@@ -11,3 +11,14 @@
 *.lai
 *.la
 *.a
+
+# Custom
+*.sdf
+*.opensdf
+*.suo
+*.vcxproj
+*.filters
+*.user
+*.ipch
+*.lib
+*.exe
