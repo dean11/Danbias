@@ -1,0 +1,16 @@
+float3 func( in float3 normalA, in float3 normalB, in float3 normalC )
+{
+	return normalize( lerp( lerp(normalA, normalB, 0.5f), lerp(normalA, normalC, 0.5f), 0.5f ) );
+
+}
+
+float3 nearTopLeft	= func( f.topPlane.normal,	f.leftPlane.normal,	f.nearPlane.normal );
+float3 nearTopRight	= func( f.topPlane.normal,	f.rightPlane.normal,	f.nearPlane.normal );
+float3 nearBottomLeft	= func( f.bottomPlane.normal,	f.leftPlane.normal,	f.nearPlane.normal );
+float3 nearBottomRight	= func( f.bottomPlane.normal,	f.rightPlane.normal,	f.nearPlane.normal );
+
+
+float3 farTopLeft	= func( f.topPlane.normal,	f.leftPlane.normal,	f.farPlane.normal );
+float3 farTopRight	= func( f.topPlane.normal,	f.rightPlane.normal,	f.farPlane.normal );
+float3 farBottomLeft	= func( f.bottomPlane.normal,	f.leftPlane.normal,	f.farPlane.normal );
+float3 farBottomRight	= func( f.bottomPlane.normal,	f.rightPlane.normal,	f.farPlane.normal );

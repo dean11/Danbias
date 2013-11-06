@@ -1,0 +1,30 @@
+F ..\Shaders\BasicDemo.hlsl
+V VSScene VS
+P PSScene PS
+
+F ..\Shaders\Obj.hlsl
+V VSObj OBJ
+P PSObj OBJ
+P PSDefObj OBJDEF
+
+F ..\Shaders\2D.hlsl
+V PassThrough 2D
+G PointToQuad 2D
+P ApplyMaterial0 Texture0
+
+F ..\Shaders\Text.hlsl
+V PassThroughText Text
+G TextToQuad Text Text
+
+F ..\Shaders\Deffered.hlsl
+C TryCompute Comp
+C BlurrHor BlurHorizontal
+C BlurrVert BlurVertical
+
+F ..\Shaders\Lazer.hlsl
+V PassThrough LazerV
+G Lazer LazerG
+
+F ..\Shaders\TileBasedDeffered.hlsl
+C lightComputer Pass0
+C composingComputer Pass1
