@@ -1,30 +1,30 @@
-#include "RawInput.h"
+#include "RawInput_Impl.h"
 
-void RawInput::Mouse_Show()					   
+void RawInput_Impl::Mouse_Show()					   
 {
 
 }
-void RawInput::Mouse_Hide()					   
+void RawInput_Impl::Mouse_Hide()					   
 {
 
 }
-void RawInput::Mouse_Lock()					   
+void RawInput_Impl::Mouse_Lock()					   
 {
 
 }
-void RawInput::Mouse_Unlock()				   
+void RawInput_Impl::Mouse_Unlock()				   
 {
 
 }
-void RawInput::Mouse_IsBtnPressed(IN RIK)	   
+void RawInput_Impl::Mouse_IsBtnPressed(IN RIK)	   
 {
 
 }
-int	 RawInput::Mouse_WheelDelta()			   
+int	 RawInput_Impl::Mouse_WheelDelta()			   
 {
 	return 0;
 }
-POINT RawInput::Mouse_Position()			   
+POINT RawInput_Impl::Mouse_Position()			   
 {
 	POINT p = {0, 0};
 	//POINT p = { this->_activeInputData.data.MOUSE_DATA.MousePos_X, this->_activeInputData.data.MOUSE_DATA.MousePos_Y };

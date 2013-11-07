@@ -1,8 +1,7 @@
-#include "RawInputWrapper.h"
+#include "RawInput.h"
 // include the basic windows header file
 #include <windows.h>
 #include <windowsx.h>
-#include <vld.h>
 #include <cassert>
 
 
@@ -73,7 +72,7 @@ void initWindow(HINSTANCE h, int i)
 }
 void initRaw()
 {
-	RawInputWrapper::Self()->Input_AddDevice(hWnd);
+	//RawInput::Self()->Input_AddDevice(hWnd);
 }
 // the entry point for any Windows program
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -93,10 +92,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         // send the message to the WindowProc function
         DispatchMessage(&msg);
 
-		RawInputWrapper::Self()->Input_Read();
+		//RawInput::Self()->Input_Read();
     }
 
-	RawInputWrapper::Destroy();
+	RawInput::Destroy();
 
     return msg.wParam;
 }

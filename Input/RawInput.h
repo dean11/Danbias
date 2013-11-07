@@ -6,7 +6,7 @@
 
 
 /*********************************************************************/
-/***************************** Keycodes ******************************/
+/***************************** Enumerations ******************************/
 /*********************************************************************/
 //! Contains keycodes
 enum RIK
@@ -125,18 +125,23 @@ enum RIM
 	RIM_RightBtn		= 0x04,
 	RIM_Scroll			= 0x0400,
 };
-/*********************************************************************/
-
-
-/**************************************************************************/
-/***************************** Callback data ******************************/
-/**************************************************************************/
+enum INPUT_ERROR_CODE
+{
+	INPUT_ERROR_CODE_FAILED,
+	INPUT_ERROR_CODE_SUCCESS,
+};
 enum InputType
 {
 	InputType_Keyboard,
 	InputType_Mouse,
 	InputType_HID,
 };
+/*********************************************************************/
+
+
+/**************************************************************************/
+/***************************** Typedefs ******************************/
+/**************************************************************************/
 struct RawMouseData
 {
 	bool shift;
@@ -170,42 +175,68 @@ struct RawInputData
 		RAWHID			HID_DATA;
 	} data;
 };
+struct INPUT_DESC
+{
+	
+	HWND targetApplication;		//!< The target proccess that will proc input.
+	bool manual;				//!< Set this to true if you want to lock callback frequency by calling  //!< @see Input_Frame()
+};
 typedef void(*INPUT_CALLBACK)(const RawInputData*);
 /*********************************************************************/
 
-class RawInputWrapper
+class RawInput
 {
 	public:
-		static RawInputWrapper*			Self							();
+		/**
+		* @return Returns a pointer to an instance of RawInput.
+		*/
+		static RawInput*				Self							();
+		/**
+		* Destroys the RawInput singleton object.
+		*/
 		static void						Destroy							();
-	
-		virtual const wchar_t*			Input_GetError					() const													PURE;
 
-		virtual bool					Input_AddDevice					(IN const HWND& targetApplication)							PURE;
-		virtual bool					Input_AddDevice					(IN const RAWINPUTDEVICE* d, IN const int& count)			PURE;
+		/**
+		* Adds a standard device to start sending input
+		* @param desc Settings for the device to add
+		* @see INPUT_DESC
+		*/
+		virtual INPUT_ERROR_CODE		AddDevice						(const INPUT_DESC& desc)									= 0;
+		virtual INPUT_ERROR_CODE		AddDevice						(const RAWINPUTDEVICE d[], IN const int count)				= 0;
 
-		virtual void					Input_Subscribe					(IN INPUT_CALLBACK fnc)										PURE;
-		virtual void					Input_Unsubscribe				(IN INPUT_CALLBACK fnc)										PURE;
+		/**
+		* Registers a function to get callback events.
+		* @param fnc a function pointer to callback function.
+		* @param subscribe If this is set to false, the function will be removed from callback list.
+		*/
+		virtual void					Subscribe						(IN INPUT_CALLBACK fnc, bool subscribe = true)				= 0;
 
-		virtual void					Input_Disable					()															PURE;
-		virtual void					Input_Enable					()															PURE;
+		/**
+		* Enables or Disables the input proccessing.
+		*/
+		virtual void					Enable							(bool enable)												= 0;
 
-		virtual void					Input_Read						()															PURE;
+		//Proccess input
+		/**
+		* Notifies the subscribers if new input has arrived. If  manual variable in structure 
+		* @see INPUT_DESC is set to false this function call will be pointless.
+		*/
+		virtual void					Frame							()															= 0;
 
-		virtual void					Mouse_Show						()															PURE;
-		virtual void					Mouse_Hide						()															PURE;
-		virtual void					Mouse_Lock						()															PURE;
-		virtual void					Mouse_Unlock					()															PURE;
-		virtual void					Mouse_IsBtnPressed				(IN RIK key)												PURE;
-		virtual int						Mouse_WheelDelta				()															PURE;
-		virtual POINT					Mouse_Position					()															PURE;
-		virtual void					Mouse_Enable					()															PURE;
-		virtual void					Mouse_Disable					()															PURE;
+		virtual void					Mouse_Show						()															= 0;
+		virtual void					Mouse_Hide						()															= 0;
+		virtual void					Mouse_Lock						()															= 0;
+		virtual void					Mouse_Unlock					()															= 0;
+		virtual void					Mouse_IsBtnPressed				(IN RIK key)												= 0;
+		virtual int						Mouse_WheelDelta				()															= 0;
+		virtual POINT					Mouse_Position					()															= 0;
+		virtual void					Mouse_Enable					()															= 0;
+		virtual void					Mouse_Disable					()															= 0;
 																																	
-		virtual bool					Keyboard_KeyUp					(IN RIK key)												PURE;
-		virtual bool					Keyboard_KeyDown				(IN RIK key)												PURE;
-		virtual void					Keyboard_Enable					()															PURE;
-		virtual void					Keyboard_Disable				()															PURE;
+		virtual bool					Keyboard_KeyUp					(IN RIK key)												= 0;
+		virtual bool					Keyboard_KeyDown				(IN RIK key)												= 0;
+		virtual void					Keyboard_Enable					()															= 0;
+		virtual void					Keyboard_Disable				()															= 0;
 
 		
 };

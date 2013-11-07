@@ -1,7 +1,7 @@
 #ifndef INCLUDE_GUARD_RAW_INPUT_H
 #define INCLUDE_GUARD_RAW_INPUT_H
 
-#include "RawInputWrapper.h"
+#include "RawInput.h"
 #include "misc.h"
 #include <vector>
 
@@ -39,7 +39,7 @@ enum RawInput_Usage
 	RawInput_Usage_TabletPCcontrols		= 9,
 };
 
-class RawInput	:public RawInputWrapper
+class RawInput_Impl	:public RawInput
 {
 	private:
 		SubscribeList<INPUT_CALLBACK, const RawInputData*>*			_procInput;
@@ -57,8 +57,8 @@ class RawInput	:public RawInputWrapper
 		HHOOK														_msgHook;
 
 	private:
-		RawInput													();	
-		~RawInput													();
+		RawInput_Impl													();	
+		~RawInput_Impl													();
 		
 		bool _addDevice												(const RAWINPUTDEVICE* k, const int& count);
 		RAWINPUT*_TranslateRawInput									(LPARAM l);
@@ -69,7 +69,7 @@ class RawInput	:public RawInputWrapper
 
 	public:
 
-		static RawInput* Self										();
+		static RawInput_Impl* Self										();
 		static void Destroy											();
 		
 		const wchar_t*			Input_GetError						() const;

@@ -35,11 +35,11 @@ void UNSUBSCRIBE(SubscribeList<FNC, PARAM>* l, FNC fnc)
 }
 
 
-void RawInput::Input_Subscribe		(IN INPUT_CALLBACK fnc)
+void RawInput_Impl::Input_Subscribe		(IN INPUT_CALLBACK fnc)
 {
 	//SUBSCRIBE(this->_procInput, fnc, &this->_procCollection.id);
 }
-void RawInput::Input_Unsubscribe	(IN INPUT_CALLBACK fnc)		 
+void RawInput_Impl::Input_Unsubscribe	(IN INPUT_CALLBACK fnc)		 
 {
 	//UNSUBSCRIBE(this->_procSystemKey, fnc);
 }

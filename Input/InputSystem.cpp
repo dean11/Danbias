@@ -1,4 +1,4 @@
-#include "RawInput.h"
+#include "RawInput_Impl.h"
 #include <WindowsX.h>
 #include <algorithm>
 #include <ctime>
@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-static RawInput* gInstance = 0;
+static RawInput_Impl* gInstance = 0;
 
 template<typename FNC, typename PARAM> void DESTROY_LIST(SubscribeList<FNC, PARAM>* l)
 {
@@ -37,25 +37,25 @@ template<typename FNC, typename PARAM> void PROCESS_SUBSCRIBERS(SubscribeList<FN
 
 
 
-RawInputWrapper*	RawInputWrapper::Self		()
+RawInput*	RawInput::Self()
 {
-	return (RawInputWrapper*)RawInput::Self();
+	return (RawInput*)RawInput_Impl::Self();
 }
-void				RawInputWrapper::Destroy	()
+void RawInput::Destroy()
 {
 	RawInput::Destroy();
 }
-RawInput*			RawInput::Self				()
+RawInput_Impl* RawInput_Impl::Self()
 {
 	if(!gInstance)
-		gInstance = new RawInput();
+		gInstance = new RawInput_Impl();
 
 	return gInstance;
 }
-void				RawInput::Destroy			()
+void RawInput_Impl::Destroy ()
 {
 /************************ Delete subscribers ****************************/
-	DESTROY_LIST(RawInput::Self()->_procInput);
+	DESTROY_LIST(RawInput_Impl::Self()->_procInput);
 
 /************************ Delete Other stuff ****************************/
 	ShowCursor(true);
@@ -72,7 +72,7 @@ void				RawInput::Destroy			()
 
 
 
-RawInput::RawInput								()
+RawInput_Impl::RawInput_Impl								()
 	: _procInput(0)
 	, _enabled(1)
 	, _mouseEnabled(1)
@@ -83,16 +83,16 @@ RawInput::RawInput								()
 {
 	if(!_msgHook)	this->_errorMsg = L"Failed to initiate window message hook";
 }
-RawInput::~RawInput								()
+RawInput_Impl::~RawInput_Impl								()
 {}
 
 
-const wchar_t* RawInput::Input_GetError() const								   
+const wchar_t* RawInput_Impl::Input_GetError() const								   
 {
 	return this->_errorMsg;
 }
 
-bool RawInput::Input_AddDevice(IN const HWND& targetApplication)
+bool RawInput_Impl::Input_AddDevice(IN const HWND& targetApplication)
 {
 	assert(targetApplication != 0);
 	static const UINT c = 2;
@@ -111,7 +111,7 @@ bool RawInput::Input_AddDevice(IN const HWND& targetApplication)
 	 
 	return true;
 }
-bool RawInput::Input_AddDevice(IN const RAWINPUTDEVICE* d, const int& count)
+bool RawInput_Impl::Input_AddDevice(IN const RAWINPUTDEVICE* d, const int& count)
 {
 	for (int i = 0; i < count; i++)
 		if(!d[i].hwndTarget)
@@ -128,16 +128,16 @@ bool RawInput::Input_AddDevice(IN const RAWINPUTDEVICE* d, const int& count)
 //this->_errorMsg = L"Failed to unregister device";
 
 
-void RawInput::Input_Disable()	   
+void RawInput_Impl::Input_Disable()	   
 {
 	this->_enabled = false;
 }
-void RawInput::Input_Enable()	   
+void RawInput_Impl::Input_Enable()	   
 {
 	this->_enabled = true;
 }
 
-void RawInput::Input_Read()
+void RawInput_Impl::Input_Read()
 {
 	//for (int i = 0; i < this->_idleKeyData.size(); i++)
 	//	this->_proccessRawKeyboardData(this->_idleKeyData.pop());
@@ -153,7 +153,7 @@ void RawInput::Input_Read()
 
 
 
-bool RawInput::_addDevice						(const RAWINPUTDEVICE* k, const int& count)
+bool RawInput_Impl::_addDevice						(const RAWINPUTDEVICE* k, const int& count)
 {
 	if(RegisterRawInputDevices(k, count, sizeof(RAWINPUTDEVICE)) == FALSE)
 	{
