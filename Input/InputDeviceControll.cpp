@@ -41,7 +41,7 @@ void RawInput::Mouse_Disable()
 }
 bool RawInput::Keyboard_KeyUp(IN RIK key)	   
 {
-	return false;
+	return false
 }
 bool RawInput::Keyboard_KeyDown(IN RIK key)	   
 {

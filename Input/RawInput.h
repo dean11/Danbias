@@ -136,6 +136,13 @@ enum InputType
 	InputType_Mouse,
 	InputType_HID,
 };
+enum MousePosition
+{
+	MousePosition_GetClientMousePosition,
+	MousePosition_GetRelativeMousePosition,
+	MousePosition_GetRelativeMouseVelocity,
+	MousePosition_GetDesktopMousePosition,
+};
 /*********************************************************************/
 
 
@@ -222,7 +229,7 @@ class RawInput
 		* @see INPUT_DESC is set to false this function call will be pointless.
 		*/
 		virtual void					Frame							()															= 0;
-
+		
 		virtual void					Mouse_Show						()															= 0;
 		virtual void					Mouse_Hide						()															= 0;
 		virtual void					Mouse_Lock						()															= 0;
@@ -238,6 +245,9 @@ class RawInput
 		virtual void					Keyboard_Enable					()															= 0;
 		virtual void					Keyboard_Disable				()															= 0;
 
+
+		virtual bool					Query							(RIM)														= 0;
+		virtual bool					Query							(RIK)														= 0;
 		
 };
 
