@@ -4,46 +4,36 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef OYSTER_COLLISION_ICOLLIDEABLE_H
-#define OYSTER_COLLISION_ICOLLIDEABLE_H
+#ifndef OYSTER_COLLISION_3D_ICOLLIDEABLE_H
+#define OYSTER_COLLISION_3D_ICOLLIDEABLE_H
 
-namespace Oyster { namespace Collision
+namespace Oyster { namespace Collision3D /// Contains a collection of 3D shapes and intercollission algorithms.
 {
 	class ICollideable
 	{
 	public:
-		enum CollisionType
+		enum Type
 		{
-			Point,
-			Ray,
-			Sphere,
-			Plane,
-			Triangle,
-			BoxAxisAligned,
-			Box,
-			Frustrum,
-			Line
+			Type_undefined,
+			Type_universe,
+			Type_point,
+			Type_ray,
+			Type_sphere,
+			Type_plane,
+			Type_triangle,
+			Type_box_axis_aligned,
+			Type_box,
+			Type_frustrum,
+			Type_line
 		};
 
-		enum State
-		{
-			Missed = 0,
-			Contained,
-			Intersected
-		};
+		const Type type;
 
-		ICollideable( CollisionType _type ) : type(_type) {};
+		ICollideable( Type type = Type_undefined );
 
-		const CollisionType type;
-
-		virtual ICollideable* clone( ) const = 0;
-
+		virtual ICollideable* clone( ) const = 0; // TODO: use smart unique pointer here
 		virtual bool Intersects( const ICollideable *target ) const = 0;
-
 		virtual bool Contains( const ICollideable *target ) const = 0;
-
-		//Not supported returns 0;
-		virtual State Advanced( const ICollideable *target ) const = 0;
 	};
 } }
 #endif
