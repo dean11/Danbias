@@ -279,7 +279,7 @@ namespace LinearAlgebra3D
 		targetMem.v[0] = ::LinearAlgebra::Vector4<ScalarType>( (q*::LinearAlgebra::Vector3<ScalarType>(1,0,0)*qConj).imaginary, 0 );
 		targetMem.v[1] = ::LinearAlgebra::Vector4<ScalarType>( (q*::LinearAlgebra::Vector3<ScalarType>(0,1,0)*qConj).imaginary, 0 );
 		targetMem.v[2] = ::LinearAlgebra::Vector4<ScalarType>( (q*::LinearAlgebra::Vector3<ScalarType>(0,0,1)*qConj).imaginary, 0 );
-		targetMem.v[3] = ::LinearAlgebra::Vector4<ScalarType>::standard_unit_W;
+		targetMem.v[3] = ::LinearAlgebra::Vector4<ScalarType>::standard_unit_w;
 		return targetMem;
 	}
 
