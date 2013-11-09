@@ -3,7 +3,6 @@
 // © Dan Andersson 2013
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 #ifndef LINEARALGEBRA_VECTOR_H
 #define LINEARALGEBRA_VECTOR_H
 
@@ -11,444 +10,453 @@
 
 namespace LinearAlgebra
 {
-	template<typename ElementType>
-	class Vector2
+	template<typename ScalarType>
+	struct Vector2
 	{
 	public:
 		union
 		{
-			struct { ElementType x, y; };
-			ElementType element[2];
-			char byte[sizeof(ElementType[2])];
+			struct { ScalarType x, y; };
+			ScalarType element[2];
+			char byte[sizeof(ScalarType[2])];
 		};
 		
-		static const Vector2<ElementType> null;
-		static const Vector2<ElementType> standardUnitX;
-		static const Vector2<ElementType> standardUnitY;
+		static const Vector2<ScalarType> null;
+		static const Vector2<ScalarType> standard_unit_X;
+		static const Vector2<ScalarType> standard_unit_Y;
 
 		Vector2( );
-		Vector2( const Vector2<ElementType> &vector );
-		Vector2( const ElementType &element );
-		Vector2( const ElementType element[2] );
-		Vector2( const ElementType &x, const ElementType &y );
-		~Vector2( );
+		Vector2( const Vector2<ScalarType> &vector );
+		Vector2( const ScalarType &element );
+		Vector2( const ScalarType element[2] );
+		Vector2( const ScalarType &x, const ScalarType &y );
 
-		operator ElementType* ( );
-		operator const ElementType* ( ) const;
+		operator ScalarType* ( );
+		operator const ScalarType* ( ) const;
 		operator char* ( );
 		operator const char* ( ) const;
-		ElementType & operator [] ( int i );
-		const ElementType & operator [] ( int i ) const;
+		ScalarType & operator [] ( int i );
+		const ScalarType & operator [] ( int i ) const;
 
-		Vector2<ElementType> & operator  = ( const Vector2<ElementType> &vector );
-		Vector2<ElementType> & operator  = ( const ElementType element[2] );
-		Vector2<ElementType> & operator *= ( const ElementType &scalar );
-		Vector2<ElementType> & operator /= ( const ElementType &scalar );
-		Vector2<ElementType> & operator += ( const Vector2<ElementType> &vector );
-		Vector2<ElementType> & operator -= ( const Vector2<ElementType> &vector );
-		Vector2<ElementType>   operator  * ( const ElementType &scalar ) const;
-		Vector2<ElementType>   operator  / ( const ElementType &scalar ) const;
-		Vector2<ElementType>   operator  + ( const Vector2<ElementType> &vector ) const;
-		Vector2<ElementType>   operator  - ( const Vector2<ElementType> &vector ) const;
-		Vector2<ElementType>   operator  - ( ) const; // unary negation
+		Vector2<ScalarType> & operator  = ( const Vector2<ScalarType> &vector );
+		Vector2<ScalarType> & operator  = ( const ScalarType element[2] );
+		Vector2<ScalarType> & operator *= ( const ScalarType &scalar );
+		Vector2<ScalarType> & operator /= ( const ScalarType &scalar );
+		Vector2<ScalarType> & operator += ( const Vector2<ScalarType> &vector );
+		Vector2<ScalarType> & operator -= ( const Vector2<ScalarType> &vector );
+		Vector2<ScalarType>   operator  * ( const ScalarType &scalar ) const;
+		Vector2<ScalarType>   operator  / ( const ScalarType &scalar ) const;
+		Vector2<ScalarType>   operator  + ( const Vector2<ScalarType> &vector ) const;
+		Vector2<ScalarType>   operator  - ( const Vector2<ScalarType> &vector ) const;
+		Vector2<ScalarType>   operator  - ( ) const; // unary negation
 
-		bool operator == ( const Vector2<ElementType> &vector ) const;
-		bool operator != ( const Vector2<ElementType> &vector ) const;
+		bool operator == ( const Vector2<ScalarType> &vector ) const;
+		bool operator != ( const Vector2<ScalarType> &vector ) const;
 
-		ElementType length( ) const;
-		ElementType dot( const Vector2<ElementType> &vector ) const;
+		ScalarType GetLength( ) const;
+		ScalarType GetMagnitude( ) const;
+		ScalarType Dot( const Vector2<ScalarType> &vector ) const;
 
-		Vector2<ElementType> & normalize( );
-		Vector2<ElementType> getNormalized( ) const;
+		Vector2<ScalarType> & Normalize( );
+		Vector2<ScalarType> GetNormalized( ) const;
 	};
 
-	template<typename ElementType>
-	class Vector3
+	template<typename ScalarType>
+	struct Vector3
 	{
 	public:
 		union
 		{
-			struct { ElementType x, y, z; };
-			struct { Vector2<ElementType> xy; };
-			ElementType element[3];
-			char byte[sizeof(ElementType[3])];
+			struct { ScalarType x, y, z; };
+			struct { Vector2<ScalarType> xy; };
+			ScalarType element[3];
+			char byte[sizeof(ScalarType[3])];
 		};
 
-		static const Vector3<ElementType> null;
-		static const Vector3<ElementType> standardUnitX;
-		static const Vector3<ElementType> standardUnitY;
-		static const Vector3<ElementType> standardUnitZ;
+		static const Vector3<ScalarType> null;
+		static const Vector3<ScalarType> standard_unit_X;
+		static const Vector3<ScalarType> standard_unit_Y;
+		static const Vector3<ScalarType> standard_unit_Z;
 
 		Vector3( );
-		Vector3( const Vector3<ElementType> &vector );
-		Vector3( const Vector2<ElementType> &vector, const ElementType &z );
-		Vector3( const ElementType &element );
-		Vector3( const ElementType element[3] );
-		Vector3( const ElementType &x, const ElementType &y, const ElementType &z );
-		~Vector3( );
+		Vector3( const Vector3<ScalarType> &vector );
+		Vector3( const Vector2<ScalarType> &vector, const ScalarType &z );
+		Vector3( const ScalarType &element );
+		Vector3( const ScalarType element[3] );
+		Vector3( const ScalarType &x, const ScalarType &y, const ScalarType &z );
 
-		operator ElementType* ();
-		operator const ElementType* () const;
+		operator ScalarType* ();
+		operator const ScalarType* () const;
 		operator char* ( );
 		operator const char* ( ) const;
-		ElementType & operator [] ( int i );
-		const ElementType & operator [] ( int i ) const;
+		ScalarType & operator [] ( int i );
+		const ScalarType & operator [] ( int i ) const;
 
-		Vector3<ElementType> & operator  = ( const Vector3<ElementType> &vector );
-		Vector3<ElementType> & operator  = ( const ElementType element[3] );
-		Vector3<ElementType> & operator *= ( const ElementType &scalar );
-		Vector3<ElementType> & operator /= ( const ElementType &scalar );
-		Vector3<ElementType> & operator += ( const Vector3<ElementType> &vector );
-		Vector3<ElementType> & operator -= ( const Vector3<ElementType> &vector );
-		Vector3<ElementType>   operator  * ( const ElementType &scalar ) const;
-		Vector3<ElementType>   operator  / ( const ElementType &scalar ) const;
-		Vector3<ElementType>   operator  + ( const Vector3<ElementType> &vector ) const;
-		Vector3<ElementType>   operator  - ( const Vector3<ElementType> &vector ) const;
-		Vector3<ElementType>   operator  - ( ) const; // unary negation
+		Vector3<ScalarType> & operator  = ( const Vector3<ScalarType> &vector );
+		Vector3<ScalarType> & operator  = ( const ScalarType element[3] );
+		Vector3<ScalarType> & operator *= ( const ScalarType &scalar );
+		Vector3<ScalarType> & operator /= ( const ScalarType &scalar );
+		Vector3<ScalarType> & operator += ( const Vector3<ScalarType> &vector );
+		Vector3<ScalarType> & operator -= ( const Vector3<ScalarType> &vector );
+		Vector3<ScalarType>   operator  * ( const ScalarType &scalar ) const;
+		Vector3<ScalarType>   operator  / ( const ScalarType &scalar ) const;
+		Vector3<ScalarType>   operator  + ( const Vector3<ScalarType> &vector ) const;
+		Vector3<ScalarType>   operator  - ( const Vector3<ScalarType> &vector ) const;
+		Vector3<ScalarType>   operator  - ( ) const; // unary negation
 
-		bool operator == ( const Vector3<ElementType> &vector ) const;
-		bool operator != ( const Vector3<ElementType> &vector ) const;
+		bool operator == ( const Vector3<ScalarType> &vector ) const;
+		bool operator != ( const Vector3<ScalarType> &vector ) const;
 
-		ElementType length( ) const;
-		ElementType dot( const Vector3<ElementType> &vector ) const;
-		Vector3<ElementType> cross( const Vector3<ElementType> &vector ) const;
+		ScalarType GetLength( ) const;
+		ScalarType GetMagnitude( ) const;
+		ScalarType Dot( const Vector3<ScalarType> &vector ) const;
+		Vector3<ScalarType> Cross( const Vector3<ScalarType> &vector ) const;
 
-		Vector3<ElementType> & normalize( );
-		Vector3<ElementType> getNormalized( ) const;
+		Vector3<ScalarType> & Normalize( );
+		Vector3<ScalarType> GetNormalized( ) const;
 	};
 
-	template<typename ElementType>
-	class Vector4
+	template<typename ScalarType>
+	struct Vector4
 	{
 	public:
 		union
 		{
-			struct { ElementType x, y, z, w; };
-			struct { Vector2<ElementType> xy; };
-			struct { Vector3<ElementType> xyz; };
-			ElementType element[4];
-			char byte[sizeof(ElementType[4])];
+			struct { ScalarType x, y, z, w; };
+			struct { Vector2<ScalarType> xy; };
+			struct { Vector3<ScalarType> xyz; };
+			ScalarType element[4];
+			char byte[sizeof(ScalarType[4])];
 		};
 
-		static const Vector4<ElementType> null;
-		static const Vector4<ElementType> standardUnitX;
-		static const Vector4<ElementType> standardUnitY;
-		static const Vector4<ElementType> standardUnitZ;
-		static const Vector4<ElementType> standardUnitW;
+		static const Vector4<ScalarType> null;
+		static const Vector4<ScalarType> standard_unit_X;
+		static const Vector4<ScalarType> standard_unit_Y;
+		static const Vector4<ScalarType> standard_unit_Z;
+		static const Vector4<ScalarType> standard_unit_W;
 
 		Vector4( );
-		Vector4( const Vector4<ElementType> &vector );
-		Vector4( const Vector3<ElementType> &vector, const ElementType &w );
-		Vector4( const Vector2<ElementType> &vector, const ElementType &z, const ElementType &w );
-		Vector4( const ElementType &element );
-		Vector4( const ElementType element[4] );
-		Vector4( const ElementType &x, const ElementType &y, const ElementType &z, const ElementType &w );
-		~Vector4( );
+		Vector4( const Vector4<ScalarType> &vector );
+		Vector4( const Vector3<ScalarType> &vector, const ScalarType &w );
+		Vector4( const Vector2<ScalarType> &vector, const ScalarType &z, const ScalarType &w );
+		Vector4( const ScalarType &element );
+		Vector4( const ScalarType element[4] );
+		Vector4( const ScalarType &x, const ScalarType &y, const ScalarType &z, const ScalarType &w );
 
-		operator ElementType* ();
-		operator const ElementType* () const;
+		operator ScalarType* ();
+		operator const ScalarType* () const;
 		operator char* ( );
 		operator const char* ( ) const;
-		ElementType & operator [] ( int i );
-		const ElementType & operator [] ( int i ) const;
+		ScalarType & operator [] ( int i );
+		const ScalarType & operator [] ( int i ) const;
 
-		Vector4<ElementType> & operator  = ( const Vector4<ElementType> &vector );
-		Vector4<ElementType> & operator  = ( const ElementType element[4] );
-		Vector4<ElementType> & operator *= ( const ElementType &scalar );
-		Vector4<ElementType> & operator /= ( const ElementType &scalar );
-		Vector4<ElementType> & operator += ( const Vector4<ElementType> &vector );
-		Vector4<ElementType> & operator -= ( const Vector4<ElementType> &vector );
-		Vector4<ElementType>   operator  * ( const ElementType &scalar ) const;
-		Vector4<ElementType>   operator  / ( const ElementType &scalar ) const;
-		Vector4<ElementType>   operator  + ( const Vector4<ElementType> &vector ) const;
-		Vector4<ElementType>   operator  - ( const Vector4<ElementType> &vector ) const;
-		Vector4<ElementType>   operator  - ( ) const; // unary negation
+		Vector4<ScalarType> & operator  = ( const Vector4<ScalarType> &vector );
+		Vector4<ScalarType> & operator  = ( const ScalarType element[4] );
+		Vector4<ScalarType> & operator *= ( const ScalarType &scalar );
+		Vector4<ScalarType> & operator /= ( const ScalarType &scalar );
+		Vector4<ScalarType> & operator += ( const Vector4<ScalarType> &vector );
+		Vector4<ScalarType> & operator -= ( const Vector4<ScalarType> &vector );
+		Vector4<ScalarType>   operator  * ( const ScalarType &scalar ) const;
+		Vector4<ScalarType>   operator  / ( const ScalarType &scalar ) const;
+		Vector4<ScalarType>   operator  + ( const Vector4<ScalarType> &vector ) const;
+		Vector4<ScalarType>   operator  - ( const Vector4<ScalarType> &vector ) const;
+		Vector4<ScalarType>   operator  - ( ) const; // unary negation
 		
-		bool operator == ( const Vector4<ElementType> &vector ) const;
-		bool operator != ( const Vector4<ElementType> &vector ) const;
+		bool operator == ( const Vector4<ScalarType> &vector ) const;
+		bool operator != ( const Vector4<ScalarType> &vector ) const;
 
-		ElementType length( ) const;
-		ElementType dot( const Vector4<ElementType> &vector ) const;
+		ScalarType GetLength( ) const;
+		ScalarType GetMagnitude( ) const;
+		ScalarType Dot( const Vector4<ScalarType> &vector ) const;
 
-		Vector4<ElementType> & normalize( );
-		Vector4<ElementType> getNormalized( ) const;
+		Vector4<ScalarType> & Normalize( );
+		Vector4<ScalarType> GetNormalized( ) const;
 	};
 
 ///////////////////////////////////////////////////////////////////////////////////
 //	Body
 ///////////////////////////////////////////////////////////////////////////////////
 
-// Vector2<ElementType> ///////////////////////////////////////
-	template<typename ElementType> const Vector2<ElementType> Vector2<ElementType>::null = Vector2<ElementType>( );
-	template<typename ElementType> const Vector2<ElementType> Vector2<ElementType>::standardUnitX = Vector2<ElementType>( 1, 0 );
-	template<typename ElementType> const Vector2<ElementType> Vector2<ElementType>::standardUnitY = Vector2<ElementType>( 0, 1 );
+// Vector2<ScalarType> ///////////////////////////////////////
 
-	template<typename ElementType>
-	Vector2<ElementType>::Vector2( ) : x(0), y(0) {}
+	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::null = Vector2<ScalarType>( );
+	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_X = Vector2<ScalarType>( 1, 0 );
+	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_Y = Vector2<ScalarType>( 0, 1 );
 
-	template<typename ElementType>
-	Vector2<ElementType>::Vector2( const Vector2<ElementType> &vector ) : x(vector.x), y(vector.y)
+	template<typename ScalarType>
+	Vector2<ScalarType>::Vector2( ) : x(), y() {}
+
+	template<typename ScalarType>
+	Vector2<ScalarType>::Vector2( const Vector2<ScalarType> &vector )
 	{ this->x = vector.x; this->y = vector.y; }
 
-	template<typename ElementType>
-	Vector2<ElementType>::Vector2( const ElementType &_element ) : x(_element), y(_element)
+	template<typename ScalarType>
+	Vector2<ScalarType>::Vector2( const ScalarType &_element )
 	{ this->x = this->y = _element; }
 
-	template<typename ElementType>
-	Vector2<ElementType>::Vector2( const ElementType _element[2] ) : x(_element[0]), y(_element[1]) {}
+	template<typename ScalarType>
+	Vector2<ScalarType>::Vector2( const ScalarType _element[2] )
+	{ this->x = _element[0]; this->y = _element[1]; }
 
-	template<typename ElementType>
-	Vector2<ElementType>::Vector2( const ElementType &_x, const ElementType &_y ) : x(_x), y(_y) {}
+	template<typename ScalarType>
+	Vector2<ScalarType>::Vector2( const ScalarType &_x, const ScalarType &_y )
+	{ this->x = _x; this->y = _y; }
 
-	template<typename ElementType>
-	Vector2<ElementType>::~Vector2( ) { /* Nothing that needs to be done */ }
-
-	template<typename ElementType>
-	inline Vector2<ElementType>::operator ElementType* ()
+	template<typename ScalarType>
+	inline Vector2<ScalarType>::operator ScalarType* ()
 	{ return this->element; }
 	
-	template<typename ElementType>
-	inline Vector2<ElementType>::operator const ElementType* () const
+	template<typename ScalarType>
+	inline Vector2<ScalarType>::operator const ScalarType* () const
 	{ return this->element; }
 
-	template<typename ElementType>
-	inline Vector2<ElementType>::operator char* ( )
+	template<typename ScalarType>
+	inline Vector2<ScalarType>::operator char* ( )
 	{ return this->byte; }
 
-	template<typename ElementType>
-	inline Vector2<ElementType>::operator const char* ( ) const
+	template<typename ScalarType>
+	inline Vector2<ScalarType>::operator const char* ( ) const
 	{ return this->byte; }
 
-	template<typename ElementType>
-	inline ElementType & Vector2<ElementType>::operator [] ( int i )
+	template<typename ScalarType>
+	inline ScalarType & Vector2<ScalarType>::operator [] ( int i )
 	{ return this->element[i]; }
 
-	template<typename ElementType>
-	inline const ElementType & Vector2<ElementType>::operator [] ( int i ) const
+	template<typename ScalarType>
+	inline const ScalarType & Vector2<ScalarType>::operator [] ( int i ) const
 	{ return this->element[i]; }
 
-	template<typename ElementType>
-	Vector2<ElementType> & Vector2<ElementType>::operator = ( const Vector2<ElementType> &vector )
+	template<typename ScalarType>
+	Vector2<ScalarType> & Vector2<ScalarType>::operator = ( const Vector2<ScalarType> &vector )
 	{
 		this->element[0] = vector.element[0];
 		this->element[1] = vector.element[1];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector2<ElementType> & Vector2<ElementType>::operator = ( const ElementType _element[2] )
+	template<typename ScalarType>
+	Vector2<ScalarType> & Vector2<ScalarType>::operator = ( const ScalarType _element[2] )
 	{
 		this->element[0] = _element[0];
 		this->element[1] = _element[1];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector2<ElementType> & Vector2<ElementType>::operator *= ( const ElementType &scalar )
+	template<typename ScalarType>
+	Vector2<ScalarType> & Vector2<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
 		this->element[0] *= scalar;
 		this->element[1] *= scalar;
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector2<ElementType> & Vector2<ElementType>::operator /= ( const ElementType &scalar )
+	template<typename ScalarType>
+	Vector2<ScalarType> & Vector2<ScalarType>::operator /= ( const ScalarType &scalar )
 	{
 		this->element[0] /= scalar;
 		this->element[1] /= scalar;
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector2<ElementType> & Vector2<ElementType>::operator += ( const Vector2<ElementType> &vector )
+	template<typename ScalarType>
+	Vector2<ScalarType> & Vector2<ScalarType>::operator += ( const Vector2<ScalarType> &vector )
 	{
 		this->element[0] += vector.element[0];
 		this->element[1] += vector.element[1];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector2<ElementType> & Vector2<ElementType>::operator -= ( const Vector2<ElementType> &vector )
+	template<typename ScalarType>
+	Vector2<ScalarType> & Vector2<ScalarType>::operator -= ( const Vector2<ScalarType> &vector )
 	{
 		this->element[0] -= vector.element[0];
 		this->element[1] -= vector.element[1];
 		return *this;
 	}
 
-	template<typename ElementType>
-	inline Vector2<ElementType> Vector2<ElementType>::operator * ( const ElementType &scalar ) const
-	{ return Vector2<ElementType>(*this) *= scalar; }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::operator * ( const ScalarType &scalar ) const
+	{ return Vector2<ScalarType>(*this) *= scalar; }
 
-	template<typename ElementType>
-	inline Vector2<ElementType> Vector2<ElementType>::operator / ( const ElementType &scalar ) const
-	{ return Vector2<ElementType>(*this) /= scalar; }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::operator / ( const ScalarType &scalar ) const
+	{ return Vector2<ScalarType>(*this) /= scalar; }
 
-	template<typename ElementType>
-	inline Vector2<ElementType> Vector2<ElementType>::operator + ( const Vector2<ElementType> &vector ) const
-	{ return Vector2<ElementType>(*this) += vector; }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::operator + ( const Vector2<ScalarType> &vector ) const
+	{ return Vector2<ScalarType>(*this) += vector; }
 
-	template<typename ElementType>
-	inline Vector2<ElementType> Vector2<ElementType>::operator - ( const Vector2<ElementType> &vector ) const
-	{ return Vector2<ElementType>(*this) -= vector; }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::operator - ( const Vector2<ScalarType> &vector ) const
+	{ return Vector2<ScalarType>(*this) -= vector; }
 
-	template<typename ElementType>
-	inline Vector2<ElementType> Vector2<ElementType>::operator - ( ) const
-	{ return Vector2<ElementType>(-this->x, -this->y); }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::operator - ( ) const
+	{ return Vector2<ScalarType>(-this->x, -this->y); }
 
-	template<typename ElementType>
-	bool Vector2<ElementType>::operator == ( const Vector2<ElementType> &vector ) const
+	template<typename ScalarType>
+	bool Vector2<ScalarType>::operator == ( const Vector2<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return false;
 		if( this->y != vector.y ) return false;
 		return true;
 	}
 
-	template<typename ElementType>
-	bool Vector2<ElementType>::operator != ( const Vector2<ElementType> &vector ) const
+	template<typename ScalarType>
+	bool Vector2<ScalarType>::operator != ( const Vector2<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return true;
 		if( this->y != vector.y ) return true;
 		return false;
 	}
 
-	template<typename ElementType>
-	inline ElementType Vector2<ElementType>::length( ) const
-	{ return (ElementType) ::sqrt( this->dot(*this) ); }
+	template<typename ScalarType>
+	inline ScalarType Vector2<ScalarType>::GetLength( ) const
+	{ return this->GetMagnitude(); }
 
-	template<typename ElementType>
-	ElementType Vector2<ElementType>::dot( const Vector2<ElementType> &vector ) const
+	template<typename ScalarType>
+	inline ScalarType Vector2<ScalarType>::GetMagnitude( ) const
+	{ return (ScalarType) ::sqrt( this->Dot(*this) ); }	
+
+	template<typename ScalarType>
+	ScalarType Vector2<ScalarType>::Dot( const Vector2<ScalarType> &vector ) const
 	{
-		ElementType value = 0;
+		ScalarType value = 0;
 		value += this->element[0] * vector.element[0];
 		value += this->element[1] * vector.element[1];
 		return value;
 	}
 
-	template<typename ElementType>
-	inline Vector2<ElementType> & Vector2<ElementType>::normalize( )
-	{ return (*this) /= this->length(); }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> & Vector2<ScalarType>::Normalize( )
+	{ return (*this) /= this->GetLength(); }
 
-	template<typename ElementType>
-	inline Vector2<ElementType> Vector2<ElementType>::getNormalized( ) const
-	{ return Vector2<ElementType>(*this).normalize(); }
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::GetNormalized( ) const
+	{ return Vector2<ScalarType>(*this).Normalize(); }
 
-// Vector3<ElementType> ///////////////////////////////////////
-	template<typename ElementType> const Vector3<ElementType> Vector3<ElementType>::null = Vector3<ElementType>( );
-	template<typename ElementType> const Vector3<ElementType> Vector3<ElementType>::standardUnitX = Vector3<ElementType>( 1, 0, 0 );
-	template<typename ElementType> const Vector3<ElementType> Vector3<ElementType>::standardUnitY = Vector3<ElementType>( 0, 1, 0 );
-	template<typename ElementType> const Vector3<ElementType> Vector3<ElementType>::standardUnitZ = Vector3<ElementType>( 0, 0, 1 );
+// Vector3<ScalarType> ///////////////////////////////////////
 
-	template<typename ElementType>
-	Vector3<ElementType>::Vector3( ) : x(0), y(0), z(0) {}
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::null = Vector3<ScalarType>( );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_X = Vector3<ScalarType>( 1, 0, 0 );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_Y = Vector3<ScalarType>( 0, 1, 0 );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_Z = Vector3<ScalarType>( 0, 0, 1 );
 
-	template<typename ElementType>
-	Vector3<ElementType>::Vector3( const Vector3<ElementType> &vector ) : x(vector.x), y(vector.y), z(vector.z)
+	template<typename ScalarType>
+	Vector3<ScalarType>::Vector3( ) : x(), y(), z() {}
+
+	template<typename ScalarType>
+	Vector3<ScalarType>::Vector3( const Vector3<ScalarType> &vector )
 	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; }
 
-	template<typename ElementType>
-	Vector3<ElementType>::Vector3( const Vector2<ElementType> &vector, const ElementType &_z ) : x(vector.x), y(vector.y), z(_z)
-	{ this->x = vector.x; this->y = vector.y; }
+	template<typename ScalarType>
+	Vector3<ScalarType>::Vector3( const Vector2<ScalarType> &vector, const ScalarType &_z )
+	{ this->x = vector.x; this->y = vector.y; this->z = _z; }
 
-	template<typename ElementType>
-	Vector3<ElementType>::Vector3( const ElementType &_element ) : x(_element), y(_element), z(_element)
+	template<typename ScalarType>
+	Vector3<ScalarType>::Vector3( const ScalarType &_element )
 	{ this->x = this->y = this->z = _element; }
 
-	template<typename ElementType>
-	Vector3<ElementType>::Vector3( const ElementType _element[3] ) : x(_element[0]), y(_element[1]), z(_element[2]) {}
+	template<typename ScalarType>
+	Vector3<ScalarType>::Vector3( const ScalarType _element[3] )
+	{ this->x = _element[0]; this->y = _element[1]; this->z = _element[2]; }
 
-	template<typename ElementType>
-	Vector3<ElementType>::Vector3( const ElementType &_x, const ElementType &_y, const ElementType &_z ) : x(_x), y(_y), z(_z)
+	template<typename ScalarType>
+	Vector3<ScalarType>::Vector3( const ScalarType &_x, const ScalarType &_y, const ScalarType &_z )
 	{ this->x = _x; this->y = _y; this->z = _z; }
 
-	template<typename ElementType>
-	Vector3<ElementType>::~Vector3( ) {  /* Nothing that needs to be done */ }
-
-	template<typename ElementType>
-	inline Vector3<ElementType>::operator ElementType* ()
+	template<typename ScalarType>
+	inline Vector3<ScalarType>::operator ScalarType* ()
 	{ return this->element; }
 	
-	template<typename ElementType>
-	inline Vector3<ElementType>::operator const ElementType* () const
+	template<typename ScalarType>
+	inline Vector3<ScalarType>::operator const ScalarType* () const
 	{ return this->element; }
 
-	template<typename ElementType>
-	inline ElementType & Vector3<ElementType>::operator [] ( int i )
+	template<typename ScalarType>
+	inline ScalarType & Vector3<ScalarType>::operator [] ( int i )
 	{ return this->element[i]; }
 
-	template<typename ElementType>
-	inline const ElementType & Vector3<ElementType>::operator [] ( int i ) const
+	template<typename ScalarType>
+	inline const ScalarType & Vector3<ScalarType>::operator [] ( int i ) const
 	{ return this->element[i]; }
 
-	template<typename ElementType>
-	Vector3<ElementType> & Vector3<ElementType>::operator = ( const Vector3<ElementType> &vector )
+	template<typename ScalarType>
+	Vector3<ScalarType> & Vector3<ScalarType>::operator = ( const Vector3<ScalarType> &vector )
 	{
-		for( int i = 0; i < 3; ++i )
-			this->element[i] = vector.element[i];
+		this->element[0] = vector.element[0];
+		this->element[1] = vector.element[1];
+		this->element[2] = vector.element[2];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> & Vector3<ElementType>::operator = ( const ElementType element[3] )
+	template<typename ScalarType>
+	Vector3<ScalarType> & Vector3<ScalarType>::operator = ( const ScalarType element[3] )
 	{
-		for( int i = 0; i < 3; ++i )
-			this->element[i] = element[i];
+		this->element[0] = element[0];
+		this->element[1] = element[1];
+		this->element[2] = element[2];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> & Vector3<ElementType>::operator *= ( const ElementType &scalar )
+	template<typename ScalarType>
+	Vector3<ScalarType> & Vector3<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
-		for( int i = 0; i < 3; ++i )
-			this->element[i] *= scalar;
+		this->element[0] *= scalar;
+		this->element[1] *= scalar;
+		this->element[2] *= scalar;			
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> & Vector3<ElementType>::operator /= ( const ElementType &scalar )
+	template<typename ScalarType>
+	Vector3<ScalarType> & Vector3<ScalarType>::operator /= ( const ScalarType &scalar )
 	{
-		for( int i = 0; i < 3; ++i )
-			this->element[i] /= scalar;
+		this->element[0] /= scalar;
+		this->element[1] /= scalar;
+		this->element[2] /= scalar;	
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> & Vector3<ElementType>::operator += ( const Vector3<ElementType> &vector )
+	template<typename ScalarType>
+	Vector3<ScalarType> & Vector3<ScalarType>::operator += ( const Vector3<ScalarType> &vector )
 	{
-		for( int i = 0; i < 3; ++i )
-			this->element[i] += vector.element[i];
+		this->element[0] += vector.element[0];
+		this->element[1] += vector.element[1];
+		this->element[2] += vector.element[2];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> & Vector3<ElementType>::operator -= ( const Vector3<ElementType> &vector )
+	template<typename ScalarType>
+	Vector3<ScalarType> & Vector3<ScalarType>::operator -= ( const Vector3<ScalarType> &vector )
 	{
-		for( int i = 0; i < 3; ++i )
-			this->element[i] -= vector.element[i];
+		this->element[0] -= vector.element[0];
+		this->element[1] -= vector.element[1];
+		this->element[2] -= vector.element[2];
 		return *this;
 	}
 
-	template<typename ElementType>
-	inline Vector3<ElementType> Vector3<ElementType>::operator * ( const ElementType &scalar ) const
-	{ return Vector3<ElementType>(*this) *= scalar; }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::operator * ( const ScalarType &scalar ) const
+	{ return Vector3<ScalarType>(*this) *= scalar; }
 
-	template<typename ElementType>
-	inline Vector3<ElementType> Vector3<ElementType>::operator / ( const ElementType &scalar ) const
-	{ return Vector3<ElementType>(*this) /= scalar; }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::operator / ( const ScalarType &scalar ) const
+	{ return Vector3<ScalarType>(*this) /= scalar; }
 
-	template<typename ElementType>
-	inline Vector3<ElementType> Vector3<ElementType>::operator + ( const Vector3<ElementType> &vector ) const
-	{ return Vector3<ElementType>(*this) += vector; }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::operator + ( const Vector3<ScalarType> &vector ) const
+	{ return Vector3<ScalarType>(*this) += vector; }
 
-	template<typename ElementType>
-	inline Vector3<ElementType> Vector3<ElementType>::operator - ( const Vector3<ElementType> &vector ) const
-	{ return Vector3<ElementType>(*this) -= vector; }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::operator - ( const Vector3<ScalarType> &vector ) const
+	{ return Vector3<ScalarType>(*this) -= vector; }
 
-	template<typename ElementType>
-	inline Vector3<ElementType> Vector3<ElementType>::operator - ( ) const
-	{ return Vector3<ElementType>(-this->x, -this->y, -this->z); }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::operator - ( ) const
+	{ return Vector3<ScalarType>(-this->x, -this->y, -this->z); }
 
-	template<typename ElementType>
-	bool Vector3<ElementType>::operator == ( const Vector3<ElementType> &vector ) const
+	template<typename ScalarType>
+	bool Vector3<ScalarType>::operator == ( const Vector3<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return false;
 		if( this->y != vector.y ) return false;
@@ -456,8 +464,8 @@ namespace LinearAlgebra
 		return true;
 	}
 
-	template<typename ElementType>
-	bool Vector3<ElementType>::operator != ( const Vector3<ElementType> &vector ) const
+	template<typename ScalarType>
+	bool Vector3<ScalarType>::operator != ( const Vector3<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return true;
 		if( this->y != vector.y ) return true;
@@ -465,157 +473,173 @@ namespace LinearAlgebra
 		return false;
 	}
 
-	template<typename ElementType>
-	inline ElementType Vector3<ElementType>::length( ) const
-	{ return (ElementType) ::sqrt( this->dot(*this) ); }
+	template<typename ScalarType>
+	inline ScalarType Vector3<ScalarType>::GetLength( ) const
+	{ return this->GetMagnitude(); }
 
-	template<typename ElementType>
-	ElementType Vector3<ElementType>::dot( const Vector3<ElementType> &vector ) const
+	template<typename ScalarType>
+	inline ScalarType Vector3<ScalarType>::GetMagnitude( ) const
+	{ return (ScalarType) ::sqrt( this->Dot(*this) ); }
+
+	template<typename ScalarType>
+	ScalarType Vector3<ScalarType>::Dot( const Vector3<ScalarType> &vector ) const
 	{
-		ElementType value = 0;
-		for( int i = 0; i < 3; ++i )
-			value += this->element[i] * vector.element[i];
+		ScalarType value = 0;
+		value += this->element[0] * vector.element[0];
+		value += this->element[1] * vector.element[1];
+		value += this->element[2] * vector.element[2];
 		return value;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> Vector3<ElementType>::cross( const Vector3<ElementType> &vector ) const
+	template<typename ScalarType>
+	Vector3<ScalarType> Vector3<ScalarType>::Cross( const Vector3<ScalarType> &vector ) const
 	{
-		return Vector3<ElementType>( (this->y*vector.z) - (this->z*vector.y),
+		return Vector3<ScalarType>( (this->y*vector.z) - (this->z*vector.y),
 									 (this->z*vector.x) - (this->x*vector.z),
 									 (this->x*vector.y) - (this->y*vector.x) );
 	}
 
-	template<typename ElementType>
-	inline Vector3<ElementType> & Vector3<ElementType>::normalize( )
-	{ return (*this) /= this->length(); }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> & Vector3<ScalarType>::Normalize( )
+	{ return (*this) /= this->GetLength(); }
 
-	template<typename ElementType>
-	inline Vector3<ElementType> Vector3<ElementType>::getNormalized( ) const
-	{ return Vector3<ElementType>(*this).normalize(); }
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::GetNormalized( ) const
+	{ return Vector3<ScalarType>(*this).Normalize(); }
 
-// Vector4<ElementType> ///////////////////////////////////////
-	template<typename ElementType> const Vector4<ElementType> Vector4<ElementType>::null = Vector4<ElementType>( );
-	template<typename ElementType> const Vector4<ElementType> Vector4<ElementType>::standardUnitX = Vector4<ElementType>( 1, 0, 0, 0 );
-	template<typename ElementType> const Vector4<ElementType> Vector4<ElementType>::standardUnitY = Vector4<ElementType>( 0, 1, 0, 0 );
-	template<typename ElementType> const Vector4<ElementType> Vector4<ElementType>::standardUnitZ = Vector4<ElementType>( 0, 0, 1, 0 );
-	template<typename ElementType> const Vector4<ElementType> Vector4<ElementType>::standardUnitW = Vector4<ElementType>( 0, 0, 0, 1 );
+// Vector4<ScalarType> ///////////////////////////////////////
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( ) : x(0), y(0), z(0), w(0) {}
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::null = Vector4<ScalarType>( );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_X = Vector4<ScalarType>( 1, 0, 0, 0 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_Y = Vector4<ScalarType>( 0, 1, 0, 0 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_Z = Vector4<ScalarType>( 0, 0, 1, 0 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_W = Vector4<ScalarType>( 0, 0, 0, 1 );
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( const Vector4<ElementType> &vector ) : x(vector.x), y(vector.y), z(vector.z), w(vector.z)
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( ) : x(), y(), z(), w() {}
+
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( const Vector4<ScalarType> &vector )
 	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; this->w = vector.w; }
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( const Vector3<ElementType> &vector, const ElementType &_w ) : x(vector.x), y(vector.y), z(vector.z), w(_w)
-	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; }
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( const Vector3<ScalarType> &vector, const ScalarType &_w )
+	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; this->w = _w; }
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( const Vector2<ElementType> &vector, const ElementType &_z, const ElementType &_w ) : x(vector.x), y(vector.y), z(_z), w(_w)
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( const Vector2<ScalarType> &vector, const ScalarType &_z, const ScalarType &_w )
 	{ this->x = vector.x; this->y = vector.y; this->z = _z; this->w = _w; }
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( const ElementType &_element ) : x(_element), y(_element), z(_element), w(_element)
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( const ScalarType &_element )
 	{ this->x = this->y = this->z = this->w = _element; }
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( const ElementType _element[4] ) : x(_element[0]), y(_element[1]), z(_element[2]), w(_element[3]) {}
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( const ScalarType _element[4] )
+	{ this->x = _element[0]; this->y = _element[1]; this->z = _element[2]; this->w = _element[3]; }
 
-	template<typename ElementType>
-	Vector4<ElementType>::Vector4( const ElementType &_x, const ElementType &_y, const ElementType &_z, const ElementType &_w ) : x(_x), y(_y), z(_z), w(_w)
+	template<typename ScalarType>
+	Vector4<ScalarType>::Vector4( const ScalarType &_x, const ScalarType &_y, const ScalarType &_z, const ScalarType &_w )
 	{ this->x = _x; this->y = _y; this->z = _z; this->w = _w; }
 
-	template<typename ElementType>
-	Vector4<ElementType>::~Vector4( ) {  /* Nothing that needs to be done */ }
-
-	template<typename ElementType>
-	inline Vector4<ElementType>::operator ElementType* ()
+	template<typename ScalarType>
+	inline Vector4<ScalarType>::operator ScalarType* ()
 	{ return this->element; }
 	
-	template<typename ElementType>
-	inline Vector4<ElementType>::operator const ElementType* () const
+	template<typename ScalarType>
+	inline Vector4<ScalarType>::operator const ScalarType* () const
 	{ return this->element; }
 
-	template<typename ElementType>
-	inline ElementType & Vector4<ElementType>::operator [] ( int i )
+	template<typename ScalarType>
+	inline ScalarType & Vector4<ScalarType>::operator [] ( int i )
 	{ return this->element[i]; }
 
-	template<typename ElementType>
-	inline const ElementType & Vector4<ElementType>::operator [] ( int i ) const
+	template<typename ScalarType>
+	inline const ScalarType & Vector4<ScalarType>::operator [] ( int i ) const
 	{ return this->element[i]; }
 
-	template<typename ElementType>
-	Vector4<ElementType> & Vector4<ElementType>::operator = ( const Vector4<ElementType> &vector )
+	template<typename ScalarType>
+	Vector4<ScalarType> & Vector4<ScalarType>::operator = ( const Vector4<ScalarType> &vector )
 	{
-		for( int i = 0; i < 4; ++i )
-			this->element[i] = vector.element[i];
+		this->element[0] = vector.element[0];
+		this->element[1] = vector.element[1];
+		this->element[2] = vector.element[2];
+		this->element[3] = vector.element[3];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector4<ElementType> & Vector4<ElementType>::operator = ( const ElementType element[4] )
+	template<typename ScalarType>
+	Vector4<ScalarType> & Vector4<ScalarType>::operator = ( const ScalarType element[4] )
 	{
-		for( int i = 0; i < 4; ++i )
-			this->element[i] = element[i];
+		this->element[0] = element[0];
+		this->element[1] = element[1];
+		this->element[2] = element[2];
+		this->element[3] = element[3];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector4<ElementType> & Vector4<ElementType>::operator *= ( const ElementType &scalar )
+	template<typename ScalarType>
+	Vector4<ScalarType> & Vector4<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
-		for( int i = 0; i < 4; ++i )
-			this->element[i] *= scalar;
+		this->element[0] *= scalar;
+		this->element[1] *= scalar;
+		this->element[2] *= scalar;
+		this->element[3] *= scalar;
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector4<ElementType> & Vector4<ElementType>::operator /= ( const ElementType &scalar )
+	template<typename ScalarType>
+	Vector4<ScalarType> & Vector4<ScalarType>::operator /= ( const ScalarType &scalar )
 	{
-		for( int i = 0; i < 4; ++i )
-			this->element[i] /= scalar;
+		this->element[0] /= scalar;
+		this->element[1] /= scalar;
+		this->element[2] /= scalar;
+		this->element[3] /= scalar;
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector4<ElementType> & Vector4<ElementType>::operator += ( const Vector4<ElementType> &vector )
+	template<typename ScalarType>
+	Vector4<ScalarType> & Vector4<ScalarType>::operator += ( const Vector4<ScalarType> &vector )
 	{
-		for( int i = 0; i < 4; ++i )
-			this->element[i] += vector.element[i];
+		this->element[0] += vector.element[0];
+		this->element[1] += vector.element[1];
+		this->element[2] += vector.element[2];
+		this->element[3] += vector.element[3];
 		return *this;
 	}
 
-	template<typename ElementType>
-	Vector4<ElementType> & Vector4<ElementType>::operator -= ( const Vector4<ElementType> &vector )
+	template<typename ScalarType>
+	Vector4<ScalarType> & Vector4<ScalarType>::operator -= ( const Vector4<ScalarType> &vector )
 	{
-		for( int i = 0; i < 4; ++i )
-			this->element[i] -= vector.element[i];
+		this->element[0] -= vector.element[0];
+		this->element[1] -= vector.element[1];
+		this->element[2] -= vector.element[2];
+		this->element[3] -= vector.element[3];
 		return *this;
 	}
 
-	template<typename ElementType>
-	inline Vector4<ElementType> Vector4<ElementType>::operator * ( const ElementType &scalar ) const
-	{ return Vector4<ElementType>(*this) *= scalar; }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::operator * ( const ScalarType &scalar ) const
+	{ return Vector4<ScalarType>(*this) *= scalar; }
 
-	template<typename ElementType>
-	inline Vector4<ElementType> Vector4<ElementType>::operator / ( const ElementType &scalar ) const
-	{ return Vector4<ElementType>(*this) /= scalar; }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::operator / ( const ScalarType &scalar ) const
+	{ return Vector4<ScalarType>(*this) /= scalar; }
 
-	template<typename ElementType>
-	inline Vector4<ElementType> Vector4<ElementType>::operator + ( const Vector4<ElementType> &vector ) const
-	{ return Vector4<ElementType>(*this) += vector; }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::operator + ( const Vector4<ScalarType> &vector ) const
+	{ return Vector4<ScalarType>(*this) += vector; }
 
-	template<typename ElementType>
-	inline Vector4<ElementType> Vector4<ElementType>::operator - ( const Vector4<ElementType> &vector ) const
-	{ return Vector4<ElementType>(*this) -= vector; }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::operator - ( const Vector4<ScalarType> &vector ) const
+	{ return Vector4<ScalarType>(*this) -= vector; }
 
-	template<typename ElementType>
-	inline Vector4<ElementType> Vector4<ElementType>::operator - ( ) const
-	{ return Vector4<ElementType>(-this->x, -this->y, -this->z, -this->w); }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::operator - ( ) const
+	{ return Vector4<ScalarType>(-this->x, -this->y, -this->z, -this->w); }
 
-	template<typename ElementType>
-	bool Vector4<ElementType>::operator == ( const Vector4<ElementType> &vector ) const
+	template<typename ScalarType>
+	bool Vector4<ScalarType>::operator == ( const Vector4<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return false;
 		if( this->y != vector.y ) return false;
@@ -624,8 +648,8 @@ namespace LinearAlgebra
 		return true;
 	}
 
-	template<typename ElementType>
-	bool Vector4<ElementType>::operator != ( const Vector4<ElementType> &vector ) const
+	template<typename ScalarType>
+	bool Vector4<ScalarType>::operator != ( const Vector4<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return true;
 		if( this->y != vector.y ) return true;
@@ -634,26 +658,32 @@ namespace LinearAlgebra
 		return false;
 	}
 
-	template<typename ElementType>
-	inline ElementType Vector4<ElementType>::length( ) const
-	{ return (ElementType) ::sqrt( this->dot(*this) ); }
+	template<typename ScalarType>
+	inline ScalarType Vector4<ScalarType>::GetLength( ) const
+	{ return this->GetMagnitude(); }
 
-	template<typename ElementType>
-	ElementType Vector4<ElementType>::dot( const Vector4<ElementType> &vector ) const
+	template<typename ScalarType>
+	inline ScalarType Vector4<ScalarType>::GetMagnitude( ) const
+	{ return (ScalarType) ::sqrt( this->Dot(*this) ); }	
+
+	template<typename ScalarType>
+	ScalarType Vector4<ScalarType>::Dot( const Vector4<ScalarType> &vector ) const
 	{
-		ElementType value = 0;
-		for( int i = 0; i < 4; ++i )
-			value += this->element[i] * vector.element[i];
+		ScalarType value = 0;
+		value += this->element[0] * vector.element[0];
+		value += this->element[1] * vector.element[1];
+		value += this->element[2] * vector.element[2];
+		value += this->element[3] * vector.element[3];
 		return value;
 	}
 
-	template<typename ElementType>
-	inline Vector4<ElementType> & Vector4<ElementType>::normalize( )
-	{ return (*this) /= this->length(); }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> & Vector4<ScalarType>::Normalize( )
+	{ return (*this) /= this->GetLength(); }
 
-	template<typename ElementType>
-	inline Vector4<ElementType> Vector4<ElementType>::getNormalized( ) const
-	{ return Vector4<ElementType>(*this).normalize(); }
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::GetNormalized( ) const
+	{ return Vector4<ScalarType>(*this).Normalize(); }
 }
 
 #endif

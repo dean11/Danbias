@@ -3,7 +3,6 @@
 // © Dan Andersson 2013
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 #ifndef LINEARMATH_H
 #define LINEARMATH_H
 
@@ -12,257 +11,439 @@
 #include "Quaternion.h"
 #include <math.h>
 
+// x2
+
+template<typename ScalarType>
+::LinearAlgebra::Matrix2x2<ScalarType> operator * ( const ::LinearAlgebra::Matrix2x2<ScalarType> &left, const ::LinearAlgebra::Matrix2x2<ScalarType> &right )
+{
+	return ::LinearAlgebra::Matrix2x2<ScalarType>( (left.m11 * right.m11) + (left.m12 * right.m21),
+												   (left.m11 * right.m12) + (left.m12 * right.m22),
+												   (left.m21 * right.m11) + (left.m22 * right.m21),
+												   (left.m21 * right.m12) + (left.m22 * right.m22) );
+}
+
+template<typename ScalarType>
+::LinearAlgebra::Vector2<ScalarType> operator * ( const ::LinearAlgebra::Matrix2x2<ScalarType> &matrix, const ::LinearAlgebra::Vector2<ScalarType> &vector )
+{
+	return ::LinearAlgebra::Vector2<ScalarType>( (matrix.m11 * vector.x) + (matrix.m12 * vector.y),
+												 (matrix.m21 * vector.x) + (matrix.m22 * vector.y) );
+}
+
+template<typename ScalarType>
+::LinearAlgebra::Vector2<ScalarType> operator * ( const ::LinearAlgebra::Vector2<ScalarType> &vector, const ::LinearAlgebra::Matrix2x2<ScalarType> &left )
+{
+	return ::LinearAlgebra::Vector2<ScalarType>( (vector.x * matrix.m11) + (vector.y * matrix.m21),
+												 (vector.x * matrix.m12) + (vector.y * matrix.m22) );
+}
+
+// x3
+
+template<typename ScalarType>
+::LinearAlgebra::Matrix3x3<ScalarType> operator * ( const ::LinearAlgebra::Matrix3x3<ScalarType> &left, const ::LinearAlgebra::Matrix3x3<ScalarType> &right )
+{
+	return ::LinearAlgebra::Matrix3x3<ScalarType>( (left.m11 * right.m11) + (left.m12 * right.m21) + (left.m13 * right.m31), (left.m11 * right.m12) + (left.m12 * right.m22) + (left.m13 * right.m32), (left.m11 * right.m13) + (left.m12 * right.m23) + (left.m13 * right.m33),
+												   (left.m21 * right.m11) + (left.m22 * right.m21) + (left.m23 * right.m31), (left.m21 * right.m12) + (left.m22 * right.m22) + (left.m23 * right.m32), (left.m21 * right.m13) + (left.m22 * right.m23) + (left.m23 * right.m33),
+												   (left.m31 * right.m11) + (left.m32 * right.m21) + (left.m33 * right.m31), (left.m31 * right.m12) + (left.m32 * right.m22) + (left.m33 * right.m32), (left.m31 * right.m13) + (left.m32 * right.m23) + (left.m33 * right.m33) );
+}
+
+template<typename ScalarType>
+::LinearAlgebra::Vector3<ScalarType> operator * ( const ::LinearAlgebra::Matrix3x3<ScalarType> &matrix, const ::LinearAlgebra::Vector3<ScalarType> &vector )
+{
+	return ::LinearAlgebra::Vector3<ScalarType>( (matrix.m11 * vector.x) + (matrix.m12 * vector.y) + (matrix.m13 * vector.z),
+												 (matrix.m21 * vector.x) + (matrix.m22 * vector.y) + (matrix.m23 * vector.z),
+												 (matrix.m31 * vector.x) + (matrix.m32 * vector.y) + (matrix.m33 * vector.z) );
+}
+
+template<typename ScalarType>
+::LinearAlgebra::Vector3<ScalarType> operator * ( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Matrix3x3<ScalarType> &left )
+{
+	return ::LinearAlgebra::Vector3<ScalarType>( (vector.x * matrix.m11) + (vector.y * matrix.m21) + (vector.z * matrix.m31),
+												 (vector.x * matrix.m12) + (vector.y * matrix.m22) + (vector.z * matrix.m32),
+												 (vector.x * matrix.m13) + (vector.y * matrix.m23) + (vector.z * matrix.m33) );
+}
+
+// x4
+
+template<typename ScalarType>
+::LinearAlgebra::Matrix4x4<ScalarType> operator * ( const ::LinearAlgebra::Matrix4x4<ScalarType> &left, const ::LinearAlgebra::Matrix4x4<ScalarType> &right )
+{
+	return ::LinearAlgebra::Matrix4x4<ScalarType>( (left.m11 * right.m11) + (left.m12 * right.m21) + (left.m13 * right.m31) + (left.m14 * right.m41), (left.m11 * right.m12) + (left.m12 * right.m22) + (left.m13 * right.m32) + (left.m14 * right.m42), (left.m11 * right.m13) + (left.m12 * right.m23) + (left.m13 * right.m33) + (left.m14 * right.m43), (left.m11 * right.m14) + (left.m12 * right.m24) + (left.m13 * right.m34) + (left.m14 * right.m44),
+												   (left.m21 * right.m11) + (left.m22 * right.m21) + (left.m23 * right.m31) + (left.m24 * right.m41), (left.m21 * right.m12) + (left.m22 * right.m22) + (left.m23 * right.m32) + (left.m24 * right.m42), (left.m21 * right.m13) + (left.m22 * right.m23) + (left.m23 * right.m33) + (left.m24 * right.m43), (left.m21 * right.m14) + (left.m22 * right.m24) + (left.m23 * right.m34) + (left.m24 * right.m44),
+												   (left.m31 * right.m11) + (left.m32 * right.m21) + (left.m33 * right.m31) + (left.m34 * right.m41), (left.m31 * right.m12) + (left.m32 * right.m22) + (left.m33 * right.m32) + (left.m34 * right.m42), (left.m31 * right.m13) + (left.m32 * right.m23) + (left.m33 * right.m33) + (left.m34 * right.m43), (left.m31 * right.m14) + (left.m32 * right.m24) + (left.m33 * right.m34) + (left.m34 * right.m44),
+												   (left.m41 * right.m11) + (left.m42 * right.m21) + (left.m43 * right.m31) + (left.m44 * right.m41), (left.m41 * right.m12) + (left.m42 * right.m22) + (left.m43 * right.m32) + (left.m44 * right.m42), (left.m41 * right.m13) + (left.m42 * right.m23) + (left.m43 * right.m33) + (left.m44 * right.m43), (left.m41 * right.m14) + (left.m42 * right.m24) + (left.m43 * right.m34) + (left.m44 * right.m44) );
+}
+
+template<typename ScalarType>
+::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix, const ::LinearAlgebra::Vector4<ScalarType> &vector )
+{
+	return ::LinearAlgebra::Vector4<ScalarType>( (matrix.m11 * vector.x) + (matrix.m12 * vector.y) + (matrix.m13 * vector.z) + (matrix.m14 * vector.w),
+												 (matrix.m21 * vector.x) + (matrix.m22 * vector.y) + (matrix.m23 * vector.z) + (matrix.m24 * vector.w),
+												 (matrix.m23 * vector.x) + (matrix.m32 * vector.y) + (matrix.m33 * vector.z) + (matrix.m34 * vector.w),
+												 (matrix.m41 * vector.x) + (matrix.m42 * vector.y) + (matrix.m43 * vector.z) + (matrix.m44 * vector.w) );
+}
+
+template<typename ScalarType>
+::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix )
+{
+	return ::LinearAlgebra::Vector4<ScalarType>( (vector.x * matrix.m11) + (vector.y * matrix.m21) + (vector.z * matrix.m31) + (vector.w * matrix.m41),
+												 (vector.x * matrix.m12) + (vector.y * matrix.m22) + (vector.z * matrix.m32) + (vector.w * matrix.m42),
+												 (vector.x * matrix.m13) + (vector.y * matrix.m23) + (vector.z * matrix.m33) + (vector.w * matrix.m43),
+												 (vector.x * matrix.m14) + (vector.y * matrix.m24) + (vector.z * matrix.m34) + (vector.w * matrix.m44) );
+}
+
 namespace LinearAlgebra
 {
-	// x2
-	template<typename ElementType>
-	Matrix2x2<ElementType> operator * ( const Matrix2x2<ElementType> &left, const Matrix2x2<ElementType> &right )
-	{ return Matrix2x2<ElementType>( (left.m11 * right.m11) + (left.m21 * right.m12), (left.m11 * right.m21) + (left.m21 * right.m22), (left.m12 * right.m11) + (left.m22 * right.m12), (left.m12 * right.m21) + (left.m22 * right.m22) ); }
-
-	template<typename ElementType>
-	Vector2<ElementType> operator * ( const Matrix2x2<ElementType> &matrix, const Vector2<ElementType> &vector )
-	{ return Vector2<ElementType>( (matrix.m11 * vector.x) + (matrix.m21 * vector.y), (matrix.m12 * vector.x) + (matrix.m22 * vector.y) ); }
-
-	template<typename ElementType>
-	Vector2<ElementType> operator * ( const Vector2<ElementType> &vector, const Matrix2x2<ElementType> &left )
-	{ return Vector2<ElementType>( (vector.x * matrix.m11) + (vector.y * matrix.m12), (vector.x * matrix.m21) + (vector.y * matrix.m22) ); }
-
-	// x3
-	template<typename ElementType>
-	Matrix3x3<ElementType> operator * ( const Matrix3x3<ElementType> &left, const Matrix3x3<ElementType> &right )
+	// Creates a solution matrix for 'out´= 'targetMem' * 'in'.
+	// Returns false if there is no explicit solution.
+	template<typename ScalarType>
+	bool SuperpositionMatrix( const Matrix2x2<ScalarType> &in, const Matrix2x2<ScalarType> &out, Matrix2x2<ScalarType> &targetMem )
 	{
-		Matrix3x3<ElementType> product, leftT = left.getTranspose();
-		for( int i = 0; i < 3; ++i ) for( int j = 0; j < 3; ++j )
-			product.m[i][j] = leftT.v[i].dot(right.v[j]);
-		return product;
+		ScalarType d = in.GetDeterminant();
+		if( d == 0 ) return false;
+		targetMem = out * (in.GetAdjoint() /= d);
+		return true;
 	}
 
-	template<typename ElementType>
-	Vector3<ElementType> operator * ( const Matrix3x3<ElementType> &matrix, const Vector3<ElementType> &vector )
-	{ return Vector3<ElementType>( (matrix.m11 * vector.x) + (matrix.m21 * vector.y) + (matrix.m31 * vector.z), (matrix.m12 * vector.x) + (matrix.m22 * vector.y) + (matrix.m32 * vector.z), (matrix.m13 * vector.x) + (matrix.m23 * vector.y) + (matrix.m33 * vector.z) ); }
-
-	template<typename ElementType>
-	Vector3<ElementType> operator * ( const Vector3<ElementType> &vector, const Matrix3x3<ElementType> &left )
-	{ return Vector3<ElementType>( (vector.x * matrix.m11) + (vector.y * matrix.m12) + (vector.z * matrix.m13), (vector.x * matrix.m21) + (vector.y * matrix.m22) + (vector.z * matrix.m23), (vector.x * matrix.m31) + (vector.y * matrix.m32) + (vector.z * matrix.m33) ); }
-
-	// x4
-	template<typename ElementType>
-	Matrix4x4<ElementType> operator * ( const Matrix4x4<ElementType> &left, const Matrix4x4<ElementType> &right )
+	// Creates a solution matrix for 'out´= 'targetMem' * 'in'.
+	// Returns false if there is no explicit solution.
+	template<typename ScalarType>
+	bool SuperpositionMatrix( const Matrix3x3<ScalarType> &in, const Matrix3x3<ScalarType> &out, Matrix3x3<ScalarType> &targetMem )
 	{
-		Matrix4x4<ElementType> product, rightT = right.getTranspose();
-		for( int i = 0; i < 4; ++i )
-		{
-			product.m[i][0] = left.v[i].dot(rightT.v[0]);
-			product.m[i][1] = left.v[i].dot(rightT.v[1]);
-			product.m[i][2] = left.v[i].dot(rightT.v[2]);
-			product.m[i][3] = left.v[i].dot(rightT.v[3]);
-		}
-		return product;
+		ScalarType d = in.GetDeterminant();
+		if( d == 0 ) return false;
+		targetMem = out * (in.GetAdjoint() /= d);
+		return true;
 	}
 
-	template<typename ElementType>
-	Vector4<ElementType> operator * ( const Matrix4x4<ElementType> &matrix, const Vector4<ElementType> &vector )
-	{ return Vector4<ElementType>( (matrix.m11 * vector.x) + (matrix.m21 * vector.y) + (matrix.m31 * vector.z) + (matrix.m41 * vector.w), (matrix.m12 * vector.x) + (matrix.m22 * vector.y) + (matrix.m32 * vector.z) + (matrix.m42 * vector.w), (matrix.m13 * vector.x) + (matrix.m23 * vector.y) + (matrix.m33 * vector.z) + (matrix.m43 * vector.w), (matrix.m14 * vector.x) + (matrix.m24 * vector.y) + (matrix.m34 * vector.z) + (matrix.m44 * vector.w) ); }
-
-	template<typename ElementType> // works for column weighted matrixes
-	Vector4<ElementType> operator * ( const Vector4<ElementType> &vector, const Matrix4x4<ElementType> &matrix )
-	{ return Vector4<ElementType>( (vector.x * matrix.m11) + (vector.y * matrix.m12) + (vector.z * matrix.m13) + (vector.w * matrix.m14), (vector.x * matrix.m21) + (vector.y * matrix.m22) + (vector.z * matrix.m23) + (vector.w * matrix.m24), (vector.x * matrix.m31) + (vector.y * matrix.m32) + (vector.z * matrix.m33) + (vector.w * matrix.m34), (vector.x * matrix.m41) + (vector.y * matrix.m42) + (vector.z * matrix.m43) + (vector.w * matrix.m44) ); }
-
-	namespace _2D
+	// Creates a solution matrix for 'out´= 'targetMem' * 'in'.
+	// Returns false if there is no explicit solution.
+	template<typename ScalarType>
+	bool SuperpositionMatrix( const Matrix4x4<ScalarType> &in, const Matrix4x4<ScalarType> &out,  Matrix4x4<ScalarType> &targetMem )
 	{
-		template<typename ElementType>
-		inline void translationMatrix( Matrix3x3<ElementType> &output, const Vector2<ElementType> &position )
-//		{ output = Matrix3x3<ElementType>( 1, 0, position.x, 0, 1, position.y, 0, 0, 1 ); }
-		{ output = Matrix3x3<ElementType>( 1, 0, 0, 0, 1, 0, position.x, position.y, 1 ); }
-
-		template<typename ElementType>
-		void rotationMatrix( Matrix2x2<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix2x2<ElementType>( c, -s, s, c );
-			output = Matrix2x2<ElementType>( c, s, -s, c );
-		}
-
-		template<typename ElementType>
-		void rotationMatrix( Matrix3x3<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix3x3<ElementType>( c, -s, 0, s, c, 0, 0, 0, 1 );
-			output = Matrix3x3<ElementType>( c, s, 0, -s, c, 0, 0, 0, 1 );
-		}
-
-		template<typename ElementType>
-		void rigidBodyMatrix( Matrix3x3<ElementType> &output, const ElementType &radian, const Vector2<ElementType> &position )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix3x3<ElementType>( c, -s, position.x, s, c, position.y, 0, 0, 1 );
-			output = Matrix3x3<ElementType>( c, s, 0, -s, c, 0, position.x, position.y, 1 );
-		}
-	}
-
-	namespace _3D
-	{
-		template<typename ElementType>
-		inline void translationMatrix( Matrix4x4<ElementType> &output, const Vector3<ElementType> &position )
-//		{ output = Matrix4x4<ElementType>( 1, 0, 0, position.x, 0, 1, 0, position.y, 0, 0, 1, position.z,  0, 0, 0, 1 ); }
-		{ output = Matrix4x4<ElementType>( 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, position.x, position.y, position.z, 1 ); }
-
-		template<typename ElementType>
-		void inverseRigidBody( Matrix4x4<ElementType> &output, const Matrix4x4<ElementType> &rigidBody )
-		{
-			output = Matrix4x4<ElementType>( rigidBody.m11, rigidBody.m21, rigidBody.m31, 0,
-											 rigidBody.m12, rigidBody.m22, rigidBody.m32, 0,
-											 rigidBody.m13, rigidBody.m23, rigidBody.m33, 0,
-											 -rigidBody.v[3].xyz.dot(rigidBody.v[0].xyz),
-											 -rigidBody.v[3].xyz.dot(rigidBody.v[1].xyz),
-											 -rigidBody.v[3].xyz.dot(rigidBody.v[2].xyz), 1 );
-		}
-
-		template<typename ElementType>
-		void rotationMatrix_AxisX( Matrix3x3<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix3x3<ElementType>( 1, 0, 0, 0, c, -s, 0, s, c );
-			output = Matrix3x3<ElementType>( 1, 0, 0, 0, c, s, 0, -s, c );
-		}
-
-		template<typename ElementType>
-		void rotationMatrix_AxisX( Matrix4x4<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix4x4<ElementType>( 1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1 );
-			output = Matrix4x4<ElementType>( 1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1 );
-		}
-
-		template<typename ElementType>
-		void rotationMatrix_AxisY( Matrix3x3<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix3x3<ElementType>( c, 0, s, 0, 1, 0, -s, 0, c );
-			output = Matrix3x3<ElementType>( c, 0, -s, 0, 1, 0, s, 0, c );
-		}
-
-		template<typename ElementType>
-		void rotationMatrix_AxisY( Matrix4x4<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix4x4<ElementType>( c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1 );
-			output = Matrix4x4<ElementType>( c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1 );
-		}
-
-		template<typename ElementType>
-		inline void rotationMatrix_AxisZ( Matrix3x3<ElementType> &output, const ElementType &radian )
-		{ ::LinearAlgebra::_2D::rotationMatrix( output, radian ); }
-
-		template<typename ElementType>
-		void rotationMatrix_AxisZ( Matrix4x4<ElementType> &output, const ElementType &radian )
-		{
-			ElementType s = std::sin( radian ),
-						c = std::cos( radian );
-//			output = Matrix4x4<ElementType>( c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
-			output = Matrix4x4<ElementType>( c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
-		}
-
-		template<typename ElementType>
-		void rotationMatrix( Matrix4x4<ElementType> &output, const Vector3<ElementType> &normalizedAxis, const ElementType &radian )
-		{ // TODO : Optimize
-			ElementType r = radian * 0.5f,
-						s = std::sin( r ),
-						c = std::cos( r );
-			Quaternion<ElementType> q( normalizedAxis * s, c ),
-									qConj = q.getConjugate();
-
-			output.v[0] = Vector4<ElementType>( (q*Vector3<ElementType>(1,0,0)*qConj).imaginary, 0 );
-			output.v[1] = Vector4<ElementType>( (q*Vector3<ElementType>(0,1,0)*qConj).imaginary, 0 );
-			output.v[2] = Vector4<ElementType>( (q*Vector3<ElementType>(0,0,1)*qConj).imaginary, 0 );
-			output.v[3] = Vector4<ElementType>( 0, 0, 0, 1 );
-		}
-
-		/*
-			returns a deltaAngularAxis which is a vectorProduct of the movementVector and leverVector.
-			angular: (1/I) * L, there I is known as the "moment of inertia", L as the "angular momentum vector".
-			lever: Displacement vector relative to the rotation pivot.
-			Recommended reading: http://en.wikipedia.org/wiki/Torque
-		*/
-		template<typename ElementType>
-		inline Vector3<ElementType> deltaAngularAxis( const Vector3<ElementType> &movement, const Vector3<ElementType> &lever )
-		{ return movement.cross( lever ); }
-
-		template<typename ElementType>
-		inline Vector3<ElementType> particleRotationMovement( const Vector3<ElementType> &deltaRadian, const Vector3<ElementType> &lever )
-		{ return lever.cross(deltaRadian) /= lever.dot(lever); }
-
-		template<typename ElementType>
-		inline Vector3<ElementType> vectorProjection( const Vector3<ElementType> &vector, const Vector3<ElementType> &axis )
-		{ return axis * ( vector.dot(axis) / axis.dot(axis) ); }
-
-		/*
-			output; is set to a rigibody matrix that revolve/rotate around centerOfMass and then translates.
-			sumDeltaAngularAxis: Sum of all ( (1/I) * ( L x D ) )-vectorproducts. There I is known as "moment of inertia", L as "angular momentum vector" and D the "lever vector".
-			sumTranslation: Sum of all the translation vectors.
-			centerOfMass: The point the particles is to revolve around, prior to translation. Default set to null vector aka origo.
-			Recommended reading: http://en.wikipedia.org/wiki/Torque
-		*/
-		template<typename ElementType>
-		void rigidBodyMatrix( Matrix4x4<ElementType> &output, const Vector3<ElementType> &sumDeltaAngularAxis, const Vector3<ElementType> &sumTranslation, const Vector3<ElementType> &centerOfMass = Vector3<ElementType>::null )
-		{
-			ElementType deltaRadian = sumDeltaAngularAxis.length();
-			if( deltaRadian != 0 )
-			{
-				Vector3<ElementType> axis = sumDeltaAngularAxis / deltaRadian;
-				rotationMatrix( output, axis, deltaRadian );
-
-				output.v[3].xyz = centerOfMass;
-				output.v[3].x -= centerOfMass.dot( output.v[0].xyz );
-				output.v[3].y -= centerOfMass.dot( output.v[1].xyz );
-				output.v[3].z -= centerOfMass.dot( output.v[2].xyz );
-			}
-			else output = Matrix4x4<ElementType>::identity;
-
-			output.v[3].xyz += sumTranslation;
-		}
-
-		/*
-			output; is set to an orthographic projection matrix.
-			width; of the projection sample volume.
-			height; of the projection sample volume.
-			nearClip: Distance to the nearClippingPlane.
-			farClip: Distance to the farClippingPlane
-		*/
-		template<typename ElementType>
-		void projectionMatrix_Orthographic( Matrix4x4<ElementType> &output, const ElementType &width, const ElementType &height, const ElementType &nearClip, const ElementType &farClip )
-		{
-			ElementType c = 1;
-			c /= nearClip - farClip;
-			output = Matrix4x4<ElementType>( 2/width, 0, 0, 0,
-											0, 2/height, 0, 0,
-											0, 0, -c, 0, 0,
-											0, nearClip*c, 1 );
-		}
-
-		/*
-			output; is set to a perspective transform matrix.
-			vertFoV; is the vertical field of vision in radians. (se FoV Hor+ )
-			aspect; is the screenratio width/height (example 16/9 or 16/10 )
-			nearClip: Distance to the nearClippingPlane
-			farClip: Distance to the farClippingPlane
-		*/
-		template<typename ElementType>
-		void projectionMatrix_Perspective( Matrix4x4<ElementType> &output, const ElementType &vertFoV, const ElementType &aspect, const ElementType &nearClip, const ElementType &farClip )
-		{
-			ElementType fov = 1 / ::std::tan( vertFoV * 0.5f ),
-						dDepth = farClip;
-			dDepth /= farClip - nearClip;
-			output = Matrix4x4<ElementType>( fov / aspect, 0, 0, 0, 0, fov, 0, 0, 0, 0, dDepth, 1, 0, 0, -(dDepth * nearClip), 0 );
-		}
+		ScalarType d = in.GetDeterminant();
+		if( d == 0 ) return false;
+		targetMem = out * (in.GetAdjoint() /= d);
+		return true;
 	}
 }
+
+namespace LinearAlgebra2D
+{
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> X_AxisTo( const ::LinearAlgebra::Vector2<ScalarType> &yAxis )
+	{ return ::LinearAlgebra::Vector2<ScalarType>( yAxis.y, -yAxis.x ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> Y_AxisTo( const ::LinearAlgebra::Vector2<ScalarType> &xAxis )
+	{ return ::LinearAlgebra::Vector2<ScalarType>( -xAxis.y, xAxis.x ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector2<ScalarType> &position, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( 1, 0, position.x,
+																   0, 1, position.y,
+																   0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix2x2<ScalarType> & RotationMatrix( const ScalarType &radian, ::LinearAlgebra::Matrix2x2<ScalarType> &targetMem = ::LinearAlgebra::Matrix2x2<ScalarType>() )
+	{
+		ScalarType s = ::std::sin( radian ),
+				   c = ::std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix2x2<ScalarType>( c, -s, s, c );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix( const ScalarType &radian, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		ScalarType s = ::std::sin( radian ),
+				   c = ::std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( c,-s, 0, s, c, 0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & OrientationMatrix( const ScalarType &radian, const ::LinearAlgebra::Vector2<ScalarType> &position, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		ScalarType s = ::std::sin( radian ),
+				   c = ::std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( c,-s, position.x,
+																   s, c, position.y,
+																   0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector2<ScalarType> &lookAt, const ::LinearAlgebra::Vector2<ScalarType> &position, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		::LinearAlgebra::Vector2<ScalarType> direction = ( lookAt - position ).GetNormalized();
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( ::LinearAlgebra::Vector3<ScalarType>( X_AxisTo(direction), 0.0f ),
+																   ::LinearAlgebra::Vector3<ScalarType>( direction, 0.0f ),
+																   ::LinearAlgebra::Vector3<ScalarType>( position, 1.0f ) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & OrientationMatrix( const ScalarType &radian, const ::LinearAlgebra::Vector2<ScalarType> &position, const ::LinearAlgebra::Vector2<ScalarType> &centerOfRotation, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{ // TODO: not tested
+		RotationMatrix( radian, targetMem );
+		targetMem.v[2].xy = position + centerOfRotation;
+		targetMem.v[2].x -= ::LinearAlgebra::Vector2<ScalarType>( targetMem.v[0].x, targetMem.v[1].x ).Dot( centerOfRotation );
+		targetMem.v[2].y -= ::LinearAlgebra::Vector2<ScalarType>( targetMem.v[0].y, targetMem.v[1].y ).Dot( centerOfRotation );
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & InverseOrientationMatrix( const ::LinearAlgebra::Matrix3x3<ScalarType> &orientationMatrix, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( orientationMatrix.m11, orientationMatrix.m21, -orientationMatrix.v[0].xy.Dot(orientationMatrix.v[2].xy),
+																   orientationMatrix.m12, orientationMatrix.m22, -orientationMatrix.v[1].xy.Dot(orientationMatrix.v[2].xy),
+																   0, 0, 1 );
+	}
+}
+
+namespace LinearAlgebra3D
+{
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 1, 0, 0, position.x,
+																   0, 1, 0, position.y,
+																   0, 0, 1, position.z,
+																   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix_AxisX( const ScalarType &radian, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		ScalarType s = std::sin( radian ),
+				   c = std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( 1, 0, 0,
+																   0, c,-s,
+																   0, s, c );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix_AxisX( const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType s = std::sin( radian ),
+				   c = std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 1, 0, 0, 0,
+																   0, c,-s, 0,
+																   0, s, c, 0,
+																   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix_AxisY( const ScalarType &radian, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		ScalarType s = std::sin( radian ),
+				   c = std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( c, 0, s,
+																   0, 1, 0,
+																  -s, 0, c );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix_AxisY( const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType s = std::sin( radian ),
+				   c = std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( c, 0, s, 0,
+																   0, 1, 0, 0,
+																  -s, 0, c, 0,
+																   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix_AxisZ( const ScalarType &radian, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{ return ::LinearAlgebra2D::RotationMatrix( radian, targetMem ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix_AxisZ( const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType s = std::sin( radian ),
+				   c = std::cos( radian );
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( c,-s, 0, 0,
+																   s, c, 0, 0,
+																   0, 0, 1, 0,
+																   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis, const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{ /// TODO: not verified
+		ScalarType r = radian * 0.5f,
+				   s = std::sin( r ),
+				   c = std::cos( r );
+		::LinearAlgebra::Quaternion<ScalarType> q( normalizedAxis * s, c ),
+												qConj = q.GetConjugate();
+
+		targetMem.v[0] = ::LinearAlgebra::Vector4<ScalarType>( (q*::LinearAlgebra::Vector3<ScalarType>(1,0,0)*qConj).imaginary, 0 );
+		targetMem.v[1] = ::LinearAlgebra::Vector4<ScalarType>( (q*::LinearAlgebra::Vector3<ScalarType>(0,1,0)*qConj).imaginary, 0 );
+		targetMem.v[2] = ::LinearAlgebra::Vector4<ScalarType>( (q*::LinearAlgebra::Vector3<ScalarType>(0,0,1)*qConj).imaginary, 0 );
+		targetMem.v[3] = ::LinearAlgebra::Vector4<ScalarType>::standard_unit_W;
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /// TODO: not tested
+		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
+		if( radian > 0 )
+		{
+			radian = ::std::sqrt( radian );
+			::LinearAlgebra::Vector3<ScalarType> axis = sumDeltaAngularAxis / radian;
+			RotationMatrix( axis, radian, targetMem );
+		}
+		else targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
+
+		targetMem.v[3].xyz = sumTranslation;
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, const ::LinearAlgebra::Vector3<ScalarType> &centerOfRotation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /// TODO: not tested
+		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
+		if( radian > 0 )
+		{
+			radian = ::std::sqrt( radian );
+			::LinearAlgebra::Vector3<ScalarType> axis = sumDeltaAngularAxis / radian;
+			RotationMatrix( axis, radian, targetMem );
+		}
+		else targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
+
+		targetMem.v[3].xyz = sumTranslation + centerOfRotation;
+		targetMem.v[3].x -= ::LinearAlgebra::Vector3<ScalarType>( targetMem.v[0].x, targetMem.v[1].x, targetMem.v[2].x ).Dot( centerOfRotation );
+		targetMem.v[3].y -= ::LinearAlgebra::Vector3<ScalarType>( targetMem.v[0].y, targetMem.v[1].y, targetMem.v[2].y ).Dot( centerOfRotation );
+		targetMem.v[3].z -= ::LinearAlgebra::Vector3<ScalarType>( targetMem.v[0].z, targetMem.v[1].z, targetMem.v[2].z ).Dot( centerOfRotation );
+
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InverseOrientationMatrix( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( orientationMatrix.m11, orientationMatrix.m21, orientationMatrix.m31, -orientationMatrix.v[0].xyz.Dot(orientationMatrix.v[3].xyz),
+																   orientationMatrix.m12, orientationMatrix.m22, orientationMatrix.m32, -orientationMatrix.v[1].xyz.Dot(orientationMatrix.v[3].xyz),
+																   orientationMatrix.m13, orientationMatrix.m23, orientationMatrix.m33, -orientationMatrix.v[2].xyz.Dot(orientationMatrix.v[3].xyz),
+																   0, 0, 0, 1 );
+	}
+
+	/*	Creates an orthographic projection matrix designed for DirectX enviroment.
+		width; of the projection sample volume.
+		height; of the projection sample volume.
+		nearClip: Distance to the nearClippingPlane.
+		farClip: Distance to the farClippingPlane
+		targetMem; is set to an orthographic projection matrix and then returned.
+	*/
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Orthographic( const ScalarType &width, const ScalarType &height, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /// TODO: not tested
+		ScalarType c = 1 / (nearClip - farClip);
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 2/width, 0, 0, 0,
+																   0, 2/height, 0, 0,
+																   0, 0, -c, 0, 0,
+																   0, nearClip*c, 1 );
+	}
+
+	/*	Creates a perspective projection matrix designed for DirectX enviroment.
+		vertFoV; is the vertical field of vision in radians. (lookup FoV Hor+ )
+		aspect; is the screenratio width/height (example 16/9 or 16/10 )
+		nearClip: Distance to the nearClippingPlane
+		farClip: Distance to the farClippingPlane
+		targetMem; is set to a perspective transform matrix and then returned.
+	*/
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &vertFoV, const ScalarType &aspect, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /// TODO: not tested
+		ScalarType fov = 1 / ::std::tan( vertFoV * 0.5f ),
+					dDepth = farClip / (farClip - nearClip);
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( fov / aspect, 0, 0, 0,
+																   0, fov, 0, 0,
+																   0, 0, dDepth, -(dDepth * nearClip),
+																   0, 0, 1, 0 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> VectorProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &axis )
+	{ return axis * ( vector.Dot(axis) / axis.Dot(axis) ); }
+}
+
+#include "Utilities.h"
+
+namespace Utility { namespace Value
+{ // Utility Value Specializations
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> Abs( const ::LinearAlgebra::Vector2<ScalarType> &vector )
+	{ return ::LinearAlgebra::Vector2<ScalarType>( Abs(vector.x), Abs(vector.y) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> Abs( const ::LinearAlgebra::Vector3<ScalarType> &vector )
+	{ return ::LinearAlgebra::Vector3<ScalarType>( Abs(vector.xy), Abs(vector.z) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> Abs( const ::LinearAlgebra::Vector4<ScalarType> &vector )
+	{ return ::LinearAlgebra::Vector4<ScalarType>( Abs(vector.xyz), Abs(vector.w) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix2x2<ScalarType> Abs( const ::LinearAlgebra::Matrix2x2<ScalarType> &matrix )
+	{ return ::LinearAlgebra::Matrix2x2<ScalarType>( Abs(matrix.v[0]), Abs(matrix.v[1]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> Abs( const ::LinearAlgebra::Matrix3x3<ScalarType> &matrix )
+	{ return ::LinearAlgebra::Matrix3x3<ScalarType>( Abs(matrix.v[0]), Abs(matrix.v[1]), Abs(matrix.v[2]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> Abs( const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix )
+	{ return ::LinearAlgebra::Matrix4x4<ScalarType>( Abs(matrix.v[0]), Abs(matrix.v[1]), Abs(matrix.v[2]), Abs(matrix.v[3]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> Max( const ::LinearAlgebra::Vector2<ScalarType> &vectorA, const ::LinearAlgebra::Vector2<ScalarType> &vectorB )
+	{ return ::LinearAlgebra::Vector2<ScalarType>( Max(vectorA.x, vectorB.x), Max(vectorA.y, vectorB.y) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> Max( const ::LinearAlgebra::Vector3<ScalarType> &vectorA, const ::LinearAlgebra::Vector3<ScalarType> &vectorB )
+	{ return ::LinearAlgebra::Vector3<ScalarType>( Max(vectorA.xy, vectorB.xy), Max(vectorA.z, vectorB.z) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> Max( const ::LinearAlgebra::Vector4<ScalarType> &vectorA, const ::LinearAlgebra::Vector4<ScalarType> &vectorB )
+	{ return ::LinearAlgebra::Vector4<ScalarType>( Max(vectorA.xyz, vectorB.xyz), Max(vectorA.w, vectorB.w) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix2x2<ScalarType> Max( const ::LinearAlgebra::Matrix2x2<ScalarType> &matrixA, const ::LinearAlgebra::Matrix2x2<ScalarType> &matrixB )
+	{ return ::LinearAlgebra::Matrix2x2<ScalarType>( Max(matrixA.v[0], matrixB.v[0]), Max(matrixA.v[1], matrixB.v[1]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> Max( const ::LinearAlgebra::Matrix3x3<ScalarType> &matrixA, const ::LinearAlgebra::Matrix3x3<ScalarType> &matrixB )
+	{ return ::LinearAlgebra::Matrix3x3<ScalarType>( Max(matrixA.v[0], matrixB.v[0]), Max(matrixA.v[1], matrixB.v[1]), Max(matrixA.v[2], matrixB.v[2]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> Max( const ::LinearAlgebra::Matrix4x4<ScalarType> &matrixA, const ::LinearAlgebra::Matrix4x4<ScalarType> &matrixB )
+	{ return ::LinearAlgebra::Matrix4x4<ScalarType>( Max(matrixA.v[0], matrixB.v[0]), Max(matrixA.v[1], matrixB.v[1]), Max(matrixA.v[2], matrixB.v[2]), Max(matrixA.v[3], matrixB.v[3]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> Min( const ::LinearAlgebra::Vector2<ScalarType> &vectorA, const ::LinearAlgebra::Vector2<ScalarType> &vectorB )
+	{ return ::LinearAlgebra::Vector2<ScalarType>( Min(vectorA.x, vectorB.x), Min(vectorA.y, vectorB.y) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> Min( const ::LinearAlgebra::Vector3<ScalarType> &vectorA, const ::LinearAlgebra::Vector3<ScalarType> &vectorB )
+	{ return ::LinearAlgebra::Vector3<ScalarType>( Min(vectorA.xy, vectorB.xy), Min(vectorA.z, vectorB.z) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> Min( const ::LinearAlgebra::Vector4<ScalarType> &vectorA, const ::LinearAlgebra::Vector4<ScalarType> &vectorB )
+	{ return ::LinearAlgebra::Vector4<ScalarType>( Min(vectorA.xyz, vectorB.xyz), Min(vectorA.w, vectorB.w) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix2x2<ScalarType> Min( const ::LinearAlgebra::Matrix2x2<ScalarType> &matrixA, const ::LinearAlgebra::Matrix2x2<ScalarType> &matrixB )
+	{ return ::LinearAlgebra::Matrix2x2<ScalarType>( Min(matrixA.v[0], matrixB.v[0]), Min(matrixA.v[1], matrixB.v[1]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> Min( const ::LinearAlgebra::Matrix3x3<ScalarType> &matrixA, const ::LinearAlgebra::Matrix3x3<ScalarType> &matrixB )
+	{ return ::LinearAlgebra::Matrix3x3<ScalarType>( Min(matrixA.v[0], matrixB.v[0]), Min(matrixA.v[1], matrixB.v[1]), Min(matrixA.v[2], matrixB.v[2]) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> Min( const ::LinearAlgebra::Matrix4x4<ScalarType> &matrixA, const ::LinearAlgebra::Matrix4x4<ScalarType> &matrixB )
+	{ return ::LinearAlgebra::Matrix4x4<ScalarType>( Min(matrixA.v[0], matrixB.v[0]), Min(matrixA.v[1], matrixB.v[1]), Min(matrixA.v[2], matrixB.v[2]), Min(matrixA.v[3], matrixB.v[3]) ); }
+} }
 
 #endif
