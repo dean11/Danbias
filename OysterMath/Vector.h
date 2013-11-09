@@ -22,8 +22,8 @@ namespace LinearAlgebra
 		};
 		
 		static const Vector2<ScalarType> null;
-		static const Vector2<ScalarType> standard_unit_X;
-		static const Vector2<ScalarType> standard_unit_Y;
+		static const Vector2<ScalarType> standard_unit_x;
+		static const Vector2<ScalarType> standard_unit_y;
 
 		Vector2( );
 		Vector2( const Vector2<ScalarType> &vector );
@@ -74,9 +74,9 @@ namespace LinearAlgebra
 		};
 
 		static const Vector3<ScalarType> null;
-		static const Vector3<ScalarType> standard_unit_X;
-		static const Vector3<ScalarType> standard_unit_Y;
-		static const Vector3<ScalarType> standard_unit_Z;
+		static const Vector3<ScalarType> standard_unit_x;
+		static const Vector3<ScalarType> standard_unit_y;
+		static const Vector3<ScalarType> standard_unit_z;
 
 		Vector3( );
 		Vector3( const Vector3<ScalarType> &vector );
@@ -130,10 +130,10 @@ namespace LinearAlgebra
 		};
 
 		static const Vector4<ScalarType> null;
-		static const Vector4<ScalarType> standard_unit_X;
-		static const Vector4<ScalarType> standard_unit_Y;
-		static const Vector4<ScalarType> standard_unit_Z;
-		static const Vector4<ScalarType> standard_unit_W;
+		static const Vector4<ScalarType> standard_unit_x;
+		static const Vector4<ScalarType> standard_unit_y;
+		static const Vector4<ScalarType> standard_unit_z;
+		static const Vector4<ScalarType> standard_unit_w;
 
 		Vector4( );
 		Vector4( const Vector4<ScalarType> &vector );
@@ -180,8 +180,8 @@ namespace LinearAlgebra
 // Vector2<ScalarType> ///////////////////////////////////////
 
 	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::null = Vector2<ScalarType>( );
-	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_X = Vector2<ScalarType>( 1, 0 );
-	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_Y = Vector2<ScalarType>( 0, 1 );
+	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_x = Vector2<ScalarType>( 1, 0 );
+	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_y = Vector2<ScalarType>( 0, 1 );
 
 	template<typename ScalarType>
 	Vector2<ScalarType>::Vector2( ) : x(), y() {}
@@ -338,9 +338,9 @@ namespace LinearAlgebra
 // Vector3<ScalarType> ///////////////////////////////////////
 
 	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::null = Vector3<ScalarType>( );
-	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_X = Vector3<ScalarType>( 1, 0, 0 );
-	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_Y = Vector3<ScalarType>( 0, 1, 0 );
-	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_Z = Vector3<ScalarType>( 0, 0, 1 );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_x = Vector3<ScalarType>( 1, 0, 0 );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_y = Vector3<ScalarType>( 0, 1, 0 );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_z = Vector3<ScalarType>( 0, 0, 1 );
 
 	template<typename ScalarType>
 	Vector3<ScalarType>::Vector3( ) : x(), y(), z() {}
@@ -510,10 +510,10 @@ namespace LinearAlgebra
 // Vector4<ScalarType> ///////////////////////////////////////
 
 	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::null = Vector4<ScalarType>( );
-	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_X = Vector4<ScalarType>( 1, 0, 0, 0 );
-	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_Y = Vector4<ScalarType>( 0, 1, 0, 0 );
-	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_Z = Vector4<ScalarType>( 0, 0, 1, 0 );
-	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_W = Vector4<ScalarType>( 0, 0, 0, 1 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_x = Vector4<ScalarType>( 1, 0, 0, 0 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_y = Vector4<ScalarType>( 0, 1, 0, 0 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_z = Vector4<ScalarType>( 0, 0, 1, 0 );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_w = Vector4<ScalarType>( 0, 0, 0, 1 );
 
 	template<typename ScalarType>
 	Vector4<ScalarType>::Vector4( ) : x(), y(), z(), w() {}

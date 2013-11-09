@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// by Dan Andersson 2013
+// Created by Dan Andersson 2013
 /////////////////////////////////////////////////////////////////////
 
 #ifndef OYSTER_MATH_H
@@ -28,23 +28,19 @@ namespace Oyster { namespace Math /// Oyster's native math library
 
 	/// Function Highly recommended to check at start, just in case current version is using a feature that might be available.
 	/// @todo TODO: create a template UniquePointer to use here
-	inline bool IsSupported()
-	{ return true; }
+	bool IsSupported();
 
 	/// Creates a solution matrix for 'out´= 'targetMem' * 'in'.
 	/// Returns false if there is no explicit solution.
-	inline bool SuperpositionMatrix( const Float2x2 &in, const Float2x2 &out, Float2x2 &targetMem )
-	{ return ::LinearAlgebra::SuperpositionMatrix( in, out, targetMem ); }
+	bool SuperpositionMatrix( const Float2x2 &in, const Float2x2 &out, Float2x2 &targetMem );
 
 	/// Creates a solution matrix for 'out´= 'targetMem' * 'in'.
 	/// Returns false if there is no explicit solution.
-	inline bool SuperpositionMatrix( const Float3x3 &in, const Float3x3 &out, Float3x3 &targetMem )
-	{ return ::LinearAlgebra::SuperpositionMatrix( in, out, targetMem ); }
+	bool SuperpositionMatrix( const Float3x3 &in, const Float3x3 &out, Float3x3 &targetMem );
 
 	/// Creates a solution matrix for 'out´= 'targetMem' * 'in'.
 	/// Returns false if there is no explicit solution.
-	inline bool SuperpositionMatrix( const Float4x4 &in, const Float4x4 &out, Float4x4 &targetMem )
-	{ return ::LinearAlgebra::SuperpositionMatrix( in, out, targetMem ); }
+	bool SuperpositionMatrix( const Float4x4 &in, const Float4x4 &out, Float4x4 &targetMem );
 } }
 
 inline ::Oyster::Math::Float2 & operator *= ( ::Oyster::Math::Float2 &left, const ::Oyster::Math::Float2 &right )
@@ -104,38 +100,30 @@ namespace Oyster { namespace Math2D /// Oyster's native math library specialized
 
 	/// If there is an Y-axis on a 2D plane, then there is an explicit X-axis on and that is what is returned.
 	/// Recommended too make sure that yAxis is normalized.
-	inline Float2 X_AxisTo( const Float2 &yAxis )
-	{ return ::LinearAlgebra2D::X_AxisTo(yAxis); }
+	Float2 X_AxisTo( const Float2 &yAxis );
 
 	/// If there is an X-axis on a 2D plane, then there is an explicit Y-axis and that is what is returned.
 	/// Recommended too make sure that yAxis is normalized.
-	inline Float2 Y_AxisTo( const Float2 &xAxis )
-	{ return ::LinearAlgebra2D::Y_AxisTo(xAxis); }
+	Float2 Y_AxisTo( const Float2 &xAxis );
 
 	/// Sets and returns targetMem to a translationMatrix with position as translation. 
-	inline Float3x3 & TranslationMatrix( const Float2 &position, Float3x3 &targetMem = Float3x3() )
-	{ return ::LinearAlgebra2D::TranslationMatrix( position, targetMem ); }
+	Float3x3 & TranslationMatrix( const Float2 &position, Float3x3 &targetMem = Float3x3() );
 
 	/// Sets and returns targetMem as a counterclockwise rotationMatrix
-	inline Float3x3 & RotationMatrix( const Float &radian, Float3x3 &targetMem = Float3x3() )
-	{ return ::LinearAlgebra2D::RotationMatrix( radian, targetMem ); }
+	Float3x3 & RotationMatrix( const Float &radian, Float3x3 &targetMem = Float3x3() );
 
 	/// Sets and returns targetMem as an orientation Matrix with position as translation and radian rotation
-	inline Float3x3 & OrientationMatrix( const Float2 &position, const Float &radian, Float3x3 &targetMem = Float3x3() )
-	{ return ::LinearAlgebra2D::OrientationMatrix( radian, position, targetMem ); }
+	Float3x3 & OrientationMatrix( const Float2 &position, const Float &radian, Float3x3 &targetMem = Float3x3() );
 
 	/// Sets and returns targetMem as an orientation Matrix with position as translation and local y-axis directed at lookAt
-	inline Float3x3 & OrientationMatrix( const Float2 &position, const Float2 &lookAt, Float3x3 &targetMem = Float3x3() )
-	{ return ::LinearAlgebra2D::OrientationMatrix( lookAt, position, targetMem ); }
+	Float3x3 & OrientationMatrix( const Float2 &position, const Float2 &lookAt, Float3x3 &targetMem = Float3x3() );
 
 	/// Sets and returns targetMem as an orientation Matrix that is rotated around localCenterOfRotation and then translated with position.
 	/// TODO: not tested
-	inline Float3x3 & OrientationMatrix( const Float2 &position, Float radian, const Float2 &localCenterOfRotation, Float3x3 &targetMem = Float3x3() )
-	{ return ::LinearAlgebra2D::OrientationMatrix( radian, position, localCenterOfRotation, targetMem ); }
+	Float3x3 & OrientationMatrix( const Float2 &position, Float radian, const Float2 &localCenterOfRotation, Float3x3 &targetMem = Float3x3() );
 
 	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
-	inline Float3x3 & InverseOrientationMatrix( const Float3x3 &orientationMatrix, Float3x3 &targetMem = Float3x3() )
-	{ return ::LinearAlgebra2D::InverseOrientationMatrix( orientationMatrix, targetMem ); }
+	Float3x3 & InverseOrientationMatrix( const Float3x3 &orientationMatrix, Float3x3 &targetMem = Float3x3() );
 } }
 
 namespace Oyster { namespace Math3D /// Oyster's native math library specialized for 3D
@@ -143,29 +131,20 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	using namespace ::Oyster::Math; // deliberate inheritance from ::Oyster::Math namespace
 
 	/// Sets and returns targetMem to a translationMatrix with position as translation. 
-	inline Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::TranslationMatrix( position, targetMem ); }
+	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
 
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the global X-axis
-	inline Float4x4 & RotationMatrix_AxisX( const Float &radian, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::RotationMatrix_AxisX( radian, targetMem ); }
+	Float4x4 & RotationMatrix_AxisX( const Float &radian, Float4x4 &targetMem = Float4x4() );
 
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the global Y-axis
-	inline Float4x4 & RotationMatrix_AxisY( const Float &radian, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::RotationMatrix_AxisY( radian, targetMem ); }
+	Float4x4 & RotationMatrix_AxisY( const Float &radian, Float4x4 &targetMem = Float4x4() );
 
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the global Z-axis
-	inline Float4x4 & RotationMatrix_AxisZ( const Float &radian, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::RotationMatrix_AxisZ( radian, targetMem ); }
+	Float4x4 & RotationMatrix_AxisZ( const Float &radian, Float4x4 &targetMem = Float4x4() );
 
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the normalizedAxis.
 	/// Please make sure normalizedAxis is normalized.
-	inline Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::RotationMatrix( normalizedAxis, radian, targetMem ); }
-
-	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
-	inline Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::InverseOrientationMatrix( orientationMatrix, targetMem ); }
+	Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem = Float4x4() );
 
 	/**	Sets and returns targetMem as an orientation Matrix
 	 *	@param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
@@ -174,8 +153,7 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	 *	@return targetMem
 		@todo TODO: not tested
 	*/
-	inline Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, targetMem ); }
+	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem = Float4x4() );
 
 	/**	Sets and returns targetMem as an orientation Matrix
 	 *	@param targetMem: is set to a rigibody matrix that revolve/rotate counterclockwise around centerOfMass and then translates.
@@ -185,8 +163,10 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	 *	@return targetMem
 		@todo TODO: not tested 
 	*/
-	inline Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, const Float3 &centerOfMass, Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, centerOfMass, targetMem ); }
+	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, const Float3 &centerOfMass, Float4x4 &targetMem = Float4x4() );
+
+	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
+	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem = Float4x4() );
 
 	/**	Creates an orthographic projection matrix designed for DirectX enviroment.
 	 *	@param targetMem; is set to an orthographic projection matrix.
@@ -197,8 +177,7 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	 *	@return targetMem
 	 	@todo TODO: not tested
 	*/
-	inline Float4x4 & ProjectionMatrix_Orthographic( const Float &width, const Float &height, const Float &nearClip = ::std::numeric_limits<Float>::epsilon(), const Float &farClip = ::std::numeric_limits<Float>::max(), Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::ProjectionMatrix_Orthographic( width, height, nearClip, farClip, targetMem ); }
+	Float4x4 & ProjectionMatrix_Orthographic( const Float &width, const Float &height, const Float &nearClip = ::std::numeric_limits<Float>::epsilon(), const Float &farClip = ::std::numeric_limits<Float>::max(), Float4x4 &targetMem = Float4x4() );
 
 	/**	Creates a perspective projection matrix designed for DirectX enviroment.
 	 *	@param targetMem; is set to a perspective transform matrix.
@@ -209,12 +188,10 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	 *	@return targetMem
 		@todo TODO: not tested
 	*/
-	inline Float4x4 & ProjectionMatrix_Perspective( const Float &verticalFoV, const Float &aspectRatio, const Float &nearClip = ::std::numeric_limits<Float>::epsilon(), const Float &farClip = ::std::numeric_limits<Float>::max(), Float4x4 &targetMem = Float4x4() )
-	{ return ::LinearAlgebra3D::ProjectionMatrix_Perspective( verticalFoV, aspectRatio, nearClip, farClip, targetMem ); }
+	Float4x4 & ProjectionMatrix_Perspective( const Float &verticalFoV, const Float &aspectRatio, const Float &nearClip = ::std::numeric_limits<Float>::epsilon(), const Float &farClip = ::std::numeric_limits<Float>::max(), Float4x4 &targetMem = Float4x4() );
 
 	/// returns the component vector of vector that is parallell with axis
-	inline Float3 VectorProjection( const Float3 &vector, const Float3 &axis )
-	{ return ::LinearAlgebra3D::VectorProjection( vector, axis ); }
+	Float3 VectorProjection( const Float3 &vector, const Float3 &axis );
 
 	/// Helper inline function that sets and then returns targetMem = projection * view
 	inline Float4x4 & ViewProjectionMatrix( const Float4x4 &view, const Float4x4 &projection, Float4x4 &targetMem = Float4x4() )
