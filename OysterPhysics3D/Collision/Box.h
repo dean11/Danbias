@@ -3,13 +3,13 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef OYSTER_COLLISION_BOX_H
-#define OYSTER_COLLISION_BOX_H
+#ifndef OYSTER_COLLISION_3D_BOX_H
+#define OYSTER_COLLISION_3D_BOX_H
 
 #include "OysterMath.h"
 #include "ICollideable.h"
 
-namespace Oyster { namespace Collision
+namespace Oyster { namespace Collision3D
 {
 	class Box : public ICollideable
 	{
@@ -28,16 +28,14 @@ namespace Oyster { namespace Collision
 		};
 
 		Box( );
-		Box( const Box &box );
 		Box( const ::Oyster::Math::Float4x4 &orientation, const ::Oyster::Math::Float3 &size );
-		~Box( );
+		virtual ~Box( );
 
 		Box & operator = ( const Box &box );
 
-		ICollideable* clone( ) const;
+		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable *target ) const;
 		bool Contains( const ICollideable *target ) const;
-		ICollideable::State Advanced( const ICollideable *target ) const; //Not supported returns 0;
 	};
 } }
 
