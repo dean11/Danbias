@@ -93,19 +93,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shader\HLSL\2D.hlsl" />
-    <FxCompile Include="Shader\HLSL\BasicDemo.hlsl" />
-    <FxCompile Include="Shader\HLSL\CollisionMethods.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered.hlsl" />
-    <FxCompile Include="Shader\HLSL\Lazer.hlsl" />
-    <FxCompile Include="Shader\HLSL\LightMaterialMethods.hlsl" />
-    <FxCompile Include="Shader\HLSL\Obj.hlsl" />
-    <FxCompile Include="Shader\HLSL\SSAO.hlsl" />
-    <FxCompile Include="Shader\HLSL\Text.hlsl" />
-    <FxCompile Include="Shader\HLSL\TileBasedDeffered.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Shader\HLSL\ShaderConfig.txt" />
-  </ItemGroup>
 </Project>
