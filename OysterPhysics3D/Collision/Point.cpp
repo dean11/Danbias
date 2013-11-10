@@ -3,37 +3,37 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "Point.h"
-#include "Collision.h"
+#include "OysterCollision.h"
 
-using namespace ::Oyster::Collision;
-using namespace ::Oyster::Math;
+using namespace ::Oyster::Collision3D;
+using namespace ::Oyster::Math3D;
 
-Point::Point( ) : ICollideable(ICollideable::Point), position() {}
-Point::Point( const Point &point ) : ICollideable(ICollideable::Point), position(point.position) {}
-Point::Point( const Float3 &pos ) : ICollideable(ICollideable::Point), position(pos) {}
-Point::~Point( ) { /*Nothing needs to be done here*/ }
+Point::Point( ) : ICollideable(Type_point), center() {}
+Point::Point( const Float3 &pos ) : ICollideable(Type_point), center(pos) {}
+Point::~Point( ) {}
 
 Point & Point::operator = ( const Point &point )
 {
-	this->position = point.position;
+	this->center = point.center;
 	return *this;
 }
 
-ICollideable* Point::clone( ) const
-{ return new Point( *this ); }
+::Utility::Memory::UniquePointer<ICollideable> Point::Clone( ) const
+{ return ::Utility::Memory::UniquePointer<ICollideable>( new Point(*this) ); }
 
 bool Point::Intersects( const ICollideable *target ) const
 {
 	switch( target->type )
 	{
-	case ICollideable::Point: return Utility::intersect( *this, *(Collision::Point*)target );
-	case ICollideable::Ray: return Utility::intersect( *(Collision::Ray*)target, *this, ((Collision::Ray*)target)->collisionDistance );
-	case ICollideable::Sphere: Utility::intersect( *(Collision::Sphere*)target, *this );
-	case ICollideable::Plane: return Utility::intersect( *(Collision::Plane*)target, *this );
-	case ICollideable::Triangle: return false; // TODO
-	case ICollideable::BoxAxisAligned: return Utility::intersect( *(Collision::BoxAxisAligned*)target, *this );
-	case ICollideable::Box: return Utility::intersect( *(Collision::Box*)target, *this );
-	case ICollideable::Frustrum: return false; // TODO
+	case Type_universe: return true;
+	case Type_point: return Utility::Intersect( *this, *(Point*)target );
+	case Type_ray: return Utility::Intersect( *(Ray*)target, *this, ((Ray*)target)->collisionDistance );
+	case Type_sphere: Utility::Intersect( *(Sphere*)target, *this );
+	case Type_plane: return Utility::Intersect( *(Plane*)target, *this );
+	case Type_triangle: return false; // TODO: 
+	case Type_box_axis_aligned: return Utility::Intersect( *(BoxAxisAligned*)target, *this );
+	case Type_box: return Utility::Intersect( *(Box*)target, *this );
+	case Type_frustrum: return false; // TODO: 
 	default: return false;
 	}
 }
@@ -42,10 +42,7 @@ bool Point::Contains( const ICollideable *target ) const
 {
 	switch( target->type )
 	{
-	case ICollideable::Point: return Utility::intersect( *this, *(Collision::Point*)target );
+	case Type_point: return Utility::Intersect( *this, *(Point*)target );
 	default: return false;
 	}
 }
-
-ICollideable::State Point::Advanced( const ICollideable *target ) const
-{ return ICollideable::Missed; } //Not supported returns 0

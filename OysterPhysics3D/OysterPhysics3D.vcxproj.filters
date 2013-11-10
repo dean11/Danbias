@@ -33,9 +33,6 @@
     <ClCompile Include="Collision\BoxAxisAligned.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Collision\Collision.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\Frustrum.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
@@ -54,15 +51,18 @@
     <ClCompile Include="Collision\Sphere.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Collision\Universe.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\OysterCollision.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collision\Box.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision\BoxAxisAligned.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\Collision.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision\Frustrum.h">
@@ -72,9 +72,6 @@
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision\Line.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\OysterCollision.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision\Plane.h">
@@ -87,6 +84,12 @@
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision\Sphere.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\Universe.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\OysterCollision.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
   </ItemGroup>

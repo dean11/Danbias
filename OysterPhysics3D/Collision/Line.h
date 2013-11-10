@@ -3,14 +3,14 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef OYSTER_COLLISION_LINE_H
-#define OYSTER_COLLISION_LINE_H
+#ifndef OYSTER_COLLISION_3D_LINE_H
+#define OYSTER_COLLISION_3D_LINE_H
 
 #include "OysterMath.h"
 #include "ICollideable.h"
 #include "Ray.h"
 
-namespace Oyster { namespace Collision
+namespace Oyster { namespace Collision3D
 {
 	class Line : public ICollideable
 	{
@@ -22,17 +22,15 @@ namespace Oyster { namespace Collision
 		};
 
 		Line( );
-		Line( const Line &line );
 		Line( const class Ray &ray, const ::Oyster::Math::Float &length );
 		Line( const ::Oyster::Math::Float3 &origin, const ::Oyster::Math::Float3 &normalizedDirection, const ::Oyster::Math::Float &length );
-		~Line( );
+		virtual ~Line( );
 
 		Line & operator = ( const Line &line );
 
-		ICollideable* clone( ) const;
+		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable *target ) const;
 		bool Contains( const ICollideable *target ) const;
-		ICollideable::State Advanced( const ICollideable *target ) const; //Not supported returns 0;
 	};
 } }
 
