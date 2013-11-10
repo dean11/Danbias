@@ -24,13 +24,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -101,7 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -114,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -129,7 +129,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -140,26 +140,35 @@
   <ItemGroup>
     <ClCompile Include="Collision\Box.cpp" />
     <ClCompile Include="Collision\BoxAxisAligned.cpp" />
-    <ClCompile Include="Collision\Collision.cpp" />
+    <ClCompile Include="Collision\OysterCollision.cpp" />
     <ClCompile Include="Collision\Frustrum.cpp" />
     <ClCompile Include="Collision\Line.cpp" />
     <ClCompile Include="Collision\Plane.cpp" />
     <ClCompile Include="Collision\Point.cpp" />
     <ClCompile Include="Collision\Ray.cpp" />
     <ClCompile Include="Collision\Sphere.cpp" />
+    <ClCompile Include="Collision\Universe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collision\Box.h" />
     <ClInclude Include="Collision\BoxAxisAligned.h" />
-    <ClInclude Include="Collision\Collision.h" />
+    <ClInclude Include="Collision\OysterCollision.h" />
     <ClInclude Include="Collision\Frustrum.h" />
     <ClInclude Include="Collision\ICollideable.h" />
     <ClInclude Include="Collision\Line.h" />
-    <ClInclude Include="Collision\OysterCollision.h" />
     <ClInclude Include="Collision\Plane.h" />
     <ClInclude Include="Collision\Point.h" />
     <ClInclude Include="Collision\Ray.h" />
     <ClInclude Include="Collision\Sphere.h" />
+    <ClInclude Include="Collision\Universe.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Misc\Misc.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OysterMath\OysterMath.vcxproj">
+      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

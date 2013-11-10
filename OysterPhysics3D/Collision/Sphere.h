@@ -3,13 +3,13 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef OYSTER_COLLISION_SPHERE_H
-#define OYSTER_COLLISION_SPHERE_H
+#ifndef OYSTER_COLLISION_3D_SPHERE_H
+#define OYSTER_COLLISION_3D_SPHERE_H
 
 #include "OysterMath.h"
 #include "ICollideable.h"
 
-namespace Oyster { namespace Collision
+namespace Oyster { namespace Collision3D
 {
 	class Sphere : public ICollideable
 	{
@@ -21,16 +21,14 @@ namespace Oyster { namespace Collision
 		};
 
 		Sphere( );
-		Sphere( const Sphere &point );
-		Sphere( const ::Oyster::Math::Float3 &position, const ::Oyster::Math::Float &radius );
-		~Sphere( );
+		Sphere( const ::Oyster::Math::Float3 &center, const ::Oyster::Math::Float &radius );
+		virtual ~Sphere( );
 
 		Sphere & operator = ( const Sphere &sphere );
 
-		ICollideable* clone( ) const;
+		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable *target ) const;
 		bool Contains( const ICollideable *target ) const;
-		ICollideable::State Advanced( const ICollideable *target ) const; //Not supported returns 0;
 	};
 } }
 

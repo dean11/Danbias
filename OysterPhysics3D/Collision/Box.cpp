@@ -3,23 +3,14 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "Box.h"
-#include "Collision.h"
+#include "OysterCollision.h"
 
-using namespace ::Oyster::Collision;
-using namespace ::Oyster::Math;
+using namespace ::Oyster::Collision3D;
+using namespace ::Oyster::Math3D;
 
-Box::Box( ) : ICollideable(ICollideable::Box), orientation(Float4x4::identity), boundingOffset() {}
-
-Box::Box( const Box &box ) : ICollideable(ICollideable::Box), orientation(box.orientation), boundingOffset(box.boundingOffset)
-{
-	this->orientation = box.orientation;
-}
-
-Box::Box( const Float4x4 &o, const Float3 &s ) : ICollideable(ICollideable::Box), orientation(o), boundingOffset(s*0.5)
-{
-	this->orientation = o;
-}
-Box::~Box( ) { /*Nothing needs to be done here*/ }
+Box::Box( ) : ICollideable(Type_box), orientation(Float4x4::identity), boundingOffset() {}
+Box::Box( const Float4x4 &o, const Float3 &s ) : ICollideable(Type_box), orientation(o), boundingOffset(s*0.5) {}
+Box::~Box( ) {}
 
 Box & Box::operator = ( const Box &box )
 {
@@ -28,21 +19,22 @@ Box & Box::operator = ( const Box &box )
 	return *this;
 }
 
-ICollideable* Box::clone( ) const
-{ return new Box( *this ); }
+::Utility::Memory::UniquePointer<ICollideable> Box::Clone( ) const
+{ return ::Utility::Memory::UniquePointer<ICollideable>( new Box(*this) ); }
 
 bool Box::Intersects( const ICollideable *target ) const
 {
 	switch( target->type )
 	{
-	case ICollideable::Point: return Utility::intersect( *this, *(Collision::Point*)target );
-	case ICollideable::Ray: return Utility::intersect( *this, *(Collision::Ray*)target, ((Collision::Ray*)target)->collisionDistance );
-	case ICollideable::Sphere: return Utility::intersect( *this, *(Collision::Sphere*)target );
-	case ICollideable::Plane: return Utility::intersect( *this, *(Collision::Plane*)target );
-	case ICollideable::Triangle: return false; // TODO
-	case ICollideable::BoxAxisAligned: return Utility::intersect( *this, *(Collision::BoxAxisAligned*)target );
-	case ICollideable::Box: return Utility::intersect( *this, *(Collision::Box*)target );
-	case ICollideable::Frustrum: return false; // TODO
+	case Type_universe: return true;
+	case Type_point: return Utility::Intersect( *this, *(Point*)target );
+	case Type_ray: return Utility::Intersect( *this, *(Ray*)target, ((Ray*)target)->collisionDistance );
+	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)target );
+	case Type_plane: return Utility::Intersect( *this, *(Plane*)target );
+	case Type_triangle: return false; // TODO: : 
+	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)target );
+	case Type_box: return Utility::Intersect( *this, *(Box*)target );
+	case Type_frustrum: return false; // TODO: : 
 	default: return false;
 	}
 }
@@ -51,15 +43,12 @@ bool Box::Contains( const ICollideable *target ) const
 {
 	switch( target->type )
 	{
-	case ICollideable::Point: return Utility::intersect( *this, *(Collision::Point*)target );
-	case ICollideable::Sphere: return false; // TODO
-	case ICollideable::Triangle: return false; // TODO
-	case ICollideable::BoxAxisAligned: return false; // TODO
-	case ICollideable::Box: return false; // TODO
-	case ICollideable::Frustrum: return false; // TODO
+	case Type_point: return Utility::Intersect( *this, *(Point*)target );
+	case Type_sphere: return false; // TODO: 
+	case Type_triangle: return false; // TODO: 
+	case Type_box_axis_aligned: return false; // TODO: 
+	case Type_box: return false; // TODO: 
+	case Type_frustrum: return false; // TODO: 
 	default: return false;
 	}
 }
-
-ICollideable::State Box::Advanced( const ICollideable *target ) const
-{ return ICollideable::Missed; } //Not supported returns 0

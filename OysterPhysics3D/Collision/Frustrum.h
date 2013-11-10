@@ -3,14 +3,14 @@
 /////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef OYSTER_COLLISION_FRUSTRUM_H
-#define OYSTER_COLLISION_FRUSTRUM_H
+#ifndef OYSTER_COLLISION_3D_FRUSTRUM_H
+#define OYSTER_COLLISION_3D_FRUSTRUM_H
 
 #include "OysterMath.h"
 #include "ICollideable.h"
 #include "Plane.h"
 
-namespace Oyster { namespace Collision
+namespace Oyster { namespace Collision3D
 {
 
 	class Frustrum : public ICollideable
@@ -25,20 +25,18 @@ namespace Oyster { namespace Collision
 		};
 
 		Frustrum( );
-		Frustrum( const Frustrum &frustrum );
 		Frustrum( const ::Oyster::Math::Float4x4 &viewProjection );
-		~Frustrum( );
+		virtual ~Frustrum( );
 
 		Frustrum & operator = ( const Frustrum &frustrum );
 		Frustrum & operator = ( const ::Oyster::Math::Float4x4 &viewProjection );
 
-		void split( Frustrum targetList[], unsigned int numX, unsigned int numY = 1U, unsigned int numZ = 1u ) const;
-		void writeToByte( unsigned char targetMem[], unsigned int &nextIndex ) const;
+		void Split( Frustrum targetList[], unsigned int numX, unsigned int numY = 1U, unsigned int numZ = 1u ) const;
+		void WriteToByte( unsigned char targetMem[], unsigned int &nextIndex ) const;
 
-		ICollideable* clone( ) const;
+		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable *target ) const;
 		bool Contains( const ICollideable *target ) const;
-		ICollideable::State Advanced( const ICollideable *target ) const; //Not supported returns 0;
 	};
 } }
 

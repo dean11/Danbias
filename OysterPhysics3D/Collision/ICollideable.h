@@ -3,9 +3,10 @@
 // Edited by Dan Andersson 2013
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 #ifndef OYSTER_COLLISION_3D_ICOLLIDEABLE_H
 #define OYSTER_COLLISION_3D_ICOLLIDEABLE_H
+
+#include "Utilities.h"
 
 namespace Oyster { namespace Collision3D /// Contains a collection of 3D shapes and intercollission algorithms.
 {
@@ -31,7 +32,7 @@ namespace Oyster { namespace Collision3D /// Contains a collection of 3D shapes 
 
 		ICollideable( Type type = Type_undefined );
 
-		virtual ICollideable* clone( ) const = 0; // TODO: use smart unique pointer here
+		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const = 0;
 		virtual bool Intersects( const ICollideable *target ) const = 0;
 		virtual bool Contains( const ICollideable *target ) const = 0;
 	};

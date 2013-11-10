@@ -3,16 +3,15 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "Line.h"
-#include "Collision.h"
+#include "OysterCollision.h"
 
-using namespace ::Oyster::Collision;
-using namespace ::Oyster::Math;
+using namespace ::Oyster::Collision3D;
+using namespace ::Oyster::Math3D;
 
-Line::Line( ) : ICollideable(ICollideable::Line), ray(), length(0.0f) {}
-Line::Line( const Line &_line ) : ICollideable(ICollideable::Line), ray(_line.ray), length(_line.length)  {}
-Line::Line( const class Ray &_ray, const Float &_length ) : ICollideable(ICollideable::Line), ray(_ray), length(_length) {}
-Line::Line( const Float3 &origin, const Float3 &normalizedDirection, const Float &_length ) : ICollideable(ICollideable::Line), ray(origin, normalizedDirection), length(_length) {}
-Line::~Line( ) { /*Nothing needs to be done here*/ }
+Line::Line( ) : ICollideable(Type_line), ray(), length(0.0f) {}
+Line::Line( const class Ray &_ray, const Float &_length ) : ICollideable(Type_line), ray(_ray), length(_length) {}
+Line::Line( const Float3 &origin, const Float3 &normalizedDirection, const Float &_length ) : ICollideable(Type_line), ray(origin, normalizedDirection), length(_length) {}
+Line::~Line( ) {}
 
 Line & Line::operator = ( const Line &line )
 {
@@ -21,20 +20,23 @@ Line & Line::operator = ( const Line &line )
 	return *this;
 }
 
-ICollideable* Line::clone( ) const
-{ return new Line(*this); }
+::Utility::Memory::UniquePointer<ICollideable> Line::Clone( ) const
+{ return ::Utility::Memory::UniquePointer<ICollideable>( new Line(*this) ); }
 
 bool Line::Intersects( const ICollideable *target ) const
 {
+	if( target->type == Type_universe )
+	{
+		this->ray.collisionDistance = 0.0f;
+		return true;
+	}
+
 	if( this->ray.Intersects( target ) ) if( this->ray.collisionDistance >= 0.0f ) if( this->ray.collisionDistance <= this->length )
-			return true;
+		return true;
 	
 	this->ray.collisionDistance = 0.0f;
 	return false;
 }
 
 bool Line::Contains( const ICollideable *target ) const
-{ /*TODO*/ return false; }
-
-ICollideable::State Line::Advanced( const ICollideable *target ) const
-{ return ICollideable::Missed; } //Not supported returns 0
+{ /* TODO: : */ return false; }
