@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "Lobby.h"
-void ControlPlayer( GameLogic::Player& p,const ClientToServerUpdateData &update);
+//void ControlPlayer( GameLogic::Player& p,const ClientToServerUpdateData &update);
 const int NR_CONNECTTHREADS=1;
 const int NR_SIMULTCPCONNECTS=1;
 //threads can only take 1 argument
@@ -60,7 +60,7 @@ private:
 	int nrActiveSessions;
 	std::vector<Event::GameEvent*> sessionEvents;
 	std::vector<Network::EffectData> sessionEffects;
-	GameLogic::Session* session;
+	//GameLogic::Session* session;
 	std::vector<ServerTimer> timer;
 	int DEBUGCTR;
 	std::vector<long> updateCount;

@@ -162,7 +162,6 @@ Global
 		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Debug|x64.ActiveCfg = Debug|x64
 		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Debug|x64.Build.0 = Debug|x64
 		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Release|Win32.ActiveCfg = Release|Win32
 		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Release|Win32.Build.0 = Release|Win32
 		{B1195BB9-B3A5-47F0-906C-8DEA384D1520}.Release|x64.ActiveCfg = Release|Win32
