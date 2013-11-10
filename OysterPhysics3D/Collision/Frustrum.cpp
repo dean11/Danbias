@@ -101,7 +101,7 @@ Frustrum & Frustrum::operator = ( const Float4x4 &vp )
 	return *this;
 }
 
-void Frustrum::Split( Frustrum target[], unsigned int numX, unsigned int numY, unsigned int numZ ) const
+void Frustrum::Split( unsigned int numX, unsigned int numY, unsigned int numZ, Frustrum target[] ) const
 {
 	float incrementX = 1.0f / numX,
 		  incrementY = 1.0f / numY,
@@ -174,7 +174,7 @@ void Frustrum::Split( Frustrum target[], unsigned int numX, unsigned int numY, u
 	}
 }
 
-void Frustrum::WriteToByte( unsigned char targetMem[], unsigned int &nextIndex ) const
+void Frustrum::WriteToByte( unsigned int &nextIndex, unsigned char targetMem[] ) const
 {
 	Float *fMem = (Float*)&targetMem[nextIndex];
 	for( int p = 0; p < 6; ++p )
