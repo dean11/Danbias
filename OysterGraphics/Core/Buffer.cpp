@@ -1,8 +1,9 @@
 #include "Buffer.h"
 #include "Core.h"
+
 using namespace Oyster;
 
-Buffer::Buffer()
+Oyster::Buffer::Buffer()
 {
 	mBuffer = NULL;
 }
@@ -118,6 +119,11 @@ HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		bufferDesc.CPUAccessFlags |= D3D11_CPU_ACCESS_WRITE;
 	}
+	else if(mUsage == BUFFER_USAGE_IMMUTABLE)
+	{
+		bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		bufferDesc.CPUAccessFlags = 0;
+	}
 
 	//Desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.MiscFlags = 0;
@@ -191,7 +197,7 @@ void Buffer::Unmap()
 	Oyster::Core::DeviceContext->Unmap( mBuffer, 0 );
 }
 
-Buffer::operator ID3D11Buffer *()
+Oyster::Buffer::operator ID3D11Buffer *()
 {
 	return this->mBuffer;
 }

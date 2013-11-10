@@ -1,5 +1,4 @@
 #include "Core.h"
-#include "..\Window\Window.h"
 
 using namespace Oyster;
 using std::string;
@@ -29,10 +28,10 @@ bool Core::Init(bool SingleThreaded, bool Reference,bool ForceDX11)
 	if(Reference)
 		driverType = D3D_DRIVER_TYPE_REFERENCE;
 	
-	/*#if defined(DEBUG) || defined(_DEBUG)
+	#if defined(DEBUG) || defined(_DEBUG)
 		Log << "DirectX running in debug mode.\n";
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	#endif*/
+	#endif
 
 
 	D3D_FEATURE_LEVEL featureLevelsToTry[] = 
@@ -103,8 +102,14 @@ bool  Core::CreateSwapChain(HWND Window, int NrofBuffers,bool MSAA_Quality,bool 
 	desc.BufferDesc.Scaling = DXGI_MODE_SCALING_CENTERED;
 	desc.BufferDesc.RefreshRate.Denominator=1;
 	desc.BufferDesc.RefreshRate.Numerator=60;
-	desc.BufferDesc.Height = Window::Size.bottom;
-	desc.BufferDesc.Width = Window::Size.left;
+
+	RECT rc;
+	GetClientRect( Window, &rc );
+	int screenWidth = rc.right - rc.left;
+	int screenHeight = rc.bottom - rc.top;
+
+	desc.BufferDesc.Height = screenHeight;
+	desc.BufferDesc.Width = screenWidth;
 	
 	//Check and Set multiSampling
 	if(MSAA_Quality)

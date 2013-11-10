@@ -2,7 +2,7 @@
 #ifndef CoreBuffer
 #define CoreBuffer
 
-#include "Core.h"
+#include "CoreIncludes.h"
 
 namespace Oyster
 {
@@ -28,7 +28,8 @@ namespace Oyster
 			BUFFER_CPU_WRITE,
 			BUFFER_CPU_WRITE_DISCARD,
 			BUFFER_CPU_READ,
-			BUFFER_USAGE_COUNT
+			BUFFER_USAGE_COUNT,
+			BUFFER_USAGE_IMMUTABLE
 		};
 
 		struct BUFFER_INIT_DESC

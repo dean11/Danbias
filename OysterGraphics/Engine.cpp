@@ -15,6 +15,7 @@ public:
 	DXGI_SAMPLE_DESC sampleDesc;
 	D3D11_VIEWPORT viewPort;
 	oysterPrivates():instance(false),swapChained(false),depth(NULL),rtv(NULL), depthTexture(NULL){};
+	int sizeX, sizeY;
 	class State
 	{
 	public:
@@ -55,13 +56,11 @@ bool Oyster::Engine::Init::HasSwapChain()
 
 bool Oyster::Engine::Init::CreateSwapChain(HWND Window,int NrofBuffers,bool MSAA_Quality,bool Fullscreen)
 {
-	if(Window==0)
-	{
-		if(Oyster::Window::Handle==0)
-			return false;
-		else
-			Window = Oyster::Window::Handle;
-	}
+	RECT rc;
+	GetClientRect( Window, &rc );
+	instance.sizeX = rc.right - rc.left;
+	instance.sizeY = rc.bottom - rc.top;
+
 	if(!instance.swapChained)
 	{
 		if(Oyster::Core::CreateSwapChain(Window,NrofBuffers,MSAA_Quality,Fullscreen))
@@ -69,11 +68,6 @@ bool Oyster::Engine::Init::CreateSwapChain(HWND Window,int NrofBuffers,bool MSAA
 	}
 
 	return instance.swapChained;
-}
-
-bool Oyster::Engine::Init::InitializeWindow(const LPCSTR appName, const LPCSTR className,const HINSTANCE &hInstance, const int &nCmdShow, WNDPROC wProc, bool handleLoop )
-{
-	return Oyster::Window::init(appName,className,hInstance,nCmdShow,wProc,handleLoop);
 }
 
 bool Oyster::Engine::Init::FullInit(const Setup& setup)
@@ -104,7 +98,7 @@ bool Oyster::Engine::Init::FullInit(const Setup& setup)
 	
 	Oyster::Resources::Buffers::Init();
 	Oyster::Resources::ShaderEffects::Init();
-	Oyster::Resources::PipeLineResourses::Init();
+	Oyster::Resources::PipeLineResourses::Init(instance.sizeX, instance.sizeY);
 	return true;
 
 }
@@ -186,7 +180,7 @@ void Oyster::Engine::Render::Geometry(const Oyster::Render::Model* models,int co
 			if(cBufferEveryObject)
 			{
 				void* data = cBufferEveryObject->Map();
-				memcpy(data,&(models[i].World->getTranspose()),64);
+				memcpy(data,&(models[i].World->GetTranspose()),64);
 				cBufferEveryObject->Unmap();
 			}
 			Oyster::Core::DeviceContext->PSSetShaderResources(0,models[i].info->Material.size(),&(models[i].info->Material[0]));
@@ -205,23 +199,23 @@ void Oyster::Engine::Render::Geometry(const Oyster::Render::Model* models,int co
 
 void Oyster::Engine::Render::Text(std::string text, Oyster::Math::Float2 size, Oyster::Math::Float3 Pos)
 {
-	Pos.x -= Oyster::Window::Size.left/2;
+	Pos.x -= instance.sizeX/2;
 	Pos.x += size.x;
 
-	Pos.y -= Oyster::Window::Size.bottom/2;
+	Pos.y -= instance.sizeY/2;
 	Pos.y += size.y;
 
 	Matrix m;
-	Math::identityMatrix(m);
-	float width = (1.0f/(Window::Size.left/2.0f));
-	float height = (1.0f/(Window::Size.bottom/2.0f));
+	m = Math::Matrix::identity;
+	float width = (1.0f/(instance.sizeX/2.0f));
+	float height = (1.0f/(instance.sizeY/2.0f));
 	m.m41=Pos.x * width;
 	m.m42=-Pos.y * height;
 	m.m43=Pos.z;
 	m.m11=width*size.x;
 	m.m22=height*size.y;
 	void* dest = Resources::Buffers::CBufferGs.Map();
-	memcpy(dest,&m.getTranspose(),64);
+	memcpy(dest,&m.GetTranspose(),64);
 	Resources::Buffers::CBufferGs.Unmap();
 	Oyster::Render::Textbox::Update(text, size.x);
 	Oyster::Engine::PrepareForRendering::Begin2DTextRender();
@@ -236,11 +230,11 @@ void Oyster::Engine::Render::ScreenQuad(ID3D11ShaderResourceView* srv, float ZPo
 	Oyster::Core::DeviceContext->PSSetShaderResources(0,1,&srv);
 
 	Matrix m;
-	Math::identityMatrix(m);
+	m = Math::Matrix::identity;
 	m.m43=ZPos;
 	
 	void* dest = Resources::Buffers::CBufferGs.Map();
-	memcpy(dest,&m.getTranspose(),64);
+	memcpy(dest,&m.GetTranspose(),64);
 	Resources::Buffers::CBufferGs.Unmap();
 
 	Oyster::Core::DeviceContext->Draw(1,0);
@@ -251,16 +245,16 @@ void Oyster::Engine::Render::Sprite(ID3D11ShaderResourceView* srv, Oyster::Math:
 
 	Oyster::Core::DeviceContext->PSSetShaderResources(0,1,&srv);
 
-	Pos.x -= Oyster::Window::Size.left/2;
+	Pos.x -= instance.sizeX/2;
 	Pos.x += size.x/2;
 
-	Pos.y -= Oyster::Window::Size.bottom/2;
+	Pos.y -= instance.sizeY/2;
 	Pos.y += size.y/2;
 
 	Matrix m;
-	Math::identityMatrix(m);
-	float width = (1.0f/(Window::Size.left/2.0f));
-	float height = (1.0f/(Window::Size.bottom/2.0f));
+	m = Math::Matrix::identity;
+	float width = (1.0f/(instance.sizeX/2.0f));
+	float height = (1.0f/(instance.sizeY/2.0f));
 	m.m41=Pos.x * width;
 	m.m42=-Pos.y * height;
 	m.m43=Pos.z;
@@ -268,7 +262,7 @@ void Oyster::Engine::Render::Sprite(ID3D11ShaderResourceView* srv, Oyster::Math:
 	m.m22=height*size.y/2;
 	
 	void* dest = Resources::Buffers::CBufferGs.Map();
-	memcpy(dest,&m.getTranspose(),64);
+	memcpy(dest,&m.GetTranspose(),64);
 	Resources::Buffers::CBufferGs.Unmap();
 
 	Oyster::Core::DeviceContext->Draw(1,0);
@@ -286,8 +280,8 @@ bool CreateDepthStencil(bool MSAA_Quality)
 	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	desc.CPUAccessFlags=0;
 	desc.MiscFlags=0;
-	desc.Height = Oyster::Window::Size.bottom;
-	desc.Width = Oyster::Window::Size.left;
+	desc.Height = instance.sizeY;
+	desc.Width = instance.sizeX;
 
 
 	//Check and Set multiSampling
@@ -355,8 +349,8 @@ void SetViewPort()
 {
 	instance.viewPort.TopLeftX = 0.0f;
 	instance.viewPort.TopLeftY = 0.0f;
-	instance.viewPort.Width = (float)Oyster::Window::Size.left;
-	instance.viewPort.Height = (float)Oyster::Window::Size.bottom;
+	instance.viewPort.Width = (float)instance.sizeX;
+	instance.viewPort.Height = (float)instance.sizeY;
 	instance.viewPort.MinDepth = 0.0f;
 	instance.viewPort.MaxDepth = 1.0f;
 
@@ -373,7 +367,7 @@ void Blur(int target)
 
 	//dispatch blurr horizontal
 	Oyster::Shader::Set::SetCompute(Oyster::Shader::Get::GetCompute("BlurHorizontal"));
-	Oyster::Core::DeviceContext->Dispatch(7,Oyster::Window::Size.bottom,1);
+	Oyster::Core::DeviceContext->Dispatch(7,instance.sizeX,1);
 
 	//clean Pipeline
 	Oyster::Core::DeviceContext->CSSetShaderResources(0,16,&Oyster::Resources::PipeLineResourses::SrvNulls[0]);
@@ -385,7 +379,7 @@ void Blur(int target)
 	
 	//dispatch blurr vertical
 	Oyster::Shader::Set::SetCompute(Oyster::Shader::Get::GetCompute("BlurVertical"));
-	Oyster::Core::DeviceContext->Dispatch(Oyster::Window::Size.left,5,1);
+	Oyster::Core::DeviceContext->Dispatch(instance.sizeY,5,1);
 
 	//clean Pipeline
 	Oyster::Core::DeviceContext->CSSetShaderResources(0,16,&Oyster::Resources::PipeLineResourses::SrvNulls[0]);
@@ -419,24 +413,24 @@ void Oyster::Engine::Pipeline::Deffered_Lightning::NewFrame(const Float4& col, c
 	Matrix V = Oyster::Math::Float4x4(View);
 	Matrix VP = V*P;
 
-	Oyster::Resources::PipeLineResourses::LightData.projectionMatrix = P.getTranspose();
+	Oyster::Resources::PipeLineResourses::LightData.projectionMatrix = P.GetTranspose();
 	Oyster::Resources::PipeLineResourses::LightData.viewMatrix = V;
 
-	Oyster::Collision::Frustrum( VP ).split(Oyster::Resources::PipeLineResourses::SubFrustrums, Oyster::Resources::PipeLineResourses::FrustrumDimensions.x, Oyster::Resources::PipeLineResourses::FrustrumDimensions.y, Oyster::Resources::PipeLineResourses::FrustrumDimensions.z );
+	Oyster::Collision3D::Frustrum( VP ).Split(Oyster::Resources::PipeLineResourses::SubFrustrums, Oyster::Resources::PipeLineResourses::FrustrumDimensions.x, Oyster::Resources::PipeLineResourses::FrustrumDimensions.y, Oyster::Resources::PipeLineResourses::FrustrumDimensions.z );
 
 	void* dest = Oyster::Resources::ShaderEffects::ModelEffect.CBuffers.Vertex[0]->Map();
-	memcpy(dest,&VP.getTranspose(),64);
+	memcpy(dest,&VP.GetTranspose(),64);
 	Oyster::Resources::ShaderEffects::ModelEffect.CBuffers.Vertex[0]->Unmap();
 
 	dest= Oyster::Resources::ShaderEffects::ModelEffect.CBuffers.Vertex[1]->Map();
-	memcpy(dest,&V.getTranspose(),64);
+	memcpy(dest,&V.GetTranspose(),64);
 	Oyster::Resources::ShaderEffects::ModelEffect.CBuffers.Vertex[1]->Unmap();
 
 	dest = Oyster::Resources::PipeLineResourses::Resources[0]->Map();
 	unsigned int bytes=0;
 	for(int i=0;i<Oyster::Resources::PipeLineResourses::FrustrumSize;++i)
 	{
-		Oyster::Resources::PipeLineResourses::SubFrustrums[i].writeToByte( (unsigned char*)dest,bytes);
+		Oyster::Resources::PipeLineResourses::SubFrustrums[i].WriteToByte( (unsigned char*)dest,bytes);
 	}
 	Oyster::Resources::PipeLineResourses::Resources[0]->Unmap();
 

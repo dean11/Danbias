@@ -19,12 +19,14 @@ bool Textbox::Init()
 	return true;
 	//return true;
 }
+/// \todo proper reading of texture
 bool Textbox::SetTexture(const char* _file)
 {
-	if(FAILED(D3DX11CreateShaderResourceViewFromFileA(Oyster::Core::Device, _file, NULL, NULL, &Texture, NULL)))
+	return false;
+	/*if(FAILED(D3DX11CreateShaderResourceViewFromFileA(Oyster::Core::Device, _file, NULL, NULL, &Texture, NULL)))
 	{
 		return false;
-	}
+	}*/
 	return true;
 }
 bool Textbox::UpdateTextField(std::string _str)

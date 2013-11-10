@@ -13,22 +13,14 @@
 #include "Shader\Shader.h"
 
 //  Math
-#include "Math\OysterMath.h"
+#include "OysterMath.h"
 
-//  FileLoader
-#include "FileLoader\ObjReader.h"
 
-//  Windows
-#include "Window\Window.h"
 
-//  Input
-#include "Input\InputController.h"
 
 //  Collision
-#include "Collision\Collision.h"
+#include "Collision\Frustrum.h"
 
-//  Game Definitions
-#include "Game\OysterGame.h"
 
 //  Resources
 #include "Resourses\ShaderEffects.h"

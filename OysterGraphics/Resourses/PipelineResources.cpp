@@ -18,29 +18,29 @@ ID3D11RenderTargetView* PipeLineResourses::RtvNulls[16] = {0};
 ID3D11ShaderResourceView* PipeLineResourses::SrvNulls[16] = {0};
 ID3D11UnorderedAccessView* PipeLineResourses::uavNULL[16] = {0};
 
-Oyster::Collision::Frustrum* PipeLineResourses::SubFrustrums = 0;
+Oyster::Collision3D::Frustrum* PipeLineResourses::SubFrustrums = 0;
 int PipeLineResourses::FrustrumSize = 0;
 LinearAlgebra::Vector3<unsigned int> PipeLineResourses::FrustrumDimensions = LinearAlgebra::Vector3<unsigned int>();
 
 Oyster::Resources::BufferDefinitions::LightStructureBuffer PipeLineResourses::LightData = Oyster::Resources::BufferDefinitions::LightStructureBuffer();
 
-void PipeLineResourses::Init()
+void PipeLineResourses::Init(int sizeX, int sizeY)
 {
-	InitGeometry();
+	InitGeometry(sizeX, sizeY);
 	
 	InitSSAOData();
-	InitSubFrustrums();
+	InitSubFrustrums(sizeX, sizeY);
 	InitPointLights();
 	InitLightData();
 
-	InitLighting();
+	InitLighting(sizeX, sizeY);
 }
 
-void PipeLineResourses::InitGeometry()
+void PipeLineResourses::InitGeometry(int sizeX, int sizeY)
 {
 	D3D11_TEXTURE2D_DESC Tdesc;
-	Tdesc.Width = Oyster::Window::Size.left;
-	Tdesc.Height = Oyster::Window::Size.bottom;
+	Tdesc.Width = sizeX;
+	Tdesc.Height = sizeY;
 	Tdesc.MipLevels = Tdesc.ArraySize = 1;
 	Tdesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	Tdesc.SampleDesc.Count = 1;
@@ -86,7 +86,7 @@ void PipeLineResourses::InitSSAOData()
 				(float)rand() / (RAND_MAX + 1) * (1 - -1) + -1,
 				(float)rand() / (RAND_MAX + 1) * (1 - 0) + 0);
 		}
-		kernel[i].normalize();
+		kernel[i].Normalize();
 
 		float scale = float(i) / float(NrOfSamples);
 		scale = (0.1f*(1 - scale * scale) + 1.0f *( scale * scale));
@@ -102,7 +102,7 @@ void PipeLineResourses::InitSSAOData()
 					(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
 					0.0f);
 			}
-			random[i].normalize();
+			random[i].Normalize();
 		}
 	}
 
@@ -137,15 +137,15 @@ void PipeLineResourses::InitSSAOData()
 	delete[] random;
 }
 
-void PipeLineResourses::InitSubFrustrums()
+void PipeLineResourses::InitSubFrustrums(int sizeX, int sizeY)
 {
-	FrustrumDimensions.x = (::Oyster::Window::Size.left + 15U) / 16U;
-	FrustrumDimensions.y = (::Oyster::Window::Size.bottom + 15U) / 16U;
+	FrustrumDimensions.x = (sizeX + 15U) / 16U;
+	FrustrumDimensions.y = (sizeY + 15U) / 16U;
 	FrustrumDimensions.z = 1;
 	FrustrumSize = FrustrumDimensions.x * FrustrumDimensions.y * FrustrumDimensions.z;
 	if(SubFrustrums!=0)
 		delete[] SubFrustrums;
-	SubFrustrums = new Frustrum[ FrustrumSize ];
+	SubFrustrums = new Collision3D::Frustrum[ FrustrumSize ];
 
 	Oyster::Buffer::BUFFER_INIT_DESC desc;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -197,11 +197,11 @@ void PipeLineResourses::InitLightData()
 	LightData.numDispatches = FrustrumDimensions;
 }
 
-void PipeLineResourses::InitLighting()
+void PipeLineResourses::InitLighting(int sizeX, int sizeY)
 {
 	D3D11_TEXTURE2D_DESC Tdesc;
-	Tdesc.Width = Oyster::Window::Size.left;
-	Tdesc.Height = Oyster::Window::Size.bottom;
+	Tdesc.Width = sizeX;
+	Tdesc.Height = sizeY;
 	Tdesc.MipLevels = Tdesc.ArraySize = 1;
 	Tdesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	Tdesc.SampleDesc.Count = 1;
