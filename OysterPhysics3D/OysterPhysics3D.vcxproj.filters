@@ -54,7 +54,22 @@
     <ClCompile Include="Collision\Universe.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Collision\OysterCollision.cpp">
+    <ClCompile Include="Collision\OysterCollision3D.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\FluidDrag.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Particle.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\RigidBody.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Spring.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\ICollideable.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,8 +104,23 @@
     <ClInclude Include="Collision\Universe.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\OysterCollision.h">
-      <Filter>Header Files\Collision</Filter>
+    <ClInclude Include="Physics\FluidDrag.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Particle.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\RigidBody.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Spring.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="OysterCollision3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OysterPhysics3D.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

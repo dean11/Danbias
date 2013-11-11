@@ -26,6 +26,8 @@ namespace Oyster { namespace Math /// Oyster's native math library
 	typedef Float3 Vector3;  // by popular demand
 	typedef Float4 Vector4;  // by popular demand
 
+	const Float pi = 3.1415926535897932384626433832795f;
+
 	/// Function Highly recommended to check at start, just in case current version is using a feature that might be available.
 	/// @todo TODO: create a template UniquePointer to use here
 	bool IsSupported();
@@ -146,48 +148,63 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	/// Please make sure normalizedAxis is normalized.
 	Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem = Float4x4() );
 
-	/**	Sets and returns targetMem as an orientation Matrix
-	 *	@param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
+	/*******************************************************************
+	 * Sets and returns targetMem as an orientation Matrix
+	 * @param normalizedAxis: The normalized vector parallell with the rotationAxis.
+	 * @param deltaRadian: The rotation angle.
+	 * @param sumTranslation: sum of all the translation vectors.
+	 * @param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
+	 * @return targetMem
+	 * @todo TODO: not tested
+	 *******************************************************************/
+	Float4x4 & OrientationMatrix( const Float3 &normalizedAxis, const Float & deltaRadian, const Float3 &sumTranslation, Float4x4 &targetMem = Float4x4() );
+
+	/*******************************************************************
+	 *	Sets and returns targetMem as an orientation Matrix
 	 *	@param sumDeltaAngularAxis: sum of all ( (1/I) * ( L x D ) )-vectorproducts. There I is known as "moment of inertia", L as "angular momentum vector" and D the "lever vector".
 	 *	@param sumTranslation: sum of all the translation vectors.
+	 *	@param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
 	 *	@return targetMem
-		@todo TODO: not tested
-	*/
+	 *	@todo TODO: not tested
+	 *******************************************************************/
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem = Float4x4() );
 
-	/**	Sets and returns targetMem as an orientation Matrix
-	 *	@param targetMem: is set to a rigibody matrix that revolve/rotate counterclockwise around centerOfMass and then translates.
+	/*******************************************************************
+	 *	Sets and returns targetMem as an orientation Matrix
 	 *	@param sumDeltaAngularAxis: sum of all ( (1/I) * ( L x D ) )-vectorproducts. There I is known as "moment of inertia", L as "angular momentum vector" and D the "lever vector".
 	 *	@param sumTranslation: sum of all the translation vectors.
 	 *	@param centerOfMass: the point the particles is to revolve around, prior to translation. Default set to null vector aka origo.
+	 *	@param targetMem: is set to a rigibody matrix that revolve/rotate counterclockwise around centerOfMass and then translates.
 	 *	@return targetMem
-		@todo TODO: not tested 
-	*/
+	 *	@todo TODO: not tested 
+	 *******************************************************************/
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, const Float3 &centerOfMass, Float4x4 &targetMem = Float4x4() );
 
 	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem = Float4x4() );
 
-	/**	Creates an orthographic projection matrix designed for DirectX enviroment.
-	 *	@param targetMem; is set to an orthographic projection matrix.
+	/*******************************************************************
+	 *	Creates an orthographic projection matrix designed for DirectX enviroment.
 	 *	@param width; of the projection sample volume.
 	 *	@param height; of the projection sample volume.
 	 *	@param nearClip: Distance to the nearPlane.
 	 *	@param farClip: Distance to the farPlane.
+	 *	@param targetMem; is set to an orthographic projection matrix.
 	 *	@return targetMem
-	 	@todo TODO: not tested
-	*/
+	 *	@todo TODO: not tested
+	 *******************************************************************/
 	Float4x4 & ProjectionMatrix_Orthographic( const Float &width, const Float &height, const Float &nearClip = ::std::numeric_limits<Float>::epsilon(), const Float &farClip = ::std::numeric_limits<Float>::max(), Float4x4 &targetMem = Float4x4() );
 
-	/**	Creates a perspective projection matrix designed for DirectX enviroment.
-	 *	@param targetMem; is set to a perspective transform matrix.
+	/*******************************************************************
+	 *	Creates a perspective projection matrix designed for DirectX enviroment.
 	 *	@param vertFoV; is the vertical field of vision in radians. (lookup FoV Hor+ )
 	 *	@param aspect; is the screenratio width/height (example 16/9 or 16/10 )
 	 *	@param nearClip: Distance to the nearPlane
 	 *	@param farClip: Distance to the farPlane
+	 *	@param targetMem; is set to a perspective transform matrix.
 	 *	@return targetMem
-		@todo TODO: not tested
-	*/
+	 *	@todo TODO: not tested
+	 *******************************************************************/
 	Float4x4 & ProjectionMatrix_Perspective( const Float &verticalFoV, const Float &aspectRatio, const Float &nearClip = ::std::numeric_limits<Float>::epsilon(), const Float &farClip = ::std::numeric_limits<Float>::max(), Float4x4 &targetMem = Float4x4() );
 
 	/// returns the component vector of vector that is parallell with axis

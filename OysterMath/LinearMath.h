@@ -284,30 +284,38 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /// TODO: not tested
-		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
-		if( radian > 0 )
-		{
-			radian = ::std::sqrt( radian );
-			::LinearAlgebra::Vector3<ScalarType> axis = sumDeltaAngularAxis / radian;
-			RotationMatrix( axis, radian, targetMem );
-		}
-		else targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
-
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis, const ScalarType &deltaRadian, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /** @todo TODO: not tested */
+		RotationMatrix( normalizedAxis, deltaRadian, targetMem );
 		targetMem.v[3].xyz = sumTranslation;
 		return targetMem;
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, const ::LinearAlgebra::Vector3<ScalarType> &centerOfRotation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /// TODO: not tested
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /** @todo TODO: not tested */
 		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
 		if( radian > 0 )
 		{
 			radian = ::std::sqrt( radian );
-			::LinearAlgebra::Vector3<ScalarType> axis = sumDeltaAngularAxis / radian;
-			RotationMatrix( axis, radian, targetMem );
+			return OrientationMatrix( sumDeltaAngularAxis / radian, radian, targetMem );
+		}
+		else
+		{
+			targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
+			targetMem.v[3].xyz = sumTranslation;
+			return targetMem;
+		}
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, const ::LinearAlgebra::Vector3<ScalarType> &centerOfRotation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /** @todo TODO: not tested */
+		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
+		if( radian > 0 )
+		{
+			radian = ::std::sqrt( radian );
+			RotationMatrix( sumDeltaAngularAxis / radian, radian, targetMem );
 		}
 		else targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
 
@@ -337,7 +345,7 @@ namespace LinearAlgebra3D
 	*/
 	template<typename ScalarType>
 	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Orthographic( const ScalarType &width, const ScalarType &height, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /// TODO: not tested
+	{ /** @todo TODO: not tested */
 		ScalarType c = 1 / (nearClip - farClip);
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 2/width, 0, 0, 0,
 																   0, 2/height, 0, 0,
@@ -354,7 +362,7 @@ namespace LinearAlgebra3D
 	*/
 	template<typename ScalarType>
 	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &vertFoV, const ScalarType &aspect, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /// TODO: not tested
+	{ /** @todo TODO: not tested */
 		ScalarType fov = 1 / ::std::tan( vertFoV * 0.5f ),
 					dDepth = farClip / (farClip - nearClip);
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( fov / aspect, 0, 0, 0,

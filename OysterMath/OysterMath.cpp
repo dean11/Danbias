@@ -63,6 +63,9 @@ namespace Oyster { namespace Math3D
 	Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem )
 	{ return ::LinearAlgebra3D::RotationMatrix( normalizedAxis, radian, targetMem ); }
 
+	Float4x4 & OrientationMatrix( const Float3 &normalizedAxis, const Float & deltaRadian, const Float3 &sumTranslation, Float4x4 &targetMem )
+	{ return ::LinearAlgebra3D::OrientationMatrix( normalizedAxis, deltaRadian, sumTranslation, targetMem ); }
+
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem )
 	{ return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, targetMem ); }
 

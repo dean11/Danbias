@@ -1,5 +1,5 @@
 #include "Universe.h"
-#include "OysterCollision.h"
+#include "..\OysterCollision3D.h"
 
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::Memory;
@@ -29,6 +29,6 @@ bool Universe::Intersects( const ICollideable *target ) const
 	return true;
 }
 
-bool Sphere::Contains( const ICollideable *target ) const
+bool Universe::Contains( const ICollideable *target ) const
 { return true; } // universe contains everything
 
