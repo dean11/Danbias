@@ -9,9 +9,9 @@ namespace Oyster
 	{
 		struct ShaderEffects
 		{
-			static Oyster::Shader::ShaderEffect BasicSprite;
-			static Oyster::Shader::ShaderEffect Text2DEffect;
-			static Oyster::Shader::ShaderEffect ModelEffect;
+			static Oyster::Core::ShaderManager::ShaderEffect BasicSprite;
+			static Oyster::Core::ShaderManager::ShaderEffect Text2DEffect;
+			static Oyster::Core::ShaderManager::ShaderEffect ModelEffect;
 
 			static void Init();
 

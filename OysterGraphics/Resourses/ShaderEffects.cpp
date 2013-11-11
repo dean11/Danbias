@@ -4,16 +4,16 @@ namespace Oyster
 {
 	namespace Resources
 	{
-		Shader::ShaderEffect ShaderEffects::BasicSprite = Shader::ShaderEffect();
-		Shader::ShaderEffect ShaderEffects::Text2DEffect = Shader::ShaderEffect();
-		Shader::ShaderEffect ShaderEffects::ModelEffect = Shader::ShaderEffect();
+		Core::ShaderManager::ShaderEffect ShaderEffects::BasicSprite = Core::ShaderManager::ShaderEffect();
+		Core::ShaderManager::ShaderEffect ShaderEffects::Text2DEffect = Core::ShaderManager::ShaderEffect();
+		Core::ShaderManager::ShaderEffect ShaderEffects::ModelEffect = Core::ShaderManager::ShaderEffect();
 
 		void ShaderEffects::Init()
 		{
 			BasicSprite.IAStage.Topology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
-			BasicSprite.Shaders.Vertex = Oyster::Shader::Get::GetVertex("2D");
-			BasicSprite.Shaders.Geometry = Oyster::Shader::Get::GetGeometry("2D");
-			BasicSprite.Shaders.Pixel = Oyster::Shader::Get::GetPixel("Texture0");
+			BasicSprite.Shaders.Vertex = Oyster::Core::ShaderManager::Get::Vertex(L"2D");
+			BasicSprite.Shaders.Geometry = Oyster::Core::ShaderManager::Get::Geometry(L"2D");
+			BasicSprite.Shaders.Pixel = Oyster::Core::ShaderManager::Get::Pixel(L"Texture0");
 
 			D3D11_BLEND_DESC blendDesc;
 			blendDesc.AlphaToCoverageEnable=false;
@@ -38,16 +38,16 @@ namespace Oyster
 
 			ID3D11InputLayout* layout;
 
-			Oyster::Shader::CreateInputLayout(SpriteVertexDesc,1,Oyster::Shader::Get::GetVertex("2D"),layout);
+			Oyster::Core::ShaderManager::CreateInputLayout(SpriteVertexDesc,1,Oyster::Core::ShaderManager::Get::Vertex(L"2D"),layout);
 
 			BasicSprite.IAStage.Layout = layout;
 
 			Text2DEffect.IAStage.Topology=D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
-			Text2DEffect.Shaders.Vertex = Oyster::Shader::Get::GetVertex("Text");
-			Text2DEffect.Shaders.Geometry = Oyster::Shader::Get::GetGeometry("Text");
-			Text2DEffect.Shaders.Pixel = Oyster::Shader::Get::GetPixel("Texture0");
+			Text2DEffect.Shaders.Vertex = Oyster::Core::ShaderManager::Get::Vertex(L"Text");
+			Text2DEffect.Shaders.Geometry = Oyster::Core::ShaderManager::Get::Geometry(L"Text");
+			Text2DEffect.Shaders.Pixel = Oyster::Core::ShaderManager::Get::Pixel(L"Texture0");
 
-			Oyster::Shader::CreateInputLayout(Text2DDesc,3,Oyster::Shader::Get::GetVertex("Text"),layout);
+			Oyster::Core::ShaderManager::CreateInputLayout(Text2DDesc,3,Oyster::Core::ShaderManager::Get::Vertex(L"Text"),layout);
 			
 			Text2DEffect.IAStage.Layout = layout;
 
@@ -56,11 +56,11 @@ namespace Oyster
 			Text2DEffect.RenderStates.BlendState = blender;
 
 			ModelEffect.IAStage.Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			Oyster::Shader::CreateInputLayout(ModelDesc,3,Oyster::Shader::Get::GetVertex("OBJ"),layout);
+			Oyster::Core::ShaderManager::CreateInputLayout(ModelDesc,3,Oyster::Core::ShaderManager::Get::Vertex(L"OBJ"),layout);
 			ModelEffect.IAStage.Layout = layout;
 
-			ModelEffect.Shaders.Vertex = Oyster::Shader::Get::GetVertex("OBJ");
-			ModelEffect.Shaders.Pixel = Oyster::Shader::Get::GetPixel("OBJDEF");
+			ModelEffect.Shaders.Vertex = Oyster::Core::ShaderManager::Get::Vertex(L"OBJ");
+			ModelEffect.Shaders.Pixel = Oyster::Core::ShaderManager::Get::Pixel(L"OBJDEF");
 
 			Oyster::Buffer::BUFFER_INIT_DESC desc;
 	

@@ -21,38 +21,25 @@ namespace Oyster
 		public:
 			struct Setup
 			{
-				struct
-				{
-					bool InitWindow;
-					LPCSTR appname;
-					LPCSTR classname;
-					HINSTANCE hinstance;
-					int nCmdShow;
-					WNDPROC wProc;
-					bool ManageWindow;
-				}Window;
-				struct
-				{
-					int NrOfBuffers;
-					bool MSAA_Quality;
-					bool Fullscreen;
-					bool SingleThreaded;
-					bool Reference;
-					bool ForceDX11;
-					bool GenerateDepthStencil;
-					bool BindDefault;
-				}Common;
+				int NrOfBuffers;
+				bool MSAA_Quality;
+				bool Fullscreen;
+				bool SingleThreaded;
+				bool Reference;
+				bool ForceDX11;
+				bool GenerateDepthStencil;
+				bool BindDefault;
 				//all but Window params have Default Values
 				Setup()
 				{
-					Common.NrOfBuffers=1;
-					Common.MSAA_Quality = false;
-					Common.Fullscreen = true;
-					Common.SingleThreaded = true;
-					Common.Reference = false;
-					Common.ForceDX11 = false;
-					Common.GenerateDepthStencil = true;
-					Common.BindDefault = true;
+					NrOfBuffers=1;
+					MSAA_Quality = false;
+					Fullscreen = true;
+					SingleThreaded = true;
+					Reference = false;
+					ForceDX11 = false;
+					GenerateDepthStencil = true;
+					BindDefault = true;
 				}
 
 			};

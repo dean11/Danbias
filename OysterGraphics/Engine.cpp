@@ -72,24 +72,20 @@ bool Oyster::Engine::Init::CreateSwapChain(HWND Window,int NrofBuffers,bool MSAA
 
 bool Oyster::Engine::Init::FullInit(const Setup& setup)
 {
-	if(!Oyster::Engine::Init::Instance(setup.Common.SingleThreaded,setup.Common.Reference,setup.Common.ForceDX11))
+	if(!Oyster::Engine::Init::Instance(setup.SingleThreaded,setup.Reference,setup.ForceDX11))
 		return false;
-	if(setup.Window.InitWindow)
-		if(!Oyster::Engine::Init::InitializeWindow(setup.Window.appname,setup.Window.classname,setup.Window.hinstance,setup.Window.nCmdShow,setup.Window.wProc, true))
-			return false;
-	if(!Oyster::Engine::Init::CreateSwapChain(NULL,setup.Common.NrOfBuffers,setup.Common.MSAA_Quality,setup.Common.Fullscreen))
+	if(!Oyster::Engine::Init::CreateSwapChain(NULL,setup.NrOfBuffers,setup.MSAA_Quality,setup.Fullscreen))
 		return false;
-	if(!Oyster::Shader::InitShaders())
-		return false;
-	if(setup.Common.GenerateDepthStencil)
-		if(!CreateDepthStencil(setup.Common.MSAA_Quality))
+	/// \todo Add Init Shaders to full Init Process
+	if(setup.GenerateDepthStencil)
+		if(!CreateDepthStencil(setup.MSAA_Quality))
 			return false;
 	if(!CreateRenderTarget())
 		return false;
 	if(!Oyster::Render::Textbox::Init())
 		return false;
 	SetViewPort();
-	if(setup.Common.BindDefault)
+	if(setup.BindDefault)
 		Oyster::Engine::PrepareForRendering::BindRenderTargets(&instance.rtv,1,instance.depth);
 
 	instance.States.NrOfSamples = 14;
@@ -152,14 +148,14 @@ void Oyster::Engine::PrepareForRendering::Begin2DRender()
 {
 	Oyster::Resources::Buffers::V2DSprites.Apply();
 	Oyster::Resources::Buffers::CBufferGs.Apply();
-	Shader::SetShaderEffect(Oyster::Resources::ShaderEffects::BasicSprite);
+	Core::ShaderManager::SetShaderEffect(Oyster::Resources::ShaderEffects::BasicSprite);
 }
 
 void Oyster::Engine::PrepareForRendering::Begin2DTextRender()
 {
 	Oyster::Render::Textbox::TextBuffer.Apply();
 	Oyster::Resources::Buffers::CBufferGs.Apply();
-	Oyster::Shader::SetShaderEffect(Oyster::Resources::ShaderEffects::Text2DEffect);
+	Oyster::Core::ShaderManager::SetShaderEffect(Oyster::Resources::ShaderEffects::Text2DEffect);
 }
 
 
@@ -366,7 +362,7 @@ void Blur(int target)
 	Oyster::Engine::PrepareForRendering::BindUAV(&Oyster::Resources::PipeLineResourses::TempUav,1);
 
 	//dispatch blurr horizontal
-	Oyster::Shader::Set::SetCompute(Oyster::Shader::Get::GetCompute("BlurHorizontal"));
+	Oyster::Core::ShaderManager::Set::Compute(Oyster::Core::ShaderManager::Get::Compute(L"BlurHorizontal"));
 	Oyster::Core::DeviceContext->Dispatch(7,instance.sizeX,1);
 
 	//clean Pipeline
@@ -378,7 +374,7 @@ void Blur(int target)
 	Oyster::Engine::PrepareForRendering::BindUAV(&Oyster::Resources::PipeLineResourses::LightTarget[target],1);
 	
 	//dispatch blurr vertical
-	Oyster::Shader::Set::SetCompute(Oyster::Shader::Get::GetCompute("BlurVertical"));
+	Oyster::Core::ShaderManager::Set::Compute(Oyster::Core::ShaderManager::Get::Compute(L"BlurVertical"));
 	Oyster::Core::DeviceContext->Dispatch(instance.sizeY,5,1);
 
 	//clean Pipeline
@@ -443,7 +439,7 @@ void Oyster::Engine::Pipeline::Deffered_Lightning::NewFrame(const Float4& col, c
 void Oyster::Engine::Pipeline::Deffered_Lightning::BeginRenderGeometry()
 {
 	Oyster::Engine::PrepareForRendering::BindRenderTargets( Oyster::Resources::PipeLineResourses::GeometryTarget, 5 );
-	Oyster::Shader::SetShaderEffect( Oyster::Resources::ShaderEffects::ModelEffect );
+	Oyster::Core::ShaderManager::SetShaderEffect( Oyster::Resources::ShaderEffects::ModelEffect );
 }
 
 void Oyster::Engine::Pipeline::Deffered_Lightning::RenderGeometry(const Oyster::Render::Model* models,int count)
@@ -472,7 +468,7 @@ void Oyster::Engine::Pipeline::Deffered_Lightning::RenderLightning()
 	Oyster::Core::DeviceContext->CSSetShaderResources(0,5, Oyster::Resources::PipeLineResourses::GeometryOut);
 	Oyster::Resources::Buffers::CBufferPipelineCs.Apply();
 	Oyster::Core::DeviceContext->CSSetShaderResources( 6, 4, Oyster::Resources::PipeLineResourses::ComputeResources );
-	Oyster::Shader::Set::SetCompute( Oyster::Shader::Get::GetCompute("Pass0") );
+	Oyster::Core::ShaderManager::Set::Compute( Oyster::Core::ShaderManager::Get::Compute(L"Pass0") );
 
 	Oyster::Core::DeviceContext->Dispatch( 49, 36, 1 );
 
@@ -490,7 +486,7 @@ void Oyster::Engine::Pipeline::Deffered_Lightning::RenderLightning()
 
 	//prepare and render final pass
 	Oyster::Engine::PrepareForRendering::BindBackBufferAsUAV();
-	Oyster::Shader::Set::SetCompute( Oyster::Shader::Get::GetCompute("Pass1") );
+	Oyster::Core::ShaderManager::Set::Compute( Oyster::Core::ShaderManager::Get::Compute(L"Pass1") );
 	Oyster::Core::DeviceContext->CSSetShaderResources( 0, 4, Oyster::Resources::PipeLineResourses::LightOut );
 
 	Oyster::Core::DeviceContext->Dispatch( 49, 36, 1 );
