@@ -31,6 +31,7 @@ namespace Oyster { namespace Collision3D /// Contains a collection of 3D shapes 
 		const Type type;
 
 		ICollideable( Type type = Type_undefined );
+		virtual ~ICollideable();
 
 		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const = 0;
 		virtual bool Intersects( const ICollideable *target ) const = 0;

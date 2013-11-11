@@ -24,9 +24,9 @@ namespace Oyster { namespace Collision3D
 			{ class Plane leftPlane, rightPlane, bottomPlane, topPlane, nearPlane, farPlane; };
 		};
 
-		Frustrum( );
+		Frustrum();
 		Frustrum( const ::Oyster::Math::Float4x4 &viewProjection );
-		virtual ~Frustrum( );
+		virtual ~Frustrum();
 
 		Frustrum & operator = ( const Frustrum &frustrum );
 		Frustrum & operator = ( const ::Oyster::Math::Float4x4 &viewProjection );
