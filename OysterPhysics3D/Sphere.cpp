@@ -1,5 +1,5 @@
 #include "Sphere.h"
-#include "..\OysterCollision3D.h"
+#include "OysterCollision3D.h"
 
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math;

@@ -298,7 +298,7 @@ namespace LinearAlgebra3D
 		if( radian > 0 )
 		{
 			radian = ::std::sqrt( radian );
-			return OrientationMatrix( sumDeltaAngularAxis / radian, radian, targetMem );
+			return OrientationMatrix( sumDeltaAngularAxis / radian, radian, sumTranslation, targetMem );
 		}
 		else
 		{
@@ -353,13 +353,16 @@ namespace LinearAlgebra3D
 																   0, nearClip*c, 1 );
 	}
 
-	/*	Creates a perspective projection matrix designed for DirectX enviroment.
-		vertFoV; is the vertical field of vision in radians. (lookup FoV Hor+ )
-		aspect; is the screenratio width/height (example 16/9 or 16/10 )
-		nearClip: Distance to the nearClippingPlane
-		farClip: Distance to the farClippingPlane
-		targetMem; is set to a perspective transform matrix and then returned.
-	*/
+	/*******************************************************************
+	 * Creates a perspective projection matrix designed for DirectX enviroment.
+	 * @param vertFoV; is the vertical field of vision in radians. (lookup FoV Hor+ )
+	 * @param aspect; is the screenratio width/height (example 16/9 or 16/10 )
+	 * @param nearClip: Distance to the nearClippingPlane
+	 * @param farClip: Distance to the farClippingPlane
+	 * @param targetMem; is set to a perspective transform matrix and then returned.
+	 * @return targetMem
+	 * @test Compare with transposed D3D counterpart
+	 *******************************************************************/
 	template<typename ScalarType>
 	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &vertFoV, const ScalarType &aspect, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{ /** @todo TODO: not tested */

@@ -82,5 +82,7 @@ namespace Oyster { namespace Math3D
 	{ return ::LinearAlgebra3D::ProjectionMatrix_Perspective( verticalFoV, aspectRatio, nearClip, farClip, targetMem ); }
 
 	Float3 VectorProjection( const Float3 &vector, const Float3 &axis )
-	{ return ::LinearAlgebra3D::VectorProjection( vector, axis ); }
+	{
+		return ::LinearAlgebra3D::VectorProjection( vector, axis );
+	}
 } }

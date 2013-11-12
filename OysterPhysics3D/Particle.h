@@ -6,8 +6,8 @@
 #define OYSTER_PHYSICS_3D_PARTICLE_H
 
 #include "OysterMath.h"
-#include "..\OysterCollision3D.h"
-#include "..\OysterPhysics3D.h"
+#include "OysterCollision3D.h"
+#include "OysterPhysics3D.h"
 
 namespace Oyster { namespace Physics3D
 {

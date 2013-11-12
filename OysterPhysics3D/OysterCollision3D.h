@@ -6,17 +6,17 @@
 #ifndef OYSTER_COLLISION_3D_UTILITY_H
 #define OYSTER_COLLISION_3D_UTILITY_H
 
-#include "Collision\ICollideable.h"
-#include "Collision\Universe.h"
-#include "Collision\Point.h"
-#include "Collision\Ray.h"
-#include "Collision\Sphere.h"
-#include "Collision\Plane.h"
-//#include "Collision\Triangle.h"
-#include "Collision\BoxAxisAligned.h"
-#include "Collision\Box.h"
-#include "Collision\Frustrum.h"
-#include "Collision\Line.h"
+#include "ICollideable.h"
+#include "Universe.h"
+#include "Point.h"
+#include "Ray.h"
+#include "Sphere.h"
+#include "Plane.h"
+//#include "Triangle.h"
+#include "BoxAxisAligned.h"
+#include "Box.h"
+#include "Frustrum.h"
+#include "Line.h"
 
 namespace Oyster { namespace Collision3D { namespace Utility
 {

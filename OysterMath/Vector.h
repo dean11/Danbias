@@ -179,7 +179,7 @@ namespace LinearAlgebra
 
 // Vector2<ScalarType> ///////////////////////////////////////
 
-	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::null = Vector2<ScalarType>( );
+	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::null = Vector2<ScalarType>( 0, 0 );
 	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_x = Vector2<ScalarType>( 1, 0 );
 	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_y = Vector2<ScalarType>( 0, 1 );
 
@@ -337,7 +337,7 @@ namespace LinearAlgebra
 
 // Vector3<ScalarType> ///////////////////////////////////////
 
-	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::null = Vector3<ScalarType>( );
+	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::null = Vector3<ScalarType>( 0, 0, 0 );
 	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_x = Vector3<ScalarType>( 1, 0, 0 );
 	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_y = Vector3<ScalarType>( 0, 1, 0 );
 	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_z = Vector3<ScalarType>( 0, 0, 1 );
@@ -509,7 +509,7 @@ namespace LinearAlgebra
 
 // Vector4<ScalarType> ///////////////////////////////////////
 
-	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::null = Vector4<ScalarType>( );
+	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::null = Vector4<ScalarType>( 0, 0, 0, 0 );
 	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_x = Vector4<ScalarType>( 1, 0, 0, 0 );
 	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_y = Vector4<ScalarType>( 0, 1, 0, 0 );
 	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_z = Vector4<ScalarType>( 0, 0, 1, 0 );

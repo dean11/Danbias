@@ -6,7 +6,7 @@
 #define OYSTER_PHYSICS_3D_FLUID_DRAG_H
 
 #include "OysterMath.h"
-#include "..\OysterPhysics3D.h"
+#include "OysterPhysics3D.h"
 
 namespace Oyster { namespace Physics3D
 {

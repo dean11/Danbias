@@ -144,6 +144,9 @@
       <Project>{4285bd3f-3c6c-4670-b7af-a29afef5f6a8}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\GamePhysics.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

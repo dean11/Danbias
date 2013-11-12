@@ -27,100 +27,100 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Collision\Box.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\BoxAxisAligned.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Frustrum.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Line.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Plane.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Point.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Ray.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Sphere.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\Universe.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\OysterCollision3D.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\FluidDrag.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\Particle.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\RigidBody.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics\Spring.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\ICollideable.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Collision\Box.h">
+    <ClInclude Include="Universe.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\BoxAxisAligned.h">
+    <ClInclude Include="Box.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\Frustrum.h">
+    <ClInclude Include="BoxAxisAligned.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\ICollideable.h">
+    <ClInclude Include="Frustrum.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\Line.h">
+    <ClInclude Include="ICollideable.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\Plane.h">
+    <ClInclude Include="Line.h">
       <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\Point.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\Ray.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\Sphere.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\Universe.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\FluidDrag.h">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\Particle.h">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\RigidBody.h">
-      <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\Spring.h">
-      <Filter>Header Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="OysterCollision3D.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Spring.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidDrag.h">
+      <Filter>Header Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="OysterPhysics3D.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Box.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxAxisAligned.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustrum.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="ICollideable.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="OysterCollision3D.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Ray.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Universe.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidDrag.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Spring.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

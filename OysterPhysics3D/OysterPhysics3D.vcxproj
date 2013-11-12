@@ -138,47 +138,47 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Collision\Box.cpp" />
-    <ClCompile Include="Collision\BoxAxisAligned.cpp" />
-    <ClCompile Include="Collision\ICollideable.cpp" />
-    <ClCompile Include="Collision\OysterCollision3D.cpp" />
-    <ClCompile Include="Collision\Frustrum.cpp" />
-    <ClCompile Include="Collision\Line.cpp" />
-    <ClCompile Include="Collision\Plane.cpp" />
-    <ClCompile Include="Collision\Point.cpp" />
-    <ClCompile Include="Collision\Ray.cpp" />
-    <ClCompile Include="Collision\Sphere.cpp" />
-    <ClCompile Include="Collision\Universe.cpp" />
-    <ClCompile Include="Physics\FluidDrag.cpp" />
-    <ClCompile Include="Physics\Particle.cpp" />
-    <ClCompile Include="Physics\RigidBody.cpp" />
-    <ClCompile Include="Physics\Spring.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Collision\Box.h" />
-    <ClInclude Include="Collision\BoxAxisAligned.h" />
-    <ClInclude Include="Collision\Frustrum.h" />
-    <ClInclude Include="Collision\ICollideable.h" />
-    <ClInclude Include="Collision\Line.h" />
-    <ClInclude Include="Collision\Plane.h" />
-    <ClInclude Include="Collision\Point.h" />
-    <ClInclude Include="Collision\Ray.h" />
-    <ClInclude Include="Collision\Sphere.h" />
-    <ClInclude Include="Collision\Universe.h" />
-    <ClInclude Include="OysterCollision3D.h" />
-    <ClInclude Include="OysterPhysics3D.h" />
-    <ClInclude Include="Physics\FluidDrag.h" />
-    <ClInclude Include="Physics\Particle.h" />
-    <ClInclude Include="Physics\RigidBody.h" />
-    <ClInclude Include="Physics\Spring.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Misc\Misc.vcxproj">
       <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
     </ProjectReference>
     <ProjectReference Include="..\OysterMath\OysterMath.vcxproj">
       <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="BoxAxisAligned.h" />
+    <ClInclude Include="FluidDrag.h" />
+    <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="ICollideable.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="OysterCollision3D.h" />
+    <ClInclude Include="OysterPhysics3D.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Spring.h" />
+    <ClInclude Include="Universe.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BoxAxisAligned.cpp" />
+    <ClCompile Include="FluidDrag.cpp" />
+    <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="ICollideable.cpp" />
+    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="OysterCollision3D.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Spring.cpp" />
+    <ClCompile Include="Universe.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

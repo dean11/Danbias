@@ -2,7 +2,7 @@
 // Created by Dan Andersson 2013
 /////////////////////////////////////////////////////////////////////
 
-#include "..\OysterCollision3D.h"
+#include "OysterCollision3D.h"
 #include "Utilities.h"
 #include <limits>
 
