@@ -124,7 +124,7 @@ namespace Utility
 		}
 
 		template<typename Type>
-		UniqueArray<Type> & UniqueArray<Type>::operator = ( const UniquePointer<Type> &donor )
+		UniqueArray<Type> & UniqueArray<Type>::operator = ( const UniqueArray<Type> &donor )
 		{
 			SafeDeleteArray( this->ownedArray );
 			this->ownedArray = donor.ownedInstance;
@@ -132,13 +132,13 @@ namespace Utility
 		}
 
 		template<typename Type> template<typename Index>
-		template<typename Index> Type & UniqueArray<Type>::operator [] ( Index i )
+		Type & UniqueArray<Type>::operator [] ( Index i )
 		{
 			return this->ownedArray[i];
 		}
 
 		template<typename Type> template<typename Index>
-		template<typename Index> const Type & UniqueArray<Type>::operator [] ( Index i ) const
+		const Type & UniqueArray<Type>::operator [] ( Index i ) const
 		{
 			return this->ownedArray[i];
 		}
