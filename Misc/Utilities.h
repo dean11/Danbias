@@ -245,4 +245,6 @@ namespace Utility
 	}
 }
 
+#include "Utilities-InlineImpl.h"
+
 #endif
