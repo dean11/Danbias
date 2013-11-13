@@ -142,6 +142,7 @@
     <ClCompile Include="WinTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Utilities-InlineImpl.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="WinTimer.h" />
   </ItemGroup>

@@ -3,7 +3,6 @@
 // © Dan Andersson 2013
 /////////////////////////////////////////////////////////////////////
 
-#pragma once
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
@@ -15,100 +14,97 @@
 
 namespace Utility
 {
-	namespace Memory
+	namespace DynamicMemory
 	{
+		/// If dynamicInstance is not NULL, then delete
+		template<typename Type> void SafeDeleteInstance( Type *dynamicInstance );
+
+		/// If dynamicArray is not NULL, then delete []
+		template<typename Type> void SafeDeleteArray( Type dynamicArray[] );
+
 		template<typename Type>
 		struct UniquePointer
-		{
+		{ /// Wrapper to safely transfer dynamic ownership/responsibility
 		public:
-			UniquePointer( Type *assignedMemory = NULL );
+			/// Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
+			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
+			UniquePointer( Type *assignedInstance = NULL );
+
+			/// Will auto delete assigned dynamic instance.
 			~UniquePointer();
 
-			UniquePointer<Type> & operator = ( Type *assignedMemory );
+			/// Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
+			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
+			UniquePointer<Type> & operator = ( Type *assignedInstance );
+
+			/// Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			/// If donor had nothing, is equavalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer<Type> & operator = ( const UniquePointer<Type> &donor );
 
+			/// Access the assigned dynamic instance. Will crash if nothing there
 			operator Type* ();
-			operator const Type* () const;
-			Type * operator -> ();
-			const Type * operator -> () const;
-			template<typename Index> Type & operator [] ( Index i );
-			template<typename Index> const Type & operator [] ( Index i ) const;
 
+			/// Access the assigned dynamic instance. Will crash if nothing there
+			operator const Type* () const;
+			
+			/// Access members of the assigned dynamic instance. Will crash if nothing there
+			Type * operator -> ();
+			
+			/// Access members of the assigned dynamic instance. Will crash if nothing there
+			const Type * operator -> () const;
+
+			/// If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
 			operator bool () const;
 
+			/// This UniquePointer drops all claims of ownership/responsibility and returns the dynamic instance. Now it is your responsibility to delete.
 			Type* Release();
-			bool haveOwnership() const;
-
+			
+			/// (inline) If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			bool HaveOwnership() const;
+			
 		private:
-			mutable Type *ownedMemory;
+			mutable Type *ownedInstance;
 		};
 
-		// IMPLEMENTATIONS ////////////////////////////////////////////////
-
 		template<typename Type>
-		UniquePointer<Type>::UniquePointer( Type *assignedMemory )
-		{ this->ownedMemory = assignedMemory; }
+		struct UniqueArray
+		{ /// Wrapper to safely transfer dynamic ownership/responsibility
+		public:
+			/// Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
+			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
+			UniqueArray( Type assignedArray[] = NULL );
+			
+			/// Will auto delete assigned dynamic array.
+			~UniqueArray();
 
-		template<typename Type>
-		UniquePointer<Type>::~UniquePointer()
-		{ if( this->ownedMemory ) delete this->ownedMemory; }
+			/// Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
+			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
+			UniqueArray<Type> & operator = ( Type assignedArray[] );
+			
+			/// Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			/// If donor had nothing, is equavalent with clearing all responsibilities from this UniqueArray.
+			UniqueArray<Type> & operator = ( const UniqueArray<Type> &donor );
 
-		template<typename Type>
-		UniquePointer<Type> & UniquePointer<Type>::operator = ( Type *assignedMemory )
-		{
-			if( this->ownedPointer ) delete this->ownedMemory;
-			this->ownedMemory = assignedMemory;
-			return *this;
-		}
+			/// Accesses the instance at index i of this UniqeArray's owned dynamic array.
+			/// Will crash if out-of-bound or there is no assigned array.
+			template<typename Index> Type & operator [] ( Index i );
+			
+			/// Accesses the instance at index i of this UniqeArray's owned dynamic array.
+			/// Will crash if out-of-bound or there is no assigned array.
+			template<typename Index> const Type & operator [] ( Index i ) const;
 
-		template<typename Type>
-		UniquePointer<Type> & UniquePointer<Type>::operator = ( const UniquePointer<Type> &donor )
-		{
-			if( this->ownedMemory ) delete this->ownedMemory;
-			this->ownedMemory = donor.ownedMemory;
-			donor.ownedMemory = NULL;
-			return *this;
-		}
+			/// If true, this UniqueArray have a current ownership/responsibility of a dynamic instance.
+			operator bool () const;
 
-		template<typename Type>
-		UniquePointer<Type>::operator Type* ()
-		{ return this->ownedMemory; }
+			/// This UniqueArray drops all claims of ownership/responsibility and returns the dynamic array. Now it is your responsibility to delete.
+			Type* Release();
 
-		template<typename Type>
-		UniquePointer<Type>::operator const Type* () const
-		{ return this->ownedMemory; }
+			/// (inline) If true, this UniqueArray have a current ownership/responsibility of a dynamic array.
+			bool HaveOwnership() const;
 
-		template<typename Type>
-		Type * UniquePointer<Type>::operator -> ()
-		{ return this->ownedMemory; }
-
-		template<typename Type>
-		const Type * UniquePointer<Type>::operator -> () const
-		{ return this->ownedMemory; }
-
-		template<typename Type> template<typename Index>
-		Type & UniquePointer<Type>::operator [] ( Index i )
-		{ return this->ownedMemory[i]; }
-
-		template<typename Type> template<typename Index>
-		const Type & UniquePointer<Type>::operator [] ( Index i ) const
-		{ return this->ownedMemory[i]; }
-
-		template<typename Type>
-		UniquePointer<Type>::operator bool() const
-		{ return this->ownedMemory != NULL; }
-
-		template<typename Type>
-		Type* UniquePointer<Type>::Release()
-		{
-			Type *copy = this->ownedMemory;
-			this->ownedMemory = NULL;
-			return copy;
-		}
-		
-		template<typename Type>
-		inline bool UniquePointer<Type>::haveOwnership() const
-		{ return this->operator bool(); }
+		private:
+			mutable Type *ownedArray;
+		};
 	}
 
 	namespace String
