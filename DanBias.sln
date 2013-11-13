@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameLogic", "GameLogic\Game
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GamePhysics", "GamePhysics\GamePhysics.vcxproj", "{104FA3E9-94D9-4E1D-A941-28A03BC8A095}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tester", "Tester\Tester.vcxproj", "{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -178,6 +180,16 @@ Global
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Release|Win32.ActiveCfg = Release|Win32
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Release|Win32.Build.0 = Release|Win32
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Release|x64.ActiveCfg = Release|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Debug|Win32.Build.0 = Debug|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Debug|x64.ActiveCfg = Debug|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|Win32.ActiveCfg = Release|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|Win32.Build.0 = Release|Win32
+		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

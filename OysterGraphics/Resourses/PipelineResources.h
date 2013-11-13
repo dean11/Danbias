@@ -43,7 +43,7 @@ namespace Oyster
 			static ID3D11ShaderResourceView* SrvNulls[16];
 			static ID3D11UnorderedAccessView* uavNULL[16];
 
-			static Oyster::Collision3D::Frustrum* SubFrustrums;
+			//static Oyster::Collision3D::Frustrum* SubFrustrums;
 			static int FrustrumSize;
 			static LinearAlgebra::Vector3<unsigned int> FrustrumDimensions;
 

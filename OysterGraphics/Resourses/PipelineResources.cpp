@@ -18,7 +18,7 @@ ID3D11RenderTargetView* PipeLineResourses::RtvNulls[16] = {0};
 ID3D11ShaderResourceView* PipeLineResourses::SrvNulls[16] = {0};
 ID3D11UnorderedAccessView* PipeLineResourses::uavNULL[16] = {0};
 
-Oyster::Collision3D::Frustrum* PipeLineResourses::SubFrustrums = 0;
+//Oyster::Collision3D::Frustrum* PipeLineResourses::SubFrustrums = 0;
 int PipeLineResourses::FrustrumSize = 0;
 LinearAlgebra::Vector3<unsigned int> PipeLineResourses::FrustrumDimensions = LinearAlgebra::Vector3<unsigned int>();
 
@@ -143,9 +143,9 @@ void PipeLineResourses::InitSubFrustrums(int sizeX, int sizeY)
 	FrustrumDimensions.y = (sizeY + 15U) / 16U;
 	FrustrumDimensions.z = 1;
 	FrustrumSize = FrustrumDimensions.x * FrustrumDimensions.y * FrustrumDimensions.z;
-	if(SubFrustrums!=0)
-		delete[] SubFrustrums;
-	SubFrustrums = new Collision3D::Frustrum[ FrustrumSize ];
+	//if(SubFrustrums!=0)
+		//delete[] SubFrustrums;
+	//SubFrustrums = new Collision3D::Frustrum[ FrustrumSize ];
 
 	Oyster::Buffer::BUFFER_INIT_DESC desc;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;

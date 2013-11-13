@@ -1,0 +1,16 @@
+﻿Build started 11/13/2013 10:26:50 AM.
+     1>Project "C:\DanBias\Danbias\Tester\Tester.vcxproj" on node 4 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\OysterGraphics /I..\OysterMath /I..\Misc /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt MainTest.cpp
+         MainTest.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\DanBias\Danbias\Debug\Tester.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\DanBias\Danbias\Debug\Tester.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\DanBias\Danbias\Debug\Tester.lib" /MACHINE:X86 Debug\MainTest.obj
+         C:\DanBias\External\Lib\Misc\Misc_x86D.lib
+         C:\DanBias\External\Lib\OysterMath\OysterMath_x86D.lib
+         C:\DanBias\External\Lib\OysterGraphics\OysterGraphics_x86D.lib
+         Tester.vcxproj -> C:\DanBias\Danbias\Debug\Tester.exe
+     1>Done Building Project "C:\DanBias\Danbias\Tester\Tester.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.51

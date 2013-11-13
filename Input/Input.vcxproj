@@ -137,18 +137,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="InputCallbackHandler.cpp" />
-    <ClCompile Include="InputDeviceControll.cpp" />
-    <ClCompile Include="InputSubscribe.cpp" />
-    <ClCompile Include="InputSystem.cpp" />
-    <ClCompile Include="Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="misc.h" />
-    <ClInclude Include="RawInput_Impl.h" />
-    <ClInclude Include="RawInput.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

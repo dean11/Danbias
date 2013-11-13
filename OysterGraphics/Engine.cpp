@@ -412,7 +412,7 @@ void Oyster::Engine::Pipeline::Deffered_Lightning::NewFrame(const Float4& col, c
 	Oyster::Resources::PipeLineResourses::LightData.projectionMatrix = P.GetTranspose();
 	Oyster::Resources::PipeLineResourses::LightData.viewMatrix = V;
 
-	Oyster::Collision3D::Frustrum( VP ).Split(Oyster::Resources::PipeLineResourses::SubFrustrums, Oyster::Resources::PipeLineResourses::FrustrumDimensions.x, Oyster::Resources::PipeLineResourses::FrustrumDimensions.y, Oyster::Resources::PipeLineResourses::FrustrumDimensions.z );
+	//Oyster::Collision3D::Frustrum( VP ).Split(Oyster::Resources::PipeLineResourses::SubFrustrums, Oyster::Resources::PipeLineResourses::FrustrumDimensions.x, Oyster::Resources::PipeLineResourses::FrustrumDimensions.y, Oyster::Resources::PipeLineResourses::FrustrumDimensions.z );
 
 	void* dest = Oyster::Resources::ShaderEffects::ModelEffect.CBuffers.Vertex[0]->Map();
 	memcpy(dest,&VP.GetTranspose(),64);
@@ -426,7 +426,7 @@ void Oyster::Engine::Pipeline::Deffered_Lightning::NewFrame(const Float4& col, c
 	unsigned int bytes=0;
 	for(int i=0;i<Oyster::Resources::PipeLineResourses::FrustrumSize;++i)
 	{
-		Oyster::Resources::PipeLineResourses::SubFrustrums[i].WriteToByte( (unsigned char*)dest,bytes);
+		//Oyster::Resources::PipeLineResourses::SubFrustrums[i].WriteToByte( (unsigned char*)dest,bytes);
 	}
 	Oyster::Resources::PipeLineResourses::Resources[0]->Unmap();
 

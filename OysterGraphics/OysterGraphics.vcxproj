@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -172,9 +172,6 @@
     </ProjectReference>
     <ProjectReference Include="..\OysterMath\OysterMath.vcxproj">
       <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OysterPhysics3D\OysterPhysics3D.vcxproj">
-      <Project>{4285bd3f-3c6c-4670-b7af-a29afef5f6a8}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
