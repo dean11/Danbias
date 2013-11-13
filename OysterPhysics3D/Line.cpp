@@ -20,8 +20,8 @@ Line & Line::operator = ( const Line &line )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Line::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Line(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Line::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Line(*this) ); }
 
 bool Line::Intersects( const ICollideable *target ) const
 {

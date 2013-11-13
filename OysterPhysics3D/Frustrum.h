@@ -37,7 +37,7 @@ namespace Oyster { namespace Collision3D
 		void Split( Frustrum targetList[], unsigned int numX, unsigned int numY = 1U, unsigned int numZ = 1u ) const; /// DEPRECATED
 		void WriteToByte( unsigned char targetMem[], unsigned int &nextIndex ) const; /// DEPRECATED
 
-		virtual ::Utility::Memory::UniquePointer<ICollideable> Clone( ) const;
+		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable *target ) const;
 		bool Contains( const ICollideable *target ) const;
 	};

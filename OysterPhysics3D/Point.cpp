@@ -18,8 +18,8 @@ Point & Point::operator = ( const Point &point )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Point::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Point(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Point::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Point(*this) ); }
 
 bool Point::Intersects( const ICollideable *target ) const
 {

@@ -19,8 +19,8 @@ Box & Box::operator = ( const Box &box )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Box::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Box(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Box::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Box(*this) ); }
 
 bool Box::Intersects( const ICollideable *target ) const
 {

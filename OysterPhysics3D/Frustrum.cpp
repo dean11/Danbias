@@ -188,8 +188,8 @@ void Frustrum::WriteToByte( unsigned int &nextIndex, unsigned char targetMem[] )
 	nextIndex += 6 * ::Utility::StaticArray::NumElementsOf( this->plane[0].byte );
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Frustrum::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Frustrum(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Frustrum::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Frustrum(*this) ); }
 
 bool Frustrum::Intersects( const ICollideable *target ) const
 {

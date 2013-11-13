@@ -2,7 +2,7 @@
 #include "OysterCollision3D.h"
 
 using namespace ::Oyster::Collision3D;
-using namespace ::Utility::Memory;
+using namespace ::Utility::DynamicMemory;
 
 Universe::Universe() : ICollideable(Type_universe) {}
 Universe::~Universe() {}

@@ -19,8 +19,8 @@ Ray & Ray::operator = ( const Ray &ray )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Ray::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Ray(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Ray::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Ray(*this) ); }
 
 bool Ray::Intersects( const ICollideable *target ) const
 {

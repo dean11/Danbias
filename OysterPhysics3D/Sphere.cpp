@@ -15,8 +15,8 @@ Sphere & Sphere::operator = ( const Sphere &sphere )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Sphere::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Sphere(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Sphere::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Sphere(*this) ); }
 
 bool Sphere::Intersects( const ICollideable *target ) const
 {
