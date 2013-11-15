@@ -93,4 +93,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\HLSL\SimpleDebug\DebugVertex.hlsl" />
+    <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl" />
+  </ItemGroup>
 </Project>

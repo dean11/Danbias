@@ -29,6 +29,7 @@ namespace Oyster
 				bool ForceDX11;
 				bool GenerateDepthStencil;
 				bool BindDefault;
+				HWND window;
 				//all but Window params have Default Values
 				Setup()
 				{

@@ -74,7 +74,7 @@ bool Oyster::Engine::Init::FullInit(const Setup& setup)
 {
 	if(!Oyster::Engine::Init::Instance(setup.SingleThreaded,setup.Reference,setup.ForceDX11))
 		return false;
-	if(!Oyster::Engine::Init::CreateSwapChain(NULL,setup.NrOfBuffers,setup.MSAA_Quality,setup.Fullscreen))
+	if(!Oyster::Engine::Init::CreateSwapChain(setup.window,setup.NrOfBuffers,setup.MSAA_Quality,setup.Fullscreen))
 		return false;
 	/// \todo Add Init Shaders to full Init Process
 	if(setup.GenerateDepthStencil)

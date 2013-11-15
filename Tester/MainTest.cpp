@@ -134,8 +134,56 @@ HRESULT InitDirect3D()
 	Oyster::Engine::Init::Setup setup;
 	setup.Fullscreen = false;
 	setup.ForceDX11 = true;
+	setup.SingleThreaded = true;
+	setup.window = g_hWnd;
 
 	Oyster::Engine::Init::FullInit( setup );
+
+	std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
+	std::wstring EffectPath = L"SimpleDebug\\";
+
+	Oyster::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
+	Oyster::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Core::ShaderManager::ShaderType::Vertex,L"Debug",false);
+
+	Oyster::Core::ShaderManager::Set::Vertex(Oyster::Core::ShaderManager::Get::Vertex(L"Debug"));
+	Oyster::Core::ShaderManager::Set::Pixel(Oyster::Core::ShaderManager::Get::Pixel(L"Debug"));
+
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	ID3D11InputLayout* layout;
+
+	Oyster::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Core::ShaderManager::Get::Vertex(L"Debug"), layout);
+
+	Oyster::Core::DeviceContext->IASetInputLayout(layout);
+	Oyster::Core::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	Oyster::Engine::PrepareForRendering::BindBackBuffer();
+	
+	struct float4
+	{
+		float x,y,z,w;
+	};
+
+	float4 mesh[] =
+	{
+		{-1.0f,1.0f,0.0f,1.0f},
+		{1.0f,1.0f,0.0f,1.0f},
+		{1.0f,-1.0f,0.0f,1.0f},
+	};
+
+	Oyster::Buffer::BUFFER_INIT_DESC desc;
+	desc.ElementSize= sizeof(float4);
+	desc.NumElements = 3;
+	desc.InitData=mesh;
+	desc.Type = Oyster::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	desc.Usage = Oyster::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
+
+	Oyster::Buffer b;
+	b.Init(desc);
+	b.Apply(0);
 
 	return S_OK;
 }
@@ -147,7 +195,11 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	
+	Oyster::Engine::PrepareForRendering::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
+
+	Oyster::Core::DeviceContext->Draw(3,0);
+
+	Oyster::Core::SwapChain->Present(0,0);
 
 	return S_OK;
 }
