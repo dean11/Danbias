@@ -1,7 +1,7 @@
 #include "Core.h"
 #include <fstream>
 
-const char* ShaderFunction = "ShaderMain";
+const char* ShaderFunction = "main";
 
 namespace Oyster
 {
