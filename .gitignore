@@ -20,3 +20,10 @@
 *.ipch
 *.lib
 *.exe
+*.tlog
+
+
+Bin/Content/
+Bin/Executable/
+Obj/
+External/
