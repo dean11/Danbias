@@ -58,6 +58,15 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
+		 * Returns the local angular momentum of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float3 AngularMomentum( const ::Oyster::Math::Float3 linearMomentum, const ::Oyster::Math::Float3 &offset )
+		{
+			return offset.Cross( linearMomentum );
+		}
+
+		/******************************************************************
 		 * Returns the local tangential momentum at localPos, of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
@@ -160,7 +169,7 @@ namespace Oyster { namespace Physics3D
 		 * 
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float3 & offset, const ::Oyster::Math::Float3 &impulseForce )
+		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float3 & impulseForce, const ::Oyster::Math::Float3 &offset )
 		{
 			return offset.Cross( impulseForce );
 		}

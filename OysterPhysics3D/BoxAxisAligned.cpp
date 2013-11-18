@@ -21,8 +21,8 @@ BoxAxisAligned & BoxAxisAligned::operator = ( const BoxAxisAligned &box )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> BoxAxisAligned::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new BoxAxisAligned(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> BoxAxisAligned::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new BoxAxisAligned(*this) ); }
 
 bool BoxAxisAligned::Intersects( const ICollideable *target ) const
 {

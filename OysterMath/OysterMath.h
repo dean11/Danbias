@@ -183,6 +183,10 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem = Float4x4() );
 
+	// O0 = T0 * R0
+	// O1 = T1 * T0 * R1 * R0
+	Float4x4 & UpdateOrientationMatrix( const Float3 &deltaPosition, const Float4x4 &deltaRotationMatrix, Float4x4 &orientationMatrix );
+
 	/*******************************************************************
 	 *	Creates an orthographic projection matrix designed for DirectX enviroment.
 	 *	@param width; of the projection sample volume.

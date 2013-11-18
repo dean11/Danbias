@@ -29,5 +29,8 @@
     <ClInclude Include="WinTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utilities-InlineImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

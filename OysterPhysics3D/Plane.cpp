@@ -19,8 +19,8 @@ Plane & Plane::operator = ( const Plane &plane )
 	return *this;
 }
 
-::Utility::Memory::UniquePointer<ICollideable> Plane::Clone( ) const
-{ return ::Utility::Memory::UniquePointer<ICollideable>( new Plane(*this) ); }
+::Utility::DynamicMemory::UniquePointer<ICollideable> Plane::Clone( ) const
+{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Plane(*this) ); }
 
 bool Plane::Intersects( const ICollideable *target ) const
 {

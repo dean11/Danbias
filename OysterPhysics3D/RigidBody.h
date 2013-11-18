@@ -96,7 +96,7 @@ namespace Oyster { namespace Physics3D
 		void SetSize( const ::Oyster::Math::Float3 &widthHeight );
 		void SetCenter( const ::Oyster::Math::Float3 &p );
 		
-		void SetImpulsTorque( const ::Oyster::Math::Float3 &t );
+		void SetImpulseTorque( const ::Oyster::Math::Float3 &t );
 		void SetAngularMomentum( const ::Oyster::Math::Float3 &h );
 		void SetAngularImpulseAcceleration( const ::Oyster::Math::Float3 &a );
 		void SetAngularVelocity( const ::Oyster::Math::Float3 &w );

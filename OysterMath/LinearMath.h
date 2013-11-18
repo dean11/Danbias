@@ -336,6 +336,19 @@ namespace LinearAlgebra3D
 																   0, 0, 0, 1 );
 	}
 
+	// O0 = T0 * R0
+	// O1 = T1 * T0 * R1 * R0
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & UpdateOrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &deltaPosition, const ::LinearAlgebra::Matrix4x4<ScalarType> &deltaRotationMatrix, ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
+	{
+		::LinearAlgebra::Vector3<ScalarType> position = deltaPosition + orientationMatrix.v[3].xyz;
+		orientationMatrix.v[3].xyz = ::LinearAlgebra::Vector3<ScalarType>::null;
+
+		orientationMatrix = deltaRotationMatrix * orientationMatrix;
+		orientationMatrix.v[3].xyz = position;
+		return orientationMatrix;
+	}
+
 	/*	Creates an orthographic projection matrix designed for DirectX enviroment.
 		width; of the projection sample volume.
 		height; of the projection sample volume.
