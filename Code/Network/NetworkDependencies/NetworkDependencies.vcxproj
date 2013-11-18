@@ -138,23 +138,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="EventStructs.h" />
-    <ClInclude Include="Network.h" />
-    <ClInclude Include="NetworkConstants.h" />
-    <ClInclude Include="NetworkIncludes.h" />
-    <ClInclude Include="NetworkInitStructs.h" />
-    <ClInclude Include="NetworkMiscFunctions.h" />
-    <ClInclude Include="NetworkTimer.h" />
-    <ClInclude Include="NetworkUpdateStructs.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Event.cpp" />
-    <ClCompile Include="NetworkMiscFunctions.cpp" />
-    <ClCompile Include="NetworkTimer.cpp" />
-    <ClCompile Include="UpdateStructs.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Misc\Misc.vcxproj">
       <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
     </ProjectReference>
@@ -166,6 +149,9 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
