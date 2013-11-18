@@ -21,6 +21,8 @@
 *.lib
 *.exe
 *.tlog
+*.vcxproj
+*.filters
 
 
 Bin/Content/
