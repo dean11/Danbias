@@ -75,6 +75,9 @@ namespace Oyster { namespace Math3D
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem )
 	{ return ::LinearAlgebra3D::InverseOrientationMatrix( orientationMatrix, targetMem ); }
 
+	Float4x4 & UpdateOrientationMatrix( const Float3 &deltaPosition, const Float4x4 &deltaRotationMatrix, Float4x4 &orientationMatrix )
+	{ return ::LinearAlgebra3D::UpdateOrientationMatrix( deltaPosition, deltaRotationMatrix, orientationMatrix ); }
+
 	Float4x4 & ProjectionMatrix_Orthographic( const Float &width, const Float &height, const Float &nearClip, const Float &farClip, Float4x4 &targetMem )
 	{ return ::LinearAlgebra3D::ProjectionMatrix_Orthographic( width, height, nearClip, farClip, targetMem ); }
 
