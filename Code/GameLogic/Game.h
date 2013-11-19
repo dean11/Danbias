@@ -14,10 +14,13 @@ namespace GameLogic
 		~Game(void);
 
 		void Init();
+		void StartGame();
+
+		void Update();
+		
 	private:
 		Level *level;
 		Player *player;
-
 
 	};
 }

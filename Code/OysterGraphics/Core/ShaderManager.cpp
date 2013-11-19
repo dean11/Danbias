@@ -149,7 +149,6 @@ namespace Oyster
 			}
 			if(FAILED(Oyster::Core::Device->CreatePixelShader(Shader->GetBufferPointer(),Shader->GetBufferSize(),NULL,&pixel)))
 			{
-				Error->Release();
 				Shader->Release();
 				return false;
 			}
@@ -205,7 +204,6 @@ namespace Oyster
 			}
 			if(FAILED(Oyster::Core::Device->CreateVertexShader(Shader->GetBufferPointer(),Shader->GetBufferSize(),NULL,&vertex)))
 			{
-				Error->Release();
 				Shader->Release();
 				return false;
 			}
