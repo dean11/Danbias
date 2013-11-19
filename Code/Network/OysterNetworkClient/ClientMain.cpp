@@ -59,9 +59,14 @@ void chat(Client client)
 	{
 		client.Recv(msgRecv);
 
-		cout<< "Server: " << msgRecv << endl;
+		cout<< "Client 2: " << msgRecv << endl;
 
 		cin.getline(msgSend , 255 , '\n');
+
+		if(strlen(msgSend) < 1)
+		{
+			strcpy_s(msgSend , " ");
+		}
 
 		if(msgSend != "exit")
 		{
@@ -72,6 +77,8 @@ void chat(Client client)
 		{
 			chatDone = true;
 		}
+
+		cin.clear();
 
 	}
 
