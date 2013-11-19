@@ -69,6 +69,9 @@
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <IncludePath>$(WindowsSDK_IncludePath);$(VCInstallDir)atlmfc\include;$(VCInstallDir)include</IncludePath>
+    <LibraryPath>$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</LibraryPath>
+    <ExecutablePath>$(VCInstallDir)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
@@ -79,6 +82,10 @@
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <IncludePath>$(WindowsSDK_IncludePath);$(VCInstallDir)atlmfc\include;$(VCInstallDir)include</IncludePath>
+    <LibraryPath>$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</LibraryPath>
+    <ExecutablePath>$(VCInstallDir)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>
+    <ReferencePath>$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
@@ -101,7 +108,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OysterPhysic3D\Collision;..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -142,6 +149,7 @@
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="FileLoader\ObjReader.cpp" />
     <ClCompile Include="Render\Model.cpp" />
     <ClCompile Include="Render\TextBox.cpp" />
     <ClCompile Include="Resourses\Buffers.cpp" />

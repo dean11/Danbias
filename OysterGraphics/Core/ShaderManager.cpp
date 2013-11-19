@@ -140,7 +140,7 @@ namespace Oyster
 		case Core::ShaderManager::ShaderType::Pixel: 
 
 			ID3D11PixelShader* pixel;
-
+			
 			if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"ps_5_0",0,0,&Shader,&Error)))
 			{
 				std::string fel = (char*)Error->GetBufferPointer();
@@ -168,7 +168,7 @@ namespace Oyster
 		case Core::ShaderManager::ShaderType::Geometry: 
 
 			ID3D11GeometryShader* geometry;
-
+			
 			if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"gs_5_0",0,0,&Shader,&Error)))
 			{
 				std::string fel = (char*)Error->GetBufferPointer();
