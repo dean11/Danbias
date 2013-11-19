@@ -5,18 +5,21 @@
 #ifndef NETWORK_DEPENDENCIES_I_CONNECTION_H
 #define NETWORK_DEPENDENCIES_I_CONNECTION_H
 
-#include <winsock2.h>
-#include <iostream>
-
-class IConnection
+namespace Oyster
 {
-	public:
-		virtual bool Connect( unsigned short port, const char serverName[] ) = 0;
-		virtual bool InitiateServer( unsigned short port ) = 0; 
-		virtual void Disconnect() = 0;
-		virtual bool Send( const char message[] ) = 0;
-		virtual int  Recieve(char message[]) = 0;
-		virtual int  Listen() = 0;
-};
+	namespace Network
+	{
+		class IConnection
+		{
+			public:
+				virtual void Disconnect() = 0;
+				virtual bool Send( const char message[] ) = 0;
+				virtual int  Recieve(char message[]) = 0;
+				virtual bool InitiateServer( unsigned short port ) { return false; };
+				virtual int  Listen() { return -1; };
+				virtual bool Connect( unsigned short port, const char serverName[] ) { return false; };
+		};
+	}
+}
 
 #endif

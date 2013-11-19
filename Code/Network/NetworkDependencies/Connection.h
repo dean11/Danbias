@@ -7,11 +7,11 @@
 
 #include "IConnection.h"
 
-class Connection : public IConnection
+class Connection : public ::Oyster::Network::IConnection
 {
 	private:
 		int mySocket;
-	
+
 	public:
 		Connection();
 		Connection(int socket);
@@ -23,6 +23,7 @@ class Connection : public IConnection
 		virtual bool Send(const char message[]);
 		virtual int  Recieve(char message[]);
 		virtual int  Listen();
+
 };
 
 #endif

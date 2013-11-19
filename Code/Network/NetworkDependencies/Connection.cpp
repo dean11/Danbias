@@ -1,5 +1,8 @@
 #include "Connection.h"
 
+#include <winsock2.h>
+#include <iostream>
+
 Connection::Connection()
 {
 	mySocket = NULL;
@@ -59,13 +62,11 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 	
 	//connection succesfull!
 	return true;
-
-
 }
 
 bool Connection::InitiateServer(unsigned short port)
 {
-	int mySocket = socket(AF_INET, SOCK_STREAM, 0);
+	mySocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(mySocket == SOCKET_ERROR)
 	{
 		//Error opening socket!
