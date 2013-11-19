@@ -14,7 +14,7 @@ class IConnection
 		virtual bool Connect( unsigned short port, const char serverName[] ) = 0;
 		virtual bool InitiateServer( unsigned short port ) = 0; 
 		virtual void Disconnect() = 0;
-		virtual bool Send(int socket , const char message[]); = 0;
+		virtual bool Send(int socket , const char message[]) = 0;
 		virtual int  Recieve( int socket ) = 0;
 		virtual int  Listen() = 0;
 };

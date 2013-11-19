@@ -106,7 +106,7 @@ bool Connection::Send(int socket , const char message[])
 	int nBytes;
 	unsigned long messageSize = strlen(message);
 
-	if((nBytes = send(socket, message , messageSize)) == SOCKET_ERROR)
+	if((nBytes = send(socket, message , messageSize, 0)) == SOCKET_ERROR)
 	{
 		//Send failed!
 		return false;
