@@ -126,6 +126,8 @@ int Connection::Recieve(char message[])
 		return -1;
 	}
 
+	message[nBytes] = NULL;
+
 	return 1;
 }
 

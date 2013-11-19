@@ -6,6 +6,7 @@ using namespace std;
 
 void ShutdownSockets();
 bool InitSockets();
+void chat(Client client);
 
 int main()
 {
@@ -19,13 +20,16 @@ int main()
 	Client client;
 
 	//Connect to server
-	client.Connect(9876, "127.0.0.1");
+	client.Connect(9876, "10.0.0.3");
+
+
+	chat(client);
 
 	//Recieve message
-	client.Recv(msgRecv);
+	//client.Recv(msgRecv);
 
 	//print message
-	cout << msgRecv << endl;
+	//cout << msgRecv << endl;
 
 	ShutdownSockets(); 
 
@@ -42,4 +46,33 @@ bool InitSockets()
 void ShutdownSockets()
 {
 	WSACleanup();
+}
+
+void chat(Client client)
+{
+	char msgRecv[255] = "\0";
+	char msgSend[255] = "\0";
+
+	bool chatDone = false;
+
+	while(!chatDone)
+	{
+		client.Recv(msgRecv);
+
+		cout<< "Server: " << msgRecv << endl;
+
+		cin.getline(msgSend , 255 , '\n');
+
+		if(msgSend != "exit")
+		{
+			client.Send(msgSend);
+		}
+
+		else
+		{
+			chatDone = true;
+		}
+
+	}
+
 }
