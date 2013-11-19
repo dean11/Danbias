@@ -31,7 +31,7 @@ int main()
 	//print message
 	//cout << msgRecv << endl;
 
-	ShutdownSockets(); 
+	ShutdownSockets();
 
 	system("pause");
 	return 0;

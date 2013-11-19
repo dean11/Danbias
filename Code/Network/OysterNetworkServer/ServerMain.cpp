@@ -13,6 +13,8 @@ int main()
 {
 	cout << "Server" << endl;
 
+	char recvBuffer[255];
+
 	if(!InitSockets())
 	{
 		cout << "Sockets failed to initialize" << endl;
@@ -23,13 +25,26 @@ int main()
 	listener.Init(9876);
 
 	//Start listening
+	//Accept a client
 	int clientSocket = listener.Accept();
+	Client client1(clientSocket);
+	cout << "First client connected." << endl;
 
 	//Accept a client
-	Client client(clientSocket);
+	clientSocket = listener.Accept();
+	Client client2(clientSocket);
+	cout << "Second client connected." << endl;
 
-	//Send a message to that client
-	client.Send("asd");
+	client1.Send("Hej");
+
+	while(1)
+	{
+		client1.Recv(recvBuffer);
+		client2.Send(recvBuffer);
+
+		client2.Recv(recvBuffer);
+		client1.Send(recvBuffer);
+	}
 
 	ShutdownSockets();
 

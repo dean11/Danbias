@@ -14,6 +14,7 @@ public:
 	~Client();
 
 	void Send(char buffer[]);
+	void Recv(char buffer[]);
 
 
 private:

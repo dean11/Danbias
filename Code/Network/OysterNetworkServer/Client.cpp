@@ -14,3 +14,8 @@ void Client::Send(char buffer[])
 {
 	connection->Send(buffer);
 }
+
+void Client::Recv(char buffer[])
+{
+	connection->Recieve(buffer);
+}
