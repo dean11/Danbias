@@ -1,6 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "Level.h"
+#include "Player.h"
 
 namespace GameLogic
 {
@@ -11,7 +13,11 @@ namespace GameLogic
 		Game(void);
 		~Game(void);
 
+		void Init();
 	private:
+		Level *level;
+		Player *player;
+
 
 	};
 }

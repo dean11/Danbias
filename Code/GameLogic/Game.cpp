@@ -10,3 +10,8 @@ Game::Game(void)
 Game::~Game(void)
 {
 }
+
+void Game::Init()
+{
+
+}
