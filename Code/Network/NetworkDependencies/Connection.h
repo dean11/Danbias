@@ -20,8 +20,8 @@ class Connection : public IConnection
 		virtual bool Connect( unsigned short port , const char serverName[] );
 		virtual bool InitiateServer( unsigned short port ); 
 		virtual void Disconnect();
-		virtual bool Send(int socket , const char message[]);
-		virtual int  Recieve(int socket);
+		virtual bool Send(const char message[]);
+		virtual int  Recieve(char message[]);
 		virtual int  Listen();
 };
 

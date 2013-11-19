@@ -101,12 +101,12 @@ void Connection::Disconnect()
 	closesocket(mySocket);
 }
 
-bool Connection::Send(int socket , const char message[])
+bool Connection::Send(const char message[])
 {
 	int nBytes;
 	unsigned long messageSize = strlen(message);
 
-	if((nBytes = send(socket, message , messageSize, 0)) == SOCKET_ERROR)
+	if((nBytes = send(mySocket, message , messageSize, 0)) == SOCKET_ERROR)
 	{
 		//Send failed!
 		return false;
@@ -115,10 +115,10 @@ bool Connection::Send(int socket , const char message[])
 	return true; 
 }
 
-int Recieve(int socket, char message[])
+int Connection::Recieve(char message[])
 {
 	int nBytes;
-	nBytes = recv(socket, message , 255, 0);
+	nBytes = recv(mySocket, message , 255, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Recv failed
