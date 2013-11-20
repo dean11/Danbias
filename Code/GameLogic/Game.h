@@ -8,20 +8,20 @@ namespace GameLogic
 {
 	class Game
 	{
-
-	public:
-		Game(void);
-		~Game(void);
-
-		void Init();
-		void StartGame();
-
-		void Update();
+	private:
+		
 		
 	private:
-		Level *level;
-		Player *player;
+		GameLogic::Level *level;
+		GameLogic::Player *player;
 
+	public:
+		Game();
+		~Game();
+		
+		void Init();
+		void StartGame();
+		void Update();
 	};
 }
 
