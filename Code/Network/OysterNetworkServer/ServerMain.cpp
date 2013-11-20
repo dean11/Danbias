@@ -40,9 +40,11 @@ int main()
 	while(1)
 	{
 		client1.Recv(recvBuffer);
+		cout << "Client1: " << recvBuffer << endl;
 		client2.Send(recvBuffer);
 
 		client2.Recv(recvBuffer);
+		cout << "Client2: " << recvBuffer << endl;
 		client1.Send(recvBuffer);
 	}
 

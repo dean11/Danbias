@@ -70,6 +70,10 @@ void chat(Client client)
 
 		if(msgSend != "exit")
 		{
+			if(strlen(msgSend) < 1)
+			{
+				strcpy_s(msgSend, "ERROR");
+			}
 			client.Send(msgSend);
 		}
 
