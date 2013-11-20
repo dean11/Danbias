@@ -27,10 +27,16 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WorldObject.h">
+    <ClInclude Include="IGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IGame.h">
+    <ClInclude Include="StaticObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,10 +53,16 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WorldObject.cpp">
+    <ClCompile Include="IGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IGame.cpp">
+    <ClCompile Include="StaticObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

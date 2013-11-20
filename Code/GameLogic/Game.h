@@ -12,8 +12,8 @@ namespace GameLogic
 		
 		
 	private:
-		GameLogic::Level *level;
-		GameLogic::Player *player;
+		Level*		level;
+		Player**	player;
 
 	public:
 		Game();
@@ -23,9 +23,5 @@ namespace GameLogic
 		void StartGame();
 		void Update();
 	};
-}
-
-	
-	
-
+}		
 #endif

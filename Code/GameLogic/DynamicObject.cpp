@@ -1,5 +1,6 @@
 #include "DynamicObject.h"
 
+using namespace GameLogic;
 
 DynamicObject::DynamicObject(void)
 {

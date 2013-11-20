@@ -1,3 +1,5 @@
+// Game Logic interface 
+
 #ifndef IGAME_H
 #define IGAME_H
 
@@ -6,7 +8,6 @@
 #else
 #define DLL_USAGE __declspec(dllimport)
 #endif
-
 
 namespace GameLogic
 {
@@ -26,6 +27,4 @@ namespace GameLogic
 	private:
 	};
 }
-
-
 #endif

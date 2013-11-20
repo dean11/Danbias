@@ -153,20 +153,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="WorldObject.h" />
+    <ClInclude Include="StaticObject.h" />
+    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="IGame.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="WorldObject.cpp" />
+    <ClCompile Include="StaticObject.cpp" />
+    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
