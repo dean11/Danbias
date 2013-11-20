@@ -32,18 +32,51 @@ namespace Oyster { namespace Math2D
 
 	Float3x3 & RotationMatrix( const Float &radian, Float3x3 &targetMem )
 	{ return ::LinearAlgebra2D::RotationMatrix( radian, targetMem ); }
+	
+	Float2x2 & InverseRotationMatrix( const Float2x2 &rotation, Float2x2 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra2D::InverseRotationMatrix( rotation );
+	}
+
+	Float3x3 & InverseRotationMatrix( const Float3x3 &rotation, Float3x3 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra2D::InverseRotationMatrix( rotation );
+	}
+
+	Float3x3 & OrientationMatrix( const Float2x2 &rotation, const Float2 &translation, Float3x3 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra2D::OrientationMatrix( rotation, translation );
+	}
+
+	Float3x3 & OrientationMatrix( const Float3x3 &rotation, const Float2 &translation, Float3x3 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra2D::OrientationMatrix( rotation, translation );
+	}
 
 	Float3x3 & OrientationMatrix( const Float2 &position, const Float &radian, Float3x3 &targetMem )
-	{ return ::LinearAlgebra2D::OrientationMatrix( radian, position, targetMem ); }
+	{
+		return ::LinearAlgebra2D::OrientationMatrix( radian, position, targetMem );
+	}
 
 	Float3x3 & OrientationMatrix( const Float2 &position, const Float2 &lookAt, Float3x3 &targetMem )
-	{ return ::LinearAlgebra2D::OrientationMatrix( lookAt, position, targetMem ); }
+	{
+		return ::LinearAlgebra2D::OrientationMatrix( lookAt, position, targetMem );
+	}
 
 	Float3x3 & OrientationMatrix( const Float2 &position, Float radian, const Float2 &localCenterOfRotation, Float3x3 &targetMem )
-	{ return ::LinearAlgebra2D::OrientationMatrix( radian, position, localCenterOfRotation, targetMem ); }
+	{
+		return ::LinearAlgebra2D::OrientationMatrix( radian, position, localCenterOfRotation, targetMem );
+	}
 
 	Float3x3 & InverseOrientationMatrix( const Float3x3 &orientationMatrix, Float3x3 &targetMem )
-	{ return ::LinearAlgebra2D::InverseOrientationMatrix( orientationMatrix, targetMem ); }
+	{
+		return ::LinearAlgebra2D::InverseOrientationMatrix( orientationMatrix, targetMem );
+	}
+
+	Float3x3 & ExtractRotationMatrix( const Float3x3 &orientation, Float3x3 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra2D::ExtractRotationMatrix( orientation );
+	}
 } }
 
 namespace Oyster { namespace Math3D
@@ -62,27 +95,66 @@ namespace Oyster { namespace Math3D
 
 	Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem )
 	{ return ::LinearAlgebra3D::RotationMatrix( normalizedAxis, radian, targetMem ); }
+	
+	Float3x3 & InverseRotationMatrix( const Float3x3 &rotation, Float3x3 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::InverseRotationMatrix( rotation );
+	}
+	
+	Float4x4 & InverseRotationMatrix( const Float4x4 &rotation, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::InverseRotationMatrix( rotation );
+	}
+
+	Float4x4 & OrientationMatrix( const Float3x3 &rotation, const Float3 &translation, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::OrientationMatrix( rotation, translation );
+	}
+
+	Float4x4 & OrientationMatrix( const Float4x4 &rotation, const Float3 &translation, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::OrientationMatrix( rotation, translation );
+	}
 
 	Float4x4 & OrientationMatrix( const Float3 &normalizedAxis, const Float & deltaRadian, const Float3 &sumTranslation, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::OrientationMatrix( normalizedAxis, deltaRadian, sumTranslation, targetMem ); }
+	{
+		return ::LinearAlgebra3D::OrientationMatrix( normalizedAxis, deltaRadian, sumTranslation, targetMem );
+	}
 
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, targetMem ); }
+	{
+		return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, targetMem );
+	}
 
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, const Float3 &centerOfMass, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, centerOfMass, targetMem ); }
+	{
+		return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, centerOfMass, targetMem );
+	}
 
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::InverseOrientationMatrix( orientationMatrix, targetMem ); }
+	{
+		return ::LinearAlgebra3D::InverseOrientationMatrix( orientationMatrix, targetMem );
+	}
 
 	Float4x4 & UpdateOrientationMatrix( const Float3 &deltaPosition, const Float4x4 &deltaRotationMatrix, Float4x4 &orientationMatrix )
-	{ return ::LinearAlgebra3D::UpdateOrientationMatrix( deltaPosition, deltaRotationMatrix, orientationMatrix ); }
+	{
+		return ::LinearAlgebra3D::UpdateOrientationMatrix( deltaPosition, deltaRotationMatrix, orientationMatrix );
+	}
+
+	Float4x4 & ExtractRotationMatrix( const Float4x4 &orientation, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::ExtractRotationMatrix( orientation );
+	}
 
 	Float4x4 & ProjectionMatrix_Orthographic( const Float &width, const Float &height, const Float &nearClip, const Float &farClip, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::ProjectionMatrix_Orthographic( width, height, nearClip, farClip, targetMem ); }
+	{
+		return ::LinearAlgebra3D::ProjectionMatrix_Orthographic( width, height, nearClip, farClip, targetMem );
+	}
 
 	Float4x4 & ProjectionMatrix_Perspective( const Float &verticalFoV, const Float &aspectRatio, const Float &nearClip, const Float &farClip, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::ProjectionMatrix_Perspective( verticalFoV, aspectRatio, nearClip, farClip, targetMem ); }
+	{
+		return ::LinearAlgebra3D::ProjectionMatrix_Perspective( verticalFoV, aspectRatio, nearClip, farClip, targetMem );
+	}
 
 	Float3 VectorProjection( const Float3 &vector, const Float3 &axis )
 	{

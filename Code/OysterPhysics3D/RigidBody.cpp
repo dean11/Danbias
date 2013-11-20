@@ -40,7 +40,7 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 { // by Dan Andersson: Euler leap frog update when Runga Kutta is not needed
 	
 	// Important! The member data is all world data except the Inertia tensor. Thus a new InertiaTensor needs to be created to be compatible with the rest of the world data.
-	Float4x4 wMomentOfInertiaTensor = TransformMatrix( this->box.orientation, this->momentOfInertiaTensor );
+	Float4x4 wMomentOfInertiaTensor = TransformMatrix( this->box.rotation, this->momentOfInertiaTensor );
 
 	// updating the linear
 	// dv = dt * a = dt * F / m
@@ -63,10 +63,9 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 		deltaRadian = ::std::sqrt( deltaRadian );
 		rotationAxis /= deltaRadian;
 
-		// using rotationAxis, deltaRadian and deltaPos to create a matrix to update the orientation matrix
-		UpdateOrientationMatrix( deltaPos, RotationMatrix(deltaRadian, rotationAxis), this->box.orientation );
-
-		/** @todo TODO: ISSUE! how is momentOfInertiaTensor related to the orientation of the RigidBody? */
+		// using rotationAxis, deltaRadian and deltaPos to create a matrix to update the box
+		this->box.center += deltaPos;
+		TransformMatrix( RotationMatrix(deltaRadian, rotationAxis), this->box.rotation, this->box.rotation );
 	}
 	else
 	{ // no rotation, only use deltaPos to translate the RigidBody
