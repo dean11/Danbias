@@ -7,7 +7,8 @@
 //--------------------------------------------------------------------------------------
 #define NOMINMAX
 #include <Windows.h>
-#include "Engine.h"
+#include "Core/Core.h"
+#include "Render\Preparations\Preparations.h"
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -142,9 +143,9 @@ HRESULT InitDirect3D()
 	std::wstring EffectPath = L"SimpleDebug\\";
 
 	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Vertex,L"Debug",false);
+	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Vertex,L"PassThroughFloat4",false);
 
-	Oyster::Graphics::Core::ShaderManager::Set::Vertex(Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"Debug"));
+	Oyster::Graphics::Core::ShaderManager::Set::Vertex(Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"));
 	Oyster::Graphics::Core::ShaderManager::Set::Pixel(Oyster::Graphics::Core::ShaderManager::Get::Pixel(L"Debug"));
 
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
@@ -154,14 +155,14 @@ HRESULT InitDirect3D()
 
 	ID3D11InputLayout* layout;
 
-	Oyster::Graphics::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"Debug"), layout);
+	Oyster::Graphics::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"), layout);
 
 	Oyster::Graphics::Core::deviceContext->IASetInputLayout(layout);
 	Oyster::Graphics::Core::deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	Oyster::Graphics::Core::deviceContext->OMSetRenderTargets(1,&Oyster::Graphics::Core::backBufferRTV,Oyster::Graphics::Core::depthStencil);
+	Oyster::Graphics::Render::Preparations::Basic::BindBackBufferRTV();
 
-	Oyster::Graphics::Core::deviceContext->RSSetViewports(1,Oyster::Graphics::Core::viewPort);
+	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();
 	
 	struct float4
 	{
@@ -196,8 +197,7 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Graphics::Core::deviceContext->ClearRenderTargetView(Oyster::Graphics::Core::backBufferRTV, Oyster::Math::Float4(0,0,1,1));
-	Oyster::Graphics::Core::deviceContext->ClearDepthStencilView(Oyster::Graphics::Core::depthStencil,1,1,0);
+	Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
 
 	Oyster::Graphics::Core::deviceContext->Draw(3,0);
 
