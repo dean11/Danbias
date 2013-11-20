@@ -131,16 +131,6 @@ void RigidBody::ApplyAngularImpulseAcceleration( const Float3 &worldA )
 	this->impulseTorqueSum += Formula::ImpulseTorque( this->momentOfInertiaTensor, worldA );
 }
 
-Float4x4 & RigidBody::AccessOrientation()
-{ // by Dan Andersson
-	return this->box.orientation;
-}
-
-const Float4x4 & RigidBody::AccessOrientation() const
-{ // by Dan Andersson
-	return this->box.orientation;
-}
-
 Float3 & RigidBody::AccessBoundingReach()
 { // by Dan Andersson
 	return this->box.boundingOffset;
@@ -171,14 +161,14 @@ const Float & RigidBody::GetMass() const
 	return this->mass;
 }
 
-const Float4x4 & RigidBody::GetOrientation() const
+const Float4x4 RigidBody::GetOrientation() const
 { // by Dan Andersson
-	return this->box.orientation;
+	return OrientationMatrix( this->box.rotation, this->box.center );
 }
 
 Float4x4 RigidBody::GetView() const
 { // by Dan Andersson
-	return InverseOrientationMatrix( this->box.orientation );
+	return InverseOrientationMatrix( this->GetOrientation() );
 }
 
 const Float3 & RigidBody::GetBoundingReach() const
@@ -249,18 +239,23 @@ Float3 RigidBody::GetTangentialLinearMomentumAt( const Float3 &worldPos ) const
 
 Float3 RigidBody::GetTangentialImpulseAccelerationAt( const Float3 &worldPos ) const
 { // by Dan Andersson
-	return this->GetTangentialImpulseAccelerationAt_Local( (this->GetView() * Float4(worldPos, 1.0f)).xyz ); // should not be any disform thus result.w = 1.0f
+	Float4x4 invWorldMomentOfInertia = TransformMatrix( this->box.rotation, this->momentOfInertiaTensor ).GetInverse();
+	Float3 worldOffset = worldPos - this->box.center;
+
+	return Formula::TangentialImpulseAcceleration( invWorldMomentOfInertia, this->impulseTorqueSum, worldOffset );
 }
 
 Float3 RigidBody::GetTangentialLinearVelocityAt( const Float3 &worldPos ) const
 { // by Dan Andersson
-	return this->GetTangentialLinearVelocityAt_Local( (this->GetView() * Float4(worldPos, 1.0f)).xyz ); // should not be any disform thus result.w = 1.0f
+	Float4x4 invWorldMomentOfInertia = TransformMatrix( this->box.rotation, this->momentOfInertiaTensor ).GetInverse();
+	Float3 worldOffset = worldPos - this->box.center;
+
+	return Formula::TangentialLinearVelocity( invWorldMomentOfInertia, this->angularMomentum, worldOffset );
 }
 
 Float3 RigidBody::GetImpulseForceAt( const Float3 &worldPos ) const
 { // by Dan Andersson
-	Float4 localForce = Float4( this->GetImpulseForceAt_Local((this->GetView() * Float4(worldPos, 1.0f)).xyz), 0.0f ); // should not be any disform thus result.w = 1.0f
-	return (this->box.orientation * localForce).xyz; // should not be any disform thus result.w = 0.0f
+	return Float3::null; //! @todo TODO: surface normal needed as well. Same goes for those below.
 }
 
 Float3 RigidBody::GetLinearMomentumAt( const Float3 &worldPos ) const
