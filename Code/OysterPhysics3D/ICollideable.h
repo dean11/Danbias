@@ -21,7 +21,7 @@ namespace Oyster { namespace Collision3D /// Contains a collection of 3D shapes 
 			Type_ray,
 			Type_sphere,
 			Type_plane,
-			Type_triangle,
+			// Type_triangle,
 			Type_box_axis_aligned,
 			Type_box,
 			Type_frustrum,
