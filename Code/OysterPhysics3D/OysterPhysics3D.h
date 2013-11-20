@@ -112,12 +112,12 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
-		 * Returns the local impulse acceleration at localPos, of a mass in angular acceleration.
+		 * Returns the world impulse acceleration at ( worldOffset = worldPos - body's center of gravity ), of a mass in angular acceleration.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialImpulseAcceleration( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &impulseTorque, const ::Oyster::Math::Float3 &localOffset )
+		inline ::Oyster::Math::Float3 TangentialImpulseAcceleration( const ::Oyster::Math::Float4x4 &worldMomentOfInertiaInversed, const ::Oyster::Math::Float3 &worldImpulseTorque, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return AngularImpulseAcceleration( momentOfInertiaInversed, impulseTorque ).Cross( localOffset );
+			return AngularImpulseAcceleration( worldMomentOfInertiaInversed, worldImpulseTorque ).Cross( worldOffset );
 		}
 
 		/******************************************************************
