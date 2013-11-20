@@ -218,9 +218,13 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	inline Float4x4 & ViewProjectionMatrix( const Float4x4 &view, const Float4x4 &projection, Float4x4 &targetMem = Float4x4() )
 	{ return targetMem = projection * view; }
 
-	/// Helper inline function that sets and then returns targetMem = transformer * transformee
-	inline Float4x4 & TransformMatrix( const Float4x4 &transformer, const Float4x4 &transformee, Float4x4 &targetMem = Float4x4() )
+	/** Helper inline function that sets and then returns targetMem = transformer * transformee */
+	inline Float4x4 & TransformMatrix( const Float4x4 &transformer, const Float4x4 &transformee, Float4x4 &targetMem )
 	{ return targetMem = transformer * transformee; }
+
+	/** Helper inline function that sets and then returns transformer * transformee */
+	inline Float4x4 TransformMatrix( const Float4x4 &transformer, const Float4x4 &transformee )
+	{ return transformer * transformee; }
 
 	/// Helper inline function that sets and then returns targetMem = transformer * transformee
 	inline Float4 & TransformVector( const Float4x4 &transformer, const Float4 &transformee, Float4 &targetMem = Float4() )

@@ -16,16 +16,21 @@
     <Filter Include="Header Files\Implementation">
       <UniqueIdentifier>{f2cb55b8-47a0-45c7-8dce-5b93f945a57b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Implementation">
-      <UniqueIdentifier>{cac9a78f-f09b-4850-b1aa-ea87e8368678}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Include">
       <UniqueIdentifier>{792daa4b-b2f7-4664-9529-71a929365274}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\GamePhysics.h">
+    <ClInclude Include="PhysicsAPI.h">
       <Filter>Header Files\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Implementation\PhysicsAPI_Impl.h">
+      <Filter>Header Files\Implementation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">
+      <Filter>Header Files\Implementation</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

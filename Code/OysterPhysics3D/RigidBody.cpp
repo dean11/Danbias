@@ -39,6 +39,9 @@ RigidBody & RigidBody::operator = ( const RigidBody &body )
 void RigidBody::Update_LeapFrog( Float deltaTime )
 { // by Dan Andersson: Euler leap frog update when Runga Kutta is not needed
 	
+	// Important! The member data is all world data except the Inertia tensor. Thus a new InertiaTensor needs to be created to be compatible with the rest of the world data.
+	Float4x4 wMomentOfInertiaTensor = TransformMatrix( this->box.orientation, this->momentOfInertiaTensor );
+
 	// updating the linear
 	// dv = dt * a = dt * F / m
 	// ds = dt * avg_v
@@ -49,7 +52,7 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 	// updating the angular
 	// dw = dt * a = dt * ( I^-1 * T )
 	// rotation = dt * avg_w
-	Float4x4 inversedMomentOfInertiaTensor = this->momentOfInertiaTensor.GetInverse();
+	Float4x4 inversedMomentOfInertiaTensor = wMomentOfInertiaTensor.GetInverse();
 	Float3 deltaAngularVelocity = Formula::AngularImpulseAcceleration( inversedMomentOfInertiaTensor, this->impulseTorqueSum ); // I^-1 * T
 	deltaAngularVelocity *= deltaTime; 
 	Float3 rotationAxis = ::Utility::Value::AverageWithDelta( Formula::AngularVelocity(inversedMomentOfInertiaTensor,this->angularMomentum), deltaAngularVelocity );
@@ -73,7 +76,7 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 	// update movements and clear impulses
 	this->linearMomentum += Formula::LinearMomentum( this->mass, deltaLinearVelocity );
 	this->impulseForceSum = Float3::null;
-	this->angularMomentum += Formula::AngularMomentum( this->momentOfInertiaTensor, deltaAngularVelocity );
+	this->angularMomentum += Formula::AngularMomentum( wMomentOfInertiaTensor, deltaAngularVelocity );
 	this->impulseTorqueSum = Float3::null;
 }
 
