@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "Object.h"
+#include "Weapon.h"
 
 namespace GameLogic
 {
@@ -19,8 +20,8 @@ namespace GameLogic
 		void Shoot();
 
 	private:
-		//Life
-		//weapon
+		int life;
+		Weapon *weapon;
 	};
 
 }
