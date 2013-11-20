@@ -14,7 +14,7 @@ namespace GameLogic
 	private:
 
 	protected:
-		//model
+		//either a model pointer or an ID to an arraypos filled with models that are to be rendered
 		//rigidBody
 
 	};
