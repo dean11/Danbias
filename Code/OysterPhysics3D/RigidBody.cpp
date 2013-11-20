@@ -258,6 +258,10 @@ Float3 RigidBody::GetTangentialImpulseForceAt_World( const Float3 &worldPos ) co
 	return this->GetTangentialImpulseForceAt_Local( (this->GetView() * Float4(worldPos, 1.0f)).xyz ); // should not be any disform thus result.w = 1.0f
 }
 
+// Dan
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Robin
+
 Float3 RigidBody::GetTangentialLinearMomentumAt_Local( const Float3 &localPos ) const
 { // by Dan Andersson
 	return Formula::TangentialLinearMomentum( this->angularMomentum, localPos );
