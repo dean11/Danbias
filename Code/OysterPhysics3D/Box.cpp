@@ -8,19 +8,28 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math3D;
 
-Box::Box( ) : ICollideable(Type_box), orientation(Float4x4::identity), boundingOffset() {}
-Box::Box( const Float4x4 &o, const Float3 &s ) : ICollideable(Type_box), orientation(o), boundingOffset(s*0.5) {}
+Box::Box( )
+	: ICollideable(Type_box), rotation(Float4x4::identity), center(0.0f), boundingOffset(0.5f)
+{}
+
+Box::Box( const Float4x4 &r, const Float3 &p, const Float3 &s )
+	: ICollideable(Type_box), rotation(r), center(p), boundingOffset(s*0.5)
+{}
+
 Box::~Box( ) {}
 
 Box & Box::operator = ( const Box &box )
 {
-	this->orientation = box.orientation;
+	this->rotation = box.rotation;
+	this->center = box.center;
 	this->boundingOffset = box.boundingOffset;
 	return *this;
 }
 
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Box::Clone( ) const
-{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Box(*this) ); }
+{
+	return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Box(*this) );
+}
 
 bool Box::Intersects( const ICollideable *target ) const
 {

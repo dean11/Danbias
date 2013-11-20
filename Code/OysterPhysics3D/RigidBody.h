@@ -34,8 +34,6 @@ namespace Oyster { namespace Physics3D
 
 		// ACCESS METHODS /////////////////////////////
 
-		::Oyster::Math::Float4x4 &		 AccessOrientation();
-		const ::Oyster::Math::Float4x4 & AccessOrientation() const;
 		::Oyster::Math::Float3 &		 AccessBoundingReach();
 		const ::Oyster::Math::Float3 &	 AccessBoundingReach() const;
 		::Oyster::Math::Float3 &		 AccessCenter();
@@ -46,7 +44,7 @@ namespace Oyster { namespace Physics3D
 		const ::Oyster::Math::Float4x4 & GetMomentOfInertia() const;
 		const ::Oyster::Math::Float &	 GetMass() const;
 
-		const ::Oyster::Math::Float4x4 & GetOrientation() const;
+		const ::Oyster::Math::Float4x4   GetOrientation() const;
 		::Oyster::Math::Float4x4		 GetView() const;
  		const ::Oyster::Math::Float4x4 & GetToWorldMatrix() const;
 		::Oyster::Math::Float4x4		 GetToLocalMatrix() const;
