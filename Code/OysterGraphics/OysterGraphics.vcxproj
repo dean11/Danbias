@@ -145,13 +145,20 @@
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
+    <ClCompile Include="Render\Preparations\Basic.cpp" />
+    <ClCompile Include="Render\Rendering\Basic.cpp" />
+    <ClCompile Include="Resources\Resources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Buffer.h" />
     <ClInclude Include="Core\Core.h" />
     <ClInclude Include="Core\CoreIncludes.h" />
     <ClInclude Include="EngineIncludes.h" />
-    <ClInclude Include="Render\Preparations.h" />
+    <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="Model\ModelInfo.h" />
+    <ClInclude Include="Render\Preparations\Preparations.h" />
+    <ClInclude Include="Render\Rendering\Render.h" />
+    <ClInclude Include="Resources\Resources.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\Misc.vcxproj">
@@ -162,6 +169,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

@@ -27,6 +27,15 @@
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Preparations\Basic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Rendering\Basic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Buffer.h">
@@ -41,12 +50,25 @@
     <ClInclude Include="EngineIncludes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Preparations.h">
+    <ClInclude Include="Render\Preparations\Preparations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Rendering\Render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\ModelInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugVertex.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl" />
+    <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl" />
   </ItemGroup>
 </Project>
