@@ -27,9 +27,18 @@
     <ClInclude Include="Implementation\PhysicsAPI_Impl.h">
       <Filter>Header Files\Implementation</Filter>
     </ClInclude>
+    <ClInclude Include="Implementation\SimpleRigidBody.h">
+      <Filter>Header Files\Implementation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\SimpleRigidBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\NullBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
