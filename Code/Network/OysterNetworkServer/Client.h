@@ -7,19 +7,29 @@
 
 #include "../NetworkDependencies/Connection.h"
 
-class Client
+namespace Oyster
 {
-public:
-	Client(unsigned int socket);
-	~Client();
+	namespace Network
+	{
+		namespace Server
+		{
+			class Client
+			{
 
-	void Send(char buffer[]);
-	void Recv(char buffer[]);
+			public:
+				Client(unsigned int socket);
+				~Client();
+
+				void Send(char buffer[]);
+				void Recv(char buffer[]);
 
 
-private:
-	Connection* connection;
+			private:
+				::Oyster::Network::Connection* connection;
 
+			};
+		}
+	}
 };
 
 #endif

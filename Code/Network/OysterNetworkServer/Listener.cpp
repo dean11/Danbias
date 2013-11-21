@@ -1,5 +1,7 @@
 #include "Listener.h"
 
+using namespace Oyster::Network;
+
 Listener::Listener()
 {
 

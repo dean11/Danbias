@@ -18,7 +18,7 @@ public:
 	int Accept();
 
 private:
-	Connection* connection;
+	::Oyster::Network::Connection* connection;
 
 };
 

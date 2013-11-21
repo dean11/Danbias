@@ -3,6 +3,7 @@
 #include "Listener.h"
 #include "Client.h"
 using namespace std;
+using namespace Oyster::Network::Server;
 
 #pragma comment(lib, "ws2_32.lib")
 

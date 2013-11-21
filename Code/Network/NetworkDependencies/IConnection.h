@@ -11,13 +11,14 @@ namespace Oyster
 	{
 		class IConnection
 		{
-			public:
-				virtual void Disconnect() = 0;
-				virtual bool Send( const char message[] ) = 0;
-				virtual int  Recieve(char message[]) = 0;
-				virtual bool InitiateServer( unsigned short port ) { return false; };
-				virtual int  Listen() { return -1; };
-				virtual bool Connect( unsigned short port, const char serverName[] ) { return false; };
+
+		public:
+			virtual void Disconnect() = 0;
+			virtual bool Send( const char message[] ) = 0;
+			virtual int  Recieve(char message[]) = 0;
+			virtual bool InitiateServer( unsigned short port ) { return false; };
+			virtual int  Listen() { return -1; };
+			virtual bool Connect( unsigned short port, const char serverName[] ) { return false; };
 		};
 	}
 }

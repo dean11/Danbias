@@ -1,5 +1,7 @@
 #include "Client.h"
 
+using namespace Oyster::Network::Client;
+
 Client::Client()
 {
 	connection = new Connection();

@@ -7,20 +7,28 @@
 
 #include "../NetworkDependencies/Connection.h"
 
-class Client
+namespace Oyster
 {
-public:
-	Client();
-	~Client();
+	namespace Network
+	{
+		namespace Client
+		{
+			class Client
+			{
+			public:
+				Client();
+				~Client();
 
-	bool Connect(unsigned int port, char filename[]);
+				bool Connect(unsigned int port, char filename[]);
 
-	void Send(char msg[]);
-	void Recv(char msg[]);
+				void Send(char msg[]);
+				void Recv(char msg[]);
 
-private:
-	Connection* connection;
-
-};
+			private:
+				::Oyster::Network::Connection* connection;
+			};
+		}
+	}
+}
 
 #endif

@@ -153,10 +153,14 @@
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Translator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
     <ClInclude Include="IConnection.h" />
+    <ClInclude Include="ITranslate.h" />
+    <ClInclude Include="Protocols.h" />
+    <ClInclude Include="Translator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

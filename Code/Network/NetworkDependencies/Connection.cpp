@@ -3,15 +3,7 @@
 #include <winsock2.h>
 #include <iostream>
 
-Connection::Connection()
-{
-	mySocket = NULL;
-}
-
-Connection::Connection(int socket)
-{
-	mySocket = socket;
-}
+using namespace Oyster::Network; 
 
 Connection::~Connection()
 {
