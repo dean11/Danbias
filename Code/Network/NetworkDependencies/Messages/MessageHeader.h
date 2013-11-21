@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////
 
 #include <string>
+#include "../Protocols.h"
 
 namespace Oyster
 {
@@ -19,8 +20,8 @@ namespace Oyster
 				MessageHeader();
 				virtual ~MessageHeader();
 
-				virtual void Translate(/*Message& msg*/);
-				virtual void Translate(unsigned char message[]);
+				virtual void Translate(Protocols::ProtocolHeader& header);
+				virtual void Translate(unsigned char message[], Protocols::ProtocolHeader& header);
 
 				unsigned char* GetMsg();
 

@@ -1,6 +1,7 @@
 #include "MessageTest.h"
 
 using namespace Oyster::Network::Messages;
+using namespace Oyster::Network::Protocols;
 
 MessageTest::MessageTest()
 {
@@ -11,16 +12,16 @@ MessageTest::~MessageTest()
 {
 }
 
-void MessageTest::Translate()
+void MessageTest::Translate(ProtocolHeader& header)
 {
-	MessageHeader::Translate();
+	MessageHeader::Translate(header);
 
-	AddStr("Hej hur mår du idag?");
+	AddStr(static_cast<ProtocolTest*>(&header)->textMessage);
 }
 
-void MessageTest::Translate(unsigned char message[])
+void MessageTest::Translate(unsigned char message[], ProtocolHeader& header)
 {
-	MessageHeader::Translate(message);
+	MessageHeader::Translate(message, header);
 
-	std::string str = GetStr(message);
+	static_cast<ProtocolTest*>(&header)->textMessage = GetStr(message);
 }

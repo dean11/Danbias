@@ -9,8 +9,8 @@ namespace Oyster
 		{
 
 		public:
-			virtual char* Translate (const Protocols::ProtocolHeader &header ) = 0;
-			virtual Protocols::ProtocolHeader& Translate ( char message[] ) = 0;
+			virtual unsigned char* Translate (Protocols::ProtocolHeader &header ) = 0;
+			virtual Protocols::ProtocolHeader& Translate ( unsigned char message[] ) = 0;
 
 		};
 	}

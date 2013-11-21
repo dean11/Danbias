@@ -1,4 +1,7 @@
-#include "string";
+#ifndef NETWORK_DEPENDENCIES_PROTOCOLS_H
+#define NETWORK_DEPENDENCIES_PROTOCOLS_H
+
+#include <string>
 
 namespace Oyster
 {
@@ -12,7 +15,6 @@ namespace Oyster
 				package_type_test,
 				package_type_input,
 				package_type_update_position
-
 			};
 
 
@@ -33,3 +35,5 @@ namespace Oyster
 		}
 	}
 }
+
+#endif

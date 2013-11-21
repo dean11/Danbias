@@ -3,6 +3,7 @@
 
 using namespace Oyster::Network::Messages;
 using namespace Oyster::Network::Packing;
+using namespace Oyster::Network::Protocols;
 
 MessageHeader::MessageHeader()
 {
@@ -15,22 +16,22 @@ MessageHeader::~MessageHeader()
 	delete[] msg;
 }
 
-void MessageHeader::Translate(/*Message& msg*/)
+void MessageHeader::Translate(ProtocolHeader& header)
 {
 	size = 0;
 
-	AddInt(4);
-	AddInt(5);
-	AddInt(6);
+	AddInt(header.clientID);
+	AddInt(header.packageType);
+	AddInt(header.size);
 }
 
-void MessageHeader::Translate(unsigned char message[])
+void MessageHeader::Translate(unsigned char message[], ProtocolHeader& header)
 {
 	size = 0;
 
-	int i = GetInt(message);
-	int j = GetInt(message);
-	int k = GetInt(message);
+	header.clientID = GetInt(message);
+	header.packageType = GetInt(message);
+	header.size = GetInt(message);
 }
 
 unsigned char* MessageHeader::GetMsg()

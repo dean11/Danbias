@@ -10,19 +10,34 @@ using namespace Oyster::Network::Server;
 void ShutdownSockets();
 bool InitSockets();
 
-#include "../NetworkDependencies/Messages/MessageTest.h"
-using namespace Oyster::Network::Messages;
+#include "../NetworkDependencies/Translator.h"
+using namespace Oyster::Network;
+using namespace ::Protocols;
 
 int main()
 {
+	unsigned char* recvBuffer;
+	Translator t;
+	ProtocolTest header;
+	header.clientID = 1;
+	header.packageType = package_type_test;
+	header.size = 12;
+	header.textMessage = "Hej";
+
+	recvBuffer = t.Translate(header);
+
+	ProtocolHeader& asd = t.Translate(recvBuffer);
+	switch(asd.packageType)
+	{
+	case package_type_test:
+
+		break;
+	}
+	cout << static_cast<ProtocolTest*>(&asd)->textMessage << endl;
+
+
 	cout << "Server" << endl;
 
-	unsigned char* recvBuffer = new unsigned char[255];
-
-	MessageTest msg;
-	msg.Translate();
-	recvBuffer = msg.GetMsg();
-	msg.Translate(recvBuffer);
 
 	if(!InitSockets())
 	{
