@@ -115,7 +115,7 @@ Oyster::Graphics::Render::ModelInfo* OBJReader::toModel()
 	}
 	modelInfo->Indexed = false;
 	modelInfo->VertexCount = (int)desc.NumElements;
-	modelInfo->Vertices = *b;
+	modelInfo->Vertices = b;
 
 
 	return modelInfo;

@@ -61,12 +61,12 @@ namespace Oyster
 				D3D11_RASTERIZER_DESC rdesc;
 				rdesc.CullMode = D3D11_CULL_NONE;
 				rdesc.FillMode = D3D11_FILL_SOLID;
-				rdesc.FrontCounterClockwise = true;
+				rdesc.FrontCounterClockwise = false;
 				rdesc.DepthBias = 0;
 				rdesc.DepthBiasClamp = 0;
-				rdesc.DepthClipEnable = false;
+				rdesc.DepthClipEnable = true;
 				rdesc.SlopeScaledDepthBias = 0;
-				rdesc.ScissorEnable = true;
+				rdesc.ScissorEnable = false;
 				rdesc.MultisampleEnable = false;
 				rdesc.AntialiasedLineEnable = false;
 

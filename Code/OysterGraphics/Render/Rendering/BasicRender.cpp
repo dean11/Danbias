@@ -13,7 +13,7 @@ namespace Oyster
 
 				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection)
 				{
-					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
+					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,1));
 					Core::ShaderManager::SetShaderEffect(Graphics::Render::Resources::obj);
 					Preparations::Basic::BindBackBufferRTV(nullptr);
 
@@ -40,10 +40,10 @@ namespace Oyster
 
 							//Set Materials :: NONE
 
-							models[i].info->Vertices.Apply();
+							models[i].info->Vertices->Apply();
 							if(models[i].info->Indexed)
 							{
-								models[i].info->Indecies.Apply();
+								models[i].info->Indecies->Apply();
 								Oyster::Graphics::Core::deviceContext->DrawIndexed(models[i].info->VertexCount,0,0);
 							}
 							else
