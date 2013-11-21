@@ -63,7 +63,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 AngularMomentum( const ::Oyster::Math::Float3 linearMomentum, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return offset.Cross( linearMomentum );
+			return worldOffset.Cross( linearMomentum );
 		}
 
 		/******************************************************************
@@ -144,7 +144,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return angularVelocity.Cross( offset );
+			return angularVelocity.Cross( worldOffset );
 		}
 
 		/******************************************************************
@@ -153,7 +153,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &angularMomentum, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return TangentialLinearVelocity( AngularVelocity(momentOfInertiaInversed, angularMomentum), offset );
+			return TangentialLinearVelocity( AngularVelocity(momentOfInertiaInversed, angularMomentum), worldOffset );
 		}
 
 		/******************************************************************
@@ -180,7 +180,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float3 & impulseForce, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return offset.Cross( impulseForce );
+			return worldOffset.Cross( impulseForce );
 		}
 
 		/******************************************************************

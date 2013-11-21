@@ -273,7 +273,7 @@ void RigidBody::SetSize( const Float3 &widthHeight )
 
 void RigidBody::SetCenter( const Float3 &worldPos )
 { // by Dan Andersson
-	this->box.center = p;
+	this->box.center = worldPos;
 }
 
 void RigidBody::SetImpulseTorque( const Float3 &worldT )
