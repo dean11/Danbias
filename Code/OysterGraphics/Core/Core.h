@@ -7,7 +7,7 @@
 #include "CoreIncludes.h"
 #include <sstream>
 #include "Buffer.h"
-#include "OysterMath.h";
+#include "OysterMath.h"
 
 namespace Oyster
 {

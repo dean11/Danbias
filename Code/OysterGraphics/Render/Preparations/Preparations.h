@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef Preparations_h
+#define Preparations_h
+
 #include "..\..\Core\Core.h"
 
 namespace Oyster
@@ -10,12 +13,12 @@ namespace Oyster
 		{
 			namespace Preparations
 			{
-				static class Basic
+				class Basic
 				{
 				public:
 					
-					/// @brief Binds the backbuffer as a RenderTargetView with or without the default DepthStencil
-					//! Binds the backbuffer as a RenderTargetView with or without the default DepthStencil
+					/// @brief Binds the backbuffer as a RenderTargetView with the default DepthStencil
+					//! Binds the backbuffer as a RenderTargetView with the default DepthStencil
 
 					static void BindBackBufferRTV();
 					/** @brief Binds the backbuffer as a RenderTargetView with the specified DepthStencil*/
@@ -25,7 +28,7 @@ namespace Oyster
 					/** @brief Binds the backbuffer as a UnorderedAccessView*/
 					static void BindBackBufferUAV();
 
-					/** @brief Binds the specified RenderTargetViews with or without the default DepthStencil*/
+					/** @brief Binds the specified RenderTargetViews with the default DepthStencil*/
 					static void BindRTV(ID3D11RenderTargetView* RTVs[], int size, bool UseDepthStencil = true);
 					/** @brief Binds the specified RenderTargetViews with the specified DepthStencil*/
 					static void BindRTV(ID3D11RenderTargetView* RTVs[], int size,ID3D11DepthStencilView* depthStencil);
@@ -33,7 +36,7 @@ namespace Oyster
 					/** @brief Binds the specified UnorderedAccessViews*/
 					static void BindUAV(ID3D11UnorderedAccessView* UAVs[], int size);
 
-					/** @brief Clear the BackBuffer and if true the default DepthStencil*/
+					/** @brief Clear the BackBuffer and the default DepthStencil*/
 					static void ClearBackBuffer(Oyster::Math::Float4 Color);
 
 					/** @brief Clear the specified RenderTargetViews*/
@@ -48,3 +51,5 @@ namespace Oyster
 		}
 	}
 }
+
+#endif

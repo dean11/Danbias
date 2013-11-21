@@ -9,6 +9,7 @@ cbuffer PerModel : register(b1)
 	matrix World;
 }
 
+
 float4 main( float4 pos : POSITION ) : SV_POSITION
 {
 	matrix VP = mul(View, Projection);
