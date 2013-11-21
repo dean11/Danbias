@@ -9,10 +9,16 @@ cbuffer PerModel : register(b1)
 	matrix World;
 }
 
+struct VertexIn
+{
+	float3 pos : POSITION;
+	float2 UV : TEXCOORD;
+	float3 normal : NORMAL;
+};
 
-float4 main( float4 pos : POSITION ) : SV_POSITION
+float4 main( VertexIn input ) : SV_POSITION
 {
 	matrix VP = mul(View, Projection);
 	matrix WVP = mul(World, VP);
-	return mul(WVP, pos);
+	return mul(WVP, float4(input.pos,1));
 }
