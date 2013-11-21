@@ -24,6 +24,7 @@ namespace GameLogic
 		void Init();
 		void StartGame();
 		void Update();
+		void Render();
 	private:
 	};
 }

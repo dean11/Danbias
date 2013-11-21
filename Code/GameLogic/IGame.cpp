@@ -34,3 +34,7 @@ void IGame::Update()
 {
 	gameModule->Update();
 }
+void IGame::Render()
+{
+	gameModule->Render();
+}

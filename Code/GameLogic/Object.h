@@ -1,6 +1,10 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "Model/Model.h"
+#include "Render/Rendering/Render.h"
+#include "Utilities.h"
+
 namespace GameLogic
 {
 
@@ -9,7 +13,10 @@ namespace GameLogic
 
 	public:
 		Object(void);
-		~Object(void);
+		virtual ~Object(void);
+	
+		Utility::DynamicMemory::UniquePointer<Oyster::Graphics::Render::Model> model;
+		void Render();
 
 	private:
 

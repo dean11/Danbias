@@ -13,7 +13,7 @@ namespace GameLogic
 		
 	private:
 		Level*		level;
-		Player**	player;
+		Player*		player;
 
 	public:
 		Game();
@@ -22,6 +22,7 @@ namespace GameLogic
 		void Init();
 		void StartGame();
 		void Update();
+		void Render();
 	};
 }		
 #endif

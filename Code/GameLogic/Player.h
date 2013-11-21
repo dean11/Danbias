@@ -18,6 +18,7 @@ namespace GameLogic
 
 		void Move();
 		void Shoot();
+	
 
 	private:
 		int life;
