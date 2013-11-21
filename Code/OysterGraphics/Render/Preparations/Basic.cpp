@@ -8,21 +8,14 @@ namespace Oyster
 		{
 			namespace Preparations
 			{
-				void Basic::BindBackBufferRTV(bool DepthStencil)
+				void Basic::BindBackBufferRTV()
 				{
-					if(DepthStencil)
-					{
-						Core::deviceContext->OMSetRenderTargets(1,&Core::backBufferRTV,Core::depthStencil);
-					}
-					else
-					{
-						Core::deviceContext->OMSetRenderTargets(1,&Core::backBufferRTV,NULL);
-					}
+					BindBackBufferRTV(Core::depthStencil);
 				}
 
-				void Basic::BindBackBufferRTV(ID3D11DepthStencilView& depthStencil)
+				void Basic::BindBackBufferRTV(ID3D11DepthStencilView* depthStencil)
 				{
-					Core::deviceContext->OMSetRenderTargets(1,&Core::backBufferRTV,&depthStencil);
+					Core::deviceContext->OMSetRenderTargets(1,&Core::backBufferRTV,depthStencil);
 				}
 
 				void Basic::BindBackBufferUAV()
@@ -38,13 +31,13 @@ namespace Oyster
 					}
 					else
 					{
-						Core::deviceContext->OMSetRenderTargets(size,RTVs,NULL);
+						BindRTV(RTVs, size, nullptr);
 					}
 				}
 
-				void Basic::BindRTV(ID3D11RenderTargetView* RTVs[], int size,ID3D11DepthStencilView& depthStencil)
+				void Basic::BindRTV(ID3D11RenderTargetView* RTVs[], int size,ID3D11DepthStencilView* depthStencil)
 				{
-					Core::deviceContext->OMSetRenderTargets(size,RTVs,&depthStencil);
+					Core::deviceContext->OMSetRenderTargets(size,RTVs,depthStencil);
 				}
 
 				void Basic::BindUAV(ID3D11UnorderedAccessView* UAVs[], int size)
@@ -52,13 +45,10 @@ namespace Oyster
 					Core::deviceContext->CSSetUnorderedAccessViews(0,size,UAVs,0);
 				}
 
-				void Basic::ClearBackBuffer(Oyster::Math::Float4 Color, bool ClearDefaultDepthStencil)
+				void Basic::ClearBackBuffer(Oyster::Math::Float4 Color)
 				{
-					Core::deviceContext->ClearRenderTargetView(Core::backBufferRTV,Color);
-					if(ClearDefaultDepthStencil)
-					{
-						Core::deviceContext->ClearDepthStencilView(Core::depthStencil,1,1,0);
-					}
+					ClearRTV(&Core::backBufferRTV, 1,Color);
+					ClearDepthStencil(Core::depthStencil);
 				}
 
 				void Basic::ClearRTV(ID3D11RenderTargetView* RTVs[], int size,Oyster::Math::Float4 Color)
@@ -69,9 +59,9 @@ namespace Oyster
 					}
 				}
 
-				void Basic::ClearDepthStencil(ID3D11DepthStencilView &depthStencil)
+				void Basic::ClearDepthStencil(ID3D11DepthStencilView* depthStencil)
 				{
-					Core::deviceContext->ClearDepthStencilView(&depthStencil,1,1,0);
+					Core::deviceContext->ClearDepthStencilView(depthStencil,1,1,0);
 				}
 
 				void Basic::SetViewPort()

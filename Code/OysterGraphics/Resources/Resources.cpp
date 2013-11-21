@@ -41,11 +41,15 @@ namespace Oyster
 				/** @todo Create DX States */  
 #pragma endregion
 
+#pragma region Setup Views
+				/** @todo Create Views */  
+#pragma endregion
 
 #pragma region Create Shader Effects
 				/** @todo Create ShaderEffects */
 #pragma endregion
 
+				return Core::Init::Sucsess;
 			}
 		}
 	}
