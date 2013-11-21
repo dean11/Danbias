@@ -160,4 +160,9 @@ namespace Oyster { namespace Math3D
 	{
 		return ::LinearAlgebra3D::VectorProjection( vector, axis );
 	}
+
+	Float3 NormalProjection( const Float3 &vector, const Float3 &normalizedAxis )
+	{
+		return ::LinearAlgebra3D::NormalProjection( vector, normalizedAxis );
+	}
 } }
