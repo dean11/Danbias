@@ -145,8 +145,8 @@
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
-    <ClCompile Include="Render\Preparations\Basic.cpp" />
-    <ClCompile Include="Render\Rendering\Basic.cpp" />
+    <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
+    <ClCompile Include="Render\Rendering\BasicRender.cpp" />
     <ClCompile Include="Resources\Resources.cpp" />
   </ItemGroup>
   <ItemGroup>
