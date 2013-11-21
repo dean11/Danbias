@@ -108,7 +108,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 AngularImpulseAcceleration( const ::Oyster::Math::Float3 &linearImpulseAcceleration, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return offset.Cross( linearImpulseAcceleration );
+			return worldOffset.Cross( linearImpulseAcceleration );
 		}
 
 		/******************************************************************
@@ -127,6 +127,15 @@ namespace Oyster { namespace Physics3D
 		inline ::Oyster::Math::Float3 AngularVelocity( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &angularMomentum )
 		{
 			return ( momentOfInertiaInversed * ::Oyster::Math::Float4( angularMomentum, 0.0f ) ).xyz;
+		}
+
+		/******************************************************************
+		 * Returns the world angular velocity of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float3 AngularVelocity( const ::Oyster::Math::Float3 &linearVelocity, const ::Oyster::Math::Float3 &worldOffset )
+		{
+			return worldOffset.Cross( linearVelocity );
 		}
 
 		/******************************************************************
@@ -181,6 +190,12 @@ namespace Oyster { namespace Physics3D
 		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float4x4 & momentOfInertia, const ::Oyster::Math::Float3 &angularImpulseAcceleration )
 		{
 			return ( momentOfInertia * ::Oyster::Math::Float4(angularImpulseAcceleration, 0.0f) ).xyz;
+		}
+
+		inline ::Oyster::Math::Float3 Impulse(  )
+		{
+			//! @todo TODO: implement calculation for impulse. Hijack Mattias Eriksson
+			return ::Oyster::Math::Float3::null;
 		}
 
 		namespace MomentOfInertia

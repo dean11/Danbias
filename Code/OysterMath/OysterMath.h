@@ -244,6 +244,9 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	/// returns the component vector of vector that is parallell with axis
 	Float3 VectorProjection( const Float3 &vector, const Float3 &axis );
 
+	/// returns the component vector of vector that is parallell with axis. Faster than VectorProjection.
+	Float3 NormalProjection( const Float3 &vector, const Float3 &normalizedAxis );
+
 	/// Helper inline function that sets and then returns targetMem = projection * view
 	inline Float4x4 & ViewProjectionMatrix( const Float4x4 &view, const Float4x4 &projection, Float4x4 &targetMem = Float4x4() )
 	{ return targetMem = projection * view; }

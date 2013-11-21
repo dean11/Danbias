@@ -455,6 +455,10 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> VectorProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &axis )
 	{ return axis * ( vector.Dot(axis) / axis.Dot(axis) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> NormalProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis )
+	{ return axis * ( vector.Dot(axis) ); }
 }
 
 #include "Utilities.h"

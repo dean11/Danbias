@@ -64,15 +64,7 @@ namespace Oyster { namespace Physics3D
 		::Oyster::Math::Float3			 GetLinearImpulseAcceleration() const;
 		::Oyster::Math::Float3			 GetLinearVelocity() const;
 
-		::Oyster::Math::Float3			 GetTangentialImpulseForceAt( const ::Oyster::Math::Float3 &worldPos ) const;
-		::Oyster::Math::Float3			 GetTangentialLinearMomentumAt( const ::Oyster::Math::Float3 &worldPos ) const;
-		::Oyster::Math::Float3			 GetTangentialImpulseAccelerationAt( const ::Oyster::Math::Float3 &worldPos ) const;
-		::Oyster::Math::Float3			 GetTangentialLinearVelocityAt( const ::Oyster::Math::Float3 &worldPos ) const;
-
-		::Oyster::Math::Float3			 GetImpulseForceAt( const ::Oyster::Math::Float3 &worldPos ) const;
-		::Oyster::Math::Float3			 GetLinearMomentumAt( const ::Oyster::Math::Float3 &worldPos ) const;
-		::Oyster::Math::Float3			 GetImpulseAccelerationAt( const ::Oyster::Math::Float3 &worldPos ) const;
-		::Oyster::Math::Float3			 GetLinearVelocityAt( const ::Oyster::Math::Float3 &worldPos ) const;
+		void GetMomentumAt( const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &surfaceNormal, ::Oyster::Math::Float3 &normalMomentum, ::Oyster::Math::Float3 &tangentialMomentum ) const;
 
 		// SET METHODS ////////////////////////////////
 
