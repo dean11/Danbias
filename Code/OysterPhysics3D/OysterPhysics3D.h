@@ -49,7 +49,7 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
-		 * Returns the local angular momentum of a mass in rotation.
+		 * Returns the world angular momentum of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 AngularMomentum( const ::Oyster::Math::Float4x4 &momentOfInertia, const ::Oyster::Math::Float3 &angularVelocity )
@@ -58,39 +58,39 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
-		 * Returns the local angular momentum of a mass in rotation.
+		 * Returns the world angular momentum of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 AngularMomentum( const ::Oyster::Math::Float3 linearMomentum, const ::Oyster::Math::Float3 &offset )
+		inline ::Oyster::Math::Float3 AngularMomentum( const ::Oyster::Math::Float3 linearMomentum, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return offset.Cross( linearMomentum );
+			return worldOffset.Cross( linearMomentum );
 		}
 
 		/******************************************************************
-		 * Returns the local tangential momentum at localPos, of a mass in rotation.
+		 * Returns the world tangential momentum at worldPos, of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialLinearMomentum( const ::Oyster::Math::Float3 &angularMomentum, const ::Oyster::Math::Float3 &localOffset )
+		inline ::Oyster::Math::Float3 TangentialLinearMomentum( const ::Oyster::Math::Float3 &angularMomentum, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return angularMomentum.Cross( localOffset );
+			return angularMomentum.Cross( worldOffset );
 		}
 
 		/******************************************************************
-		 * Returns the local tangential momentum at localPos, of a mass in rotation.
+		 * Returns the world tangential momentum at worldPos, of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialLinearMomentum( const ::Oyster::Math::Float4x4 &momentOfInertia, const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &localOffset )
+		inline ::Oyster::Math::Float3 TangentialLinearMomentum( const ::Oyster::Math::Float4x4 &momentOfInertia, const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return TangentialLinearMomentum( AngularMomentum(momentOfInertia, angularVelocity), localOffset );
+			return TangentialLinearMomentum( AngularMomentum(momentOfInertia, angularVelocity), worldOffset );
 		}
 
 		/******************************************************************
-		 * Returns the local impulse force at localPos, of a mass in angular acceleration.
+		 * Returns the world impulse force at worldPos, of a mass in angular acceleration.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialImpulseForce( const ::Oyster::Math::Float3 &impulseTorque, const ::Oyster::Math::Float3 &localOffset )
+		inline ::Oyster::Math::Float3 TangentialImpulseForce( const ::Oyster::Math::Float3 &impulseTorque, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return impulseTorque.Cross( localOffset );
+			return impulseTorque.Cross( worldOffset );
 		}
 
 		/******************************************************************
@@ -106,22 +106,22 @@ namespace Oyster { namespace Physics3D
 		 * 
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 AngularImpulseAcceleration( const ::Oyster::Math::Float3 &linearImpulseAcceleration, const ::Oyster::Math::Float3 &offset )
+		inline ::Oyster::Math::Float3 AngularImpulseAcceleration( const ::Oyster::Math::Float3 &linearImpulseAcceleration, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return offset.Cross( linearImpulseAcceleration );
+			return worldOffset.Cross( linearImpulseAcceleration );
 		}
 
 		/******************************************************************
-		 * Returns the local impulse acceleration at localPos, of a mass in angular acceleration.
+		 * Returns the world impulse acceleration at ( worldOffset = worldPos - body's center of gravity ), of a mass in angular acceleration.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialImpulseAcceleration( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &impulseTorque, const ::Oyster::Math::Float3 &localOffset )
+		inline ::Oyster::Math::Float3 TangentialImpulseAcceleration( const ::Oyster::Math::Float4x4 &worldMomentOfInertiaInversed, const ::Oyster::Math::Float3 &worldImpulseTorque, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return AngularImpulseAcceleration( momentOfInertiaInversed, impulseTorque ).Cross( localOffset );
+			return AngularImpulseAcceleration( worldMomentOfInertiaInversed, worldImpulseTorque ).Cross( worldOffset );
 		}
 
 		/******************************************************************
-		 * Returns the local angular velocity of a mass in rotation.
+		 * Returns the world angular velocity of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 AngularVelocity( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &angularMomentum )
@@ -130,21 +130,30 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
-		 * Returns the local tangential velocity at localPos, of a mass in rotation.
+		 * Returns the world angular velocity of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &offset )
+		inline ::Oyster::Math::Float3 AngularVelocity( const ::Oyster::Math::Float3 &linearVelocity, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return angularVelocity.Cross( offset );
+			return worldOffset.Cross( linearVelocity );
 		}
 
 		/******************************************************************
-		 * Returns the local tangential velocity at localPos, of a mass in rotation.
+		 * Returns the world tangential velocity at worldPos, of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &angularMomentum, const ::Oyster::Math::Float3 &offset )
+		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return TangentialLinearVelocity( AngularVelocity(momentOfInertiaInversed, angularMomentum), offset );
+			return angularVelocity.Cross( worldOffset );
+		}
+
+		/******************************************************************
+		 * Returns the world tangential velocity at worldPos, of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float4x4 &momentOfInertiaInversed, const ::Oyster::Math::Float3 &angularMomentum, const ::Oyster::Math::Float3 &worldOffset )
+		{
+			return TangentialLinearVelocity( AngularVelocity(momentOfInertiaInversed, angularMomentum), worldOffset );
 		}
 
 		/******************************************************************
@@ -169,9 +178,9 @@ namespace Oyster { namespace Physics3D
 		 * 
 		 * @todo TODO: improve doc
 		 ******************************************************************/
-		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float3 & impulseForce, const ::Oyster::Math::Float3 &offset )
+		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float3 & impulseForce, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return offset.Cross( impulseForce );
+			return worldOffset.Cross( impulseForce );
 		}
 
 		/******************************************************************
@@ -181,6 +190,12 @@ namespace Oyster { namespace Physics3D
 		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float4x4 & momentOfInertia, const ::Oyster::Math::Float3 &angularImpulseAcceleration )
 		{
 			return ( momentOfInertia * ::Oyster::Math::Float4(angularImpulseAcceleration, 0.0f) ).xyz;
+		}
+
+		inline ::Oyster::Math::Float3 Impulse(  )
+		{
+			//! @todo TODO: implement calculation for impulse. Hijack Mattias Eriksson
+			return ::Oyster::Math::Float3::null;
 		}
 
 		namespace MomentOfInertia
