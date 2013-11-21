@@ -13,10 +13,13 @@ namespace Oyster
 				static class Basic
 				{
 				public:
+					
+					/// @brief Binds the backbuffer as a RenderTargetView with or without the default DepthStencil
+					//! Binds the backbuffer as a RenderTargetView with or without the default DepthStencil
+
+					static void BindBackBufferRTV();
 					/** @brief Binds the backbuffer as a RenderTargetView with the specified DepthStencil*/
-					static void BindBackBufferRTV(ID3D11DepthStencilView& depthStencil);
-					/** @brief Binds the backbuffer as a RenderTargetView with or without the default DepthStencil*/
-					static void BindBackBufferRTV(bool UseDefaultDepthStencil = true);
+					static void BindBackBufferRTV(ID3D11DepthStencilView* depthStencil);
 					
 
 					/** @brief Binds the backbuffer as a UnorderedAccessView*/
@@ -25,18 +28,18 @@ namespace Oyster
 					/** @brief Binds the specified RenderTargetViews with or without the default DepthStencil*/
 					static void BindRTV(ID3D11RenderTargetView* RTVs[], int size, bool UseDepthStencil = true);
 					/** @brief Binds the specified RenderTargetViews with the specified DepthStencil*/
-					static void BindRTV(ID3D11RenderTargetView* RTVs[], int size,ID3D11DepthStencilView& depthStencil);
+					static void BindRTV(ID3D11RenderTargetView* RTVs[], int size,ID3D11DepthStencilView* depthStencil);
 
 					/** @brief Binds the specified UnorderedAccessViews*/
 					static void BindUAV(ID3D11UnorderedAccessView* UAVs[], int size);
 
 					/** @brief Clear the BackBuffer and if true the default DepthStencil*/
-					static void ClearBackBuffer(Oyster::Math::Float4 Color, bool ClearDefaultDepthStencil = true);
+					static void ClearBackBuffer(Oyster::Math::Float4 Color);
 
 					/** @brief Clear the specified RenderTargetViews*/
 					static void ClearRTV(ID3D11RenderTargetView* RTVs[], int size,Oyster::Math::Float4 Color);
 					/** @brief Clear the specified DepthStencil*/
-					static void ClearDepthStencil(ID3D11DepthStencilView &depthStencil);
+					static void ClearDepthStencil(ID3D11DepthStencilView* depthStencil);
 
 					/** @brief Binds the default ViewPort*/
 					static void SetViewPort();
