@@ -27,13 +27,13 @@
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Preparations\Basic.cpp">
+    <ClCompile Include="Render\Rendering\BasicRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Rendering\Basic.cpp">
+    <ClCompile Include="Render\Preparations\BasicPreparations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\Resources.cpp">
+    <ClCompile Include="Render\Resources\Resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,9 +45,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CoreIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineIncludes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\Preparations\Preparations.h">
@@ -62,7 +59,10 @@
     <ClInclude Include="Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\Resources.h">
+    <ClInclude Include="Render\Resources\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\GraphicalDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
