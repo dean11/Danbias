@@ -2,6 +2,7 @@
 #define OBJREADER_H
 #include "..\..\Misc\Utilities.h"
 #include "..\..\OysterMath\OysterMath.h"
+#include "..\Model\ModelInfo.h"
 
 //#include <fstream>
 
@@ -48,6 +49,7 @@ class OBJReader
 		~OBJReader();
 
 		void readOBJFile( std::wstring fileName);
+		Oyster::Graphics::Render::ModelInfo toModel();
 
 };
 #endif

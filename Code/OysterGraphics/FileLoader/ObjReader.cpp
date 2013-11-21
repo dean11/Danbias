@@ -94,6 +94,32 @@ void OBJReader::readOBJFile( std::wstring fileName )
 	inStream.close();
 }
 
+Oyster::Graphics::Render::ModelInfo OBJReader::toModel()
+{
+	Oyster::Graphics::Buffer b;
+	Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
+	Oyster::Graphics::Render::ModelInfo modelInfo;
+	
+	desc.ElementSize = sizeof(OBJReader::OBJFormat);
+	desc.InitData = &this->_myOBJ[0];
+	desc.NumElements = (UINT32)this->_myOBJ.size();
+	desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::CONSTANT_BUFFER_VS;
+	desc.Usage = Oyster::Graphics::Buffer::BUFFER_USAGE_IMMUTABLE;
+	HRESULT hr = S_OK;
+	
+	hr = b.Init(desc);
+	if(FAILED(hr))
+	{
+		//Something isn't okay here
+	}
+	modelInfo.Indexed = false;
+	modelInfo.VertexCount = (int)desc.NumElements;
+	modelInfo.Vertices = b;
+
+
+	return modelInfo;
+}
+
 //Private functions
 void OBJReader::stringSplit( std::string strToSplit )
 {
