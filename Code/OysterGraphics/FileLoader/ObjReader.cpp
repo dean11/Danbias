@@ -15,14 +15,14 @@ OBJReader::~OBJReader()
 
 }
 
-void OBJReader::readOBJFile( wstring fileName )
+void OBJReader::readOBJFile( std::wstring fileName )
 {
-	fstream inStream;
-	string typeOfData = " ";
+	std::fstream inStream;
+	std::string typeOfData = " ";
 	float vertexData;
-	string face1, face2, face3;
+	std::string face1, face2, face3;
 
-	inStream.open( fileName, fstream::in );
+	inStream.open( fileName, std::fstream::in );
 	
 	if( inStream.is_open() )
 	{
@@ -95,11 +95,11 @@ void OBJReader::readOBJFile( wstring fileName )
 }
 
 //Private functions
-void OBJReader::stringSplit( string strToSplit )
+void OBJReader::stringSplit( std::string strToSplit )
 {
 	char delim = '/';
-	string vPos, vNormal, vTexel;
-	stringstream aStream(strToSplit);
+	std::string vPos, vNormal, vTexel;
+	std::stringstream aStream(strToSplit);
 	getline( aStream, vPos, delim );
 	getline( aStream, vTexel, delim );
 	getline( aStream, vNormal );

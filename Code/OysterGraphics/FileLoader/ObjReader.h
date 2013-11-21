@@ -19,8 +19,8 @@ class OBJReader
 
 		struct OBJMaterialData
 		{
-			string	_name;
-			string	_mapKd;
+			std::string	_name;
+			std::string	_mapKd;
 			float	_kd[3];
 			float	_ka[3];
 			float	_tf[3];
@@ -35,19 +35,19 @@ class OBJReader
 		std::vector<OBJFormat> _myOBJ;
 	private:
 		
-		vector<Oyster::Math::Float3> _mVertexCoord, _mVertexNormal;
-		vector<Oyster::Math::Float2> _mVertexTexture;
+		std::vector<Oyster::Math::Float3> _mVertexCoord, _mVertexNormal;
+		std::vector<Oyster::Math::Float2> _mVertexTexture;
 
 		int _mNrOfCoords, _mNrOfNormals, _mNrOfTexels, _mNrOfFaces;
 		int _mPos, _mNormal, _mTexel;
-		void stringSplit( string strToSplit );
+		void stringSplit( std::string strToSplit );
 		void addToOBJarray();
 
 	public:
 		OBJReader();
 		~OBJReader();
 
-		void readOBJFile( wstring fileName);
+		void readOBJFile( std::wstring fileName);
 
 };
 #endif
