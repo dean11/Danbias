@@ -7,23 +7,30 @@
 
 #include "IConnection.h"
 
-class Connection : public ::Oyster::Network::IConnection
+namespace Oyster
 {
-	private:
-		int mySocket;
+	namespace Network
+	{
+		class Connection : public IConnection
+		{
 
-	public:
-		Connection();
-		Connection(int socket);
-		~Connection();
+		public:
+			Connection()           { mySocket = 0; };
+			Connection(int socket) { mySocket = socket; };
+			~Connection();
 
-		virtual bool Connect( unsigned short port , const char serverName[] );
-		virtual bool InitiateServer( unsigned short port ); 
-		virtual void Disconnect();
-		virtual bool Send(const char message[]);
-		virtual int  Recieve(char message[]);
-		virtual int  Listen();
+			virtual bool Connect( unsigned short port , const char serverName[] );
+			virtual bool InitiateServer( unsigned short port ); 
+			virtual void Disconnect();
+			virtual bool Send(const char message[]);
+			virtual int  Recieve(char message[]);
+			virtual int  Listen();
 
-};
+		private:
+			int mySocket;
+
+		};
+	}
+}
 
 #endif

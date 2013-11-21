@@ -2,6 +2,7 @@
 #include "Client.h"
 #include <WinSock2.h>
 using namespace std;
+using namespace Oyster::Network::Client;
 #pragma comment(lib, "ws2_32.lib")
 
 void ShutdownSockets();

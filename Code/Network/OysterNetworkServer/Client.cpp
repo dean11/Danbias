@@ -1,5 +1,7 @@
 #include "Client.h"
 
+using namespace Oyster::Network::Server;
+
 Client::Client(unsigned int socket)
 {
 	connection = new Connection(socket);
