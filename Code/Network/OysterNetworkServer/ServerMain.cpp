@@ -9,11 +9,19 @@ using namespace std;
 void ShutdownSockets();
 bool InitSockets();
 
+#include "../NetworkDependencies/Messages/MessageTest.h"
+using namespace Oyster::Network::Messages;
+
 int main()
 {
 	cout << "Server" << endl;
 
-	char recvBuffer[255];
+	unsigned char* recvBuffer = new unsigned char[255];
+
+	MessageTest msg;
+	msg.Translate();
+	recvBuffer = msg.GetMsg();
+	msg.Translate(recvBuffer);
 
 	if(!InitSockets())
 	{
@@ -39,13 +47,13 @@ int main()
 
 	while(1)
 	{
-		client1.Recv(recvBuffer);
+		/*client1.Recv(recvBuffer);
 		cout << "Client1: " << recvBuffer << endl;
 		client2.Send(recvBuffer);
 
 		client2.Recv(recvBuffer);
 		cout << "Client2: " << recvBuffer << endl;
-		client1.Send(recvBuffer);
+		client1.Send(recvBuffer);*/
 	}
 
 	ShutdownSockets();

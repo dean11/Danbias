@@ -2,7 +2,7 @@
 #define NETWORK_SERVER_CLIENT_H
 
 /////////////////////////////////////////////////////////////////////
-// Created by Pontus 2013
+// Created by Pontus Fransson 2013
 /////////////////////////////////////////////////////////////////////
 
 #include "../NetworkDependencies/Connection.h"
@@ -15,7 +15,6 @@ public:
 
 	void Send(char buffer[]);
 	void Recv(char buffer[]);
-
 
 private:
 	Connection* connection;
