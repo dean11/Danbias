@@ -14,16 +14,19 @@ using namespace Oyster::Math;
 
 namespace Oyster
 {
-	namespace Render
+	namespace Graphics
 	{
-		struct ModelInfo
+		namespace Render
 		{
-			std::vector<ID3D11ShaderResourceView*> Material;
-			Oyster::Buffer Vertices,Indecies;
-			bool Indexed;
-			int VertexCount;
-		};	
-	};
+			struct ModelInfo
+			{
+				std::vector<ID3D11ShaderResourceView*> Material;
+				Buffer Vertices,Indecies;
+				bool Indexed;
+				int VertexCount;
+			};	
+		}
+	}
 };
 
 #endif
