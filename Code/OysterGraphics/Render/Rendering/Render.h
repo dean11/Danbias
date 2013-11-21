@@ -12,7 +12,7 @@ namespace Oyster
 		{
 			namespace Rendering
 			{
-				static class Basic
+				class Basic
 				{
 				public:
 					class Resources

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef Reources_h
+#define Reources_h
+
 #include <map>
 #include "..\Core\Core.h"
 
@@ -9,7 +12,7 @@ namespace Oyster
 	{
 		namespace Render
 		{
-			static class Resources
+			class Resources
 			{
 				const Core::ShaderManager::ShaderEffect basic;
 				const Buffer ModelData;
@@ -19,3 +22,5 @@ namespace Oyster
 		}
 	}
 }
+
+#endif
