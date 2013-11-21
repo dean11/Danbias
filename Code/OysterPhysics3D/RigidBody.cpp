@@ -70,7 +70,7 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 		this->box.center += deltaPos;
 	}
 
-	// update movements and clear impulseForceSum and impulseTorqueSum
+	// update momentums and clear impulseForceSum and impulseTorqueSum
 	this->linearMomentum += linearImpulse;
 	this->impulseForceSum = Float3::null;
 	this->angularMomentum += angularImpulse;
