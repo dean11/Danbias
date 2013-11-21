@@ -387,6 +387,23 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> OrientationMatrix_LookAtDirection( const ::LinearAlgebra::Vector3<ScalarType> &normalizedDirection, const ::LinearAlgebra::Vector3<ScalarType> &normalizedUpVector, const ::LinearAlgebra::Vector3<ScalarType> &worldPos )
+	{ // Righthanded system! Forward is considered to be along negative z axis. Up is considered along positive y axis.
+		::LinearAlgebra::Vector3<ScalarType> right = normalizedDirection.Cross( normalizedUpVector ).GetNormalized();
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( ::LinearAlgebra::Vector4<ScalarType>( right, 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( right.Cross( normalizedDirection ), 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( -normalizedDirection, 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( worldPos, 1.0f ) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> OrientationMatrix_LookAtPos( const ::LinearAlgebra::Vector3<ScalarType> &worldLookAt, const ::LinearAlgebra::Vector3<ScalarType> &normalizedUpVector, const ::LinearAlgebra::Vector3<ScalarType> &worldPos )
+	{ // Righthanded system! Forward is considered to be along negative z axis. Up is considered along positive y axis.
+		::LinearAlgebra::Vector3<ScalarType> direction = ( worldLookAt - worldPos ).GetNormalized();
+		return OrientationMatrix_LookAtDirection( direction, normalizedUpVector, worldPos );
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InverseOrientationMatrix( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( orientationMatrix.m11, orientationMatrix.m21, orientationMatrix.m31, -orientationMatrix.v[0].xyz.Dot(orientationMatrix.v[3].xyz),
@@ -458,7 +475,7 @@ namespace LinearAlgebra3D
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> NormalProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis )
-	{ return axis * ( vector.Dot(axis) ); }
+	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
 }
 
 #include "Utilities.h"

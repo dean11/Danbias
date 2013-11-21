@@ -131,6 +131,16 @@ namespace Oyster { namespace Math3D
 		return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, centerOfMass, targetMem );
 	}
 
+	Float4x4 & OrientationMatrix_LookAtDirection( const Float3 &normalizedDirection, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::OrientationMatrix_LookAtDirection( normalizedDirection, normalizedUpVector, worldPos );
+	}
+
+	Float4x4 & OrientationMatrix_LookAtPos( const Float3 &worldLookAt, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::OrientationMatrix_LookAtPos( worldLookAt, normalizedUpVector, worldPos );
+	}
+
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem )
 	{
 		return ::LinearAlgebra3D::InverseOrientationMatrix( orientationMatrix, targetMem );
