@@ -49,7 +49,7 @@ class OBJReader
 		~OBJReader();
 
 		void readOBJFile( std::wstring fileName);
-		Oyster::Graphics::Render::ModelInfo toModel();
+		Oyster::Graphics::Render::ModelInfo* toModel();
 
 };
 #endif

@@ -9,13 +9,18 @@
 #include <Windows.h>
 #include "Core/Core.h"
 #include "Render\Preparations\Preparations.h"
+#include "Render\Resources\Resources.h"
+#include "Render\Rendering\Render.h"
+#include "FileLoader\ObjReader.h"
 
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
-
+Oyster::Graphics::Render::Model* m	=				new Oyster::Graphics::Render::Model();
+Oyster::Math::Float4x4 V;
+Oyster::Math::Float4x4 P;
 
 
 //--------------------------------------------------------------------------------------
@@ -139,7 +144,7 @@ HRESULT InitDirect3D()
 
 	
 
-	std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
+	/*std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
 	std::wstring EffectPath = L"SimpleDebug\\";
 
 	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
@@ -160,11 +165,13 @@ HRESULT InitDirect3D()
 	Oyster::Graphics::Core::deviceContext->IASetInputLayout(layout);
 	Oyster::Graphics::Core::deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	Oyster::Graphics::Render::Preparations::Basic::BindBackBufferRTV();
+	Oyster::Graphics::Render::Preparations::Basic::BindBackBufferRTV();*/
+
+	Oyster::Graphics::Render::Resources::Init();
 
 	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();
 	
-	struct float4
+	/*struct float4
 	{
 		float x,y,z,w;
 	};
@@ -185,7 +192,15 @@ HRESULT InitDirect3D()
 
 	Oyster::Graphics::Buffer b;
 	b.Init(desc);
-	b.Apply(0);
+	b.Apply(0);*/
+
+	OBJReader or;
+	or.readOBJFile(L"bth.obj");
+	m->info = or.toModel();
+	m->World = Oyster::Math::Matrix::identity;
+
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(PI/4,16.0f/9.0f,1,100);
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,30)).GetInverse();
 
 	return S_OK;
 }
@@ -197,11 +212,16 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
+	Oyster::Graphics::Render::Rendering::Basic::NewFrame(V,P);
+	/*Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
 
 	Oyster::Graphics::Core::deviceContext->Draw(3,0);
 
-	Oyster::Graphics::Core::swapChain->Present(0,0);
+	Oyster::Graphics::Core::swapChain->Present(0,0);*/
+
+	Oyster::Graphics::Render::Rendering::Basic::RenderScene(m,1);
+
+	Oyster::Graphics::Render::Rendering::Basic::EndFrame();
 
 	return S_OK;
 }

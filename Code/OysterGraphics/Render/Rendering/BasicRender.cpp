@@ -1,5 +1,6 @@
 #include "Render.h"
 #include "../Resources/Resources.h"
+#include "../../Definitions/GraphicalDefinition.h"
 
 namespace Oyster
 {
@@ -10,12 +11,23 @@ namespace Oyster
 			namespace Rendering
 			{
 
-				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4 Projection)
+				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection)
 				{
-					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,1));
+					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
 					Core::ShaderManager::SetShaderEffect(Graphics::Render::Resources::obj);
-					Preparations::Basic::BindBackBufferRTV();
+					Preparations::Basic::BindBackBufferRTV(nullptr);
+
+					Definitions::VP vp;
+					vp.V = View;
+					vp.P = Projection;
+
+					void* data = Resources::VPData.Map();
+					memcpy(data, &vp, sizeof(Definitions::VP));
+					Resources::VPData.Unmap();
+
+					Resources::VPData.Apply();
 				}
+
 				void Basic::RenderScene(Model* models, int count)
 				{
 					for(int i = 0; i < count; ++i)

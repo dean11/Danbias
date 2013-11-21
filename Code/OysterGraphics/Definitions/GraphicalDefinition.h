@@ -13,6 +13,12 @@ namespace Oyster
 				Oyster::Math::Float2 uv;
 				Oyster::Math::Float3 normal;
 			};
+
+			struct VP
+			{
+				Oyster::Math::Matrix V;
+				Oyster::Math::Matrix P;
+			};
 		}
 	}
 }

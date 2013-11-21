@@ -145,6 +145,7 @@
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
+    <ClCompile Include="FileLoader\ObjReader.cpp" />
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
     <ClCompile Include="Render\Rendering\BasicRender.cpp" />
     <ClCompile Include="Render\Resources\Resources.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Core\Buffer.h" />
     <ClInclude Include="Core\Core.h" />
     <ClInclude Include="Core\CoreIncludes.h" />
+    <ClInclude Include="FileLoader\ObjReader.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Model\ModelInfo.h" />
     <ClInclude Include="Render\Preparations\Preparations.h" />

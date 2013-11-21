@@ -1,4 +1,5 @@
 #include "OBJReader.h"
+#include "..\Definitions\GraphicalDefinition.h"
 #include <sstream>
 #include <fstream>
 
@@ -94,27 +95,27 @@ void OBJReader::readOBJFile( std::wstring fileName )
 	inStream.close();
 }
 
-Oyster::Graphics::Render::ModelInfo OBJReader::toModel()
+Oyster::Graphics::Render::ModelInfo* OBJReader::toModel()
 {
-	Oyster::Graphics::Buffer b;
+	Oyster::Graphics::Buffer* b = new Oyster::Graphics::Buffer();
 	Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
-	Oyster::Graphics::Render::ModelInfo modelInfo;
+	Oyster::Graphics::Render::ModelInfo* modelInfo = new Oyster::Graphics::Render::ModelInfo();
 	
-	desc.ElementSize = sizeof(OBJReader::OBJFormat);
+	desc.ElementSize = 32;
 	desc.InitData = &this->_myOBJ[0];
-	desc.NumElements = (UINT32)this->_myOBJ.size();
-	desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::CONSTANT_BUFFER_VS;
-	desc.Usage = Oyster::Graphics::Buffer::BUFFER_USAGE_IMMUTABLE;
+	desc.NumElements = this->_myOBJ.size();
+	desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	desc.Usage = Oyster::Graphics::Buffer::BUFFER_DEFAULT;
 	HRESULT hr = S_OK;
 	
-	hr = b.Init(desc);
+	hr = b->Init(desc);
 	if(FAILED(hr))
 	{
 		//Something isn't okay here
 	}
-	modelInfo.Indexed = false;
-	modelInfo.VertexCount = (int)desc.NumElements;
-	modelInfo.Vertices = b;
+	modelInfo->Indexed = false;
+	modelInfo->VertexCount = (int)desc.NumElements;
+	modelInfo->Vertices = *b;
 
 
 	return modelInfo;
