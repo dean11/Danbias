@@ -11,7 +11,7 @@
 //#include "ICollideable.h"
 #include "ModelInfo.h"
 
-using namespace Oyster::Math;
+//using namespace Oyster::Math;
 
 namespace Oyster
 {
@@ -22,7 +22,7 @@ namespace Oyster
 			struct Model
 			{
 				ModelInfo* info;
-				Float4x4 *World;
+				Oyster::Math::Float4x4 *World;
 				bool Visible;
 			};
 		}

@@ -10,7 +10,7 @@
 //#include "OysterMath.h"
 //#include "ICollideable.h"
 
-using namespace Oyster::Math;
+//using namespace Oyster::Math;
 
 namespace Oyster
 {
