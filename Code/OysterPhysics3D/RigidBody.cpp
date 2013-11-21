@@ -229,7 +229,7 @@ Float3 RigidBody::GetLinearVelocity() const
 }
 
 void RigidBody::GetMomentumAt( const Float3 &worldPos, const Float3 &surfaceNormal, Float3 &normalMomentum, Float3 &tangentialMomentum ) const
-{
+{ // by Dan Andersson
 	Float3 worldOffset = worldPos - this->box.center;
 	Float3 momentum = Formula::TangentialLinearMomentum( this->angularMomentum, worldOffset );
 	momentum += this->linearMomentum;
@@ -238,7 +238,18 @@ void RigidBody::GetMomentumAt( const Float3 &worldPos, const Float3 &surfaceNorm
 	tangentialMomentum = momentum - normalMomentum;
 }
 
-void RigidBody::SetMomentOfInertia( const Float4x4 &localI )
+void RigidBody::SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &localI )
+{ // by Dan Andersson
+	if( localI.GetDeterminant() != 0.0f ) // insanitycheck! momentOfInertiaTensor must be invertable
+	{
+		Float3 w = Formula::AngularVelocity( (this->box.rotation * this->momentOfInertiaTensor).GetInverse(),
+											 this->angularMomentum );
+		this->momentOfInertiaTensor = localI;
+		this->angularMomentum = Formula::AngularMomentum( this->box.rotation*localI, w );
+	}
+}
+
+void RigidBody::SetMomentOfInertia_KeepMomentum( const Float4x4 &localI )
 { // by Dan Andersson
 	if( localI.GetDeterminant() != 0.0f ) // insanitycheck! momentOfInertiaTensor must be invertable
 	{
@@ -250,9 +261,9 @@ void RigidBody::SetMass_KeepVelocity( const Float &m )
 { // by Dan Andersson
 	if( m != 0.0f ) // insanitycheck! mass must be invertable
 	{
-		Float3 velocity = Formula::LinearVelocity( this->mass, this->linearMomentum );
+		Float3 v = Formula::LinearVelocity( this->mass, this->linearMomentum );
 		this->mass = m;
-		this->linearMomentum = Formula::LinearMomentum( this->mass, velocity );
+		this->linearMomentum = Formula::LinearMomentum( this->mass, v );
 	}
 }
 

@@ -68,7 +68,8 @@ namespace Oyster { namespace Physics3D
 
 		// SET METHODS ////////////////////////////////
 
-		void SetMomentOfInertia( const ::Oyster::Math::Float4x4 &localI );
+		void SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &localI );
+		void SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &localI );
 		void SetMass_KeepVelocity( const ::Oyster::Math::Float &m );
 		void SetMass_KeepMomentum( const ::Oyster::Math::Float &m );
 
