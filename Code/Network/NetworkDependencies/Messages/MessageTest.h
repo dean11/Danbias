@@ -19,7 +19,7 @@ namespace Oyster
 				MessageTest();
 				virtual ~MessageTest();
 
-				virtual void Translate(Protocols::ProtocolHeader& header);
+				virtual void Translate(Protocols::ProtocolHeader& header, unsigned char msg[]);
 				virtual void Translate(unsigned char message[], Protocols::ProtocolHeader& header);
 
 			private:

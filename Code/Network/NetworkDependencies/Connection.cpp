@@ -7,9 +7,7 @@ using namespace Oyster::Network;
 
 Connection::~Connection()
 {
-	mySocket = NULL;
-
-	if(socket != NULL)
+	if(mySocket != NULL)
 	{
 		closesocket( mySocket );
 		mySocket = NULL;

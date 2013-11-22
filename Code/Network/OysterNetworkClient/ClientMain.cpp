@@ -1,21 +1,19 @@
 #include <iostream>
 #include "Client.h"
 #include <WinSock2.h>
+#include <vld.h>
 #include "..\NetworkDependencies\Translator.h"
+#include "..\NetworkDependencies\Protocols.h"
 
 using namespace std;
 using namespace Oyster::Network::Protocols;;
 using namespace Oyster::Network::Client;
-#pragma comment(lib, "ws2_32.lib")
 
+#pragma comment(lib, "ws2_32.lib")
 
 void ShutdownSockets();
 bool InitSockets();
-void chat(Client client);
-
-#include "../NetworkDependencies/Protocols.h"
-#include "../NetworkDependencies/Translator.h"
-using namespace Oyster::Network::Protocols;
+void chat(Client &client);
 
 int main()
 {
@@ -56,11 +54,11 @@ void ShutdownSockets()
 	WSACleanup();
 }
 
-void chat(Client client)
+void chat(Client &client)
 {
 	Oyster::Network::Translator *t = new Oyster::Network::Translator();
 
-	unsigned char msgRecv[255] = "\0";
+	unsigned char msgRecv[256] = "\0";
 	string msgSend = "";
 
 	ProtocolSet* set = new ProtocolSet;
@@ -73,8 +71,8 @@ void chat(Client client)
 	{
 		client.Recv(msgRecv);
 		
-		set = t->Translate(set, msgRecv);
-
+		t->Translate(set, msgRecv);
+		
 		switch(set->t)
 		{
 		case package_type_header:
@@ -83,17 +81,16 @@ void chat(Client client)
 			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
 			break;
 		}
-
+		
+		set->Release();
 
 		std::getline(std::cin, msgSend);
-
+	
 		if( msgSend != "exit")
 		{
 			if(msgSend.length() < 1)
 			{
-				//memcpy(msgSend, "ERROR" , 5);
 				msgSend = "ERROR!";
-				//strcpy_s(msgSend, "ERROR");
 			}
 
 			test.packageType = package_type_test;
@@ -114,5 +111,6 @@ void chat(Client client)
 
 	}
 
+	delete t;
 	delete set;
 }

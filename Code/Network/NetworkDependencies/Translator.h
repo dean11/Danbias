@@ -12,13 +12,14 @@ namespace Oyster
 		class Translator : public ITranslate
 		{
 		public:
-			Translator (){ };
-			~Translator(){ };
+			Translator () { msg = new unsigned char[256]; };
+			~Translator() { if(msg != NULL) { delete [] this->msg; }};
 
 			unsigned char* Translate (Protocols::ProtocolHeader &header );
 			Protocols::ProtocolSet* Translate (Protocols::ProtocolSet* set, unsigned char msg[] );
 
 		private:
+			unsigned char* msg;
 
 		};
 	}

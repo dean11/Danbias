@@ -12,11 +12,11 @@ MessageTest::~MessageTest()
 {
 }
 
-void MessageTest::Translate(ProtocolHeader& header)
+void MessageTest::Translate(ProtocolHeader& header, unsigned char msg[])
 {
-	MessageHeader::Translate(header);
+	MessageHeader::Translate(header, msg);
 
-	AddStr(static_cast<ProtocolTest*>(&header)->textMessage);
+	AddStr(static_cast<ProtocolTest*>(&header)->textMessage, msg);
 }
 
 void MessageTest::Translate(unsigned char message[], ProtocolHeader& header)

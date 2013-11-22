@@ -10,7 +10,6 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 
 	switch(header.packageType)
 	{
-
 	case package_type_header:
 		message = new MessageHeader();
 		break;
@@ -20,9 +19,15 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 		break;
 	}
 
-	message->Translate(header);
+	message->Translate(header, this->msg);
 
-	return message->GetMsg();
+	if(message != NULL)
+	{
+		delete message;
+		message = NULL;
+	}
+
+	return msg;
 }
 
 ProtocolSet* Translator::Translate(ProtocolSet* set, unsigned char msg[] )

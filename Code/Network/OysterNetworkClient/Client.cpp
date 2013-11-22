@@ -9,7 +9,8 @@ Client::Client()
 
 Client::~Client()
 {
-	delete connection;
+	delete this->connection;
+	connection = 0;
 }
 
 bool Client::Connect(unsigned int port, char filename[])

@@ -20,23 +20,20 @@ namespace Oyster
 				MessageHeader();
 				virtual ~MessageHeader();
 
-				virtual void Translate(Protocols::ProtocolHeader& header);
+				virtual void Translate(Protocols::ProtocolHeader& header, unsigned char msg[] );
 				virtual void Translate(unsigned char message[], Protocols::ProtocolHeader& header);
 
-				unsigned char* GetMsg();
 
 			protected:
 				//Add variables to messages
-				void AddInt(int i);
-				void AddStr(std::string str);
+				void AddInt(int i, unsigned char msg[]);
+				void AddStr(std::string str, unsigned char msg[]);
 
 				//Get variables from message
 				int GetInt(unsigned char message[]);
 				std::string GetStr(unsigned char message[]);
 
 			private:
-				static const int max_message_length = 1024;
-				unsigned char* msg;
 				int size;
 
 			};

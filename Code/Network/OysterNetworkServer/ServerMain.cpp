@@ -1,5 +1,6 @@
 #include <iostream>
 #include <WinSock2.h>
+#include <vld.h>
 #include "Listener.h"
 #include "Client.h"
 using namespace std;
@@ -16,7 +17,7 @@ using namespace ::Protocols;
 
 int main()
 {
-	unsigned char* recvBuffer = new unsigned char[255];
+	unsigned char* recvBuffer = new unsigned char[256];
 	cout << "Server" << endl;
 	Translator t;
 
@@ -42,21 +43,20 @@ int main()
 
 	client1.Send((unsigned char*)"Hej");
 	ProtocolSet* set = new ProtocolSet;
-
+	
 	while(1)
 	{
 		client1.Recv(recvBuffer);
-
-		set = t.Translate(set, recvBuffer);
+		
+		t.Translate(set, recvBuffer);
 		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
 		cout << "Client1: " << set->Protocol.pTest->textMessage << endl;
 		set->Release();
 		client2.Send(recvBuffer);
-		
 
 		client2.Recv(recvBuffer);
 
-		set = t.Translate(set, recvBuffer);
+		t.Translate(set, recvBuffer);
 		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
 		cout << "Client2: " << set->Protocol.pTest->textMessage << endl;
 		set->Release();
@@ -64,7 +64,6 @@ int main()
 	}
 
 	ShutdownSockets();
-
 	delete[] recvBuffer;
 	delete set;
 
