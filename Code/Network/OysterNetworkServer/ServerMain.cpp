@@ -41,8 +41,13 @@ int main()
 	Client client2(clientSocket);
 	cout << "Second client connected." << endl;
 
-	client1.Send((unsigned char*)"Hej");
 	ProtocolSet* set = new ProtocolSet;
+	ProtocolTest test;
+	test.clientID = 0;
+	test.textMessage = "hej";
+	recvBuffer = t.Translate(test);
+
+	client1.Send(recvBuffer);
 	
 	while(1)
 	{

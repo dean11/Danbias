@@ -33,6 +33,8 @@ namespace Oyster
 				int GetInt(unsigned char message[]);
 				std::string GetStr(unsigned char message[]);
 
+				void SetSize(unsigned char msg[]);
+
 			private:
 				int size;
 

@@ -8,23 +8,20 @@ using namespace Oyster::Network::Protocols;
 MessageHeader::MessageHeader()
 {
 	size = 0;
-
 }
 
 MessageHeader::~MessageHeader()
 {
-	
 }
 
 void MessageHeader::Translate(ProtocolHeader& header, unsigned char msg[] )
 {
 	size = 0;
-
-	AddInt(header.clientID, msg);
-	AddInt(header.packageType, msg);
-	AddInt(header.size, msg);
-
 	
+	AddInt(header.size, msg);
+	AddInt(header.packageType, msg);
+	AddInt(header.clientID, msg);
+	SetSize(msg);
 }
 
 void MessageHeader::Translate(unsigned char message[], ProtocolHeader& header)
@@ -35,7 +32,6 @@ void MessageHeader::Translate(unsigned char message[], ProtocolHeader& header)
 	header.packageType = GetInt(message);
 	header.size = GetInt(message);
 }
-
 
 void MessageHeader::AddInt(int i, unsigned char msg[])
 {
@@ -61,4 +57,9 @@ std::string MessageHeader::GetStr(unsigned char message[])
 	std::string std = UnpackStr(&message[size]);
 	size += 2 + std.length();
 	return std;
+}
+
+void MessageHeader::SetSize(unsigned char msg[])
+{
+	Pack(&msg[0], size);
 }
