@@ -1,5 +1,6 @@
 #include "Core.h"
 #include <fstream>
+#include <map>
 
 const char* ShaderFunction = "main";
 

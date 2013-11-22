@@ -154,7 +154,7 @@ HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 
 	if(FAILED(hr))
 	{
-		MessageBox(NULL, "Unable to create buffer.", "Slenda Error", MB_ICONERROR | MB_OK);
+		MessageBox(NULL, L"Unable to create buffer.", L"Slenda Error", MB_ICONERROR | MB_OK);
 	}
 
 	return hr;

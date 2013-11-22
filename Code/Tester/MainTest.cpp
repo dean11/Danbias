@@ -181,9 +181,9 @@ HRESULT InitDirect3D()
 	m->info = or.toModel();
 #pragma endregion
 	
-	m->World = Oyster::Math::Matrix::identity;
+	//*((Oyster::Math::Matrix)m->data) = Oyster::Math::Matrix::identity;
 
-	P = Oyster::Math3D::ProjectionMatrix_Perspective(PI/2,16.0f/9.0f,.1f,100);
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,16.0f/9.0f,.1f,100);
 
 	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,10.4f));
 	V = Oyster::Math3D::InverseOrientationMatrix(V);

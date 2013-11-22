@@ -1,7 +1,9 @@
 #include "Resources.h"
 #include "..\OysterGraphics\Definitions\GraphicalDefinition.h"
 
-const std::wstring PathFromExeToHlsl = L"..\\OysterGraphics\\Shader\\HLSL\\";
+// /Bin/Executable/Tester ->
+// /Code/OysterGraphics/Shader/HLSL
+const std::wstring PathFromExeToHlsl = L"..\\..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\";
 const std::wstring VertexTransformDebug = L"TransformDebugVertex";
 const std::wstring VertexDebug = L"DebugVertex";
 const std::wstring PixelRed = L"DebugPixel";
