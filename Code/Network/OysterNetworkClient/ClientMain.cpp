@@ -29,7 +29,7 @@ int main()
 	Client client;
 
 	//Connect to server
-	client.Connect(9876, "127.0.0.1");
+	client.Connect(9876, "10.0.0.3");
 
 	chat(client);
 
@@ -79,20 +79,12 @@ void chat(Client client)
 		case package_type_header:
 			break;
 		case package_type_test:
-			cout <<"Client 2: " <<((ProtocolTest*)&header)->textMessage <<endl;
+			cout <<"Client 2: " <<((ProtocolTest*)header)->textMessage <<endl;
 			break;
 		}
 
 
 		std::getline(std::cin, msgSend);
-		std::cin.clear();
-
-		if(msgSend.length() < 1)
-		{
-			//memcpy(msgSend, " " , 1);
-			msgSend = " ";
-			//strcpy_s((char)msgSend , " ");
-		}
 
 		if( msgSend != "exit")
 		{
