@@ -19,10 +19,10 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 		break;
 	}
 
-	message->Translate(header, this->msg);
-
 	if(message != NULL)
 	{
+		message->Translate(header, this->msg);
+
 		delete message;
 		message = NULL;
 	}

@@ -31,12 +31,6 @@ int main()
 
 	chat(client);
 
-	//Recieve message
-	//client.Recv(msgRecv);
-
-	//print message
-	//cout << msgRecv << endl;
-
 	ShutdownSockets();
 
 	system("pause");
