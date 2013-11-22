@@ -6,7 +6,8 @@
 #include "Utilities.h"
 #include <limits>
 
-using namespace Oyster::Math3D;
+using namespace ::Oyster::Math3D;
+using namespace ::Utility::Value;
 
 namespace Oyster { namespace Collision3D { namespace Utility
 {
@@ -19,13 +20,13 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		// Float calculations can suffer roundingerrors. Which is where epsilon = 1e-20 comes into the picture
 		inline bool EqualsZero( const Float &value )
 		{ // by Dan Andersson
-			return ::Utility::Value::Abs( value ) < epsilon;
+			return Abs( value ) < epsilon;
 		}
 
 		// Float calculations can suffer roundingerrors. Which is where epsilon = 1e-20 comes into the picture
 		inline bool NotEqualsZero( const Float &value )
 		{ // by Dan Andersson
-			return ::Utility::Value::Abs( value ) > epsilon;
+			return Abs( value ) > epsilon;
 		}
 
 		// returns true if miss/reject
@@ -39,8 +40,8 @@ namespace Oyster { namespace Collision3D { namespace Utility
 					  t2 = e - boundingOffset;
 				t1 /= f; t2 /= f;
 				if( t1 > t2 ) ::Utility::Element::Swap( t1, t2 );
-				tMin = ::Utility::Value::Max( tMin, t1 );
-				tMax = ::Utility::Value::Min( tMax, t2 );
+				tMin = Max( tMin, t1 );
+				tMax = Min( tMax, t2 );
 				if( tMin > tMax ) return true;
 				if( tMax < 0.0f ) return true;
 			}
@@ -65,101 +66,140 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		{ // by Dan Andersson
 			Float3 c = (box.maxVertex + box.minVertex) * 0.5f, // box.Center
 				   h = (box.maxVertex - box.minVertex) * 0.5f; // box.halfSize
-			boxExtend  = h.x * ::Utility::Value::Abs(plane.normal.x); // Box max extending towards plane
-			boxExtend += h.y * ::Utility::Value::Abs(plane.normal.y);
-			boxExtend += h.z * ::Utility::Value::Abs(plane.normal.z);
+			boxExtend  = h.x * Abs(plane.normal.x); // Box max extending towards plane
+			boxExtend += h.y * Abs(plane.normal.y);
+			boxExtend += h.z * Abs(plane.normal.z);
 			centerDistance = c.Dot(plane.normal) + plane.phasing; // distance between box center and plane
 		}
 
 		void Compare( Float &boxExtend, Float &centerDistance, const Plane &plane, const Box &box )
 		{ // by Dan Andersson
-			boxExtend  = box.boundingOffset.x * ::Utility::Value::Abs(plane.normal.Dot(box.orientation.v[0].xyz)); // Box max extending towards plane
-			boxExtend += box.boundingOffset.y * ::Utility::Value::Abs(plane.normal.Dot(box.orientation.v[1].xyz));
-			boxExtend += box.boundingOffset.z * ::Utility::Value::Abs(plane.normal.Dot(box.orientation.v[2].xyz));
+			boxExtend  = box.boundingOffset.x * Abs(plane.normal.Dot(box.xAxis)); // Box max extending towards plane
+			boxExtend += box.boundingOffset.y * Abs(plane.normal.Dot(box.yAxis));
+			boxExtend += box.boundingOffset.z * Abs(plane.normal.Dot(box.zAxis));
 
-			centerDistance = box.orientation.v[3].xyz.Dot(plane.normal) + plane.phasing; // distance between box center and plane
+			centerDistance = box.center.Dot(plane.normal) + plane.phasing; // distance between box center and plane
 		}
 
-		bool FifteenAxisVsAlignedAxisOverlappingChecks( const Float3 &boundingOffsetA, const Float3 &boundingOffsetB, const Float4x4 &orientationB )
-		{ // by Dan Andersson			
-			Float4x4 absOrientationB;
-			{
-				Float4x4 tO = orientationB.GetTranspose();
-				absOrientationB.v[0] = ::Utility::Value::Abs(tO.v[0]);
-				if( absOrientationB.v[0].w > boundingOffsetA.x + boundingOffsetB.Dot(absOrientationB.v[0].xyz) ) return false;
-				absOrientationB.v[1] = ::Utility::Value::Abs(tO.v[1]);
-				if( absOrientationB.v[1].w > boundingOffsetA.y + boundingOffsetB.Dot(absOrientationB.v[1].xyz) ) return false;
-				absOrientationB.v[2] = ::Utility::Value::Abs(tO.v[2]);
-				if( absOrientationB.v[2].w > boundingOffsetA.z + boundingOffsetB.Dot(absOrientationB.v[2].xyz) ) return false;
+		bool SeperatingAxisTest_AxisAlignedVsTransformedBox( const Float3 &boundingOffsetA, const Float3 &boundingOffsetB, const Float4x4 &rotationB, const Float3 &worldOffset )
+		{ // by Dan Andersson
+
+			/*****************************************************************
+			 * Uses the Seperating Axis Theorem
+			 * if( |t dot s| > hA dot |s * RA| + hB dot |s * RB| ) then not intersecting
+			 *     |t dot s| > hA dot |s| + hB dot |s * RB| .. as RA = I
+			 *
+			 * t: objectB's offset from objectA														[worldOffset]
+			 * s: current comparison axis
+			 * hA: boundingReach vector of objectA. Only absolute values is assumed.				[boundingOffsetA]
+			 * hB: boundingReach vector of objectB. Only absolute values is assumed.				[boundingOffsetB]
+			 * RA: rotation matrix of objectA. Is identity matrix here, thus omitted.
+			 * RB: rotation matrix of objectB. Is transformed into objectA's view at this point.	[rotationB]
+			 *
+			 * Note: s * RB = (RB^T * s)^T = (RB^-1 * s)^T .... vector == vector^T
+			 *****************************************************************/
+
+			Float4x4 absRotationB = Abs(rotationB);
+			Float3 absWorldOffset = Abs(worldOffset); // |t|: [absWorldOffset]
+
+			// s = { 1, 0, 0 }	[ RA.v[0] ]
+			if( absWorldOffset.x > boundingOffsetA.x + boundingOffsetB.Dot(Float3(absRotationB.v[0].x, absRotationB.v[1].x, absRotationB.v[2].x)) )
+			{ // |t dot s| > hA dot |s| + hB dot |s * RB| -->> t.x > hA.x + hB dot |{RB.v[0].x, RB.v[1].x, RB.v[2].x}| 
+				return false;
 			}
 
-			absOrientationB.Transpose();
-			if( ::Utility::Value::Abs(orientationB.v[3].Dot(orientationB.v[0])) > boundingOffsetB.x + boundingOffsetA.Dot(absOrientationB.v[0].xyz) ) return false;
-			if( ::Utility::Value::Abs(orientationB.v[3].Dot(orientationB.v[1])) > boundingOffsetB.x + boundingOffsetA.Dot(absOrientationB.v[1].xyz) ) return false;
-			if( ::Utility::Value::Abs(orientationB.v[3].Dot(orientationB.v[2])) > boundingOffsetB.x + boundingOffsetA.Dot(absOrientationB.v[2].xyz) ) return false;
+			// s = { 0, 1, 0 }	[ RA.v[1] ]
+			if( absWorldOffset.y > boundingOffsetA.y + boundingOffsetB.Dot(Float3(absRotationB.v[0].y, absRotationB.v[1].y, absRotationB.v[2].y)) )
+			{ // t.y > hA.y + hB dot |{RB.v[0].y, RB.v[1].y, RB.v[2].y}|
+				return false;
+			}
+
+			// s = { 0, 0, 1 }	[ RA.v[2] ]
+			if( absWorldOffset.z > boundingOffsetA.z + boundingOffsetB.Dot(Float3(absRotationB.v[0].z, absRotationB.v[1].z, absRotationB.v[2].z)) )
+			{ // t.z > hA.z + hB dot |{RB.v[0].z, RB.v[1].z, RB.v[2].z}|
+				return false;
+			}
+
+			// s = RB.v[0].xyz
+			if( Abs(worldOffset.Dot(rotationB.v[0].xyz)) > boundingOffsetA.Dot(absRotationB.v[0].xyz) + boundingOffsetB.x )
+			{ // |t dot s| > hA dot |s| + hB dot |s * RB| -->> |t dot s| > hA dot |s| + hB dot |{1, 0, 0}| -->> |t dot s| > hA dot |s| + hB.x
+				return false;
+			}
+
+			// s = RB.v[1].xyz
+			if( Abs(worldOffset.Dot(rotationB.v[1].xyz)) > boundingOffsetA.Dot(absRotationB.v[1].xyz) + boundingOffsetB.y )
+			{ // |t dot s| > hA dot |s| + hB.y
+				return false;
+			}
+
+			// s = RB.v[2].xyz
+			if( Abs(worldOffset.Dot(rotationB.v[2].xyz)) > boundingOffsetA.Dot(absRotationB.v[2].xyz) + boundingOffsetB.z )
+			{ // |t dot s| > hA dot |s| + hB.z
+				return false;
+			}
+
+			// s = ( 1,0,0 ) x rotationB.v[0].xyz:
+			Float d = boundingOffsetA.y * absRotationB.v[0].z;
+			d += boundingOffsetA.z * absRotationB.v[0].y;
+			d += boundingOffsetB.y * absRotationB.v[2].x;
+			d += boundingOffsetB.z * absRotationB.v[1].x;
+			if( Abs(worldOffset.z*rotationB.v[0].y - worldOffset.y*rotationB.v[0].z) > d ) return false;
+
+			// s = ( 1,0,0 ) x rotationB.v[1].xyz:
+			d  = boundingOffsetA.y * absRotationB.v[1].z;
+			d += boundingOffsetA.z * absRotationB.v[1].y;
+			d += boundingOffsetB.x * absRotationB.v[2].x;
+			d += boundingOffsetB.z * absRotationB.v[0].x;
+			if( Abs(worldOffset.z*rotationB.v[1].y - worldOffset.y*rotationB.v[1].z) > d ) return false;
+
+			// s = ( 1,0,0 ) x rotationB.v[2].xyz:
+			d  = boundingOffsetA.y * absRotationB.v[2].z;
+			d += boundingOffsetA.z * absRotationB.v[2].y;
+			d += boundingOffsetB.x * absRotationB.v[1].x;
+			d += boundingOffsetB.y * absRotationB.v[0].x;
+			if( Abs(worldOffset.z*rotationB.v[2].y - worldOffset.y*rotationB.v[2].z) > d ) return false;
+
+			// s = ( 0,1,0 ) x rotationB.v[0].xyz:
+			d  = boundingOffsetA.x * absRotationB.v[0].z;
+			d += boundingOffsetA.z * absRotationB.v[0].x;
+			d += boundingOffsetB.y * absRotationB.v[2].y;
+			d += boundingOffsetB.z * absRotationB.v[1].y;
+			if( Abs(worldOffset.x*rotationB.v[0].z - worldOffset.z*rotationB.v[0].x) > d ) return false;
 		
-			// ( 1,0,0 ) x orientationB.v[0].xyz:
-			Float d = boundingOffsetA.y * absOrientationB.v[0].z;
-			d += boundingOffsetA.z * absOrientationB.v[0].y;
-			d += boundingOffsetB.y * absOrientationB.v[2].x;
-			d += boundingOffsetB.z * absOrientationB.v[1].x;
-			if( ::Utility::Value::Abs(orientationB.v[3].z*orientationB.v[0].y - orientationB.v[3].y*orientationB.v[0].z) > d ) return false;
+			// s = ( 0,1,0 ) x rotationB.v[1].xyz:
+			d  = boundingOffsetA.x * absRotationB.v[1].z;
+			d += boundingOffsetA.z * absRotationB.v[1].x;
+			d += boundingOffsetB.x * absRotationB.v[2].y;
+			d += boundingOffsetB.z * absRotationB.v[0].y;
+			if( Abs(worldOffset.x*rotationB.v[1].z - worldOffset.z*rotationB.v[1].x) > d ) return false;
 
-			// ( 1,0,0 ) x orientationB.v[1].xyz:
-			d  = boundingOffsetA.y * absOrientationB.v[1].z;
-			d += boundingOffsetA.z * absOrientationB.v[1].y;
-			d += boundingOffsetB.x * absOrientationB.v[2].x;
-			d += boundingOffsetB.z * absOrientationB.v[0].x;
-			if( ::Utility::Value::Abs(orientationB.v[3].z*orientationB.v[1].y - orientationB.v[3].y*orientationB.v[1].z) > d ) return false;
+			// s = ( 0,1,0 ) x rotationB.v[2].xyz:
+			d  = boundingOffsetA.x * absRotationB.v[2].z;
+			d += boundingOffsetA.z * absRotationB.v[2].x;
+			d += boundingOffsetB.x * absRotationB.v[1].y;
+			d += boundingOffsetB.y * absRotationB.v[0].y;
+			if( Abs(worldOffset.x*rotationB.v[2].z - worldOffset.z*rotationB.v[2].x) > d ) return false;
 
-			// ( 1,0,0 ) x orientationB.v[2].xyz:
-			d  = boundingOffsetA.y * absOrientationB.v[2].z;
-			d += boundingOffsetA.z * absOrientationB.v[2].y;
-			d += boundingOffsetB.x * absOrientationB.v[1].x;
-			d += boundingOffsetB.y * absOrientationB.v[0].x;
-			if( ::Utility::Value::Abs(orientationB.v[3].z*orientationB.v[2].y - orientationB.v[3].y*orientationB.v[2].z) > d ) return false;
+			// s = ( 0,0,1 ) x rotationB.v[0].xyz:
+			d  = boundingOffsetA.x * absRotationB.v[0].y;
+			d += boundingOffsetA.y * absRotationB.v[0].x;
+			d += boundingOffsetB.y * absRotationB.v[2].z;
+			d += boundingOffsetB.z * absRotationB.v[1].z;
+			if( Abs(worldOffset.y*rotationB.v[0].x - worldOffset.x*rotationB.v[0].y) > d ) return false;
 
-			// ( 0,1,0 ) x orientationB.v[0].xyz:
-			d  = boundingOffsetA.x * absOrientationB.v[0].z;
-			d += boundingOffsetA.z * absOrientationB.v[0].x;
-			d += boundingOffsetB.y * absOrientationB.v[2].y;
-			d += boundingOffsetB.z * absOrientationB.v[1].y;
-			if( ::Utility::Value::Abs(orientationB.v[3].x*orientationB.v[0].z - orientationB.v[3].z*orientationB.v[0].x) > d ) return false;
-		
-			// ( 0,1,0 ) x orientationB.v[1].xyz:
-			d  = boundingOffsetA.x * absOrientationB.v[1].z;
-			d += boundingOffsetA.z * absOrientationB.v[1].x;
-			d += boundingOffsetB.x * absOrientationB.v[2].y;
-			d += boundingOffsetB.z * absOrientationB.v[0].y;
-			if( ::Utility::Value::Abs(orientationB.v[3].x*orientationB.v[1].z - orientationB.v[3].z*orientationB.v[1].x) > d ) return false;
+			// s = ( 0,0,1 ) x rotationB.v[1].xyz:
+			d  = boundingOffsetA.x * absRotationB.v[1].y;
+			d += boundingOffsetA.y * absRotationB.v[1].x;
+			d += boundingOffsetB.x * absRotationB.v[2].z;
+			d += boundingOffsetB.z * absRotationB.v[0].z;
+			if( Abs(worldOffset.y*rotationB.v[1].x - worldOffset.x*rotationB.v[1].y) > d ) return false;
 
-			// ( 0,1,0 ) x orientationB.v[2].xyz:
-			d  = boundingOffsetA.x * absOrientationB.v[2].z;
-			d += boundingOffsetA.z * absOrientationB.v[2].x;
-			d += boundingOffsetB.x * absOrientationB.v[1].y;
-			d += boundingOffsetB.y * absOrientationB.v[0].y;
-			if( ::Utility::Value::Abs(orientationB.v[3].x*orientationB.v[2].z - orientationB.v[3].z*orientationB.v[2].x) > d ) return false;
-
-			// ( 0,0,1 ) x orientationB.v[0].xyz:
-			d  = boundingOffsetA.x * absOrientationB.v[0].y;
-			d += boundingOffsetA.y * absOrientationB.v[0].x;
-			d += boundingOffsetB.y * absOrientationB.v[2].z;
-			d += boundingOffsetB.z * absOrientationB.v[1].z;
-			if( ::Utility::Value::Abs(orientationB.v[3].y*orientationB.v[0].x - orientationB.v[3].x*orientationB.v[0].y) > d ) return false;
-
-			// ( 0,0,1 ) x orientationB.v[1].xyz:
-			d  = boundingOffsetA.x * absOrientationB.v[1].y;
-			d += boundingOffsetA.y * absOrientationB.v[1].x;
-			d += boundingOffsetB.x * absOrientationB.v[2].z;
-			d += boundingOffsetB.z * absOrientationB.v[0].z;
-			if( ::Utility::Value::Abs(orientationB.v[3].y*orientationB.v[1].x - orientationB.v[3].x*orientationB.v[1].y) > d ) return false;
-
-			// ( 0,0,1 ) x orientationB.v[2].xyz:
-			d  = boundingOffsetA.x * absOrientationB.v[2].y;
-			d += boundingOffsetA.y * absOrientationB.v[2].x;
-			d += boundingOffsetB.x * absOrientationB.v[1].z;
-			d += boundingOffsetB.y * absOrientationB.v[0].z;
-			if( ::Utility::Value::Abs(orientationB.v[3].y*orientationB.v[2].x - orientationB.v[3].x*orientationB.v[2].y) > d ) return false;
+			// s = ( 0,0,1 ) x rotationB.v[2].xyz:
+			d  = boundingOffsetA.x * absRotationB.v[2].y;
+			d += boundingOffsetA.y * absRotationB.v[2].x;
+			d += boundingOffsetB.x * absRotationB.v[1].z;
+			d += boundingOffsetB.y * absRotationB.v[0].z;
+			if( Abs(worldOffset.y*rotationB.v[2].x - worldOffset.x*rotationB.v[2].y) > d ) return false;
 
 			return true;
 		}
@@ -353,8 +393,8 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere )
 	{ // by Dan Andersson
-		Float3 e = ::Utility::Value::Max( box.minVertex - sphere.center, Float3::null );
-		e += ::Utility::Value::Max( sphere.center - box.maxVertex, Float3::null );
+		Float3 e = Max( box.minVertex - sphere.center, Float3::null );
+		e += Max( sphere.center - box.maxVertex, Float3::null );
 
 		if( e.Dot(e) > (sphere.radius * sphere.radius) ) return false;
 		return true;
@@ -385,17 +425,17 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Box &box, const Point &point )
 	{ // by Dan Andersson
-		Float3 dPos = point.center - box.orientation.v[3].xyz;
+		Float3 dPos = point.center - box.center;
 
-		Float coordinate = dPos.Dot( box.orientation.v[0].xyz );
+		Float coordinate = dPos.Dot( box.xAxis );
 		if( coordinate > box.boundingOffset.x ) return false;
 		if( coordinate < -box.boundingOffset.x ) return false;
 
-		coordinate = dPos.Dot( box.orientation.v[1].xyz );
+		coordinate = dPos.Dot( box.yAxis );
 		if( coordinate > box.boundingOffset.y ) return false;
 		if( coordinate < -box.boundingOffset.y ) return false;
 
-		coordinate = dPos.Dot( box.orientation.v[2].xyz );
+		coordinate = dPos.Dot( box.zAxis );
 		if( coordinate > box.boundingOffset.z ) return false;
 		if( coordinate < -box.boundingOffset.z ) return false;
 
@@ -419,11 +459,11 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Box &box, const Sphere &sphere )
 	{ // by Dan Andersson
-		Float3 e = sphere.center - box.orientation.v[3].xyz,
-			   centerL = Float3( e.Dot(box.orientation.v[0].xyz), e.Dot(box.orientation.v[1].xyz), e.Dot(box.orientation.v[2].xyz) );
+		Float3 e = sphere.center - box.center,
+			   centerL = Float3( e.Dot(box.xAxis), e.Dot(box.yAxis), e.Dot(box.zAxis) );
 		
-		e  = ::Utility::Value::Max( (box.boundingOffset + centerL)*=-1.0f, Float3::null );
-		e += ::Utility::Value::Max( centerL - box.boundingOffset, Float3::null );
+		e  = Max( (box.boundingOffset + centerL)*=-1.0f, Float3::null );
+		e += Max( centerL - box.boundingOffset, Float3::null );
 		
 		if( e.Dot(e) > (sphere.radius * sphere.radius) ) return false;
 		return true;
@@ -440,20 +480,20 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB )
 	{ // by Dan Andersson
-		Float3 alignedOffsetBoundaries = boxB.maxVertex - boxB.minVertex;
-		Float4x4 translated = boxA.orientation;
-		translated.v[3].xyz -= boxB.minVertex;
-		translated.v[3].xyz += alignedOffsetBoundaries * 0.5f;
-		alignedOffsetBoundaries = ::Utility::Value::Abs(alignedOffsetBoundaries);
-		return Private::FifteenAxisVsAlignedAxisOverlappingChecks( alignedOffsetBoundaries, boxA.boundingOffset, translated );
+		Float3 alignedOffsetBoundaries = (boxB.maxVertex - boxB.minVertex) * 0.5f,
+			   offset = boxA.center - Average( boxB.minVertex, boxB.maxVertex );
+		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries, boxA.boundingOffset, boxA.rotation, offset );
 	}
 
 	bool Intersect( const Box &boxA, const Box &boxB )
 	{ // by Dan Andersson
-		Float4x4 M;
-		InverseOrientationMatrix( boxA.orientation, M );
-		TransformMatrix( M, boxB.orientation, M ); /// TODO: not verified
-		return Private::FifteenAxisVsAlignedAxisOverlappingChecks( boxA.boundingOffset, boxB.boundingOffset, M );
+		Float4x4 orientationA = OrientationMatrix(boxA.rotation, boxA.center),
+				 orientationB = OrientationMatrix(boxB.rotation, boxB.center),
+				 invOrientationA = InverseOrientationMatrix( orientationA );
+
+		orientationB = TransformMatrix( invOrientationA, orientationB );
+
+		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, ExtractRotationMatrix(orientationB), orientationB.v[3].xyz );
 	}
 
 	bool Intersect( const Frustrum &frustrum, const Point &point )
@@ -490,37 +530,37 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		if( Intersect(frustrum.leftPlane, ray, distance) )
 		{
 			intersected = true;
-			connectDistance = ::Utility::Value::Min( connectDistance, distance );
+			connectDistance = Min( connectDistance, distance );
 		}
 
 		if( Intersect(frustrum.rightPlane, ray, distance) )
 		{
 			intersected = true;
-			connectDistance = ::Utility::Value::Min( connectDistance, distance );
+			connectDistance = Min( connectDistance, distance );
 		}
 
 		if( Intersect(frustrum.bottomPlane, ray, distance) )
 		{
 			intersected = true;
-			connectDistance = ::Utility::Value::Min( connectDistance, distance );
+			connectDistance = Min( connectDistance, distance );
 		}
 
 		if( Intersect(frustrum.topPlane, ray, distance) )
 		{
 			intersected = true;
-			connectDistance = ::Utility::Value::Min( connectDistance, distance );
+			connectDistance = Min( connectDistance, distance );
 		}
 
 		if( Intersect(frustrum.nearPlane, ray, distance) )
 		{
 			intersected = true;
-			connectDistance = ::Utility::Value::Min( connectDistance, distance );
+			connectDistance = Min( connectDistance, distance );
 		}
 
 		if( Intersect(frustrum.farPlane, ray, distance) )
 		{
 			intersected = true;
-			connectDistance = ::Utility::Value::Min( connectDistance, distance );
+			connectDistance = Min( connectDistance, distance );
 		}
 
 		if( intersected ) return true;

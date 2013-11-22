@@ -162,6 +162,32 @@ namespace LinearAlgebra2D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix2x2<ScalarType> & InverseRotationMatrix( const ::LinearAlgebra::Matrix2x2<ScalarType> &rotationMatrix )
+	{
+		return rotationMatrix.GetTranspose();
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & InverseRotationMatrix( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
+	{
+		return rotationMatrix.GetTranspose();
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> OrientationMatrix( const ::LinearAlgebra::Matrix2x2<ScalarType> &rotation, const ::LinearAlgebra::Vector2<ScalarType> &translation )
+	{
+		return ::LinearAlgebra::Matrix3x3<ScalarType>( ::LinearAlgebra::Vector3<ScalarType>(rotation.v[0], 0),
+													   ::LinearAlgebra::Vector3<ScalarType>(rotation.v[1], 0),
+													   ::LinearAlgebra::Vector3<ScalarType>(translation, 1) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> OrientationMatrix( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotation, const ::LinearAlgebra::Vector2<ScalarType> &translation )
+	{
+		return ::LinearAlgebra::Matrix3x3<ScalarType>( rotation.v[0], rotation.v[1], ::LinearAlgebra::Vector3<ScalarType>(translation, 1) );
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix3x3<ScalarType> & OrientationMatrix( const ScalarType &radian, const ::LinearAlgebra::Vector2<ScalarType> &position, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
 	{
 		ScalarType s = ::std::sin( radian ),
@@ -196,6 +222,12 @@ namespace LinearAlgebra2D
 		return targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>( orientationMatrix.m11, orientationMatrix.m21, -orientationMatrix.v[0].xy.Dot(orientationMatrix.v[2].xy),
 																   orientationMatrix.m12, orientationMatrix.m22, -orientationMatrix.v[1].xy.Dot(orientationMatrix.v[2].xy),
 																   0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> ExtractRotationMatrix( const ::LinearAlgebra::Matrix3x3<ScalarType> &orientationMatrix )
+	{
+		return ::LinearAlgebra::Matrix3x3<ScalarType>( orientationMatrix.v[0], orientationMatrix.v[1], ::LinearAlgebra::Vector3<ScalarType>::standard_unit_z );
 	}
 }
 
@@ -284,6 +316,33 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & InverseRotationMatrix( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
+	{
+		return rotationMatrix.GetTranspose();
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InverseRotationMatrix( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotationMatrix )
+	{
+		return rotationMatrix.GetTranspose();
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> OrientationMatrix( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotation, const ::LinearAlgebra::Vector3<ScalarType> &translation )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( ::LinearAlgebra::Vector4<ScalarType>(rotation.v[0], 0),
+													   ::LinearAlgebra::Vector4<ScalarType>(rotation.v[1], 0),
+													   ::LinearAlgebra::Vector4<ScalarType>(rotation.v[2], 0),
+													   ::LinearAlgebra::Vector4<ScalarType>(translation, 1) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> OrientationMatrix( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotation, const ::LinearAlgebra::Vector3<ScalarType> &translation )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( rotation.v[0], rotation.v[1], rotation.v[2], ::LinearAlgebra::Vector4<ScalarType>(translation, 1) );
+	}
+
+	template<typename ScalarType>
 	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis, const ScalarType &deltaRadian, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{ /** @todo TODO: not tested */
 		RotationMatrix( normalizedAxis, deltaRadian, targetMem );
@@ -328,6 +387,23 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> OrientationMatrix_LookAtDirection( const ::LinearAlgebra::Vector3<ScalarType> &normalizedDirection, const ::LinearAlgebra::Vector3<ScalarType> &normalizedUpVector, const ::LinearAlgebra::Vector3<ScalarType> &worldPos )
+	{ // Righthanded system! Forward is considered to be along negative z axis. Up is considered along positive y axis.
+		::LinearAlgebra::Vector3<ScalarType> right = normalizedDirection.Cross( normalizedUpVector ).GetNormalized();
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( ::LinearAlgebra::Vector4<ScalarType>( right, 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( right.Cross( normalizedDirection ), 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( -normalizedDirection, 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( worldPos, 1.0f ) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> OrientationMatrix_LookAtPos( const ::LinearAlgebra::Vector3<ScalarType> &worldLookAt, const ::LinearAlgebra::Vector3<ScalarType> &normalizedUpVector, const ::LinearAlgebra::Vector3<ScalarType> &worldPos )
+	{ // Righthanded system! Forward is considered to be along negative z axis. Up is considered along positive y axis.
+		::LinearAlgebra::Vector3<ScalarType> direction = ( worldLookAt - worldPos ).GetNormalized();
+		return OrientationMatrix_LookAtDirection( direction, normalizedUpVector, worldPos );
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InverseOrientationMatrix( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( orientationMatrix.m11, orientationMatrix.m21, orientationMatrix.m31, -orientationMatrix.v[0].xyz.Dot(orientationMatrix.v[3].xyz),
@@ -347,6 +423,12 @@ namespace LinearAlgebra3D
 		orientationMatrix = deltaRotationMatrix * orientationMatrix;
 		orientationMatrix.v[3].xyz = position;
 		return orientationMatrix;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> ExtractRotationMatrix( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( orientationMatrix.v[0], orientationMatrix.v[1], orientationMatrix.v[2], ::LinearAlgebra::Vector4<ScalarType>::standard_unit_w );
 	}
 
 	/*	Creates an orthographic projection matrix designed for DirectX enviroment.
@@ -390,6 +472,10 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> VectorProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &axis )
 	{ return axis * ( vector.Dot(axis) / axis.Dot(axis) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> NormalProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis )
+	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
 }
 
 #include "Utilities.h"

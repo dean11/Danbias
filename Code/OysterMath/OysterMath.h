@@ -114,6 +114,18 @@ namespace Oyster { namespace Math2D /// Oyster's native math library specialized
 	/// Sets and returns targetMem as a counterclockwise rotationMatrix
 	Float3x3 & RotationMatrix( const Float &radian, Float3x3 &targetMem = Float3x3() );
 
+	/// If rotation is assumed to be by all definitions a rotation matrix. Then this is a much faster inverse method.
+	Float2x2 & InverseRotationMatrix( const Float2x2 &rotation, Float2x2 &targetMem = Float2x2() );
+	
+	/// If rotation is assumed to be by all definitions a rotation matrix. Then this is a much faster inverse method.
+	Float3x3 & InverseRotationMatrix( const Float3x3 &rotation, Float3x3 &targetMem = Float3x3() );
+
+	/// Sets and returns targetMem as an orientation Matrix composed by the rotation matrix and translation vector
+	Float3x3 & OrientationMatrix( const Float2x2 &rotation, const Float2 &translation, Float3x3 &targetMem = Float3x3() );
+
+	/// Sets and returns targetMem as an orientation Matrix composed by the rotation matrix and translation vector
+	Float3x3 & OrientationMatrix( const Float3x3 &rotation, const Float2 &translation, Float3x3 &targetMem = Float3x3() );
+
 	/// Sets and returns targetMem as an orientation Matrix with position as translation and radian rotation
 	Float3x3 & OrientationMatrix( const Float2 &position, const Float &radian, Float3x3 &targetMem = Float3x3() );
 
@@ -126,6 +138,9 @@ namespace Oyster { namespace Math2D /// Oyster's native math library specialized
 
 	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
 	Float3x3 & InverseOrientationMatrix( const Float3x3 &orientationMatrix, Float3x3 &targetMem = Float3x3() );
+
+	/// Returns targetmem after writing the rotation data from orientation, into it.
+	Float3x3 & ExtractRotationMatrix( const Float3x3 &orientation, Float3x3 &targetMem = Float3x3() );
 } }
 
 namespace Oyster { namespace Math3D /// Oyster's native math library specialized for 3D
@@ -147,6 +162,18 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the normalizedAxis.
 	/// Please make sure normalizedAxis is normalized.
 	Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem = Float4x4() );
+
+	/// If rotation is assumed to be by all definitions a rotation matrix. Then this is a much faster inverse method.
+	Float3x3 & InverseRotationMatrix( const Float3x3 &rotation, Float3x3 &targetMem = Float3x3() );
+
+	/// If rotation is assumed to be by all definitions a rotation matrix. Then this is a much faster inverse method.
+	Float4x4 & InverseRotationMatrix( const Float4x4 &rotation, Float4x4 &targetMem = Float4x4() );
+	
+	/// Sets and returns targetMem as an orientation Matrix composed by the rotation matrix and translation vector
+	Float4x4 & OrientationMatrix( const Float3x3 &rotation, const Float3 &translation, Float4x4 &targetMem = Float4x4() );
+
+	/// Sets and returns targetMem as an orientation Matrix composed by the rotation matrix and translation vector
+	Float4x4 & OrientationMatrix( const Float4x4 &rotation, const Float3 &translation, Float4x4 &targetMem = Float4x4() );
 
 	/*******************************************************************
 	 * Sets and returns targetMem as an orientation Matrix
@@ -180,12 +207,21 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	 *******************************************************************/
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, const Float3 &centerOfMass, Float4x4 &targetMem = Float4x4() );
 
+	//! @todo TODO: Add documentation and not tested
+	Float4x4 & OrientationMatrix_LookAtDirection( const Float3 &normalizedDirection, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem = Float4x4() );
+
+	//! @todo TODO: Add documentation and not tested
+	Float4x4 & OrientationMatrix_LookAtPos( const Float3 &worldLookAt, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem = Float4x4() );
+
 	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem = Float4x4() );
 
 	// O0 = T0 * R0
 	// O1 = T1 * T0 * R1 * R0
 	Float4x4 & UpdateOrientationMatrix( const Float3 &deltaPosition, const Float4x4 &deltaRotationMatrix, Float4x4 &orientationMatrix );
+
+	/// Returns targetmem after writing the rotation data from orientation, into it.
+	Float4x4 & ExtractRotationMatrix( const Float4x4 &orientation, Float4x4 &targetMem = Float4x4() );
 
 	/*******************************************************************
 	 *	Creates an orthographic projection matrix designed for DirectX enviroment.
@@ -214,13 +250,20 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	/// returns the component vector of vector that is parallell with axis
 	Float3 VectorProjection( const Float3 &vector, const Float3 &axis );
 
+	/// returns the component vector of vector that is parallell with axis. Faster than VectorProjection.
+	Float3 NormalProjection( const Float3 &vector, const Float3 &normalizedAxis );
+
 	/// Helper inline function that sets and then returns targetMem = projection * view
 	inline Float4x4 & ViewProjectionMatrix( const Float4x4 &view, const Float4x4 &projection, Float4x4 &targetMem = Float4x4() )
 	{ return targetMem = projection * view; }
 
-	/// Helper inline function that sets and then returns targetMem = transformer * transformee
-	inline Float4x4 & TransformMatrix( const Float4x4 &transformer, const Float4x4 &transformee, Float4x4 &targetMem = Float4x4() )
+	/** Helper inline function that sets and then returns targetMem = transformer * transformee */
+	inline Float4x4 & TransformMatrix( const Float4x4 &transformer, const Float4x4 &transformee, Float4x4 &targetMem )
 	{ return targetMem = transformer * transformee; }
+
+	/** Helper inline function that sets and then returns transformer * transformee */
+	inline Float4x4 TransformMatrix( const Float4x4 &transformer, const Float4x4 &transformee )
+	{ return transformer * transformee; }
 
 	/// Helper inline function that sets and then returns targetMem = transformer * transformee
 	inline Float4 & TransformVector( const Float4x4 &transformer, const Float4 &transformee, Float4 &targetMem = Float4() )

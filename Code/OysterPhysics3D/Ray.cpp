@@ -33,7 +33,7 @@ bool Ray::Intersects( const ICollideable *target ) const
 	case Type_ray: return Utility::Intersect( *this, *(Ray*)target, this->collisionDistance, ((Ray*)target)->collisionDistance );
 	case Type_sphere: return Utility::Intersect( *(Sphere*)target, *this, this->collisionDistance );
 	case Type_plane: return Utility::Intersect( *(Plane*)target, *this, this->collisionDistance );
-	case Type_triangle: return false; // TODO: 
+	// case Type_triangle: return false; // TODO: 
 	case Type_box_axis_aligned: return Utility::Intersect( *(BoxAxisAligned*)target, *this, this->collisionDistance );
 	case Type_box: return Utility::Intersect( *(Box*)target, *this, this->collisionDistance );
 	case Type_frustrum: return false; // TODO: 

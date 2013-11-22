@@ -27,7 +27,7 @@ bool Sphere::Intersects( const ICollideable *target ) const
 	case Type_ray: return Utility::Intersect( *this, *(Ray*)target, ((Ray*)target)->collisionDistance );
 	case Type_sphere: Utility::Intersect( *this, *(Sphere*)target );
 	case Type_plane: return Utility::Intersect( *(Plane*)target, *this );
-	case Type_triangle: return false; // TODO: 
+	// case Type_triangle: return false; // TODO: 
 	case Type_box_axis_aligned: return Utility::Intersect( *(BoxAxisAligned*)target, *this );
 	case Type_box: return Utility::Intersect( *(Box*)target, *this );
 	case Type_frustrum: return false; // TODO: 
@@ -41,7 +41,7 @@ bool Sphere::Contains( const ICollideable *target ) const
 	{
 	case Type_point:  return Utility::Intersect( *this, *(Point*)target );
 	case Type_sphere: return Utility::Contains( *this, *(Sphere*)target );
-	case Type_triangle: return false; // TODO: 
+	// case Type_triangle: return false; // TODO: 
 	case Type_box_axis_aligned: return false; // TODO: 
 	case Type_box: return false; // TODO: 
 	case Type_frustrum: return false; // TODO: 
