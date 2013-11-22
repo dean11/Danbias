@@ -23,11 +23,21 @@ namespace Oyster
 			const float gravity_constant = (const float)6.67284e-11; // The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
 		}
 
-		namespace MomentOfInertia
-		{
-			//! @todo TODO: add forward methods to Oyster::Physics3D::Formula::MomentOfInertia
 
-		}
+		class MomentOfInertia
+		{
+		public:
+			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+				
+			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+
+			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
+
+			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
+	
+			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
+		};
+
 
 		class API
 		{
