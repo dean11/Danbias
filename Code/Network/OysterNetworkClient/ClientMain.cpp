@@ -9,6 +9,10 @@ void ShutdownSockets();
 bool InitSockets();
 void chat(Client client);
 
+#include "../NetworkDependencies/Protocols.h"
+#include "../NetworkDependencies/Translator.h"
+using namespace Oyster::Network::Protocols;
+
 int main()
 {
 	char msgRecv[255] = "\0";
@@ -21,10 +25,13 @@ int main()
 	Client client;
 
 	//Connect to server
-	client.Connect(9876, "10.0.0.3");
+	client.Connect(9876, "127.0.0.1");
 
+	unsigned char* recvBuffer = new unsigned char[255];
 
-	chat(client);
+	client.Send(recvBuffer);
+
+	//chat(client);
 
 	//Recieve message
 	//client.Recv(msgRecv);
@@ -51,8 +58,8 @@ void ShutdownSockets()
 
 void chat(Client client)
 {
-	char msgRecv[255] = "\0";
-	char msgSend[255] = "\0";
+	unsigned char msgRecv[255] = "\0";
+	unsigned char msgSend[255] = "\0";
 
 	bool chatDone = false;
 
@@ -62,18 +69,18 @@ void chat(Client client)
 
 		cout<< "Client 2: " << msgRecv << endl;
 
-		cin.getline(msgSend , 255 , '\n');
+		cin.getline((char*)msgSend , 255 , '\n');
 
-		if(strlen(msgSend) < 1)
+		if(strlen((char*)msgSend) < 1)
 		{
-			strcpy_s(msgSend , " ");
+			memcpy(msgSend, " ", 1);
 		}
 
-		if(msgSend != "exit")
+		if((char*)msgSend != "exit")
 		{
-			if(strlen(msgSend) < 1)
+			if(strlen((char*)msgSend) < 1)
 			{
-				strcpy_s(msgSend, "ERROR");
+				memcpy(msgSend, "ERROR", 1);
 			}
 			client.Send(msgSend);
 		}

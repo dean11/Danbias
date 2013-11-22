@@ -16,7 +16,7 @@ namespace Oyster
 			~Translator(){};
 
 			unsigned char* Translate (Protocols::ProtocolHeader &header );
-			Protocols::ProtocolHeader& Translate (unsigned char msg[] ); 
+			Protocols::ProtocolHeader* Translate (unsigned char msg[] ); 
 		};
 	}
 }

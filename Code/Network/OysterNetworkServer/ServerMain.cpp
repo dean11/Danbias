@@ -16,28 +16,9 @@ using namespace ::Protocols;
 
 int main()
 {
-	unsigned char* recvBuffer;
-	Translator t;
-	ProtocolTest header;
-	header.clientID = 1;
-	header.packageType = package_type_test;
-	header.size = 12;
-	header.textMessage = "Hej";
-
-	recvBuffer = t.Translate(header);
-
-	ProtocolHeader& asd = t.Translate(recvBuffer);
-	switch(asd.packageType)
-	{
-	case package_type_test:
-
-		break;
-	}
-	cout << static_cast<ProtocolTest*>(&asd)->textMessage << endl;
-
-
+	unsigned char* recvBuffer = new unsigned char[255];
 	cout << "Server" << endl;
-
+	Translator t;
 
 	if(!InitSockets())
 	{
@@ -59,20 +40,29 @@ int main()
 	Client client2(clientSocket);
 	cout << "Second client connected." << endl;
 
-	client1.Send("Hej");
+	client1.Send((unsigned char*)"Hej");
+	ProtocolHeader* header = NULL;
 
 	while(1)
 	{
-		/*client1.Recv(recvBuffer);
-		cout << "Client1: " << recvBuffer << endl;
+		client1.Recv(recvBuffer);
+
+		header = t.Translate(recvBuffer);
+		cout << header->clientID << ' ' << header->packageType << ' ' << header->size << endl;
+		cout << "Client1: " << ((ProtocolTest*)header)->textMessage << endl;
 		client2.Send(recvBuffer);
 
 		client2.Recv(recvBuffer);
-		cout << "Client2: " << recvBuffer << endl;
-		client1.Send(recvBuffer);*/
+
+		header = t.Translate(recvBuffer);
+		cout << header->clientID << ' ' << header->packageType << ' ' << header->size << endl;
+		cout << "Client1: " << ((ProtocolTest*)header)->textMessage << endl;
+		client1.Send(recvBuffer);
 	}
 
 	ShutdownSockets();
+
+	delete[] recvBuffer;
 
 	system("pause");
 	return 0;

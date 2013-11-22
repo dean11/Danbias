@@ -25,9 +25,9 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 	return message->GetMsg();
 }
 
-ProtocolHeader& Translator::Translate(unsigned char msg[] )
+ProtocolHeader* Translator::Translate(unsigned char msg[] )
 {
-	ProtocolHeader* header = new ProtocolHeader();
+	ProtocolHeader *header = new ProtocolHeader();
 	MessageHeader *message = new MessageHeader();
 
 	message->Translate(msg, *header);
@@ -46,7 +46,5 @@ ProtocolHeader& Translator::Translate(unsigned char msg[] )
 	}
 
 	message->Translate(msg, *header);
-	return *header;
+	return header;
 }
-
-

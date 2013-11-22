@@ -19,12 +19,12 @@ bool Client::Connect(unsigned int port, char filename[])
 	return true;
 }
 
-void Client::Send(char msg[])
+void Client::Send(unsigned char msg[])
 {
 	connection->Send(msg);
 }
 
-void Client::Recv(char msg[])
+void Client::Recv(unsigned char msg[])
 {
 	connection->Recieve(msg);
 }
