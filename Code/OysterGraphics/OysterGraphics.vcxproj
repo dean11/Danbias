@@ -154,6 +154,7 @@
     <ClInclude Include="Core\Buffer.h" />
     <ClInclude Include="Core\Core.h" />
     <ClInclude Include="Core\CoreIncludes.h" />
+    <ClInclude Include="DllInterfaces\SimpleInterface.h" />
     <ClInclude Include="FileLoader\ObjReader.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Model\ModelInfo.h" />

@@ -1,5 +1,6 @@
 #include "OBJReader.h"
 #include "..\Definitions\GraphicalDefinition.h"
+#include "..\Core\Buffer.h"
 #include <sstream>
 #include <fstream>
 

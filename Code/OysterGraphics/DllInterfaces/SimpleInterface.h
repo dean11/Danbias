@@ -1,5 +1,7 @@
 #pragma once
+#include <string>
 #include "..\Model\Model.h"
+#include "OysterMath.h"
 
 
 class SimpleInterface
@@ -16,11 +18,11 @@ public:
 
 	State Init(HWND Window, bool MSAA_Quality, bool Fullscreen);
 	//! @brief from Oyster::Math Float4x4, expects corect methods
-	static void NewFrame(float View[16], float Projection[16]);
+	static void NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection);
 	static void RenderScene(Oyster::Graphics::Render::Model* models, int count);
 	static void EndFrame();
 
-	static Oyster::Graphics::Render::Model* CreateModel();
+	static Oyster::Graphics::Render::Model* CreateModel(std::wstring filename);
 
 	static State SetOptions(Option);
 	

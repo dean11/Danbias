@@ -14,8 +14,7 @@ namespace Oyster
 			struct Model
 			{
 				
-				typedef unsigned long long ModelData;
-				ModelData info;
+				void* const info;
 				//ModelInfo* info;
 				void* data;
 				int size;

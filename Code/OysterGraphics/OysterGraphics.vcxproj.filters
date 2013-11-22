@@ -71,6 +71,9 @@
     <ClInclude Include="FileLoader\ObjReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DllInterfaces\SimpleInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugVertex.hlsl" />
