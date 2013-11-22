@@ -145,16 +145,26 @@
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
-    <ClCompile Include="FileLoader\ObjReader.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
     <ClCompile Include="Render\Rendering\BasicRender.cpp" />
     <ClCompile Include="Render\Resources\Resources.cpp" />
+=======
+    <ClCompile Include="FileLoader\ObjReader.cpp" />
+    <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
+    <ClCompile Include="Render\Rendering\BasicRender.cpp" />
+    <ClCompile Include="Resources\Resources.cpp" />
+>>>>>>> f08e9491ed00b00aedba0eabf1caed33830fc0e2
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Buffer.h" />
     <ClInclude Include="Core\Core.h" />
     <ClInclude Include="Core\CoreIncludes.h" />
+<<<<<<< HEAD
+=======
+    <ClInclude Include="EngineIncludes.h" />
     <ClInclude Include="FileLoader\ObjReader.h" />
+>>>>>>> f08e9491ed00b00aedba0eabf1caed33830fc0e2
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Model\ModelInfo.h" />
     <ClInclude Include="Render\Preparations\Preparations.h" />
@@ -176,11 +186,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </AssemblerOutput>
-      <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </AssemblerOutputFile>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
