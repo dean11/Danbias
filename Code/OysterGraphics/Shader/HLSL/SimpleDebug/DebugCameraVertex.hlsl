@@ -21,8 +21,8 @@ float4 main( VertexIn input ) : SV_POSITION
 	float4 postTransform = float4(input.pos*0.1f,1);
 	postTransform.y += 1.5f;
 	//return postTransform;
-	return mul(float4(input.pos*0.1f,1), View);
-	//matrix VP = mul(Projection,View);
+	//return mul(View, float4(input.pos,1));
+	matrix VP = mul(Projection, View);
 	//matrix WVP = mul(World, VP);
-	//return mul(VP, float4(input.pos*0.01f,1));
+	return mul(VP, float4(input.pos*0.1f,1) );
 }

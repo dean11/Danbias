@@ -392,7 +392,7 @@ namespace LinearAlgebra3D
 		::LinearAlgebra::Vector3<ScalarType> right = normalizedDirection.Cross( normalizedUpVector ).GetNormalized();
 		return ::LinearAlgebra::Matrix4x4<ScalarType>( ::LinearAlgebra::Vector4<ScalarType>( right, 0.0f ),
 													   ::LinearAlgebra::Vector4<ScalarType>( right.Cross( normalizedDirection ), 0.0f ),
-													   ::LinearAlgebra::Vector4<ScalarType>( -normalizedDirection, 0.0f ),
+													   ::LinearAlgebra::Vector4<ScalarType>( normalizedDirection, 0.0f ),
 													   ::LinearAlgebra::Vector4<ScalarType>( worldPos, 1.0f ) );
 	}
 

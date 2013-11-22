@@ -143,40 +143,12 @@ HRESULT InitDirect3D()
 	if(Oyster::Graphics::Core::Init::FullInit(g_hWnd,false,false)==Oyster::Graphics::Core::Init::Fail)
 		return E_FAIL;
 
-	
-
-	/*std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
-	std::wstring EffectPath = L"SimpleDebug\\";
-
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Vertex,L"PassThroughFloat4",false);
-
-	Oyster::Graphics::Core::ShaderManager::Set::Vertex(Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"));
-	Oyster::Graphics::Core::ShaderManager::Set::Pixel(Oyster::Graphics::Core::ShaderManager::Get::Pixel(L"Debug"));
-
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
-	ID3D11InputLayout* layout;
-
-	Oyster::Graphics::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"), layout);
-
-	Oyster::Graphics::Core::deviceContext->IASetInputLayout(layout);
-	Oyster::Graphics::Core::deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	Oyster::Graphics::Render::Preparations::Basic::BindBackBufferRTV();*/
-
+	//Init shaders
 	Oyster::Graphics::Render::Resources::Init();
 
 	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();
-	
-	/*struct float4
-	{
-		float x,y,z,w;
-	};*/
 
+#pragma region Triangle
 	//Oyster::Graphics::Definitions::ObjVertex mesh[] =
 	//{
 	//	{Oyster::Math::Vector3(-1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
@@ -199,17 +171,23 @@ HRESULT InitDirect3D()
 	//mi->Indexed = false;
 	//mi->VertexCount = 3;
 	//mi->Vertices = b;
-
+	
+	//m->info = mi;
+#pragma endregion
+	
+#pragma region Obj
 	OBJReader or;
 	or.readOBJFile(L"bth.obj");
 	m->info = or.toModel();
+#pragma endregion
 	
-	
-	//m->info = mi;
 	m->World = Oyster::Math::Matrix::identity;
 
-	P = Oyster::Math3D::ProjectionMatrix_Perspective(PI/4,16.0f/9.0f,1,100);
-	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,0.0f)).GetInverse();
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(PI/2,16.0f/9.0f,.1f,100);
+
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,10.4f));
+	V = Oyster::Math3D::InverseOrientationMatrix(V);
+
 
 	return S_OK;
 }
