@@ -1,7 +1,7 @@
 #include "Resources.h"
 #include "..\OysterGraphics\Definitions\GraphicalDefinition.h"
 
-const std::wstring PathFromExeToHlsl = L"";
+const std::wstring PathFromExeToHlsl = L"..\\OysterGraphics\\Shader\\HLSL\\";
 const std::wstring VertexTransformDebug = L"TransformDebugVertex";
 const std::wstring VertexDebug = L"DebugVertex";
 const std::wstring PixelRed = L"DebugPixel";
@@ -16,6 +16,10 @@ namespace Oyster
 	{
 		namespace Render
 		{
+			Shader::ShaderEffect Resources::obj;
+			Buffer Resources::ModelData = Buffer();
+			Buffer Resources::VPData = Buffer();
+
 			Core::Init::State Resources::Init()
 			{
 
@@ -24,11 +28,11 @@ namespace Oyster
 #ifdef _DEBUG
 
 				/** Load Vertex Shader for d3dcompile*/
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugCameraVertex",ShaderType::Vertex, VertexTransformDebug, false);
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugVertex",ShaderType::Vertex, VertexDebug, false);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugCameraVertex.hlsl",ShaderType::Vertex, VertexTransformDebug, false);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugVertex.hlsl",ShaderType::Vertex, VertexDebug, false);
 
 				/** Load Pixel Shader for d3dcompile */
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"DebugPixel", ShaderType::Pixel, PixelRed, false);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"DebugPixel.hlsl", ShaderType::Pixel, PixelRed, false);
 
 #else
 				/** Load Vertex Shader with Precompiled */
@@ -53,6 +57,21 @@ namespace Oyster
 
 #pragma region Setup Render States
 				/** @todo Create DX States */  
+
+				D3D11_RASTERIZER_DESC rdesc;
+				rdesc.CullMode = D3D11_CULL_NONE;
+				rdesc.FillMode = D3D11_FILL_SOLID;
+				rdesc.FrontCounterClockwise = false;
+				rdesc.DepthBias = 0;
+				rdesc.DepthBiasClamp = 0;
+				rdesc.DepthClipEnable = true;
+				rdesc.SlopeScaledDepthBias = 0;
+				rdesc.ScissorEnable = false;
+				rdesc.MultisampleEnable = false;
+				rdesc.AntialiasedLineEnable = false;
+
+				ID3D11RasterizerState* rs = NULL;
+				Oyster::Graphics::Core::device->CreateRasterizerState(&rdesc,&rs);
 #pragma endregion
 
 #pragma region Setup Views
@@ -68,13 +87,14 @@ namespace Oyster
 				{
 					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 					{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-					{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+					{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 
 				};
 
 				Shader::CreateInputLayout(indesc,3,GetShader::Vertex(VertexTransformDebug),obj.IAStage.Layout);
 				obj.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 				obj.CBuffers.Vertex.push_back(&VPData);
+				obj.RenderStates.Rasterizer = rs;
 
 #pragma endregion
 

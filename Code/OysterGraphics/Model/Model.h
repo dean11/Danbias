@@ -22,7 +22,7 @@ namespace Oyster
 			struct Model
 			{
 				ModelInfo* info;
-				Oyster::Math::Float4x4 *World;
+				Oyster::Math::Float4x4 World;
 				bool Visible;
 			};
 		}

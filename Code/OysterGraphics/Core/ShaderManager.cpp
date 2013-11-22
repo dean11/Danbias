@@ -143,7 +143,7 @@ namespace Oyster
 
 				ID3D11PixelShader* pixel;
 
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"ps_5_0",0,0,&Shader,&Error)))
+				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"ps_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
 				{
 					std::string fel = (char*)Error->GetBufferPointer();
 					Error->Release();
@@ -170,7 +170,7 @@ namespace Oyster
 
 				ID3D11GeometryShader* geometry;
 
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"gs_5_0",0,0,&Shader,&Error)))
+				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"gs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
 				{
 					std::string fel = (char*)Error->GetBufferPointer();
 					Error->Release();
@@ -197,7 +197,7 @@ namespace Oyster
 
 				ID3D11VertexShader* vertex;
 
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"vs_5_0",0,0,&Shader,&Error)))
+				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"vs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
 				{
 					std::string fel = (char*)Error->GetBufferPointer();
 					Error->Release();

@@ -27,16 +27,24 @@
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Render\Rendering\BasicRender.cpp">
+=======
+    <ClCompile Include="Resources\Resources.cpp">
+>>>>>>> f08e9491ed00b00aedba0eabf1caed33830fc0e2
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Render\Resources\Resources.cpp">
+=======
+    <ClCompile Include="Render\Rendering\BasicRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileLoader\ObjReader.cpp">
+>>>>>>> f08e9491ed00b00aedba0eabf1caed33830fc0e2
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
