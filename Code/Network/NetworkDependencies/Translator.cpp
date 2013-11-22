@@ -25,26 +25,35 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 	return message->GetMsg();
 }
 
-ProtocolHeader* Translator::Translate(unsigned char msg[] )
+ProtocolSet* Translator::Translate(ProtocolSet* set, unsigned char msg[] )
 {
 	ProtocolHeader *header = new ProtocolHeader();
 	MessageHeader *message = new MessageHeader();
 
 	message->Translate(msg, *header);
+	delete message;
+	message = NULL;
 
-	switch(header->packageType)
+	//Switch to the correct package.
+	set->t = (PackageType)header->packageType;
+	switch(set->t)
 	{
 	case package_type_header:
 		message = new MessageHeader();
-		header = new ProtocolHeader();
+		set->Protocol.pHeader = new ProtocolHeader;
+		message->Translate(msg, *set->Protocol.pHeader);
 		break;
 
 	case package_type_test:
 		message = new MessageTest();
-		header = new ProtocolTest();
+		set->Protocol.pTest = new ProtocolTest;
+		message->Translate(msg, *set->Protocol.pTest);
 		break;
 	}
 
-	message->Translate(msg, *header);
-	return header;
+	if(message)
+		delete message;
+	delete header;
+
+	return set;
 }

@@ -41,28 +41,32 @@ int main()
 	cout << "Second client connected." << endl;
 
 	client1.Send((unsigned char*)"Hej");
-	ProtocolHeader* header = NULL;
+	ProtocolSet* set = new ProtocolSet;
 
 	while(1)
 	{
 		client1.Recv(recvBuffer);
 
-		header = t.Translate(recvBuffer);
-		cout << header->clientID << ' ' << header->packageType << ' ' << header->size << endl;
-		cout << "Client1: " << ((ProtocolTest*)header)->textMessage << endl;
+		set = t.Translate(set, recvBuffer);
+		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
+		cout << "Client1: " << set->Protocol.pTest->textMessage << endl;
+		set->Release();
 		client2.Send(recvBuffer);
+		
 
 		client2.Recv(recvBuffer);
 
-		header = t.Translate(recvBuffer);
-		cout << header->clientID << ' ' << header->packageType << ' ' << header->size << endl;
-		cout << "Client1: " << ((ProtocolTest*)header)->textMessage << endl;
+		set = t.Translate(set, recvBuffer);
+		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
+		cout << "Client2: " << set->Protocol.pTest->textMessage << endl;
+		set->Release();
 		client1.Send(recvBuffer);
 	}
 
 	ShutdownSockets();
 
 	delete[] recvBuffer;
+	delete set;
 
 	system("pause");
 	return 0;

@@ -63,6 +63,7 @@ void chat(Client client)
 	unsigned char msgRecv[255] = "\0";
 	string msgSend = "";
 
+	ProtocolSet* set = new ProtocolSet;
 	ProtocolHeader* header;
 	ProtocolTest test;
 
@@ -72,14 +73,14 @@ void chat(Client client)
 	{
 		client.Recv(msgRecv);
 		
-		header = t->Translate(msgRecv);
+		set = t->Translate(set, msgRecv);
 
-		switch(header->packageType)
+		switch(set->t)
 		{
 		case package_type_header:
 			break;
 		case package_type_test:
-			cout <<"Client 2: " <<((ProtocolTest*)header)->textMessage <<endl;
+			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
 			break;
 		}
 
@@ -113,4 +114,5 @@ void chat(Client client)
 
 	}
 
+	delete set;
 }

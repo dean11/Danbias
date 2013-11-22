@@ -10,7 +10,7 @@ namespace Oyster
 
 		public:
 			virtual unsigned char* Translate (Protocols::ProtocolHeader &header ) = 0;
-			virtual Protocols::ProtocolHeader* Translate ( unsigned char message[] ) = 0;
+			virtual Protocols::ProtocolSet* Translate (Protocols::ProtocolSet* set, unsigned char message[] ) = 0;
 
 		};
 	}

@@ -17,7 +17,6 @@ namespace Oyster
 				package_type_update_position
 			};
 
-
 			struct ProtocolHeader
 			{
 				int size;
@@ -32,14 +31,37 @@ namespace Oyster
 				std::string textMessage;
 				ProtocolTest() { this->packageType = package_type_test; }
 			};
-			/*struct Prutt
+
+			class ProtocolSet
 			{
+			public:
 				PackageType t;
-				union PRUTT
+				union
 				{
-					ProtocolTest *ptest,
-				};
-			};*/
+					ProtocolHeader* pHeader;
+					ProtocolTest *pTest;
+
+				}Protocol;
+
+				void Release()
+				{
+					switch(t)
+					{
+					case package_type_header:
+						if(Protocol.pHeader)
+						{
+							delete Protocol.pHeader;
+						}
+						break;
+					case package_type_test:
+						if(Protocol.pTest)
+						{
+							delete Protocol.pTest;
+						}
+						break;
+					}
+				}
+			};
 		}
 	}
 }
