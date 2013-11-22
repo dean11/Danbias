@@ -23,6 +23,12 @@ namespace Oyster
 			const float gravity_constant = (const float)6.67284e-11; // The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
 		}
 
+		namespace MomentOfInertia
+		{
+			//! @todo TODO: add forward methods to Oyster::Physics3D::Formula::MomentOfInertia
+
+		}
+
 		class API
 		{
 		public:
