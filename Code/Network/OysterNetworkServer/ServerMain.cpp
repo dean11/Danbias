@@ -40,12 +40,8 @@ int main()
 	Client client2(clientSocket);
 	cout << "Second client connected." << endl;
 
-<<<<<<< HEAD
 	client1.Send((unsigned char*)"Hej");
 	ProtocolHeader* header = NULL;
-=======
-	client1.Send((unsigned char*) "Hej");
->>>>>>> 4142688f6c4a63aa97341205588ad6cace0f43af
 
 	while(1)
 	{

@@ -98,13 +98,10 @@ bool Connection::Send(const unsigned char message[])
 {
 	int nBytes;
 	unsigned long messageSize = strlen((char*)message);
-<<<<<<< HEAD
-	if((nBytes = send(mySocket, (char*)message , messageSize, 0)) == SOCKET_ERROR)
-=======
+
 	messageSize = 18;
 	nBytes = send(mySocket, (char*)message , messageSize, 0);
 	if(nBytes == SOCKET_ERROR)
->>>>>>> 4142688f6c4a63aa97341205588ad6cace0f43af
 	{
 		//Send failed!
 		return false;
