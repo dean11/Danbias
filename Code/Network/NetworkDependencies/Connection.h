@@ -20,10 +20,13 @@ namespace Oyster
 			~Connection();
 
 			virtual bool Connect( unsigned short port , const char serverName[] );
-			virtual bool InitiateServer( unsigned short port ); 
+			virtual bool InitiateServer( unsigned short port );
+
 			virtual void Disconnect();
-			virtual bool Send(const char message[]);
-			virtual int  Recieve(char message[]);
+
+			virtual bool Send(const unsigned char message[]);
+			virtual int  Recieve(unsigned char message[]);
+
 			virtual int  Listen();
 
 		private:

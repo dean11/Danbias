@@ -20,8 +20,8 @@ namespace Oyster
 				Client(unsigned int socket);
 				~Client();
 
-				void Send(char buffer[]);
-				void Recv(char buffer[]);
+				void Send(unsigned char buffer[]);
+				void Recv(unsigned char buffer[]);
 
 			private:
 				::Oyster::Network::Connection* connection;

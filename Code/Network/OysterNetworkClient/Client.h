@@ -21,8 +21,8 @@ namespace Oyster
 
 				bool Connect(unsigned int port, char filename[]);
 
-				void Send(char msg[]);
-				void Recv(char msg[]);
+				void Send(unsigned char msg[]);
+				void Recv(unsigned char msg[]);
 
 			private:
 				::Oyster::Network::Connection* connection;

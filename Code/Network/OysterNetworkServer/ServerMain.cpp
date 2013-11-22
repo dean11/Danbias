@@ -59,7 +59,7 @@ int main()
 	Client client2(clientSocket);
 	cout << "Second client connected." << endl;
 
-	client1.Send("Hej");
+	client1.Send((unsigned char*) "Hej");
 
 	while(1)
 	{
