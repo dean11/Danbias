@@ -99,7 +99,7 @@ bool Connection::Send(const unsigned char message[])
 	int nBytes;
 	unsigned long messageSize = strlen((char*)message);
 
-	messageSize = 18;
+	messageSize = 255;
 	nBytes = send(mySocket, (char*)message , messageSize, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
