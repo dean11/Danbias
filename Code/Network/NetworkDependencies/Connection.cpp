@@ -26,8 +26,8 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 	}
 
 
-	struct hostent *hostEntry;
-	if((hostEntry = gethostbyname(serverName)) == NULL)
+	struct hostent *hostEnt;
+	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{
 		//couldn't find host
 		return false;
@@ -35,7 +35,7 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port);
-	server.sin_addr.s_addr = *(unsigned long*) hostEntry->h_addr;
+	server.sin_addr.s_addr = *(unsigned long*) hostEnt->h_addr;
 
 	while(1)
 	{
@@ -77,7 +77,7 @@ bool Connection::InitiateServer(unsigned short port)
 		return false;
 	}
 
-	//not our Listen function!
+	//not our Listen function! its trying to keep our socket open for connections
 	if(listen(mySocket, 5) == SOCKET_ERROR)
 	{
 		//"Listen failed!
@@ -98,7 +98,13 @@ bool Connection::Send(const unsigned char message[])
 {
 	int nBytes;
 	unsigned long messageSize = strlen((char*)message);
+<<<<<<< HEAD
 	if((nBytes = send(mySocket, (char*)message , messageSize, 0)) == SOCKET_ERROR)
+=======
+	messageSize = 18;
+	nBytes = send(mySocket, (char*)message , messageSize, 0);
+	if(nBytes == SOCKET_ERROR)
+>>>>>>> 4142688f6c4a63aa97341205588ad6cace0f43af
 	{
 		//Send failed!
 		return false;

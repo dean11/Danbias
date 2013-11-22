@@ -32,6 +32,14 @@ namespace Oyster
 				std::string textMessage;
 				ProtocolTest() { this->packageType = package_type_test; }
 			};
+			/*struct Prutt
+			{
+				PackageType t;
+				union PRUTT
+				{
+					ProtocolTest *ptest,
+				};
+			};*/
 		}
 	}
 }
