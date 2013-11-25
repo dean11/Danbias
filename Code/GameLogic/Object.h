@@ -5,6 +5,8 @@
 #include "Render/Rendering/Render.h"
 #include "Utilities.h"
 
+#include "PhysicsAPI.h"
+
 namespace GameLogic
 {
 
@@ -23,6 +25,8 @@ namespace GameLogic
 	protected:
 		//either a model pointer or an ID to an arraypos filled with models that are to be rendered
 		//rigidBody
+		unsigned int ref;
+		::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> rigidBody;
 
 	};
 

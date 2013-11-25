@@ -10,6 +10,7 @@
 #include "Core/Core.h"
 #include "Render\Preparations\Preparations.h"
 #include "IGame.h"
+#include "InputController.h"
 
 
 
@@ -198,6 +199,9 @@ HRESULT Render(float deltaTime)
 	//Oyster::Graphics::Core::deviceContext->Draw(3,0);
 	
 	//Oyster::Graphics::Render::Rendering::Basic::EndFrame();
+
+
+	
 	Oyster::Graphics::Core::swapChain->Present(0,0);
 
 	return S_OK;
