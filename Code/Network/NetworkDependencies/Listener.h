@@ -1,31 +1,31 @@
-#ifndef NETWORK_CLIENT_CLIENT_H
-#define NETWORK_CLIENT_CLIENT_H
+#ifndef NETWORK_SERVER_LISTENER_H
+#define NETWORK_SERVER_LISTENER_H
 
 /////////////////////////////////////
 // Created by Pontus Fransson 2013 //
 /////////////////////////////////////
 
+#include "IListener.h"
 #include "../NetworkDependencies/Connection.h"
 
 namespace Oyster
 {
 	namespace Network
 	{
-		namespace Client
+		namespace Server
 		{
-			class Client
+			class Listener
 			{
 			public:
-				Client();
-				~Client();
+				Listener();
+				~Listener();
 
-				bool Connect(unsigned int port, char filename[]);
-
-				void Send(unsigned char msg[]);
-				void Recv(unsigned char msg[]);
+				bool Init(unsigned int port);
+				int Accept();
 
 			private:
 				::Oyster::Network::Connection* connection;
+
 			};
 		}
 	}

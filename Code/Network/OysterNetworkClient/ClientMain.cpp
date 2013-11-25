@@ -27,7 +27,7 @@ int main()
 	Client client;
 
 	//Connect to server
-	client.Connect(9876, "10.0.0.3");
+	client.Connect(9876, "localhost");
 
 	chat(client);
 
@@ -52,12 +52,19 @@ void chat(Client &client)
 {
 	Oyster::Network::Translator *t = new Oyster::Network::Translator();
 
-	unsigned char msgRecv[256] = "\0";
+	unsigned char msgRecv[2560] = "\0";
 	string msgSend = "";
 
 	ProtocolSet* set = new ProtocolSet;
-	ProtocolHeader* header;
 	ProtocolTest test;
+	test.numOfFloats = 5;
+	test.f = new float[test.numOfFloats];
+	float temp = 12345.5654f;
+	for(int i = 0; i < 5; i++)
+	{
+		test.f[i] = temp;
+		temp++;
+	}
 
 	bool chatDone = false;
 
@@ -65,20 +72,26 @@ void chat(Client &client)
 	{
 		client.Recv(msgRecv);
 		
-		t->Translate(set, msgRecv);
+		t->Unpack(set, msgRecv);
 		
-		switch(set->t)
+		switch(set->type)
 		{
 		case package_type_header:
 			break;
 		case package_type_test:
 			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
+			for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
+			{
+				cout << set->Protocol.pTest->f[i] << ' ' ;
+			}
 			break;
 		}
 		
 		set->Release();
 
 		std::getline(std::cin, msgSend);
+
+
 	
 		if( msgSend != "exit")
 		{
@@ -91,7 +104,7 @@ void chat(Client &client)
 			test.size = msgSend.length();
 			test.textMessage = msgSend;
 			
-			unsigned char *message = t->Translate(test);
+			unsigned char *message = t->Pack(test);
 
 			client.Send(message);
 		}

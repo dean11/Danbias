@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="Listener.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Messages\MessageHeader.cpp" />
     <ClCompile Include="Messages\MessageTest.cpp" />
@@ -169,6 +170,8 @@
   <ItemGroup>
     <ClInclude Include="Connection.h" />
     <ClInclude Include="IConnection.h" />
+    <ClInclude Include="IListener.h" />
+    <ClInclude Include="Listener.h" />
     <ClInclude Include="Messages\MessageHeader.h" />
     <ClInclude Include="Messages\MessagesInclude.h" />
     <ClInclude Include="Messages\MessageTest.h" />

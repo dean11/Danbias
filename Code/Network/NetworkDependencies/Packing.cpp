@@ -33,13 +33,13 @@ namespace Oyster
 			void Pack(unsigned char buffer[], short i)
 			{
 				*buffer++ = i >> 8;
-				*buffer++ = i;
+				*buffer++ = (char)i;
 			}
 
 			void Pack(unsigned char buffer[], unsigned short i)
 			{
 				*buffer++ = i >> 8;
-				*buffer++ = i;
+				*buffer++ = (char)i;
 			}
 
 			//int (32-bit)
@@ -62,26 +62,26 @@ namespace Oyster
 			//__int64 (64-bit)
 			void Pack(unsigned char buffer[], __int64 i)
 			{
-				*buffer++ = i >> 56;
-				*buffer++ = i >> 48;
-				*buffer++ = i >> 40;
-				*buffer++ = i >> 32;
-				*buffer++ = i >> 24;
-				*buffer++ = i >> 16;
-				*buffer++ = i >> 8;
-				*buffer++ = i;
+				*buffer++ = (char)(i >> 56);
+				*buffer++ = (char)(i >> 48);
+				*buffer++ = (char)(i >> 40);
+				*buffer++ = (char)(i >> 32);
+				*buffer++ = (char)(i >> 24);
+				*buffer++ = (char)(i >> 16);
+				*buffer++ = (char)(i >> 8);
+				*buffer++ = (char)i;
 			}
 
 			void Pack(unsigned char buffer[], unsigned __int64 i)
 			{
-				*buffer++ = i >> 56;
-				*buffer++ = i >> 48;
-				*buffer++ = i >> 40;
-				*buffer++ = i >> 32;
-				*buffer++ = i >> 24;
-				*buffer++ = i >> 16;
-				*buffer++ = i >> 8;
-				*buffer++ = i;
+				*buffer++ = (char)(i >> 56);
+				*buffer++ = (char)(i >> 48);
+				*buffer++ = (char)(i >> 40);
+				*buffer++ = (char)(i >> 32);
+				*buffer++ = (char)(i >> 24);
+				*buffer++ = (char)(i >> 16);
+				*buffer++ = (char)(i >> 8);
+				*buffer++ = (char)i;
 			}
 
 			//floating point (32, 64-bit)

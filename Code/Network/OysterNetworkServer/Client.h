@@ -1,9 +1,9 @@
 #ifndef NETWORK_SERVER_CLIENT_H
 #define NETWORK_SERVER_CLIENT_H
 
-/////////////////////////////////////////////////////////////////////
-// Created by Pontus Fransson 2013
-/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////
+// Created by Pontus Fransson 2013 //
+/////////////////////////////////////
 
 #include "../NetworkDependencies/Connection.h"
 
@@ -15,7 +15,6 @@ namespace Oyster
 		{
 			class Client
 			{
-
 			public:
 				Client(unsigned int socket);
 				~Client();

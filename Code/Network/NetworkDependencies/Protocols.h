@@ -23,19 +23,24 @@ namespace Oyster
 				int packageType;
 				int clientID;
 
-				ProtocolHeader() { this->packageType = package_type_header; }  
+				ProtocolHeader() { this->packageType = package_type_header; }
+				virtual ~ProtocolHeader() {  }
 			};
 
 			struct ProtocolTest : public ProtocolHeader
 			{
 				std::string textMessage;
+				unsigned int numOfFloats;
+				float *f;
+
 				ProtocolTest() { this->packageType = package_type_test; }
+				virtual ~ProtocolTest() { delete[] f; }
 			};
 
 			class ProtocolSet
 			{
 			public:
-				PackageType t;
+				PackageType type;
 				union
 				{
 					ProtocolHeader* pHeader;
@@ -45,7 +50,7 @@ namespace Oyster
 
 				void Release()
 				{
-					switch(t)
+					switch(type)
 					{
 					case package_type_header:
 						if(Protocol.pHeader)

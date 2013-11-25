@@ -96,8 +96,11 @@ bool Connection::Send(const unsigned char message[])
 {
 	int nBytes;
 	unsigned long messageSize = strlen((char*)message);
+	int optlen = sizeof(int);
+	int optval = 0;
+	getsockopt(mySocket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
 
-	messageSize = 255;
+	messageSize = 1000;
 	nBytes = send(mySocket, (char*)message , messageSize, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
@@ -111,7 +114,7 @@ bool Connection::Send(const unsigned char message[])
 int Connection::Recieve(unsigned char message[])
 {
 	int nBytes;
-	nBytes = recv(mySocket, (char*)message , 255, 0);
+	nBytes = recv(mySocket, (char*)message , 10000, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Recv failed

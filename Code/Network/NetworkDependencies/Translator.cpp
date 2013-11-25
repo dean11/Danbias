@@ -4,7 +4,7 @@ using namespace Oyster::Network;
 using namespace ::Protocols;
 using namespace ::Messages;
 
-unsigned char* Translator::Translate( ProtocolHeader &header )
+unsigned char* Translator::Pack( ProtocolHeader &header )
 {
 	MessageHeader *message = NULL;
 
@@ -21,7 +21,7 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 
 	if(message != NULL)
 	{
-		message->Translate(header, this->msg);
+		message->Pack(header, this->msg);
 
 		delete message;
 		message = NULL;
@@ -30,34 +30,36 @@ unsigned char* Translator::Translate( ProtocolHeader &header )
 	return msg;
 }
 
-ProtocolSet* Translator::Translate(ProtocolSet* set, unsigned char msg[] )
+ProtocolSet* Translator::Unpack(ProtocolSet* set, unsigned char msg[] )
 {
 	ProtocolHeader *header = new ProtocolHeader();
 	MessageHeader *message = new MessageHeader();
 
-	message->Translate(msg, *header);
+	message->Unpack(msg, *header);
 	delete message;
 	message = NULL;
 
 	//Switch to the correct package.
-	set->t = (PackageType)header->packageType;
-	switch(set->t)
+	set->type = (PackageType)header->packageType;
+	switch(set->type)
 	{
 	case package_type_header:
 		message = new MessageHeader();
 		set->Protocol.pHeader = new ProtocolHeader;
-		message->Translate(msg, *set->Protocol.pHeader);
+		message->Unpack(msg, *set->Protocol.pHeader);
 		break;
 
 	case package_type_test:
 		message = new MessageTest();
 		set->Protocol.pTest = new ProtocolTest;
-		message->Translate(msg, *set->Protocol.pTest);
+		message->Unpack(msg, *set->Protocol.pTest);
 		break;
 	}
 
 	if(message)
+	{
 		delete message;
+	}
 	delete header;
 
 	return set;

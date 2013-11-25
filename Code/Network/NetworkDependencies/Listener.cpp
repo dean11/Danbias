@@ -1,6 +1,6 @@
 #include "Listener.h"
 
-using namespace Oyster::Network;
+using namespace Oyster::Network::Server;
 
 Listener::Listener()
 {

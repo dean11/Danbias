@@ -7,6 +7,7 @@
     <ClCompile Include="Messages\MessageTest.cpp" />
     <ClCompile Include="Packing.cpp" />
     <ClCompile Include="Translator.cpp" />
+    <ClCompile Include="Listener.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
@@ -18,5 +19,7 @@
     <ClInclude Include="Protocols.h" />
     <ClInclude Include="Translator.h" />
     <ClInclude Include="Messages\MessagesInclude.h" />
+    <ClInclude Include="Listener.h" />
+    <ClInclude Include="IListener.h" />
   </ItemGroup>
 </Project>

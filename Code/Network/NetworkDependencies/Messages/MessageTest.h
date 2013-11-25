@@ -1,9 +1,9 @@
 #ifndef NETWORK_DEPENDENCIES_MESSAGE_TEST_H
 #define NETWORK_DEPENDENCIES_MESSAGE_TEST_H
 
-/////////////////////////////////////////////////////////////////////
-// Created by Pontus Fransson 2013
-/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////
+// Created by Pontus Fransson 2013 //
+/////////////////////////////////////
 
 #include "MessageHeader.h"
 
@@ -19,11 +19,10 @@ namespace Oyster
 				MessageTest();
 				virtual ~MessageTest();
 
-				virtual void Translate(Protocols::ProtocolHeader& header, unsigned char msg[]);
-				virtual void Translate(unsigned char message[], Protocols::ProtocolHeader& header);
+				virtual void Pack(Protocols::ProtocolHeader& header, unsigned char msg[]);
+				virtual void Unpack(unsigned char msg[], Protocols::ProtocolHeader& header);
 
 			private:
-
 			};
 		}
 	}
