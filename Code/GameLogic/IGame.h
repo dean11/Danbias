@@ -3,7 +3,7 @@
 #ifndef IGAME_H
 #define IGAME_H
 
-#if defined DLL_EXPORT
+#if defined GAME_DLL_EXPORT
 #define DLL_USAGE __declspec(dllexport)
 #else
 #define DLL_USAGE __declspec(dllimport)
