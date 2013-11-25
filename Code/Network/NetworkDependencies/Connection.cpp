@@ -3,51 +3,31 @@
 #include <winsock2.h>
 #include <iostream>
 
-using namespace Oyster::Network; 
+using namespace Oyster::Network;
 
 Connection::~Connection()
 {
-	if(mySocket != NULL)
-	{
-		closesocket( mySocket );
-		mySocket = NULL;
-	}
+	closesocket( this->socket );
 }
 
 bool Connection::Connect(unsigned short port , const char serverName[])
 {
-	mySocket = socket(AF_INET, SOCK_STREAM, 0);
-	if(mySocket == SOCKET_ERROR)
-	{
-		 //error opening socket
-		return false;
-	}
-
-
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{
 		//couldn't find host
 		return false;
 	}
+
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port);
 	server.sin_addr.s_addr = *(unsigned long*) hostEnt->h_addr;
 
-	while(1)
+	if(connect(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
-		if(connect(mySocket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
-		{
-			//Error connecting to server
-			return false;
-		}
-
-		else
-		{
-			break;
-		}
-		Sleep(10);
+		//Error connecting to server
+		return false;
 	}
 	
 	//connection succesfull!
@@ -56,8 +36,7 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 
 bool Connection::InitiateServer(unsigned short port)
 {
-	mySocket = socket(AF_INET, SOCK_STREAM, 0);
-	if(mySocket == SOCKET_ERROR)
+	if(!initiateSocket())
 	{
 		//Error opening socket!
 		return false;
@@ -68,28 +47,38 @@ bool Connection::InitiateServer(unsigned short port)
 	server.sin_port = htons(port);
 	server.sin_addr.s_addr = INADDR_ANY;
 
-	if(bind(mySocket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
+	if(bind(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
 		//Bind failed!;
-		closesocket(mySocket);
+		closesocket(this->socket);
 		return false;
 	}
 
 	//not our Listen function! its trying to keep our socket open for connections
-	if(listen(mySocket, 5) == SOCKET_ERROR)
+	if(listen(this->socket, 5) == SOCKET_ERROR)
 	{
 		//"Listen failed!
-		closesocket(mySocket);
-		return -1;
+		closesocket(this->socket);
+		return false;
 	}
 
 	//Server started!
-	return mySocket;
+	return true;
+}
+
+bool Connection::InitiateClient()
+{
+	if(!initiateSocket())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void Connection::Disconnect()
 {
-	closesocket(mySocket);
+	closesocket(this->socket);
 }
 
 bool Connection::Send(const unsigned char message[])
@@ -98,10 +87,10 @@ bool Connection::Send(const unsigned char message[])
 	unsigned long messageSize = strlen((char*)message);
 	int optlen = sizeof(int);
 	int optval = 0;
-	getsockopt(mySocket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
+	getsockopt(this->socket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
 
-	messageSize = 1000;
-	nBytes = send(mySocket, (char*)message , messageSize, 0);
+	messageSize = 255;
+	nBytes = send(this->socket, (char*)message , messageSize, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Send failed!
@@ -114,7 +103,8 @@ bool Connection::Send(const unsigned char message[])
 int Connection::Recieve(unsigned char message[])
 {
 	int nBytes;
-	nBytes = recv(mySocket, (char*)message , 10000, 0);
+
+	nBytes = recv(this->socket, (char*)message , 255, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Recv failed
@@ -129,11 +119,26 @@ int Connection::Recieve(unsigned char message[])
 int Connection::Listen()
 {
 	int clientSocket;
-	if((clientSocket = accept(mySocket, NULL, NULL)) == INVALID_SOCKET)
+	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{
 		//failed
 		return -1;
 	}
 
 	return clientSocket;
+}
+
+///////////////////////////////////////
+//Private functions
+///////////////////////////////////////
+bool Connection::initiateSocket()
+{
+	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
+	if(this->socket == SOCKET_ERROR)
+	{
+		 //error opening socket
+		return false;
+	}
+
+	return true;
 }
