@@ -31,15 +31,15 @@ namespace Oyster
 		class DLL_USAGE MomentOfInertia
 		{
 		public:
-			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & __stdcall CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
 				
-			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & __stdcall CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
 
-			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
+			static ::Oyster::Math::Float4x4 & __stdcall CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
 
-			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
+			static ::Oyster::Math::Float4x4 & __stdcall CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
 	
-			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
+			static ::Oyster::Math::Float4x4 & __stdcall CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
 		};
 
 		class DLL_USAGE API
@@ -49,7 +49,7 @@ namespace Oyster
 			typedef void (*EventAction_Destruction)( unsigned int, ::Utility::DynamicMemory::UniquePointer<ICustomBody> );
 
 			/** Gets the Physics instance. */
-			static API & Instance();
+			static API & __stdcall Instance();
 
 			/********************************************************
 			 * Sets the time length of each physics update frame.
