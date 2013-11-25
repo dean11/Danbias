@@ -1,5 +1,6 @@
 #include "PhysicsAPI_Impl.h"
 #include "SimpleRigidBody.h"
+#include "OysterPhysics3D.h"
 
 using namespace ::Oyster::Physics;
 using namespace ::Oyster::Math;
@@ -7,6 +8,31 @@ using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
 
 API_Impl instance;  
+
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
+{
+	return ::Oyster::Physics3D::Formula::MomentOfInertia::Sphere(mass, radius);
+}
+
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
+{
+	return ::Oyster::Physics3D::Formula::MomentOfInertia::HollowSphere(mass, radius);
+}
+
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth )
+{
+	return ::Oyster::Physics3D::Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
+}
+
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius )
+{
+	return ::Oyster::Physics3D::Formula::MomentOfInertia::Cylinder(mass, height, radius);
+}
+
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length )
+{
+	return ::Oyster::Physics3D::Formula::MomentOfInertia::RodCenter(mass, length);
+}
 
 API & Instance()
 {
@@ -45,80 +71,78 @@ void API_Impl::Update()
 	/** @todo TODO: Fix this function.*/
 }
 
-bool API_Impl::IsInLimbo( unsigned int objRef )
+bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {
 	//! @todo TODO: implement stub
 	return true;
 }
 
-void API_Impl::MoveToLimbo( unsigned int objRef )
+void API_Impl::MoveToLimbo( const ICustomBody* objRef )
 {
 	/** @todo TODO: Fix this function.*/
 }
-void API_Impl::ReleaseFromLimbo( unsigned int objRef )
+void API_Impl::ReleaseFromLimbo( const ICustomBody* objRef )
 {
 	/** @todo TODO: Fix this function.*/
 }
 
-unsigned int API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle )
+void API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle )
 {
 	/** @todo TODO: Fix this function.*/
-
-	return 0;
 }
 
-::Utility::DynamicMemory::UniquePointer<ICustomBody> ExtractObject( unsigned int objRef )
+::Utility::DynamicMemory::UniquePointer<ICustomBody> API_Impl::ExtractObject( const ICustomBody* objRef )
 {
 	//! @todo TODO: implement stub
 	return NULL;
 }
 
-void API_Impl::DestroyObject( unsigned int objRef )
+void API_Impl::DestroyObject( const ICustomBody* objRef )
 {
 	/** @todo TODO: Fix this function.*/
 }
 
-void API_Impl::ApplyForceAt( unsigned int objRef, const Float3 &worldPos, const Float3 &worldF )
+void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::ApplyCollisionResponse( unsigned int objRefA, unsigned int objRefB, Float &deltaWhen, Float3 &worldPointOfContact )
+void API_Impl::ApplyCollisionResponse( const ICustomBody* objRefA, const ICustomBody* objRefB, Float &deltaWhen, Float3 &worldPointOfContact )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetMomentOfInertiaTensor_KeepVelocity( unsigned int objRef, const Float4x4 &localI )
+void API_Impl::SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const Float4x4 &localI )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetMomentOfInertiaTensor_KeepMomentum( unsigned int objRef, const Float4x4 &localI )
+void API_Impl::SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const Float4x4 &localI )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetMass_KeepVelocity( unsigned int objRef, Float m )
+void API_Impl::SetMass_KeepVelocity( const ICustomBody* objRef, Float m )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetMass_KeepMomentum( unsigned int objRef, Float m )
+void API_Impl::SetMass_KeepMomentum( const ICustomBody* objRef, Float m )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetCenter( unsigned int objRef, const Float3 &worldPos )
+void API_Impl::SetCenter( const ICustomBody* objRef, const Float3 &worldPos )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetRotation( unsigned int objRef, const Float4x4 &rotation )
+void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation )
 {
 	//! @todo TODO: implement stub
 }
 
-void API_Impl::SetOrientation( unsigned int objRef, const Float4x4 &orientation )
+void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
 {
 	//! @todo TODO: implement stub
 }

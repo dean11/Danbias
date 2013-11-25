@@ -213,6 +213,12 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	//! @todo TODO: Add documentation and not tested
 	Float4x4 & OrientationMatrix_LookAtPos( const Float3 &worldLookAt, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem = Float4x4() );
 
+	//! @todo TODO: Add documentation and not tested
+	Float4x4 & ViewMatrix_LookAtDirection( const Float3 &normalizedDirection, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem = Float4x4() );
+
+	//! @todo TODO: Add documentation and not tested
+	Float4x4 & ViewMatrix_LookAtPos( const Float3 &worldLookAt, const Float3 &normalizedUpVector, const Float3 &worldPos, Float4x4 &targetMem = Float4x4() );
+
 	/// If orientationMatrix is assumed to be by all definitions a rigid orientation matrix aka rigid body matrix. Then this is a much faster inverse method.
 	Float4x4 & InverseOrientationMatrix( const Float4x4 &orientationMatrix, Float4x4 &targetMem = Float4x4() );
 

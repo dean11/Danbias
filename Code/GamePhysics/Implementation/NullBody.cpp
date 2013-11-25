@@ -28,11 +28,6 @@ bool NullBody::Intersects( const ICollideable &shape ) const
 	return false;
 }
 
-unsigned int NullBody::GetReference() const
-{
-	return not_a_reference;
-}
-
 Sphere & NullBody::GetBoundingSphere( Sphere &targetMem ) const
 {
 	return targetMem = Sphere( Float3::null, 0.0f );
