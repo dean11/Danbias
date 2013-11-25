@@ -200,11 +200,16 @@ namespace Oyster
 			virtual ~API() {}
 		};
 	
+		//! sdfsdf
 		class ICustomBody
 		{
 		public:
 			virtual ~ICustomBody() {};
 
+			/********************************************************
+			 * Creates a complete copy of the current (type)object.
+			 * @return An ICustomBody pointer along with the responsibility to delete.
+			 ********************************************************/
 			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const = 0;
 			
 			virtual bool IsSubscribingCollisions() const = 0;
