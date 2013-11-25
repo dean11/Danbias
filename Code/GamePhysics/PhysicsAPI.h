@@ -206,7 +206,7 @@ namespace Oyster
 			virtual ~API() {}
 		};
 	
-		//! documentation in progress
+		//! The root interface for all physical representations processable by the engine.
 		class PHYSICS_DLL_USAGE ICustomBody
 		{
 		public:
@@ -218,25 +218,112 @@ namespace Oyster
 			 ********************************************************/
 			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const = 0;
 			
+			/********************************************************
+			 * @return true if Engine should call the EventAction_Collision function.
+			 ********************************************************/
 			virtual bool IsSubscribingCollisions() const = 0;
+
+			/********************************************************
+			 * Performs a detailed Intersect test and returns if, when and where.
+			 * @param object: What this is intersect testing against.
+			 * @param deltaWhen: Time in seconds since last update frame til timeOfContact. 0.0f <= deltaWhen <= deltaTime
+			 * @param worldPointOfContact: Where at timeOfContact, this and object touches eachother.
+			 * @return true if this truly intersects with object.
+			 ********************************************************/
 			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const = 0;
+			
+			/********************************************************
+			 * param shape: Any defined sample shape.
+			 * @return true if this truly intersects with shape.
+			 ********************************************************/
 			virtual bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const = 0;
 
-			virtual ::Oyster::Collision3D::Sphere &	GetBoundingSphere( ::Oyster::Collision3D::Sphere &targetMem = ::Oyster::Collision3D::Sphere() ) const = 0;
-			virtual ::Oyster::Math::Float3 &		GetNormalAt( const ::Oyster::Math::Float3 &worldPos, ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
-			virtual ::Oyster::Math::Float3 &		GetCenter( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
-			virtual ::Oyster::Math::Float4x4 &		GetRotation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
-			virtual ::Oyster::Math::Float4x4 &		GetOrientation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
-			virtual ::Oyster::Math::Float4x4 &		GetView( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
+			/********************************************************
+			 * Required by Engine's Collision Search.
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a sphere shape that contains the ICustomBody.
+			 ********************************************************/
+			virtual ::Oyster::Collision3D::Sphere & GetBoundingSphere( ::Oyster::Collision3D::Sphere &targetMem = ::Oyster::Collision3D::Sphere() ) const = 0;
+			
+			/********************************************************
+			 * Required by Engine's Collision Responsing.
+			 * @param worldPos: Should be worldPointOfContact from Intersects( ... )
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a surface normal in worldSpace.
+			 ********************************************************/
+			virtual ::Oyster::Math::Float3 & GetNormalAt( const ::Oyster::Math::Float3 &worldPos, ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
+			
+			/********************************************************
+			 * The world position of this center of gravity.
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a position in worldSpace.
+			 ********************************************************/
+			virtual ::Oyster::Math::Float3 & GetCenter( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
+			
+			/********************************************************
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a copy of this's rotation matrix.
+			 ********************************************************/
+			virtual ::Oyster::Math::Float4x4 & GetRotation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
+			
+			/********************************************************
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a copy of this's orientation matrix.
+			 ********************************************************/
+			virtual ::Oyster::Math::Float4x4 & GetOrientation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
+			
+			/********************************************************
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a copy of this's view matrix.
+			 ********************************************************/
+			virtual ::Oyster::Math::Float4x4 & GetView( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
 
+			/********************************************************
+			 * To be only called by Engine
+			 * Is called during API::Update
+			 ********************************************************/
 			virtual UpdateState Update( ::Oyster::Math::Float timeStepLength ) = 0;
 
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetMomentOfInertiaTensor_KeepVelocity(...) instead
+			 ********************************************************/
 			virtual void SetMomentOfInertiaTensor_KeepVelocity( const ::Oyster::Math::Float4x4 &localI ) = 0;
+			
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetMomentOfInertiaTensor_KeepMomentum(...)
+			 ********************************************************/
 			virtual void SetMomentOfInertiaTensor_KeepMomentum( const ::Oyster::Math::Float4x4 &localI ) = 0;
+			
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetMass_KeepVelocity(...)
+			 ********************************************************/
 			virtual void SetMass_KeepVelocity( ::Oyster::Math::Float m ) = 0;
+			
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetMass_KeepMomentum(...)
+			 ********************************************************/
 			virtual void SetMass_KeepMomentum( ::Oyster::Math::Float m ) = 0;
+			
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetCenter(...)
+			 ********************************************************/
 			virtual void SetCenter( const ::Oyster::Math::Float3 &worldPos ) = 0;
+			
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetRotation(...)
+			 ********************************************************/
 			virtual void SetRotation( const ::Oyster::Math::Float4x4 &rotation ) = 0;
+			
+			/********************************************************
+			 * To be only called by Engine
+			 * Use API::SetOrientation(...)
+			 ********************************************************/
 			virtual void SetOrientation( const ::Oyster::Math::Float4x4 &orientation ) = 0;
 		};
 	}
