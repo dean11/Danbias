@@ -239,41 +239,6 @@ namespace Oyster
 			virtual void SetRotation( const ::Oyster::Math::Float4x4 &rotation ) = 0;
 			virtual void SetOrientation( const ::Oyster::Math::Float4x4 &orientation ) = 0;
 		};
-
-		namespace Error
-		{ //! The content in here is used as API return errorvalues.
-
-			class DLL_USAGE NullBody : public ICustomBody
-			{
-			public:
-				virtual ~NullBody();
-
-				::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const;
-			
-				bool IsSubscribingCollisions() const;
-				bool Intersects( const ICustomBody &object, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const;
-				bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const;
-
-				unsigned int					GetReference() const;
-				::Oyster::Collision3D::Sphere &	GetBoundingSphere( ::Oyster::Collision3D::Sphere &targetMem = ::Oyster::Collision3D::Sphere() ) const;
-				::Oyster::Math::Float3 &		GetNormalAt( const ::Oyster::Math::Float3 &worldPos, ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const;
-				::Oyster::Math::Float3 &		GetCenter( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const;
-				::Oyster::Math::Float4x4 &		GetRotation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
-				::Oyster::Math::Float4x4 &		GetOrientation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
-				::Oyster::Math::Float4x4 &		GetView( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
-
-				UpdateState Update( ::Oyster::Math::Float timeStepLength );
-
-				void SetMomentOfInertiaTensor_KeepVelocity( const ::Oyster::Math::Float4x4 &localI );
-				void SetMomentOfInertiaTensor_KeepMomentum( const ::Oyster::Math::Float4x4 &localI );
-				void SetMass_KeepVelocity( ::Oyster::Math::Float m );
-				void SetMass_KeepMomentum( ::Oyster::Math::Float m );
-				void SetCenter( const ::Oyster::Math::Float3 &worldPos );
-				void SetRotation( const ::Oyster::Math::Float4x4 &rotation );
-				void SetOrientation( const ::Oyster::Math::Float4x4 &orientation );
-
-			} const nobody;
-		}
 	}
 }
 #endif
