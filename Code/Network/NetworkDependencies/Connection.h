@@ -30,6 +30,8 @@ namespace Oyster
 			virtual int  Listen();
 
 		private:
+			bool initiateSocket();
+
 			int socket;
 
 		};

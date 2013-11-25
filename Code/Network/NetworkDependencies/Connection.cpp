@@ -36,8 +36,7 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 
 bool Connection::InitiateServer(unsigned short port)
 {
-	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
-	if(this->socket == SOCKET_ERROR)
+	if(!initiateSocket())
 	{
 		//Error opening socket!
 		return false;
@@ -69,10 +68,8 @@ bool Connection::InitiateServer(unsigned short port)
 
 bool Connection::InitiateClient()
 {
-	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
-	if(this->socket == SOCKET_ERROR)
+	if(!initiateSocket())
 	{
-		 //error opening socket
 		return false;
 	}
 
@@ -125,4 +122,19 @@ int Connection::Listen()
 	}
 
 	return clientSocket;
+}
+
+///////////////////////////////////////
+//Private functions
+///////////////////////////////////////
+bool Connection::initiateSocket()
+{
+	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
+	if(this->socket == SOCKET_ERROR)
+	{
+		 //error opening socket
+		return false;
+	}
+
+	return true;
 }
