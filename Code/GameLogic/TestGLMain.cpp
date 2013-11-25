@@ -10,7 +10,7 @@
 #include "Core/Core.h"
 #include "Render\Preparations\Preparations.h"
 #include "IGame.h"
-#include "InputController.h"
+//#include "InputController.h"
 
 
 

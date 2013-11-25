@@ -25,6 +25,7 @@ namespace GameLogic
 		void StartGame();
 		void Update();
 		void Render();
+		Game* getGameModule();
 	private:
 	};
 }

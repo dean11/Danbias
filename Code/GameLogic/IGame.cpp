@@ -38,3 +38,7 @@ void IGame::Render()
 {
 	gameModule->Render();
 }
+Game* IGame::getGameModule()
+{
+	return gameModule;
+}
