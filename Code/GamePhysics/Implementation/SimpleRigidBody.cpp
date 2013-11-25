@@ -38,12 +38,6 @@ bool SimpleRigidBody::Intersects( const ICollideable &shape ) const
 	return false;
 }
 
-unsigned int SimpleRigidBody::GetReference() const
-{
-	//! @todo TODO: implement stub
-	return Error::not_a_reference;
-}
-
 Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
 	//! @todo TODO: implement stub

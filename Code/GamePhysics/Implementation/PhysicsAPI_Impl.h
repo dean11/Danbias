@@ -20,26 +20,24 @@ namespace Oyster
 
 			void Update();
 
-			bool IsInLimbo( unsigned int objRef );
-			void MoveToLimbo( unsigned int objRef );
-			void ReleaseFromLimbo( unsigned int objRef );
+			bool IsInLimbo( const ICustomBody* objRef );
+			void MoveToLimbo( const ICustomBody* objRef );
+			void ReleaseFromLimbo( const ICustomBody* objRef );
 
-			unsigned int AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle );
-			::Utility::DynamicMemory::UniquePointer<ICustomBody> ExtractObject( unsigned int objRef );
-			void DestroyObject( unsigned int objRef );
+			void AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle );
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> ExtractObject( const ICustomBody* objRef );
+			void DestroyObject( const ICustomBody* objRef );
 
-			const ICustomBody & Peek( unsigned int objRef ) const;
+			void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
+			void ApplyCollisionResponse( const ICustomBody* objRefA, const ICustomBody* objRefB, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact );
 
-			void ApplyForceAt( unsigned int objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
-			void ApplyCollisionResponse( unsigned int objRefA, unsigned int objRefB, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact );
-
-			void SetMomentOfInertiaTensor_KeepVelocity( unsigned int objRef, const ::Oyster::Math::Float4x4 &localI );
-			void SetMomentOfInertiaTensor_KeepMomentum( unsigned int objRef, const ::Oyster::Math::Float4x4 &localI );
-			void SetMass_KeepVelocity( unsigned int objRef, ::Oyster::Math::Float m );
-			void SetMass_KeepMomentum( unsigned int objRef, ::Oyster::Math::Float m );
-			void SetCenter( unsigned int objRef, const ::Oyster::Math::Float3 &worldPos );
-			void SetRotation( unsigned int objRef, const ::Oyster::Math::Float4x4 &rotation );
-			void SetOrientation( unsigned int objRef, const ::Oyster::Math::Float4x4 &orientation );
+			void SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );
+			void SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );
+			void SetMass_KeepVelocity( const ICustomBody* objRef, ::Oyster::Math::Float m );
+			void SetMass_KeepMomentum( const ICustomBody* objRef, ::Oyster::Math::Float m );
+			void SetCenter( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos );
+			void SetRotation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &rotation );
+			void SetOrientation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &orientation );
 
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const;
 		};
