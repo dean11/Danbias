@@ -12,14 +12,6 @@ Connection::~Connection()
 
 bool Connection::Connect(unsigned short port , const char serverName[])
 {
-	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
-	if(this->socket == SOCKET_ERROR)
-	{
-		 //error opening socket
-		return false;
-	}
-
-
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{
@@ -32,19 +24,10 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 	server.sin_port = htons(port);
 	server.sin_addr.s_addr = *(unsigned long*) hostEnt->h_addr;
 
-	while(1)
+	if(connect(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
-		if(connect(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
-		{
-			//Error connecting to server
-			return false;
-		}
-
-		else
-		{
-			break;
-		}
-		Sleep(10);
+		//Error connecting to server
+		return false;
 	}
 	
 	//connection succesfull!
@@ -77,11 +60,23 @@ bool Connection::InitiateServer(unsigned short port)
 	{
 		//"Listen failed!
 		closesocket(this->socket);
-		return -1;
+		return false;
 	}
 
 	//Server started!
-	return this->socket;
+	return true;
+}
+
+bool Connection::InitiateClient()
+{
+	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
+	if(this->socket == SOCKET_ERROR)
+	{
+		 //error opening socket
+		return false;
+	}
+
+	return true;
 }
 
 void Connection::Disconnect()

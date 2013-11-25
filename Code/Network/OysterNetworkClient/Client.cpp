@@ -15,6 +15,7 @@ Client::~Client()
 
 bool Client::Connect(unsigned int port, char filename[])
 {
+	connection->InitiateClient();
 	connection->Connect(port, filename);
 
 	return true;

@@ -17,7 +17,7 @@ namespace Oyster
 			virtual bool Send( const unsigned char message[] ) = 0;
 			virtual int  Recieve(unsigned char message[]) = 0;
 			virtual bool InitiateServer( unsigned short port ) { return false; };
-			virtual bool initiateClient( unsigned short port ) { return false; };
+			virtual bool InitiateClient() { return false; };
 			virtual int  Listen() { return -1; };
 			virtual bool Connect( unsigned short port, const char serverName[] ) { return false; };
 		};
