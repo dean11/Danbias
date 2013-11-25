@@ -93,7 +93,7 @@ unsigned int API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICusto
 	return 0;
 }
 
-::Utility::DynamicMemory::UniquePointer<ICustomBody> ExtractObject( unsigned int objRef )
+::Utility::DynamicMemory::UniquePointer<ICustomBody> API_Impl::ExtractObject( unsigned int objRef )
 {
 	//! @todo TODO: implement stub
 	return NULL;
@@ -102,6 +102,12 @@ unsigned int API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICusto
 void API_Impl::DestroyObject( unsigned int objRef )
 {
 	/** @todo TODO: Fix this function.*/
+}
+
+const ICustomBody & API_Impl::Peek( unsigned int objRef ) const
+{
+	//! @todo TODO: implement stub
+	return Error::nobody;
 }
 
 void API_Impl::ApplyForceAt( unsigned int objRef, const Float3 &worldPos, const Float3 &worldF )
