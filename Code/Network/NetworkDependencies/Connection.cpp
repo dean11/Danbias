@@ -85,17 +85,16 @@ bool Connection::Send(const unsigned char message[])
 {
 	int nBytes;
 	unsigned long messageSize = strlen((char*)message);
-	int optlen = sizeof(int);
-	int optval = 0;
-	getsockopt(this->socket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
 
-	messageSize = 255;
+	messageSize = 1600;
 	nBytes = send(this->socket, (char*)message , messageSize, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Send failed!
 		return false;
 	}
+
+	std::cout << "Size of the sent data: " << nBytes << " bytes" << std::endl;
 
 	return true; 
 }
@@ -104,7 +103,7 @@ int Connection::Recieve(unsigned char message[])
 {
 	int nBytes;
 
-	nBytes = recv(this->socket, (char*)message , 255, 0);
+	nBytes = recv(this->socket, (char*)message, 1600, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Recv failed
@@ -118,6 +117,11 @@ int Connection::Recieve(unsigned char message[])
 
 int Connection::Listen()
 {
+	int optlen = sizeof(int);
+	int optval;
+	int Return = getsockopt(this->socket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
+	std::cout << optval << std::endl;
+
 	int clientSocket;
 	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{

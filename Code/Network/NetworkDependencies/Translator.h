@@ -16,7 +16,7 @@ namespace Oyster
 		class Translator : public ITranslate
 		{
 		public:
-			Translator () { msg = new unsigned char[256]; };
+			Translator () { msg = new unsigned char[1601]; };
 			~Translator() { if(msg != NULL) { delete [] this->msg; }};
 
 			unsigned char* Pack (Protocols::ProtocolHeader &header );

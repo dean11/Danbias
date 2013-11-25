@@ -166,6 +166,7 @@
     <ClCompile Include="Messages\MessageTest.cpp" />
     <ClCompile Include="Packing.cpp" />
     <ClCompile Include="Translator.cpp" />
+    <ClCompile Include="WinsockFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="ITranslate.h" />
     <ClInclude Include="Protocols.h" />
     <ClInclude Include="Translator.h" />
+    <ClInclude Include="WinsockFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

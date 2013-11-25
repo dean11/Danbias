@@ -1,18 +1,17 @@
 #include <iostream>
-#include "Client.h"
 #include <WinSock2.h>
 #include <vld.h>
+#include "../NetworkDependencies/WinsockFunctions.h"
 #include "..\NetworkDependencies\Translator.h"
 #include "..\NetworkDependencies\Protocols.h"
+#include "Client.h"
+
+#pragma comment(lib, "ws2_32.lib")
 
 using namespace std;
 using namespace Oyster::Network::Protocols;;
 using namespace Oyster::Network::Client;
 
-#pragma comment(lib, "ws2_32.lib")
-
-void ShutdownSockets();
-bool InitSockets();
 void chat(Client &client);
 
 int main()
@@ -37,22 +36,11 @@ int main()
 	return 0;
 }
 
-bool InitSockets()
-{
-	WSADATA wsaData;
-	return WSAStartup(MAKEWORD(2, 2), &wsaData) == NO_ERROR;
-}
-
-void ShutdownSockets()
-{
-	WSACleanup();
-}
-
 void chat(Client &client)
 {
 	Oyster::Network::Translator *t = new Oyster::Network::Translator();
 
-	unsigned char msgRecv[2560] = "\0";
+	unsigned char msgRecv[1601] = "\0";
 	string msgSend = "";
 
 	ProtocolSet* set = new ProtocolSet;
@@ -82,8 +70,9 @@ void chat(Client &client)
 			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
 			for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
 			{
-				cout << set->Protocol.pTest->f[i] << ' ' ;
+				//cout << set->Protocol.pTest->f[i] << ' ' ;
 			}
+			cout << endl;
 			break;
 		}
 		
@@ -100,8 +89,6 @@ void chat(Client &client)
 				msgSend = "ERROR!";
 			}
 
-			test.packageType = package_type_test;
-			test.size = msgSend.length();
 			test.textMessage = msgSend;
 			
 			unsigned char *message = t->Pack(test);

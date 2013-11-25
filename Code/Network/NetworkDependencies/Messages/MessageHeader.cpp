@@ -99,12 +99,12 @@ void MessageHeader::PackFloat(float i, unsigned char msg[])
 void MessageHeader::PackFloat(float i[], unsigned int elementCount, unsigned char msg[])
 {
 	//Pack number of elements
-	PackUnsignedInt(elementCount, &msg[size]);
+	PackUnsignedInt(elementCount, msg);
 
 	//Pack all elements
 	for(int j = 0; j < elementCount; j++)
 	{
-		PackFloat(i[j], &msg[size]);
+		PackFloat(i[j], msg);
 	}
 }
 
@@ -204,12 +204,12 @@ float* MessageHeader::UnpackFloat(unsigned int& elementCount, unsigned char msg[
 {
 	float* i;
 
-	elementCount = UnpackUnsignedInt(&msg[size]);
+	elementCount = UnpackUnsignedInt(msg);
 
 	i = new float[elementCount];
 	for(int j = 0; j < elementCount; j++)
 	{
-		i[j] = UnpackFloat(&msg[size]);
+		i[j] = UnpackFloat(msg);
 	}
 
 	return i;
