@@ -1,6 +1,10 @@
 #ifndef NETWORK_DEPENDENCIES_PROTOCOLS_H
 #define NETWORK_DEPENDENCIES_PROTOCOLS_H
 
+//////////////////////////////////
+// Created by Sam Svensson 2013 //
+//////////////////////////////////
+
 #include <string>
 
 namespace Oyster

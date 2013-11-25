@@ -1,6 +1,10 @@
 #ifndef NETWORK_DEPENDENCIES_I_TRANSLATE
 #define NETWORK_DEPENDENCIES_I_TRANSLATE
 
+//////////////////////////////////
+// Created by Sam Svensson 2013 //
+//////////////////////////////////
+
 namespace Oyster
 {
 	namespace Network

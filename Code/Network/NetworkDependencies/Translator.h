@@ -1,6 +1,10 @@
 #ifndef NETWORK_DEPENDENCIES_TRANSLATOR_H
 #define NETWORK_DEPENDENCIES_TRANSLATOR_H
 
+//////////////////////////////////
+// Created by Sam Svensson 2013 //
+//////////////////////////////////
+
 #include "Messages/MessagesInclude.h"
 #include "Protocols.h"
 #include "ITranslate.h"
