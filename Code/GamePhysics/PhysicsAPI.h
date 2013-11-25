@@ -226,11 +226,12 @@ namespace Oyster
 			/********************************************************
 			 * Performs a detailed Intersect test and returns if, when and where.
 			 * @param object: What this is intersect testing against.
-			 * @param deltaWhen: Time in seconds since last update frame til timeOfContact. 0.0f <= deltaWhen <= deltaTime
+			 * @param timeStepLength: The value set by API::SetDeltaTime(...)
+			 * @param deltaWhen: Time in seconds since last update frame til timeOfContact. 0.0f <= deltaWhen <= timeStepLength
 			 * @param worldPointOfContact: Where at timeOfContact, this and object touches eachother.
 			 * @return true if this truly intersects with object.
 			 ********************************************************/
-			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const = 0;
+			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const = 0;
 			
 			/********************************************************
 			 * param shape: Any defined sample shape.

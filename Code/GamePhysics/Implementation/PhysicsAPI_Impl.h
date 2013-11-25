@@ -41,7 +41,6 @@ namespace Oyster
 
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const;
 		};
-	
 	}
 
 }

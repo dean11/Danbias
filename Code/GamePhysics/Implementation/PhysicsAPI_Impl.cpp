@@ -7,7 +7,8 @@ using namespace ::Oyster::Math;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
 
-API_Impl instance;  
+API_Impl API_instance;
+Float updateFrameLength = 1.0f / 120.0f;
 
 ::Oyster::Math::Float4x4 & MomentOfInertia::CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
 {
@@ -36,7 +37,7 @@ API_Impl instance;
 
 API & API::Instance()
 {
-	return instance;
+	return API_instance;
 }
 
 API_Impl::API_Impl()
@@ -51,7 +52,7 @@ API_Impl::~API_Impl()
 
 void API_Impl::SetDeltaTime( float deltaTime )
 {
-	/** @todo TODO: Fix this function.*/
+	updateFrameLength = deltaTime;
 }
 void API_Impl::SetGravityConstant( float g )
 {
