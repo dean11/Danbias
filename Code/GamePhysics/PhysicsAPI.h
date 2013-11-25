@@ -45,8 +45,8 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE API
 		{
 		public:
-			typedef void (*EventAction_Collision)( unsigned int, unsigned int );
-			typedef void (*EventAction_Destruction)( unsigned int, ::Utility::DynamicMemory::UniquePointer<ICustomBody> );
+			typedef void (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
 
 			/** Gets the Physics instance. */
 			static API & Instance();
