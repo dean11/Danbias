@@ -4,6 +4,12 @@
 #include "OysterCollision3D.h"
 #include "OysterMath.h"
 
+#if defined DLL_EXPORT
+	#define DLL_USAGE __declspec(dllexport)
+#else
+	#define DLL_USAGE __declspec(dllimport)
+#endif
+
 namespace Oyster
 {
 	namespace Physics
@@ -22,7 +28,7 @@ namespace Oyster
 			const float gravity_constant = (const float)6.67284e-11; //!< The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
 		}
 
-		class MomentOfInertia
+		class DLL_USAGE MomentOfInertia
 		{
 		public:
 			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
@@ -36,7 +42,7 @@ namespace Oyster
 			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
 		};
 
-		class API
+		class DLL_USAGE API
 		{
 		public:
 			typedef void (*EventAction_Collision)( unsigned int, unsigned int );
@@ -200,8 +206,8 @@ namespace Oyster
 			virtual ~API() {}
 		};
 	
-		//! sdfsdf
-		class ICustomBody
+		//! documentation in progress
+		class DLL_USAGE ICustomBody
 		{
 		public:
 			virtual ~ICustomBody() {};
@@ -237,7 +243,7 @@ namespace Oyster
 		namespace Error
 		{ //! The content in here is used as API return errorvalues.
 
-			class NullBody : public ICustomBody
+			class DLL_USAGE NullBody : public ICustomBody
 			{
 			public:
 				virtual ~NullBody();
