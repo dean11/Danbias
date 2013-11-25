@@ -4,16 +4,16 @@
 #define IGAME_H
 
 #if defined GAME_DLL_EXPORT
-#define DLL_USAGE __declspec(dllexport)
+#define GAME_DLL_USAGE __declspec(dllexport)
 #else
-#define DLL_USAGE __declspec(dllimport)
+#define GAME_DLL_USAGE __declspec(dllimport)
 #endif
 
 namespace GameLogic
 {
 	class Game;
 
-	class DLL_USAGE IGame
+	class GAME_DLL_USAGE IGame
 	{
 	private:
 		Game* gameModule;
