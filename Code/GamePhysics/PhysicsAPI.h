@@ -4,10 +4,10 @@
 #include "OysterCollision3D.h"
 #include "OysterMath.h"
 
-#if defined DLL_EXPORT
-	#define DLL_USAGE __declspec(dllexport)
+#if defined PHYSICS_DLL_EXPORT
+	#define PHYSICS_DLL_USAGE __declspec(dllexport)
 #else
-	#define DLL_USAGE __declspec(dllimport)
+	#define PHYSICS_DLL_USAGE __declspec(dllimport)
 #endif
 
 namespace Oyster
@@ -28,28 +28,28 @@ namespace Oyster
 			const float gravity_constant = (const float)6.67284e-11; //!< The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
 		}
 
-		class DLL_USAGE MomentOfInertia
+		class PHYSICS_DLL_USAGE MomentOfInertia
 		{
 		public:
-			static ::Oyster::Math::Float4x4 & __stdcall CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
 				
-			static ::Oyster::Math::Float4x4 & __stdcall CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
 
-			static ::Oyster::Math::Float4x4 & __stdcall CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
+			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
 
-			static ::Oyster::Math::Float4x4 & __stdcall CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
+			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
 	
-			static ::Oyster::Math::Float4x4 & __stdcall CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
+			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
 		};
 
-		class DLL_USAGE API
+		class PHYSICS_DLL_USAGE API
 		{
 		public:
 			typedef void (*EventAction_Collision)( unsigned int, unsigned int );
 			typedef void (*EventAction_Destruction)( unsigned int, ::Utility::DynamicMemory::UniquePointer<ICustomBody> );
 
 			/** Gets the Physics instance. */
-			static API & __stdcall Instance();
+			static API & Instance();
 
 			/********************************************************
 			 * Sets the time length of each physics update frame.
@@ -207,7 +207,7 @@ namespace Oyster
 		};
 	
 		//! documentation in progress
-		class DLL_USAGE ICustomBody
+		class PHYSICS_DLL_USAGE ICustomBody
 		{
 		public:
 			virtual ~ICustomBody() {};

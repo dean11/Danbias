@@ -9,32 +9,32 @@ using namespace ::Utility::DynamicMemory;
 
 API_Impl instance;  
 
-::Oyster::Math::Float4x4 & __stdcall MomentOfInertia::CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
 {
 	return ::Oyster::Physics3D::Formula::MomentOfInertia::Sphere(mass, radius);
 }
 
-::Oyster::Math::Float4x4 & __stdcall MomentOfInertia::CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
 {
 	return ::Oyster::Physics3D::Formula::MomentOfInertia::HollowSphere(mass, radius);
 }
 
-::Oyster::Math::Float4x4 & __stdcall MomentOfInertia::CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth )
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth )
 {
 	return ::Oyster::Physics3D::Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
 }
 
-::Oyster::Math::Float4x4 & __stdcall MomentOfInertia::CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius )
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius )
 {
 	return ::Oyster::Physics3D::Formula::MomentOfInertia::Cylinder(mass, height, radius);
 }
 
-::Oyster::Math::Float4x4 & __stdcall MomentOfInertia::CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length )
+::Oyster::Math::Float4x4 & MomentOfInertia::CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length )
 {
 	return ::Oyster::Physics3D::Formula::MomentOfInertia::RodCenter(mass, length);
 }
 
-API & __stdcall API::Instance()
+API & API::Instance()
 {
 	return instance;
 }
