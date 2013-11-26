@@ -57,6 +57,11 @@ API_Impl::API_Impl()
 
 API_Impl::~API_Impl() {}
 
+void API_Impl::Init( unsigned int numObjects, unsigned int numGravityWells , const Float3 &worldSize )
+{
+	//! @todo TODO: implement stub
+}
+
 void API_Impl::SetDeltaTime( float deltaTime )
 {
 	updateFrameLength = deltaTime;
@@ -151,6 +156,11 @@ void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation 
 }
 
 void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
+{
+	//! @todo TODO: implement stub
+}
+
+void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
 {
 	//! @todo TODO: implement stub
 }

@@ -7,7 +7,11 @@ using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::Value;
 
-SimpleRigidBody::SimpleRigidBody() : previous(), current() {}
+SimpleRigidBody::SimpleRigidBody()
+	: previous(), current(),
+	  gravityNormal(0.0f),
+	  subscribeCollision(true),
+	  ignoreGravity(false) {}
 
 SimpleRigidBody::~SimpleRigidBody() {}
 
@@ -18,7 +22,12 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 
 bool SimpleRigidBody::IsSubscribingCollisions() const
 { // Assumption
-	return true;
+	return this->subscribeCollision;
+}
+
+bool SimpleRigidBody::IsAffectedByGravity() const
+{
+	return !this->ignoreGravity;
 }
 
 bool SimpleRigidBody::Intersects( const ICustomBody &object, Float timeStepLength, Float &deltaWhen, Float3 &worldPointOfContact ) const
@@ -51,6 +60,11 @@ Float3 & SimpleRigidBody::GetNormalAt( const Float3 &worldPos, Float3 &targetMem
 	return targetMem = (worldPos - this->current.box.center).GetNormalized();
 }
 
+Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
+{
+	return targetMem = this->gravityNormal;	
+}
+
 Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
 {
 	return targetMem = this->current.box.center;
@@ -79,6 +93,22 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 
 	// compare previous and new state and return result
 	return this->current == this->previous ? resting : altered;
+}
+
+void SimpleRigidBody::SetGravity( bool ignore)
+{
+	this->ignoreGravity = ignore;
+	this->gravityNormal = Float3::null;
+}
+
+void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
+{
+	this->gravityNormal = normalizedVector;
+}
+
+void SimpleRigidBody::SetSubscription( bool subscribeCollision )
+{
+	this->subscribeCollision = subscribeCollision;
 }
 
 void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
@@ -114,4 +144,9 @@ void SimpleRigidBody::SetRotation( const Float4x4 &rotation )
 void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
 {
 	this->current.SetOrientation( orientation );
+}
+
+void SimpleRigidBody::SetSize( const Float3 &size )
+{
+	this->current.SetSize( size );
 }
