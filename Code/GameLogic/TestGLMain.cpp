@@ -10,6 +10,10 @@
 #include "Core/Core.h"
 #include "Render\Preparations\Preparations.h"
 #include "IGame.h"
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
 //#include "InputController.h"
 
 
@@ -40,6 +44,34 @@ HRESULT				CleanUp();
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
 //--------------------------------------------------------------------------------------
+
+void SetStdOutToNewConsole()
+{
+	// allocate a console for this app
+	AllocConsole();
+
+	// redirect unbuffered STDOUT to the console
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	int fileDescriptor = _open_osfhandle((intptr_t)consoleHandle, _O_TEXT);
+	FILE *fp = _fdopen( fileDescriptor, "w" );
+	*stdout = *fp;
+	setvbuf( stdout, NULL, _IONBF, 0 );
+
+	// give the console window a nicer title
+
+	SetConsoleTitle(L"Debug Output");
+
+	// give the console window a bigger buffer size
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if ( GetConsoleScreenBufferInfo(consoleHandle, &csbi) )
+	{
+		COORD bufferSize;
+		bufferSize.X = csbi.dwSize.X;
+		bufferSize.Y = 50;
+		SetConsoleScreenBufferSize(consoleHandle, bufferSize);
+	}
+}
+
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
@@ -57,7 +89,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 	__int64 prevTimeStamp = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
-
+	SetStdOutToNewConsole();
 	// Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message)
