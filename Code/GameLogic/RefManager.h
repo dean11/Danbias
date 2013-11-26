@@ -16,8 +16,8 @@ namespace GameLogic
 		RefManager(void);
 		~RefManager(void);
 
-		Object* GetMap(Oyster::Physics::ICustomBody *body);
-		void AddMapping(Oyster::Physics::ICustomBody *body, Object *obj);
+		Object* GetMap(Oyster::Physics::ICustomBody &body);
+		void AddMapping(Oyster::Physics::ICustomBody &body, Object &obj);
 
 
 	private:

@@ -8,21 +8,21 @@ namespace GameLogic
 {
 	class Game
 	{
-	private:
+	public:
+		Game();
+		~Game();
+
+		void Init();
+		void StartGame();
+		void Update();
+		void Render();
 		
 		
 	private:
 		Level*		level;
 		Player*		player;
 
-	public:
-		Game();
-		~Game();
 		
-		void Init();
-		void StartGame();
-		void Update();
-		void Render();
 	};
 }		
 #endif

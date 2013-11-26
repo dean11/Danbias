@@ -17,7 +17,7 @@ namespace GameLogic
 		Object(void);
 		virtual ~Object(void);
 	
-		Utility::DynamicMemory::UniquePointer<Oyster::Graphics::Render::Model> model;
+		
 		void Render();
 
 	private:
@@ -25,9 +25,9 @@ namespace GameLogic
 	protected:
 		//either a model pointer or an ID to an arraypos filled with models that are to be rendered
 		//rigidBody
-		unsigned int ref;
-		::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> rigidBody;
 
+		Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> rigidBody;
+		Utility::DynamicMemory::UniquePointer<Oyster::Graphics::Render::Model> model;
 	};
 
 }

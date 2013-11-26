@@ -13,14 +13,14 @@ RefManager::~RefManager(void)
 {
 }
 
-Object* RefManager::GetMap(Oyster::Physics::ICustomBody *body)
+Object* RefManager::GetMap(Oyster::Physics::ICustomBody &body)
 {
-	return mapper[body];
+	return mapper[&body];
 }
 
-void RefManager::AddMapping(Oyster::Physics::ICustomBody *body, Object *obj)
+void RefManager::AddMapping(Oyster::Physics::ICustomBody &body, Object &obj)
 {
-	mapper.insert(mapData(body,obj));
+	mapper.insert(mapData(&body,&obj));
 }
 
 
