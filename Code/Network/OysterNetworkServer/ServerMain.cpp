@@ -18,10 +18,11 @@ int main()
 	unsigned char* recvBuffer = new unsigned char[1601];
 	cout << "Server" << endl;
 	Translator t;
+	int errorCode;
 
-	if(!InitSockets())
+	if(!InitWinSock())
 	{
-		cout << "Sockets failed to initialize" << endl;
+		cout << "errorMessage: unable to start winsock" << endl;
 	}
 
 	//Create socket
@@ -84,7 +85,7 @@ int main()
 		client1.Send(recvBuffer);
 	}
 
-	ShutdownSockets();
+	ShutdownWinSock();
 	delete[] recvBuffer;
 	delete set;
 

@@ -2,6 +2,7 @@
 
 #include <winsock2.h>
 #include <iostream>
+#include <string>
 
 using namespace Oyster::Network;
 
@@ -10,13 +11,12 @@ Connection::~Connection()
 	closesocket( this->socket );
 }
 
-bool Connection::Connect(unsigned short port , const char serverName[])
+int Connection::Connect(unsigned short port , const char serverName[])
 {
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{
-		//couldn't find host
-		return false;
+		return WSAGetLastError();
 	}
 
 	struct sockaddr_in server;
@@ -26,20 +26,20 @@ bool Connection::Connect(unsigned short port , const char serverName[])
 
 	if(connect(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
-		//Error connecting to server
-		return false;
+		return WSAGetLastError();
 	}
 	
 	//connection succesfull!
-	return true;
+	return 0;
 }
 
-bool Connection::InitiateServer(unsigned short port)
+int Connection::InitiateServer(unsigned short port)
 {
-	if(!initiateSocket())
+	int errorCode = 0;
+
+	if((errorCode = initiateSocket()) != 0)
 	{
-		//Error opening socket!
-		return false;
+		return errorCode;
 	}
 
 	struct sockaddr_in server;
@@ -49,39 +49,38 @@ bool Connection::InitiateServer(unsigned short port)
 
 	if(bind(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
-		//Bind failed!;
+		errorCode = WSAGetLastError();
 		closesocket(this->socket);
-		return false;
+		return errorCode;
 	}
 
 	//not our Listen function! its trying to keep our socket open for connections
 	if(listen(this->socket, 5) == SOCKET_ERROR)
 	{
-		//"Listen failed!
+		errorCode = WSAGetLastError();
 		closesocket(this->socket);
-		return false;
+		return errorCode;
 	}
 
 	//Server started!
-	return true;
+	return 0;
 }
 
-bool Connection::InitiateClient()
+int Connection::InitiateClient()
 {
-	if(!initiateSocket())
-	{
-		return false;
-	}
+	int errorCode;
+	return initiateSocket();
 
-	return true;
 }
 
-void Connection::Disconnect()
+int Connection::Disconnect()
 {
 	closesocket(this->socket);
+
+	return WSAGetLastError();
 }
 
-bool Connection::Send(const unsigned char message[])
+int Connection::Send(const unsigned char message[])
 {
 	int nBytes;
 	unsigned long messageSize = strlen((char*)message);
@@ -90,13 +89,10 @@ bool Connection::Send(const unsigned char message[])
 	nBytes = send(this->socket, (char*)message , messageSize, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
-		//Send failed!
-		return false;
+		return WSAGetLastError();
 	}
 
-	std::cout << "Size of the sent data: " << nBytes << " bytes" << std::endl;
-
-	return true; 
+	return 0; 
 }
 
 int Connection::Recieve(unsigned char message[])
@@ -106,27 +102,20 @@ int Connection::Recieve(unsigned char message[])
 	nBytes = recv(this->socket, (char*)message, 1600, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
-		//Recv failed
-		return -1;
+		return WSAGetLastError();
 	}
 
 	message[nBytes] = '\0';
 
-	return 1;
+	return 0;
 }
 
 int Connection::Listen()
 {
-	int optlen = sizeof(int);
-	int optval;
-	int Return = getsockopt(this->socket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
-	std::cout << optval << std::endl;
-
 	int clientSocket;
 	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{
-		//failed
-		return -1;
+		return WSAGetLastError();
 	}
 
 	return clientSocket;
@@ -135,14 +124,13 @@ int Connection::Listen()
 ///////////////////////////////////////
 //Private functions
 ///////////////////////////////////////
-bool Connection::initiateSocket()
+int Connection::initiateSocket()
 {
 	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
 	if(this->socket == SOCKET_ERROR)
 	{
-		 //error opening socket
-		return false;
+		return WSAGetLastError();
 	}
 
-	return true;
+	return 0;
 }

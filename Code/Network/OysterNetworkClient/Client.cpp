@@ -13,20 +13,29 @@ Client::~Client()
 	connection = 0;
 }
 
-bool Client::Connect(unsigned int port, char filename[])
+int Client::Connect(unsigned int port, char filename[])
 {
-	connection->InitiateClient();
-	connection->Connect(port, filename);
+	int errorCode;
 
-	return true;
+	if((errorCode = connection->InitiateClient()) != 0)
+	{
+		return errorCode;
+	}
+
+	if((errorCode = connection->Connect(port, filename)) != 0)
+	{
+		return errorCode;
+	}
+
+	return 0;
 }
 
-void Client::Send(unsigned char msg[])
+int Client::Send(unsigned char msg[])
 {
-	connection->Send(msg);
+	return connection->Send(msg);
 }
 
-void Client::Recv(unsigned char msg[])
+int Client::Recv(unsigned char msg[])
 {
-	connection->Recieve(msg);
+	return connection->Recieve(msg);
 }

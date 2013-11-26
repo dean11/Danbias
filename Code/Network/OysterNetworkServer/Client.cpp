@@ -12,12 +12,12 @@ Client::~Client()
 	delete connection;
 }
 
-void Client::Send(unsigned char buffer[])
+int Client::Send(unsigned char buffer[])
 {
-	connection->Send(buffer);
+	return connection->Send(buffer);
 }
 
-void Client::Recv(unsigned char buffer[])
+int Client::Recv(unsigned char buffer[])
 {
-	connection->Recieve(buffer);
+	return connection->Recieve(buffer);
 }

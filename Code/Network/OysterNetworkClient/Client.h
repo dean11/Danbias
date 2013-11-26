@@ -19,10 +19,10 @@ namespace Oyster
 				Client();
 				~Client();
 
-				bool Connect(unsigned int port, char filename[]);
+				int Connect(unsigned int port, char filename[]);
 
-				void Send(unsigned char msg[]);
-				void Recv(unsigned char msg[]);
+				int Send(unsigned char msg[]);
+				int Recv(unsigned char msg[]);
 
 			private:
 				::Oyster::Network::Connection* connection;

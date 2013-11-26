@@ -2,8 +2,8 @@
 #include <WinSock2.h>
 #include <vld.h>
 #include "../NetworkDependencies/WinsockFunctions.h"
-#include "..\NetworkDependencies\Translator.h"
-#include "..\NetworkDependencies\Protocols.h"
+#include "../NetworkDependencies/Translator.h"
+#include "../NetworkDependencies/Protocols.h"
 #include "Client.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -16,9 +16,11 @@ void chat(Client &client);
 
 int main()
 {
+	int errorCode;
+
 	char msgRecv[255] = "\0";
 
-	InitSockets();
+	InitWinSock();
 
 	cout << "Client" << endl;
 
@@ -26,11 +28,17 @@ int main()
 	Client client;
 
 	//Connect to server
-	client.Connect(9876, "localhost");
+	errorCode = client.Connect(9876, "localhost");
+
+	if(errorCode != 0)
+	{
+		wstring errorTest = GetErrorMessage(errorCode);
+		wcout << "errorMessage: " << errorTest << endl;
+	}
 
 	chat(client);
 
-	ShutdownSockets();
+	ShutdownWinSock();
 
 	system("pause");
 	return 0;
