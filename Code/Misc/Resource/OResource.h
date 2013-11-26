@@ -47,7 +47,7 @@ namespace Oyster
 			static OResource*	Reload				(OResource* resource);
 			static bool			Release				(OResource* resource);
 
-			Utility::DynamicMemory::RefCount	resourceRef;
+			Utility::DynamicMemory::ReferenceCount	resourceRef;
 
 		private:
 			static OResource*	ByteLoader			(const wchar_t filename[], ResourceType type, OResource* old = 0);
