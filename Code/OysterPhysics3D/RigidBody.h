@@ -24,6 +24,9 @@ namespace Oyster { namespace Physics3D
 
 		RigidBody & operator = ( const RigidBody &body );
 
+		bool operator == ( const RigidBody &body );
+		bool operator != ( const RigidBody &body );
+
 		void Update_LeapFrog( ::Oyster::Math::Float deltaTime );
 		void ApplyImpulseForce( const ::Oyster::Math::Float3 &worldF );
 		void ApplyImpulseForceAt( const ::Oyster::Math::Float3 &worldF, const ::Oyster::Math::Float3 &worldPos );
@@ -76,6 +79,7 @@ namespace Oyster { namespace Physics3D
 		void SetOrientation( const ::Oyster::Math::Float4x4 &o );
 		void SetSize( const ::Oyster::Math::Float3 &widthHeight );
 		void SetCenter( const ::Oyster::Math::Float3 &worldPos );
+		void SetRotation( const ::Oyster::Math::Float4x4 &r );
 		
 		void SetImpulseTorque( const ::Oyster::Math::Float3 &worldT );
 		void SetAngularMomentum( const ::Oyster::Math::Float3 &worldH );

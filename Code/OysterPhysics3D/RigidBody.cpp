@@ -36,6 +36,51 @@ RigidBody & RigidBody::operator = ( const RigidBody &body )
 	return *this;
 }
 
+bool RigidBody::operator == ( const RigidBody &body )
+{
+	if( this->box.center != body.box.center )
+	{
+		return false;
+	}
+
+	if( this->box.rotation != body.box.rotation )
+	{
+		return false;
+	}
+
+	if( this->box.boundingOffset != body.box.boundingOffset )
+	{
+		return false;
+	}
+
+	if( this->angularMomentum != body.angularMomentum )
+	{
+		return false;
+	}
+
+	if( this->linearMomentum != body.linearMomentum )
+	{
+		return false;
+	}
+
+	if( this->impulseTorqueSum != body.impulseTorqueSum )
+	{
+		return false;
+	}
+
+	if( this->impulseForceSum != body.impulseForceSum )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool RigidBody::operator != ( const RigidBody &body )
+{
+	return !this->operator==( body );
+}
+
 void RigidBody::Update_LeapFrog( Float deltaTime )
 { // by Dan Andersson: Euler leap frog update when Runga Kutta is not needed
 	
@@ -285,6 +330,11 @@ void RigidBody::SetSize( const Float3 &widthHeight )
 void RigidBody::SetCenter( const Float3 &worldPos )
 { // by Dan Andersson
 	this->box.center = worldPos;
+}
+
+void RigidBody::SetRotation( const Float4x4 &r )
+{ // by Dan Andersson
+	this->box.rotation = r;
 }
 
 void RigidBody::SetImpulseTorque( const Float3 &worldT )

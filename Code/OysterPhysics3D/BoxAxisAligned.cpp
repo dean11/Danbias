@@ -24,26 +24,26 @@ BoxAxisAligned & BoxAxisAligned::operator = ( const BoxAxisAligned &box )
 ::Utility::DynamicMemory::UniquePointer<ICollideable> BoxAxisAligned::Clone( ) const
 { return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new BoxAxisAligned(*this) ); }
 
-bool BoxAxisAligned::Intersects( const ICollideable *target ) const
+bool BoxAxisAligned::Intersects( const ICollideable &target ) const
 {
-	switch( target->type )
+	switch( target.type )
 	{
 	case Type_universe: return true;
-	case Type_point: return Utility::Intersect( *this, *(Point*)target );
-	case Type_ray: return Utility::Intersect( *this, *(Ray*)target, ((Ray*)target)->collisionDistance );
-	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)target );
-	case Type_plane: return Utility::Intersect( *this, *(Plane*)target );
+	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
+	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance );
+	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target );
+	case Type_plane: return Utility::Intersect( *this, *(Plane*)&target );
 	// case Type_triangle: return false; // TODO: 
-	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)target );
+	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)&target );
 	// case Type_box: return false; // TODO: 
 	// case Type_frustrum: return false; // TODO: 
 	default: return false;
 	}
 }
 
-bool BoxAxisAligned::Contains( const ICollideable *target ) const
+bool BoxAxisAligned::Contains( const ICollideable &target ) const
 {
-	switch( target->type )
+	switch( target.type )
 	{
 	// case Type_point: return false; // TODO: 
 	// case Type_sphere: return false; // TODO: 

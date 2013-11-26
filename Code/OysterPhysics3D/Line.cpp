@@ -23,9 +23,9 @@ Line & Line::operator = ( const Line &line )
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Line::Clone( ) const
 { return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Line(*this) ); }
 
-bool Line::Intersects( const ICollideable *target ) const
+bool Line::Intersects( const ICollideable &target ) const
 {
-	if( target->type == Type_universe )
+	if( target.type == Type_universe )
 	{
 		this->ray.collisionDistance = 0.0f;
 		return true;
@@ -38,5 +38,5 @@ bool Line::Intersects( const ICollideable *target ) const
 	return false;
 }
 
-bool Line::Contains( const ICollideable *target ) const
+bool Line::Contains( const ICollideable &target ) const
 { /* TODO: : */ return false; }
