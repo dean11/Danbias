@@ -47,7 +47,7 @@ Player::Player(void)
 	life = 10;
 
 	UniquePointer<ICustomBody> rigidBody = API::Instance().CreateSimpleRigidBody();
-	//ref = API::Instance().AddObject(rigidBody);
+	API::Instance().AddObject(rigidBody);
 	////ref = API::Instance().AddObject(API::Instance().CreateSimpleRigidBody());
 	//const ICustomBody* rB;
 

@@ -27,18 +27,22 @@ namespace Utility
 		{
 		public:
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer( Type *assignedInstance = NULL );
+
+			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			UniquePointer( const UniquePointer<Type> &donor );
 
 			//! Will auto delete assigned dynamic instance.
 			~UniquePointer();
 
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer<Type> & operator = ( Type *assignedInstance );
 
 			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
-			//! If donor had nothing, is equavalent with clearing all responsibilities from this UniquePointer.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer<Type> & operator = ( const UniquePointer<Type> &donor );
 
 			//! Access the assigned dynamic instance. Will crash if nothing there
@@ -71,18 +75,22 @@ namespace Utility
 		{ //! Wrapper to safely transfer dynamic ownership/responsibility
 		public:
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray( Type assignedArray[] = NULL );
 			
+			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			UniqueArray( const UniqueArray<Type> &donor );
+
 			//! Will auto delete assigned dynamic array.
 			~UniqueArray();
 
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray<Type> & operator = ( Type assignedArray[] );
 			
 			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
-			//! If donor had nothing, is equavalent with clearing all responsibilities from this UniqueArray.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray<Type> & operator = ( const UniqueArray<Type> &donor );
 
 			//! Accesses the instance at index i of this UniqeArray's owned dynamic array.
