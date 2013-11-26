@@ -13,8 +13,8 @@ namespace Oyster
 		struct CustomData;
 		/** A Resource handle representing various resources */
 		typedef unsigned long OHRESOURCE;
-		typedef void(*CustomUnloadFunction)(void*);
-		typedef const CustomData&(*CustomLoadFunction)();
+		typedef void(*CustomUnloadFunction)(void* loadedData);
+		typedef const CustomData&(*CustomLoadFunction)(const wchar_t filename[]);
 
 		/** An enum class representing all avalible resources that is supported. */
 		enum ResourceType
