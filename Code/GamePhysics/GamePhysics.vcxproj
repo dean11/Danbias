@@ -149,6 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Implementation\Octree.h" />
     <ClInclude Include="Implementation\PhysicsAPI_Impl.h" />
     <ClInclude Include="Implementation\SimpleRigidBody.h" />
     <ClInclude Include="PhysicsAPI.h" />
