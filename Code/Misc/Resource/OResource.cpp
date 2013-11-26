@@ -8,57 +8,75 @@ OResource::OResource(OHRESOURCE handle, ResourceType type, size_t resourceSize, 
 	,	resourceSize		(resourceSize)
 	,	resourceElementSize	(elementSize)
 	,	resourceType		(type)
+	,	customData			(0)
 {
 	
 }
 OResource::~OResource()
 {}
 
-bool OResource::Release()
+
+OResource*	OResource::Load		(const wchar_t filename[], ResourceType type)
 {
-	if(this->resourceRef.Decref() == 0)
+	switch (type)
 	{
-		Remove(this->resourceType, this->resourceData);
-		return true;
-	}
-	return false;
-}
-
-void OResource::Remove(ResourceType t, OHRESOURCE& r)
-{
-	switch (t)
-	{
-		case Oyster::Resource::ResourceType_Texture_PNG:
-		case Oyster::Resource::ResourceType_Texture_DDS:
-		case Oyster::Resource::ResourceType_Texture_JPG:
-
-		break;
-
-		case Oyster::Resource::ResourceType_Mesh_VertexData:
-		case Oyster::Resource::ResourceType_Mesh_AnimationData:
-
-		break;
-
-		case Oyster::Resource::ResourceType_Audio_mp3:
-
-		break;
-
-		case Oyster::Resource::ResourceType_Shader_Vertex:
-		case Oyster::Resource::ResourceType_Shader_Hull:
-		case Oyster::Resource::ResourceType_Shader_Domain:
-		case Oyster::Resource::ResourceType_Shader_Geometry:
-		case Oyster::Resource::ResourceType_Shader_Pixel:
-		case Oyster::Resource::ResourceType_Shader_Compute:
-
-		break;
-
-		case Oyster::Resource::ResourceType_UNKNOWN:
 		case Oyster::Resource::ResourceType_Byte_Raw:
 		case Oyster::Resource::ResourceType_Byte_ANSI:
 		case Oyster::Resource::ResourceType_Byte_UTF8:
 		case Oyster::Resource::ResourceType_Byte_UNICODE:
 		case Oyster::Resource::ResourceType_Byte_UTF16LE:
-			delete ((char*)r);
+			return OResource::ByteLoader(filename, type);
 		break;
 	}
+
+	return 0;
 }
+OResource*	OResource::Load		(const wchar_t filename[], CustomLoadFunction loadFnc)
+{
+	return OResource::CustomLoader(filename, loadFnc);
+}
+OResource*	OResource::Reload	(OResource* resource)
+{
+	if(!resource) return 0;
+
+	switch (resource->resourceType)
+	{
+		case Oyster::Resource::ResourceType_Byte_Raw:
+		case Oyster::Resource::ResourceType_Byte_ANSI:
+		case Oyster::Resource::ResourceType_Byte_UTF8:
+		case Oyster::Resource::ResourceType_Byte_UNICODE:
+		case Oyster::Resource::ResourceType_Byte_UTF16LE:
+			resource->ByteReloader();
+		break;
+
+		case Oyster::Resource::ResourceType_UNKNOWN:
+			resource->CustomReloader();
+		break;
+	}
+
+	return resource;
+}
+bool		OResource::Release	(OResource* resource)
+{
+	if(resource->resourceRef.Decref() == 0)
+	{
+		switch (resource->resourceType)
+		{
+			case Oyster::Resource::ResourceType_Byte_Raw:
+			case Oyster::Resource::ResourceType_Byte_ANSI:
+			case Oyster::Resource::ResourceType_Byte_UTF8:
+			case Oyster::Resource::ResourceType_Byte_UNICODE:
+			case Oyster::Resource::ResourceType_Byte_UTF16LE:
+				resource->ByteUnloader();
+			break;
+
+			case Oyster::Resource::ResourceType_UNKNOWN:
+				resource->CustomUnloader();
+			break;
+		}
+		return true;
+	}
+	return false;
+}
+
+

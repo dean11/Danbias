@@ -10,34 +10,15 @@ namespace Oyster
 { 
 	namespace Resource
 	{
+		struct CustomData;
 		/** A Resource handle representing various resources */
 		typedef unsigned long OHRESOURCE;
+		typedef void(*CustomUnloadFunction)(void*);
+		typedef const CustomData&(*CustomLoadFunction)();
 
 		/** An enum class representing all avalible resources that is supported. */
 		enum ResourceType
 		{
-			//Texture
-			ResourceType_Texture_PNG,				/**< Handle can be interpeted as ID3D11ShaderResourceView */
-			ResourceType_Texture_DDS,				/**< Handle can be interpeted as ID3D11ShaderResourceView */
-			ResourceType_Texture_JPG,				/**< Handle can be interpeted as ID3D11ShaderResourceView */
-		
-			//Mesh
-			ResourceType_Mesh_AllInOne,				/**< Handle can be interpeted as ? */
-			ResourceType_Mesh_VertexData,			/**< Handle can be interpeted as ? */
-			ResourceType_Mesh_AnimationData,		/**< Handle can be interpeted as ? */
-		
-			//Audio
-			ResourceType_Audio_mp3,					/**< Handle can be interpeted as ? */
-		
-			//Shaders
-			ResourceType_Shader_Vertex,				/**< Handle can be interpeted as ? */
-			ResourceType_Shader_VertexBLOB,			/**< Handle can be interpeted as ID3Blob */
-			ResourceType_Shader_Hull,				/**< Handle can be interpeted as ? */
-			ResourceType_Shader_Domain,				/**< Handle can be interpeted as ? */
-			ResourceType_Shader_Geometry,			/**< Handle can be interpeted as ? */
-			ResourceType_Shader_Pixel,				/**< Handle can be interpeted as ? */
-			ResourceType_Shader_Compute,			/**< Handle can be interpeted as ? */
-		
 			//Byte
 			ResourceType_Byte_Raw,					/**< Handle can be interpeted as char[] or char* */
 			ResourceType_Byte_ANSI,					/**< Handle can be interpeted as char[] or char* */
@@ -46,22 +27,25 @@ namespace Oyster
 			ResourceType_Byte_UTF16LE,				/**< Handle can be interpeted as char[] or char* */
 
 			ResourceType_COUNT,						/**< Handle can be interpeted as ? */
-			ResourceType_UNKNOWN = -1				/**< Handle can be interpeted as char[] or char* */
+
+			ResourceType_UNKNOWN = -1,				/**< Handle can be interpeted as void* */
+		};
+
+		/** A struct to return when doing a custom resource Load 
+		*	By loading this way you are handing over the ownership to the resource loaded. 
+		*/
+		struct CustomData
+		{
+			void* loadedData;							///<! The loaded resource interpeted as a void*.
+			CustomUnloadFunction resourceUnloadFnc;		///<! The function that will be used to free the resource when needed.
 		};
 		
 		/** A resource handler interface to interact with when loading resources. 
 		*	The resource handler uses the filename to make resources unuiqe.
 		*/
-		class IResourceHandler
+		class OysterResource
 		{
 		public:
-
-			/**
-			*	Release the resource handle, wich in turn releases every resource loaded with this instance.
-			*	@return Nothing.
-			*/
-			static void						Release();
-
 			/**
 			*	Load a resource given a type.
 			*	@param filename The path to the resource.
@@ -69,7 +53,30 @@ namespace Oyster
 			*	@param force If set to true, the resource will be reloaded if it already exists. If it does not, nothing happens.
 			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
 			*/
-			static OHRESOURCE				LoadResource(const wchar_t filename[], ResourceType type, bool force = false);
+			static OHRESOURCE				LoadResource(const wchar_t filename[], ResourceType type);
+
+			/**
+			*	Load a resource with a custom loading function
+			*	@param filename The path to the resource.
+			*	@param force If set to true, the resource will be reloaded even if exists.
+			*	@param loadFnc If set, this gives you the right to do custom resource loading if your recource type is not supported.
+			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
+			*/
+			static OHRESOURCE				LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc = 0, unsigned int CustomId = 0);
+
+			/**
+			*	Reload a resource
+			*	@param filename The path to the resource.
+			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
+			*/
+			static OHRESOURCE				ReloadResource(const wchar_t filename[]);
+
+			/**
+			*	Reload a resource
+			*	@param filename The path to the resource.
+			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
+			*/
+			static OHRESOURCE				ReloadResource(OHRESOURCE resource);
 
 			/**
 			*	Releases all resources loaded by the resource handler.

@@ -103,16 +103,15 @@ bool ReadFromFile(const wchar_t fileName[], const char openFlag[], std::string& 
 }
 
 
-OResource* OResource::ByteLoader(const wchar_t filename[], ResourceType type)
+OResource* OResource::ByteLoader(const wchar_t filename[], ResourceType type, OResource* old)
 {
-	OResource *resource = 0;
+	OResource *resource = old;
 	std::wstring wOut;
 	std::string sOut;
 	bool success = false;
 
 	switch (type)
 	{
-		case Oyster::Resource::ResourceType_UNKNOWN:
 		case Oyster::Resource::ResourceType_Byte_Raw:
 			success = ReadFromFile(filename, "rb", sOut, sizeof(char));
 		break;
@@ -147,10 +146,28 @@ OResource* OResource::ByteLoader(const wchar_t filename[], ResourceType type)
 		char *data = new char[sOut.size()+1];
 		data[sOut.size()] = '\0';
 		memcpy(&data[0], &sOut[0], sOut.size());
-		resource = new OResource((OHRESOURCE)data, type, (sizeof(char) * sOut.size()), sizeof(char), filename);
-		
+
+		if(!old)
+		{
+			resource = new OResource((OHRESOURCE)data, type, (sizeof(char) * sOut.size()), sizeof(char), filename);
+		}
+		else
+		{
+			old->resourceData = (OHRESOURCE)data;
+		}
 	}
 	return resource;
 }
 			
+void OResource::ByteUnloader()
+{
+	delete [] ((char*)this->resourceData);
+	this->resourceData = 0;
+}
+
+OResource* OResource::ByteReloader()
+{
+	ByteUnloader();
+	return ByteLoader(this->resourceFilename.c_str(), this->resourceType, this); 
+}
 

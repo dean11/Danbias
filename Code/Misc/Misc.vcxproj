@@ -146,14 +146,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Resource\Loaders\Textloader.cpp" />
+    <ClCompile Include="Resource\Loaders\ByteLoader.cpp" />
+    <ClCompile Include="Resource\Loaders\CustomLoader.cpp" />
+    <ClCompile Include="MainTest.cpp" />
     <ClCompile Include="Resource\OResourceHandler.cpp" />
     <ClCompile Include="Resource\OResource.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="WinTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resource\OResourceHandler.h" />
     <ClInclude Include="Resource\OysterResource.h" />
     <ClInclude Include="Resource\OResource.h" />
     <ClInclude Include="Utilities-InlineImpl.h" />
