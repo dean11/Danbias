@@ -38,6 +38,14 @@ namespace Utility
 		}
 
 		template<typename Type>
+		UniquePointer<Type>::UniquePointer( const UniquePointer<Type> &donor )
+		{
+			this->ownedInstance = donor.ownedInstance;
+			donor.ownedInstance = NULL;
+
+		}
+
+		template<typename Type>
 		UniquePointer<Type>::~UniquePointer()
 		{
 			SafeDeleteInstance( this->ownedInstance );
@@ -108,6 +116,14 @@ namespace Utility
 		UniqueArray<Type>::UniqueArray( Type assignedArray[] )
 		{
 			this->ownedArray = assignedArray;
+		}
+
+		template<typename Type>
+		UniqueArray<Type>::UniqueArray( const UniqueArray<Type> &donor )
+		{
+			this->ownedArray = donor.ownedArray;
+			donor.ownedArray = NULL;
+
 		}
 
 		template<typename Type>
