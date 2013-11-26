@@ -3,19 +3,18 @@
 #define MODELINFO_h
 
 
-#include "..\Core\CoreIncludes.h"
-#include "..\Core\Buffer.h"
+#include "..\Core\Core.h"
 
 namespace Oyster
 {
 	namespace Graphics
 	{
-		namespace Render
+		namespace Model
 		{
 			struct ModelInfo
 			{
 				std::vector<ID3D11ShaderResourceView*> Material;
-				Buffer *Vertices,*Indecies;
+				Core::Buffer *Vertices,*Indecies;
 				bool Indexed;
 				int VertexCount;
 			};	

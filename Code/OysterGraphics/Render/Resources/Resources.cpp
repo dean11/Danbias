@@ -11,6 +11,7 @@ const std::wstring PixelRed = L"DebugPixel";
 typedef Oyster::Graphics::Core::ShaderManager::ShaderType ShaderType;
 typedef Oyster::Graphics::Core::ShaderManager::Get GetShader;
 typedef Oyster::Graphics::Core::ShaderManager Shader;
+typedef Oyster::Graphics::Core::Buffer Buffer;
 
 namespace Oyster
 {
@@ -99,7 +100,6 @@ namespace Oyster
 				obj.RenderStates.Rasterizer = rs;
 
 #pragma endregion
-
 				return Core::Init::Sucsess;
 			}
 		}

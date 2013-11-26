@@ -1,19 +1,18 @@
-#include "Buffer.h"
 #include "Core.h"
 
 using namespace Oyster::Graphics;
 
-Buffer::Buffer()
+Core::Buffer::Buffer()
 {
 	mBuffer = NULL;
 }
 
-Buffer::~Buffer()
+Core::Buffer::~Buffer()
 {
 	SAFE_RELEASE(mBuffer);
 }
 
-HRESULT Buffer::Apply(UINT32 misc) const
+HRESULT Core::Buffer::Apply(UINT32 misc) const
 {
 	HRESULT hr = S_OK;
 
@@ -59,7 +58,7 @@ HRESULT Buffer::Apply(UINT32 misc) const
 	return hr;
 }
 
-HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
+HRESULT Core::Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 {
 	D3D11_BUFFER_DESC bufferDesc;
 
@@ -154,13 +153,13 @@ HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 
 	if(FAILED(hr))
 	{
-		MessageBox(NULL, L"Unable to create buffer.", L"Slenda Error", MB_ICONERROR | MB_OK);
+		//MessageBox(NULL, L"Unable to create buffer.", L"Slenda Error", MB_ICONERROR | MB_OK);
 	}
 
 	return hr;
 }
 
-void* Buffer::Map()
+void* Core::Buffer::Map()
 {
 	void* ret = NULL;
 	if(mUsage == BUFFER_CPU_WRITE || mUsage == BUFFER_CPU_READ || mUsage == BUFFER_CPU_WRITE_DISCARD)
@@ -192,17 +191,17 @@ void* Buffer::Map()
 
 }
 
-void Buffer::Unmap()
+void Core::Buffer::Unmap()
 {
 	Core::deviceContext->Unmap( mBuffer, 0 );
 }
 
-Buffer::operator ID3D11Buffer *()
+Core::Buffer::operator ID3D11Buffer *()
 {
 	return this->mBuffer;
 }
 
-Buffer::operator const ID3D11Buffer *() const
+Core::Buffer::operator const ID3D11Buffer *() const
 {
 	return this->mBuffer;
 }

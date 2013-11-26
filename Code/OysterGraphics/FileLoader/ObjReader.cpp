@@ -1,6 +1,5 @@
 #include "OBJReader.h"
 #include "..\Definitions\GraphicalDefinition.h"
-#include "..\Core\Buffer.h"
 #include <sstream>
 #include <fstream>
 
@@ -96,17 +95,17 @@ void OBJReader::readOBJFile( std::wstring fileName )
 	inStream.close();
 }
 
-Oyster::Graphics::Render::ModelInfo* OBJReader::toModel()
+Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
 {
-	Oyster::Graphics::Buffer* b = new Oyster::Graphics::Buffer();
-	Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
-	Oyster::Graphics::Render::ModelInfo* modelInfo = new Oyster::Graphics::Render::ModelInfo();
+	Oyster::Graphics::Core::Buffer* b = new Oyster::Graphics::Core::Buffer();
+	Oyster::Graphics::Core::Buffer::BUFFER_INIT_DESC desc;
+	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
 	
 	desc.ElementSize = 32;
 	desc.InitData = &this->_myOBJ[0];
 	desc.NumElements = this->_myOBJ.size();
-	desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
-	desc.Usage = Oyster::Graphics::Buffer::BUFFER_DEFAULT;
+	desc.Type = Oyster::Graphics::Core::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	desc.Usage = Oyster::Graphics::Core::Buffer::BUFFER_DEFAULT;
 	HRESULT hr = S_OK;
 	
 	hr = b->Init(desc);

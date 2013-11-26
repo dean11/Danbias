@@ -2,22 +2,16 @@
 #ifndef Mesh_h
 #define Mesh_h
 
-#include "ModelInfo.h"
-
-
 namespace Oyster
 {
 	namespace Graphics
 	{
-		namespace Render
+		namespace Model
 		{
 			struct Model
 			{
-				
-				void* const info;
-				//ModelInfo* info;
-				void* data;
-				int size;
+				void* info;
+				Oyster::Math::Float4x4 WorldMatrix;
 				bool Visible;
 			};
 		}

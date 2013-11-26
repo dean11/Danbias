@@ -16,8 +16,8 @@ namespace Oyster
 			{
 			public:
 				static Core::ShaderManager::ShaderEffect obj;
-				static Buffer ModelData;
-				static Buffer VPData;
+				static Core::Buffer ModelData;
+				static Core::Buffer VPData;
 
 				static Core::Init::State Init();
 			};

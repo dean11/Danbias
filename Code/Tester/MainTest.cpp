@@ -19,7 +19,7 @@
 //--------------------------------------------------------------------------------------
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
-Oyster::Graphics::Render::Model* m	=				new Oyster::Graphics::Render::Model();
+Oyster::Graphics::Model::Model* m	=				new Oyster::Graphics::Model::Model();
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
 
@@ -178,7 +178,8 @@ HRESULT InitDirect3D()
 #pragma region Obj
 	OBJReader or;
 	or.readOBJFile(L"bth.obj");
-	m->info = or.toModel();
+	m->info = (void*)or.toModel();
+	m->Visible=true;
 #pragma endregion
 	
 	//*((Oyster::Math::Matrix)m->data) = Oyster::Math::Matrix::identity;

@@ -1,6 +1,7 @@
 #include "Render.h"
 #include "../Resources/Resources.h"
 #include "../../Definitions/GraphicalDefinition.h"
+#include "../../Model/ModelInfo.h"
 
 namespace Oyster
 {
@@ -28,27 +29,30 @@ namespace Oyster
 					Resources::VPData.Apply();
 				}
 
-				void Basic::RenderScene(Model* models, int count)
+				void Basic::RenderScene(Model::Model* models, int count)
 				{
 					for(int i = 0; i < count; ++i)
 					{
 						if(models[i].Visible)
 						{
 							void* data  = Resources::ModelData.Map();
-							memcpy(data,&(models[i].data),64);
+							memcpy(data,&(models[i].WorldMatrix),64);
 							Resources::ModelData.Unmap();
 
 							//Set Materials :: NONE
 
-							models[i].info->Vertices->Apply();
-							if(models[i].info->Indexed)
+							Model
+								::ModelInfo* info = (Model::ModelInfo*)models[i].info;
+
+							info->Vertices->Apply();
+							if(info->Indexed)
 							{
-								models[i].info->Indecies->Apply();
-								Oyster::Graphics::Core::deviceContext->DrawIndexed(models[i].info->VertexCount,0,0);
+								info->Indecies->Apply();
+								Oyster::Graphics::Core::deviceContext->DrawIndexed(info->VertexCount,0,0);
 							}
 							else
 							{
-								Oyster::Graphics::Core::deviceContext->Draw(models[i].info->VertexCount,0);
+								Oyster::Graphics::Core::deviceContext->Draw(info->VertexCount,0);
 							}
 						}
 					}				
