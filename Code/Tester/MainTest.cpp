@@ -177,12 +177,12 @@ HRESULT InitDirect3D()
 	
 #pragma region Obj
 	OBJReader or;
-	or.readOBJFile(L"bth.obj");
+	or.readOBJFile(L"crate.obj");
 	m->info = (void*)or.toModel();
 	m->Visible=true;
 #pragma endregion
 	
-	//*((Oyster::Math::Matrix)m->data) = Oyster::Math::Matrix::identity;
+	m->WorldMatrix = Oyster::Math::Matrix::identity;
 
 	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,16.0f/9.0f,.1f,100);
 

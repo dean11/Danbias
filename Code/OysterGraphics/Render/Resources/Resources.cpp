@@ -99,6 +99,7 @@ namespace Oyster
 				obj.CBuffers.Vertex.push_back(&VPData);
 				obj.RenderStates.Rasterizer = rs;
 
+				ModelData.Apply(1);
 #pragma endregion
 				return Core::Init::Sucsess;
 			}

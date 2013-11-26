@@ -2,6 +2,7 @@
 #include "..\Definitions\GraphicalDefinition.h"
 #include <sstream>
 #include <fstream>
+#include "TextureLoader.h"
 
 using namespace std;
 OBJReader::OBJReader() 
@@ -116,6 +117,8 @@ Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
 	modelInfo->Indexed = false;
 	modelInfo->VertexCount = (int)desc.NumElements;
 	modelInfo->Vertices = b;
+
+	//Oyster::Resource::OysterResource::LoadResource(L"Normal.png",(Oyster::Resource::CustomLoadFunction)Oyster::Graphics::Loading::LoadTexture);
 
 
 	return modelInfo;

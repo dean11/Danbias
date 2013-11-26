@@ -18,11 +18,11 @@ struct VertexIn
 
 float4 main( VertexIn input ) : SV_POSITION
 {
-	float4 postTransform = float4(input.pos*0.1f,1);
-	postTransform.y += 1.5f;
+	float4 postTransform = mul( World, float4(input.pos,1) );
+	//float4 postTransform = float4(input.pos,1);
 	//return postTransform;
 	//return mul(View, float4(input.pos,1));
 	matrix VP = mul(Projection, View);
 	//matrix WVP = mul(World, VP);
-	return mul(VP, float4(input.pos*0.1f,1) );
+	return mul(VP, postTransform );
 }

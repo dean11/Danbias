@@ -36,7 +36,7 @@ namespace Oyster
 						if(models[i].Visible)
 						{
 							void* data  = Resources::ModelData.Map();
-							memcpy(data,&(models[i].WorldMatrix),64);
+							memcpy(data,&(models[i].WorldMatrix),sizeof(Math::Float4x4));
 							Resources::ModelData.Unmap();
 
 							//Set Materials :: NONE
