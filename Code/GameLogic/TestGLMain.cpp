@@ -10,7 +10,7 @@
 #include "Core/Core.h"
 #include "Render\Preparations\Preparations.h"
 #include "IGame.h"
-//#include "InputController.h"
+#include "L_inputClass.h"
 
 
 
@@ -21,6 +21,7 @@ HINSTANCE				g_hInst					= NULL;
 HWND					g_hWnd					= NULL;
 
 GameLogic::IGame* game;
+InputClass* inputObj;
 
 
 //--------------------------------------------------------------------------------------
@@ -181,16 +182,30 @@ HRESULT InitGame()
 	game = new GameLogic::IGame();
 	game->Init();
 	game->StartGame();
+
+	inputObj = new InputClass;
+	if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
+	{
+		MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return S_OK;
 }
 HRESULT Update(float deltaTime)
 {
 	game->Update();
+	inputObj->Update();
 	return S_OK;
 }
 
 HRESULT Render(float deltaTime)
 {
+	int isPressed = 0;
+	if(inputObj->IsKeyPressed(DIK_A))
+	{
+		isPressed = 1;
+	}
 	//Oyster::Graphics::Render::Rendering::Basic::NewFrame();
 	Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
 	
@@ -199,7 +214,11 @@ HRESULT Render(float deltaTime)
 	//Oyster::Graphics::Core::deviceContext->Draw(3,0);
 	
 	//Oyster::Graphics::Render::Rendering::Basic::EndFrame();
+	wchar_t title[255];
 
+	//swprintf(title, L"| FPS: %d \n",(int)(isPressed));
+	swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
+	SetWindowText(g_hWnd, title);
 
 	
 	Oyster::Graphics::Core::swapChain->Present(0,0);
