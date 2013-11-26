@@ -7,9 +7,7 @@
 
 namespace GameLogic
 {
-	//void ColisionEvent(unsigned int obj1, unsigned int obj2);
-	void DestructionEvent(unsigned int obj1, ::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> obj2);
-	
+
 	class Player : public Object
 	{
 

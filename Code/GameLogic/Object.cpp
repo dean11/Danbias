@@ -59,3 +59,8 @@ void Object::Render()
 	model->info->Vertices.Apply(0);
 	Oyster::Graphics::Core::deviceContext->Draw(model->info->VertexCount,0);
 }
+
+Object::OBJECT_TYPE Object::GetType()
+{
+	return this->type;
+}
