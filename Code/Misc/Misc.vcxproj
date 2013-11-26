@@ -161,7 +161,6 @@
     <ClInclude Include="Thread\IThreadObject.h" />
     <ClInclude Include="Thread\OysterMutex.h" />
     <ClInclude Include="Thread\OysterThread.h" />
-    <ClInclude Include="Thread\OysterThread_Impl.h" />
     <ClInclude Include="Utilities-InlineImpl.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="WinTimer.h" />

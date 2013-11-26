@@ -1,3 +1,7 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
+
 #ifndef MISC_OYSTER_THREAD_H
 #define MISC_OYSTER_THREAD_H
 
@@ -42,4 +46,4 @@ namespace Oyster
 	} 
 }
 
-#endif // !MISC_I_OYSTER_THREAD_H
+#endif // !MISC_OYSTER_THREAD_H

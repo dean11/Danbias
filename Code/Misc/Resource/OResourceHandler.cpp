@@ -60,7 +60,8 @@ OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunc
 
 	if(!resourceData) return 0;
 
-	if(resourceData)	resourceData->SetResourceID(CustomId);
+	resourceData->SetResourceID(CustomId);
+
 	resourcePrivate.SaveResource(resourceData);
 
 	return (OHRESOURCE)resourceData->GetResourceHandle();

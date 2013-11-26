@@ -65,8 +65,5 @@
     <ClInclude Include="Thread\OysterThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Thread\OysterThread_Impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

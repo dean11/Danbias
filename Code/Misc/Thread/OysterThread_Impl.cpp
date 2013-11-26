@@ -1,8 +1,12 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
+
 #include "OysterThread.h"
-#include <thread>
 #include "OysterMutex.h"
-#include <assert.h>
 #include "..\Utilities.h"
+#include <thread>
+#include <assert.h>
 
 using namespace Oyster::Thread;
 using namespace Utility::DynamicMemory::SmartPointer;
@@ -140,31 +144,6 @@ OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start)
 	this->privateData->threadData->owner = worker;
 
 	ThreadFunction fnc = ThreadingFunction;
-
-/*
-	//Create a lambda function with current worker instance to fire of the thread
-#if defined(DEBUG) || defined (_DEBUG)
-	ThreadFunction fnc = [](ThreadData* w) -> void
-	{
-		while(w->state == OYSTER_THREAD_STATE_STOPED);
-
-		w->owner->ThreadEntry();
-		while (true)
-		{
-			w->mutexLock.LockMutex();
-				w->owner->DoWork();							
-			w->mutexLock.UnlockMutex();
-		}
-			w->mutexLock.LockMutex();
-				w->owner->ThreadExit();
-			w->mutexLock.UnlockMutex();
-	};
-
-#else
-	ThreadFunction fnc = ThreadingFunction;
-	//ThreadFunction fnc = THREAD_LAMBDA_FUNCTION_CREATION;
-#endif
-*/
 
 	//Maby move this thread creation to a seperate Start() function because std::thread fires the thread when it is created. :(
 	this->privateData->threadData->workerThread = new std::thread(fnc, this->privateData->threadData);
