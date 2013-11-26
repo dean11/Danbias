@@ -148,7 +148,6 @@
   <ItemGroup>
     <ClCompile Include="Resource\Loaders\ByteLoader.cpp" />
     <ClCompile Include="Resource\Loaders\CustomLoader.cpp" />
-    <ClCompile Include="MainTest.cpp" />
     <ClCompile Include="Resource\OResourceHandler.cpp" />
     <ClCompile Include="Resource\OResource.cpp" />
     <ClCompile Include="Utilities.cpp" />

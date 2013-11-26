@@ -7,12 +7,9 @@
 //--------------------------------------------------------------------------------------
 #define NOMINMAX
 #include <Windows.h>
-#include "Core/Core.h"
-#include "Render\Preparations\Preparations.h"
-#include "Render\Resources\Resources.h"
-#include "Render\Rendering\Render.h"
-#include "FileLoader\ObjReader.h"
-#include "Definitions\GraphicalDefinition.h"
+#include "DllInterfaces\GFXAPI.h"
+
+
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -42,6 +39,22 @@ HRESULT				InitDirect3D();
 //--------------------------------------------------------------------------------------
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
+
+	bool b = SetDllDirectoryW(L"..\\..\\DLL");
+	typedef struct tagLOADPARMS32
+	{ 
+		LPSTR lpEnvAddress;  // address of environment strings 
+		LPSTR lpCmdLine;     // address of command line 
+		LPSTR lpCmdShow;     // how to show new program 
+		DWORD dwReserved;    // must be zero 
+	} LOADPARMS32;
+	LOADPARMS32 params;
+	params.dwReserved=NULL;
+	params.lpCmdLine="";
+	params.lpCmdShow="";
+	params.lpEnvAddress="";
+	LoadModule("OysterGraphics_x86D.dll",&params);
+
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
 
@@ -138,15 +151,10 @@ HRESULT InitDirect3D()
 {
 	HRESULT hr = S_OK;;
 
-	Oyster::Graphics::Core::resolution = Oyster::Math::Float2( 1024, 768 );
-
-	if(Oyster::Graphics::Core::Init::FullInit(g_hWnd,false,false)==Oyster::Graphics::Core::Init::Fail)
+	if(Oyster::Graphics::API::Init(g_hWnd,false,false, Oyster::Math::Float2( 1024, 768 )) == Oyster::Graphics::API::Fail)
+	{
 		return E_FAIL;
-
-	//Init shaders
-	Oyster::Graphics::Render::Resources::Init();
-
-	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();
+	}
 
 #pragma region Triangle
 	//Oyster::Graphics::Definitions::ObjVertex mesh[] =
@@ -176,15 +184,12 @@ HRESULT InitDirect3D()
 #pragma endregion
 	
 #pragma region Obj
-	OBJReader or;
-	or.readOBJFile(L"crate.obj");
-	m->info = (void*)or.toModel();
-	m->Visible=true;
+	m =  Oyster::Graphics::API::CreateModel(L"bth.obj");
+	m->WorldMatrix *= 0.1f;
 #pragma endregion
 	
-	m->WorldMatrix = Oyster::Math::Matrix::identity;
 
-	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,16.0f/9.0f,.1f,100);
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,100);
 
 	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,10.4f));
 	V = Oyster::Math3D::InverseOrientationMatrix(V);
@@ -200,18 +205,11 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Graphics::Render::Rendering::Basic::NewFrame(V,P);
-	//Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
+	Oyster::Graphics::API::NewFrame(V,P);
 
-	//m->info->Vertices->Apply(0);
+	Oyster::Graphics::API::RenderScene(m,1);
 
-	//Oyster::Graphics::Core::deviceContext->Draw(3,0);
-
-	//Oyster::Graphics::Core::swapChain->Present(0,0);
-
-	Oyster::Graphics::Render::Rendering::Basic::RenderScene(m,1);
-
-	Oyster::Graphics::Render::Rendering::Basic::EndFrame();
+	Oyster::Graphics::API::EndFrame();
 
 	return S_OK;
 }

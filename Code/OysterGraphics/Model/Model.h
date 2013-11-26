@@ -1,6 +1,7 @@
 #pragma once
 #ifndef Mesh_h
 #define Mesh_h
+#include "OysterMath.h"
 
 namespace Oyster
 {
@@ -10,6 +11,7 @@ namespace Oyster
 		{
 			struct Model
 			{
+				//! do not Edit, linked to render data
 				void* info;
 				Oyster::Math::Float4x4 WorldMatrix;
 				bool Visible;
