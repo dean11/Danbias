@@ -112,11 +112,13 @@ namespace Utility
 				int count;
 
 			public:
-				RefCount()		:count(0)	{ }
-				void Incref()				{ this->count++; }
-				void Incref(int c)			{ this->count += c; }
-				int  Decref()				{ return --this->count;}
-				void Reset()				{ this->count = 0; }
+				RefCount()		:count(0)						{ }
+				RefCount(const RefCount& o)						{ count = o.count; }
+				const RefCount& operator=(const RefCount& o)	{ count = o.count;  return *this;}
+				void Incref()									{ this->count++; }
+				void Incref(int c)								{ this->count += c; }
+				int  Decref()									{ return --this->count;}
+				void Reset()									{ this->count = 0; }
 		};
 	}
 

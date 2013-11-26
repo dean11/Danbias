@@ -16,9 +16,15 @@ namespace Oyster
 		class OResource
 		{
 		public:
+			struct CustomResourceData
+			{
+				CustomLoadFunction loadingFunction;
+				CustomUnloadFunction unloadingFunction;
+			};
+
+		public:
 										OResource(OHRESOURCE handle, ResourceType type, size_t size, size_t elementSize, ::std::wstring resourceFilename);
 			virtual~					OResource();
-			bool						Release();
 
 			inline ResourceType			GetResourceType()					const	
 			{ return this->resourceType; }
@@ -36,23 +42,30 @@ namespace Oyster
 			{ this->resourceID = id; }
 
 		public:
-			static OResource*	TextureLoader		(const wchar_t filename[], ResourceType type)	{return 0;}
-			static OResource*	MeshLoader			(const wchar_t filename[], ResourceType type)	{return 0;};
-			static OResource*	AudioLoader			(const wchar_t filename[], ResourceType type)	{return 0;};
-			static OResource*	ShaderLoader		(const wchar_t filename[], ResourceType type)	{return 0;};
-			static OResource*	ByteLoader			(const wchar_t filename[], ResourceType type);
+			static OResource*	Load				(const wchar_t filename[], ResourceType type);
+			static OResource*	Load				(const wchar_t filename[], CustomLoadFunction loadFnc);
+			static OResource*	Reload				(OResource* resource);
+			static bool			Release				(OResource* resource);
 
 			Utility::DynamicMemory::RefCount	resourceRef;
 
 		private:
-			static void			Remove			(ResourceType t, OHRESOURCE& r);
+			static OResource*	ByteLoader			(const wchar_t filename[], ResourceType type, OResource* old = 0);
+			void				ByteUnloader		();
+			OResource*			ByteReloader		();
 
-			OHRESOURCE							resourceData;
-			ResourceType						resourceType;
-			size_t								resourceSize;
-			size_t								resourceElementSize;
-			::std::wstring						resourceFilename;
-			unsigned int						resourceID;
+			static OResource*	CustomLoader		(const wchar_t filename[], CustomLoadFunction loadFnc);
+			void				CustomUnloader		();
+			OResource*			CustomReloader		();
+
+			OHRESOURCE			resourceData;
+			ResourceType		resourceType;
+			size_t				resourceSize;
+			size_t				resourceElementSize;
+			::std::wstring		resourceFilename;
+			unsigned int		resourceID;
+
+			CustomResourceData	*customData;
 		};
 	}
 }
