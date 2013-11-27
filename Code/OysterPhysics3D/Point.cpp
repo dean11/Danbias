@@ -8,8 +8,16 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math3D;
 
-Point::Point( ) : ICollideable(Type_point), center() {}
-Point::Point( const Float3 &pos ) : ICollideable(Type_point), center(pos) {}
+Point::Point( ) : ICollideable(Type_point)
+{
+	this->center = Float3::null;
+}
+
+Point::Point( const Float3 &pos ) : ICollideable(Type_point)
+{
+	this->center = pos;
+}
+
 Point::~Point( ) {}
 
 Point & Point::operator = ( const Point &point )
@@ -19,7 +27,9 @@ Point & Point::operator = ( const Point &point )
 }
 
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Point::Clone( ) const
-{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Point(*this) ); }
+{
+	return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Point(*this) );
+}
 
 bool Point::Intersects( const ICollideable &target ) const
 {
