@@ -151,6 +151,7 @@ namespace Utility
 					T& operator* ();
 					T* operator-> ();
 					operator T* ();
+					operator bool();
 
 					/**
 					*	Returns the connected pointer */

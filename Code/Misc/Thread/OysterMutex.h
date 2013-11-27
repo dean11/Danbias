@@ -20,8 +20,6 @@ public:
 	void UnlockMutex();
 	/** Returns true if mutex is taken */
 	bool IsTaken();
-	/** This function resets resource locking */
-	void Reset();
 
 private:
 	std::mutex mutex;
