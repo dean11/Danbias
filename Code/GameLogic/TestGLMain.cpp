@@ -10,7 +10,15 @@
 #include "Core/Core.h"
 #include "Render\Preparations\Preparations.h"
 #include "IGame.h"
+
 #include "L_inputClass.h"
+
+// debug window include
+#include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
+#include <iostream>
+
 
 
 
@@ -41,6 +49,34 @@ HRESULT				CleanUp();
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
 //--------------------------------------------------------------------------------------
+
+void SetStdOutToNewConsole()
+{
+	// allocate a console for this app
+	AllocConsole();
+
+	// redirect unbuffered STDOUT to the console
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	int fileDescriptor = _open_osfhandle((intptr_t)consoleHandle, _O_TEXT);
+	FILE *fp = _fdopen( fileDescriptor, "w" );
+	*stdout = *fp;
+	setvbuf( stdout, NULL, _IONBF, 0 );
+
+	// give the console window a nicer title
+
+	SetConsoleTitle(L"Debug Output");
+
+	// give the console window a bigger buffer size
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if ( GetConsoleScreenBufferInfo(consoleHandle, &csbi) )
+	{
+		COORD bufferSize;
+		bufferSize.X = csbi.dwSize.X;
+		bufferSize.Y = 50;
+		SetConsoleScreenBufferSize(consoleHandle, bufferSize);
+	}
+}
+
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
@@ -58,7 +94,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
 	__int64 prevTimeStamp = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
-
+	SetStdOutToNewConsole();
 	// Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message)
@@ -194,8 +230,28 @@ HRESULT InitGame()
 }
 HRESULT Update(float deltaTime)
 {
-	game->Update();
 	inputObj->Update();
+	GameLogic::keyInput key = GameLogic::keyInput_none;
+
+	if(inputObj->IsKeyPressed(DIK_W))
+	{
+		key = GameLogic::keyInput_W;	
+	}
+	else if(inputObj->IsKeyPressed(DIK_A))
+	{
+		key = GameLogic::keyInput_A;	
+	}
+	else if(inputObj->IsKeyPressed(DIK_S))
+	{
+		key = GameLogic::keyInput_S;	
+	}
+	else if(inputObj->IsKeyPressed(DIK_D))
+	{
+		key = GameLogic::keyInput_D;	
+	}
+
+	game->Update(key);
+	
 	return S_OK;
 }
 
@@ -205,6 +261,7 @@ HRESULT Render(float deltaTime)
 	if(inputObj->IsKeyPressed(DIK_A))
 	{
 		isPressed = 1;
+		std::cout<<"knon";
 	}
 	//Oyster::Graphics::Render::Rendering::Basic::NewFrame();
 	Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));

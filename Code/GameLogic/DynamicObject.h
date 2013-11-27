@@ -6,6 +6,7 @@
 namespace GameLogic
 {
 
+
 	class DynamicObject : public Object
 	{
 
