@@ -84,7 +84,7 @@ void OysterByte::IncreaseCapacity(unsigned int oldSize)
 	capacity = size * 2;
 	unsigned char* temp = new unsigned char[capacity];
 	
-	for(int i = 0; i < oldSize; i++)
+	for(int i = 0; i < (int)oldSize; i++)
 	{
 		temp[i] = byteArray[i];
 	}

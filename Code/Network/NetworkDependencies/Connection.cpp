@@ -37,7 +37,7 @@ int Connection::InitiateServer(unsigned short port)
 {
 	int errorCode = 0;
 
-	if((errorCode = initiateSocket()) != 0)
+	if((errorCode = InitiateSocket()) != 0)
 	{
 		return errorCode;
 	}
@@ -68,9 +68,7 @@ int Connection::InitiateServer(unsigned short port)
 
 int Connection::InitiateClient()
 {
-	int errorCode;
-	return initiateSocket();
-
+	return InitiateSocket();
 }
 
 int Connection::Disconnect()
@@ -80,7 +78,7 @@ int Connection::Disconnect()
 	return WSAGetLastError();
 }
 
-bool Connection::Send(OysterByte& bytes)
+int Connection::Send(OysterByte& bytes)
 {
 	int nBytes;
 
@@ -129,7 +127,7 @@ int Connection::Listen()
 ///////////////////////////////////////
 //Private functions
 ///////////////////////////////////////
-int Connection::initiateSocket()
+int Connection::InitiateSocket()
 {
 	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
 	if(this->socket == SOCKET_ERROR)

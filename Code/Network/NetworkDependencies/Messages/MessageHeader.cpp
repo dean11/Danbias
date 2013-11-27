@@ -116,7 +116,7 @@ void MessageHeader::PackFloat(float i[], unsigned int elementCount, OysterByte& 
 	PackUnsignedInt(elementCount, bytes);
 
 	//Pack all elements
-	for(int j = 0; j < elementCount; j++)
+	for(int j = 0; j < (int)elementCount; j++)
 	{
 		PackFloat(i[j], bytes);
 	}
@@ -226,7 +226,7 @@ float* MessageHeader::UnpackFloat(unsigned int& elementCount, OysterByte& bytes)
 	elementCount = UnpackUnsignedInt(bytes);
 
 	i = new float[elementCount];
-	for(int j = 0; j < elementCount; j++)
+	for(int j = 0; j < (int)elementCount; j++)
 	{
 		i[j] = UnpackFloat(bytes);
 	}

@@ -15,7 +15,7 @@ namespace Oyster
 
 		public:
 			virtual int Disconnect() = 0;
-			virtual bool Send( OysterByte& bytes ) = 0;
+			virtual int Send( OysterByte& bytes ) = 0;
 			virtual int  Recieve( OysterByte& bytes) = 0;
 			virtual int InitiateServer( unsigned short port ) { return false; };
 			virtual int InitiateClient() { return false; };

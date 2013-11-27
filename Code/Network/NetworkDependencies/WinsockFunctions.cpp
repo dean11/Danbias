@@ -34,4 +34,6 @@ std::wstring GetErrorMessage(int errorCode)
 		return retVal;
 	}
 
+	//Added this if bufLen is 0
+	return retVal;
 }

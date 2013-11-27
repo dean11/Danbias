@@ -23,7 +23,7 @@ namespace Oyster
 			virtual int InitiateServer( unsigned short port );
 			virtual int InitiateClient();
 
-			virtual bool Send( OysterByte& bytes );
+			virtual int Send( OysterByte& bytes );
 			virtual int  Recieve( OysterByte& bytes );
 
 			virtual int Disconnect();
@@ -31,7 +31,7 @@ namespace Oyster
 			virtual int  Listen();
 
 		private:
-			int initiateSocket();
+			int InitiateSocket();
 
 			int socket;
 

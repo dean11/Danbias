@@ -87,7 +87,7 @@ namespace Oyster
 			//floating point (32, 64-bit)
 			void Pack(unsigned char buffer[], float i)
 			{
-				int tempFloat = Pack754(i, 32, 8);
+				__int64 tempFloat = Pack754(i, 32, 8);
 				Pack(buffer, tempFloat);
 			}
 
@@ -269,7 +269,7 @@ namespace Oyster
 			float Unpackf(unsigned char buffer[])
 			{
 				int tempFloat = Unpacki(buffer);
-				return Unpack754(tempFloat, 32, 8);
+				return (float)Unpack754(tempFloat, 32, 8);
 			}
 
 			double Unpackd(unsigned char buffer[])

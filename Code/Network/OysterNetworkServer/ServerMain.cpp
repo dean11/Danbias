@@ -50,7 +50,7 @@ int main()
 	test.numOfFloats = 35;
 	test.f = new float[test.numOfFloats];
 	float temp = 395.456f;
-	for(int i = 0; i < test.numOfFloats; i++)
+	for(int i = 0; i < (int)test.numOfFloats; i++)
 	{
 		test.f[i] = temp;
 		temp--;
@@ -67,7 +67,7 @@ int main()
 		t.Unpack(set, recvBuffer);
 		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
 		cout << "Client1: " << set->Protocol.pTest->textMessage << endl;
-		for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
+		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
 		{
 			cout << set->Protocol.pTest->f[i] << ' ';
 		}
@@ -80,7 +80,7 @@ int main()
 		t.Unpack(set, recvBuffer);
 		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
 		cout << "Client2: " << set->Protocol.pTest->textMessage << endl;
-		for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
+		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
 		{
 			cout << set->Protocol.pTest->f[i] << ' ';
 		}
