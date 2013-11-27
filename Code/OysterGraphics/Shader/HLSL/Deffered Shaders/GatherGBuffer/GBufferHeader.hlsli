@@ -28,6 +28,8 @@ struct PixelOut
 Texture2D Diffuse		: register(t0);
 Texture2D Specular		: register(t1);
 
+SamplerState Sampler	: register(s0);
+
 cbuffer PerFrame : register(b0)
 {
 	matrix View;

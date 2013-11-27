@@ -1,3 +1,6 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
 
 #include "..\OResource.h"
 #include "..\..\Utilities.h"
@@ -9,7 +12,7 @@ using namespace Oyster::Resource;
 
 OResource*	OResource::CustomLoader(const wchar_t filename[], CustomLoadFunction fnc)
 {
-	const CustomData &data = fnc();
+	const CustomData &data = fnc(filename);
 
 	if(!data.loadedData)		return 0;
 	if(!data.resourceUnloadFnc)	return 0;
@@ -31,7 +34,7 @@ OResource* OResource::CustomReloader()
 {
 	CustomUnloader();
 
-	const CustomData &data = this->customData->loadingFunction();
+	const CustomData &data = this->customData->loadingFunction(this->resourceFilename.c_str());
 	this->resourceData = (OHRESOURCE)data.loadedData;
 
 	if(data.resourceUnloadFnc)

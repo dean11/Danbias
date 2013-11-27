@@ -7,6 +7,7 @@ const std::wstring PathFromExeToHlsl = L"..\\..\\..\\Code\\OysterGraphics\\Shade
 const std::wstring VertexTransformDebug = L"TransformDebugVertex";
 const std::wstring VertexDebug = L"DebugVertex";
 const std::wstring PixelRed = L"DebugPixel";
+const std::wstring PixelTexture = L"Texture";
 
 typedef Oyster::Graphics::Core::ShaderManager::ShaderType ShaderType;
 typedef Oyster::Graphics::Core::ShaderManager::Get GetShader;
@@ -19,7 +20,7 @@ namespace Oyster
 	{
 		namespace Render
 		{
-			Shader::ShaderEffect Resources::obj;
+			Shader::ShaderEffect Resources::obj;// = Shader::ShaderEffect();;
 			Buffer Resources::ModelData = Buffer();
 			Buffer Resources::VPData = Buffer();
 
@@ -36,6 +37,8 @@ namespace Oyster
 
 				/** Load Pixel Shader for d3dcompile */
 				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"DebugPixel.hlsl", ShaderType::Pixel, PixelRed, false);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"TextureDebug.hlsl", ShaderType::Pixel, PixelTexture, false);
+				
 
 #else
 				/** Load Vertex Shader with Precompiled */
@@ -75,6 +78,23 @@ namespace Oyster
 
 				ID3D11RasterizerState* rs = NULL;
 				Oyster::Graphics::Core::device->CreateRasterizerState(&rdesc,&rs);
+
+				D3D11_SAMPLER_DESC sdesc;
+				sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
+				/// @todo parata med fredrik om wraping
+				sdesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR_ONCE;
+				sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+				sdesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+				sdesc.MipLODBias = 0;
+				sdesc.MaxAnisotropy =4;
+				sdesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+				*sdesc.BorderColor = *Oyster::Math::Float4(0,0,0,1).element;
+				sdesc.MinLOD = 0;
+				sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+				ID3D11SamplerState** ss = new ID3D11SamplerState*[1];
+				Oyster::Graphics::Core::device->CreateSamplerState(&sdesc,ss);
+
 #pragma endregion
 
 #pragma region Setup Views
@@ -84,7 +104,7 @@ namespace Oyster
 #pragma region Create Shader Effects
 				/** @todo Create ShaderEffects */
 				obj.Shaders.Pixel = GetShader::Pixel(PixelRed);
-				obj.Shaders.Vertex = GetShader::Vertex(VertexTransformDebug);
+				obj.Shaders.Vertex = GetShader::Vertex(VertexDebug);
 
 				D3D11_INPUT_ELEMENT_DESC indesc[] =
 				{
@@ -98,6 +118,8 @@ namespace Oyster
 				obj.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 				obj.CBuffers.Vertex.push_back(&VPData);
 				obj.RenderStates.Rasterizer = rs;
+				obj.RenderStates.SampleCount = 1;
+				obj.RenderStates.SampleState = ss;
 
 				ModelData.Apply(1);
 #pragma endregion

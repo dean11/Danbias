@@ -6,8 +6,8 @@ namespace Oyster
 	{
 		namespace Loading
 		{
-			void UnloadTexture();
-			Oyster::Resource::CustomData* LoadTexture();
+			void UnloadTexture(void* loadedData);
+			const Oyster::Resource::CustomData& LoadTexture(const wchar_t filename[]);
 		}
 	}
 }

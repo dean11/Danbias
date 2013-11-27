@@ -328,7 +328,7 @@ namespace Oyster
 		/// \todo smart Set ie. not resetting the shader
 		/// \todo research states
 		/// \todo smart buffer set
-		void Core::ShaderManager::SetShaderEffect(ShaderEffect se)
+		void Core::ShaderManager::SetShaderEffect(ShaderEffect& se)
 		{
 			Set::Pixel(se.Shaders.Pixel);
 			Set::Vertex(se.Shaders.Vertex);

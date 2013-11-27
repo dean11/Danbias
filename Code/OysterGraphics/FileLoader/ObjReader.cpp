@@ -117,9 +117,11 @@ Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
 	modelInfo->Indexed = false;
 	modelInfo->VertexCount = (int)desc.NumElements;
 	modelInfo->Vertices = b;
+	
 
+	Oyster::Resource::OHRESOURCE diffuse = Oyster::Resource::OysterResource::LoadResource(L"bth.png",Oyster::Graphics::Loading::LoadTexture);
 	//Oyster::Resource::OysterResource::LoadResource(L"Normal.png",(Oyster::Resource::CustomLoadFunction)Oyster::Graphics::Loading::LoadTexture);
-
+	modelInfo->Material.push_back((ID3D11ShaderResourceView*)diffuse);
 
 	return modelInfo;
 }

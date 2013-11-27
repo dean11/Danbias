@@ -2,6 +2,7 @@
 // Inline and template implementations for
 // the Utility Collection of Miscellanious Handy Functions
 // © Dan Andersson 2013
+// © Dennis Andersen 2013 TODO: Is this correct?
 /////////////////////////////////////////////////////////////////////
 
 #ifndef UTILITIES_INLINE_IMPL_H
@@ -149,8 +150,7 @@ namespace Utility
 			return this->ownedArray != NULL;
 		}
 
-		template<typename Type>
-		Type* UniqueArray<Type>::Release()
+		template<typename Type>Type* UniqueArray<Type>::Release()
 		{
 			Type *copy = this->ownedArray;
 			this->ownedArray = NULL;
@@ -161,6 +161,113 @@ namespace Utility
 		inline bool UniqueArray<Type>::HaveOwnership() const
 		{
 			return this->operator bool();
+		}
+
+		namespace SmartPointer
+		{
+			template<typename T> 
+			void StdSmartPointer<T>::Destroy()
+			{
+				delete this->_rc;
+				this->_rc = NULL;
+				delete this->_ptr;
+				this->_ptr = NULL;
+			}
+			template<typename T> StdSmartPointer<T>::StdSmartPointer()
+					:_rc(0), _ptr(0)
+				{ }
+			template<typename T> StdSmartPointer<T>::StdSmartPointer(T* p)
+				:_ptr(p)
+			{ 
+				this->_rc = new ReferenceCount();
+				this->_rc->Incref();
+			}
+			template<typename T> StdSmartPointer<T>::StdSmartPointer(const StdSmartPointer& d)
+				:_ptr(d._ptr), _rc(d._rc)
+			{
+				if(this->_rc)
+					this->_rc->Incref();
+			}
+			template<typename T> StdSmartPointer<T>::~StdSmartPointer()
+			{
+				if (this->_rc && this->_rc->Decref() == 0)
+				{
+					Destroy();
+				}
+			}
+			template<typename T> StdSmartPointer<T>& StdSmartPointer<T>::operator= (const StdSmartPointer<T>& p)
+			{
+				if (this != &p)
+				{
+					//Last to go?
+					if(this->_rc && this->_rc->Release() == 0)
+					{
+						//Call child specific
+						Destroy();
+					}
+
+					this->_ptr = p._ptr;
+					this->_rc = p._rc;
+					this->_rc->Add();
+				}
+				return *this;
+			}
+			template<typename T> StdSmartPointer<T>& StdSmartPointer<T>::operator= (T* p)
+			{
+				if (this->_ptr != p)
+				{
+					//Last to go?
+					if(this->_rc)
+					{
+						if(this->_rc->Decref() == 0)
+						{
+							//Call child specific
+							Destroy();
+							this->_rc = new ReferenceCount();
+						}
+					}
+					else
+						this->_rc = new ReferenceCount();
+		
+					this->_ptr = p;
+					this->_rc->Incref();
+				}
+				return *this;
+			}
+			template<typename T> inline bool StdSmartPointer<T>::operator== (const StdSmartPointer<T>& d)
+			{
+				return d._ptr == this->_ptr;
+			}
+			template<typename T> inline bool StdSmartPointer<T>::operator== (const T& p)
+			{
+				return &p == this->_ptr;
+			}
+			template<typename T> inline T& StdSmartPointer<T>::operator* ()
+			{
+				return *this->_ptr;
+			}
+			template<typename T> inline T* StdSmartPointer<T>::operator-> ()
+			{
+				return this->_ptr;
+			}
+			template<typename T> inline StdSmartPointer<T>::operator T* ()
+			{
+				return this->_ptr;
+			}
+
+			/**
+			*	Returns the connected pointer */
+			template<typename T> inline T* StdSmartPointer<T>::Get()
+			{
+				return this->_ptr;
+			}
+
+			/** Checks if the pointer is valid (not NULL)
+				Returns true for valid, else false. */
+			template<typename T> inline bool StdSmartPointer<T>::IsValid()
+			{
+				return (this->_ptr != NULL)  ?	true : false;
+			}
 		}
 	}
 }

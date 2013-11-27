@@ -201,6 +201,7 @@ HRESULT InitDirect3D()
 
 HRESULT Update(float deltaTime)
 {
+	m->WorldMatrix.m14 += 0.0001f;
 	return S_OK;
 }
 

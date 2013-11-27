@@ -1,7 +1,8 @@
 //!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!
 // Utility Collection of Miscellanious Handy Functions
 // © Dan Andersson 2013
-//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!//!
+// © Dennis Andersen 2013
+
 
 #ifndef UTILITIES_H
 #define UTILITIES_H
@@ -106,20 +107,62 @@ namespace Utility
 			mutable Type *ownedArray;
 		};
 
-		struct RefCount
+		struct ReferenceCount
 		{
 			private:
 				int count;
 
 			public:
-				RefCount()		:count(0)						{ }
-				RefCount(const RefCount& o)						{ count = o.count; }
-				const RefCount& operator=(const RefCount& o)	{ count = o.count;  return *this;}
-				void Incref()									{ this->count++; }
-				void Incref(int c)								{ this->count += c; }
-				int  Decref()									{ return --this->count;}
-				void Reset()									{ this->count = 0; }
+				ReferenceCount()		:count(0)									{ }
+				ReferenceCount(const ReferenceCount& o)								{ count = o.count; }
+				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count = o.count;  return *this;}
+				inline void Incref()												{ this->count++; }
+				inline void Incref(int c)											{ this->count += c; }
+				inline int  Decref()												{ return --this->count;}
+				inline void Reset()													{ this->count = 0; }
 		};
+
+		namespace SmartPointer
+		{
+			//! Smart pointer for a regular object.
+			/** 
+			*	Regular objects, objects that is deleted normaly (ie not COM objects, or array pointers) 
+			*	can use this class to easy the use of dynamic memory 
+			*/
+			template<typename T>
+			struct StdSmartPointer
+			{
+				private:
+					ReferenceCount	*_rc;
+					T				*_ptr;
+
+					/** Destroys the pointer and returns the memory allocated. */
+					void Destroy();
+
+				public:
+					StdSmartPointer();
+					StdSmartPointer(T* p);
+					StdSmartPointer(const StdSmartPointer& d);
+					virtual~StdSmartPointer();
+					StdSmartPointer<T>& operator= (const StdSmartPointer<T>& p);
+					StdSmartPointer<T>& operator= (T* p);
+					bool operator== (const StdSmartPointer<T>& d);
+					bool operator== (const T& p);
+					T& operator* ();
+					T* operator-> ();
+					operator T* ();
+
+					/**
+					*	Returns the connected pointer */
+					T* Get();
+
+					/** Checks if the pointer is valid (not NULL)
+						Returns true for valid, else false. */
+					bool IsValid();
+			};
+		}
+
+
 	}
 
 	namespace String
