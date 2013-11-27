@@ -6,7 +6,5 @@
 
 using namespace ::Oyster::Collision3D;
 
-ICollideable::ICollideable( Type _type )
-	: type(_type) {}
-
+ICollideable::ICollideable( Type _type ) : type(_type) {}
 ICollideable::~ICollideable() {}
