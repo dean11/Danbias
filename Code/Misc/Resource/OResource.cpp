@@ -7,17 +7,19 @@
 using namespace Oyster::Resource;
 
 OResource::OResource(OHRESOURCE handle, ResourceType type, size_t resourceSize, size_t elementSize, ::std::wstring filename)
-	:	resourceData		(handle)
-	,	resourceFilename	(filename)
+	:	resourceFilename	(filename)
 	,	resourceSize		(resourceSize)
 	,	resourceElementSize	(elementSize)
 	,	resourceType		(type)
 	,	customData			(0)
 {
-	
+	resourceData = handle;
 }
 OResource::~OResource()
-{}
+{
+	delete this->customData;
+	this->customData = 0;
+}
 
 
 OResource*	OResource::Load		(const wchar_t filename[], ResourceType type)
