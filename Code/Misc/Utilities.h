@@ -12,6 +12,7 @@
 #include <vector>
 #include <locale>
 #include <limits>
+#include <atomic>
 
 namespace Utility
 {
@@ -110,12 +111,12 @@ namespace Utility
 		struct ReferenceCount
 		{
 			private:
-				int count;
+				std::atomic<int> count;
 
 			public:
 				ReferenceCount()		:count(0)									{ }
-				ReferenceCount(const ReferenceCount& o)								{ count = o.count; }
-				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count = o.count;  return *this;}
+				ReferenceCount(const ReferenceCount& o)								{ count.store(o.count); }
+				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count.store(o.count);  return *this;}
 				inline void Incref()												{ this->count++; }
 				inline void Incref(int c)											{ this->count += c; }
 				inline int  Decref()												{ return --this->count;}
