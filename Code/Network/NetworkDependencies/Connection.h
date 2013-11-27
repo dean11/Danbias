@@ -20,18 +20,18 @@ namespace Oyster
 			Connection(int socket) { this->socket = socket; };
 			virtual ~Connection();
 
-			virtual bool InitiateServer( unsigned short port );
-			virtual bool InitiateClient();
+			virtual int InitiateServer( unsigned short port );
+			virtual int InitiateClient();
 
 			virtual bool Send( OysterByte& bytes );
 			virtual int  Recieve( OysterByte& bytes );
 
-			virtual void Disconnect();
-			virtual bool Connect( unsigned short port , const char serverName[] );
+			virtual int Disconnect();
+			virtual int Connect( unsigned short port , const char serverName[] );
 			virtual int  Listen();
 
 		private:
-			bool initiateSocket();
+			int initiateSocket();
 
 			int socket;
 

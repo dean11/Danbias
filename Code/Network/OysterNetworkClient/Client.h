@@ -20,7 +20,7 @@ namespace Oyster
 				Client();
 				~Client();
 
-				bool Connect(unsigned int port, char filename[]);
+				int Connect(unsigned int port, char filename[]);
 
 				void Send(OysterByte& bytes);
 				void Recv(OysterByte& bytes);

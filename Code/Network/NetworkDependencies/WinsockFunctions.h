@@ -4,8 +4,12 @@
 /////////////////////////////////////
 // Created by Pontus Fransson 2013 //
 /////////////////////////////////////
+#include <string>
 
-void ShutdownSockets();
-bool InitSockets();
+
+void ShutdownWinSock();
+bool InitWinSock();
+
+std::wstring GetErrorMessage(int errorCode);
 
 #endif
