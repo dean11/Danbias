@@ -1,19 +1,19 @@
 #include "SimpleRigidBody.h"
+#include "PhysicsAPI_Impl.h"
 
 using namespace ::Oyster::Physics;
-using namespace ::Oyster::Math;
+using namespace ::Oyster::Math3D;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
+using namespace ::Utility::Value;
 
 SimpleRigidBody::SimpleRigidBody()
-{
-	//! @todo TODO: implement stub
-}
+	: previous(), current(),
+	  gravityNormal(0.0f),
+	  subscribeCollision(true),
+	  ignoreGravity(false) {}
 
-SimpleRigidBody::~SimpleRigidBody()
-{
-	//! @todo TODO: implement stub
-}
+SimpleRigidBody::~SimpleRigidBody() {}
 
 UniquePointer<ICustomBody> SimpleRigidBody::Clone() const	
 {
@@ -21,96 +21,132 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 }
 
 bool SimpleRigidBody::IsSubscribingCollisions() const
-{
-	//! @todo TODO: implement stub
-	return false;
+{ // Assumption
+	return this->subscribeCollision;
 }
 
-bool SimpleRigidBody::Intersects( const ICustomBody &object, Float &deltaWhen, Float3 &worldPointOfContact ) const
+bool SimpleRigidBody::IsAffectedByGravity() const
 {
-	//! @todo TODO: implement stub
-	return false;
+	return !this->ignoreGravity;
+}
+
+bool SimpleRigidBody::Intersects( const ICustomBody &object, Float timeStepLength, Float &deltaWhen, Float3 &worldPointOfContact ) const
+{
+	if( object.Intersects(this->current.box) )
+	{ //! @todo TODO: better implementation needed
+		deltaWhen = timeStepLength;
+		worldPointOfContact = Average( this->current.box.center, object.GetCenter() );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool SimpleRigidBody::Intersects( const ICollideable &shape ) const
 {
-	//! @todo TODO: implement stub
-	return false;
+	return this->current.box.Intersects( shape );
 }
 
 Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
-	//! @todo TODO: implement stub
-	return targetMem = Sphere( Float3::null, 0.0f );
+	return targetMem = Sphere( this->current.box.center, this->current.box.boundingOffset.GetMagnitude() );
 }
 
 Float3 & SimpleRigidBody::GetNormalAt( const Float3 &worldPos, Float3 &targetMem ) const
 {
-	//! @todo TODO: implement stub
-	return targetMem = Float3::standard_unit_z;
+	//! @todo TODO: better implementation needed
+	return targetMem = (worldPos - this->current.box.center).GetNormalized();
+}
+
+Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
+{
+	return targetMem = this->gravityNormal;	
 }
 
 Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
 {
-	//! @todo TODO: implement stub
-	return targetMem = Float3::null;
+	return targetMem = this->current.box.center;
 }
 
 Float4x4 & SimpleRigidBody::GetRotation( Float4x4 &targetMem ) const
 {
-	//! @todo TODO: implement stub
-	return targetMem = Float4x4::identity;
+	return targetMem = this->current.box.rotation;
 }
 
 Float4x4 & SimpleRigidBody::GetOrientation( Float4x4 &targetMem ) const
 {
-	//! @todo TODO: implement stub
-	return targetMem = Float4x4::identity;
+	return targetMem = this->current.GetOrientation();
 }
 
 Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
 {
-	//! @todo TODO: implement stub
-	return targetMem = Float4x4::identity;
+	return targetMem = this->current.GetView();
 }
 
 UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
-	//! @todo TODO: implement stub
-	return resting;
+	this->previous = this->current; // memorizing the old state
+
+	this->current.Update_LeapFrog( timeStepLength );
+
+	// compare previous and new state and return result
+	return this->current == this->previous ? resting : altered;
+}
+
+void SimpleRigidBody::SetGravity( bool ignore)
+{
+	this->ignoreGravity = ignore;
+	this->gravityNormal = Float3::null;
+}
+
+void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
+{
+	this->gravityNormal = normalizedVector;
+}
+
+void SimpleRigidBody::SetSubscription( bool subscribeCollision )
+{
+	this->subscribeCollision = subscribeCollision;
 }
 
 void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
 {
-	//! @todo TODO: implement stub
+	this->current.SetMomentOfInertia_KeepVelocity( localI );
 }
 
 void SimpleRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
 {
-	//! @todo TODO: implement stub
+	this->current.SetMomentOfInertia_KeepMomentum( localI );
 }
 
 void SimpleRigidBody::SetMass_KeepVelocity( Float m )
 {
-	//! @todo TODO: implement stub
+	this->current.SetMass_KeepVelocity( m );
 }
 
 void SimpleRigidBody::SetMass_KeepMomentum( Float m )
 {
-	//! @todo TODO: implement stub
+	this->current.SetMass_KeepMomentum( m );
 }
 
 void SimpleRigidBody::SetCenter( const Float3 &worldPos )
 {
-	//! @todo TODO: implement stub
+	this->current.SetCenter( worldPos );
 }
 
 void SimpleRigidBody::SetRotation( const Float4x4 &rotation )
 {
-	//! @todo TODO: implement stub
+	this->current.SetRotation( rotation );
 }
 
 void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
 {
-	//! @todo TODO: implement stub
+	this->current.SetOrientation( orientation );
+}
+
+void SimpleRigidBody::SetSize( const Float3 &size )
+{
+	this->current.SetSize( size );
 }

@@ -27,27 +27,35 @@
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Resources\Resources.cpp">
+=======
+    <ClCompile Include="Render\Rendering\BasicRender.cpp">
+>>>>>>> origin/Graphics
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Render\Rendering\BasicRender.cpp">
+=======
+    <ClCompile Include="Render\Resources\Resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLoader\ObjReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLoader\TextureLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DllInterfaces\GFXAPI.cpp">
+>>>>>>> origin/Graphics
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CoreIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineIncludes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\Preparations\Preparations.h">
@@ -62,7 +70,22 @@
     <ClInclude Include="Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\Resources.h">
+    <ClInclude Include="Render\Resources\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions\GraphicalDefinition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileLoader\ObjReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileLoader\TextureLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Dx11Includes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DllInterfaces\GFXAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -70,5 +93,10 @@
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugVertex.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl" />
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\PixelGatherData.hlsl" />
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\VertexGatherData.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\GBufferHeader.hlsli" />
   </ItemGroup>
 </Project>

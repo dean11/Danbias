@@ -1,6 +1,8 @@
 #include "OBJReader.h"
+#include "..\Definitions\GraphicalDefinition.h"
 #include <sstream>
 #include <fstream>
+#include "TextureLoader.h"
 
 using namespace std;
 OBJReader::OBJReader() 
@@ -15,14 +17,14 @@ OBJReader::~OBJReader()
 
 }
 
-void OBJReader::readOBJFile( wstring fileName )
+void OBJReader::readOBJFile( std::wstring fileName )
 {
-	fstream inStream;
-	string typeOfData = " ";
+	std::fstream inStream;
+	std::string typeOfData = " ";
 	float vertexData;
-	string face1, face2, face3;
+	std::string face1, face2, face3;
 
-	inStream.open( fileName, fstream::in );
+	inStream.open( fileName, std::fstream::in );
 	
 	if( inStream.is_open() )
 	{
@@ -94,12 +96,40 @@ void OBJReader::readOBJFile( wstring fileName )
 	inStream.close();
 }
 
+Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
+{
+	Oyster::Graphics::Core::Buffer* b = new Oyster::Graphics::Core::Buffer();
+	Oyster::Graphics::Core::Buffer::BUFFER_INIT_DESC desc;
+	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
+	
+	desc.ElementSize = 32;
+	desc.InitData = &this->_myOBJ[0];
+	desc.NumElements = this->_myOBJ.size();
+	desc.Type = Oyster::Graphics::Core::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	desc.Usage = Oyster::Graphics::Core::Buffer::BUFFER_DEFAULT;
+	HRESULT hr = S_OK;
+	
+	hr = b->Init(desc);
+	if(FAILED(hr))
+	{
+		//Something isn't okay here
+	}
+	modelInfo->Indexed = false;
+	modelInfo->VertexCount = (int)desc.NumElements;
+	modelInfo->Vertices = b;
+
+	//Oyster::Resource::OysterResource::LoadResource(L"Normal.png",(Oyster::Resource::CustomLoadFunction)Oyster::Graphics::Loading::LoadTexture);
+
+
+	return modelInfo;
+}
+
 //Private functions
-void OBJReader::stringSplit( string strToSplit )
+void OBJReader::stringSplit( std::string strToSplit )
 {
 	char delim = '/';
-	string vPos, vNormal, vTexel;
-	stringstream aStream(strToSplit);
+	std::string vPos, vNormal, vTexel;
+	std::stringstream aStream(strToSplit);
 	getline( aStream, vPos, delim );
 	getline( aStream, vTexel, delim );
 	getline( aStream, vNormal );

@@ -113,6 +113,21 @@ namespace Utility
 		private:
 			mutable Type *ownedArray;
 		};
+
+		struct RefCount
+		{
+			private:
+				int count;
+
+			public:
+				RefCount()		:count(0)						{ }
+				RefCount(const RefCount& o)						{ count = o.count; }
+				const RefCount& operator=(const RefCount& o)	{ count = o.count;  return *this;}
+				void Incref()									{ this->count++; }
+				void Incref(int c)								{ this->count += c; }
+				int  Decref()									{ return --this->count;}
+				void Reset()									{ this->count = 0; }
+		};
 	}
 
 	namespace String
@@ -136,6 +151,13 @@ namespace Utility
 		::std::vector<::std::wstring> & Split( ::std::vector<::std::wstring> &output, const ::std::wstring &str, char delim, ::std::wstring::size_type offset = 0 );
 		::std::vector<::std::wstring> & Split( ::std::vector<::std::wstring> &output, const ::std::wstring &str, const ::std::wstring &delim, ::std::wstring::size_type offset = 0 );
 		::std::vector<::std::wstring> & Split( ::std::vector<::std::wstring> &output, const ::std::wstring &str, const ::std::vector<::std::wstring> &delim, ::std::wstring::size_type offset = 0 );
+		::std::wstring & wToLowerCase( ::std::wstring &output, const ::std::wstring &str );
+		::std::wstring & wToLowerCase( ::std::wstring &str );
+
+		//To wstring
+
+		::std::wstring & StringToWstring( const ::std::string &str, ::std::wstring &wstr );
+		::std::string & WStringToString( const ::std::wstring &wstr, ::std::string &str );
 	}
 
 	namespace Stream
