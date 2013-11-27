@@ -1,9 +1,9 @@
 #include "Buffer.h"
 #include "Core.h"
 
-using namespace Oyster;
+using namespace Oyster::Graphics;
 
-Oyster::Buffer::Buffer()
+Buffer::Buffer()
 {
 	mBuffer = NULL;
 }
@@ -23,32 +23,32 @@ HRESULT Buffer::Apply(UINT32 misc) const
 		{
 			UINT32 vertexSize = mElementSize;
 			UINT32 offset = 0;
-			Oyster::Core::DeviceContext->IASetVertexBuffers(misc, 1, &mBuffer, &vertexSize, &offset );
+			Core::deviceContext->IASetVertexBuffers(misc, 1, &mBuffer, &vertexSize, &offset );
 		}
 		break;
 	case INDEX_BUFFER:
 		{
-			Oyster::Core::DeviceContext->IASetIndexBuffer(mBuffer, DXGI_FORMAT_R32_UINT, 0);
+			Core::deviceContext->IASetIndexBuffer(mBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 		break;
 	case CONSTANT_BUFFER_VS:
 		{
-			Oyster::Core::DeviceContext->VSSetConstantBuffers(misc, 1, &mBuffer);
+			Core::deviceContext->VSSetConstantBuffers(misc, 1, &mBuffer);
 		}
 		break;
 	case CONSTANT_BUFFER_GS:
 		{
-			Oyster::Core::DeviceContext->GSSetConstantBuffers(misc, 1, &mBuffer);
+			Core::deviceContext->GSSetConstantBuffers(misc, 1, &mBuffer);
 		}
 		break;
 	case CONSTANT_BUFFER_PS:
 		{
-			Oyster::Core::DeviceContext->PSSetConstantBuffers(misc, 1, &mBuffer);
+			Core::deviceContext->PSSetConstantBuffers(misc, 1, &mBuffer);
 		}
 		break;
 	case CONSTANT_BUFFER_CS:
 		{
-			Oyster::Core::DeviceContext->CSSetConstantBuffers(misc,1,&mBuffer);
+			Core::deviceContext->CSSetConstantBuffers(misc,1,&mBuffer);
 		}
 		break;
 	default:
@@ -145,11 +145,11 @@ HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 		data.pSysMem = initDesc.InitData;
 		data.SysMemPitch=0;
 		data.SysMemSlicePitch = 0;
-		hr = Oyster::Core::Device->CreateBuffer(&bufferDesc, &data, &mBuffer);
+		hr = Core::device->CreateBuffer(&bufferDesc, &data, &mBuffer);
 	}
 	else
 	{
-		hr = Oyster::Core::Device->CreateBuffer(&bufferDesc, NULL, &mBuffer);
+		hr = Core::device->CreateBuffer(&bufferDesc, NULL, &mBuffer);
 	}
 
 	if(FAILED(hr))
@@ -173,7 +173,7 @@ void* Buffer::Map()
 		else if(mUsage == BUFFER_CPU_WRITE_DISCARD)	mapType = D3D11_MAP_WRITE_DISCARD;
 
 		HRESULT hr = S_OK;
-		if(FAILED(hr = Oyster::Core::DeviceContext->Map(
+		if(FAILED(hr = Core::deviceContext->Map(
 			mBuffer,
 			0,
 			(D3D11_MAP)mapType,
@@ -194,10 +194,10 @@ void* Buffer::Map()
 
 void Buffer::Unmap()
 {
-	Oyster::Core::DeviceContext->Unmap( mBuffer, 0 );
+	Core::deviceContext->Unmap( mBuffer, 0 );
 }
 
-Oyster::Buffer::operator ID3D11Buffer *()
+Buffer::operator ID3D11Buffer *()
 {
 	return this->mBuffer;
 }

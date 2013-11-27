@@ -1,268 +1,149 @@
-#include "ObjReader.h"
-#include "Utilities.h"
-#include "..\Core\Core.h"
+#include "OBJReader.h"
+#include "..\Definitions\GraphicalDefinition.h"
+#include <sstream>
 #include <fstream>
-#include <map>
 
 using namespace std;
-using namespace Oyster::FileLoaders;
-using namespace Oyster;
-using namespace Oyster::Math;
-
-ObjReader *ObjReader::LoadFile(std::string fileName, Oyster::Math::Float4x4 transform)
+OBJReader::OBJReader() 
 {
-	static std::map<std::string, ObjReader *> cache;
-
-	ObjReader *reader = NULL;
-
-	if (cache.count(fileName))
-	{
-		reader = cache[fileName];
-	}
-	else
-	{
-		reader = new ObjReader();
-		reader->ParseFile(fileName, transform);
-
-		cache[fileName] = reader;
-	}
-
-	return reader;
+	_mPos		= 0;
+	_mNormal	= 0;
+	_mTexel		= 0;
 }
 
-ObjReader::ObjReader(void)
+OBJReader::~OBJReader()
 {
+
 }
 
-
-ObjReader::~ObjReader(void)
+void OBJReader::readOBJFile( std::wstring fileName )
 {
-}
+	std::fstream inStream;
+	std::string typeOfData = " ";
+	float vertexData;
+	std::string face1, face2, face3;
 
-void ObjReader::ParseFile(std::string fileName, Float4x4 transform)
-{
-	ifstream input;
-	input.open(fileName.c_str());
-
-	if(!input.is_open())
+	inStream.open( fileName, std::fstream::in );
+	
+	if( inStream.is_open() )
 	{
-		return;
-	}
-
-	string path;
-	Utility::String::extractDirPath(path,fileName,'\\');
-
-	std::vector<Vertex> VertexList;
-	std::vector<Float3> vList;
-	std::vector<Float3> nList;
-	std::vector<Float2> uvList;
-	Vertex vertex1, vertex2, vertex3;
-	Float3 face[3];
-	Float3 position, normal;
-	Float2 uv;
-	string s;
-
-	while(!input.eof())
-	{
-		getline(input,s);
-		int offset = (int)s.find(' ');
-
-		if(offset!=-1)
+		while( !inStream.eof() )
 		{
-			string c = s.substr(0,offset); 
+			inStream >> typeOfData;
 
-			if(c=="v")
+			if( typeOfData == "v" )
 			{
-				position = readVertex(offset,s);
-				vList.push_back(position);
+				Oyster::Math::Float3 position;
+
+				inStream >> vertexData;
+				position.x = vertexData;
+				
+				inStream >> vertexData;
+				position.y = vertexData;
+
+				inStream >> vertexData;
+				position.z = vertexData;
+
+				_mVertexCoord.push_back( position );
+
 			}
-			else if(c=="vt")
+			else if( typeOfData == "vt" )
 			{
-				uv = readUV(offset,s);
-				uvList.push_back(uv);
+				Oyster::Math::Float2 texel;
+				inStream >> vertexData;
+				texel.x = vertexData;
+
+				inStream >> vertexData;
+				texel.y = 1 - vertexData;
+
+				_mVertexTexture.push_back( texel );
 			}
-			else if(c=="vn")
+			else if( typeOfData == "vn" )
 			{
-				normal = readNormal(offset,s);
-				nList.push_back(normal);
+				Oyster::Math::Float3 normal;
+				inStream >> vertexData;
+				normal.x = vertexData;
+
+				inStream >> vertexData;
+				normal.y = vertexData;
+
+				inStream >> vertexData;
+				normal.z = vertexData;
+
+				_mVertexNormal.push_back( normal );
 			}
-			else if(c=="f")
+			else if( typeOfData == "f" )
 			{
-				readFace(offset, s, face);
+				inStream >> face1;
+				stringSplit( face1 );
+				
+				addToOBJarray();
 
-				vertex1.Position = vList[(int)face[0].x];
-				vertex1.UV = uvList[(int)face[0].y];
-				vertex1.Normal = nList[(int)face[0].z];
+				inStream >> face2;
+				stringSplit( face2 );
 
-				vertex2.Position = vList[(int)face[1].x];
-				vertex2.UV = uvList[(int)face[1].y];
-				vertex2.Normal = nList[(int)face[1].z];
+				addToOBJarray();
 
-				vertex3.Position = vList[(int)face[2].x];
-				vertex3.UV = uvList[(int)face[2].y];
-				vertex3.Normal = nList[(int)face[2].z];
+				inStream >> face3;
+				stringSplit( face3 );
 
-				VertexList.push_back(vertex1);
-				VertexList.push_back(vertex3);
-				VertexList.push_back(vertex2);
-			}
-			else if(c=="mtllib")
-			{
-				this->materials = GetMaterials(path+s.substr(offset+1));
+				addToOBJarray();
 			}
 		}
 	}
 
-	input.close();
+	inStream.close();
+}
 
-	this->numVertices = VertexList.size();
-	this->vertices = new Vertex[this->numVertices];
-
-	for(size_t i=0;i<this->numVertices;++i)
+Oyster::Graphics::Render::ModelInfo* OBJReader::toModel()
+{
+	Oyster::Graphics::Buffer* b = new Oyster::Graphics::Buffer();
+	Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
+	Oyster::Graphics::Render::ModelInfo* modelInfo = new Oyster::Graphics::Render::ModelInfo();
+	
+	desc.ElementSize = 32;
+	desc.InitData = &this->_myOBJ[0];
+	desc.NumElements = this->_myOBJ.size();
+	desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	desc.Usage = Oyster::Graphics::Buffer::BUFFER_DEFAULT;
+	HRESULT hr = S_OK;
+	
+	hr = b->Init(desc);
+	if(FAILED(hr))
 	{
-		vertices[i].Position=Math::transformVector(Math::Float4(VertexList[i].Position,1),transform);
-		vertices[i].Normal=Math::transformVector(Math::Float4(VertexList[i].Normal,0),transform);
-		vertices[i].UV = VertexList[i].UV;
+		//Something isn't okay here
 	}
+	modelInfo->Indexed = false;
+	modelInfo->VertexCount = (int)desc.NumElements;
+	modelInfo->Vertices = b;
+
+
+	return modelInfo;
 }
 
-void ObjReader::GetVertexData(Vertex **vertex,int &numVertex, std::map<std::string, ID3D11ShaderResourceView *> &Textures)
+//Private functions
+void OBJReader::stringSplit( std::string strToSplit )
 {
-	numVertex=(int)this->numVertices;
-	(*vertex)=this->vertices;
-	Textures = this->materials;
+	char delim = '/';
+	std::string vPos, vNormal, vTexel;
+	std::stringstream aStream(strToSplit);
+	getline( aStream, vPos, delim );
+	getline( aStream, vTexel, delim );
+	getline( aStream, vNormal );
+
+	_mPos		= atoi( vPos.c_str() );
+	_mNormal	= atoi( vNormal.c_str() );
+	_mTexel		= atoi( vTexel.c_str() );
+
 }
 
-Float3 ObjReader::extract(std::string d)
+void OBJReader::addToOBJarray()
 {
-	Float3 data;
-	int offset=(int)d.find('/');
-	data.x=(float)atoi(d.substr(1,offset).c_str())-1;
+	OBJFormat temp;
 
-	int newOffset = (int)d.find('/',offset+1);
-	string d2=d.substr(offset+1,newOffset-offset-1);
-	data.y=(float)atoi(d2.c_str())-1;
-	offset=newOffset;
+	temp._d3VertexCoord		= _mVertexCoord.at( _mPos - 1 );
+	temp._d3VertexNormal	= _mVertexNormal.at( _mNormal - 1 );
+	temp._d3VertexTexture	= _mVertexTexture.at( _mTexel - 1 );
 
-	newOffset = (int)d.find('/',offset+1);
-	string d3=d.substr(offset+1,newOffset-offset-1);
-	data.z=(float)atoi(d3.c_str())-1;
-
-	return data;
-}
-
-Float3 ObjReader::readVertex(int offset,string s)
-{
-	int newOffset = (int)s.find(' ',offset+1);
-	Float3 vertex;
-	string d = s.substr(offset,newOffset-offset);
-	vertex.x = (float)atof(d.c_str());
-	offset=newOffset;
-	
-	newOffset = (int)s.find(' ',offset+1);
-	vertex.y = (float)atof(s.substr(offset,newOffset-offset).c_str());
-	offset=newOffset;
-	
-	newOffset = (int)s.find(' ',offset+1);
-	vertex.z = (float)-atof(s.substr(offset,newOffset-offset).c_str());
-				
-	return vertex;
-}
-
-Float2 ObjReader::readUV(int offset,string s)
-{
-	int newOffset = (int)s.find(' ',offset+1);
-	Float2 uv;
-	string d = s.substr(offset,newOffset-offset);
-	uv.x =(float)atof(d.c_str());
-	offset=newOffset;
-
-	newOffset = (int)s.find(' ',offset+1);
-	d = s.substr(offset,newOffset-offset);
-	uv.y =1- (float)atof(d.c_str());
-	offset=newOffset;
-
-	return uv;
-}
-
-Float3 ObjReader::readNormal(int offset,string s)
-{
-	int newOffset = (int)s.find(' ',offset+1);
-	Float3 vertex;
-	string d = s.substr(offset,newOffset-offset);
-	vertex.x = (float)atof(d.c_str());
-	offset=newOffset;
-	
-	newOffset = (int)s.find(' ',offset+1);
-	vertex.y = (float)atof(s.substr(offset,newOffset-offset).c_str());
-	offset=newOffset;
-	
-	newOffset = (int)s.find(' ',offset+1);
-	vertex.z = (float)-atof(s.substr(offset,newOffset-offset).c_str());
-				
-	return vertex;
-}
-
-void ObjReader::readFace(int offset,string s, Oyster::Math::Float3 face[3])
-{
-	int newOffset = (int)s.find(' ',offset+1);
-	string point1 = s.substr(offset,newOffset-offset);
-
-	offset = newOffset;
-	newOffset = (int)s.find(' ',offset+1);
-	string point2 = s.substr(offset,newOffset-offset);
-
-	offset = newOffset;
-	newOffset = (int)s.find(' ',offset+1);
-	string point3 = s.substr(offset,newOffset-offset);
-	
-	face[0] = extract(point1);
-	face[1] = extract(point2);
-	face[2] = extract(point3);
-}
-
-std::map<std::string, ID3D11ShaderResourceView *> ObjReader::GetMaterials(std::string fileName)
-{
-	ifstream input;
-	input.open(fileName.c_str());
-
-	std::map<std::string, ID3D11ShaderResourceView *> materials;
-	ID3D11ShaderResourceView *srv;
-	string texture;
-	string s;
-	string path;
-	Utility::String::extractDirPath(path,fileName,'\\');
-	if(!input.is_open())
-		return materials;
-
-	while(!input.eof())
-	{
-		getline(input,s);
-		int offset = (int)s.find(' ');
-		if(offset!=-1)
-		{
-			string c = s.substr(0,offset); 
-			if(c=="map_Kd")
-			{
-				texture = path+s.substr(offset+1);
-				D3DX11CreateShaderResourceViewFromFile(Oyster::Core::Device,texture.c_str(), NULL, NULL, &srv, NULL);
-				materials["Diffuse"] = srv;
-			}
-			if(c=="map_G")
-			{
-				texture = path+s.substr(offset+1);
-				D3DX11CreateShaderResourceViewFromFile(Oyster::Core::Device,texture.c_str(), NULL, NULL, &srv, NULL);
-				materials["Glow"] = srv;
-			}
-			if(c=="map_Ks")
-			{
-				texture = path+s.substr(offset+1);
-				D3DX11CreateShaderResourceViewFromFile(Oyster::Core::Device,texture.c_str(), NULL, NULL, &srv, NULL);
-				materials["Specular"] = srv;
-			}
-		}
-	}
-	input.close();
-
-	return materials;
+	_myOBJ.push_back( temp );
 }

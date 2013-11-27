@@ -7,14 +7,21 @@
 //--------------------------------------------------------------------------------------
 #define NOMINMAX
 #include <Windows.h>
-#include "Engine.h"
+#include "Core/Core.h"
+#include "Render\Preparations\Preparations.h"
+#include "Render\Resources\Resources.h"
+#include "Render\Rendering\Render.h"
+#include "FileLoader\ObjReader.h"
+#include "Definitions\GraphicalDefinition.h"
 
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
-
+Oyster::Graphics::Render::Model* m	=				new Oyster::Graphics::Render::Model();
+Oyster::Math::Float4x4 V;
+Oyster::Math::Float4x4 P;
 
 
 //--------------------------------------------------------------------------------------
@@ -131,59 +138,56 @@ HRESULT InitDirect3D()
 {
 	HRESULT hr = S_OK;;
 
-	Oyster::Engine::Init::Setup setup;
-	setup.Fullscreen = false;
-	setup.ForceDX11 = true;
-	setup.SingleThreaded = true;
-	setup.window = g_hWnd;
+	Oyster::Graphics::Core::resolution = Oyster::Math::Float2( 1024, 768 );
 
-	Oyster::Engine::Init::FullInit( setup );
+	if(Oyster::Graphics::Core::Init::FullInit(g_hWnd,false,false)==Oyster::Graphics::Core::Init::Fail)
+		return E_FAIL;
 
-	std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
-	std::wstring EffectPath = L"SimpleDebug\\";
+	//Init shaders
+	Oyster::Graphics::Render::Resources::Init();
 
-	Oyster::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
-	Oyster::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Core::ShaderManager::ShaderType::Vertex,L"Debug",false);
+	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();
 
-	Oyster::Core::ShaderManager::Set::Vertex(Oyster::Core::ShaderManager::Get::Vertex(L"Debug"));
-	Oyster::Core::ShaderManager::Set::Pixel(Oyster::Core::ShaderManager::Get::Pixel(L"Debug"));
+#pragma region Triangle
+	//Oyster::Graphics::Definitions::ObjVertex mesh[] =
+	//{
+	//	{Oyster::Math::Vector3(-1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
+	//	{Oyster::Math::Vector3(1,-1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
+	//	{Oyster::Math::Vector3(1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
+	//};
 
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
+	//Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
+	//desc.ElementSize= sizeof(Oyster::Graphics::Definitions::ObjVertex);
+	//desc.NumElements = 3;
+	//desc.InitData=mesh;
+	//desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	//desc.Usage = Oyster::Graphics::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
 
-	ID3D11InputLayout* layout;
+	//Oyster::Graphics::Buffer *b = new Oyster::Graphics::Buffer();;
+	//b->Init(desc);
 
-	Oyster::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Core::ShaderManager::Get::Vertex(L"Debug"), layout);
-
-	Oyster::Core::DeviceContext->IASetInputLayout(layout);
-	Oyster::Core::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	Oyster::Engine::PrepareForRendering::BindBackBuffer();
+	////b.Apply(0);
+	//Oyster::Graphics::Render::ModelInfo* mi = new Oyster::Graphics::Render::ModelInfo();
+	//mi->Indexed = false;
+	//mi->VertexCount = 3;
+	//mi->Vertices = b;
 	
-	struct float4
-	{
-		float x,y,z,w;
-	};
+	//m->info = mi;
+#pragma endregion
+	
+#pragma region Obj
+	OBJReader or;
+	or.readOBJFile(L"bth.obj");
+	m->info = or.toModel();
+#pragma endregion
+	
+	m->World = Oyster::Math::Matrix::identity;
 
-	float4 mesh[] =
-	{
-		{-1.0f,1.0f,0.0f,1.0f},
-		{1.0f,1.0f,0.0f,1.0f},
-		{1.0f,-1.0f,0.0f,1.0f},
-	};
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(PI/2,16.0f/9.0f,.1f,100);
 
-	Oyster::Buffer::BUFFER_INIT_DESC desc;
-	desc.ElementSize= sizeof(float4);
-	desc.NumElements = 3;
-	desc.InitData=mesh;
-	desc.Type = Oyster::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
-	desc.Usage = Oyster::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,10.4f));
+	V = Oyster::Math3D::InverseOrientationMatrix(V);
 
-	Oyster::Buffer b;
-	b.Init(desc);
-	b.Apply(0);
 
 	return S_OK;
 }
@@ -195,11 +199,18 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Engine::PrepareForRendering::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
+	Oyster::Graphics::Render::Rendering::Basic::NewFrame(V,P);
+	//Oyster::Graphics::Render::Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
 
-	Oyster::Core::DeviceContext->Draw(3,0);
+	//m->info->Vertices->Apply(0);
 
-	Oyster::Core::SwapChain->Present(0,0);
+	//Oyster::Graphics::Core::deviceContext->Draw(3,0);
+
+	//Oyster::Graphics::Core::swapChain->Present(0,0);
+
+	Oyster::Graphics::Render::Rendering::Basic::RenderScene(m,1);
+
+	Oyster::Graphics::Render::Rendering::Basic::EndFrame();
 
 	return S_OK;
 }
