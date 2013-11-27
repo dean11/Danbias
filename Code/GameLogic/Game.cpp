@@ -9,7 +9,12 @@ Game::Game(void)
 
 Game::~Game(void)
 {
-	SAFE_DELETE(player);
+	//SAFE_DELETE(player);
+	if(player)
+	{
+		delete player;
+		player = NULL;
+	}
 }
 
 void Game::Init()
@@ -20,11 +25,13 @@ void Game::StartGame()
 {
 
 }
-void Game::Update()
+void Game::Update(keyInput keyPressed)
 {
-	player->Update();
+	player->Update(keyPressed);
 }
 void Game::Render()
 {
-	player->Render();
+	Oyster::Graphics::Model::Model* model_Arr;
+	model_Arr = player->Render();
+	Oyster::Graphics::API::RenderScene(model_Arr, 1);
 }

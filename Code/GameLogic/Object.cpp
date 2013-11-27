@@ -5,15 +5,16 @@
 using namespace GameLogic;
 
 using namespace Oyster::Math;
-using namespace Oyster::Graphics::Render;
+using namespace Oyster::Graphics::Model;
 
 using namespace Utility::DynamicMemory;
 
 Object::Object(void)
 {
 	model = new Model();
+	model = Oyster::Graphics::API::CreateModel(L"bth.obj");
 
-	struct float4
+	/*struct float4
 	{
 		float x,y,z,w;
 	};
@@ -46,18 +47,21 @@ Object::Object(void)
 
 	model->World = &matrix;
 	model->info = modelInfo;
-	model->Visible = true;
+	model->Visible = true;*/
 }
 
 
 Object::~Object(void)
 {
-	SAFE_DELETE(model->info);
+	//SAFE_DELETE(model->info);
+
+	 Oyster::Graphics::API::DeleteModel(model);
 }
-void Object::Render()
+Model* Object::Render()
 {
-	model->info->Vertices.Apply(0);
-	Oyster::Graphics::Core::deviceContext->Draw(model->info->VertexCount,0);
+	//model->info->Vertices.Apply(0);
+	this->rigidBody->GetOrientation(model->WorldMatrix);
+	return model;
 }
 
 Object::OBJECT_TYPE Object::GetType()

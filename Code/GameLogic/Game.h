@@ -3,9 +3,12 @@
 
 #include "Level.h"
 #include "Player.h"
+#include "IGame.h"
 
 namespace GameLogic
 {
+	
+
 	class Game
 	{
 	public:
@@ -14,7 +17,7 @@ namespace GameLogic
 
 		void Init();
 		void StartGame();
-		void Update();
+		void Update(keyInput keyPressed);
 		void Render();
 		
 		
