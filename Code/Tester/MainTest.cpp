@@ -40,7 +40,7 @@ HRESULT				InitDirect3D();
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 
-	bool b = SetDllDirectoryW(L"..\\..\\DLL");
+	BOOL b = SetDllDirectoryW(L"..\\..\\DLL");
 	typedef struct tagLOADPARMS32
 	{ 
 		LPSTR lpEnvAddress;  // address of environment strings 
@@ -186,6 +186,7 @@ HRESULT InitDirect3D()
 #pragma region Obj
 	m =  Oyster::Graphics::API::CreateModel(L"bth.obj");
 	m->WorldMatrix *= 0.1f;
+	m->WorldMatrix.m44 = 1;
 #pragma endregion
 	
 
