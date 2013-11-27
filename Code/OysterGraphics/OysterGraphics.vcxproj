@@ -149,18 +149,13 @@
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
-    <ClCompile Include="Render\Rendering\BasicRender.cpp" />
-    <ClCompile Include="Resources\Resources.cpp" />
-=======
+
     <ClCompile Include="DllInterfaces\GFXAPI.cpp" />
     <ClCompile Include="FileLoader\ObjReader.cpp" />
     <ClCompile Include="FileLoader\TextureLoader.cpp" />
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
     <ClCompile Include="Render\Rendering\BasicRender.cpp" />
     <ClCompile Include="Render\Resources\Resources.cpp" />
->>>>>>> origin/Graphics
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Core.h" />
