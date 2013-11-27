@@ -86,14 +86,24 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		DWORD dwReserved;    // must be zero 
 	} LOADPARMS32;
 	LOADPARMS32 p;
-	memset(&p, 0, sizeof(LOADPARMS32));
 	p.lpEnvAddress = "";
 	p.lpCmdLine = "";
 	p.lpCmdShow = "";
 	p.dwReserved = 0;
-	DWORD ret = LoadModule("OysterGraphics_x86D.dll", &p);
-	ret = LoadModule("GameLogic_x86D.dll", &p);
+	DWORD ret = 1;
+	ret = LoadModule("OysterGraphics_x86D.dll", &p);
 	
+	if( ret == 0)
+	{
+		// error
+		return 0;
+	}
+	ret = LoadModule("GameLogic_x86D.dll", &p);
+	if( ret == 0)
+	{
+		// error
+		return 0;
+	}
 
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
