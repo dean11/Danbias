@@ -3,6 +3,7 @@
 #include <winsock2.h>
 #include <iostream>
 #include <string>
+#include <fcntl.h>
 
 using namespace Oyster::Network;
 
@@ -136,4 +137,17 @@ int Connection::InitiateSocket()
 	}
 
 	return 0;
+}
+
+void Connection::SetBlockingMode(bool blocking)
+{
+	//TODO: Implement this function. Setting the socket to blocking or non-blocking.
+	if(blocking)
+	{
+		//fcntl(this->socket, F_SETFL, O_NONBLOCK);
+	}
+	else
+	{
+
+	}
 }

@@ -7,6 +7,9 @@
 
 #include "IListener.h"
 #include "../NetworkDependencies/Connection.h"
+#include "../../Misc/Thread/OysterThread.h"
+#include "../../Misc/Thread/OysterMutex.h"
+
 
 namespace Oyster
 {
@@ -14,7 +17,7 @@ namespace Oyster
 	{
 		namespace Server
 		{
-			class Listener
+			class Listener : public ::Oyster::Thread::IThreadObject
 			{
 			public:
 				Listener();
@@ -22,9 +25,23 @@ namespace Oyster
 
 				bool Init(unsigned int port);
 				int Accept();
+				int GetNewClient();
+
+				//Thread functions
+				bool DoWork();
+				void ThreadEntry();
+				void ThreadExit();
+
+			private:
+
 
 			private:
 				::Oyster::Network::Connection* connection;
+				int tempSocket;
+				bool newSocket;
+
+				::Oyster::Thread::OysterThread thread;
+				OysterMutex mutex;
 
 			};
 		}

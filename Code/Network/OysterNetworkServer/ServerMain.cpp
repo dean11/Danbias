@@ -30,19 +30,9 @@ int main()
 	//Create socket
 	Listener listener;
 	listener.Init(9876);
-
+	Sleep(1000);
 	//Start listening
 	//Accept a client
-	int clientSocket = listener.Accept();
-	Client client1(clientSocket);
-	cout << "First client connected." << endl;
-
-	//Accept a client
-	clientSocket = listener.Accept();
-	Client client2(clientSocket);
-	cout << "Second client connected." << endl;
-
-	ProtocolSet* set = new ProtocolSet;
 	ProtocolTest test;
 	test.clientID = 0;
 	test.size = 2;
@@ -57,7 +47,51 @@ int main()
 	}
 
 	t.Pack(test, recvBuffer);
+	
+	while(1)
+	{
+		int client = listener.GetNewClient();
+		if(client != -1)
+		{
+			cout << "Client connected: " << client << endl;
+			Client client1(client);
 
+			client1.Send(recvBuffer);
+		}
+		//Sleep(100);
+	}
+
+
+/*	int clientSocket = listener.Accept();
+	Client client1(clientSocket);
+	cout << "First client connected." << endl;
+
+	//Accept a client
+	clientSocket = listener.Accept();
+	Client client2(clientSocket);
+	cout << "Second client connected." << endl;
+*/
+
+
+	/*
+	ProtocolSet* set = new ProtocolSet;
+	ProtocolTest test;
+	test.clientID = 0;
+	test.size = 2;
+	test.textMessage = "hej";
+	test.numOfFloats = 35;
+	test.f = new float[test.numOfFloats];
+	float temp = 395.456f;
+	for(int i = 0; i < (int)test.numOfFloats; i++)
+	{
+		test.f[i] = temp;
+		temp--;
+	}
+
+	t.Pack(test, recvBuffer);*/
+
+
+/*
 	client1.Send(recvBuffer);
 
 	while(1)
@@ -92,7 +126,7 @@ int main()
 
 	ShutdownWinSock();
 	delete set;
-
+	*/
 	system("pause");
 	return 0;
 }

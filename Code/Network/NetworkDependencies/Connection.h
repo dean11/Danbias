@@ -32,6 +32,7 @@ namespace Oyster
 
 		private:
 			int InitiateSocket();
+			void SetBlockingMode(bool blocking);
 
 			int socket;
 
