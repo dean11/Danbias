@@ -103,8 +103,8 @@ namespace Oyster
 			desc.BufferDesc.RefreshRate.Denominator=1;
 			desc.BufferDesc.RefreshRate.Numerator=60;
 
-			desc.BufferDesc.Height = Size.y;
-			desc.BufferDesc.Width = Size.x;
+			desc.BufferDesc.Height = (UINT)Size.y;
+			desc.BufferDesc.Width = (UINT)Size.x;
 
 			if(Core::swapChain)
 			{
@@ -180,8 +180,8 @@ namespace Oyster
 			desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 			desc.CPUAccessFlags=0;
 			desc.MiscFlags=0;
-			desc.Height = Size.y;
-			desc.Width = Size.x;
+			desc.Height = (UINT)Size.y;
+			desc.Width = (UINT)Size.x;
 
 			if(Core::depthStencil)
 			{

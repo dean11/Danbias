@@ -3,67 +3,80 @@
 #include "OysterPhysics3D.h"
 
 using namespace ::Oyster::Physics;
+using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
 
-API_Impl instance;  
+API_Impl API_instance;
 
-::Oyster::Math::Float4x4 & MomentOfInertia::CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
+// default API::EventAction_Collision
+void defaultCollisionAction( const ICustomBody *proto, const ICustomBody *deuter )
+{ /* do nothing */ }
+
+// default API::EventAction_Destruction
+void defaultDestructionAction( UniquePointer<ICustomBody> proto )
+{ /* do nothing besides proto auto deleting itself. */ }
+
+Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius)
 {
-	return ::Oyster::Physics3D::Formula::MomentOfInertia::Sphere(mass, radius);
+	return Formula::MomentOfInertia::Sphere(mass, radius);
 }
 
-::Oyster::Math::Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius)
+Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const Float mass, const Float radius)
 {
-	return ::Oyster::Physics3D::Formula::MomentOfInertia::HollowSphere(mass, radius);
+	return Formula::MomentOfInertia::HollowSphere(mass, radius);
 }
 
-::Oyster::Math::Float4x4 & MomentOfInertia::CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth )
+Float4x4 & MomentOfInertia::CreateCuboidMatrix( const Float mass, const Float height, const Float width, const Float depth )
 {
-	return ::Oyster::Physics3D::Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
+	return Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
 }
 
-::Oyster::Math::Float4x4 & MomentOfInertia::CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius )
+Float4x4 & MomentOfInertia::CreateCylinderMatrix( const Float mass, const Float height, const Float radius )
 {
-	return ::Oyster::Physics3D::Formula::MomentOfInertia::Cylinder(mass, height, radius);
+	return Formula::MomentOfInertia::Cylinder(mass, height, radius);
 }
 
-::Oyster::Math::Float4x4 & MomentOfInertia::CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length )
+Float4x4 & MomentOfInertia::CreateRodMatrix( const Float mass, const Float length )
 {
-	return ::Oyster::Physics3D::Formula::MomentOfInertia::RodCenter(mass, length);
+	return Formula::MomentOfInertia::RodCenter(mass, length);
 }
 
 API & API::Instance()
 {
-	return instance;
+	return API_instance;
 }
 
 API_Impl::API_Impl()
-{
-	/** @todo TODO: Fix this constructor.*/
-}
+	: gravityConstant( Constant::gravity_constant ),
+	  updateFrameLength( 1.0f / 120.0f ),
+	  collisionAction( defaultCollisionAction ),
+	  destructionAction( defaultDestructionAction )
+{}
 
-API_Impl::~API_Impl()
+API_Impl::~API_Impl() {}
+
+void API_Impl::Init( unsigned int numObjects, unsigned int numGravityWells , const Float3 &worldSize )
 {
-	/** @todo TODO: Fix this destructor.*/
+	//! @todo TODO: implement stub
 }
 
 void API_Impl::SetDeltaTime( float deltaTime )
 {
-	/** @todo TODO: Fix this function.*/
+	updateFrameLength = deltaTime;
 }
 void API_Impl::SetGravityConstant( float g )
 {
-	/** @todo TODO: Fix this function.*/
+	this->gravityConstant = g;
 }
-void API_Impl::SetAction( EventAction_Collision functionPointer )
+void API_Impl::SetAction( API::EventAction_Collision functionPointer )
 {
-	/** @todo TODO: Fix this function.*/
+	this->collisionAction = functionPointer;
 }
-void API_Impl::SetAction( EventAction_Destruction functionPointer )
+void API_Impl::SetAction( API::EventAction_Destruction functionPointer )
 {
-	/** @todo TODO: Fix this function.*/
+	this->destructionAction = functionPointer;
 }
 
 void API_Impl::Update()
@@ -143,6 +156,11 @@ void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation 
 }
 
 void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
+{
+	//! @todo TODO: implement stub
+}
+
+void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
 {
 	//! @todo TODO: implement stub
 }

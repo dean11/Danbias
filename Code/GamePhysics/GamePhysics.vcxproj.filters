@@ -30,6 +30,9 @@
     <ClInclude Include="Implementation\SimpleRigidBody.h">
       <Filter>Header Files\Implementation</Filter>
     </ClInclude>
+    <ClInclude Include="Implementation\SphericalRigidBody.h">
+      <Filter>Header Files\Implementation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">
@@ -38,7 +41,10 @@
     <ClCompile Include="Implementation\SimpleRigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DLLMain.cpp">
+    <ClCompile Include="Implementation\DLLMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\SphericalRigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
