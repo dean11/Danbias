@@ -6,6 +6,7 @@
 //////////////////////////////////
 
 #include "IConnection.h"
+#include "../NetworkDependencies/OysterByte.h"
 
 namespace Oyster
 {
@@ -22,8 +23,8 @@ namespace Oyster
 			virtual bool InitiateServer( unsigned short port );
 			virtual bool InitiateClient();
 
-			virtual bool Send(const unsigned char message[]);
-			virtual int  Recieve(unsigned char message[]);
+			virtual bool Send( OysterByte& bytes );
+			virtual int  Recieve( OysterByte& bytes );
 
 			virtual void Disconnect();
 			virtual bool Connect( unsigned short port , const char serverName[] );

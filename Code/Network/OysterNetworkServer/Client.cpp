@@ -1,5 +1,6 @@
 #include "Client.h"
 
+using namespace Oyster::Network;
 using namespace Oyster::Network::Server;
 
 Client::Client(unsigned int socket)
@@ -12,12 +13,12 @@ Client::~Client()
 	delete connection;
 }
 
-void Client::Send(unsigned char buffer[])
+void Client::Send(OysterByte& bytes)
 {
-	connection->Send(buffer);
+	connection->Send(bytes);
 }
 
-void Client::Recv(unsigned char buffer[])
+void Client::Recv(OysterByte& bytes)
 {
-	connection->Recieve(buffer);
+	connection->Recieve(bytes);
 }

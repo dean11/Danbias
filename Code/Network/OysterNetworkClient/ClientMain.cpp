@@ -4,12 +4,13 @@
 #include "../NetworkDependencies/WinsockFunctions.h"
 #include "..\NetworkDependencies\Translator.h"
 #include "..\NetworkDependencies\Protocols.h"
+#include "../NetworkDependencies/OysterByte.h"
 #include "Client.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
 using namespace std;
-using namespace Oyster::Network::Protocols;;
+using namespace Oyster::Network::Protocols;
 using namespace Oyster::Network::Client;
 
 void chat(Client &client);
@@ -40,7 +41,7 @@ void chat(Client &client)
 {
 	Oyster::Network::Translator *t = new Oyster::Network::Translator();
 
-	unsigned char msgRecv[1601] = "\0";
+	Oyster::Network::OysterByte msgRecv;
 	string msgSend = "";
 
 	ProtocolSet* set = new ProtocolSet;
@@ -70,13 +71,14 @@ void chat(Client &client)
 			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
 			for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
 			{
-				//cout << set->Protocol.pTest->f[i] << ' ' ;
+				cout << set->Protocol.pTest->f[i] << ' ' ;
 			}
 			cout << endl;
 			break;
 		}
 		
 		set->Release();
+		msgRecv.Clear(1000);
 
 		std::getline(std::cin, msgSend);
 
@@ -91,9 +93,9 @@ void chat(Client &client)
 
 			test.textMessage = msgSend;
 			
-			unsigned char *message = t->Pack(test);
+			t->Pack(test, msgRecv);
 
-			client.Send(message);
+			client.Send(msgRecv);
 		}
 
 		else

@@ -9,12 +9,13 @@ namespace Oyster
 {
 	namespace Network
 	{
+		class OysterByte;
 		class ITranslate
 		{
 
 		public:
-			virtual unsigned char* Pack (Protocols::ProtocolHeader &header ) = 0;
-			virtual Protocols::ProtocolSet* Unpack (Protocols::ProtocolSet* set, unsigned char message[] ) = 0;
+			virtual void Pack (Protocols::ProtocolHeader &header, OysterByte& bytes) = 0;
+			virtual Protocols::ProtocolSet* Unpack (Protocols::ProtocolSet* set, OysterByte& bytes ) = 0;
 
 		};
 	}

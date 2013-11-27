@@ -1,6 +1,9 @@
 #include "MessageHeader.h"
 #include "../Packing.h"
+#include <iostream>
+using namespace std;
 
+using namespace Oyster::Network;
 using namespace Oyster::Network::Messages;
 using namespace Oyster::Network::Protocols;
 
@@ -13,223 +16,239 @@ MessageHeader::~MessageHeader()
 {
 }
 
-void MessageHeader::Pack(ProtocolHeader& header, unsigned char msg[] )
+void MessageHeader::Pack(ProtocolHeader& header, OysterByte& bytes)
+{
+	size = 0;
+
+	PackInt(header.size, bytes);
+	PackInt(header.packageType, bytes);
+	PackInt(header.clientID, bytes);
+	SetSize(bytes);
+}
+
+void MessageHeader::Unpack(OysterByte& bytes, ProtocolHeader& header)
 {
 	size = 0;
 	
-	PackInt(header.size, msg);
-	PackInt(header.packageType, msg);
-	PackInt(header.clientID, msg);
-	SetSize(msg);
-}
-
-void MessageHeader::Unpack(unsigned char msg[], ProtocolHeader& header)
-{
-	size = 0;
-
-	header.clientID = UnpackInt(msg);
-	header.packageType = UnpackInt(msg);
-	header.size = UnpackInt(msg);
+	header.size = UnpackInt(bytes);
+	header.packageType = UnpackInt(bytes);
+	header.clientID = UnpackInt(bytes);
 }
 
 /**************************
 		Pack
 **************************/
 
-void MessageHeader::PackBool(bool i, unsigned char msg[])
+void MessageHeader::PackBool(bool i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(1);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 1;
 }
 
-void MessageHeader::PackChar(char i, unsigned char msg[])
+void MessageHeader::PackChar(char i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(1);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 1;
 }
 
-void MessageHeader::PackUnsignedChar(unsigned char i, unsigned char msg[])
+void MessageHeader::PackUnsignedChar(unsigned char i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(1);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 1;
 }
 
-void MessageHeader::PackShort(short i, unsigned char msg[])
+void MessageHeader::PackShort(short i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(2);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 2;
 }
 
-void MessageHeader::PackUnsignedShort(unsigned short i, unsigned char msg[])
+void MessageHeader::PackUnsignedShort(unsigned short i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(2);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 2;
 }
 
-void MessageHeader::PackInt(int i, unsigned char msg[])
+void MessageHeader::PackInt(int i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(4);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 4;
 }
 
-void MessageHeader::PackUnsignedInt(unsigned int i, unsigned char msg[])
+void MessageHeader::PackUnsignedInt(unsigned int i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(4);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 4;
 }
 
-void MessageHeader::PackInt64(__int64 i, unsigned char msg[])
+void MessageHeader::PackInt64(__int64 i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(8);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 8;
 }
 
-void MessageHeader::PackUnsignedInt64(unsigned __int64 i, unsigned char msg[])
+void MessageHeader::PackUnsignedInt64(unsigned __int64 i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(8);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 8;
 }
 
-void MessageHeader::PackFloat(float i, unsigned char msg[])
+void MessageHeader::PackFloat(float i, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], i);
+	bytes.AddSize(4);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 4;
 }
 
-void MessageHeader::PackFloat(float i[], unsigned int elementCount, unsigned char msg[])
+void MessageHeader::PackFloat(float i[], unsigned int elementCount, OysterByte& bytes)
 {
+	bytes.AddSize(4);
 	//Pack number of elements
-	PackUnsignedInt(elementCount, msg);
+	PackUnsignedInt(elementCount, bytes);
 
 	//Pack all elements
 	for(int j = 0; j < elementCount; j++)
 	{
-		PackFloat(i[j], msg);
+		PackFloat(i[j], bytes);
 	}
 }
 
-void MessageHeader::PackDouble(double i, unsigned char msg[])
-{
-	Packing::Pack(&msg[size], i);
+void MessageHeader::PackDouble(double i, OysterByte& bytes)
+{               
+	bytes.AddSize(8);
+	Packing::Pack(&bytes.GetByteArray()[size], i);
 	size += 8;
 }
 
-void MessageHeader::PackStr(char str[], unsigned char msg[])
+void MessageHeader::PackStr(char str[], OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], str);
-	size += 2 + strlen(str);
+	int totalSize = 2 + strlen(str);
+	bytes.AddSize(totalSize);
+	Packing::Pack(&bytes.GetByteArray()[size], str);
+	size += totalSize;
 }
 
-void MessageHeader::PackStr(std::string str, unsigned char msg[])
+void MessageHeader::PackStr(std::string str, OysterByte& bytes)
 {
-	Packing::Pack(&msg[size], str);
-	size += 2 + str.length();
+	int totalSize = 2 + str.length();
+	bytes.AddSize(totalSize);
+	Packing::Pack(&bytes.GetByteArray()[size], str);
+	size += totalSize;
 }
 
 /**************************
 		Unpack
 **************************/
 
-bool MessageHeader::UnpackBool(unsigned char msg[])
+bool MessageHeader::UnpackBool(OysterByte& bytes)
 {
-	bool i = Packing::Unpackb(&msg[size]);
+	bool i = Packing::Unpackb(&bytes.GetByteArray()[size]);
 	size += 1;
 	return i;
 }
 
-char MessageHeader::UnpackChar(unsigned char msg[])
+char MessageHeader::UnpackChar(OysterByte& bytes)
 {
-	char i = Packing::Unpackc(&msg[size]);
+	char i = Packing::Unpackc(&bytes.GetByteArray()[size]);
 	size += 1;
 	return i;
 }
 
-unsigned char MessageHeader::UnpackUnsignedChar(unsigned char msg[])
+unsigned char MessageHeader::UnpackUnsignedChar(OysterByte& bytes)
 {
-	unsigned char i = Packing::UnpackC(&msg[size]);
+	unsigned char i = Packing::UnpackC(&bytes.GetByteArray()[size]);
 	size += 1;
 	return i;
 }
 
-short MessageHeader::UnpackShort(unsigned char msg[])
+short MessageHeader::UnpackShort(OysterByte& bytes)
 {
-	short i = Packing::Unpacks(&msg[size]);
+	short i = Packing::Unpacks(&bytes.GetByteArray()[size]);
 	size += 2;
 	return i;
 }
 
-unsigned short MessageHeader::UnpackUnsignedShort(unsigned char msg[])
+unsigned short MessageHeader::UnpackUnsignedShort(OysterByte& bytes)
 {
-	unsigned short i = Packing::UnpackS(&msg[size]);
+	unsigned short i = Packing::UnpackS(&bytes.GetByteArray()[size]);
 	size += 2;
 	return i;
 }
 
-int MessageHeader::UnpackInt(unsigned char msg[])
+int MessageHeader::UnpackInt(OysterByte& bytes)
 {
-	int i = Packing::Unpacki(&msg[size]);
+	int i = Packing::Unpacki(&bytes.GetByteArray()[size]);
 	size += 4;
 	return i;
 }
 
-unsigned int MessageHeader::UnpackUnsignedInt(unsigned char msg[])
+unsigned int MessageHeader::UnpackUnsignedInt(OysterByte& bytes)
 {
-	unsigned int i = Packing::UnpackI(&msg[size]);
+	unsigned int i = Packing::UnpackI(&bytes.GetByteArray()[size]);
 	size += 4;
 	return i;
 }
 
-__int64 MessageHeader::UnpackInt64(unsigned char msg[])
+__int64 MessageHeader::UnpackInt64(OysterByte& bytes)
 {
-	__int64 i = Packing::Unpacki64(&msg[size]);
+	__int64 i = Packing::Unpacki64(&bytes.GetByteArray()[size]);
 	size += 8;
 	return i;
 }
 
-unsigned __int64 MessageHeader::UnpackUnsignedInt64(unsigned char msg[])
+unsigned __int64 MessageHeader::UnpackUnsignedInt64(OysterByte& bytes)
 {
-	unsigned __int64 i = Packing::UnpackI64(&msg[size]);
+	unsigned __int64 i = Packing::UnpackI64(&bytes.GetByteArray()[size]);
 	size += 8;
 	return i;
 }
 
-float MessageHeader::UnpackFloat(unsigned char msg[])
+float MessageHeader::UnpackFloat(OysterByte& bytes)
 {
-	float i = Packing::Unpackf(&msg[size]);
+	float i = Packing::Unpackf(&bytes.GetByteArray()[size]);
 	size += 4;
 	return i;
 }
 
-float* MessageHeader::UnpackFloat(unsigned int& elementCount, unsigned char msg[])
+float* MessageHeader::UnpackFloat(unsigned int& elementCount, OysterByte& bytes)
 {
 	float* i;
 
-	elementCount = UnpackUnsignedInt(msg);
+	elementCount = UnpackUnsignedInt(bytes);
 
 	i = new float[elementCount];
 	for(int j = 0; j < elementCount; j++)
 	{
-		i[j] = UnpackFloat(msg);
+		i[j] = UnpackFloat(bytes);
 	}
 
 	return i;
 }
 
-double MessageHeader::UnpackDouble(unsigned char msg[])
+double MessageHeader::UnpackDouble(OysterByte& bytes)
 {
-	double i = Packing::Unpackd(&msg[size]);
+	double i = Packing::Unpackd(&bytes.GetByteArray()[size]);
 	size += 8;
 	return i;
 }
 
-std::string MessageHeader::UnpackStr(unsigned char msg[])
+std::string MessageHeader::UnpackStr(OysterByte& bytes)
 {
-	std::string str = Packing::UnpackStr(&msg[size]);
+	std::string str = Packing::UnpackStr(&bytes.GetByteArray()[size]);
 	size += 2 + str.length();
 	return str;
 }
 
-void MessageHeader::SetSize(unsigned char msg[])
+void MessageHeader::SetSize(OysterByte& bytes)
 {
-	Packing::Pack(&msg[0], size);
+	Packing::Pack(bytes, size);
 }

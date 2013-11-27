@@ -6,6 +6,7 @@
 /////////////////////////////////////
 
 #include "../NetworkDependencies/Connection.h"
+#include "../NetworkDependencies/OysterByte.h"
 
 namespace Oyster
 {
@@ -21,8 +22,8 @@ namespace Oyster
 
 				bool Connect(unsigned int port, char filename[]);
 
-				void Send(unsigned char msg[]);
-				void Recv(unsigned char msg[]);
+				void Send(OysterByte& bytes);
+				void Recv(OysterByte& bytes);
 
 			private:
 				::Oyster::Network::Connection* connection;

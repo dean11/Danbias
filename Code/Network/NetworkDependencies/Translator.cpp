@@ -4,7 +4,7 @@ using namespace Oyster::Network;
 using namespace ::Protocols;
 using namespace ::Messages;
 
-unsigned char* Translator::Pack( ProtocolHeader &header )
+void Translator::Pack( ProtocolHeader &header, OysterByte& bytes )
 {
 	MessageHeader *message = NULL;
 
@@ -21,21 +21,19 @@ unsigned char* Translator::Pack( ProtocolHeader &header )
 
 	if(message != NULL)
 	{
-		message->Pack(header, this->msg);
+		message->Pack(header, bytes);
 
 		delete message;
 		message = NULL;
 	}
-
-	return msg;
 }
 
-ProtocolSet* Translator::Unpack(ProtocolSet* set, unsigned char msg[] )
+ProtocolSet* Translator::Unpack(ProtocolSet* set, OysterByte& bytes )
 {
 	ProtocolHeader *header = new ProtocolHeader();
 	MessageHeader *message = new MessageHeader();
 
-	message->Unpack(msg, *header);
+	message->Unpack(bytes, *header);
 	delete message;
 	message = NULL;
 
@@ -46,13 +44,13 @@ ProtocolSet* Translator::Unpack(ProtocolSet* set, unsigned char msg[] )
 	case package_type_header:
 		message = new MessageHeader();
 		set->Protocol.pHeader = new ProtocolHeader;
-		message->Unpack(msg, *set->Protocol.pHeader);
+		message->Unpack(bytes, *set->Protocol.pHeader);
 		break;
 
 	case package_type_test:
 		message = new MessageTest();
 		set->Protocol.pTest = new ProtocolTest;
-		message->Unpack(msg, *set->Protocol.pTest);
+		message->Unpack(bytes, *set->Protocol.pTest);
 		break;
 	}
 

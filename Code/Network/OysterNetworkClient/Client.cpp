@@ -21,12 +21,12 @@ bool Client::Connect(unsigned int port, char filename[])
 	return true;
 }
 
-void Client::Send(unsigned char msg[])
+void Client::Send(Oyster::Network::OysterByte& bytes)
 {
-	connection->Send(msg);
+	connection->Send(bytes);
 }
 
-void Client::Recv(unsigned char msg[])
+void Client::Recv(Oyster::Network::OysterByte& bytes)
 {
-	connection->Recieve(msg);
+	connection->Recieve(bytes);
 }

@@ -19,8 +19,8 @@ namespace Oyster
 				MessageTest();
 				virtual ~MessageTest();
 
-				virtual void Pack(Protocols::ProtocolHeader& header, unsigned char msg[]);
-				virtual void Unpack(unsigned char msg[], Protocols::ProtocolHeader& header);
+				virtual void Pack(Protocols::ProtocolHeader& header, OysterByte& bytes);
+				virtual void Unpack(OysterByte& bytes, Protocols::ProtocolHeader& header);
 
 			private:
 			};

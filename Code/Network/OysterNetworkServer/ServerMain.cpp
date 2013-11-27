@@ -5,6 +5,7 @@
 #include "../NetworkDependencies/Listener.h"
 #include "../NetworkDependencies/Translator.h"
 #include "Client.h"
+#include "../NetworkDependencies/OysterByte.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -15,7 +16,8 @@ using namespace ::Protocols;
 
 int main()
 {
-	unsigned char* recvBuffer = new unsigned char[1601];
+	OysterByte recvBuffer;
+
 	cout << "Server" << endl;
 	Translator t;
 
@@ -42,8 +44,9 @@ int main()
 	ProtocolSet* set = new ProtocolSet;
 	ProtocolTest test;
 	test.clientID = 0;
+	test.size = 2;
 	test.textMessage = "hej";
-	test.numOfFloats = 350;
+	test.numOfFloats = 35;
 	test.f = new float[test.numOfFloats];
 	float temp = 395.456f;
 	for(int i = 0; i < test.numOfFloats; i++)
@@ -51,14 +54,15 @@ int main()
 		test.f[i] = temp;
 		temp--;
 	}
-	recvBuffer = t.Pack(test);
+
+	t.Pack(test, recvBuffer);
 
 	client1.Send(recvBuffer);
 
 	while(1)
 	{
 		client1.Recv(recvBuffer);
-		
+
 		t.Unpack(set, recvBuffer);
 		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
 		cout << "Client1: " << set->Protocol.pTest->textMessage << endl;
@@ -85,7 +89,6 @@ int main()
 	}
 
 	ShutdownSockets();
-	delete[] recvBuffer;
 	delete set;
 
 	system("pause");

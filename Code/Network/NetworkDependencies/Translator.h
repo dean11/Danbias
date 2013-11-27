@@ -8,6 +8,7 @@
 #include "Messages/MessagesInclude.h"
 #include "Protocols.h"
 #include "ITranslate.h"
+#include "OysterByte.h"
 
 namespace Oyster
 {
@@ -16,14 +17,15 @@ namespace Oyster
 		class Translator : public ITranslate
 		{
 		public:
-			Translator () { msg = new unsigned char[1601]; };
-			~Translator() { if(msg != NULL) { delete [] this->msg; }};
+			Translator () { /*msg = new unsigned char[1601];*/ };
+			~Translator() { /*if(msg != NULL) { delete [] this->msg; }*/ };
 
-			unsigned char* Pack (Protocols::ProtocolHeader &header );
-			Protocols::ProtocolSet* Unpack (Protocols::ProtocolSet* set, unsigned char msg[] );
+			void Pack (Protocols::ProtocolHeader &header, OysterByte& bytes );
+			Protocols::ProtocolSet* Unpack (Protocols::ProtocolSet* set, OysterByte& bytes );
 
 		private:
-			unsigned char* msg;
+			//unsigned char* msg;
+			//OysterByte bytes;
 
 		};
 	}

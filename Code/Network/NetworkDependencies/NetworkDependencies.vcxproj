@@ -164,6 +164,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Messages\MessageHeader.cpp" />
     <ClCompile Include="Messages\MessageTest.cpp" />
+    <ClCompile Include="OysterByte.cpp" />
     <ClCompile Include="Packing.cpp" />
     <ClCompile Include="Translator.cpp" />
     <ClCompile Include="WinsockFunctions.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Messages\MessageHeader.h" />
     <ClInclude Include="Messages\MessagesInclude.h" />
     <ClInclude Include="Messages\MessageTest.h" />
+    <ClInclude Include="OysterByte.h" />
     <ClInclude Include="Packing.h" />
     <ClInclude Include="ITranslate.h" />
     <ClInclude Include="Protocols.h" />

@@ -9,13 +9,14 @@ namespace Oyster
 {
 	namespace Network
 	{
+		class OysterByte;
 		class IConnection
 		{
 
 		public:
 			virtual void Disconnect() = 0;
-			virtual bool Send( const unsigned char message[] ) = 0;
-			virtual int  Recieve(unsigned char message[]) = 0;
+			virtual bool Send( OysterByte& bytes ) = 0;
+			virtual int  Recieve( OysterByte& bytes) = 0;
 			virtual bool InitiateServer( unsigned short port ) { return false; };
 			virtual bool InitiateClient() { return false; };
 			virtual int  Listen() { return -1; };

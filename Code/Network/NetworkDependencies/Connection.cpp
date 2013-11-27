@@ -81,13 +81,11 @@ void Connection::Disconnect()
 	closesocket(this->socket);
 }
 
-bool Connection::Send(const unsigned char message[])
+bool Connection::Send(OysterByte& bytes)
 {
 	int nBytes;
-	unsigned long messageSize = strlen((char*)message);
 
-	messageSize = 1600;
-	nBytes = send(this->socket, (char*)message , messageSize, 0);
+	nBytes = send(this->socket, bytes, bytes.GetSize(), 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Send failed!
@@ -99,29 +97,31 @@ bool Connection::Send(const unsigned char message[])
 	return true; 
 }
 
-int Connection::Recieve(unsigned char message[])
+int Connection::Recieve(OysterByte& bytes)
 {
 	int nBytes;
 
-	nBytes = recv(this->socket, (char*)message, 1600, 0);
+	bytes.Clear(1000);
+	nBytes = recv(this->socket, bytes, 500, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		//Recv failed
 		return -1;
 	}
+	else
+	{
+		bytes.SetSize(nBytes);
+	}
 
-	message[nBytes] = '\0';
+	std::cout << "Size of the recieved data: " << nBytes << " bytes" << std::endl;
+
+	//bytes.byteArray[nBytes] = '\0';
 
 	return 1;
 }
 
 int Connection::Listen()
 {
-	int optlen = sizeof(int);
-	int optval;
-	int Return = getsockopt(this->socket, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
-	std::cout << optval << std::endl;
-
 	int clientSocket;
 	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{

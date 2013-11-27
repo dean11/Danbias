@@ -1,5 +1,6 @@
 #include "MessageTest.h"
 
+using namespace Oyster::Network;
 using namespace Oyster::Network::Messages;
 using namespace Oyster::Network::Protocols;
 
@@ -11,19 +12,21 @@ MessageTest::~MessageTest()
 {
 }
 
-void MessageTest::Pack(ProtocolHeader& header, unsigned char msg[])
+void MessageTest::Pack(ProtocolHeader& header, OysterByte& bytes)
 {
-	MessageHeader::Pack(header, msg);
+	MessageHeader::Pack(header, bytes);
+	unsigned char asd[1000];
+	//strcpy_s(asd, bytes.GetSize(), bytes);
 
-	PackStr(static_cast<ProtocolTest*>(&header)->textMessage, msg);
-	PackFloat(static_cast<ProtocolTest*>(&header)->f, static_cast<ProtocolTest*>(&header)->numOfFloats, msg);
-	SetSize(msg);
+	PackStr(static_cast<ProtocolTest*>(&header)->textMessage, bytes);
+	PackFloat(static_cast<ProtocolTest*>(&header)->f, static_cast<ProtocolTest*>(&header)->numOfFloats, bytes);
+	SetSize(bytes);
 }
 
-void MessageTest::Unpack(unsigned char msg[], ProtocolHeader& header)
+void MessageTest::Unpack(OysterByte& bytes, ProtocolHeader& header)
 {
-	MessageHeader::Unpack(msg, header);
+	MessageHeader::Unpack(bytes, header);
 
-	static_cast<ProtocolTest*>(&header)->textMessage = UnpackStr(msg);
-	static_cast<ProtocolTest*>(&header)->f = UnpackFloat(static_cast<ProtocolTest*>(&header)->numOfFloats, msg);
+	static_cast<ProtocolTest*>(&header)->textMessage = UnpackStr(bytes);
+	static_cast<ProtocolTest*>(&header)->f = UnpackFloat(static_cast<ProtocolTest*>(&header)->numOfFloats, bytes);
 }
