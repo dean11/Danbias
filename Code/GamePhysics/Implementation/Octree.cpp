@@ -16,6 +16,16 @@ Octree::~Octree()
 
 }
 
+Octree& Octree::operator=(const Octree& orig)
+{
+	this->leafData = orig.leafData;
+	this->updateQueue = orig.updateQueue;
+	this->worldNode = orig.worldNode;
+	this->mapReferences = orig.mapReferences;
+
+	return *this;
+}
+
 void Octree::AddObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef)
 {
 	Data data;
@@ -50,7 +60,6 @@ void Octree::MoveToUpdateQueue(Utility::DynamicMemory::UniquePointer< ICustomBod
 	this->updateQueue.push_back(&this->leafData[this->mapReferences[customBodyRef]]);*/
 }
 
-
 void Octree::DestroyObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef)
 {
 	std::map<ICustomBody*, unsigned int>::iterator it = this->mapReferences.find(customBodyRef);
@@ -60,17 +69,51 @@ void Octree::DestroyObject(Utility::DynamicMemory::UniquePointer< ICustomBody > 
 	this->leafData.erase(this->leafData.begin() + this->leafData[this->mapReferences[customBodyRef]].queueRef);
 }
 
-std::vector<ICustomBody*> Octree::Sample(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef)
+std::vector<ICustomBody*> Octree::Sample(ICustomBody* customBodyRef)
 {
 	std::vector<ICustomBody*> list;
 
+	auto object = this->mapReferences.find(customBodyRef);
+
+	if(object == this->mapReferences.end())
+	{	
+		return list;
+	}	
+
+	unsigned int tempRef = object->second;
+
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(this->leafData[i].customBodyRef != customBodyRef) if(this->leafData[i].container.Intersects(customBodyRef->GetBoundingSphere()))
+		if(tempRef != i) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
 		{
 			list.push_back(this->leafData[i].customBodyRef);
 		}
 	}
 
 	return list;
+}
+
+void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
+{
+	auto object = this->mapReferences.find(customBodyRef);
+
+	if(object == this->mapReferences.end())
+	{	
+		return;
+	}
+
+	unsigned int tempRef = object->second;
+
+	for(unsigned int i = 0; i<this->leafData.size(); i++)
+	{
+		if(tempRef != i) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
+		{
+			hitAction(*this, tempRef, i);
+		}
+	}
+}
+
+ICustomBody* Octree::GetCustomBody(const unsigned int tempRef)
+{
+	return this->leafData[tempRef].customBodyRef;
 }
