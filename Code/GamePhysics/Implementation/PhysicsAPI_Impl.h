@@ -41,7 +41,9 @@ namespace Oyster
 			void SetOrientation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &orientation );
 			void SetSize( const ICustomBody* objRef, const ::Oyster::Math::Float3 &size );
 
-			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const;
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SimpleBodyDescription &desc ) const;
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const;
+
 		private:
 			::Oyster::Math::Float gravityConstant, updateFrameLength;
 			EventAction_Destruction destructionAction;

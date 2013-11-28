@@ -2,6 +2,7 @@
 #include "PhysicsAPI_Impl.h"
 
 using namespace ::Oyster::Physics;
+using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math3D;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
