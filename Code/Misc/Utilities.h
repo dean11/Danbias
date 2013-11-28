@@ -27,18 +27,22 @@ namespace Utility
 		{
 		public:
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer( Type *assignedInstance = NULL );
+
+			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			UniquePointer( const UniquePointer<Type> &donor );
 
 			//! Will auto delete assigned dynamic instance.
 			~UniquePointer();
 
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer<Type> & operator = ( Type *assignedInstance );
 
 			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
-			//! If donor had nothing, is equavalent with clearing all responsibilities from this UniquePointer.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer<Type> & operator = ( const UniquePointer<Type> &donor );
 
 			//! Access the assigned dynamic instance. Will crash if nothing there
@@ -77,18 +81,22 @@ namespace Utility
 		{ //! Wrapper to safely transfer dynamic ownership/responsibility
 		public:
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray( Type assignedArray[] = NULL );
 			
+			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			UniqueArray( const UniqueArray<Type> &donor );
+
 			//! Will auto delete assigned dynamic array.
 			~UniqueArray();
 
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			//! If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
+			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray<Type> & operator = ( Type assignedArray[] );
 			
 			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
-			//! If donor had nothing, is equavalent with clearing all responsibilities from this UniqueArray.
+			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray<Type> & operator = ( const UniqueArray<Type> &donor );
 
 			//! Accesses the instance at index i of this UniqeArray's owned dynamic array.
@@ -117,6 +125,21 @@ namespace Utility
 		private:
 			mutable Type *ownedArray;
 		};
+
+		struct RefCount
+		{
+			private:
+				int count;
+
+			public:
+				RefCount()		:count(0)						{ }
+				RefCount(const RefCount& o)						{ count = o.count; }
+				const RefCount& operator=(const RefCount& o)	{ count = o.count;  return *this;}
+				void Incref()									{ this->count++; }
+				void Incref(int c)								{ this->count += c; }
+				int  Decref()									{ return --this->count;}
+				void Reset()									{ this->count = 0; }
+		};
 	}
 
 	namespace String
@@ -140,6 +163,13 @@ namespace Utility
 		::std::vector<::std::wstring> & Split( ::std::vector<::std::wstring> &output, const ::std::wstring &str, char delim, ::std::wstring::size_type offset = 0 );
 		::std::vector<::std::wstring> & Split( ::std::vector<::std::wstring> &output, const ::std::wstring &str, const ::std::wstring &delim, ::std::wstring::size_type offset = 0 );
 		::std::vector<::std::wstring> & Split( ::std::vector<::std::wstring> &output, const ::std::wstring &str, const ::std::vector<::std::wstring> &delim, ::std::wstring::size_type offset = 0 );
+		::std::wstring & wToLowerCase( ::std::wstring &output, const ::std::wstring &str );
+		::std::wstring & wToLowerCase( ::std::wstring &str );
+
+		//To wstring
+
+		::std::wstring & StringToWstring( const ::std::string &str, ::std::wstring &wstr );
+		::std::string & WStringToString( const ::std::wstring &wstr, ::std::string &str );
 	}
 
 	namespace Stream

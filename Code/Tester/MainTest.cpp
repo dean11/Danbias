@@ -7,14 +7,18 @@
 //--------------------------------------------------------------------------------------
 #define NOMINMAX
 #include <Windows.h>
-#include "Engine.h"
+#include "DllInterfaces\GFXAPI.h"
+
+
 
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
-
+Oyster::Graphics::Model::Model* m	=				new Oyster::Graphics::Model::Model();
+Oyster::Math::Float4x4 V;
+Oyster::Math::Float4x4 P;
 
 
 //--------------------------------------------------------------------------------------
@@ -35,6 +39,22 @@ HRESULT				InitDirect3D();
 //--------------------------------------------------------------------------------------
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
+
+	BOOL b = SetDllDirectoryW(L"..\\..\\DLL");
+	typedef struct tagLOADPARMS32
+	{ 
+		LPSTR lpEnvAddress;  // address of environment strings 
+		LPSTR lpCmdLine;     // address of command line 
+		LPSTR lpCmdShow;     // how to show new program 
+		DWORD dwReserved;    // must be zero 
+	} LOADPARMS32;
+	LOADPARMS32 params;
+	params.dwReserved=NULL;
+	params.lpCmdLine="";
+	params.lpCmdShow="";
+	params.lpEnvAddress="";
+	LoadModule("OysterGraphics_x86D.dll",&params);
+
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
 
@@ -131,59 +151,50 @@ HRESULT InitDirect3D()
 {
 	HRESULT hr = S_OK;;
 
-	Oyster::Engine::Init::Setup setup;
-	setup.Fullscreen = false;
-	setup.ForceDX11 = true;
-	setup.SingleThreaded = true;
-	setup.window = g_hWnd;
-
-	Oyster::Engine::Init::FullInit( setup );
-
-	std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
-	std::wstring EffectPath = L"SimpleDebug\\";
-
-	Oyster::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
-	Oyster::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Core::ShaderManager::ShaderType::Vertex,L"Debug",false);
-
-	Oyster::Core::ShaderManager::Set::Vertex(Oyster::Core::ShaderManager::Get::Vertex(L"Debug"));
-	Oyster::Core::ShaderManager::Set::Pixel(Oyster::Core::ShaderManager::Get::Pixel(L"Debug"));
-
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	if(Oyster::Graphics::API::Init(g_hWnd,false,false, Oyster::Math::Float2( 1024, 768 )) == Oyster::Graphics::API::Fail)
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
+		return E_FAIL;
+	}
 
-	ID3D11InputLayout* layout;
+#pragma region Triangle
+	//Oyster::Graphics::Definitions::ObjVertex mesh[] =
+	//{
+	//	{Oyster::Math::Vector3(-1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
+	//	{Oyster::Math::Vector3(1,-1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
+	//	{Oyster::Math::Vector3(1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
+	//};
 
-	Oyster::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Core::ShaderManager::Get::Vertex(L"Debug"), layout);
+	//Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
+	//desc.ElementSize= sizeof(Oyster::Graphics::Definitions::ObjVertex);
+	//desc.NumElements = 3;
+	//desc.InitData=mesh;
+	//desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+	//desc.Usage = Oyster::Graphics::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
 
-	Oyster::Core::DeviceContext->IASetInputLayout(layout);
-	Oyster::Core::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//Oyster::Graphics::Buffer *b = new Oyster::Graphics::Buffer();;
+	//b->Init(desc);
 
-	Oyster::Engine::PrepareForRendering::BindBackBuffer();
+	////b.Apply(0);
+	//Oyster::Graphics::Render::ModelInfo* mi = new Oyster::Graphics::Render::ModelInfo();
+	//mi->Indexed = false;
+	//mi->VertexCount = 3;
+	//mi->Vertices = b;
 	
-	struct float4
-	{
-		float x,y,z,w;
-	};
+	//m->info = mi;
+#pragma endregion
+	
+#pragma region Obj
+	m =  Oyster::Graphics::API::CreateModel(L"bth.obj");
+	m->WorldMatrix *= 0.1f;
+	m->WorldMatrix.m44 = 1;
+#pragma endregion
+	
 
-	float4 mesh[] =
-	{
-		{-1.0f,1.0f,0.0f,1.0f},
-		{1.0f,1.0f,0.0f,1.0f},
-		{1.0f,-1.0f,0.0f,1.0f},
-	};
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,100);
 
-	Oyster::Buffer::BUFFER_INIT_DESC desc;
-	desc.ElementSize= sizeof(float4);
-	desc.NumElements = 3;
-	desc.InitData=mesh;
-	desc.Type = Oyster::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
-	desc.Usage = Oyster::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,10.4f));
+	V = Oyster::Math3D::InverseOrientationMatrix(V);
 
-	Oyster::Buffer b;
-	b.Init(desc);
-	b.Apply(0);
 
 	return S_OK;
 }
@@ -195,11 +206,11 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Engine::PrepareForRendering::ClearBackBuffer(Oyster::Math::Float4(0,0,1,1));
+	Oyster::Graphics::API::NewFrame(V,P);
 
-	Oyster::Core::DeviceContext->Draw(3,0);
+	Oyster::Graphics::API::RenderScene(m,1);
 
-	Oyster::Core::SwapChain->Present(0,0);
+	Oyster::Graphics::API::EndFrame();
 
 	return S_OK;
 }
