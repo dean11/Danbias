@@ -21,56 +21,87 @@ namespace Utility
 {
 	namespace DynamicMemory
 	{
-		//! If dynamicInstance is not NULL, then delete
+		/******************************************************************
+		 * If dynamicInstance is not NULL, then delete.
+		 ******************************************************************/
 		template<typename Type> void SafeDeleteInstance( Type *dynamicInstance );
 
-		//! If dynamicArray is not NULL, then delete []
+		/******************************************************************
+		 * If dynamicArray is not NULL, then delete [].
+		 ******************************************************************/
 		template<typename Type> void SafeDeleteArray( Type dynamicArray[] );
 
 		//! Wrapper to safely transfer dynamic ownership/responsibility
 		template<typename Type> struct UniquePointer
 		{
 		public:
-			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
+			/******************************************************************
+			 * Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
+			 * If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
+			 ******************************************************************/
 			 UniquePointer( Type *assignedInstance = NULL );
 
-			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
-			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			 ******************************************************************/
 			UniquePointer( const UniquePointer<Type> &donor );
 
-			//! Will auto delete assigned dynamic instance.
+			/******************************************************************
+			 * Will auto delete assigned dynamic instance.
+			 ******************************************************************/
 			~UniquePointer();
 
-			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
-			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			 ******************************************************************/
 			UniquePointer<Type> & operator = ( const UniquePointer<Type> &donor );
 
-			//! Access the assigned dynamic instance. Will crash if nothing there
+			/******************************************************************
+			 * Access the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
 			operator Type* ();
 
-			//! Access the assigned dynamic instance. Will crash if nothing there
+			/******************************************************************
+			 * Access the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
 			operator const Type* () const;
 			
-			//! Access members of the assigned dynamic instance. Will crash if nothing there
+			/******************************************************************
+			 * Access members of the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
 			Type * operator -> ();
 			
-			//! Access members of the assigned dynamic instance. Will crash if nothing there
+			/******************************************************************
+			 * Access members of the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
 			const Type * operator -> () const;
 
-			//! If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			/******************************************************************
+			 * @return true if this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			 ******************************************************************/
 			operator bool () const;
 
-			//! @return true if this ownedInstance matches with stray
+			/******************************************************************
+			 * @return true if this ownedInstance matches with stray
+			 ******************************************************************/
 			bool operator == ( Type *stray ) const;
 
-			//! @return false if this ownedInstance matches with stray
+			/******************************************************************
+			 * @return false if this ownedInstance matches with stray
+			 ******************************************************************/
 			bool operator != ( Type *stray ) const;
 
-			//! This UniquePointer drops all claims of ownership/responsibility and returns the dynamic instance. Now it is your responsibility to delete.
+			/******************************************************************
+			 * This UniquePointer drops all claims of ownership/responsibility and returns the dynamic instance. Now it is your responsibility to delete.
+			 ******************************************************************/
 			Type* Release();
 			
-			//! (inline) If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			/******************************************************************
+			 * @return true if this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			 * inline of @see operator bool () const
+			 ******************************************************************/
 			bool HaveOwnership() const;
 			
 		private:
@@ -81,42 +112,65 @@ namespace Utility
 		struct UniqueArray
 		{ //! Wrapper to safely transfer dynamic ownership/responsibility
 		public:
-			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
+			/******************************************************************
+			 * Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
+			 * If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
+			 ******************************************************************/
 			UniqueArray( Type assignedArray[] = NULL );
 			
-			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
-			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			 ******************************************************************/
 			UniqueArray( const UniqueArray<Type> &donor );
 
-			//! Will auto delete assigned dynamic array.
+			/******************************************************************
+			 * Will auto delete assigned dynamic array.
+			 ******************************************************************/
 			~UniqueArray();
 			
-			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
-			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			 ******************************************************************/
 			UniqueArray<Type> & operator = ( const UniqueArray<Type> &donor );
 
-			//! Accesses the instance at index i of this UniqeArray's owned dynamic array.
-			//! Will crash if out-of-bound or there is no assigned array.
+			/******************************************************************
+			 * Accesses the instance at index i of this UniqeArray's owned dynamic array.
+			 * Will crash if out-of-bound or there is no assigned array.
+			 ******************************************************************/
 			template<typename Index> Type & operator [] ( Index i );
 			
-			//! Accesses the instance at index i of this UniqeArray's owned dynamic array.
-			//! Will crash if out-of-bound or there is no assigned array.
+			/******************************************************************
+			 * Accesses the instance at index i of this UniqeArray's owned dynamic array.
+			 * Will crash if out-of-bound or there is no assigned array.
+			 ******************************************************************/
 			template<typename Index> const Type & operator [] ( Index i ) const;
 
-			//! If true, this UniqueArray have a current ownership/responsibility of a dynamic instance.
+			/******************************************************************
+			 * @return true if this UniqueArray have a current ownership/responsibility of a dynamic array.
+			 ******************************************************************/
 			operator bool () const;
 
-			//! @return true if this ownedInstance matches with stray
+			/******************************************************************
+			 * @return true if this ownedInstance matches with stray.
+			 ******************************************************************/
 			bool operator == ( Type *stray ) const;
 
-			//! @return false if this ownedInstance matches with stray
+			/******************************************************************
+			 * @return false if this ownedInstance matches with stray.
+			 ******************************************************************/
 			bool operator != ( Type *stray ) const;
 
-			//! This UniqueArray drops all claims of ownership/responsibility and returns the dynamic array. Now it is your responsibility to delete.
+			/******************************************************************
+			 * This UniqueArray drops all claims of ownership/responsibility and returns the dynamic array. Now it is your responsibility to delete.
+			 ******************************************************************/
 			Type* Release();
 
-			//! (inline) If true, this UniqueArray have a current ownership/responsibility of a dynamic array.
+			/******************************************************************
+			 * @return true if this UniqueArray have a current ownership/responsibility of a dynamic array.
+			 * inline of @see operator bool () const
+			 ******************************************************************/
 			bool HaveOwnership() const;
 
 		private:
