@@ -27,6 +27,9 @@ namespace Utility
 		template<typename Type> struct UniquePointer
 		{
 		public:
+			//! Creates an empty UniquePointer.
+			//UniquePointer();
+
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
 			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
 			UniquePointer( Type *assignedInstance = NULL );
@@ -40,7 +43,7 @@ namespace Utility
 
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
 			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
-			UniquePointer<Type> & operator = ( Type *assignedInstance );
+			UniquePointer<Type> & operator = ( Type *assignedInstance ); // potential ambiguous
 
 			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
 			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
@@ -81,6 +84,9 @@ namespace Utility
 		struct UniqueArray
 		{ //! Wrapper to safely transfer dynamic ownership/responsibility
 		public:
+			//! Creates an empty UniqueArray.
+			//UniqueArray();
+
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
 			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
 			UniqueArray( Type assignedArray[] = NULL );
@@ -94,7 +100,7 @@ namespace Utility
 
 			//! Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
 			//! If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
-			UniqueArray<Type> & operator = ( Type assignedArray[] );
+			UniqueArray<Type> & operator = ( Type assignedArray[] ); // potential ambiguous
 			
 			//! Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
 			//! If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
@@ -331,6 +337,6 @@ namespace Utility
 	}
 }
 
-#include "Utilities-InlineImpl.h"
+#include "Utilities-Impl.h"
 
 #endif
