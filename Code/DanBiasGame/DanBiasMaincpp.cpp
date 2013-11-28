@@ -7,7 +7,7 @@
 //--------------------------------------------------------------------------------------
 #define NOMINMAX
 #include <Windows.h>
-#include "Core/Core.h"
+
 #include "DllInterfaces/GFXAPI.h"
 #include "IGame.h"
 
@@ -39,7 +39,6 @@ HRESULT             InitWindow( HINSTANCE hInstance, int nCmdShow );
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 HRESULT				Render(float deltaTime);
 HRESULT				Update(float deltaTime);
-HRESULT				InitDirect3D();
 HRESULT				InitGame();
 HRESULT				CleanUp();
 
@@ -79,10 +78,34 @@ void SetStdOutToNewConsole()
 
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
-	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
+	SetDllDirectory(L"..\\DLL\\");
+	typedef struct tagLOADPARMS32 { 
+		LPSTR lpEnvAddress;  // address of environment strings 
+		LPSTR lpCmdLine;     // address of command line 
+		LPSTR lpCmdShow;     // how to show new program 
+		DWORD dwReserved;    // must be zero 
+	} LOADPARMS32;
+	LOADPARMS32 p;
+	p.lpEnvAddress = "";
+	p.lpCmdLine = "";
+	p.lpCmdShow = "";
+	p.dwReserved = 0;
+	DWORD ret = 1;
+	ret = LoadModule("OysterGraphics_x86D.dll", &p);
+	
+	if( ret == 0)
+	{
+		// error
 		return 0;
+	}
+	ret = LoadModule("GameLogic_x86D.dll", &p);
+	if( ret == 0)
+	{
+		// error
+		return 0;
+	}
 
-	if( FAILED( InitDirect3D() ) )
+	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
 
 	if( FAILED( InitGame() ) )
@@ -95,7 +118,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	__int64 prevTimeStamp = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 	
-	//debugwindow
+	//debug window
 	//SetStdOutToNewConsole();
 	// Main message loop
 	MSG msg = {0};
@@ -172,61 +195,18 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 }
 
 
-
-//--------------------------------------------------------------------------------------
-// Create Direct3D device and swap chain
-//--------------------------------------------------------------------------------------
-HRESULT InitDirect3D()
-{
-	/*HRESULT hr = S_OK;;
-
-	Oyster::Graphics::Core::resolution = Oyster::Math::Float2( 1024, 768 );
-
-	if(Oyster::Graphics::Core::Init::FullInit(g_hWnd,false,false)==Oyster::Graphics::Core::Init::Fail)
-		return E_FAIL;
-
-
-
-	std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
-	std::wstring EffectPath = L"SimpleDebug\\";
-
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Vertex,L"PassThroughFloat4",false);
-
-	Oyster::Graphics::Core::ShaderManager::Set::Vertex(Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"));
-	Oyster::Graphics::Core::ShaderManager::Set::Pixel(Oyster::Graphics::Core::ShaderManager::Get::Pixel(L"Debug"));
-
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
-	ID3D11InputLayout* layout;
-
-	Oyster::Graphics::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"), layout);
-
-	Oyster::Graphics::Core::deviceContext->IASetInputLayout(layout);
-	Oyster::Graphics::Core::deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	Oyster::Graphics::Render::Preparations::Basic::BindBackBufferRTV();
-
-	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();*/
-
-	return S_OK;
-}
-
 HRESULT InitGame()
 {
-
-	if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
-		return E_FAIL;
-
 	inputObj = new InputClass;
 	if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
 	{
 		MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 		return false;
 	}
+	if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+		return E_FAIL;
+
+
 	game = new GameLogic::IGame();
 	game->Init();
 	game->StartGame();
@@ -279,7 +259,7 @@ HRESULT Render(float deltaTime)
 	Oyster::Math::Float4x4 view  =Oyster::Math3D::OrientationMatrix_LookAtDirection(dir, up, pos);
 	view = view.GetInverse();
 
-	Oyster::Math::Float4x4 proj = Oyster::Math3D::ProjectionMatrix_Perspective(PI/2, 1024/768, 1, 1000);
+	Oyster::Math::Float4x4 proj = Oyster::Math3D::ProjectionMatrix_Perspective(3.14f/2, 1024/768, 1, 1000);
 
 	Oyster::Graphics::API::NewFrame(view, proj);
 	
@@ -296,7 +276,11 @@ HRESULT Render(float deltaTime)
 HRESULT CleanUp()
 {
 	
-	SAFE_DELETE(game);
+	if(game)
+	{
+		delete game;
+		game = NULL;
+	}
 	return S_OK;
 }
 //--------------------------------------------------------------------------------------

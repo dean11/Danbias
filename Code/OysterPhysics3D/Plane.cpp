@@ -8,8 +8,18 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math;
 
-Plane::Plane( ) : ICollideable(Type_plane), normal(), phasing(0.0f) {}
-Plane::Plane( const Float3 &n, const Float &p ) : ICollideable(Type_plane), normal(n), phasing(p) {}
+Plane::Plane( ) : ICollideable(Type_plane)
+{
+	this->normal = Float3::standard_unit_z;
+	this->phasing = 0.0f;
+}
+
+Plane::Plane( const Float3 &n, const Float &p ) : ICollideable(Type_plane)
+{
+	this->normal = n;
+	this->phasing = p;
+}
+
 Plane::~Plane( ) {}
 
 Plane & Plane::operator = ( const Plane &plane )

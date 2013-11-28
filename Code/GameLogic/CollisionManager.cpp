@@ -28,6 +28,8 @@ void CollisionManager::ColisionEvent(Oyster::Physics::ICustomBody &obj1, Oyster:
 			PlayerVBox(*((Player*)realObj1),*((DynamicObject*)realObj2));
 		}
 
+
+
 		break;
 	case Object::OBJECT_TYPE_BOX:
 

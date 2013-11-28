@@ -8,6 +8,7 @@ BOOL WINAPI DllMain(
 	_In_  LPVOID lpvReserved
 	)
 {
+
 	return TRUE;
 }
 using namespace GameLogic;
@@ -30,9 +31,9 @@ void IGame::StartGame()
 {
 	gameModule->StartGame();
 }
-void IGame::Update()
+void IGame::Update(keyInput keyPressed)
 {
-	gameModule->Update();
+	gameModule->Update(keyPressed);
 }
 void IGame::Render()
 {

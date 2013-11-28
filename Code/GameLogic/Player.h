@@ -8,10 +8,12 @@
 
 #include "Object.h"
 #include "Weapon.h"
+#include "IGame.h"
 
 
 namespace GameLogic
 {
+	
 
 	class Player : public Object
 	{
@@ -20,7 +22,7 @@ namespace GameLogic
 		Player(void);
 		~Player(void);
 	
-		void Update();
+		void Update(keyInput keyPressed);
 
 		void Move();
 		void Shoot();

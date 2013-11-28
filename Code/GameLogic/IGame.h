@@ -14,6 +14,15 @@
 namespace GameLogic
 {
 	class Game;
+	
+	enum keyInput
+	{
+		keyInput_W,
+		keyInput_A,
+		keyInput_S,
+		keyInput_D,
+		keyInput_none
+	};
 
 	class GAME_DLL_USAGE IGame
 	{
@@ -23,9 +32,13 @@ namespace GameLogic
 		IGame();
 		~IGame();
 
+
 		void Init();
 		void StartGame();
-		void Update();
+		/************************************************************************/
+		/* Get key input    to update the player                                */
+		/************************************************************************/
+		void Update(keyInput keyPressed);
 		void Render();
 		Game* getGameModule();
 	private:
