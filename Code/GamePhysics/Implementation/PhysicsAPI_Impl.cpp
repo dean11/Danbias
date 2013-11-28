@@ -1,6 +1,7 @@
 #include "PhysicsAPI_Impl.h"
-#include "SimpleRigidBody.h"
 #include "OysterPhysics3D.h"
+#include "SimpleRigidBody.h"
+#include "SphericalRigidBody.h"
 
 using namespace ::Oyster::Physics;
 using namespace ::Oyster::Physics3D;
@@ -161,9 +162,14 @@ void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
 	//! @todo TODO: implement stub
 }
 
-UniquePointer<ICustomBody> API_Impl::CreateSimpleRigidBody() const
+UniquePointer<ICustomBody> API_Impl::CreateRigidBody( const API::SimpleBodyDescription &desc ) const
 {
-	return new SimpleRigidBody();
+	return new SimpleRigidBody( desc );
+}
+
+UniquePointer<ICustomBody> API_Impl::CreateRigidBody( const API::SphericalBodyDescription &desc ) const
+{
+	return new SphericalRigidBody( desc );
 }
 
 namespace Oyster { namespace Physics { namespace Default

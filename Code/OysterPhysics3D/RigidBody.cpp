@@ -9,9 +9,14 @@ using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math3D;
 
-RigidBody::RigidBody( const Box &b, Float m )
-	: box(b), angularMomentum(0.0f), linearMomentum(0.0f), impulseTorqueSum(0.0f), impulseForceSum(0.0f)
+RigidBody::RigidBody( const Box &b, Float m, const Float4x4 &inertiaTensor )
 { // by Dan Andersson
+	this->box = b;
+	this->angularMomentum = Float3::null;
+	this->linearMomentum = Float3::null;
+	this->impulseTorqueSum = Float3::null;
+	this->impulseForceSum = Float3::null;
+
 	if( m != 0.0f )
 	{
 		this->mass = m;
@@ -21,7 +26,14 @@ RigidBody::RigidBody( const Box &b, Float m )
 		this->mass = ::Utility::Value::numeric_limits<Float>::epsilon();
 	}
 
-	this->momentOfInertiaTensor = Float4x4::identity;
+	if( inertiaTensor.GetDeterminant() != 0.0f )
+	{
+		this->momentOfInertiaTensor = inertiaTensor;
+	}
+	else
+	{
+		this->momentOfInertiaTensor = Float4x4::identity;
+	}
 }
 
 RigidBody & RigidBody::operator = ( const RigidBody &body )

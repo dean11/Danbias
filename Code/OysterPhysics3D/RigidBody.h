@@ -20,7 +20,9 @@ namespace Oyster { namespace Physics3D
 							   impulseTorqueSum,	/** The impulse torque T (Nm) that will be consumed each update.	(worldValue) */
 							   impulseForceSum;		/** The impulse force F (N) that will be consumed each update.		(worldValue) */
 
-		RigidBody( const ::Oyster::Collision3D::Box &box = ::Oyster::Collision3D::Box(), ::Oyster::Math::Float mass = 1.0f );
+		RigidBody( const ::Oyster::Collision3D::Box &box = ::Oyster::Collision3D::Box(),
+				   ::Oyster::Math::Float mass = 12.0f,
+				   const ::Oyster::Math::Float4x4 &inertiaTensor = ::Oyster::Math::Float4x4::identity );
 
 		RigidBody & operator = ( const RigidBody &body );
 

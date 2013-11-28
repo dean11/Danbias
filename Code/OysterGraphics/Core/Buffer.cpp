@@ -1,19 +1,18 @@
-#include "Buffer.h"
 #include "Core.h"
 
-using namespace Oyster;
+using namespace Oyster::Graphics;
 
-Oyster::Buffer::Buffer()
+Core::Buffer::Buffer()
 {
 	mBuffer = NULL;
 }
 
-Buffer::~Buffer()
+Core::Buffer::~Buffer()
 {
 	SAFE_RELEASE(mBuffer);
 }
 
-HRESULT Buffer::Apply(UINT32 misc) const
+HRESULT Core::Buffer::Apply(UINT32 misc) const
 {
 	HRESULT hr = S_OK;
 
@@ -23,32 +22,32 @@ HRESULT Buffer::Apply(UINT32 misc) const
 		{
 			UINT32 vertexSize = mElementSize;
 			UINT32 offset = 0;
-			Oyster::Core::DeviceContext->IASetVertexBuffers(misc, 1, &mBuffer, &vertexSize, &offset );
+			Core::deviceContext->IASetVertexBuffers(misc, 1, &mBuffer, &vertexSize, &offset );
 		}
 		break;
 	case INDEX_BUFFER:
 		{
-			Oyster::Core::DeviceContext->IASetIndexBuffer(mBuffer, DXGI_FORMAT_R32_UINT, 0);
+			Core::deviceContext->IASetIndexBuffer(mBuffer, DXGI_FORMAT_R32_UINT, 0);
 		}
 		break;
 	case CONSTANT_BUFFER_VS:
 		{
-			Oyster::Core::DeviceContext->VSSetConstantBuffers(misc, 1, &mBuffer);
+			Core::deviceContext->VSSetConstantBuffers(misc, 1, &mBuffer);
 		}
 		break;
 	case CONSTANT_BUFFER_GS:
 		{
-			Oyster::Core::DeviceContext->GSSetConstantBuffers(misc, 1, &mBuffer);
+			Core::deviceContext->GSSetConstantBuffers(misc, 1, &mBuffer);
 		}
 		break;
 	case CONSTANT_BUFFER_PS:
 		{
-			Oyster::Core::DeviceContext->PSSetConstantBuffers(misc, 1, &mBuffer);
+			Core::deviceContext->PSSetConstantBuffers(misc, 1, &mBuffer);
 		}
 		break;
 	case CONSTANT_BUFFER_CS:
 		{
-			Oyster::Core::DeviceContext->CSSetConstantBuffers(misc,1,&mBuffer);
+			Core::deviceContext->CSSetConstantBuffers(misc,1,&mBuffer);
 		}
 		break;
 	default:
@@ -59,7 +58,7 @@ HRESULT Buffer::Apply(UINT32 misc) const
 	return hr;
 }
 
-HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
+HRESULT Core::Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 {
 	D3D11_BUFFER_DESC bufferDesc;
 
@@ -145,22 +144,22 @@ HRESULT Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 		data.pSysMem = initDesc.InitData;
 		data.SysMemPitch=0;
 		data.SysMemSlicePitch = 0;
-		hr = Oyster::Core::Device->CreateBuffer(&bufferDesc, &data, &mBuffer);
+		hr = Core::device->CreateBuffer(&bufferDesc, &data, &mBuffer);
 	}
 	else
 	{
-		hr = Oyster::Core::Device->CreateBuffer(&bufferDesc, NULL, &mBuffer);
+		hr = Core::device->CreateBuffer(&bufferDesc, NULL, &mBuffer);
 	}
 
 	if(FAILED(hr))
 	{
-		MessageBox(NULL, "Unable to create buffer.", "Slenda Error", MB_ICONERROR | MB_OK);
+		//MessageBox(NULL, L"Unable to create buffer.", L"Slenda Error", MB_ICONERROR | MB_OK);
 	}
 
 	return hr;
 }
 
-void* Buffer::Map()
+void* Core::Buffer::Map()
 {
 	void* ret = NULL;
 	if(mUsage == BUFFER_CPU_WRITE || mUsage == BUFFER_CPU_READ || mUsage == BUFFER_CPU_WRITE_DISCARD)
@@ -173,7 +172,7 @@ void* Buffer::Map()
 		else if(mUsage == BUFFER_CPU_WRITE_DISCARD)	mapType = D3D11_MAP_WRITE_DISCARD;
 
 		HRESULT hr = S_OK;
-		if(FAILED(hr = Oyster::Core::DeviceContext->Map(
+		if(FAILED(hr = Core::deviceContext->Map(
 			mBuffer,
 			0,
 			(D3D11_MAP)mapType,
@@ -192,17 +191,17 @@ void* Buffer::Map()
 
 }
 
-void Buffer::Unmap()
+void Core::Buffer::Unmap()
 {
-	Oyster::Core::DeviceContext->Unmap( mBuffer, 0 );
+	Core::deviceContext->Unmap( mBuffer, 0 );
 }
 
-Oyster::Buffer::operator ID3D11Buffer *()
+Core::Buffer::operator ID3D11Buffer *()
 {
 	return this->mBuffer;
 }
 
-Buffer::operator const ID3D11Buffer *() const
+Core::Buffer::operator const ID3D11Buffer *() const
 {
 	return this->mBuffer;
 }

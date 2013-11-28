@@ -24,7 +24,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -66,22 +66,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
   </PropertyGroup>
@@ -90,11 +90,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -102,6 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\OysterPhysic3D\Collision;..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,6 +120,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,6 +136,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -140,31 +147,27 @@
   <ItemGroup>
     <ClCompile Include="Core\Buffer.cpp" />
     <ClCompile Include="Core\Core.cpp" />
+    <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\ShaderManager.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Render\Model.cpp" />
-    <ClCompile Include="Render\TextBox.cpp" />
-    <ClCompile Include="Resourses\Buffers.cpp" />
-    <ClCompile Include="Resourses\Manager.cpp" />
-    <ClCompile Include="Resourses\PipelineResources.cpp" />
-    <ClCompile Include="Resourses\ShaderEffects.cpp" />
+    <ClCompile Include="DllInterfaces\GFXAPI.cpp" />
+    <ClCompile Include="FileLoader\ObjReader.cpp" />
+    <ClCompile Include="FileLoader\TextureLoader.cpp" />
+    <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
+    <ClCompile Include="Render\Rendering\BasicRender.cpp" />
+    <ClCompile Include="Render\Resources\Resources.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Buffer.h" />
     <ClInclude Include="Core\Core.h" />
-    <ClInclude Include="Core\CoreIncludes.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="EngineIncludes.h" />
+    <ClInclude Include="Core\Dx11Includes.h" />
+    <ClInclude Include="DllInterfaces\GFXAPI.h" />
     <ClInclude Include="FileLoader\ObjReader.h" />
-    <ClInclude Include="Render\Lights.h" />
-    <ClInclude Include="Render\Model.h" />
-    <ClInclude Include="Render\ModelInfo.h" />
-    <ClInclude Include="Render\TextBox.h" />
-    <ClInclude Include="Resourses\Buffers.h" />
-    <ClInclude Include="Resourses\GraphicsDefinitions.h" />
-    <ClInclude Include="Resourses\Manager.h" />
-    <ClInclude Include="Resourses\PipelineResources.h" />
-    <ClInclude Include="Resourses\ShaderEffects.h" />
+    <ClInclude Include="FileLoader\TextureLoader.h" />
+    <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="Model\ModelInfo.h" />
+    <ClInclude Include="Render\Preparations\Preparations.h" />
+    <ClInclude Include="Render\Rendering\Render.h" />
+    <ClInclude Include="Definitions\GraphicalDefinition.h" />
+    <ClInclude Include="Render\Resources\Resources.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\Misc.vcxproj">
@@ -175,6 +178,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\PixelGatherData.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\VertexGatherData.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </AssemblerOutput>
+      <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </AssemblerOutputFile>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -192,7 +220,14 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">main</EntryPointName>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </AssemblerOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OysterGraphics.vcxproj.filters.orig" />
+    <None Include="OysterGraphics.vcxproj.orig" />
+    <None Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\GBufferHeader.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,9 +1,9 @@
 //Oyster
 
 //  Render
-#include "Render\Model.h"
-#include "Render\Camera.h"
-#include "Render\TextBox.h"
+//#include "Render\Model.h"
+//#include "Render\Camera.h"
+//#include "Render\TextBox.h"
 
 //  Core
 #include "Core\Core.h"
@@ -16,8 +16,8 @@
 #include "OysterMath.h"
 
 //  Resources
-#include "Resourses\ShaderEffects.h"
-#include "Resourses\Buffers.h"
-#include "Resourses\PipelineResources.h"
-#include "Resourses\GraphicsDefinitions.h"
-#include "Resourses\Manager.h"
+//#include "Resourses\ShaderEffects.h"
+//#include "Resourses\Buffers.h"
+//#include "Resourses\PipelineResources.h"
+//#include "Resourses\GraphicsDefinitions.h"
+//#include "Resourses\Manager.h"

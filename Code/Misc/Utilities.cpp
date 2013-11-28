@@ -281,6 +281,53 @@ namespace Utility
 			return output;
 		}
 
+		::std::wstring & wToLowerCase( ::std::wstring &output, const ::std::wstring &str )
+		{
+			int length = (int)str.length();
+			output.resize( length );
+			for( int i = 0; i < length; ++i )
+				output[i] = ::std::tolower( str[i], ::std::locale() );
+			return output;
+		}
+
+		::std::wstring & wToLowerCase( ::std::wstring &str )
+		{
+			int length = (int)str.length();
+			for( int i = 0; i < length; ++i )
+				str[i] = ::std::tolower( str[i], ::std::locale() );
+			return str;
+		}
+
+		//To wstring
+
+		::std::wstring & StringToWString( const ::std::string &str, ::std::wstring &wstr )
+		{
+			const char *orig = str.c_str();
+
+			// Convert to a wchar_t*
+			size_t origsize = strlen(orig) + 1;
+			const size_t newsize = 255;
+			size_t convertedChars = 0;
+			wchar_t wcstring[newsize];
+			mbstowcs_s(&convertedChars, wcstring, origsize, orig, _TRUNCATE);
+			wstr = wcstring;
+			//wcscat_s(wcstring, L" (wchar_t *)");
+			return wstr;
+		}
+
+		::std::string & WStringToString( const ::std::wstring &wstr, ::std::string &str )
+		{
+			const wchar_t* orig = wstr.c_str();
+			// Convert to a char*
+			size_t origsize = wcslen(orig) + 1;
+			const size_t newsize = 255;
+			size_t convertedChars = 0;
+			char nstring[newsize];
+			wcstombs_s(&convertedChars, nstring, origsize, orig, _TRUNCATE);
+			str = nstring;
+			//strcat_s(nstring, " (char *)");
+			return str;
+		}
 	}
 
 	// STREAM ////////////////////////////////////////////////////////////

@@ -1,42 +1,55 @@
-#pragma once
-#include "..\Core\CoreIncludes.h"
-#include "..\Math\OysterMath.h"
+#ifndef OBJREADER_H
+#define OBJREADER_H
+#include "..\..\Misc\Utilities.h"
+#include "..\..\OysterMath\OysterMath.h"
+#include "..\Model\ModelInfo.h"
 
-namespace Oyster
+//#include <fstream>
+
+
+
+class OBJReader
 {
-	namespace FileLoaders
-	{
-		class ObjReader
+	public:
+		struct OBJFormat
 		{
-		public:
-			struct Vertex
-			{
-				Oyster::Math::Float3 Position;
-				Oyster::Math::Float3 Normal;
-				Oyster::Math::Float2 UV;
-			};
-
-			static ObjReader *LoadFile(std::string fileName, Oyster::Math::Float4x4 transform = Oyster::Math::Float4x4::identity);
-
-			ObjReader(void);
-			~ObjReader(void);
-			
-			void GetVertexData(Vertex **vertex,int &numVertex, std::map<std::string, ID3D11ShaderResourceView *> &textures);
-
-		private:
-			Vertex *vertices;
-			size_t numVertices;
-			std::map<std::string, ID3D11ShaderResourceView *> materials;
-
-			void ParseFile(std::string fileName, Oyster::Math::Float4x4 transform = Oyster::Math::Float4x4::identity);
-
-			Oyster::Math::Float3 extract(std::string d);
-			Oyster::Math::Float3 readVertex(int offset,std::string s);
-			Oyster::Math::Float2 readUV(int offset,std::string s);
-			Oyster::Math::Float3 readNormal(int offset,std::string s);
-			void readFace(int offset,std::string s, Oyster::Math::Float3 face[3]);
-
-			std::map<std::string, ID3D11ShaderResourceView *> GetMaterials(std::string fileName);
+			Oyster::Math::Float3 _d3VertexCoord;
+			Oyster::Math::Float2 _d3VertexTexture;
+			Oyster::Math::Float3 _d3VertexNormal;
 		};
-	}
-}
+
+		struct OBJMaterialData
+		{
+			std::string	_name;
+			std::string	_mapKd;
+			float	_kd[3];
+			float	_ka[3];
+			float	_tf[3];
+			float	_ni;
+
+			OBJMaterialData()
+			{
+				_name	= " ";
+				_mapKd	= " ";
+			}
+		};
+		std::vector<OBJFormat> _myOBJ;
+	private:
+		
+		std::vector<Oyster::Math::Float3> _mVertexCoord, _mVertexNormal;
+		std::vector<Oyster::Math::Float2> _mVertexTexture;
+
+		int _mNrOfCoords, _mNrOfNormals, _mNrOfTexels, _mNrOfFaces;
+		int _mPos, _mNormal, _mTexel;
+		void stringSplit( std::string strToSplit );
+		void addToOBJarray();
+
+	public:
+		OBJReader();
+		~OBJReader();
+
+		void readOBJFile( std::wstring fileName);
+		Oyster::Graphics::Model::ModelInfo* toModel();
+
+};
+#endif
