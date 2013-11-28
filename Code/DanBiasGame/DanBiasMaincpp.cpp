@@ -76,34 +76,59 @@ void SetStdOutToNewConsole()
 	}
 }
 
+
+typedef Oyster::Graphics::API::State (*Init)(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
+typedef struct tagLOADPARMS32 { 
+	LPSTR lpEnvAddress;  // address of environment strings 
+	LPSTR lpCmdLine;     // address of command line 
+	LPSTR lpCmdShow;     // how to show new program 
+	DWORD dwReserved;    // must be zero 
+} LOADPARMS32;
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
-	SetDllDirectory(L"..\\DLL\\");
-	typedef struct tagLOADPARMS32 { 
-		LPSTR lpEnvAddress;  // address of environment strings 
-		LPSTR lpCmdLine;     // address of command line 
-		LPSTR lpCmdShow;     // how to show new program 
-		DWORD dwReserved;    // must be zero 
-	} LOADPARMS32;
+	wchar_t	buff[255];
+	_wgetcwd(buff, 255);
+	BOOL success = SetDllDirectory(L"..\\..\\DLL");
+	if (success == 0)
+	{
+		return 0;
+	}
+	
 	LOADPARMS32 p;
 	p.lpEnvAddress = "";
 	p.lpCmdLine = "";
 	p.lpCmdShow = "";
 	p.dwReserved = 0;
 	DWORD ret = 1;
+
 	ret = LoadModule("OysterGraphics_x86D.dll", &p);
-	
+	HMODULE temp = LoadLibrary(L"OysterGraphics_x86D.dll");
 	if( ret == 0)
 	{
 		// error
+
 		return 0;
 	}
+	
 	ret = LoadModule("GameLogic_x86D.dll", &p);
 	if( ret == 0)
 	{
 		// error
 		return 0;
 	}
+	//HINSTANCE hGetProcIDDLL = LoadLibrary(L"C:\\Users\\Linda Andersson\\Desktop\\spel\\git\\Bin\\DLL\\OysterGraphics_x86D.dll");
+
+	//if (hGetProcIDDLL == NULL) {
+	//	std::cout << "could not load the dynamic library" << std::endl;
+	//	return EXIT_FAILURE;
+	//}
+	//
+	//// resolve function address here
+	//Init funci = (Init)GetProcAddress(hGetProcIDDLL, "Oyster::Graphics::API::Init");
+	//if (!funci) {
+	//	std::cout << "could not locate the function" << std::endl;
+	//	return EXIT_FAILURE;
+	//}
 
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
@@ -120,6 +145,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	
 	//debug window
 	//SetStdOutToNewConsole();
+
 	// Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message)
