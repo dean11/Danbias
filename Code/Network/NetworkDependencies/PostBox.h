@@ -6,8 +6,8 @@
 /////////////////////////////////////
 
 #include "IPostBox.h"
-#include <queue>
 #include "../../Misc/Thread/OysterMutex.h"
+#include "../../Misc/ThreadSafeQueue.h"
 
 namespace Oyster
 {
@@ -25,8 +25,7 @@ namespace Oyster
 			virtual bool IsFull();
 
 		private:
-			std::queue<T> messages;
-			OysterMutex mutex;
+			Oyster::Queue::ThreadSafeQueue<T> messages;
 
 		};
 
@@ -44,27 +43,23 @@ namespace Oyster
 		template <class T>
 		void PostBox<T>::PostMessage(T& message)
 		{
-			mutex.LockMutex();
-			messages.push(message);
-			mutex.UnlockMutex();
+			messages.Push(message);
 		}
 
 		template <class T>
 		void PostBox<T>::FetchMessage(T& message)
 		{
-			mutex.LockMutex();
 			if(IsFull())
 			{
-				message = messages.front();
-				messages.pop();
+				message = messages.Front();
+				messages.Pop();
 			}
-			mutex.UnlockMutex();
 		}
 
 		template <class T>
 		bool PostBox<T>::IsFull()
 		{
-			return !messages.empty();
+			return !messages.IsEmpty();
 		}
 	}
 }

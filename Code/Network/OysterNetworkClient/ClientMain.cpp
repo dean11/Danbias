@@ -41,7 +41,7 @@ int main()
 
 	//test queue
 	//-----------------------------------------
-	Oyster::Queue::IQueue<int> *test = new Oyster::Queue::ThreadSafeQueue<int>();
+	/*Oyster::Queue::IQueue<int> *test = new Oyster::Queue::ThreadSafeQueue<int>();
 	Oyster::Queue::IQueue<int> *test2 = new Oyster::Queue::ThreadSafeQueue<int>();
 
 	for(int i = 0; i < 100; i++)
@@ -91,8 +91,8 @@ int main()
 	cout << test->Front() << " " << test2->Front() <<endl;
 
 	delete test;
-	delete test2;
-	//chat(client);
+	delete test2;*/
+	chat(client);
 
 	ShutdownWinSock();
 
