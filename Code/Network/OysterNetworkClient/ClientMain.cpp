@@ -5,6 +5,7 @@
 #include "..\NetworkDependencies\Translator.h"
 #include "..\NetworkDependencies\Protocols.h"
 #include "../NetworkDependencies/OysterByte.h"
+#include "../../Misc/ThreadSafeQueue.h"
 #include "Client.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -37,7 +38,61 @@ int main()
 		wcout << "errorMessage: " << errorTest << endl;
 	}
 
-	chat(client);
+
+	//test queue
+	//-----------------------------------------
+	Oyster::Queue::IQueue<int> *test = new Oyster::Queue::ThreadSafeQueue<int>();
+	Oyster::Queue::IQueue<int> *test2 = new Oyster::Queue::ThreadSafeQueue<int>();
+
+	for(int i = 0; i < 100; i++)
+	{
+		//test->Push(i);
+		//cout << test->Pop() << endl;
+	}
+
+	cout << "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej" <<endl;
+
+	for(int i = 99; i > -1; i--)
+	{
+		//test->Push(i);
+		//cout << test->Pop() << endl;
+	}
+
+	if(test->IsEmpty())
+	{
+		for(int i = 99; i > -1; i--)
+		{
+			test->Push(i);
+			//cout << test->Pop() << endl;
+		}
+	}
+
+	for(int i = 0; i < 50; i++)
+	{
+		test2->Push(i);
+	}
+
+	//test2->Swap(*test);
+
+	cout << "TEST 1-50" <<endl;
+	int size = test->Size();
+	for(int i = 0; i < size; i++)
+	{
+		//cout << test->Pop() << endl;
+	}
+
+	cout << "TEST2 99-1" <<endl;
+	size = test2->Size();
+	for(int i = 0; i < size; i++)
+	{
+		//cout << test2->Pop() << endl;
+	}
+
+	cout << test->Front() << " " << test2->Front() <<endl;
+
+	delete test;
+	delete test2;
+	//chat(client);
 
 	ShutdownWinSock();
 
