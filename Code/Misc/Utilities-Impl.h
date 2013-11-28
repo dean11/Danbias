@@ -1,7 +1,11 @@
 /////////////////////////////////////////////////////////////////////
 // Inline and template implementations for
 // the Utility Collection of Miscellanious Handy Functions
-// © Dan Andersson 2013
+//
+// Created 2013 by Dan Andersson
+// Edited 2013 by
+// * Dan Andersson
+// * Dennis Andersen
 /////////////////////////////////////////////////////////////////////
 
 #ifndef UTILITIES_INLINE_IMPL_H
@@ -49,14 +53,6 @@ namespace Utility
 		UniquePointer<Type>::~UniquePointer()
 		{
 			SafeDeleteInstance( this->ownedInstance );
-		}
-
-		template<typename Type>
-		UniquePointer<Type> & UniquePointer<Type>::operator = ( Type *assignedInstance )
-		{
-			SafeDeleteInstance( this->ownedInstance );
-			this->ownedInstance = assignedInstance;
-			return *this;
 		}
 
 		template<typename Type>
@@ -142,13 +138,6 @@ namespace Utility
 		UniqueArray<Type>::~UniqueArray()
 		{
 			SafeDeleteArray( this->ownedArray );
-		}
-
-		template<typename Type>
-		UniqueArray<Type> & UniqueArray<Type>::operator = ( Type assignedArray[] )
-		{
-			SafeDeleteArray( this->ownedArray );
-			this->ownedArray = assignedArray;
 		}
 
 		template<typename Type>
