@@ -15,6 +15,8 @@ namespace Oyster
 		class Octree
 		{
 		public:
+			static const unsigned int invalid_ref;
+
 			typedef void(*VistorAction)(Octree&, unsigned int, unsigned int);
 
 			struct Data
@@ -52,11 +54,17 @@ namespace Oyster
 
 			ICustomBody* GetCustomBody(const unsigned int tempRef);
 
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> Extract( const ICustomBody* objRef );
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> Extract( unsigned int tempRef ); // Dan vill ha
+			unsigned int GetTemporaryReferenceOf( const ICustomBody* objRef ) const; // Dan vill ha
+			void SetAsAltered( unsigned int tempRef ); // Dan vill ha
+			void EvaluatePosition( unsigned int tempRef ); // Dan vill ha
+
 		private:
 			std::vector < Data > leafData;
 			std::vector < Data* > updateQueue;
 
-			std::map< ICustomBody*, unsigned int > mapReferences;
+			std::map< const ICustomBody*, unsigned int > mapReferences;
 
 			OctreeNode worldNode;
 		};
