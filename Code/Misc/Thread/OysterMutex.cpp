@@ -64,8 +64,3 @@ bool OysterMutex::IsTaken()
 {
 	return !this->mutex.try_lock();
 }
-void OysterMutex::Reset()
-{
-	if(!this->mutex.try_lock())
-		this->mutex.unlock();
-}

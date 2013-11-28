@@ -6,7 +6,6 @@
 #define MISC_OYSTER_THREAD_H
 
 #include "IThreadObject.h"
-
 namespace Oyster 
 { 
 	namespace Thread
@@ -23,11 +22,10 @@ namespace Oyster
 			struct PrivateData;
 			PrivateData *privateData;
 
-			OysterThread(const OysterThread& original);
-			const OysterThread& operator=(const OysterThread& original);
-
 		public:
 			OysterThread();
+			OysterThread(const OysterThread& original);
+			const OysterThread& operator=(const OysterThread& original);
 			virtual~OysterThread();
 
 			OYSTER_THREAD_ERROR Create(IThreadObject* worker, bool start);

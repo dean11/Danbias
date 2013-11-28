@@ -43,7 +43,7 @@ OHRESOURCE OysterResource::LoadResource(const wchar_t* filename, ResourceType ty
 
 	return resourceData->GetResourceHandle();
 }
-OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc, unsigned int CustomId)
+OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc, int CustomId)
 {
 	if(!filename)	return 0;
 	if(!loadFnc)	return 0;
@@ -67,14 +67,14 @@ OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunc
 	return (OHRESOURCE)resourceData->GetResourceHandle();
 }
 
-OHRESOURCE ReloadResource(const wchar_t filename[])
+OHRESOURCE OysterResource::ReloadResource(const wchar_t filename[])
 {
 	OResource *resourceData = resourcePrivate.FindResource(filename);
 	if(!resourceData) return 0;		//The resource has not been loaded
 
 	return OResource::Reload(resourceData)->GetResourceHandle();
 }
-OHRESOURCE ReloadResource(OHRESOURCE resource)
+OHRESOURCE OysterResource::ReloadResource(OHRESOURCE resource)
 {
 	OResource *resourceData = resourcePrivate.FindResource(resource);
 	if(!resourceData) return 0;		//The resource has not been loaded
@@ -89,17 +89,31 @@ void OysterResource::Clean()
 
 	for (i; i != last; i++)
 	{
-		if(OResource::Release(i->second))
-		{
-			const wchar_t* temp = i->second->GetResourceFilename();
-			delete resourcePrivate.resources[temp];
-			resourcePrivate.resources.erase(temp);
-		}
+		//Remove all the references
+		while (!OResource::Release(i->second));
+		
+		const wchar_t* temp = i->second->GetResourceFilename();
+		delete resourcePrivate.resources[temp];
+		resourcePrivate.resources.erase(temp);
+
 	}
 }
 void OysterResource::ReleaseResource(const OHRESOURCE& resourceData)
 {
 	OResource* t = resourcePrivate.FindResource(resourceData);
+	if(t)
+	{
+		if(OResource::Release(t))
+		{
+			const wchar_t* temp = t->GetResourceFilename();
+			delete resourcePrivate.resources[temp];
+			resourcePrivate.resources.erase(temp);
+		}
+	}
+}
+void OysterResource::ReleaseResource(const wchar_t filename[])
+{
+	OResource* t = resourcePrivate.FindResource(filename);
 	if(t)
 	{
 		if(OResource::Release(t))
@@ -117,13 +131,27 @@ void OysterResource::SetResourceId (const OHRESOURCE& resourceData, unsigned int
 
 	if(t)	t->SetResourceID(id);
 }
+void OysterResource::SetResourceId(const wchar_t c[], unsigned int id)
+{
+	OResource* t = resourcePrivate.FindResource(c);
+
+	if(t)	t->SetResourceID(id);
+}
 ResourceType OysterResource::GetResourceType (const OHRESOURCE& resourceData)
 {
 	OResource* t = resourcePrivate.FindResource(resourceData);
 
 	if(t)	return t->GetResourceType();
 
-	return ResourceType_UNKNOWN;
+	return ResourceType_INVALID;
+}
+ResourceType OysterResource::GetResourceType (const wchar_t c[])
+{
+	OResource* t = resourcePrivate.FindResource(c);
+
+	if(t)	return t->GetResourceType();
+
+	return ResourceType_INVALID;
 }
 const wchar_t* OysterResource::GetResourceFilename (const OHRESOURCE& resourceData)
 {
@@ -133,7 +161,15 @@ const wchar_t* OysterResource::GetResourceFilename (const OHRESOURCE& resourceDa
 
 	return 0;
 }
-unsigned int OysterResource::GetResourceId (const OHRESOURCE& resourceData)	
+OHRESOURCE OysterResource::GetResourceHandle(const wchar_t filename[])
+{
+	OResource* t = resourcePrivate.FindResource(filename);
+
+	if(t)	return t->GetResourceHandle();
+
+	return 0;
+}
+int OysterResource::GetResourceId (const OHRESOURCE& resourceData)	
 {
 	OResource* t = resourcePrivate.FindResource(resourceData);
 
@@ -141,7 +177,14 @@ unsigned int OysterResource::GetResourceId (const OHRESOURCE& resourceData)
 
 	return -1;
 }
+int OysterResource::GetResourceId(const wchar_t c[])
+{
+	OResource* t = resourcePrivate.FindResource(c);
 
+	if(t)	return t->GetResourceID();
+
+	return -1;
+}
 
 
 OResource* ResourcePrivate::FindResource(const OHRESOURCE& h) const

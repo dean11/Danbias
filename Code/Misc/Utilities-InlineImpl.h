@@ -165,8 +165,7 @@ namespace Utility
 
 		namespace SmartPointer
 		{
-			template<typename T> 
-			void StdSmartPointer<T>::Destroy()
+			template<typename T> void StdSmartPointer<T>::Destroy()
 			{
 				delete this->_rc;
 				this->_rc = NULL;
@@ -200,7 +199,7 @@ namespace Utility
 				if (this != &p)
 				{
 					//Last to go?
-					if(this->_rc && this->_rc->Release() == 0)
+					if(this->_rc && this->_rc->Decref() == 0)
 					{
 						//Call child specific
 						Destroy();
@@ -208,7 +207,7 @@ namespace Utility
 
 					this->_ptr = p._ptr;
 					this->_rc = p._rc;
-					this->_rc->Add();
+					this->_rc->Incref();
 				}
 				return *this;
 			}
@@ -254,16 +253,14 @@ namespace Utility
 			{
 				return this->_ptr;
 			}
-
-			/**
-			*	Returns the connected pointer */
+			template<typename T> inline StdSmartPointer<T>::operator bool()
+			{
+				return (this->_ptr != 0);
+			}
 			template<typename T> inline T* StdSmartPointer<T>::Get()
 			{
 				return this->_ptr;
 			}
-
-			/** Checks if the pointer is valid (not NULL)
-				Returns true for valid, else false. */
 			template<typename T> inline bool StdSmartPointer<T>::IsValid()
 			{
 				return (this->_ptr != NULL)  ?	true : false;
