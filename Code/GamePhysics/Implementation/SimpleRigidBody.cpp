@@ -10,7 +10,7 @@ using namespace ::Utility::Value;
 
 SimpleRigidBody::SimpleRigidBody()
 {
-	this->rigid = RigidBody();
+	this->rigid = RigidBody( Box(Float4x4::identity, Float3::null, Float3(1.0f)), 16.0f, Float4x4::identity );
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
 	this->ignoreGravity = false;

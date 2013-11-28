@@ -169,7 +169,7 @@ UniquePointer<ICustomBody> API_Impl::CreateRigidBody( const API::SimpleBodyDescr
 
 UniquePointer<ICustomBody> API_Impl::CreateRigidBody( const API::SphericalBodyDescription &desc ) const
 {
-	return new SphericalRigidBody();
+	return new SphericalRigidBody( desc );
 }
 
 namespace Oyster { namespace Physics { namespace Default
