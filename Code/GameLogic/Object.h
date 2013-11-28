@@ -13,6 +13,7 @@
 #include "Utilities.h"
 
 
+
 namespace GameLogic
 {
 	class Object
@@ -38,8 +39,8 @@ namespace GameLogic
 		//either a model pointer or an ID to an arraypos filled with models that are to be rendered
 		//rigidBody
 
-		Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> rigidBody;
-		Utility::DynamicMemory::UniquePointer<Oyster::Graphics::Model::Model> model;
+		Oyster::Physics::ICustomBody *rigidBody;
+		Oyster::Graphics::Model::Model *model;
 
 	};
 

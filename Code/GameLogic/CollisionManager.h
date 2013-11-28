@@ -9,20 +9,13 @@
 
 namespace GameLogic
 {
+	RefManager refManager;
 
-	class CollisionManager
+	namespace CollisionManager
 	{
 
-		public:
-			CollisionManager(void);
-			~CollisionManager(void);
-
-		private:
 			void ColisionEvent(Oyster::Physics::ICustomBody &obj1, Oyster::Physics::ICustomBody &obj2);
 			void PlayerVBox(Player &player, DynamicObject &box);
-
-		private:
-			RefManager *refManager;
 
 	};
 
