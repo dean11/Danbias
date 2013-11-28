@@ -27,7 +27,7 @@ namespace Oyster
 				int packageType;
 				int clientID;
 
-				ProtocolHeader() { this->packageType = package_type_header; }
+				ProtocolHeader() { this->packageType = PackageType_header; }
 				virtual ~ProtocolHeader() {  }
 			};
 
@@ -37,7 +37,7 @@ namespace Oyster
 				unsigned int numOfFloats;
 				float *f;
 
-				ProtocolTest() { this->packageType = package_type_test; }
+				ProtocolTest() { this->packageType = PackageType_test; }
 				virtual ~ProtocolTest() { delete[] f; }
 			};
 
@@ -56,13 +56,13 @@ namespace Oyster
 				{
 					switch(type)
 					{
-					case package_type_header:
+					case PackageType_header:
 						if(Protocol.pHeader)
 						{
 							delete Protocol.pHeader;
 						}
 						break;
-					case package_type_test:
+					case PackageType_test:
 						if(Protocol.pTest)
 						{
 							delete Protocol.pTest;

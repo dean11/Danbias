@@ -10,11 +10,11 @@ void Translator::Pack( ProtocolHeader &header, OysterByte& bytes )
 
 	switch(header.packageType)
 	{
-	case package_type_header:
+	case PackageType_header:
 		message = new MessageHeader();
 		break;
 
-	case package_type_test:
+	case PackageType_test:
 		message = new MessageTest();
 		break;
 	}
@@ -41,13 +41,13 @@ ProtocolSet* Translator::Unpack(ProtocolSet* set, OysterByte& bytes )
 	set->type = (PackageType)header->packageType;
 	switch(set->type)
 	{
-	case package_type_header:
+	case PackageType_header:
 		message = new MessageHeader();
 		set->Protocol.pHeader = new ProtocolHeader;
 		message->Unpack(bytes, *set->Protocol.pHeader);
 		break;
 
-	case package_type_test:
+	case PackageType_test:
 		message = new MessageTest();
 		set->Protocol.pTest = new ProtocolTest;
 		message->Unpack(bytes, *set->Protocol.pTest);
