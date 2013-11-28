@@ -10,7 +10,7 @@ using namespace ::Utility::Value;
 SimpleRigidBody::SimpleRigidBody()
 	: previous(), current(),
 	  gravityNormal(0.0f),
-	  subscribeCollision(true),
+	  collisionAction(Default::EventAction_Collision),
 	  ignoreGravity(false) {}
 
 SimpleRigidBody::~SimpleRigidBody() {}
@@ -18,11 +18,6 @@ SimpleRigidBody::~SimpleRigidBody() {}
 UniquePointer<ICustomBody> SimpleRigidBody::Clone() const	
 {
 	return new SimpleRigidBody( *this );
-}
-
-bool SimpleRigidBody::IsSubscribingCollisions() const
-{ // Assumption
-	return this->subscribeCollision;
 }
 
 bool SimpleRigidBody::IsAffectedByGravity() const
@@ -92,7 +87,19 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 	this->current.Update_LeapFrog( timeStepLength );
 
 	// compare previous and new state and return result
-	return this->current == this->previous ? resting : altered;
+	return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
+}
+
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
+{
+	if( functionPointer )
+	{
+		this->collisionAction = functionPointer;
+	}
+	else
+	{
+		this->collisionAction = Default::EventAction_Collision;
+	}
 }
 
 void SimpleRigidBody::SetGravity( bool ignore)
@@ -104,11 +111,6 @@ void SimpleRigidBody::SetGravity( bool ignore)
 void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
-}
-
-void SimpleRigidBody::SetSubscription( bool subscribeCollision )
-{
-	this->subscribeCollision = subscribeCollision;
 }
 
 void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
