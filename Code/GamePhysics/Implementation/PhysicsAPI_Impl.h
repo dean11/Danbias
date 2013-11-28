@@ -17,8 +17,7 @@ namespace Oyster
 
 			void SetDeltaTime( float deltaTime );
 			void SetGravityConstant( float g );
-			void SetAction( EventAction_Collision functionPointer );
-			void SetAction( EventAction_Destruction functionPointer );
+			void SetSubscription( EventAction_Destruction functionPointer );
 
 			void Update();
 
@@ -45,11 +44,15 @@ namespace Oyster
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const;
 		private:
 			::Oyster::Math::Float gravityConstant, updateFrameLength;
-			EventAction_Collision collisionAction;
 			EventAction_Destruction destructionAction;
 		};
-	}
 
+		namespace Default
+		{
+			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
+			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+		}
+	}
 }
 
 #endif
