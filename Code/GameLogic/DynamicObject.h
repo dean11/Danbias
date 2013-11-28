@@ -1,3 +1,8 @@
+//////////////////////////////////////////////////
+//Created by Erik and Linda of the GameLogic team
+//////////////////////////////////////////////////
+
+
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 
@@ -13,6 +18,8 @@ namespace GameLogic
 	public:
 		DynamicObject(void);
 		~DynamicObject(void);
+
+		void Update();
 
 	};
 

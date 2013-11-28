@@ -13,16 +13,6 @@ Player::Player(void)
 	:Object()
 {
 	life = 100;
-	
-	Oyster::Physics::ICustomBody* temp = rigidBody = API::Instance().CreateSimpleRigidBody().Release();
-	
-	rigidBody->SetCenter(Oyster::Math::Float3(50,0,0));
-	rigidBody->SetMass_KeepMomentum(30);
-	rigidBody->SetSize(Oyster::Math::Float3(2,2,2));
-	rigidBody->SetSubscription(true);
-	rigidBody->SetMomentOfInertiaTensor_KeepMomentum(Oyster::Math::Float4x4( Oyster::Physics::MomentOfInertia::CreateCuboidMatrix(30, 2, 2, 2)));
-	
-	//API::Instance().AddObject(temp);
 }
 
 

@@ -1,5 +1,7 @@
 #include "Object.h"
 #include "OysterMath.h"
+#include "DllInterfaces\GFXAPI.h"
+#include "CollisionManager.h"
 
 
 using namespace GameLogic;
@@ -8,60 +10,40 @@ using namespace Oyster::Math;
 using namespace Oyster::Graphics::Model;
 
 using namespace Utility::DynamicMemory;
+using namespace Oyster::Physics;
 
 Object::Object(void)
 {
+
 	model = new Model();
 	model = Oyster::Graphics::API::CreateModel(L"bth.obj");
 
-	/*struct float4
-	{
-		float x,y,z,w;
-	};
+	ICustomBody* temp = rigidBody = API::Instance().CreateSimpleRigidBody().Release();
 
-	float4 mesh[] =
-	{
-		{-1.0f,1.0f,0.0f,1.0f},
-		{1.0f,1.0f,0.0f,1.0f},
-		{1.0f,-1.0f,0.0f,1.0f},
-	};
+	rigidBody->SetCenter(Float3(50,0,0));
+	rigidBody->SetMass_KeepMomentum(30);
+	rigidBody->SetSize(Float3(2,2,2));
+	rigidBody->SetSubscription(true);
+	rigidBody->SetMomentOfInertiaTensor_KeepMomentum(Float4x4(MomentOfInertia::CreateCuboidMatrix(30, 2, 2, 2)));
 
-	Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
-	desc.ElementSize= sizeof(float4);
-	desc.NumElements = 3;
-	desc.InitData=mesh;
-	desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
-	desc.Usage = Oyster::Graphics::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
 
-	Oyster::Graphics::Buffer *b = new Oyster::Graphics::Buffer();
-	b->Init(desc);
+	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);
 
-	ModelInfo* modelInfo = new ModelInfo();
-	modelInfo->Vertices = *b;
-
-	modelInfo->Indexed = false;
-	modelInfo->VertexCount = 3;
-	
-	
-	Float4x4 matrix = Float4x4::identity;
-
-	model->World = &matrix;
-	model->info = modelInfo;
-	model->Visible = true;*/
 }
 
 
 Object::~Object(void)
 {
-	//SAFE_DELETE(model->info);
 
-	 Oyster::Graphics::API::DeleteModel(model);
+	Oyster::Graphics::API::DeleteModel(model);
+
 }
-Model* Object::Render()
+
+void Object::Render()
 {
-	//model->info->Vertices.Apply(0);
 	this->rigidBody->GetOrientation(model->WorldMatrix);
-	return model;
+	Oyster::Graphics::API::RenderScene(model, 1);
+
 }
 
 Object::OBJECT_TYPE Object::GetType()

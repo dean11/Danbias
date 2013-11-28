@@ -1,3 +1,8 @@
+//////////////////////////////////////////////////
+//Created by Erik and Linda of the GameLogic team
+//////////////////////////////////////////////////
+
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
@@ -6,6 +11,7 @@
 
 #include "Model/Model.h"
 #include "Utilities.h"
+
 
 
 namespace GameLogic
@@ -22,7 +28,7 @@ namespace GameLogic
 			OBJECT_TYPE_BOX,
 		};
 		
-		Oyster::Graphics::Model::Model* Render();
+		void Render();
 
 		OBJECT_TYPE GetType();
 
@@ -33,8 +39,9 @@ namespace GameLogic
 		//either a model pointer or an ID to an arraypos filled with models that are to be rendered
 		//rigidBody
 
-		Oyster::Physics::ICustomBody* rigidBody;
-		Oyster::Graphics::Model::Model* model;
+		Oyster::Physics::ICustomBody *rigidBody;
+		Oyster::Graphics::Model::Model *model;
+
 	};
 
 }
