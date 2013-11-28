@@ -1,4 +1,4 @@
-#include "Debug.hlsli"
+#include "Debug.hlsl"
 
 Texture2D tex : register(t0);
 SamplerState S1 : register(s0);

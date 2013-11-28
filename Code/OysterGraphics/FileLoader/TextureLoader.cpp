@@ -14,9 +14,9 @@ HRESULT CreateWICTextureFromFileEx( ID3D11Device* d3dDevice,
 											 ID3D11Resource** texture,
 											 ID3D11ShaderResourceView** textureView );
 
-const Oyster::Resource::CustomData& Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[])
+Oyster::Resource::CustomData& Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[])
 {
-	ID3D11ShaderResourceView* srv;
+	ID3D11ShaderResourceView* srv = NULL;
 	Oyster::Resource::CustomData Ret;
 	HRESULT hr = CreateWICTextureFromFileEx(Core::device,Core::deviceContext,filename,0,D3D11_USAGE_DEFAULT,D3D11_BIND_SHADER_RESOURCE,0,0,false,NULL,&srv);
 	if(hr!=S_OK)
@@ -25,7 +25,7 @@ const Oyster::Resource::CustomData& Oyster::Graphics::Loading::LoadTexture(const
 	}
 	else
 	{
-		Ret.loadedData = srv;
+		Ret.loadedData = (void*)srv;
 		Ret.resourceUnloadFnc = Loading::UnloadTexture;
 	}
 

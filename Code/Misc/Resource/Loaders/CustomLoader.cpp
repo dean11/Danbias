@@ -12,16 +12,16 @@ using namespace Oyster::Resource;
 
 OResource*	OResource::CustomLoader(const wchar_t filename[], CustomLoadFunction fnc)
 {
-	const CustomData &data = fnc(filename);
+	CustomData &data = fnc(filename);
 
 	if(!data.loadedData)		return 0;
 	if(!data.resourceUnloadFnc)	return 0;
-
-	OResource *resource = new OResource((OHRESOURCE)data.loadedData, ResourceType_UNKNOWN, 0, 0, filename);
+	OHRESOURCE n = (OHRESOURCE)data.loadedData;
+	OResource *resource = new OResource(n, ResourceType_UNKNOWN, 0, 0, filename);
 	
 	resource->customData = new CustomResourceData();
 	resource->customData->unloadingFunction = data.resourceUnloadFnc;
-	resource->resourceData = (OHRESOURCE)data.loadedData;
+	//resource->resourceData = (OHRESOURCE)data.loadedData;
 	resource->customData->loadingFunction = fnc;
 
 	return resource;

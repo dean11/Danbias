@@ -65,9 +65,9 @@ namespace Oyster
 				/** @todo Create DX States */  
 
 				D3D11_RASTERIZER_DESC rdesc;
-				rdesc.CullMode = D3D11_CULL_NONE;
+				rdesc.CullMode = D3D11_CULL_BACK;
 				rdesc.FillMode = D3D11_FILL_SOLID;
-				rdesc.FrontCounterClockwise = false;
+				rdesc.FrontCounterClockwise = true;
 				rdesc.DepthBias = 0;
 				rdesc.DepthBiasClamp = 0;
 				rdesc.DepthClipEnable = true;
@@ -82,18 +82,40 @@ namespace Oyster
 				D3D11_SAMPLER_DESC sdesc;
 				sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
 				/// @todo parata med fredrik om wraping
-				sdesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR_ONCE;
-				sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-				sdesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+				sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+				sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+				sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 				sdesc.MipLODBias = 0;
 				sdesc.MaxAnisotropy =4;
-				sdesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-				*sdesc.BorderColor = *Oyster::Math::Float4(0,0,0,1).element;
+				sdesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+				*sdesc.BorderColor = *Oyster::Math::Float4(1,1,1,1).element;
 				sdesc.MinLOD = 0;
 				sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 				ID3D11SamplerState** ss = new ID3D11SamplerState*[1];
 				Oyster::Graphics::Core::device->CreateSamplerState(&sdesc,ss);
+
+				D3D11_DEPTH_STENCIL_DESC ddesc;
+				ddesc.DepthEnable = true;
+				ddesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+				ddesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+				ddesc.StencilEnable = true;
+				ddesc.StencilReadMask = 0xFF;
+				ddesc.StencilWriteMask = 0xFF;
+
+				ddesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+				ddesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+				ddesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+				ddesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+				ddesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+				ddesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+				ddesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+				ddesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+				ID3D11DepthStencilState* dsState;
+				Core::device->CreateDepthStencilState(&ddesc,&dsState);
 
 #pragma endregion
 
@@ -103,8 +125,8 @@ namespace Oyster
 
 #pragma region Create Shader Effects
 				/** @todo Create ShaderEffects */
-				obj.Shaders.Pixel = GetShader::Pixel(PixelRed);
-				obj.Shaders.Vertex = GetShader::Vertex(VertexDebug);
+				obj.Shaders.Pixel = GetShader::Pixel(PixelTexture);
+				obj.Shaders.Vertex = GetShader::Vertex(VertexTransformDebug);
 
 				D3D11_INPUT_ELEMENT_DESC indesc[] =
 				{
@@ -120,6 +142,7 @@ namespace Oyster
 				obj.RenderStates.Rasterizer = rs;
 				obj.RenderStates.SampleCount = 1;
 				obj.RenderStates.SampleState = ss;
+				obj.RenderStates.DepthStencil = dsState;
 
 				ModelData.Apply(1);
 #pragma endregion

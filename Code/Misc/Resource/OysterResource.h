@@ -16,7 +16,7 @@ namespace Oyster
 		/** Typedef on a fuction required for custom unloading */
 		typedef void(*CustomUnloadFunction)(void* loadedData);
 		/** Typedef on a fuction required for custom loading */
-		typedef const CustomData&(*CustomLoadFunction)(const wchar_t filename[]);
+		typedef CustomData&(*CustomLoadFunction)(const wchar_t filename[]);
 
 		/** An enum class representing all avalible resources that is supported. */
 		enum ResourceType

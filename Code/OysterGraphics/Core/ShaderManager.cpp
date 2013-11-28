@@ -144,7 +144,7 @@ namespace Oyster
 
 				ID3D11PixelShader* pixel;
 
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"ps_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
+				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,ShaderFunction,"ps_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
 				{
 					std::string fel = (char*)Error->GetBufferPointer();
 					Error->Release();
@@ -171,7 +171,7 @@ namespace Oyster
 
 				ID3D11GeometryShader* geometry;
 
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"gs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
+				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,ShaderFunction,"gs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
 				{
 					std::string fel = (char*)Error->GetBufferPointer();
 					Error->Release();
@@ -198,7 +198,7 @@ namespace Oyster
 
 				ID3D11VertexShader* vertex;
 
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,NULL,ShaderFunction,"vs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
+				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,ShaderFunction,"vs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
 				{
 					std::string fel = (char*)Error->GetBufferPointer();
 					Error->Release();
@@ -344,6 +344,7 @@ namespace Oyster
 				se.CBuffers.Pixel[i]->Apply(i);
 			Core::deviceContext->RSSetState(se.RenderStates.Rasterizer);
 			Core::deviceContext->PSSetSamplers(0,se.RenderStates.SampleCount,se.RenderStates.SampleState);
+			Core::deviceContext->OMSetDepthStencilState(se.RenderStates.DepthStencil,0);
 			float test[4] = {0};
 			Core::deviceContext->OMSetBlendState(se.RenderStates.BlendState,test,-1);
 		}

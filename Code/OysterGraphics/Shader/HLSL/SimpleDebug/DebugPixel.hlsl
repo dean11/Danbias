@@ -1,4 +1,4 @@
-#include "Debug.hlsli"
+//#include "Debug.hlsli"
 
 float4 main() : SV_TARGET
 {

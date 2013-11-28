@@ -175,7 +175,7 @@ namespace Oyster
 			D3D11_TEXTURE2D_DESC desc;
 			desc.MipLevels=1;
 			desc.ArraySize=1;
-			desc.Format = DXGI_FORMAT_D32_FLOAT;
+			desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 			desc.Usage = D3D11_USAGE_DEFAULT;
 			desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 			desc.CPUAccessFlags=0;

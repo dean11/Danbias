@@ -53,7 +53,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	params.lpCmdLine="";
 	params.lpCmdShow="";
 	params.lpEnvAddress="";
-	LoadModule("OysterGraphics_x86D.dll",&params);
 
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
@@ -184,24 +183,23 @@ HRESULT InitDirect3D()
 #pragma endregion
 	
 #pragma region Obj
-	m =  Oyster::Graphics::API::CreateModel(L"bth.obj");
-	m->WorldMatrix *= 0.1f;
-	m->WorldMatrix.m44 = 1;
+	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy.obj");
 #pragma endregion
 	
 
-	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,100);
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 
-	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,-1.5f,10.4f));
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,5.4f));
 	V = Oyster::Math3D::InverseOrientationMatrix(V);
 
 
 	return S_OK;
 }
-
+float angle = 0;
 HRESULT Update(float deltaTime)
 {
-	m->WorldMatrix.m14 += 0.0001f;
+	angle += Oyster::Math::pi/30000;
+	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
 	return S_OK;
 }
 

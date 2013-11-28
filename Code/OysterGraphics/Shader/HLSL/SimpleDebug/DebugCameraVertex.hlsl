@@ -1,5 +1,4 @@
-#include "Debug.hlsli"
-
+#include "Debug.hlsl"
 
 VertexOut main( VertexIn input )
 {
@@ -9,5 +8,6 @@ VertexOut main( VertexIn input )
 	outp.Pos = mul(VP, outp.Wpos );
 	outp.UV = input.UV;
 	outp.Normal = input.normal;
+	
 	return outp;
 }

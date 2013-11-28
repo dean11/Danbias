@@ -119,9 +119,10 @@ Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
 	modelInfo->Vertices = b;
 	
 
-	Oyster::Resource::OHRESOURCE diffuse = Oyster::Resource::OysterResource::LoadResource(L"bth.png",Oyster::Graphics::Loading::LoadTexture);
+	Oyster::Resource::OHRESOURCE diffuse = Oyster::Resource::OysterResource::LoadResource(L"orca_tex.jpg",Oyster::Graphics::Loading::LoadTexture);
 	//Oyster::Resource::OysterResource::LoadResource(L"Normal.png",(Oyster::Resource::CustomLoadFunction)Oyster::Graphics::Loading::LoadTexture);
-	modelInfo->Material.push_back((ID3D11ShaderResourceView*)diffuse);
+	void* v = (void*)diffuse;
+	modelInfo->Material.push_back((ID3D11ShaderResourceView*)v);
 
 	return modelInfo;
 }
