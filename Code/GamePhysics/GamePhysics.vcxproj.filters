@@ -51,7 +51,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Implementation\Octree.cpp">
-      <Filter>Header Files\Implementation</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

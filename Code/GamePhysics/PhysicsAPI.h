@@ -64,7 +64,7 @@ namespace Oyster
 			/********************************************************
 			 * Sets the time length of each physics update frame.
 			 ********************************************************/
-			virtual void SetDeltaTime( float seconds ) = 0;
+			virtual void SetFrameTimeLength( float seconds ) = 0;
 			
 			/********************************************************
 			 * Sets the Gravityconstant in the physics that will be

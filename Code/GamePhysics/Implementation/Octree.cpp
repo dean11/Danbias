@@ -2,6 +2,9 @@
 
 using namespace Oyster;
 using namespace	Physics;
+using namespace ::Utility::DynamicMemory;
+
+const unsigned int Octree::invalid_ref = ::Utility::Value::numeric_limits<unsigned int>::max();
 
 Octree::Octree(unsigned int bufferSize, unsigned char numLayers, Math::Float3 worldSize)
 {
@@ -26,7 +29,7 @@ Octree& Octree::operator=(const Octree& orig)
 	return *this;
 }
 
-void Octree::AddObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef)
+void Octree::AddObject(UniquePointer< ICustomBody > customBodyRef)
 {
 	Data data;
 	//Data* tempPtr = this->worldNode.dataPtr;
@@ -54,15 +57,15 @@ void Octree::AddObject(Utility::DynamicMemory::UniquePointer< ICustomBody > cust
 	}*/
 }
 
-void Octree::MoveToUpdateQueue(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef)
+void Octree::MoveToUpdateQueue(UniquePointer< ICustomBody > customBodyRef)
 {
 	/*this->leafData[this->mapReferences[customBodyRef]].queueRef = this->updateQueue.size();
 	this->updateQueue.push_back(&this->leafData[this->mapReferences[customBodyRef]]);*/
 }
 
-void Octree::DestroyObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef)
+void Octree::DestroyObject(UniquePointer< ICustomBody > customBodyRef)
 {
-	std::map<ICustomBody*, unsigned int>::iterator it = this->mapReferences.find(customBodyRef);
+	std::map<const ICustomBody*, unsigned int>::iterator it = this->mapReferences.find(customBodyRef);
 
 	this->mapReferences.erase(it);
 
@@ -116,4 +119,53 @@ void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
 ICustomBody* Octree::GetCustomBody(const unsigned int tempRef)
 {
 	return this->leafData[tempRef].customBodyRef;
+}
+
+UniquePointer<ICustomBody> Octree::Extract( const ICustomBody* objRef )
+{ // Dan Andersson
+	auto iter = this->mapReferences.find( objRef );
+	if( iter != this->mapReferences.end() )
+	{
+		return this->Extract( iter->second );
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+UniquePointer<ICustomBody> Octree::Extract( unsigned int tempRef )
+{
+	if( tempRef != Octree::invalid_ref )
+	{
+		//! @todo TODO: implement stub
+		return NULL;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+unsigned int Octree::GetTemporaryReferenceOf( const ICustomBody* objRef ) const
+{ // Dan Andersson
+	auto iter = this->mapReferences.find( objRef );
+	if( iter != this->mapReferences.end() )
+	{
+		return iter->second;
+	}
+	else
+	{
+		return Octree::invalid_ref;
+	}
+}
+
+void Octree::SetAsAltered( unsigned int tempRef )
+{
+	//! @todo TODO: implement stub
+}
+
+void Octree::EvaluatePosition( unsigned int tempRef )
+{
+	//! @todo TODO: implement stub
 }
