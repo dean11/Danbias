@@ -18,7 +18,6 @@ void CollisionManager::ColisionEvent(Oyster::Physics::ICustomBody &obj1, Oyster:
 	Object *realObj1 = refManager->GetMap(obj1);
 	Object *realObj2 = refManager->GetMap(obj2);
 	
-	
 	switch(realObj1->GetType())
 	{
 	case Object::OBJECT_TYPE_PLAYER:
@@ -27,8 +26,6 @@ void CollisionManager::ColisionEvent(Oyster::Physics::ICustomBody &obj1, Oyster:
 		{
 			PlayerVBox(*((Player*)realObj1),*((DynamicObject*)realObj2));
 		}
-
-
 
 		break;
 	case Object::OBJECT_TYPE_BOX:
