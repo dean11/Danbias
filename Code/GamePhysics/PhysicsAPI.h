@@ -415,7 +415,6 @@ namespace Oyster
 			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;
-			::Oyster::Math::Float4x4 inertiaTensor;
 			ICustomBody::EventAction_Collision subscription;
 			bool ignoreGravity;
 
@@ -425,7 +424,6 @@ namespace Oyster
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->radius = 0.5f;
 				this->mass = 10.0f;
-				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
 				this->subscription = NULL;
 				this->ignoreGravity = false;
 			}

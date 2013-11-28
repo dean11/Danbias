@@ -21,7 +21,7 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 {
 	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition, Float3(2.0f * desc.radius) ),
 							 desc.mass,
-							 desc.inertiaTensor );
+							 MomentOfInertia::CreateSphereMatrix( desc.mass, desc.radius ) );
 	this->gravityNormal = Float3::null;
 
 	if( desc.subscription )
