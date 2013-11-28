@@ -45,6 +45,9 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE API
 		{
 		public:
+			struct SimpleBodyDescription;
+			struct SphericalBodyDescription;
+
 			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
 
 			/** Gets the Physics instance. */
@@ -207,10 +210,18 @@ namespace Oyster
 
 			/********************************************************
 			 * Creates a new dynamically allocated object that can be used as a component for more complex ICustomBodies.
+			 * @param desc: @see API::SimpleBodyDescription
 			 * @return A pointer along with the responsibility to delete.
 			 ********************************************************/
-			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const = 0;
-		
+			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SimpleBodyDescription &desc ) const = 0;
+
+			/********************************************************
+			 * Creates a new dynamically allocated object that can be used as a component for more complex ICustomBodies.
+			 * @param desc: @see API::SphericalBodyDescription
+			 * @return A pointer along with the responsibility to delete.
+			 ********************************************************/
+			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const = 0;
+
 		protected:
 			virtual ~API() {}
 		};
@@ -374,6 +385,50 @@ namespace Oyster
 			 * Use API::SetSize(...)
 			 ********************************************************/
 			virtual void SetSize( const ::Oyster::Math::Float3 &size ) = 0;
+		};
+
+		struct API::SimpleBodyDescription
+		{
+			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 centerPosition;
+			::Oyster::Math::Float3 size;
+			::Oyster::Math::Float mass;
+			::Oyster::Math::Float4x4 inertiaTensor;
+			ICustomBody::EventAction_Collision subscription;
+			bool ignoreGravity;
+
+			SimpleBodyDescription()
+			{
+				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->centerPosition = ::Oyster::Math::Float3::null;
+				this->size = ::Oyster::Math::Float3( 1.0f );
+				this->mass = 12.0f;
+				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
+				this->subscription = NULL;
+				this->ignoreGravity = false;
+			}
+		};
+
+		struct API::SphericalBodyDescription
+		{
+			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 centerPosition;
+			::Oyster::Math::Float radius;
+			::Oyster::Math::Float mass;
+			::Oyster::Math::Float4x4 inertiaTensor;
+			ICustomBody::EventAction_Collision subscription;
+			bool ignoreGravity;
+
+			SphericalBodyDescription()
+			{
+				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->centerPosition = ::Oyster::Math::Float3::null;
+				this->radius = 0.5f;
+				this->mass = 10.0f;
+				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
+				this->subscription = NULL;
+				this->ignoreGravity = false;
+			}
 		};
 	}
 }

@@ -10,6 +10,7 @@ namespace Oyster { namespace Physics
 	{
 	public:
 		SimpleRigidBody();
+		SimpleRigidBody( const API::SimpleBodyDescription &desc );
 		virtual ~SimpleRigidBody();
 
 		::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const;
@@ -41,7 +42,7 @@ namespace Oyster { namespace Physics
 		void SetSize( const ::Oyster::Math::Float3 &size );
 
 	private:
-		::Oyster::Physics3D::RigidBody previous, current;
+		::Oyster::Physics3D::RigidBody rigid;
 		::Oyster::Math::Float3 gravityNormal;
 		EventAction_Collision collisionAction;
 		bool ignoreGravity;
