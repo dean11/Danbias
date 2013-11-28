@@ -15,10 +15,10 @@ namespace Oyster
 		{
 			enum PackageType
 			{
-				package_type_header,
-				package_type_test,
-				package_type_input,
-				package_type_update_position
+				PackageType_header,
+				PackageType_test,
+				PackageType_input,
+				PackageType_update_position
 			};
 
 			struct ProtocolHeader
