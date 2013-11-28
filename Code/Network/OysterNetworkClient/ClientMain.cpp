@@ -73,9 +73,9 @@ void chat(Client &client)
 		
 		switch(set->type)
 		{
-		case package_type_header:
+		case PackageType_header:
 			break;
-		case package_type_test:
+		case PackageType_test:
 			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
 			for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
 			{
