@@ -56,6 +56,12 @@ namespace Utility
 			//! If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
 			operator bool () const;
 
+			//! @return true if this ownedInstance matches with stray
+			bool operator == ( Type *stray ) const;
+
+			//! @return false if this ownedInstance matches with stray
+			bool operator != ( Type *stray ) const;
+
 			//! This UniquePointer drops all claims of ownership/responsibility and returns the dynamic instance. Now it is your responsibility to delete.
 			Type* Release();
 			
@@ -95,6 +101,12 @@ namespace Utility
 
 			//! If true, this UniqueArray have a current ownership/responsibility of a dynamic instance.
 			operator bool () const;
+
+			//! @return true if this ownedInstance matches with stray
+			bool operator == ( Type *stray ) const;
+
+			//! @return false if this ownedInstance matches with stray
+			bool operator != ( Type *stray ) const;
 
 			//! This UniqueArray drops all claims of ownership/responsibility and returns the dynamic array. Now it is your responsibility to delete.
 			Type* Release();

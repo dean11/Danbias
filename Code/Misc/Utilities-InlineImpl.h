@@ -91,6 +91,18 @@ namespace Utility
 		}
 
 		template<typename Type>
+		bool UniquePointer<Type>::operator == ( Type *stray ) const
+		{
+			return this->ownedInstance == stray;
+		}
+
+		template<typename Type>
+		bool UniquePointer<Type>::operator != ( Type *stray ) const
+		{
+			return this->ownedInstance != stray;
+		}
+
+		template<typename Type>
 		Type* UniquePointer<Type>::Release()
 		{
 			Type *copy = this->ownedInstance;
@@ -147,6 +159,18 @@ namespace Utility
 		UniqueArray<Type>::operator bool () const
 		{
 			return this->ownedArray != NULL;
+		}
+
+		template<typename Type>
+		bool UniqueArray<Type>::operator == ( Type *stray ) const
+		{
+			return this->ownedArray == stray;
+		}
+
+		template<typename Type>
+		bool UniqueArray<Type>::operator != ( Type *stray ) const
+		{
+			return this->ownedArray != stray;
 		}
 
 		template<typename Type>
