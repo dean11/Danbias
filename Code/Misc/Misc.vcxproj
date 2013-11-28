@@ -156,8 +156,10 @@
     <ClCompile Include="WinTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IQueue.h" />
     <ClInclude Include="Resource\OysterResource.h" />
     <ClInclude Include="Resource\OResource.h" />
+    <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="Thread\IThreadObject.h" />
     <ClInclude Include="Thread\OysterMutex.h" />
     <ClInclude Include="Thread\OysterThread.h" />
