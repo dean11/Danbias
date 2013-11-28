@@ -28,7 +28,7 @@ void Translator::Pack( ProtocolHeader &header, OysterByte& bytes )
 	}
 }
 
-ProtocolSet* Translator::Unpack(ProtocolSet* set, OysterByte& bytes )
+void Translator::Unpack(ProtocolSet* set, OysterByte& bytes )
 {
 	ProtocolHeader *header = new ProtocolHeader();
 	MessageHeader *message = new MessageHeader();
@@ -60,5 +60,5 @@ ProtocolSet* Translator::Unpack(ProtocolSet* set, OysterByte& bytes )
 	}
 	delete header;
 
-	return set;
+	//return set;
 }

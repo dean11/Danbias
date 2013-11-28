@@ -149,14 +149,6 @@
     <ProjectReference Include="..\..\Misc\Misc.vcxproj">
       <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\OysterMath\OysterMath.vcxproj">
-      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
-      <Private>true</Private>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
@@ -173,6 +165,7 @@
     <ClInclude Include="Connection.h" />
     <ClInclude Include="IConnection.h" />
     <ClInclude Include="IListener.h" />
+    <ClInclude Include="IPostBox.h" />
     <ClInclude Include="Listener.h" />
     <ClInclude Include="Messages\MessageHeader.h" />
     <ClInclude Include="Messages\MessagesInclude.h" />
@@ -180,6 +173,7 @@
     <ClInclude Include="OysterByte.h" />
     <ClInclude Include="Packing.h" />
     <ClInclude Include="ITranslate.h" />
+    <ClInclude Include="PostBox.h" />
     <ClInclude Include="Protocols.h" />
     <ClInclude Include="Translator.h" />
     <ClInclude Include="WinsockFunctions.h" />

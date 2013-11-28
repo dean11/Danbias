@@ -9,7 +9,7 @@
 #include "../NetworkDependencies/Connection.h"
 #include "../../Misc/Thread/OysterThread.h"
 #include "../../Misc/Thread/OysterMutex.h"
-
+#include "IPostBox.h"
 
 namespace Oyster
 {
@@ -24,8 +24,10 @@ namespace Oyster
 				~Listener();
 
 				bool Init(unsigned int port);
+				void Shutdown();
 				int Accept();
 				int GetNewClient();
+				void SetPostBox(IPostBox<int>* postBox);
 
 				//Thread functions
 				bool DoWork();
@@ -37,11 +39,11 @@ namespace Oyster
 
 			private:
 				::Oyster::Network::Connection* connection;
-				int tempSocket;
-				bool newSocket;
 
 				::Oyster::Thread::OysterThread thread;
 				OysterMutex mutex;
+
+				IPostBox<int>* postBox;
 
 			};
 		}

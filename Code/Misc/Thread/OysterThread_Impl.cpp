@@ -62,7 +62,7 @@ using namespace Utility::DynamicMemory::SmartPointer;
 		~PrivateData()
 		{
 			//@todo TODO: Make detatch avalible.
-			//this->threadData->workerThread->detach();
+			this->threadData->workerThread->detach();
 
 			this->threadData->owner = 0;
 

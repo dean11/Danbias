@@ -4,8 +4,6 @@ using namespace Oyster::Network::Server;
 
 Listener::Listener()
 {
-	newSocket = false;
-	tempSocket = 0;
 }
 
 Listener::~Listener()
@@ -27,19 +25,16 @@ bool Listener::Init(unsigned int port)
 	return true;
 }
 
-int Listener::GetNewClient()
+void Listener::Shutdown()
+{
+	thread.Terminate();
+}
+
+void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
 {
 	mutex.LockMutex();
-	int temp = -1;
-
-	if(newSocket)
-	{
-		temp = tempSocket;
-		newSocket = false;
-	}
+	this->postBox = postBox;
 	mutex.UnlockMutex();
-
-	return temp;
 }
 
 int Listener::Accept()
@@ -48,8 +43,7 @@ int Listener::Accept()
 	clientSocket = connection->Listen();
 
 	mutex.LockMutex();
-	tempSocket = clientSocket;
-	newSocket = true;
+	postBox->PostMessage(clientSocket);
 	mutex.UnlockMutex();
 
 	return clientSocket;

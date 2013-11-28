@@ -25,5 +25,7 @@
     <ClInclude Include="IListener.h" />
     <ClInclude Include="WinsockFunctions.h" />
     <ClInclude Include="OysterByte.h" />
+    <ClInclude Include="IPostBox.h" />
+    <ClInclude Include="PostBox.h" />
   </ItemGroup>
 </Project>

@@ -17,15 +17,13 @@ namespace Oyster
 		class Translator : public ITranslate
 		{
 		public:
-			Translator () { /*msg = new unsigned char[1601];*/ };
-			~Translator() { /*if(msg != NULL) { delete [] this->msg; }*/ };
+			Translator () {  };
+			~Translator() {  };
 
 			void Pack (Protocols::ProtocolHeader &header, OysterByte& bytes );
-			Protocols::ProtocolSet* Unpack (Protocols::ProtocolSet* set, OysterByte& bytes );
+			void Unpack (Protocols::ProtocolSet* set, OysterByte& bytes );
 
 		private:
-			//unsigned char* msg;
-			//OysterByte bytes;
 
 		};
 	}

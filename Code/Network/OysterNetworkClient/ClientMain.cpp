@@ -88,7 +88,7 @@ void chat(Client &client)
 		set->Release();
 		msgRecv.Clear(1000);
 
-		std::getline(std::cin, msgSend);
+		/*std::getline(std::cin, msgSend);
 
 
 	
@@ -111,7 +111,7 @@ void chat(Client &client)
 			chatDone = true;
 		}
 
-		cin.clear();
+		cin.clear();*/
 
 	}
 

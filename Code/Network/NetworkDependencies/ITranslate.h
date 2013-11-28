@@ -15,7 +15,7 @@ namespace Oyster
 
 		public:
 			virtual void Pack (Protocols::ProtocolHeader &header, OysterByte& bytes) = 0;
-			virtual Protocols::ProtocolSet* Unpack (Protocols::ProtocolSet* set, OysterByte& bytes ) = 0;
+			virtual void Unpack (Protocols::ProtocolSet* set, OysterByte& bytes ) = 0;
 
 		};
 	}
