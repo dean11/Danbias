@@ -31,7 +31,5 @@ void Game::Update(keyInput keyPressed)
 }
 void Game::Render()
 {
-	Oyster::Graphics::Model::Model* model_Arr;
-	model_Arr = player->Render();
-	Oyster::Graphics::API::RenderScene(model_Arr, 1);
+	player->Render();
 }

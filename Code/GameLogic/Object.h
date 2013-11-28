@@ -28,7 +28,7 @@ namespace GameLogic
 			OBJECT_TYPE_BOX,
 		};
 		
-		Oyster::Graphics::Model::Model* Render();
+		void Render();
 
 		OBJECT_TYPE GetType();
 
