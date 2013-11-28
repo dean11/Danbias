@@ -29,7 +29,9 @@ namespace Oyster
 
 			struct OctreeNode
 			{
-
+				OctreeNode* children[8];
+				Data* dataPtr;
+				Collision3D::BoxAxisAligned container;
 			};
 
 			Octree(unsigned int bufferSize, unsigned char numLayers, Math::Float3 worldSize);
@@ -39,16 +41,16 @@ namespace Oyster
 
 			void MoveToUpdateQueue(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			void Update();
-
 			void DestroyObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			void Sample(Collision3D::ICollideable& collideable);
+			std::vector<ICustomBody*> Sample(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 		private:
 			std::vector < Data > leafData;
+			std::vector < Data* > updateQueue;
 
 			std::map< ICustomBody*, unsigned int > mapReferences;
 
+			OctreeNode worldNode;
 		};
 	}
 

@@ -30,6 +30,9 @@
     <ClInclude Include="Implementation\SimpleRigidBody.h">
       <Filter>Header Files\Implementation</Filter>
     </ClInclude>
+    <ClInclude Include="Implementation\Octree.h">
+      <Filter>Header Files\Implementation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">
@@ -40,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="DLLMain.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Octree.cpp">
+      <Filter>Header Files\Implementation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
