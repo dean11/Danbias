@@ -1,3 +1,8 @@
+//////////////////////////////////////////////////
+//Created by Erik and Linda of the GameLogic team
+//////////////////////////////////////////////////
+
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
@@ -26,6 +31,7 @@ namespace GameLogic
 		};
 		
 		void Render();
+		void Update();
 
 		OBJECT_TYPE GetType();
 
@@ -37,7 +43,7 @@ namespace GameLogic
 		//rigidBody
 
 		Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> rigidBody;
-		Utility::DynamicMemory::UniquePointer<Oyster::Graphics::Render::Model> model;
+		Utility::DynamicMemory::UniquePointer<Oyster::Graphics::Model::Model> model;
 	};
 
 }

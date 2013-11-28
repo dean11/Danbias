@@ -14,3 +14,8 @@ DynamicObject::DynamicObject(void)
 DynamicObject::~DynamicObject(void)
 {
 }
+
+void DynamicObject::Update()
+{
+	//updatera objectet
+}
