@@ -15,6 +15,8 @@ namespace Oyster
 		class Octree
 		{
 		public:
+			typedef void(*VistorAction)(Octree&, unsigned int, unsigned int);
+
 			struct Data
 			{
 				Data* prev;
@@ -22,7 +24,7 @@ namespace Oyster
 
 				Collision3D::Sphere container;
 
-				Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef;
+				::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef;
 
 				unsigned int queueRef;
 			};
@@ -34,16 +36,22 @@ namespace Oyster
 				Collision3D::BoxAxisAligned container;
 			};
 
-			Octree(unsigned int bufferSize, unsigned char numLayers, Math::Float3 worldSize);
+			Octree(unsigned int bufferSize = 0, unsigned char numLayers = 0, Math::Float3 worldSize = Math::Float3::null);
 			virtual ~Octree();
 
-			void AddObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			Octree& operator=(const Octree& orig);
 
-			void MoveToUpdateQueue(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			void AddObject(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			void DestroyObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			void MoveToUpdateQueue(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			std::vector<ICustomBody*> Sample(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			void DestroyObject(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+
+			std::vector<ICustomBody*> Sample(ICustomBody* customBodyRef);
+			void Visit(ICustomBody* customBodyRef, VistorAction hitAction );
+
+			ICustomBody* GetCustomBody(const unsigned int tempRef);
+
 		private:
 			std::vector < Data > leafData;
 			std::vector < Data* > updateQueue;
