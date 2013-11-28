@@ -74,13 +74,22 @@ namespace PrivateStatic
 	}
 }
 
-Frustrum::Frustrum() : ICollideable(Type_frustrum),
-	leftPlane(Float3::standard_unit_x, -0.5f), rightPlane(-Float3::standard_unit_x, 0.5f),
-	bottomPlane(Float3::standard_unit_y, -0.5f), topPlane(-Float3::standard_unit_y, 0.5f),
-	nearPlane(Float3::standard_unit_z, -0.5f), farPlane(-Float3::standard_unit_z, 0.5f) {}
+Frustrum::Frustrum() : ICollideable(Type_frustrum)
+{
+	this->leftPlane   = Plane( Float3::standard_unit_x, -0.5f );
+	this->rightPlane  = Plane(-Float3::standard_unit_x,  0.5f ),
+	this->bottomPlane = Plane( Float3::standard_unit_y, -0.5f );
+	this->topPlane	  = Plane(-Float3::standard_unit_y,  0.5f );
+	this->nearPlane	  = Plane( Float3::standard_unit_z, -0.5f );
+	this->farPlane	  = Plane(-Float3::standard_unit_z,  0.5f );
+}
 
 Frustrum::Frustrum( const Float4x4 &vp ) : ICollideable(Type_frustrum)
-{ PrivateStatic::VP_ToPlanes( this->leftPlane, this->rightPlane, this->bottomPlane, this->topPlane, this->nearPlane, this->farPlane, vp ); }
+{
+	PrivateStatic::VP_ToPlanes( this->leftPlane, this->rightPlane, this->bottomPlane,
+								this->topPlane,  this->nearPlane,  this->farPlane,
+								vp );
+}
 
 Frustrum::~Frustrum() {}
 
@@ -191,29 +200,29 @@ void Frustrum::WriteToByte( unsigned int &nextIndex, unsigned char targetMem[] )
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Frustrum::Clone( ) const
 { return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Frustrum(*this) ); }
 
-bool Frustrum::Intersects( const ICollideable *target ) const
+bool Frustrum::Intersects( const ICollideable &target ) const
 {
-	switch( target->type )
+	switch( target.type )
 	{
 	case Type_universe: return true;
-	case Type_point: return Utility::Intersect( *this, *(Point*)target );
-	case Type_ray: return Utility::Intersect( *this, *(Ray*)target, ((Ray*)target)->collisionDistance );
-	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)target );
-	case Type_plane: return Utility::Intersect( *this, *(Plane*)target );
+	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
+	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance );
+	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target );
+	case Type_plane: return Utility::Intersect( *this, *(Plane*)&target );
 	// case Type_triangle: return false; // TODO: 
-	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)target );
-	case Type_box: return Utility::Intersect( *this, *(Box*)target );
-	case Type_frustrum: return Utility::Intersect( *this, *(Frustrum*)target );
+	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)&target );
+	case Type_box: return Utility::Intersect( *this, *(Box*)&target );
+	case Type_frustrum: return Utility::Intersect( *this, *(Frustrum*)&target );
 	// case Type_line: return false; // TODO: 
 	default: return false;
 	}
 }
 
-bool Frustrum::Contains( const ICollideable *target ) const
+bool Frustrum::Contains( const ICollideable &target ) const
 {
-	switch( target->type )
+	switch( target.type )
 	{
-	case Type_point: return Utility::Intersect( *this, *(Point*)target );
+	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
 	// case Type_ray: return false; // TODO: 
 	// case Type_sphere: return false; // TODO: 
 	// case Type_plane: return false; // TODO: 

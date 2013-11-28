@@ -6,10 +6,14 @@
 // http://lolengine.net/blog/2011/3/4/fuck-you-microsoft-near-far-macros
 #include <windows.h>
 #include <D3D11.h>
-#include <d3dcompiler.h>
 
 #pragma comment(lib, "d3d11.lib")
+
+#ifdef _DEBUG
+#include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
+#endif
+
 
 
 #include <string>

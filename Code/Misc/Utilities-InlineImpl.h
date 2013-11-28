@@ -2,7 +2,6 @@
 // Inline and template implementations for
 // the Utility Collection of Miscellanious Handy Functions
 // © Dan Andersson 2013
-// © Dennis Andersen 2013 TODO: Is this correct?
 /////////////////////////////////////////////////////////////////////
 
 #ifndef UTILITIES_INLINE_IMPL_H
@@ -36,6 +35,14 @@ namespace Utility
 		UniquePointer<Type>::UniquePointer( Type *assignedInstance )
 		{
 			this->ownedInstance = assignedInstance;
+		}
+
+		template<typename Type>
+		UniquePointer<Type>::UniquePointer( const UniquePointer<Type> &donor )
+		{
+			this->ownedInstance = donor.ownedInstance;
+			donor.ownedInstance = NULL;
+
 		}
 
 		template<typename Type>
@@ -92,6 +99,18 @@ namespace Utility
 		}
 
 		template<typename Type>
+		bool UniquePointer<Type>::operator == ( Type *stray ) const
+		{
+			return this->ownedInstance == stray;
+		}
+
+		template<typename Type>
+		bool UniquePointer<Type>::operator != ( Type *stray ) const
+		{
+			return this->ownedInstance != stray;
+		}
+
+		template<typename Type>
 		Type* UniquePointer<Type>::Release()
 		{
 			Type *copy = this->ownedInstance;
@@ -109,6 +128,14 @@ namespace Utility
 		UniqueArray<Type>::UniqueArray( Type assignedArray[] )
 		{
 			this->ownedArray = assignedArray;
+		}
+
+		template<typename Type>
+		UniqueArray<Type>::UniqueArray( const UniqueArray<Type> &donor )
+		{
+			this->ownedArray = donor.ownedArray;
+			donor.ownedArray = NULL;
+
 		}
 
 		template<typename Type>
@@ -150,7 +177,20 @@ namespace Utility
 			return this->ownedArray != NULL;
 		}
 
-		template<typename Type>Type* UniqueArray<Type>::Release()
+		template<typename Type>
+		bool UniqueArray<Type>::operator == ( Type *stray ) const
+		{
+			return this->ownedArray == stray;
+		}
+
+		template<typename Type>
+		bool UniqueArray<Type>::operator != ( Type *stray ) const
+		{
+			return this->ownedArray != stray;
+		}
+
+		template<typename Type>
+		Type* UniqueArray<Type>::Release()
 		{
 			Type *copy = this->ownedArray;
 			this->ownedArray = NULL;
@@ -162,7 +202,7 @@ namespace Utility
 		{
 			return this->operator bool();
 		}
-
+		
 		namespace SmartPointer
 		{
 			template<typename T> void StdSmartPointer<T>::Destroy()

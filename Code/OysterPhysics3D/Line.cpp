@@ -8,9 +8,24 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math3D;
 
-Line::Line( ) : ICollideable(Type_line), ray(), length(0.0f) {}
-Line::Line( const class Ray &_ray, const Float &_length ) : ICollideable(Type_line), ray(_ray), length(_length) {}
-Line::Line( const Float3 &origin, const Float3 &normalizedDirection, const Float &_length ) : ICollideable(Type_line), ray(origin, normalizedDirection), length(_length) {}
+Line::Line( ) : ICollideable(Type_line)
+{
+	this->ray = Ray();
+	this->length = 0.0f;
+}
+
+Line::Line( const class Ray &_ray, const Float &_length ) : ICollideable(Type_line)
+{
+	this->ray = _ray;
+	this->length = _length;
+}
+
+Line::Line( const Float3 &origin, const Float3 &normalizedDirection, const Float &_length ) : ICollideable(Type_line)
+{
+	this->ray = Ray( origin, normalizedDirection );
+	this->length = _length;
+}
+
 Line::~Line( ) {}
 
 Line & Line::operator = ( const Line &line )
@@ -23,9 +38,9 @@ Line & Line::operator = ( const Line &line )
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Line::Clone( ) const
 { return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Line(*this) ); }
 
-bool Line::Intersects( const ICollideable *target ) const
+bool Line::Intersects( const ICollideable &target ) const
 {
-	if( target->type == Type_universe )
+	if( target.type == Type_universe )
 	{
 		this->ray.collisionDistance = 0.0f;
 		return true;
@@ -38,5 +53,5 @@ bool Line::Intersects( const ICollideable *target ) const
 	return false;
 }
 
-bool Line::Contains( const ICollideable *target ) const
+bool Line::Contains( const ICollideable &target ) const
 { /* TODO: : */ return false; }

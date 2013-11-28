@@ -444,8 +444,8 @@ namespace LinearAlgebra3D
 		ScalarType c = 1 / (nearClip - farClip);
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 2/width, 0, 0, 0,
 																   0, 2/height, 0, 0,
-																   0, 0, -c, 0, 0,
-																   0, nearClip*c, 1 );
+																   0, 0, -c, nearClip*c, 
+																   0, 0, 0, 1 );
 	}
 
 	/*******************************************************************
@@ -460,14 +460,26 @@ namespace LinearAlgebra3D
 	 *******************************************************************/
 	template<typename ScalarType>
 	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &vertFoV, const ScalarType &aspect, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /** @todo TODO: not tested */
+	{ 
 		ScalarType fov = 1 / ::std::tan( vertFoV * 0.5f ),
 					dDepth = farClip / (farClip - nearClip);
-		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( fov / aspect, 0, 0, 0,
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( fov / aspect, 0, 0, 0, 
 																   0, fov, 0, 0,
 																   0, 0, dDepth, -(dDepth * nearClip),
 																   0, 0, 1, 0 );
 	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &left, const ScalarType &right, const ScalarType &top, const ScalarType &bottom, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{ /** @todo TODO: not tested */
+		ScalarType fov = 1 / ::std::tan( vertFoV * 0.5f ),
+					dDepth = farClip / (farClip - nearClip);
+		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 2*nearClip/(right - left), 0, -(right + left)/(right - left), 0,
+																   0, 2*nearClip/(top - bottom), -(top + bottom)/(top - bottom), 0,
+																   0, 0, dDepth, -(dDepth * nearClip),
+																   0, 0, 1, 0 );
+	}
+
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> VectorProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &axis )

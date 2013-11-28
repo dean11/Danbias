@@ -1,7 +1,9 @@
 #include "Resources.h"
 #include "..\OysterGraphics\Definitions\GraphicalDefinition.h"
 
-const std::wstring PathFromExeToHlsl = L"..\\OysterGraphics\\Shader\\HLSL\\";
+// /Bin/Executable/Tester ->
+// /Code/OysterGraphics/Shader/HLSL
+const std::wstring PathFromExeToHlsl = L"..\\..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\";
 const std::wstring VertexTransformDebug = L"TransformDebugVertex";
 const std::wstring VertexDebug = L"DebugVertex";
 const std::wstring PixelRed = L"DebugPixel";
@@ -9,6 +11,7 @@ const std::wstring PixelRed = L"DebugPixel";
 typedef Oyster::Graphics::Core::ShaderManager::ShaderType ShaderType;
 typedef Oyster::Graphics::Core::ShaderManager::Get GetShader;
 typedef Oyster::Graphics::Core::ShaderManager Shader;
+typedef Oyster::Graphics::Core::Buffer Buffer;
 
 namespace Oyster
 {
@@ -96,8 +99,8 @@ namespace Oyster
 				obj.CBuffers.Vertex.push_back(&VPData);
 				obj.RenderStates.Rasterizer = rs;
 
+				ModelData.Apply(1);
 #pragma endregion
-
 				return Core::Init::Sucsess;
 			}
 		}
