@@ -112,7 +112,7 @@ UniquePointer<ICustomBody> API_Impl::ExtractObject( const ICustomBody* objRef )
 void API_Impl::DestroyObject( const ICustomBody* objRef )
 {
 	UniquePointer<ICustomBody> object = this->worldScene.Extract( objRef );
-	if( object != NULL )
+	if( object )
 	{
 		this->destructionAction( object );
 	}
