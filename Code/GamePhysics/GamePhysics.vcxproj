@@ -152,13 +152,15 @@
     <ClInclude Include="Implementation\Octree.h" />
     <ClInclude Include="Implementation\PhysicsAPI_Impl.h" />
     <ClInclude Include="Implementation\SimpleRigidBody.h" />
+    <ClInclude Include="Implementation\SphericalRigidBody.h" />
     <ClInclude Include="PhysicsAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\Octree.cpp" />
+    <ClCompile Include="Implementation\DLLMain.cpp" />
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp" />
     <ClCompile Include="Implementation\SimpleRigidBody.cpp" />
-    <ClCompile Include="DLLMain.cpp" />
+    <ClCompile Include="Implementation\SphericalRigidBody.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

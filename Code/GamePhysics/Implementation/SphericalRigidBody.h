@@ -1,19 +1,21 @@
-#ifndef OYSTER_PHYSICS_SIMPLE_RIGIDBODY_H
-#define OYSTER_PHYSICS_SIMPLE_RIGIDBODY_H
+#ifndef OYSTER_PHYSICS_SPHERICAL_RIGIDBODY_H
+#define OYSTER_PHYSICS_SPHERICAL_RIGIDBODY_H
 
 #include "..\PhysicsAPI.h"
 #include "RigidBody.h"
+#include "Sphere.h"
 
 namespace Oyster { namespace Physics
 {
-	class SimpleRigidBody : public ICustomBody
+	class SphericalRigidBody : public ICustomBody
 	{
 	public:
-		SimpleRigidBody();
-		virtual ~SimpleRigidBody();
+		SphericalRigidBody();
+		virtual ~SphericalRigidBody();
 
 		::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const;
 		
+		bool IsSubscribingCollisions() const;
 		bool IsAffectedByGravity() const;
 		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const;
 		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const;
@@ -45,6 +47,7 @@ namespace Oyster { namespace Physics
 		::Oyster::Math::Float3 gravityNormal;
 		EventAction_Collision collisionAction;
 		bool ignoreGravity;
+		::Oyster::Collision3D::Sphere body;
 	};
 } }
 

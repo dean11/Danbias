@@ -13,10 +13,11 @@ namespace Oyster
 			API_Impl();
 			virtual ~API_Impl();
 
+			void Init( unsigned int numObjects, unsigned int numGravityWells , const ::Oyster::Math::Float3 &worldSize );
+
 			void SetDeltaTime( float deltaTime );
 			void SetGravityConstant( float g );
-			void SetAction( EventAction_Collision functionPointer );
-			void SetAction( EventAction_Destruction functionPointer );
+			void SetSubscription( EventAction_Destruction functionPointer );
 
 			void Update();
 
@@ -38,15 +39,20 @@ namespace Oyster
 			void SetCenter( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos );
 			void SetRotation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &rotation );
 			void SetOrientation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &orientation );
+			void SetSize( const ICustomBody* objRef, const ::Oyster::Math::Float3 &size );
 
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const;
 		private:
 			::Oyster::Math::Float gravityConstant, updateFrameLength;
-			EventAction_Collision collisionAction;
 			EventAction_Destruction destructionAction;
 		};
-	}
 
+		namespace Default
+		{
+			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
+			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+		}
+	}
 }
 
 #endif

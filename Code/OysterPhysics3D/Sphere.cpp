@@ -4,8 +4,18 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math;
 
-Sphere::Sphere( ) : ICollideable(Type_sphere), center(), radius(0.0f) { }
-Sphere::Sphere( const Float3 &_position, const Float &_radius ) : ICollideable(Type_sphere), center(_position), radius(_radius) {}
+Sphere::Sphere( ) : ICollideable(Type_sphere)
+{
+	this->center = Float3::null;
+	this->radius = 0.0f;
+}
+
+Sphere::Sphere( const Float3 &_position, const Float &_radius ) : ICollideable(Type_sphere)
+{
+	this->center = _position;
+	this->radius = _radius;
+}
+
 Sphere::~Sphere( ) {}
 
 Sphere & Sphere::operator = ( const Sphere &sphere )

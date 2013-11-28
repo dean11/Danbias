@@ -10,14 +10,6 @@ using namespace ::Utility::DynamicMemory;
 
 API_Impl API_instance;
 
-// default API::EventAction_Collision
-void defaultCollisionAction( const ICustomBody *proto, const ICustomBody *deuter )
-{ /* do nothing */ }
-
-// default API::EventAction_Destruction
-void defaultDestructionAction( UniquePointer<ICustomBody> proto )
-{ /* do nothing besides proto auto deleting itself. */ }
-
 Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius)
 {
 	return Formula::MomentOfInertia::Sphere(mass, radius);
@@ -51,27 +43,36 @@ API & API::Instance()
 API_Impl::API_Impl()
 	: gravityConstant( Constant::gravity_constant ),
 	  updateFrameLength( 1.0f / 120.0f ),
-	  collisionAction( defaultCollisionAction ),
-	  destructionAction( defaultDestructionAction )
+	  destructionAction( Default::EventAction_Destruction )
 {}
 
 API_Impl::~API_Impl() {}
+
+void API_Impl::Init( unsigned int numObjects, unsigned int numGravityWells , const Float3 &worldSize )
+{
+	//! @todo TODO: implement stub
+}
 
 void API_Impl::SetDeltaTime( float deltaTime )
 {
 	updateFrameLength = deltaTime;
 }
+
 void API_Impl::SetGravityConstant( float g )
 {
 	this->gravityConstant = g;
 }
-void API_Impl::SetAction( API::EventAction_Collision functionPointer )
+
+void API_Impl::SetSubscription( API::EventAction_Destruction functionPointer )
 {
-	this->collisionAction = functionPointer;
-}
-void API_Impl::SetAction( API::EventAction_Destruction functionPointer )
-{
-	this->destructionAction = functionPointer;
+	if( functionPointer )
+	{
+		this->destructionAction = functionPointer;
+	}
+	else
+	{
+		this->destructionAction = Default::EventAction_Destruction;
+	}
 }
 
 void API_Impl::Update()
@@ -155,7 +156,25 @@ void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orient
 	//! @todo TODO: implement stub
 }
 
+void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
+{
+	//! @todo TODO: implement stub
+}
+
 UniquePointer<ICustomBody> API_Impl::CreateSimpleRigidBody() const
 {
 	return new SimpleRigidBody();
 }
+
+namespace Oyster { namespace Physics { namespace Default
+{
+
+	void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto )
+	{ /* Do nothing except allowing the proto uniquePointer destroy itself. */ }
+
+	::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter )
+	{ /* Do nothing except returning business as usual. */
+		return ::Oyster::Physics::ICustomBody::SubscriptMessage_none;
+	}
+
+} } }

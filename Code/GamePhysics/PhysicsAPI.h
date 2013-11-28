@@ -19,8 +19,8 @@ namespace Oyster
 
 		enum UpdateState
 		{
-			resting,
-			altered
+			UpdateState_resting,
+			UpdateState_altered
 		};
 
 		namespace Constant
@@ -45,11 +45,18 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE API
 		{
 		public:
-			typedef void (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
 			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
 
 			/** Gets the Physics instance. */
 			static API & Instance();
+
+			/********************************************************
+			 * Clears all content and reset Engine assetts such as buffers.
+			 * @param numObjects: The predicted max number of active objects.
+			 * @param numGravityWells: The predicted max number of active gravity wells.
+			 * @param worldSize: The size of acceptable physics space.
+			 ********************************************************/
+			virtual void Init( unsigned int numObjects, unsigned int numGravityWells , const ::Oyster::Math::Float3 &worldSize ) = 0;
 
 			/********************************************************
 			 * Sets the time length of each physics update frame.
@@ -62,20 +69,15 @@ namespace Oyster
 			 * @param g: Default is the real world Constant::gravity_constant [N(m/kg)^2]
 			 ********************************************************/
 			virtual void SetGravityConstant( float g ) = 0;
-
-			/********************************************************
-			 * Sets the function that will be called by the engine
-			 * whenever a subscribed collision occurs.
-			 ********************************************************/
-			virtual void SetAction( EventAction_Collision functionPointer ) = 0;
 			
 			/********************************************************
 			 * Sets the function that will be called by the engine
 			 * whenever an object is being destroyed for some reason.
 			 * - Because DestroyObject(...) were called.
 			 * - Out of memory forced engine to destroy an object.
+			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
-			virtual void SetAction( EventAction_Destruction functionPointer ) = 0;
+			virtual void SetSubscription( EventAction_Destruction functionPointer ) = 0;
 
 			/********************************************************
 			 * Triggers the engine to run next update frame.
@@ -133,7 +135,7 @@ namespace Oyster
 			 * @param worldF: Vector with the direction and magnitude of the force. [N]
 			 ********************************************************/
 			virtual void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF ) = 0;
-			
+
 			/********************************************************
 			 * Apply force on an object.
 			 * @param objRefA: A pointer to the ICustomBody representing a physical object.
@@ -197,6 +199,13 @@ namespace Oyster
 			virtual void SetOrientation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &orientation ) = 0;
 			
 			/********************************************************
+			 * Resizes the boundingBox.
+			 * @param objRef: A pointer to the ICustomBody representing a physical object.
+			 * @param size: New size of this [m]
+			 ********************************************************/
+			virtual void SetSize( const ICustomBody* objRef, const ::Oyster::Math::Float3 &size ) = 0;
+
+			/********************************************************
 			 * Creates a new dynamically allocated object that can be used as a component for more complex ICustomBodies.
 			 * @return A pointer along with the responsibility to delete.
 			 ********************************************************/
@@ -210,6 +219,14 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE ICustomBody
 		{
 		public:
+			enum SubscriptMessage
+			{
+				SubscriptMessage_none,
+				SubscriptMessage_ignore_collision_response
+			};
+
+			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+
 			virtual ~ICustomBody() {};
 
 			/********************************************************
@@ -217,11 +234,11 @@ namespace Oyster
 			 * @return An ICustomBody pointer along with the responsibility to delete.
 			 ********************************************************/
 			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const = 0;
-			
+
 			/********************************************************
-			 * @return true if Engine should call the EventAction_Collision function.
+			 * @return true if Engine should apply gravity on this object.
 			 ********************************************************/
-			virtual bool IsSubscribingCollisions() const = 0;
+			virtual bool IsAffectedByGravity() const = 0;
 
 			/********************************************************
 			 * Performs a detailed Intersect test and returns if, when and where.
@@ -255,6 +272,13 @@ namespace Oyster
 			virtual ::Oyster::Math::Float3 & GetNormalAt( const ::Oyster::Math::Float3 &worldPos, ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
 			
 			/********************************************************
+			 * The gravity normal will have same direction as the total gravity force pulling on this and have the magnitude of 1.0f.
+			 * @param targetMem: Provided memory that written into and then returned.
+			 * @return a normalized vector in worldSpace. Exception: Null vector if no gravity been applied.
+			 ********************************************************/
+			virtual ::Oyster::Math::Float3 & GetGravityNormal( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
+
+			/********************************************************
 			 * The world position of this center of gravity.
 			 * @param targetMem: Provided memory that written into and then returned.
 			 * @return a position in worldSpace.
@@ -280,52 +304,76 @@ namespace Oyster
 			virtual ::Oyster::Math::Float4x4 & GetView( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const = 0;
 
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Is called during API::Update
 			 ********************************************************/
 			virtual UpdateState Update( ::Oyster::Math::Float timeStepLength ) = 0;
+			
+			/********************************************************
+			 * Sets the function that will be called by the engine
+			 * whenever a collision occurs.
+			 * @param functionPointer: If NULL, an empty default function will be set.
+			 ********************************************************/
+			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
 
 			/********************************************************
-			 * To be only called by Engine
+			 * @param ignore: True if Engine should not apply Gravity.
+			 ********************************************************/
+			virtual void SetGravity( bool ignore) = 0;
+
+			/********************************************************
+			 * Used by Engine
+			 * @param normalizedVector: Should have same direction as the pullinggravity.
+			 ********************************************************/
+			virtual void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector ) = 0;
+
+			/********************************************************
+			 * To not be called if is in Engine
 			 * Use API::SetMomentOfInertiaTensor_KeepVelocity(...) instead
 			 ********************************************************/
 			virtual void SetMomentOfInertiaTensor_KeepVelocity( const ::Oyster::Math::Float4x4 &localI ) = 0;
 			
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Use API::SetMomentOfInertiaTensor_KeepMomentum(...)
 			 ********************************************************/
 			virtual void SetMomentOfInertiaTensor_KeepMomentum( const ::Oyster::Math::Float4x4 &localI ) = 0;
 			
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Use API::SetMass_KeepVelocity(...)
 			 ********************************************************/
 			virtual void SetMass_KeepVelocity( ::Oyster::Math::Float m ) = 0;
 			
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Use API::SetMass_KeepMomentum(...)
 			 ********************************************************/
 			virtual void SetMass_KeepMomentum( ::Oyster::Math::Float m ) = 0;
 			
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Use API::SetCenter(...)
 			 ********************************************************/
 			virtual void SetCenter( const ::Oyster::Math::Float3 &worldPos ) = 0;
 			
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Use API::SetRotation(...)
 			 ********************************************************/
 			virtual void SetRotation( const ::Oyster::Math::Float4x4 &rotation ) = 0;
 			
 			/********************************************************
-			 * To be only called by Engine
+			 * To not be called if is in Engine
 			 * Use API::SetOrientation(...)
 			 ********************************************************/
 			virtual void SetOrientation( const ::Oyster::Math::Float4x4 &orientation ) = 0;
+
+			/********************************************************
+			 * To not be called if is in Engine
+			 * Use API::SetSize(...)
+			 ********************************************************/
+			virtual void SetSize( const ::Oyster::Math::Float3 &size ) = 0;
 		};
 	}
 }
