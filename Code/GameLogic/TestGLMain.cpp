@@ -5,6 +5,12 @@
 //
 // Copyright (c) Stefan Petersson 2011. All rights reserved.
 //--------------------------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// Test main function for game logic when .exe
+// Doesn't run when Game logic is compiled as a .dll
+//////////////////////////////////////////////////////////////////////////
+
 #define NOMINMAX
 #include <Windows.h>
 #include "Core/Core.h"
@@ -28,8 +34,8 @@
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
 
-GameLogic::IGame* game;
-InputClass* inputObj;
+GameLogic::IGame	*game;
+InputClass			*inputObj;
 
 
 //--------------------------------------------------------------------------------------
@@ -95,8 +101,9 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	__int64 prevTimeStamp = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 	
-	//debugwindow
+	//Init debug window
 	//SetStdOutToNewConsole();
+
 	// Main message loop
 	MSG msg = {0};
 	while(WM_QUIT != msg.message)
@@ -171,56 +178,21 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 	return S_OK;
 }
 
-
-
 //--------------------------------------------------------------------------------------
-// Create Direct3D device and swap chain
+// Create Direct3D with Oyster Graphics
 //--------------------------------------------------------------------------------------
 HRESULT InitDirect3D()
 {
-	/*HRESULT hr = S_OK;;
-
-	Oyster::Graphics::Core::resolution = Oyster::Math::Float2( 1024, 768 );
-
-	if(Oyster::Graphics::Core::Init::FullInit(g_hWnd,false,false)==Oyster::Graphics::Core::Init::Fail)
+	if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
 		return E_FAIL;
-
-
-
-	std::wstring ShaderPath = L"..\\OysterGraphics\\Shader\\HLSL\\";
-	std::wstring EffectPath = L"SimpleDebug\\";
-
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugPixel.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Pixel,L"Debug",false);
-	Oyster::Graphics::Core::ShaderManager::Init(ShaderPath + EffectPath + L"DebugVertex.hlsl",Oyster::Graphics::Core::ShaderManager::ShaderType::Vertex,L"PassThroughFloat4",false);
-
-	Oyster::Graphics::Core::ShaderManager::Set::Vertex(Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"));
-	Oyster::Graphics::Core::ShaderManager::Set::Pixel(Oyster::Graphics::Core::ShaderManager::Get::Pixel(L"Debug"));
-
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
-	ID3D11InputLayout* layout;
-
-	Oyster::Graphics::Core::ShaderManager::CreateInputLayout( inputDesc, 1, Oyster::Graphics::Core::ShaderManager::Get::Vertex(L"PassThroughFloat4"), layout);
-
-	Oyster::Graphics::Core::deviceContext->IASetInputLayout(layout);
-	Oyster::Graphics::Core::deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	Oyster::Graphics::Render::Preparations::Basic::BindBackBufferRTV();
-
-	Oyster::Graphics::Render::Preparations::Basic::SetViewPort();*/
-
 	return S_OK;
 }
 
+//--------------------------------------------------------------------------------------
+// Init the input and the game
+//-------------------------------------------------------------------------------------
 HRESULT InitGame()
 {
-
-	if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
-		return E_FAIL;
-
 	inputObj = new InputClass;
 	if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
 	{
@@ -231,10 +203,9 @@ HRESULT InitGame()
 	game->Init();
 	game->StartGame();
 
-
-
 	return S_OK;
 }
+
 HRESULT Update(float deltaTime)
 {
 	inputObj->Update();
@@ -272,10 +243,10 @@ HRESULT Render(float deltaTime)
 	}
 
 	// test view and projection matrix 
-	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,-1);
-	Oyster::Math::Float3 up  =Oyster::Math::Float3(0,1,0);
+	Oyster::Math::Float3 dir = Oyster::Math::Float3(0, 0, -1);
+	Oyster::Math::Float3 up  = Oyster::Math::Float3(0, 1, 0);
 	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 100);
-
+	
 	Oyster::Math::Float4x4 view  =Oyster::Math3D::OrientationMatrix_LookAtDirection(dir, up, pos);
 	view = view.GetInverse();
 
