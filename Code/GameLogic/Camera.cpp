@@ -131,7 +131,6 @@ void Camera::Pitch(float angle)
 	
 	Oyster::Math::Float4x4 R;
 							  
-	//D3DXMatrixRotationAxis(&R, &-mRight, radians);
 	Oyster::Math3D::RotationMatrix(radians,-mRight,R);
 	this->mUp = CrossMatrix(this->mUp, R);
 	this->mLook = CrossMatrix(this->mLook, R);
@@ -144,7 +143,6 @@ void Camera::Yaw(float angle)
 	Oyster::Math::Float4x4 R;
 							  
 	Oyster::Math::Float3 up(0,1,0);
-	//D3DXMatrixRotationAxis(&R, &-up, radians);
 	Oyster::Math3D::RotationMatrix(radians,-up,R);
 
 	this->mRight = CrossMatrix(this->mRight, R);
@@ -163,41 +161,24 @@ void Camera::UpdateViewMatrix()
 	float y = -m_position.Dot(mUp);
 	float z = -m_position.Dot(mLook);
 
-	//this->mView(0, 0) = this->mRight.x;
 	mView.m11 = mRight.x;
-	//this->mView(1, 0) = this->mRight.y;
 	mView.m21 = mRight.y;
-	//this->mView(2, 0) = this->mRight.z;
 	mView.m31 = mRight.z;
-	//this->mView(3, 0) = x;
 	mView.m41 = x;
 
-	//this->mView(0, 1) = this->mUp.x;
 	mView.m12 = mUp.x;
-	//this->mView(1, 1) = this->mUp.y;
 	mView.m22 = mUp.y;
-	//this->mView(2, 1) = this->mUp.z;
 	mView.m32 = mUp.z;
-	//this->mView(3, 1) = y;
 	mView.m42 = y;
 
-	//this->mView(0, 2) = this->mLook.x;
 	mView.m13 = mLook.x;
-	//this->mView(1, 2) = this->mLook.y;
 	mView.m23 = mLook.y;
-	//this->mView(2, 2) = this->mLook.z;
 	mView.m33 = mLook.z;
-	//this->mView(3, 2) = z;
 	mView.m43 = z;
 
-	//this->mView(0, 3) = 0.0f;
 	mView.m14 = 0.0f;
-	//this->mView(1, 3) = 0.0f;
 	mView.m24 = 0.0f;
-	
-	//this->mView(2, 3) = 0.0f;
 	mView.m34 = 0.0f;
-	//this->mView(3, 3) = 1.0f;
 	mView.m44 = 1.0f;
 
 	mView.Transpose();
