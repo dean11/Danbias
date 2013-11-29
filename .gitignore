@@ -21,7 +21,6 @@
 *.lib
 *.exe
 *.tlog
-*.vcxproj
 *.filters
 *.ilk
 *.exp
