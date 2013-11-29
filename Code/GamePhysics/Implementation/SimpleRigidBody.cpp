@@ -42,6 +42,11 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 	return new SimpleRigidBody( *this );
 }
 
+void SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+{
+	this->collisionAction( proto, deuter );
+}
+
 bool SimpleRigidBody::IsAffectedByGravity() const
 {
 	return !this->ignoreGravity;

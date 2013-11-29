@@ -247,6 +247,11 @@ namespace Oyster
 			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const = 0;
 
 			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
+
+			/********************************************************
 			 * @return true if Engine should apply gravity on this object.
 			 ********************************************************/
 			virtual bool IsAffectedByGravity() const = 0;

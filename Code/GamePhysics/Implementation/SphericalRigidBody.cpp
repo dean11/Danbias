@@ -44,6 +44,11 @@ UniquePointer<ICustomBody> SphericalRigidBody::Clone() const
 	return new SphericalRigidBody( *this );
 }
 
+void SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+{
+	this->collisionAction( proto, deuter );
+}
+
 bool SphericalRigidBody::IsAffectedByGravity() const
 {
 	return !this->ignoreGravity;
