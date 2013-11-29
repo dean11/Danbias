@@ -13,6 +13,8 @@ namespace Oyster
 {
 	namespace Network
 	{
+		//With this class you can post items to it and then fetch them somewhere else.
+		//It is thread safe beacause of the ThreadSafeQueue.
 		template <class T>
 		class PostBox : public IPostBox<T>
 		{

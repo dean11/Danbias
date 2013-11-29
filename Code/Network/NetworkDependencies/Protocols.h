@@ -41,6 +41,9 @@ namespace Oyster
 				virtual ~ProtocolTest() { delete[] f; }
 			};
 
+
+			//Holding every protocol in an union.
+			//Used because we now don't have to type case our protocol when we recieve them.
 			class ProtocolSet
 			{
 			public:

@@ -4,6 +4,7 @@ using namespace Oyster::Network::Server;
 
 Listener::Listener()
 {
+	connection = NULL;
 }
 
 Listener::~Listener()

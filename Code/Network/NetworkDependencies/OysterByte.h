@@ -30,8 +30,6 @@ namespace Oyster
 			operator char*();
 			operator const char*();
 			operator unsigned char*();
-
-			//unsigned char& operator[](unsigned int id);
 			
 		private:
 			void IncreaseCapacity(unsigned int cap);		//Expands the byteArray

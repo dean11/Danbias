@@ -25,8 +25,7 @@ namespace Oyster
 
 				bool Init(unsigned int port);
 				void Shutdown();
-				int Accept();
-				int GetNewClient();
+
 				void SetPostBox(IPostBox<int>* postBox);
 
 				//Thread functions
@@ -35,6 +34,8 @@ namespace Oyster
 				void ThreadExit();
 
 			private:
+				//Function that runs in the thread.
+				int Accept();
 
 
 			private:

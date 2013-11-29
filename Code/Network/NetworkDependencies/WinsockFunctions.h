@@ -4,8 +4,8 @@
 /////////////////////////////////////
 // Created by Pontus Fransson 2013 //
 /////////////////////////////////////
-#include <string>
 
+#include <string>
 
 void ShutdownWinSock();
 bool InitWinSock();

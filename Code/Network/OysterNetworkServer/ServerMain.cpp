@@ -37,6 +37,7 @@ int main()
 	listener.Init(9876);
 	listener.SetPostBox(postBox);
 	Sleep(1000);
+
 	//Start listening
 	//Accept a client
 	ProtocolTest test;
@@ -84,37 +85,9 @@ int main()
 	}
 	listener.Shutdown();
 
-
-/*	int clientSocket = listener.Accept();
-	Client client1(clientSocket);
-	cout << "First client connected." << endl;
-
-	//Accept a client
-	clientSocket = listener.Accept();
-	Client client2(clientSocket);
-	cout << "Second client connected." << endl;
-*/
-
-
 	/*
 	ProtocolSet* set = new ProtocolSet;
-	ProtocolTest test;
-	test.clientID = 0;
-	test.size = 2;
-	test.textMessage = "hej";
-	test.numOfFloats = 35;
-	test.f = new float[test.numOfFloats];
-	float temp = 395.456f;
-	for(int i = 0; i < (int)test.numOfFloats; i++)
-	{
-		test.f[i] = temp;
-		temp--;
-	}
 
-	t.Pack(test, recvBuffer);*/
-
-
-/*
 	client1.Send(recvBuffer);
 
 	while(1)
