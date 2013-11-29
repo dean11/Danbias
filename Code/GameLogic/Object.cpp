@@ -18,14 +18,7 @@ Object::Object(void)
 	model = new Model();
 	model = Oyster::Graphics::API::CreateModel(L"bth.obj");
 
-	ICustomBody* temp = rigidBody = API::Instance().CreateSimpleRigidBody().Release();
-
-	rigidBody->SetCenter(Float3(50,0,0));
-	rigidBody->SetMass_KeepMomentum(30);
-	rigidBody->SetSize(Float3(2,2,2));
-	rigidBody->SetSubscription(true);
-	rigidBody->SetMomentOfInertiaTensor_KeepMomentum(Float4x4(MomentOfInertia::CreateCuboidMatrix(30, 2, 2, 2)));
-
+	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody().Release();
 
 	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);
 
