@@ -38,7 +38,7 @@ namespace GameLogic
 		/************************************************************************/
 		/* Get key input    to update the player                                */
 		/************************************************************************/
-		void Update(keyInput keyPressed);
+		void Update(keyInput keyPressed, float pitch, float yaw);
 		void Render();
 		Game* getGameModule();
 	private:

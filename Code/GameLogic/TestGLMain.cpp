@@ -228,8 +228,17 @@ HRESULT Update(float deltaTime)
 		key = GameLogic::keyInput_D;	
 	}
 
-	game->Update(key);
-	
+	float pitch = 0;
+	float yaw	= 0;
+
+	// move only when mouse is pressed
+	//if(inputObj->IsMousePressed())
+	//{
+		pitch = inputObj->GetPitch();
+		yaw	= inputObj->GetYaw();
+	//}
+
+	game->Update(key, pitch, yaw);
 	return S_OK;
 }
 
@@ -242,18 +251,6 @@ HRESULT Render(float deltaTime)
 		//std::cout<<"test";
 	}
 
-	// test view and projection matrix 
-	Oyster::Math::Float3 dir = Oyster::Math::Float3(0, 0, -1);
-	Oyster::Math::Float3 up  = Oyster::Math::Float3(0, 1, 0);
-	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 100);
-	
-	Oyster::Math::Float4x4 view  =Oyster::Math3D::OrientationMatrix_LookAtDirection(dir, up, pos);
-	view = view.GetInverse();
-
-	Oyster::Math::Float4x4 proj = Oyster::Math3D::ProjectionMatrix_Perspective(PI/2, 1024/768, 1, 1000);
-
-	Oyster::Graphics::API::NewFrame(view, proj);
-	
 	game->Render();
 	wchar_t title[255];
 	swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
@@ -266,7 +263,6 @@ HRESULT Render(float deltaTime)
 
 HRESULT CleanUp()
 {
-	
 	SAFE_DELETE(game);
 	return S_OK;
 }

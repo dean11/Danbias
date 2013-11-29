@@ -117,7 +117,7 @@ Oyster::Math::Float4x4 Camera::ViewsProj()const
 
 void Camera::Walk(float dist)
 {
-	this->m_position += dist*Oyster::Math::Float3(1,0,0);
+	this->m_position += dist*this->mLook;
 }
 
 void Camera::Strafe(float dist)

@@ -39,6 +39,7 @@ HRESULT             InitWindow( HINSTANCE hInstance, int nCmdShow );
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 HRESULT				Render(float deltaTime);
 HRESULT				Update(float deltaTime);
+HRESULT				InitDirect3D();
 HRESULT				InitGame();
 HRESULT				CleanUp();
 
@@ -78,14 +79,22 @@ void SetStdOutToNewConsole()
 
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
+	// for dynamic .dll loading
+	// path is relative to the .exe and  .dll pos
+	// also change the VC directories - working dir is set to $(SolutionDir)..\Bin\Executable\Tester
+	// to fit with  where the .obj files is
+	// linker/ input/ delayed load .dll - specify the .dll that should be loaded 
+
 	BOOL success = SetDllDirectory(L"..\\..\\DLL");
 	if (success == 0)
 	{
 		return 0;
 	}
 
-
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
+		return 0;
+
+	if( FAILED( InitDirect3D() ) )
 		return 0;
 
 	if( FAILED( InitGame() ) )
@@ -175,7 +184,19 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 	return S_OK;
 }
 
+//--------------------------------------------------------------------------------------
+// Create Direct3D with Oyster Graphics
+//--------------------------------------------------------------------------------------
+HRESULT InitDirect3D()
+{
+	if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+		return E_FAIL;
+	return S_OK;
+}
 
+//--------------------------------------------------------------------------------------
+// Init the input and the game
+//-------------------------------------------------------------------------------------
 HRESULT InitGame()
 {
 	inputObj = new InputClass;
@@ -184,18 +205,13 @@ HRESULT InitGame()
 		MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 		return false;
 	}
-	if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
-		return E_FAIL;
-
-
 	game = new GameLogic::IGame();
 	game->Init();
 	game->StartGame();
 
-
-
 	return S_OK;
 }
+
 HRESULT Update(float deltaTime)
 {
 	inputObj->Update();
@@ -218,7 +234,17 @@ HRESULT Update(float deltaTime)
 		key = GameLogic::keyInput_D;	
 	}
 
-	game->Update(key);
+	float pitch = 0;
+	float yaw	= 0;
+
+	//if(inputObj->IsMousePressed())
+	//{
+	pitch = inputObj->GetPitch();
+	yaw	= inputObj->GetYaw();
+	//}
+
+	game->Update(key, pitch, yaw);
+
 	
 	return S_OK;
 }
@@ -232,18 +258,6 @@ HRESULT Render(float deltaTime)
 		//std::cout<<"test";
 	}
 
-	// test view and projection matrix 
-	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,-1);
-	Oyster::Math::Float3 up  =Oyster::Math::Float3(0,1,0);
-	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 100);
-
-	Oyster::Math::Float4x4 view  =Oyster::Math3D::OrientationMatrix_LookAtDirection(dir, up, pos);
-	view = view.GetInverse();
-
-	Oyster::Math::Float4x4 proj = Oyster::Math3D::ProjectionMatrix_Perspective(3.14f/2, 1024/768, 1, 1000);
-
-	Oyster::Graphics::API::NewFrame(view, proj);
-	
 	game->Render();
 	wchar_t title[255];
 	swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));

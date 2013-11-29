@@ -29,9 +29,9 @@ void IGame::StartGame()
 {
 	gameModule->StartGame();
 }
-void IGame::Update(keyInput keyPressed)
+void IGame::Update(keyInput keyPressed, float pitch, float yaw)
 {
-	gameModule->Update(keyPressed);
+	gameModule->Update(keyPressed, pitch, yaw);
 }
 void IGame::Render()
 {

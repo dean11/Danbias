@@ -44,7 +44,11 @@ public:
 
 	bool IsKeyPressed(int key);
 	bool IsMousePressed();
-	void MouseMove(float &Pitch, float &RoateY);
+
+	// Call if mouse is pressed
+	float GetYaw();
+	float GetPitch();
+
 };
 
 #endif
