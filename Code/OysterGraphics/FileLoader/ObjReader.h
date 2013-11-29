@@ -43,6 +43,7 @@ class OBJReader
 		int _mPos, _mNormal, _mTexel;
 		void stringSplit( std::string strToSplit );
 		void addToOBJarray();
+		void* Mat;
 
 	public:
 		OBJReader();

@@ -45,6 +45,9 @@
     <ClCompile Include="DllInterfaces\GFXAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileLoader\ShaderLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Core.h">
@@ -71,13 +74,13 @@
     <ClInclude Include="FileLoader\ObjReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileLoader\TextureLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Dx11Includes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DllInterfaces\GFXAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileLoader\GeneralLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -88,9 +91,11 @@
     <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\PixelGatherData.hlsl" />
     <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\VertexGatherData.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\TextureDebug.hlsl" />
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\Render\LightPass.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\GBufferHeader.hlsli" />
-    <None Include="Shader\HLSL\SimpleDebug\Debug.hlsli" />
+    <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
+    <None Include="Shader\HLSL\Deffered Shaders\Render\Defines.hlsli" />
   </ItemGroup>
 </Project>

@@ -32,12 +32,12 @@ namespace Oyster
 #ifdef _DEBUG
 
 				/** Load Vertex Shader for d3dcompile*/
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugCameraVertex.hlsl",ShaderType::Vertex, VertexTransformDebug, false);
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugVertex.hlsl",ShaderType::Vertex, VertexDebug, false);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugCameraVertex.hlsl",ShaderType::Vertex, VertexTransformDebug);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" +L"DebugVertex.hlsl",ShaderType::Vertex, VertexDebug);
 
 				/** Load Pixel Shader for d3dcompile */
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"DebugPixel.hlsl", ShaderType::Pixel, PixelRed, false);
-				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"TextureDebug.hlsl", ShaderType::Pixel, PixelTexture, false);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"DebugPixel.hlsl", ShaderType::Pixel, PixelRed);
+				Core::ShaderManager::Init(PathFromExeToHlsl + L"SimpleDebug\\" + L"TextureDebug.hlsl", ShaderType::Pixel, PixelTexture);
 				
 
 #else
@@ -147,6 +147,39 @@ namespace Oyster
 				ModelData.Apply(1);
 #pragma endregion
 				return Core::Init::Sucsess;
+			}
+
+			void Resources::Clean()
+			{
+				Resources::ModelData.~Buffer();
+				Resources::VPData.~Buffer();
+				for(int i = 0; i < obj.CBuffers.Vertex.size(); ++i)
+				{
+					//SAFE_RELEASE(obj.CBuffers.Vertex[i]);
+				}
+				for(int i = 0; i < obj.CBuffers.Pixel.size(); ++i)
+				{
+					SAFE_DELETE(obj.CBuffers.Pixel[i]);
+				}
+				for(int i = 0; i < obj.CBuffers.Geometry.size(); ++i)
+				{
+					SAFE_DELETE(obj.CBuffers.Geometry[i]);
+				}
+
+				SAFE_RELEASE(obj.IAStage.Layout);
+
+				SAFE_RELEASE(obj.RenderStates.BlendState);
+
+				SAFE_RELEASE(obj.RenderStates.DepthStencil);
+
+				SAFE_RELEASE(obj.RenderStates.Rasterizer);
+
+				for(int i = 0; i < obj.RenderStates.SampleCount; ++i)
+				{
+					SAFE_RELEASE(obj.RenderStates.SampleState[i]);
+				}
+				
+				SAFE_DELETE_ARRAY(obj.RenderStates.SampleState);
 			}
 		}
 	}

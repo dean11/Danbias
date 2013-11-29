@@ -158,12 +158,18 @@ namespace Oyster
 					Pixel,
 					Compute
 				};
+				struct ShaderData
+				{
+					size_t size;
+					char* data;
+				};
 
 				static void SetShaderEffect(ShaderEffect&);
 
 				static void CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC *desc, int ElementCount,int VertexIndex,ID3D11InputLayout *&Layout);
 
-				static bool Init(std::wstring filename, ShaderType type, std::wstring name, bool Precompiled = true);
+				static bool Init(std::wstring filename, ShaderType type, std::wstring name);
+				static void* CreateShader(ShaderData data, ShaderType type);
 
 				struct Get
 				{
@@ -184,6 +190,8 @@ namespace Oyster
 					static void Hull(int Index);
 					static void Domain(int Index);
 				};
+
+				static void Clean();
 			};
 
 			//Set resulotion Before Calling Full Init

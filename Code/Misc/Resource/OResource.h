@@ -27,19 +27,33 @@ namespace Oyster
 			virtual~					OResource();
 
 			inline ResourceType			GetResourceType()					const	
-			{ return this->resourceType; }
+			{ 
+				return this->resourceType; 
+			}
 			inline const wchar_t*		GetResourceFilename()				const	
-			{ return this->resourceFilename.c_str(); }
+			{ 
+				return this->resourceFilename.c_str(); 
+			}
 			inline OHRESOURCE			GetResourceHandle()					const	
-			{ return this->resourceData; }
+			{ 
+				return this->resourceData; 
+			}
 			inline unsigned long long	GetResourceSize()					const	
-			{ return this->resourceSize; }
+			{ 
+				return this->resourceSize; 
+			}
 			inline unsigned long long	GetResourceElementSize()			const	
-			{ return this->resourceElementSize; }
+			{ 
+				return this->resourceElementSize; 
+			}
 			inline unsigned int			GetResourceID()						const	
-			{ return this->resourceID; }
-			inline void					SetResourceID(unsigned int id)				
-			{ this->resourceID = id; }
+			{ 
+				return this->resourceID; 
+			}
+			inline void					SetResourceID(int id)				
+			{ 
+				this->resourceID = id; 
+			}
 
 		public:
 			static OResource*	Load				(const wchar_t filename[], ResourceType type);
@@ -63,7 +77,7 @@ namespace Oyster
 			size_t				resourceSize;
 			size_t				resourceElementSize;
 			::std::wstring		resourceFilename;
-			unsigned int		resourceID;
+			int					resourceID;
 
 			CustomResourceData	*customData;
 		};

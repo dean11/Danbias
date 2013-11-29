@@ -6,6 +6,7 @@
 // Copyright (c) Stefan Petersson 2011. All rights reserved.
 //--------------------------------------------------------------------------------------
 #define NOMINMAX
+#include <vld.h>
 #include <Windows.h>
 #include "DllInterfaces\GFXAPI.h"
 
@@ -16,7 +17,7 @@
 //--------------------------------------------------------------------------------------
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
-Oyster::Graphics::Model::Model* m	=				new Oyster::Graphics::Model::Model();
+Oyster::Graphics::Model::Model* m				= NULL;
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
 
@@ -90,6 +91,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		}
 	}
 
+	Oyster::Graphics::API::DeleteModel(m);
+	Oyster::Graphics::API::Clean();
 	return (int) msg.wParam;
 }
 
@@ -183,7 +186,7 @@ HRESULT InitDirect3D()
 #pragma endregion
 	
 #pragma region Obj
-	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy.obj");
+	m =  Oyster::Graphics::API::CreateModel(L"orca");
 #pragma endregion
 	
 

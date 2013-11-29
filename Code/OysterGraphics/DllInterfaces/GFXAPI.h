@@ -28,6 +28,7 @@ namespace Oyster
 			};
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
+			static void Clean();
 			//! @brief from Oyster::Math Float4x4, expects corect methods
 			static void NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection);
 			static void RenderScene(Oyster::Graphics::Model::Model* models, int count);

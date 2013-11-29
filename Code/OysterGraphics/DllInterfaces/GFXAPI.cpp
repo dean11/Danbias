@@ -3,6 +3,7 @@
 #include "../Render/Resources/Resources.h"
 #include "../Render/Rendering/Render.h"
 #include "../FileLoader/ObjReader.h"
+#include "../../Misc/Resource/OysterResource.h"
 
 namespace Oyster
 {
@@ -60,7 +61,17 @@ namespace Oyster
 
 		void API::DeleteModel(Model::Model* model)
 		{
+			Model::ModelInfo* info = (Model::ModelInfo*)model->info;
 			delete model;
+			info->Vertices->~Buffer();
+		}
+
+		void API::Clean()
+		{
+			SAFE_DELETE(Core::viewPort);
+			Oyster::Resource::OysterResource::Clean();
+			Oyster::Graphics::Core::ShaderManager::Clean();
+			Oyster::Graphics::Render::Resources::Clean();
 		}
 	}
 }

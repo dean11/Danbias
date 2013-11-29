@@ -1,4 +1,4 @@
-#include "TextureLoader.h"
+#include "GeneralLoader.h"
 #include "..\Core\Dx11Includes.h"
 #include "..\Core\Core.h"
 
@@ -14,22 +14,19 @@ HRESULT CreateWICTextureFromFileEx( ID3D11Device* d3dDevice,
 											 ID3D11Resource** texture,
 											 ID3D11ShaderResourceView** textureView );
 
-Oyster::Resource::CustomData& Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[])
+void Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[], Oyster::Resource::CustomData& out)
 {
 	ID3D11ShaderResourceView* srv = NULL;
-	Oyster::Resource::CustomData Ret;
 	HRESULT hr = CreateWICTextureFromFileEx(Core::device,Core::deviceContext,filename,0,D3D11_USAGE_DEFAULT,D3D11_BIND_SHADER_RESOURCE,0,0,false,NULL,&srv);
 	if(hr!=S_OK)
 	{
-		memset(&Ret,0,sizeof(Ret));
+		memset(&out,0,sizeof(out));
 	}
 	else
 	{
-		Ret.loadedData = (void*)srv;
-		Ret.resourceUnloadFnc = Loading::UnloadTexture;
+		out.loadedData = (void*)srv;
+		out.resourceUnloadFnc = Loading::UnloadTexture;
 	}
-
-	return Ret;
 }
 
 void Oyster::Graphics::Loading::UnloadTexture(void* data)

@@ -1,6 +1,8 @@
 #include "Core.h"
 #include <fstream>
 #include <map>
+#include "../FileLoader/GeneralLoader.h"
+#include "Resource\OysterResource.h"
 
 const char* ShaderFunction = "main";
 
@@ -8,15 +10,8 @@ namespace Oyster
 {
 	namespace Graphics
 	{
-		bool LoadPrecompiled(std::wstring filename, Core::ShaderManager::ShaderType type, std::wstring name);
-		bool LoadCompile(std::wstring filename, Core::ShaderManager::ShaderType type, std::wstring name);
 		namespace
 		{
-			struct ShaderData
-			{
-				size_t size;
-				char* data;
-			};
 			std::vector<ID3D11PixelShader*> PS;
 			std::map<std::wstring,int> PSMap;
 
@@ -26,213 +21,146 @@ namespace Oyster
 			std::vector<ID3D11ComputeShader*> CS;
 			std::map<std::wstring,int> CSMap;
 
+			std::vector<ID3D11DomainShader*> DS;
+			std::map<std::wstring,int> DSMap;
+
+			std::vector<ID3D11HullShader*> HS;
+			std::map<std::wstring,int> HSMap;
+
 			std::vector<ID3D11VertexShader*> VS;
-			std::vector<ShaderData> VData;
+			std::vector<Core::ShaderManager::ShaderData> VData;
 			std::map<std::wstring,int> VSMap;
 		}
 
 		#pragma region Init
-		bool Core::ShaderManager::Init(std::wstring filename, ShaderType type, std::wstring name, bool Precompiled)
+		bool Core::ShaderManager::Init(std::wstring filename, ShaderType type, std::wstring name)
 		{
-			if(Precompiled)
+			void* data;
+			bool ForceReload;
+#if defined (_DEBUG) | defined (DEBUG)
+			ForceReload = true;
+#else
+			ForceReload = false;
+#endif
+			switch (type)
 			{
-				return LoadPrecompiled(filename, type, name);
-			}
-			else
-			{
-				return LoadCompile(filename, type, name);
+			case Oyster::Graphics::Core::ShaderManager::Vertex:
+				if(!VSMap.count(name) || ForceReload)
+				{
+					data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderV, -1, ForceReload);
+					if(data)
+					{
+						VSMap[name] = VS.size();
+						VS.push_back((ID3D11VertexShader*)data);
+					}
+				}
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Hull:
+				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderH, -1, ForceReload);
+				if(!HSMap.count(name) || ForceReload)
+				{
+					if(data!=0)
+					{
+						HSMap[name] = HS.size();
+						HS.push_back((ID3D11HullShader*)data);
+					}
+				}
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Domain:
+				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderD, -1, ForceReload);
+				if(!DSMap.count(name) || ForceReload)
+				{
+					if(data!=0)
+					{
+						DSMap[name] = DS.size();
+						DS.push_back((ID3D11DomainShader*)data);
+					}
+				}
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Geometry:
+				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderG, -1, ForceReload);
+				if(!GSMap.count(name) || ForceReload)
+				{
+					if(data!=0)
+					{
+						GSMap[name] = GS.size();
+						GS.push_back((ID3D11GeometryShader*)data);
+					}
+				}
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Pixel:
+				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderP, -1, ForceReload);
+				if(!PSMap.count(name) || ForceReload)
+				{
+					if(data!=0)
+					{
+						PSMap[name] = PS.size();
+						PS.push_back((ID3D11PixelShader*)data);
+					}
+				}
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Compute:
+				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderC, -1, ForceReload);
+				if(!CSMap.count(name) || ForceReload)
+				{
+					if(data!=0)
+					{
+						CSMap[name] = CS.size();
+						CS.push_back((ID3D11ComputeShader*)data);
+					}
+				}
+				break;
+			default:
+				break;
 			}
 			return true;
 		}
 
-		bool LoadPrecompiled(std::wstring filename, Core::ShaderManager::ShaderType type, std::wstring name)
+		void* Core::ShaderManager::CreateShader(Core::ShaderManager::ShaderData data, Core::ShaderManager::ShaderType type)
 		{
-
-			std::ifstream stream;
-			ShaderData sd;
-
-	
-			//Create Vertex shader and Layout	
-			stream.open(filename, std::ifstream::in | std::ifstream::binary);
-			if(stream.good())
-			{
-				stream.seekg(0, std::ios::end);
-				sd.size = size_t(stream.tellg());
-				sd.data = new char[sd.size];
-				stream.seekg(0, std::ios::beg);
-				stream.read(&sd.data[0], sd.size);
-				stream.close();
-
 			
-				ID3D11VertexShader* vertex;
-				ID3D11GeometryShader* geometry;
-				ID3D11PixelShader* pixel;
-				ID3D11ComputeShader* compute;
-			
-				switch(type)
-				{
-				case Core::ShaderManager::ShaderType::Vertex:
-
-					if(VSMap.count(name))
-						return false;	
-
-					if(FAILED(Core::device->CreateVertexShader(sd.data, sd.size, 0, &vertex)))
-					{
-						return false;
-					}
-					VSMap[name] = VS.size();
-					VS.push_back(vertex);
-					VData.push_back(sd);
-					break;
-
-				case Core::ShaderManager::ShaderType::Hull:
-				case Core::ShaderManager::ShaderType::Domain:
-
-					return false;
-
-				case Core::ShaderManager::ShaderType::Geometry:
-
-					if(GSMap.count(name))
-						return false;
-					if(FAILED(Core::device->CreateGeometryShader(sd.data, sd.size, 0, &geometry)))
-					{
-						return false;
-					}
-					GSMap[name] = GS.size();
-					GS.push_back(geometry);
-					break;
-
-				case Core::ShaderManager::ShaderType::Pixel:
-
-					if(PSMap.count(name))
-						return false;
-					if(FAILED(Core::device->CreatePixelShader(sd.data, sd.size, 0, &pixel)))
-					{
-						return false;
-					}
-					PSMap[name] = PS.size();
-					PS.push_back(pixel);
-					break;
-
-				case Core::ShaderManager::ShaderType::Compute:
-
-					if(CSMap.count(name))
-						return false;
-					if(FAILED(Core::device->CreateComputeShader(sd.data, sd.size, 0, &compute)))
-					{
-						return false;
-					}
-					CSMap[name] = CS.size();
-					CS.push_back(compute);
-					break;
-				}
-			}
-			else
+			HRESULT hr;
+			switch (type)
 			{
-				return false;
+			case Oyster::Graphics::Core::ShaderManager::Vertex:
+				ID3D11VertexShader* vs;
+				hr = Core::device->CreateVertexShader(data.data,data.size,NULL,&vs);
+				if(hr == S_OK)
+					VData.push_back(data);
+				return vs;
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Hull:
+				ID3D11HullShader* hs;
+				Core::device->CreateHullShader(data.data,data.size,NULL,&hs);
+				delete[] data.data;
+				return hs;
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Domain:
+				ID3D11DomainShader* ds;
+				Core::device->CreateDomainShader(data.data,data.size,NULL,&ds);
+				delete[] data.data;
+				return ds;
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Geometry:
+				ID3D11GeometryShader* gs;
+				Core::device->CreateGeometryShader(data.data,data.size,NULL,&gs);
+				delete[] data.data;
+				return gs;
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Pixel:
+				ID3D11PixelShader* ps;
+				Core::device->CreatePixelShader(data.data,data.size,NULL,&ps);
+				delete[] data.data;
+				return ps;
+				break;
+			case Oyster::Graphics::Core::ShaderManager::Compute:
+				ID3D11ComputeShader* cs;
+				Core::device->CreateComputeShader(data.data,data.size,NULL,&cs);
+				delete[] data.data;
+				return cs;
+				break;
 			}
-			return true;
-		}
-
-		bool LoadCompile(std::wstring filename, Core::ShaderManager::ShaderType type, std::wstring name)
-		{
-			/// \todo error reporting
-			ID3D10Blob *Shader,*Error;
-			switch(type)
-			{
-			case Core::ShaderManager::ShaderType::Pixel: 
-
-				ID3D11PixelShader* pixel;
-
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,ShaderFunction,"ps_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
-				{
-					std::string fel = (char*)Error->GetBufferPointer();
-					Error->Release();
-					return false;
-				}
-				if(FAILED(Core::device->CreatePixelShader(Shader->GetBufferPointer(),Shader->GetBufferSize(),NULL,&pixel)))
-				{
-					Shader->Release();
-					return false;
-				}
-				Shader->Release();
-				if(!PSMap.count(name))
-				{
-					PSMap[name] = PS.size();
-					PS.push_back(pixel);
-				}
-				else
-				{
-					PS[PSMap[name]] = pixel;
-				}
-				break;
-
-			case Core::ShaderManager::ShaderType::Geometry: 
-
-				ID3D11GeometryShader* geometry;
-
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,ShaderFunction,"gs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
-				{
-					std::string fel = (char*)Error->GetBufferPointer();
-					Error->Release();
-					return false;
-				}
-				if(FAILED(Core::device->CreateGeometryShader(Shader->GetBufferPointer(),Shader->GetBufferSize(),NULL,&geometry)))
-				{
-					Shader->Release();
-					return false;
-				}
-				Shader->Release();
-				if(!GSMap.count(name))
-				{
-					GSMap[name] = GS.size();
-					GS.push_back(geometry);
-				}
-				else
-				{
-					GS[GSMap[name]] = geometry;
-				}
-				break;
-
-			case Core::ShaderManager::ShaderType::Vertex: 
-
-				ID3D11VertexShader* vertex;
-
-				if(FAILED(D3DCompileFromFile(filename.c_str(),NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,ShaderFunction,"vs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error)))
-				{
-					std::string fel = (char*)Error->GetBufferPointer();
-					Error->Release();
-					return false;
-				}
-				if(FAILED(Core::device->CreateVertexShader(Shader->GetBufferPointer(),Shader->GetBufferSize(),NULL,&vertex)))
-				{
-					Shader->Release();
-					return false;
-				}
-				if(!VSMap.count(name))
-				{
-					VSMap[name] = VS.size();
-					VS.push_back(vertex);
-					ShaderData sd;
-					sd.size = Shader->GetBufferSize();
-					sd.data = new char[sd.size];
-					memcpy(sd.data,Shader->GetBufferPointer(),sd.size);
-					VData.push_back(sd);
-				}
-				else
-				{
-					VS[VSMap[name]] = vertex;
-					delete[] VData[VSMap[name]].data;
-					VData[VSMap[name]].size = Shader->GetBufferSize();
-					VData[VSMap[name]].data = new char[VData[VSMap[name]].size];
-					memcpy(VData[VSMap[name]].data,Shader->GetBufferPointer(),VData[VSMap[name]].size);
-				}
-			
-				Shader->Release();
-				break;
-				
-			}
-			return true;
+			return NULL;
 		}
 	#pragma endregion
 
@@ -347,6 +275,14 @@ namespace Oyster
 			Core::deviceContext->OMSetDepthStencilState(se.RenderStates.DepthStencil,0);
 			float test[4] = {0};
 			Core::deviceContext->OMSetBlendState(se.RenderStates.BlendState,test,-1);
+		}
+
+		void Core::ShaderManager::Clean()
+		{
+			for(int i = 0; i < VData.size(); ++i)
+			{
+				delete[] VData[i].data;
+			}
 		}
 	}
 }
