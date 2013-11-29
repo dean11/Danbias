@@ -75,6 +75,7 @@ void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 					   0, yScale, 0, 0,
 					   0, 0, zf/(zf-zn), 1,
 					   0, 0, -zn*zf/(zf-zn), 0);
+	mProj.Transpose();
 }
 
 void Camera::LookAt(Oyster::Math::Float3 pos, Oyster::Math::Float3 target, Oyster::Math::Float3 worldUp)
@@ -198,4 +199,6 @@ void Camera::UpdateViewMatrix()
 	mView.m34 = 0.0f;
 	//this->mView(3, 3) = 1.0f;
 	mView.m44 = 1.0f;
+
+	mView.Transpose();
 }
