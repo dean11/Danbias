@@ -94,11 +94,11 @@ std::vector<ICustomBody*>& Octree::Sample(ICustomBody* customBodyRef, std::vecto
 	return updateList;
 }
 
-std::vector<ICustomBody*>& Octree::Sample(::Collision3D::ICollideable* collideable, std::vector<ICustomBody*>& updateList)
+std::vector<ICustomBody*>& Octree::Sample(const Oyster::Collision3D::ICollideable& collideable, std::vector<ICustomBody*>& updateList)
 {
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(this->leafData[i].container.Intersects(*collideable))
+		if(this->leafData[i].container.Intersects(collideable))
 		{
 			updateList.push_back(this->leafData[i].customBodyRef);
 		}
@@ -127,11 +127,11 @@ void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
 	}
 }
 
-void Octree::Visit(::Collision3D::ICollideable* collideable, VistorAction hitAction)
+void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, VistorAction hitAction)
 {
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(this->leafData[i].container.Intersects(*collideable))
+		if(this->leafData[i].container.Intersects(collideable))
 		{
 			//hitAction(*this, tempRef, i); // @todo TODO: Add typedef to handle function calls with ICollideable
 		}
