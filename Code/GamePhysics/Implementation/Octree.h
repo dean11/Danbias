@@ -50,9 +50,9 @@ namespace Oyster
 			void DestroyObject(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
 			std::vector<ICustomBody*>& Sample(ICustomBody* customBodyRef, std::vector<ICustomBody*>& updateList);
-			std::vector<ICustomBody*>& Sample(Oyster::Collision3D::ICollideable* collideable, std::vector<ICustomBody*>& updateList);
+			std::vector<ICustomBody*>& Sample(const Oyster::Collision3D::ICollideable& collideable, std::vector<ICustomBody*>& updateList);
 			void Visit(ICustomBody* customBodyRef, VistorAction hitAction );
-			void Visit(Oyster::Collision3D::ICollideable* collideable, VistorAction hitAction );
+			void Visit(const Oyster::Collision3D::ICollideable& collideable, VistorAction hitAction );
 
 			ICustomBody* GetCustomBody(const unsigned int tempRef);
 
