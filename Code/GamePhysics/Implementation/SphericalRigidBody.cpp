@@ -2,6 +2,7 @@
 #include "PhysicsAPI_Impl.h"
 
 using namespace ::Oyster::Physics;
+using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math3D;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
@@ -10,7 +11,7 @@ using namespace ::Utility::Value;
 SphericalRigidBody::SphericalRigidBody()
 	: previous(), current( Box(Float4x4::identity, Float3::null, Float3(1.0f)) ),
 	  gravityNormal( 0.0f ),
-	  subscribeCollision( true ),
+	  collisionAction(Default::EventAction_Collision),
 	  ignoreGravity( false ),
 	  body( Float3::null, 0.5f ) {}
 
@@ -19,11 +20,6 @@ SphericalRigidBody::~SphericalRigidBody() {}
 UniquePointer<ICustomBody> SphericalRigidBody::Clone() const	
 {
 	return new SphericalRigidBody( *this );
-}
-
-bool SphericalRigidBody::IsSubscribingCollisions() const
-{ // Assumption
-	return this->subscribeCollision;
 }
 
 bool SphericalRigidBody::IsAffectedByGravity() const
@@ -94,7 +90,19 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 	this->body.center = this->current.GetCenter();
 
 	// compare previous and new state and return result
-	return this->current == this->previous ? resting : altered;
+	return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
+}
+
+void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
+{
+	if( functionPointer )
+	{
+		this->collisionAction = functionPointer;
+	}
+	else
+	{
+		this->collisionAction = Default::EventAction_Collision;
+	}
 }
 
 void SphericalRigidBody::SetGravity( bool ignore)
@@ -106,11 +114,6 @@ void SphericalRigidBody::SetGravity( bool ignore)
 void SphericalRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
-}
-
-void SphericalRigidBody::SetSubscription( bool subscribeCollision )
-{
-	this->subscribeCollision = subscribeCollision;
 }
 
 void SphericalRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )

@@ -30,9 +30,9 @@ namespace Oyster { namespace Physics
 
 		UpdateState Update( ::Oyster::Math::Float timeStepLength );
 
+		void SetSubscription( EventAction_Collision functionPointer );
 		void SetGravity( bool ignore);
 		void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector );
-		void SetSubscription( bool subscribeCollision );
 		void SetMomentOfInertiaTensor_KeepVelocity( const ::Oyster::Math::Float4x4 &localI );
 		void SetMomentOfInertiaTensor_KeepMomentum( const ::Oyster::Math::Float4x4 &localI );
 		void SetMass_KeepVelocity( ::Oyster::Math::Float m );
@@ -45,7 +45,8 @@ namespace Oyster { namespace Physics
 	private:
 		::Oyster::Physics3D::RigidBody previous, current;
 		::Oyster::Math::Float3 gravityNormal;
-		bool subscribeCollision, ignoreGravity;
+		EventAction_Collision collisionAction;
+		bool ignoreGravity;
 		::Oyster::Collision3D::Sphere body;
 	};
 } }
