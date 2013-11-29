@@ -27,8 +27,8 @@ namespace Oyster { namespace Collision3D
 		Point & operator = ( const Point &point );
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
-		bool Intersects( const ICollideable *target ) const;
-		bool Contains( const ICollideable *target ) const;
+		bool Intersects( const ICollideable &target ) const;
+		bool Contains( const ICollideable &target ) const;
 	};
 } }
 

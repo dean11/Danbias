@@ -20,9 +20,14 @@ namespace Oyster { namespace Physics3D
 							   impulseTorqueSum,	/** The impulse torque T (Nm) that will be consumed each update.	(worldValue) */
 							   impulseForceSum;		/** The impulse force F (N) that will be consumed each update.		(worldValue) */
 
-		RigidBody( const ::Oyster::Collision3D::Box &box = ::Oyster::Collision3D::Box(), ::Oyster::Math::Float mass = 1.0f );
+		RigidBody( const ::Oyster::Collision3D::Box &box = ::Oyster::Collision3D::Box(),
+				   ::Oyster::Math::Float mass = 12.0f,
+				   const ::Oyster::Math::Float4x4 &inertiaTensor = ::Oyster::Math::Float4x4::identity );
 
 		RigidBody & operator = ( const RigidBody &body );
+
+		bool operator == ( const RigidBody &body );
+		bool operator != ( const RigidBody &body );
 
 		void Update_LeapFrog( ::Oyster::Math::Float deltaTime );
 		void ApplyImpulseForce( const ::Oyster::Math::Float3 &worldF );
@@ -68,13 +73,15 @@ namespace Oyster { namespace Physics3D
 
 		// SET METHODS ////////////////////////////////
 
-		void SetMomentOfInertia( const ::Oyster::Math::Float4x4 &localI );
+		void SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &localI );
+		void SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &localI );
 		void SetMass_KeepVelocity( const ::Oyster::Math::Float &m );
 		void SetMass_KeepMomentum( const ::Oyster::Math::Float &m );
 
 		void SetOrientation( const ::Oyster::Math::Float4x4 &o );
 		void SetSize( const ::Oyster::Math::Float3 &widthHeight );
 		void SetCenter( const ::Oyster::Math::Float3 &worldPos );
+		void SetRotation( const ::Oyster::Math::Float4x4 &r );
 		
 		void SetImpulseTorque( const ::Oyster::Math::Float3 &worldT );
 		void SetAngularMomentum( const ::Oyster::Math::Float3 &worldH );

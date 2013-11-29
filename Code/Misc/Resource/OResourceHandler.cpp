@@ -23,46 +23,71 @@ public:
 } resourcePrivate;
 
 
-OHRESOURCE OysterResource::LoadResource(const wchar_t* filename, ResourceType type)
+OHRESOURCE OysterResource::LoadResource(const wchar_t* filename, ResourceType type, int customID, bool force)
 {
 	if(!filename) return 0;
 
 	OResource *resourceData = resourcePrivate.FindResource(filename);
+
 	if(resourceData)	
 	{
-		//Add new reference
-		resourcePrivate.SaveResource(resourceData, false);
-		return resourceData->GetResourceHandle();
+		if(force)
+		{
+			return OysterResource::ReloadResource(filename);
+		}
+		else
+		{
+			//Add new reference
+			resourcePrivate.SaveResource(resourceData, false);
+			return resourceData->GetResourceHandle();
+		}
 	}
-	
-	resourceData = OResource::Load(filename, type);
-
-	if(!resourceData) return 0;
-
-	resourcePrivate.SaveResource(resourceData);
+	else
+	{
+		resourceData = OResource::Load(filename, type);
+		if(resourceData) 
+		{
+			resourceData->SetResourceID(customID);
+			resourcePrivate.SaveResource(resourceData);
+		}
+	}
 
 	return resourceData->GetResourceHandle();
 }
-OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc, int CustomId)
+OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc, int customId, bool force)
 {
-	if(!filename)	return 0;
-	if(!loadFnc)	return 0;
+	if(!filename)	
+	{
+		return 0;
+	}
+	if(!loadFnc)	
+	{
+		return 0;
+	}
 
 	OResource *resourceData = resourcePrivate.FindResource(filename);
 	if(resourceData)	
 	{
-		//Add new reference
-		resourcePrivate.SaveResource(resourceData, false);
-		return resourceData->GetResourceHandle();
+		if(force)
+		{
+			return OysterResource::ReloadResource(filename);
+		}
+		else
+		{
+			//Add new reference
+			resourcePrivate.SaveResource(resourceData, false);
+			return resourceData->GetResourceHandle();
+		}
 	}
-
-	resourceData = OResource::Load(filename, loadFnc);
-
-	if(!resourceData) return 0;
-
-	resourceData->SetResourceID(CustomId);
-
-	resourcePrivate.SaveResource(resourceData);
+	else
+	{
+		resourceData = OResource::Load(filename, loadFnc);
+		if(resourceData)
+		{
+			resourceData->SetResourceID(customId);
+			resourcePrivate.SaveResource(resourceData);
+		}
+	}
 
 	return (OHRESOURCE)resourceData->GetResourceHandle();
 }

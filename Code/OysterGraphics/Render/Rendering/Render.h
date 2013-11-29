@@ -17,7 +17,7 @@ namespace Oyster
 				public:
 
 					static void NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection);
-					static void RenderScene(Model* models, int count);
+					static void RenderScene(Model::Model* models, int count);
 					static void EndFrame();
 				};
 			}

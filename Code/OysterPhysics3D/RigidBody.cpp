@@ -9,9 +9,14 @@ using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math3D;
 
-RigidBody::RigidBody( const Box &b, Float m )
-	: box(b), angularMomentum(0.0f), linearMomentum(0.0f), impulseTorqueSum(0.0f), impulseForceSum(0.0f)
+RigidBody::RigidBody( const Box &b, Float m, const Float4x4 &inertiaTensor )
 { // by Dan Andersson
+	this->box = b;
+	this->angularMomentum = Float3::null;
+	this->linearMomentum = Float3::null;
+	this->impulseTorqueSum = Float3::null;
+	this->impulseForceSum = Float3::null;
+
 	if( m != 0.0f )
 	{
 		this->mass = m;
@@ -21,7 +26,14 @@ RigidBody::RigidBody( const Box &b, Float m )
 		this->mass = ::Utility::Value::numeric_limits<Float>::epsilon();
 	}
 
-	this->momentOfInertiaTensor = Float4x4::identity;
+	if( inertiaTensor.GetDeterminant() != 0.0f )
+	{
+		this->momentOfInertiaTensor = inertiaTensor;
+	}
+	else
+	{
+		this->momentOfInertiaTensor = Float4x4::identity;
+	}
 }
 
 RigidBody & RigidBody::operator = ( const RigidBody &body )
@@ -34,6 +46,51 @@ RigidBody & RigidBody::operator = ( const RigidBody &body )
 	this->mass = body.mass;
 	this->momentOfInertiaTensor = body.momentOfInertiaTensor;
 	return *this;
+}
+
+bool RigidBody::operator == ( const RigidBody &body )
+{
+	if( this->box.center != body.box.center )
+	{
+		return false;
+	}
+
+	if( this->box.rotation != body.box.rotation )
+	{
+		return false;
+	}
+
+	if( this->box.boundingOffset != body.box.boundingOffset )
+	{
+		return false;
+	}
+
+	if( this->angularMomentum != body.angularMomentum )
+	{
+		return false;
+	}
+
+	if( this->linearMomentum != body.linearMomentum )
+	{
+		return false;
+	}
+
+	if( this->impulseTorqueSum != body.impulseTorqueSum )
+	{
+		return false;
+	}
+
+	if( this->impulseForceSum != body.impulseForceSum )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool RigidBody::operator != ( const RigidBody &body )
+{
+	return !this->operator==( body );
 }
 
 void RigidBody::Update_LeapFrog( Float deltaTime )
@@ -225,7 +282,7 @@ Float3 RigidBody::GetLinearVelocity() const
 }
 
 void RigidBody::GetMomentumAt( const Float3 &worldPos, const Float3 &surfaceNormal, Float3 &normalMomentum, Float3 &tangentialMomentum ) const
-{
+{ // by Dan Andersson
 	Float3 worldOffset = worldPos - this->box.center;
 	Float3 momentum = Formula::TangentialLinearMomentum( this->angularMomentum, worldOffset );
 	momentum += this->linearMomentum;
@@ -234,7 +291,18 @@ void RigidBody::GetMomentumAt( const Float3 &worldPos, const Float3 &surfaceNorm
 	tangentialMomentum = momentum - normalMomentum;
 }
 
-void RigidBody::SetMomentOfInertia( const Float4x4 &localI )
+void RigidBody::SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &localI )
+{ // by Dan Andersson
+	if( localI.GetDeterminant() != 0.0f ) // insanitycheck! momentOfInertiaTensor must be invertable
+	{
+		Float3 w = Formula::AngularVelocity( (this->box.rotation * this->momentOfInertiaTensor).GetInverse(),
+											 this->angularMomentum );
+		this->momentOfInertiaTensor = localI;
+		this->angularMomentum = Formula::AngularMomentum( this->box.rotation*localI, w );
+	}
+}
+
+void RigidBody::SetMomentOfInertia_KeepMomentum( const Float4x4 &localI )
 { // by Dan Andersson
 	if( localI.GetDeterminant() != 0.0f ) // insanitycheck! momentOfInertiaTensor must be invertable
 	{
@@ -246,9 +314,9 @@ void RigidBody::SetMass_KeepVelocity( const Float &m )
 { // by Dan Andersson
 	if( m != 0.0f ) // insanitycheck! mass must be invertable
 	{
-		Float3 velocity = Formula::LinearVelocity( this->mass, this->linearMomentum );
+		Float3 v = Formula::LinearVelocity( this->mass, this->linearMomentum );
 		this->mass = m;
-		this->linearMomentum = Formula::LinearMomentum( this->mass, velocity );
+		this->linearMomentum = Formula::LinearMomentum( this->mass, v );
 	}
 }
 
@@ -274,6 +342,11 @@ void RigidBody::SetSize( const Float3 &widthHeight )
 void RigidBody::SetCenter( const Float3 &worldPos )
 { // by Dan Andersson
 	this->box.center = worldPos;
+}
+
+void RigidBody::SetRotation( const Float4x4 &r )
+{ // by Dan Andersson
+	this->box.rotation = r;
 }
 
 void RigidBody::SetImpulseTorque( const Float3 &worldT )

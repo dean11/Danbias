@@ -1,7 +1,10 @@
 /////////////////////////////////////////////////////////////////////
 // Utility Collection of Miscellanious Handy Functions
-// © Dan Andersson 2013
-// © Dennis Andersen 2013
+//
+// Created 2013 by Dan Andersson
+// Edited 2013 by
+// * Dan Andersson
+// * Dennis Andersen
 /////////////////////////////////////////////////////////////////////
 
 #ifndef UTILITIES_H
@@ -18,153 +21,212 @@ namespace Utility
 {
 	namespace DynamicMemory
 	{
-		/// If dynamicInstance is not NULL, then delete
+		/******************************************************************
+		 * If dynamicInstance is not NULL, then delete.
+		 ******************************************************************/
 		template<typename Type> void SafeDeleteInstance( Type *dynamicInstance );
 
-		/// If dynamicArray is not NULL, then delete []
+		/******************************************************************
+		 * If dynamicArray is not NULL, then delete [].
+		 ******************************************************************/
 		template<typename Type> void SafeDeleteArray( Type dynamicArray[] );
 
-		template<typename Type>
-		struct UniquePointer
-		{ /// Wrapper to safely transfer dynamic ownership/responsibility
-		public:
-			/// Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
-			UniquePointer( Type *assignedInstance = NULL );
-
-			/// Will auto delete assigned dynamic instance.
-			~UniquePointer();
-
-			/// Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
-			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniquePointer.
-			UniquePointer<Type> & operator = ( Type *assignedInstance );
-
-			/// Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
-			/// If donor had nothing, is equavalent with clearing all responsibilities from this UniquePointer.
-			UniquePointer<Type> & operator = ( const UniquePointer<Type> &donor );
-
-			/// Access the assigned dynamic instance. Will crash if nothing there
-			operator Type* ();
-
-			/// Access the assigned dynamic instance. Will crash if nothing there
-			operator const Type* () const;
-			
-			/// Access members of the assigned dynamic instance. Will crash if nothing there
-			Type * operator -> ();
-			
-			/// Access members of the assigned dynamic instance. Will crash if nothing there
-			const Type * operator -> () const;
-
-			/// If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
-			operator bool () const;
-
-			/// This UniquePointer drops all claims of ownership/responsibility and returns the dynamic instance. Now it is your responsibility to delete.
-			Type* Release();
-			
-			/// (inline) If true, this UniquePointer have a current ownership/responsibility of a dynamic instance.
-			bool HaveOwnership() const;
-			
-		private:
-			mutable Type *ownedInstance;
-		};
-
-		template<typename Type>
-		struct UniqueArray
-		{ /// Wrapper to safely transfer dynamic ownership/responsibility
-		public:
-			/// Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
-			UniqueArray( Type assignedArray[] = NULL );
-			
-			/// Will auto delete assigned dynamic array.
-			~UniqueArray();
-
-			/// Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
-			/// If NULL is assigned is equavalent with clearing all responsibilities from this UniqueArray.
-			UniqueArray<Type> & operator = ( Type assignedArray[] );
-			
-			/// Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
-			/// If donor had nothing, is equavalent with clearing all responsibilities from this UniqueArray.
-			UniqueArray<Type> & operator = ( const UniqueArray<Type> &donor );
-
-			/// Accesses the instance at index i of this UniqeArray's owned dynamic array.
-			/// Will crash if out-of-bound or there is no assigned array.
-			template<typename Index> Type & operator [] ( Index i );
-			
-			/// Accesses the instance at index i of this UniqeArray's owned dynamic array.
-			/// Will crash if out-of-bound or there is no assigned array.
-			template<typename Index> const Type & operator [] ( Index i ) const;
-
-			/// If true, this UniqueArray have a current ownership/responsibility of a dynamic instance.
-			operator bool () const;
-
-			/// This UniqueArray drops all claims of ownership/responsibility and returns the dynamic array. Now it is your responsibility to delete.
-			Type* Release();
-
-			/// (inline) If true, this UniqueArray have a current ownership/responsibility of a dynamic array.
-			bool HaveOwnership() const;
-
-		private:
-			mutable Type *ownedArray;
-		};
-
+		//! A simple reference counter with some extra functionality
 		struct ReferenceCount
 		{
 			private:
-				std::atomic<int> count;
+				int count;
 
 			public:
 				ReferenceCount()		:count(0)									{ }
-				ReferenceCount(const ReferenceCount& o)								{ count.store(o.count); }
-				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count.store(o.count);  return *this;}
+				ReferenceCount(const ReferenceCount& o)								{ count = o.count; }
+				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count = o.count;  return *this;}
 				inline void Incref()												{ this->count++; }
 				inline void Incref(int c)											{ this->count += c; }
 				inline int  Decref()												{ return --this->count;}
 				inline void Reset()													{ this->count = 0; }
 		};
 
-		namespace SmartPointer
+		//! Wrapper to safely transfer dynamic ownership/responsibility
+		template<typename Type> struct UniquePointer
 		{
-			//! Smart pointer for a regular object.
-			/** 
-			*	Regular objects, objects that is deleted normaly (ie not COM objects, or array pointers) 
-			*	can use this class to easy the use of dynamic memory 
-			*/
-			template<typename T>
-			struct StdSmartPointer
-			{
-				private:
-					ReferenceCount	*_rc;
-					T				*_ptr;
+		public:
+			/******************************************************************
+			 * Assigns assignedInstance ownership to this UniquePonter, old owned instance will be deleted.
+			 * If NULL is assigned is equivalent with clearing all responsibilities from this UniquePointer.
+			 ******************************************************************/
+			 UniquePointer( Type *assignedInstance = NULL );
 
-					/** Destroys the pointer and returns the memory allocated. */
-					void Destroy();
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			 ******************************************************************/
+			UniquePointer( const UniquePointer<Type> &donor );
 
-				public:
-					StdSmartPointer();
-					StdSmartPointer(T* p);
-					StdSmartPointer(const StdSmartPointer& d);
-					virtual~StdSmartPointer();
-					StdSmartPointer<T>& operator= (const StdSmartPointer<T>& p);
-					StdSmartPointer<T>& operator= (T* p);
-					bool operator== (const StdSmartPointer<T>& d);
-					bool operator== (const T& p);
-					T& operator* ();
-					T* operator-> ();
-					operator T* ();
-					operator bool();
+			/******************************************************************
+			 * Will auto delete assigned dynamic instance.
+			 ******************************************************************/
+			~UniquePointer();
 
-					/**
-					*	Returns the connected pointer */
-					T* Get();
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned instance will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniquePointer.
+			 ******************************************************************/
+			UniquePointer<Type> & operator = ( const UniquePointer<Type> &donor );
 
-					/** Checks if the pointer is valid (not NULL)
-						Returns true for valid, else false. */
-					bool IsValid();
-			};
-		}
+			/******************************************************************
+			 * Access the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
+			operator Type* ();
 
+			/******************************************************************
+			 * Access the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
+			operator const Type* () const;
+			
+			/******************************************************************
+			 * Access members of the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
+			Type * operator -> ();
+			
+			/******************************************************************
+			 * Access members of the assigned dynamic instance. Will crash if nothing there
+			 ******************************************************************/
+			const Type * operator -> () const;
 
+			/******************************************************************
+			 * @return true if this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			 ******************************************************************/
+			operator bool () const;
+
+			/******************************************************************
+			 * @return true if this ownedInstance matches with stray
+			 ******************************************************************/
+			bool operator == ( Type *stray ) const;
+
+			/******************************************************************
+			 * @return false if this ownedInstance matches with stray
+			 ******************************************************************/
+			bool operator != ( Type *stray ) const;
+
+			/******************************************************************
+			 * This UniquePointer drops all claims of ownership/responsibility and returns the dynamic instance. Now it is your responsibility to delete.
+			 ******************************************************************/
+			Type* Release();
+			
+			/******************************************************************
+			 * @return true if this UniquePointer have a current ownership/responsibility of a dynamic instance.
+			 * inline of @see operator bool () const
+			 ******************************************************************/
+			bool HaveOwnership() const;
+			
+		private:
+			mutable Type *ownedInstance;
+		};
+
+		//! Wrapper to safely transfer dynamic ownership/responsibility
+		template<typename Type> struct UniqueArray
+		{
+		public:
+			/******************************************************************
+			 * Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
+			 * If NULL is assigned is equivalent with clearing all responsibilities from this UniqueArray.
+			 ******************************************************************/
+			UniqueArray( Type assignedArray[] = NULL );
+			
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			 ******************************************************************/
+			UniqueArray( const UniqueArray<Type> &donor );
+
+			/******************************************************************
+			 * Will auto delete assigned dynamic array.
+			 ******************************************************************/
+			~UniqueArray();
+			
+			/******************************************************************
+			 * Transfers assignedInstance ownership from donor to this UniquePonter, old owned array will be deleted.
+			 * If donor had nothing, is equivalent with clearing all responsibilities from this UniqueArray.
+			 ******************************************************************/
+			UniqueArray<Type> & operator = ( const UniqueArray<Type> &donor );
+
+			/******************************************************************
+			 * Accesses the instance at index i of this UniqeArray's owned dynamic array.
+			 * Will crash if out-of-bound or there is no assigned array.
+			 ******************************************************************/
+			template<typename Index> Type & operator [] ( Index i );
+			
+			/******************************************************************
+			 * Accesses the instance at index i of this UniqeArray's owned dynamic array.
+			 * Will crash if out-of-bound or there is no assigned array.
+			 ******************************************************************/
+			template<typename Index> const Type & operator [] ( Index i ) const;
+
+			/******************************************************************
+			 * @return true if this UniqueArray have a current ownership/responsibility of a dynamic array.
+			 ******************************************************************/
+			operator bool () const;
+
+			/******************************************************************
+			 * @return true if this ownedInstance matches with stray.
+			 ******************************************************************/
+			bool operator == ( Type *stray ) const;
+
+			/******************************************************************
+			 * @return false if this ownedInstance matches with stray.
+			 ******************************************************************/
+			bool operator != ( Type *stray ) const;
+
+			/******************************************************************
+			 * This UniqueArray drops all claims of ownership/responsibility and returns the dynamic array. Now it is your responsibility to delete.
+			 ******************************************************************/
+			Type* Release();
+
+			/******************************************************************
+			 * @return true if this UniqueArray have a current ownership/responsibility of a dynamic array.
+			 * inline of @see operator bool () const
+			 ******************************************************************/
+			bool HaveOwnership() const;
+
+		private:
+			mutable Type *ownedArray;
+		};
+
+		//! Wrapper to manage references on a pointer.
+		template<typename T> struct SmartPointer
+		{
+			private:
+				ReferenceCount	*_rc;
+				T				*_ptr;
+
+				/** Destroys the pointer and returns the memory allocated. */
+				void Destroy();
+
+			public:
+				SmartPointer();
+				SmartPointer(T* p);
+				SmartPointer(const SmartPointer& d);
+				virtual~SmartPointer();
+				SmartPointer<T>& operator= (const SmartPointer<T>& p);
+				SmartPointer<T>& operator= (T* p);
+				bool operator== (const SmartPointer<T>& d);
+				bool operator== (const T& p);
+				T& operator* ();
+				T* operator-> ();
+				operator T* ();
+				operator bool();
+
+				/**
+				*	Returns the connected pointer 
+				*/
+				T* Get();
+
+				/** Checks if the pointer is valid (not NULL)
+				*	Returns true for valid, else false. 
+				*/
+				bool IsValid();
+		};
 	}
 
 	namespace String
@@ -260,7 +322,7 @@ namespace Utility
 		inline ValueType Degree( const ValueType &radian )
 		{ return radian * (180.0f / 3.1415926535897932384626433832795f); }
 
-		// SPECIALIZATIONS //////////////////////////////////////////
+		// SPECIALIZATIONS //!//!//!//!//!//!//!//!//!//!//!//!//!//!
 
 		template<> inline char Average<char>( const char &valueA, const char &valueB )
 		{ return (valueA + valueB) >> 1; }
@@ -310,8 +372,13 @@ namespace Utility
 		template<> inline unsigned long long AverageWithDelta<unsigned long long>( const unsigned long long &origin, const unsigned long long &delta )
 		{ return origin + (delta >> 1); }
 	}
+
+	namespace Thread
+	{
+		//Utilities for threading
+	}
 }
 
-#include "Utilities-InlineImpl.h"
+#include "Utilities-Impl.h"
 
 #endif

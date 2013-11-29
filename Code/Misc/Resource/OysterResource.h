@@ -28,7 +28,7 @@ namespace Oyster
 			ResourceType_Byte_UNICODE,				/**< Handle can be interpeted as char[] or char* */
 			ResourceType_Byte_UTF16LE,				/**< Handle can be interpeted as char[] or char* */
 
-			ResourceType_COUNT,						/**< Not used. */
+			ResourceType_COUNT,						/**< Handle can be interpeted as ? */
 
 			ResourceType_UNKNOWN = -1,				/**< Handle can be interpeted as void* */
 			ResourceType_INVALID = -2,				/**< Invalid or non existing resource */
@@ -54,16 +54,17 @@ namespace Oyster
 			*	@param force If set to true, the resource will be reloaded if it already exists. If it does not, nothing happens.
 			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
 			*/
-			static OHRESOURCE				LoadResource(const wchar_t filename[], ResourceType type);
+			static OHRESOURCE				LoadResource(const wchar_t filename[], ResourceType type, int customId = -1, bool force = false);
 
 			/**
 			*	Load a resource with a custom loading function
 			*	@param filename The path to the resource.
-			*	@param force If set to true, the resource will be reloaded even if exists.
 			*	@param loadFnc If set, this gives you the right to do custom resource loading if your recource type is not supported.
+			*	@param customId A custom ID that can be used.
+			*	@param force If set to true, the resource will be reloaded even if exists.
 			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
 			*/
-			static OHRESOURCE				LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc = 0, int CustomId = -1);
+			static OHRESOURCE				LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc = 0, int customId = -1, bool force = false);
 
 			/**
 			*	Reload a resource

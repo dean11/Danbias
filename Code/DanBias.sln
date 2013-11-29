@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GamePhysics", "GamePhysics\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tester", "Tester\Tester.vcxproj", "{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DanBiasGame", "DanBiasGame\DanBiasGame.vcxproj", "{2A1BC987-AF42-4500-802D-89CD32FC1309}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -175,6 +177,7 @@ Global
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Debug|Win32.ActiveCfg = Debug|Win32
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Debug|Win32.Build.0 = Debug|Win32
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Debug|x64.ActiveCfg = Debug|x64
+		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Debug|x64.Build.0 = Debug|x64
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{104FA3E9-94D9-4E1D-A941-28A03BC8A095}.Release|Win32.ActiveCfg = Release|Win32
@@ -190,6 +193,18 @@ Global
 		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|Win32.ActiveCfg = Release|Win32
 		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|Win32.Build.0 = Release|Win32
 		{1B3BEA4C-CF75-438A-9693-60FB8444BBF3}.Release|x64.ActiveCfg = Release|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Debug|Win32.Build.0 = Debug|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Debug|x64.ActiveCfg = Debug|x64
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Debug|x64.Build.0 = Debug|x64
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Release|Win32.ActiveCfg = Release|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Release|Win32.Build.0 = Release|Win32
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Release|x64.ActiveCfg = Release|x64
+		{2A1BC987-AF42-4500-802D-89CD32FC1309}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

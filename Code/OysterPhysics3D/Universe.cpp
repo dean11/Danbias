@@ -13,15 +13,15 @@ Universe & Universe::operator = ( const Universe &universe )
 UniquePointer<ICollideable> Universe::Clone( ) const
 { return UniquePointer<ICollideable>( new Universe(*this) ); }
 
-bool Universe::Intersects( const ICollideable *target ) const
+bool Universe::Intersects( const ICollideable &target ) const
 { // universe touches everything
-	switch( target->type )
+	switch( target.type )
 	{
 	case Type_ray:
-		((Ray*)target)->collisionDistance = 0.0f;
+		((Ray*)&target)->collisionDistance = 0.0f;
 		break;
 	case Type_line:
-		((Line*)target)->ray.collisionDistance = 0.0f;
+		((Line*)&target)->ray.collisionDistance = 0.0f;
 		break;
 	default: break;
 	}
@@ -29,6 +29,6 @@ bool Universe::Intersects( const ICollideable *target ) const
 	return true;
 }
 
-bool Universe::Contains( const ICollideable *target ) const
+bool Universe::Contains( const ICollideable &target ) const
 { return true; } // universe contains everything
 

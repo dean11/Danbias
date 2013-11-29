@@ -1,8 +1,11 @@
 /////////////////////////////////////////////////////////////////////
 // Inline and template implementations for
 // the Utility Collection of Miscellanious Handy Functions
-// © Dan Andersson 2013
-// © Dennis Andersen 2013 TODO: Is this correct?
+//
+// Created 2013 by Dan Andersson
+// Edited 2013 by
+// * Dan Andersson
+// * Dennis Andersen
 /////////////////////////////////////////////////////////////////////
 
 #ifndef UTILITIES_INLINE_IMPL_H
@@ -32,6 +35,7 @@ namespace Utility
 			}
 		}
 
+#pragma region UnuiqePointer
 		template<typename Type>
 		UniquePointer<Type>::UniquePointer( Type *assignedInstance )
 		{
@@ -39,17 +43,17 @@ namespace Utility
 		}
 
 		template<typename Type>
-		UniquePointer<Type>::~UniquePointer()
+		UniquePointer<Type>::UniquePointer( const UniquePointer<Type> &donor )
 		{
-			SafeDeleteInstance( this->ownedInstance );
+			this->ownedInstance = donor.ownedInstance;
+			donor.ownedInstance = NULL;
+
 		}
 
 		template<typename Type>
-		UniquePointer<Type> & UniquePointer<Type>::operator = ( Type *assignedInstance )
+		UniquePointer<Type>::~UniquePointer()
 		{
 			SafeDeleteInstance( this->ownedInstance );
-			this->ownedInstance = assignedInstance;
-			return *this;
 		}
 
 		template<typename Type>
@@ -92,6 +96,18 @@ namespace Utility
 		}
 
 		template<typename Type>
+		bool UniquePointer<Type>::operator == ( Type *stray ) const
+		{
+			return this->ownedInstance == stray;
+		}
+
+		template<typename Type>
+		bool UniquePointer<Type>::operator != ( Type *stray ) const
+		{
+			return this->ownedInstance != stray;
+		}
+
+		template<typename Type>
 		Type* UniquePointer<Type>::Release()
 		{
 			Type *copy = this->ownedInstance;
@@ -112,16 +128,17 @@ namespace Utility
 		}
 
 		template<typename Type>
-		UniqueArray<Type>::~UniqueArray()
+		UniqueArray<Type>::UniqueArray( const UniqueArray<Type> &donor )
 		{
-			SafeDeleteArray( this->ownedArray );
+			this->ownedArray = donor.ownedArray;
+			donor.ownedArray = NULL;
+
 		}
 
 		template<typename Type>
-		UniqueArray<Type> & UniqueArray<Type>::operator = ( Type assignedArray[] )
+		UniqueArray<Type>::~UniqueArray()
 		{
 			SafeDeleteArray( this->ownedArray );
-			this->ownedArray = assignedArray;
 		}
 
 		template<typename Type>
@@ -150,7 +167,20 @@ namespace Utility
 			return this->ownedArray != NULL;
 		}
 
-		template<typename Type>Type* UniqueArray<Type>::Release()
+		template<typename Type>
+		bool UniqueArray<Type>::operator == ( Type *stray ) const
+		{
+			return this->ownedArray == stray;
+		}
+
+		template<typename Type>
+		bool UniqueArray<Type>::operator != ( Type *stray ) const
+		{
+			return this->ownedArray != stray;
+		}
+
+		template<typename Type>
+		Type* UniqueArray<Type>::Release()
 		{
 			Type *copy = this->ownedArray;
 			this->ownedArray = NULL;
@@ -162,110 +192,114 @@ namespace Utility
 		{
 			return this->operator bool();
 		}
+#pragma endregion
 
-		namespace SmartPointer
+#pragma region SmartPointer
+		template<typename T> void SmartPointer<T>::Destroy()
 		{
-			template<typename T> void StdSmartPointer<T>::Destroy()
-			{
-				delete this->_rc;
-				this->_rc = NULL;
-				delete this->_ptr;
-				this->_ptr = NULL;
-			}
-			template<typename T> StdSmartPointer<T>::StdSmartPointer()
-					:_rc(0), _ptr(0)
-				{ }
-			template<typename T> StdSmartPointer<T>::StdSmartPointer(T* p)
-				:_ptr(p)
-			{ 
-				this->_rc = new ReferenceCount();
+			delete this->_rc;
+			this->_rc = NULL;
+
+			//Use default function for memory deallocation.
+			SafeDeleteInstance<T>(this->_ptr);
+
+			this->_ptr = NULL;
+		}
+		template<typename T> SmartPointer<T>::SmartPointer()
+				:_rc(0), _ptr(0)
+			{ }
+		template<typename T> SmartPointer<T>::SmartPointer(T* p)
+			:_ptr(p)
+		{ 
+			this->_rc = new ReferenceCount();
+			this->_rc->Incref();
+		}
+		template<typename T> SmartPointer<T>::SmartPointer(const SmartPointer& d)
+			:_ptr(d._ptr), _rc(d._rc)
+		{
+			if(this->_rc)
 				this->_rc->Incref();
-			}
-			template<typename T> StdSmartPointer<T>::StdSmartPointer(const StdSmartPointer& d)
-				:_ptr(d._ptr), _rc(d._rc)
+		}
+		template<typename T> SmartPointer<T>::~SmartPointer()
+		{
+			if (this->_rc && this->_rc->Decref() == 0)
 			{
-				if(this->_rc)
-					this->_rc->Incref();
+				Destroy();
 			}
-			template<typename T> StdSmartPointer<T>::~StdSmartPointer()
+		}
+		template<typename T> SmartPointer<T>& SmartPointer<T>::operator= (const SmartPointer<T>& p)
+		{
+			if (this != &p)
 			{
-				if (this->_rc && this->_rc->Decref() == 0)
+				//Last to go?
+				if(this->_rc && this->_rc->Decref() == 0)
 				{
+					//Call child specific
 					Destroy();
 				}
+
+				this->_ptr = p._ptr;
+				this->_rc = p._rc;
+				this->_rc->Incref();
 			}
-			template<typename T> StdSmartPointer<T>& StdSmartPointer<T>::operator= (const StdSmartPointer<T>& p)
+			return *this;
+		}
+		template<typename T> SmartPointer<T>& SmartPointer<T>::operator= (T* p)
+		{
+			if (this->_ptr != p)
 			{
-				if (this != &p)
+				//Last to go?
+				if(this->_rc)
 				{
-					//Last to go?
-					if(this->_rc && this->_rc->Decref() == 0)
+					if(this->_rc->Decref() == 0)
 					{
 						//Call child specific
 						Destroy();
-					}
-
-					this->_ptr = p._ptr;
-					this->_rc = p._rc;
-					this->_rc->Incref();
-				}
-				return *this;
-			}
-			template<typename T> StdSmartPointer<T>& StdSmartPointer<T>::operator= (T* p)
-			{
-				if (this->_ptr != p)
-				{
-					//Last to go?
-					if(this->_rc)
-					{
-						if(this->_rc->Decref() == 0)
-						{
-							//Call child specific
-							Destroy();
-							this->_rc = new ReferenceCount();
-						}
-					}
-					else
 						this->_rc = new ReferenceCount();
-		
-					this->_ptr = p;
-					this->_rc->Incref();
+					}
 				}
-				return *this;
+				else
+					this->_rc = new ReferenceCount();
+		
+				this->_ptr = p;
+				this->_rc->Incref();
 			}
-			template<typename T> inline bool StdSmartPointer<T>::operator== (const StdSmartPointer<T>& d)
-			{
-				return d._ptr == this->_ptr;
-			}
-			template<typename T> inline bool StdSmartPointer<T>::operator== (const T& p)
-			{
-				return &p == this->_ptr;
-			}
-			template<typename T> inline T& StdSmartPointer<T>::operator* ()
-			{
-				return *this->_ptr;
-			}
-			template<typename T> inline T* StdSmartPointer<T>::operator-> ()
-			{
-				return this->_ptr;
-			}
-			template<typename T> inline StdSmartPointer<T>::operator T* ()
-			{
-				return this->_ptr;
-			}
-			template<typename T> inline StdSmartPointer<T>::operator bool()
-			{
-				return (this->_ptr != 0);
-			}
-			template<typename T> inline T* StdSmartPointer<T>::Get()
-			{
-				return this->_ptr;
-			}
-			template<typename T> inline bool StdSmartPointer<T>::IsValid()
-			{
-				return (this->_ptr != NULL)  ?	true : false;
-			}
+			return *this;
 		}
+		template<typename T> inline bool SmartPointer<T>::operator== (const SmartPointer<T>& d)
+		{
+			return d._ptr == this->_ptr;
+		}
+		template<typename T> inline bool SmartPointer<T>::operator== (const T& p)
+		{
+			return &p == this->_ptr;
+		}
+		template<typename T> inline T& SmartPointer<T>::operator* ()
+		{
+			return *this->_ptr;
+		}
+		template<typename T> inline T* SmartPointer<T>::operator-> ()
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline SmartPointer<T>::operator T* ()
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline SmartPointer<T>::operator bool()
+		{
+			return (this->_ptr != 0);
+		}
+		template<typename T> inline T* SmartPointer<T>::Get()
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline bool SmartPointer<T>::IsValid()
+		{
+			return (this->_ptr != NULL)  ?	true : false;
+		}
+#pragma endregion
+		
 	}
 }
 

@@ -27,6 +27,12 @@
     <ClCompile Include="Resource\OResourceHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Thread\OysterMutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\OysterThread_Impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Resource\Loaders\ByteLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,13 +53,22 @@
     <ClInclude Include="WinTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities-InlineImpl.h">
+    <ClInclude Include="Utilities-Impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\OResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\OysterResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\OResource.h">
+    <ClInclude Include="Thread\IThreadObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\OysterMutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\OysterThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Thread\IThreadObject.h">
