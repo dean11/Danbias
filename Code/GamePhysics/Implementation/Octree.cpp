@@ -72,15 +72,13 @@ void Octree::DestroyObject(UniquePointer< ICustomBody > customBodyRef)
 	this->leafData.erase(this->leafData.begin() + this->leafData[this->mapReferences[customBodyRef]].queueRef);
 }
 
-std::vector<ICustomBody*> Octree::Sample(ICustomBody* customBodyRef)
+std::vector<ICustomBody*>& Octree::Sample(ICustomBody* customBodyRef, std::vector<ICustomBody*>& updateList)
 {
-	std::vector<ICustomBody*> list;
-
 	auto object = this->mapReferences.find(customBodyRef);
 
 	if(object == this->mapReferences.end())
 	{	
-		return list;
+		return updateList;
 	}	
 
 	unsigned int tempRef = object->second;
@@ -89,11 +87,24 @@ std::vector<ICustomBody*> Octree::Sample(ICustomBody* customBodyRef)
 	{
 		if(tempRef != i) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
 		{
-			list.push_back(this->leafData[i].customBodyRef);
+			updateList.push_back(this->leafData[i].customBodyRef);
 		}
 	}
 
-	return list;
+	return updateList;
+}
+
+std::vector<ICustomBody*>& Octree::Sample(::Collision3D::ICollideable* collideable, std::vector<ICustomBody*>& updateList)
+{
+	for(unsigned int i = 0; i<this->leafData.size(); i++)
+	{
+		if(this->leafData[i].container.Intersects(*collideable))
+		{
+			updateList.push_back(this->leafData[i].customBodyRef);
+		}
+	}
+
+	return updateList;
 }
 
 void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
@@ -112,6 +123,17 @@ void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
 		if(tempRef != i) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
 		{
 			hitAction(*this, tempRef, i);
+		}
+	}
+}
+
+void Octree::Visit(::Collision3D::ICollideable* collideable, VistorAction hitAction)
+{
+	for(unsigned int i = 0; i<this->leafData.size(); i++)
+	{
+		if(this->leafData[i].container.Intersects(*collideable))
+		{
+			//hitAction(*this, tempRef, i); // @todo TODO: Add typedef to handle function calls with ICollideable
 		}
 	}
 }
