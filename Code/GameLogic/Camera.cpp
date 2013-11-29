@@ -81,14 +81,15 @@ void Camera::LookAt(Oyster::Math::Float3 pos, Oyster::Math::Float3 target, Oyste
 {
 	Oyster::Math::Float3 L;
 
-	D3DXVec3Subtract(&L, &target, &pos);
 	L = target - pos;
-	D3DXVec3Normalize(&L, &L);
-	Oyster::Math::Float3 R; 
-	D3DXVec3Cross(&R, &worldUp, &L);
-	D3DXVec3Normalize(&R, &R);
+	L.Normalize();
+	
+	Oyster::Math::Float3 R;
+	R = worldUp.Cross(L);
+	R.Normalize();
+
 	Oyster::Math::Float3 U;
-	D3DXVec3Cross(&U, &L, &R);
+	U = L.Cross(R);
 
 	this->m_position = pos;
 	this->mLook = L;
@@ -109,7 +110,7 @@ Oyster::Math::Float4x4 Camera::Proj()const
 Oyster::Math::Float4x4 Camera::ViewsProj()const
 {
 	Oyster::Math::Float4x4 M;
-	D3DXMatrixMultiply(&M, &this->mView, &this->mProj);
+	M = mView * mProj;
 	return M;
 }
 
@@ -129,7 +130,8 @@ void Camera::Pitch(float angle)
 	
 	Oyster::Math::Float4x4 R;
 							  
-	D3DXMatrixRotationAxis(&R, &-mRight, radians);
+	//D3DXMatrixRotationAxis(&R, &-mRight, radians);
+	Oyster::Math3D::RotationMatrix(radians,-mRight,R);
 	this->mUp = CrossMatrix(this->mUp, R);
 	this->mLook = CrossMatrix(this->mLook, R);
 }
@@ -141,7 +143,8 @@ void Camera::Yaw(float angle)
 	Oyster::Math::Float4x4 R;
 							  
 	Oyster::Math::Float3 up(0,1,0);
-	D3DXMatrixRotationAxis(&R, &-up, radians);
+	//D3DXMatrixRotationAxis(&R, &-up, radians);
+	Oyster::Math3D::RotationMatrix(radians,-up,R);
 
 	this->mRight = CrossMatrix(this->mRight, R);
 	this->mUp = CrossMatrix(mUp, R);
@@ -150,33 +153,49 @@ void Camera::Yaw(float angle)
 
 void Camera::UpdateViewMatrix()
 {
-	D3DXVec3Normalize(&this->mLook, &this->mLook);
-	D3DXVec3Cross(&this->mUp, &this->mLook, &this->mRight);
-	D3DXVec3Normalize(&this->mUp, &this->mUp);
-	D3DXVec3Cross(&this->mRight, &this->mUp, &this->mLook);
+	mLook.Normalize();
+	mUp = mLook.Cross(mRight);
+	mUp.Normalize();
+	mRight = mUp.Cross(mLook);
 	
+	float x = -m_position.Dot(mRight);
+	float y = -m_position.Dot(mUp);
+	float z = -m_position.Dot(mLook);
 
-	float x = -D3DXVec3Dot(&this->m_position, &mRight);
-	float y = -D3DXVec3Dot(&this->m_position, &mUp);
-	float z = -D3DXVec3Dot(&this->m_position, &mLook);
+	//this->mView(0, 0) = this->mRight.x;
+	mView.m11 = mRight.x;
+	//this->mView(1, 0) = this->mRight.y;
+	mView.m21 = mRight.y;
+	//this->mView(2, 0) = this->mRight.z;
+	mView.m31 = mRight.z;
+	//this->mView(3, 0) = x;
+	mView.m41 = x;
 
-	this->mView(0, 0) = this->mRight.x;
-	this->mView(1, 0) = this->mRight.y;
-	this->mView(2, 0) = this->mRight.z;
-	this->mView(3, 0) = x;
+	//this->mView(0, 1) = this->mUp.x;
+	mView.m12 = mUp.x;
+	//this->mView(1, 1) = this->mUp.y;
+	mView.m22 = mUp.y;
+	//this->mView(2, 1) = this->mUp.z;
+	mView.m32 = mUp.z;
+	//this->mView(3, 1) = y;
+	mView.m42 = y;
 
-	this->mView(0, 1) = this->mUp.x;
-	this->mView(1, 1) = this->mUp.y;
-	this->mView(2, 1) = this->mUp.z;
-	this->mView(3, 1) = y;
+	//this->mView(0, 2) = this->mLook.x;
+	mView.m13 = mLook.x;
+	//this->mView(1, 2) = this->mLook.y;
+	mView.m23 = mLook.y;
+	//this->mView(2, 2) = this->mLook.z;
+	mView.m33 = mLook.z;
+	//this->mView(3, 2) = z;
+	mView.m43 = z;
 
-	this->mView(0, 2) = this->mLook.x;
-	this->mView(1, 2) = this->mLook.y;
-	this->mView(2, 2) = this->mLook.z;
-	this->mView(3, 2) = z;
-
-	this->mView(0, 3) = 0.0f;
-	this->mView(1, 3) = 0.0f;
-	this->mView(2, 3) = 0.0f;
-	this->mView(3, 3) = 1.0f;
+	//this->mView(0, 3) = 0.0f;
+	mView.m14 = 0.0f;
+	//this->mView(1, 3) = 0.0f;
+	mView.m24 = 0.0f;
+	
+	//this->mView(2, 3) = 0.0f;
+	mView.m34 = 0.0f;
+	//this->mView(3, 3) = 1.0f;
+	mView.m44 = 1.0f;
 }
