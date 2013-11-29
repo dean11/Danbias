@@ -8,16 +8,14 @@ BOOL WINAPI DllMain(
 	_In_  LPVOID lpvReserved
 	)
 {
-
 	return TRUE;
 }
 using namespace GameLogic;
+
 IGame::IGame()
 {
 	gameModule = new Game();
 }
-
-
 IGame::~IGame()
 {
 	delete gameModule;

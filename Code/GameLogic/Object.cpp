@@ -43,7 +43,6 @@ void Object::Render()
 {
 	this->rigidBody->GetOrientation(model->WorldMatrix);
 	Oyster::Graphics::API::RenderScene(model, 1);
-
 }
 
 Object::OBJECT_TYPE Object::GetType()

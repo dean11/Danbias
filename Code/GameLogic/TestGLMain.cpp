@@ -272,10 +272,10 @@ HRESULT Render(float deltaTime)
 	}
 
 	// test view and projection matrix 
-	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,-1);
-	Oyster::Math::Float3 up  =Oyster::Math::Float3(0,1,0);
+	Oyster::Math::Float3 dir = Oyster::Math::Float3(0, 0, -1);
+	Oyster::Math::Float3 up  = Oyster::Math::Float3(0, 1, 0);
 	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 100);
-
+	
 	Oyster::Math::Float4x4 view  =Oyster::Math3D::OrientationMatrix_LookAtDirection(dir, up, pos);
 	view = view.GetInverse();
 
