@@ -2,6 +2,7 @@
 #define PHYSICS_API_IMPL_H
 
 #include "../PhysicsAPI.h"
+#include "Octree.h"
 
 namespace Oyster
 {
@@ -15,7 +16,7 @@ namespace Oyster
 
 			void Init( unsigned int numObjects, unsigned int numGravityWells , const ::Oyster::Math::Float3 &worldSize );
 
-			void SetDeltaTime( float deltaTime );
+			void SetFrameTimeLength( float deltaTime );
 			void SetGravityConstant( float g );
 			void SetSubscription( EventAction_Destruction functionPointer );
 
@@ -47,6 +48,7 @@ namespace Oyster
 		private:
 			::Oyster::Math::Float gravityConstant, updateFrameLength;
 			EventAction_Destruction destructionAction;
+			Octree worldScene;
 		};
 
 		namespace Default

@@ -11,11 +11,12 @@ namespace Oyster { namespace Physics
 	{
 	public:
 		SphericalRigidBody();
+		SphericalRigidBody( const API::SphericalBodyDescription &desc );
 		virtual ~SphericalRigidBody();
 
 		::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const;
 		
-		bool IsSubscribingCollisions() const;
+		void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
 		bool IsAffectedByGravity() const;
 		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const;
 		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const;
@@ -43,7 +44,7 @@ namespace Oyster { namespace Physics
 		void SetSize( const ::Oyster::Math::Float3 &size );
 
 	private:
-		::Oyster::Physics3D::RigidBody previous, current;
+		::Oyster::Physics3D::RigidBody rigid;
 		::Oyster::Math::Float3 gravityNormal;
 		EventAction_Collision collisionAction;
 		bool ignoreGravity;

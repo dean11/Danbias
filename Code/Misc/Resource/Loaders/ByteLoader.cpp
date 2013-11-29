@@ -149,7 +149,7 @@ OResource* OResource::ByteLoader(const wchar_t filename[], ResourceType type, OR
 
 		if(!old)
 		{
-			resource = new OResource((OHRESOURCE)data, type, (sizeof(char) * sOut.size()), sizeof(char), filename);
+			resource = new OResource((OHRESOURCE&)data, type, (sizeof(char) * sOut.size()), sizeof(char), filename);
 		}
 		else
 		{

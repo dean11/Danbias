@@ -64,7 +64,7 @@ namespace Oyster
 			/********************************************************
 			 * Sets the time length of each physics update frame.
 			 ********************************************************/
-			virtual void SetDeltaTime( float seconds ) = 0;
+			virtual void SetFrameTimeLength( float seconds ) = 0;
 			
 			/********************************************************
 			 * Sets the Gravityconstant in the physics that will be
@@ -247,6 +247,11 @@ namespace Oyster
 			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const = 0;
 
 			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
+
+			/********************************************************
 			 * @return true if Engine should apply gravity on this object.
 			 ********************************************************/
 			virtual bool IsAffectedByGravity() const = 0;
@@ -415,7 +420,6 @@ namespace Oyster
 			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;
-			::Oyster::Math::Float4x4 inertiaTensor;
 			ICustomBody::EventAction_Collision subscription;
 			bool ignoreGravity;
 
@@ -425,7 +429,6 @@ namespace Oyster
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->radius = 0.5f;
 				this->mass = 10.0f;
-				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
 				this->subscription = NULL;
 				this->ignoreGravity = false;
 			}

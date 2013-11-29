@@ -15,6 +15,10 @@ namespace Oyster
 		class Octree
 		{
 		public:
+			static const unsigned int invalid_ref;
+
+			typedef void(*VistorAction)(Octree&, unsigned int, unsigned int);
+
 			struct Data
 			{
 				Data* prev;
@@ -22,33 +26,49 @@ namespace Oyster
 
 				Collision3D::Sphere container;
 
-				Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef;
+				::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef;
 
 				unsigned int queueRef;
 			};
 
 			struct OctreeNode
 			{
-
+				OctreeNode* children[8];
+				Data* dataPtr;
+				Collision3D::BoxAxisAligned container;
 			};
 
-			Octree(unsigned int bufferSize, unsigned char numLayers, Math::Float3 worldSize);
+			Octree(unsigned int bufferSize = 0, unsigned char numLayers = 0, Math::Float3 worldSize = Math::Float3::null);
 			virtual ~Octree();
 
-			void AddObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			Octree& operator=(const Octree& orig);
 
-			void MoveToUpdateQueue(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			void AddObject(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			void Update();
+			void MoveToUpdateQueue(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			void DestroyObject(Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
+			void DestroyObject(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
-			void Sample(Collision3D::ICollideable& collideable);
+			std::vector<ICustomBody*>& Sample(ICustomBody* customBodyRef, std::vector<ICustomBody*>& updateList);
+			std::vector<ICustomBody*>& Sample(const Oyster::Collision3D::ICollideable& collideable, std::vector<ICustomBody*>& updateList);
+			void Visit(ICustomBody* customBodyRef, VistorAction hitAction );
+			void Visit(const Oyster::Collision3D::ICollideable& collideable, VistorAction hitAction );
+
+			ICustomBody* GetCustomBody(const unsigned int tempRef);
+
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> Extract( const ICustomBody* objRef );
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> Extract( unsigned int tempRef ); // Dan vill ha
+			unsigned int GetTemporaryReferenceOf( const ICustomBody* objRef ) const; // Dan vill ha
+			void SetAsAltered( unsigned int tempRef ); // Dan vill ha
+			void EvaluatePosition( unsigned int tempRef ); // Dan vill ha
+
 		private:
 			std::vector < Data > leafData;
+			std::vector < Data* > updateQueue;
 
-			std::map< ICustomBody*, unsigned int > mapReferences;
+			std::map< const ICustomBody*, unsigned int > mapReferences;
 
+			OctreeNode worldNode;
 		};
 	}
 

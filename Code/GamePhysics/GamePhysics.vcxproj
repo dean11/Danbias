@@ -156,6 +156,7 @@
     <ClInclude Include="PhysicsAPI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Implementation\Octree.cpp" />
     <ClCompile Include="Implementation\DLLMain.cpp" />
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp" />
     <ClCompile Include="Implementation\SimpleRigidBody.cpp" />

@@ -1,79 +1,121 @@
-#include "SocketClient.h"
-const int maxThreadCount=2;
-bool validateIpAddress(const std::string ipAddress)
-{
-	struct sockaddr_in sa;
-	int result = inet_pton(AF_INET, ipAddress.c_str(), &(sa.sin_addr));
-	return result != 0;
-}
-/*int main(int argc, char *argv[])
-{
-	std::string tst;
-	bool test=true;
-	//Multithreading variables
-	//int nThreads = 0;
-	//DWORD dwThreadId[maxThreadCount];
-	//HANDLE threadhandle;
+#include <iostream>
+#include <WinSock2.h>
+#include <vld.h>
+#include "../NetworkDependencies/WinsockFunctions.h"
+#include "..\NetworkDependencies\Translator.h"
+#include "..\NetworkDependencies\Protocols.h"
+#include "../NetworkDependencies/OysterByte.h"
+#include "../../Misc/ThreadSafeQueue.h"
+#include "Client.h"
 
-	GameClass game;
-	SocketClient<GameClass> client;
-	//Sets up the link to the GameClass class.
-	client.setPlayerContPtr(&game);
-	//This is the loop which makes the user enter the server address.
-	while (!client.isReady());
-	do
-	{
-		if (!test)
-		{
-			printf("Could not connect to server. Try another IP.\n");
-		}
-		else
-		{
-			printf("Enter the server ip. \n");
-		}
-		getline(std::cin, tst);
-		if (tst.length()==0)
-		{
-			tst="127.0.0.1";
-		}
-		if (validateIpAddress(tst))
-		{
-			//Tmp init connection message: set username
-			char* tmp=new char[30];
-			printf("What is your desired username?\n");
-			std::cin.getline(tmp,30);
-			if (strlen(tmp)==0)
-			{
-				tmp="Anonymous";
-			}
-			printf("Username set to %s\n", tmp);
+#pragma comment(lib, "ws2_32.lib")
 
-			test=client.connectToIP(tst.c_str(), tmp, strlen(tmp));
-		}
-		else
-		{
-			printf("Invalid IPaddress. Please enter a new IPaddress.\n");
-			test=false;
-		}
-	} while (!test);
-	while (!client.isConnected());
-	Sleep(1000);
-	//Starts the receive loop
-	//threadhandle=CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)&client.receiveDataThreadV,(LPVOID) &client,0,&dwThreadId[0]);
-	client.startReceiveThread();
-	//GetExitCodeThread(threadhandle, eCode);
-	//This is just a loop to receive user input which creates a natural delay for sendUserData.
-	printf("Write what you want to send\n");
-	tst="tmp init message";
-	while (tst.length()>0)
+using namespace std;
+using namespace Oyster::Network::Protocols;
+using namespace Oyster::Network::Client;
+
+void chat(Client &client);
+
+int main()
+{
+	int errorCode;
+
+	char msgRecv[255] = "\0";
+
+	InitWinSock();
+
+	cout << "Client" << endl;
+
+	//Create Client
+	Client client;
+
+	//Connect to server
+	errorCode = client.Connect(9876, "localhost");
+
+	if(errorCode != 0)
 	{
-		client.sendMessage(tst);
-		client.sendUserData();
-		getline(std::cin, tst);
+		wstring errorTest = GetErrorMessage(errorCode);
+		wcout << "errorMessage: " << errorTest << endl;
 	}
-	//Kills off the thread and connection
-	//DWORD eCode=0;
-	//TerminateThread(threadhandle, eCode);
-	client.closeConnection();
+
+	chat(client);
+
+	ShutdownWinSock();
+
+	system("pause");
 	return 0;
-}*/
+}
+
+void chat(Client &client)
+{
+	Oyster::Network::Translator *t = new Oyster::Network::Translator();
+
+	Oyster::Network::OysterByte msgRecv;
+	string msgSend = "";
+
+	ProtocolSet* set = new ProtocolSet;
+	ProtocolTest test;
+	test.numOfFloats = 5;
+	test.f = new float[test.numOfFloats];
+	float temp = 12345.5654f;
+	for(int i = 0; i < 5; i++)
+	{
+		test.f[i] = temp;
+		temp++;
+	}
+
+	bool chatDone = false;
+
+	while(!chatDone)
+	{
+		client.Recv(msgRecv);
+		
+		t->Unpack(set, msgRecv);
+		
+		switch(set->type)
+		{
+		case PackageType_header:
+			break;
+		case PackageType_test:
+			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
+			for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
+			{
+				cout << set->Protocol.pTest->f[i] << ' ' ;
+			}
+			cout << endl;
+			break;
+		}
+		
+		set->Release();
+		msgRecv.Clear(1000);
+
+		/*std::getline(std::cin, msgSend);
+
+
+	
+		if( msgSend != "exit")
+		{
+			if(msgSend.length() < 1)
+			{
+				msgSend = "ERROR!";
+			}
+
+			test.textMessage = msgSend;
+			
+			t->Pack(test, msgRecv);
+
+			client.Send(msgRecv);
+		}
+
+		else
+		{
+			chatDone = true;
+		}
+
+		cin.clear();*/
+
+	}
+
+	delete t;
+	delete set;
+}
