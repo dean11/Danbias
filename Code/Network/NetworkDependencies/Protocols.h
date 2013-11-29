@@ -1,9 +1,13 @@
 #ifndef NETWORK_DEPENDENCIES_PROTOCOLS_H
 #define NETWORK_DEPENDENCIES_PROTOCOLS_H
 
-//////////////////////////////////
-// Created by Sam Svensson 2013 //
-//////////////////////////////////
+//////////////////////////////////////
+// Created by Sam Svensson 2013 
+// Holder structs for our protocols
+// with the use of union.
+// each packagetyp
+// is linked to a protocol 
+//////////////////////////////////////
 
 #include <string>
 

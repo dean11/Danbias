@@ -20,6 +20,7 @@ namespace Oyster
 			Connection( int socket ) { this->socket = socket; };
 			virtual ~Connection();
 
+			
 			virtual int InitiateServer( unsigned short port );
 			virtual int InitiateClient();
 
@@ -28,6 +29,7 @@ namespace Oyster
 
 			virtual int Disconnect();
 			virtual int Connect( unsigned short port , const char serverName[] );
+			
 			virtual int  Listen();
 
 		private:

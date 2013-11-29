@@ -13,6 +13,10 @@ namespace Oyster
 		class IQueue
 		{
 		public:
+
+			//---------------------------------------------
+			//standard operations of the std::queue
+			//---------------------------------------------
 			virtual ~IQueue() {};
 			virtual void Push( Type item ) = 0;
 			virtual Type Pop() = 0;

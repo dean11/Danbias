@@ -3,7 +3,9 @@
 
 ////////////////////////////////////////////
 // Thread safe queue implemented 
-// with single linked list.      
+// with single linked list and template.
+// uses mutex to lock the queue
+// otherwise its a standard queue
 // Created by Sam Svensson 2013  
 /////////////////////////////////////////////
 

@@ -14,13 +14,25 @@ namespace Oyster
 		{
 
 		public:
-			virtual int Disconnect() = 0;
+			
+			//sends and recieve functions with bytearrays, 
+			//will send to the users connection via socket
 			virtual int Send( OysterByte& bytes ) = 0;
 			virtual int  Recieve( OysterByte& bytes) = 0;
+
+			//initiates sockets and address for server and client
 			virtual int InitiateServer( unsigned short port ) { return false; };
 			virtual int InitiateClient() { return false; };
+
+			//Listen function to let client connect, only used by the server
 			virtual int  Listen() { return -1; };
+
+			//enables the client to connect with a server with use of name and port
+			//(servers uses Listen instead of connect)
 			virtual int Connect( unsigned short port, const char serverName[] ) { return false; };
+
+			//Disconnects the client or server TODO: optimize!
+			virtual int Disconnect() = 0;
 		};
 	}
 }
