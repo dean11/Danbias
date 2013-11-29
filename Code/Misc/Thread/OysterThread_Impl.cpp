@@ -10,14 +10,14 @@
 #include <atomic>
 
 using namespace Oyster::Thread;
-using namespace Utility::DynamicMemory::SmartPointer;
+using namespace Utility::DynamicMemory;
 
 
 #pragma region Declerations
 
 	struct ThreadData;
 	/** A typical Oyster thread function */
-	typedef void (*ThreadFunction)(StdSmartPointer<ThreadData>&);
+	typedef void (*ThreadFunction)(SmartPointer<ThreadData>&);
 
 	enum OYSTER_THREAD_STATE
 	{
@@ -32,12 +32,13 @@ using namespace Utility::DynamicMemory::SmartPointer;
 	struct ThreadData
 	{
 		std::atomic<OYSTER_THREAD_STATE>	state;			//<! The current thread state.
-		//OYSTER_THREAD_STATE	state;						//<! The current thread state.
-		StdSmartPointer<std::thread> workerThread;			//<! The worker thread.
+		SmartPointer<std::thread> workerThread;				//<! The worker thread.
 		std::thread::id callingThread;						//<! The owner thread.
 		IThreadObject *owner;								//<! The owner of the thread as IThread.
 		std::atomic<int> msec;								//<! A timer in miliseconds.
+
 		//OysterMutex mutexLock;							//<! The lock, locking the member variabls.
+		//OYSTER_THREAD_STATE	state;						//<! The current thread state.
 	
 		ThreadData() {}
 		~ThreadData() {}
@@ -45,7 +46,7 @@ using namespace Utility::DynamicMemory::SmartPointer;
 	};
 	struct OysterThread::PrivateData
 	{
-		StdSmartPointer<ThreadData> threadData;
+		SmartPointer<ThreadData> threadData;
 	
 		PrivateData()
 			:threadData(new ThreadData())
@@ -76,11 +77,11 @@ using namespace Utility::DynamicMemory::SmartPointer;
 
 int tempId = 0;
 std::vector<int> IDS;
-static void ThreadingFunction(StdSmartPointer<ThreadData> &origin)
+static void ThreadingFunction(SmartPointer<ThreadData> &origin)
 {
 
 	bool shouldContinue;
-	StdSmartPointer<ThreadData> w = origin;
+	SmartPointer<ThreadData> w = origin;
 
 theBegining:
 

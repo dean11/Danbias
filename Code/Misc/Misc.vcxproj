@@ -152,7 +152,6 @@
     <ClCompile Include="Resource\OResource.cpp" />
     <ClCompile Include="Thread\OysterMutex.cpp" />
     <ClCompile Include="Thread\OysterThread_Impl.cpp" />
-    <ClCompile Include="Thread\OysterThread_Impl.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="WinTimer.cpp" />
   </ItemGroup>
@@ -161,7 +160,6 @@
     <ClInclude Include="Resource\OResource.h" />
     <ClInclude Include="Thread\IThreadObject.h" />
     <ClInclude Include="Thread\OysterMutex.h" />
-    <ClInclude Include="Thread\OysterThread.h" />
     <ClInclude Include="Thread\OysterThread.h" />
     <ClInclude Include="Utilities-Impl.h" />
     <ClInclude Include="Utilities.h" />
