@@ -33,6 +33,9 @@
     <ClInclude Include="Implementation\SphericalRigidBody.h">
       <Filter>Header Files\Implementation</Filter>
     </ClInclude>
+    <ClInclude Include="Implementation\Octree.h">
+      <Filter>Header Files\Implementation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Implementation\SphericalRigidBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Implementation\Octree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

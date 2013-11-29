@@ -29,7 +29,7 @@ namespace LinearAlgebra
 		Matrix2x2( );
 		Matrix2x2( const ScalarType &m11, const ScalarType &m12,
 			       const ScalarType &m21, const ScalarType &m22 );
-		Matrix2x2( const Vector2<ScalarType> vec[2] );
+		explicit Matrix2x2( const Vector2<ScalarType> vec[2] );
 		Matrix2x2( const Vector2<ScalarType> &vec1, const Vector2<ScalarType> &vec2 );
 		explicit Matrix2x2( const ScalarType element[4] );
 		Matrix2x2( const Matrix2x2<ScalarType> &matrix );
@@ -80,7 +80,7 @@ namespace LinearAlgebra
 		Matrix3x3( const ScalarType &m11, const ScalarType &m12, const ScalarType &m13,
 			       const ScalarType &m21, const ScalarType &m22, const ScalarType &m23,
 				   const ScalarType &m31, const ScalarType &m32, const ScalarType &m33 );
-		Matrix3x3( const Vector3<ScalarType> vec[3] );
+		explicit Matrix3x3( const Vector3<ScalarType> vec[3] );
 		Matrix3x3( const Vector3<ScalarType> &vec1, const Vector3<ScalarType> &vec2, const Vector3<ScalarType> &vec3 );
 		explicit Matrix3x3( const ScalarType element[9] );
 		Matrix3x3( const Matrix3x3<ScalarType> &matrix );
@@ -132,7 +132,7 @@ namespace LinearAlgebra
 			       const ScalarType &m21, const ScalarType &m22, const ScalarType &m23, const ScalarType &m24,
 				   const ScalarType &m31, const ScalarType &m32, const ScalarType &m33, const ScalarType &m34,
 				   const ScalarType &m41, const ScalarType &m42, const ScalarType &m43, const ScalarType &m44 );
-		Matrix4x4( const Vector4<ScalarType> vec[4] );
+		explicit Matrix4x4( const Vector4<ScalarType> vec[4] );
 		Matrix4x4( const Vector4<ScalarType> &vec1, const Vector4<ScalarType> &vec2, const Vector4<ScalarType> &vec3, const Vector4<ScalarType> &vec4 );
 		explicit Matrix4x4( const ScalarType element[16] );
 		Matrix4x4( const Matrix4x4<ScalarType> &matrix );

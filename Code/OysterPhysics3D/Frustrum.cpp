@@ -74,13 +74,22 @@ namespace PrivateStatic
 	}
 }
 
-Frustrum::Frustrum() : ICollideable(Type_frustrum),
-	leftPlane(Float3::standard_unit_x, -0.5f), rightPlane(-Float3::standard_unit_x, 0.5f),
-	bottomPlane(Float3::standard_unit_y, -0.5f), topPlane(-Float3::standard_unit_y, 0.5f),
-	nearPlane(Float3::standard_unit_z, -0.5f), farPlane(-Float3::standard_unit_z, 0.5f) {}
+Frustrum::Frustrum() : ICollideable(Type_frustrum)
+{
+	this->leftPlane   = Plane( Float3::standard_unit_x, -0.5f );
+	this->rightPlane  = Plane(-Float3::standard_unit_x,  0.5f ),
+	this->bottomPlane = Plane( Float3::standard_unit_y, -0.5f );
+	this->topPlane	  = Plane(-Float3::standard_unit_y,  0.5f );
+	this->nearPlane	  = Plane( Float3::standard_unit_z, -0.5f );
+	this->farPlane	  = Plane(-Float3::standard_unit_z,  0.5f );
+}
 
 Frustrum::Frustrum( const Float4x4 &vp ) : ICollideable(Type_frustrum)
-{ PrivateStatic::VP_ToPlanes( this->leftPlane, this->rightPlane, this->bottomPlane, this->topPlane, this->nearPlane, this->farPlane, vp ); }
+{
+	PrivateStatic::VP_ToPlanes( this->leftPlane, this->rightPlane, this->bottomPlane,
+								this->topPlane,  this->nearPlane,  this->farPlane,
+								vp );
+}
 
 Frustrum::~Frustrum() {}
 

@@ -8,8 +8,20 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Math3D;
 
-Ray::Ray( ) : ICollideable(Type_ray), origin(), direction(), collisionDistance(0.0f) {}
-Ray::Ray( const Float3 &o, const ::Oyster::Math::Float3 &d ) : ICollideable(Type_ray), origin(o), direction(d), collisionDistance(0.0f)  {}
+Ray::Ray( ) : ICollideable(Type_ray)
+{
+	this->origin = Float3::null;
+	this->direction = Float3::standard_unit_z;
+	this->collisionDistance = 0.0f;
+}
+
+Ray::Ray( const Float3 &o, const ::Oyster::Math::Float3 &d ) : ICollideable(Type_ray)
+{
+	this->origin = o;
+	this->direction = d;
+	this->collisionDistance = 0.0f;
+}
+
 Ray::~Ray( ) {}
 
 Ray & Ray::operator = ( const Ray &ray )
@@ -20,7 +32,9 @@ Ray & Ray::operator = ( const Ray &ray )
 }
 
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Ray::Clone( ) const
-{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Ray(*this) ); }
+{
+	return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Ray(*this) );
+}
 
 bool Ray::Intersects( const ICollideable &target ) const
 {

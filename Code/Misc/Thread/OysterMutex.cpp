@@ -8,7 +8,6 @@
 #include <thread>
 #include <future>
 
-using namespace Oyster::Thread;
 
 
 OysterMutex::OysterMutex()

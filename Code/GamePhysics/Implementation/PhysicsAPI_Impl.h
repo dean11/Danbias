@@ -2,6 +2,7 @@
 #define PHYSICS_API_IMPL_H
 
 #include "../PhysicsAPI.h"
+#include "Octree.h"
 
 namespace Oyster
 {
@@ -15,10 +16,9 @@ namespace Oyster
 
 			void Init( unsigned int numObjects, unsigned int numGravityWells , const ::Oyster::Math::Float3 &worldSize );
 
-			void SetDeltaTime( float deltaTime );
+			void SetFrameTimeLength( float deltaTime );
 			void SetGravityConstant( float g );
-			void SetAction( EventAction_Collision functionPointer );
-			void SetAction( EventAction_Destruction functionPointer );
+			void SetSubscription( EventAction_Destruction functionPointer );
 
 			void Update();
 
@@ -42,14 +42,21 @@ namespace Oyster
 			void SetOrientation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &orientation );
 			void SetSize( const ICustomBody* objRef, const ::Oyster::Math::Float3 &size );
 
-			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const;
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SimpleBodyDescription &desc ) const;
+			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const;
+
 		private:
 			::Oyster::Math::Float gravityConstant, updateFrameLength;
-			EventAction_Collision collisionAction;
 			EventAction_Destruction destructionAction;
+			Octree worldScene;
 		};
-	}
 
+		namespace Default
+		{
+			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
+			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+		}
+	}
 }
 
 #endif

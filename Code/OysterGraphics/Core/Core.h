@@ -164,7 +164,7 @@ namespace Oyster
 					char* data;
 				};
 
-				static void SetShaderEffect(ShaderEffect&);
+				static void SetShaderEffect(ShaderEffect);
 
 				static void CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC *desc, int ElementCount,int VertexIndex,ID3D11InputLayout *&Layout);
 

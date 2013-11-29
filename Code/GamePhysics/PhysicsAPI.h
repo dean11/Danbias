@@ -19,8 +19,8 @@ namespace Oyster
 
 		enum UpdateState
 		{
-			resting,
-			altered
+			UpdateState_resting,
+			UpdateState_altered
 		};
 
 		namespace Constant
@@ -45,7 +45,9 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE API
 		{
 		public:
-			typedef void (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+			struct SimpleBodyDescription;
+			struct SphericalBodyDescription;
+
 			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
 
 			/** Gets the Physics instance. */
@@ -62,7 +64,7 @@ namespace Oyster
 			/********************************************************
 			 * Sets the time length of each physics update frame.
 			 ********************************************************/
-			virtual void SetDeltaTime( float seconds ) = 0;
+			virtual void SetFrameTimeLength( float seconds ) = 0;
 			
 			/********************************************************
 			 * Sets the Gravityconstant in the physics that will be
@@ -70,20 +72,15 @@ namespace Oyster
 			 * @param g: Default is the real world Constant::gravity_constant [N(m/kg)^2]
 			 ********************************************************/
 			virtual void SetGravityConstant( float g ) = 0;
-
-			/********************************************************
-			 * Sets the function that will be called by the engine
-			 * whenever a subscribed collision occurs.
-			 ********************************************************/
-			virtual void SetAction( EventAction_Collision functionPointer ) = 0;
 			
 			/********************************************************
 			 * Sets the function that will be called by the engine
 			 * whenever an object is being destroyed for some reason.
 			 * - Because DestroyObject(...) were called.
 			 * - Out of memory forced engine to destroy an object.
+			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
-			virtual void SetAction( EventAction_Destruction functionPointer ) = 0;
+			virtual void SetSubscription( EventAction_Destruction functionPointer ) = 0;
 
 			/********************************************************
 			 * Triggers the engine to run next update frame.
@@ -213,10 +210,18 @@ namespace Oyster
 
 			/********************************************************
 			 * Creates a new dynamically allocated object that can be used as a component for more complex ICustomBodies.
+			 * @param desc: @see API::SimpleBodyDescription
 			 * @return A pointer along with the responsibility to delete.
 			 ********************************************************/
-			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateSimpleRigidBody() const = 0;
-		
+			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SimpleBodyDescription &desc ) const = 0;
+
+			/********************************************************
+			 * Creates a new dynamically allocated object that can be used as a component for more complex ICustomBodies.
+			 * @param desc: @see API::SphericalBodyDescription
+			 * @return A pointer along with the responsibility to delete.
+			 ********************************************************/
+			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const = 0;
+
 		protected:
 			virtual ~API() {}
 		};
@@ -225,6 +230,14 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE ICustomBody
 		{
 		public:
+			enum SubscriptMessage
+			{
+				SubscriptMessage_none,
+				SubscriptMessage_ignore_collision_response
+			};
+
+			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+
 			virtual ~ICustomBody() {};
 
 			/********************************************************
@@ -232,11 +245,11 @@ namespace Oyster
 			 * @return An ICustomBody pointer along with the responsibility to delete.
 			 ********************************************************/
 			virtual ::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const = 0;
-			
+
 			/********************************************************
-			 * @return true if Engine should call the EventAction_Collision function.
+			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual bool IsSubscribingCollisions() const = 0;
+			virtual void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
 
 			/********************************************************
 			 * @return true if Engine should apply gravity on this object.
@@ -313,6 +326,13 @@ namespace Oyster
 			virtual UpdateState Update( ::Oyster::Math::Float timeStepLength ) = 0;
 			
 			/********************************************************
+			 * Sets the function that will be called by the engine
+			 * whenever a collision occurs.
+			 * @param functionPointer: If NULL, an empty default function will be set.
+			 ********************************************************/
+			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
+
+			/********************************************************
 			 * @param ignore: True if Engine should not apply Gravity.
 			 ********************************************************/
 			virtual void SetGravity( bool ignore) = 0;
@@ -322,11 +342,6 @@ namespace Oyster
 			 * @param normalizedVector: Should have same direction as the pullinggravity.
 			 ********************************************************/
 			virtual void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector ) = 0;
-
-			/********************************************************
-			 * @param subscribeCollision: If is true, engine will call EventAction_Collision when this collides.
-			 ********************************************************/
-			virtual void SetSubscription( bool subscribeCollision ) = 0;
 
 			/********************************************************
 			 * To not be called if is in Engine
@@ -375,6 +390,48 @@ namespace Oyster
 			 * Use API::SetSize(...)
 			 ********************************************************/
 			virtual void SetSize( const ::Oyster::Math::Float3 &size ) = 0;
+		};
+
+		struct API::SimpleBodyDescription
+		{
+			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 centerPosition;
+			::Oyster::Math::Float3 size;
+			::Oyster::Math::Float mass;
+			::Oyster::Math::Float4x4 inertiaTensor;
+			ICustomBody::EventAction_Collision subscription;
+			bool ignoreGravity;
+
+			SimpleBodyDescription()
+			{
+				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->centerPosition = ::Oyster::Math::Float3::null;
+				this->size = ::Oyster::Math::Float3( 1.0f );
+				this->mass = 12.0f;
+				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
+				this->subscription = NULL;
+				this->ignoreGravity = false;
+			}
+		};
+
+		struct API::SphericalBodyDescription
+		{
+			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 centerPosition;
+			::Oyster::Math::Float radius;
+			::Oyster::Math::Float mass;
+			ICustomBody::EventAction_Collision subscription;
+			bool ignoreGravity;
+
+			SphericalBodyDescription()
+			{
+				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->centerPosition = ::Oyster::Math::Float3::null;
+				this->radius = 0.5f;
+				this->mass = 10.0f;
+				this->subscription = NULL;
+				this->ignoreGravity = false;
+			}
 		};
 	}
 }
