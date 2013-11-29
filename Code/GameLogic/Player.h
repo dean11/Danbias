@@ -30,8 +30,8 @@ namespace GameLogic
 		void Shoot();
 	
 	private:
-		int life;
-		Weapon *weapon;
+		int		life;
+		Weapon	*weapon;
 	};
 }
 #endif

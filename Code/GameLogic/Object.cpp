@@ -18,7 +18,10 @@ Object::Object(void)
 	model = new Model();
 	model = Oyster::Graphics::API::CreateModel(L"bth.obj");
 
-	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody().Release();
+	API::SimpleBodyDescription sbDesc;
+	//sbDesc.centerPosition = 
+
+	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
 	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);
 
