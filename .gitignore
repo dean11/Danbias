@@ -23,9 +23,12 @@
 *.tlog
 *.vcxproj
 *.filters
+*.ilk
+*.exp
+*.dll
 
 
-Bin/Content/
+Bin/Content/Sound/
 Bin/Executable/
 Obj/
 External/
