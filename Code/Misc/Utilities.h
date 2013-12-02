@@ -212,6 +212,8 @@ namespace Utility
 				SmartPointer<T>& operator= (T* p);
 				bool operator== (const SmartPointer<T>& d);
 				bool operator== (const T& p);
+				bool operator!= (const SmartPointer<T>& d);
+				bool operator!= (const T& p);
 				T& operator* ();
 				T* operator-> ();
 				operator T* ();

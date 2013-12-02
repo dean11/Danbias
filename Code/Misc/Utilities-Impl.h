@@ -274,6 +274,14 @@ namespace Utility
 		{
 			return &p == this->_ptr;
 		}
+		template<typename T> inline bool SmartPointer<T>::operator!= (const SmartPointer<T>& d)
+		{
+			return d._ptr != this->_ptr;
+		}
+		template<typename T> inline bool SmartPointer<T>::operator!= (const T& p)
+		{
+			return &p != this->_ptr;
+		}
 		template<typename T> inline T& SmartPointer<T>::operator* ()
 		{
 			return *this->_ptr;
