@@ -184,3 +184,8 @@ void SphericalRigidBody::SetSize( const Float3 &size )
 	this->rigid.SetSize( size );
 	this->body.radius = 0.5f * Min( Min( size.x, size.y ), size.z ); // inline Min( FloatN )?
 }
+
+void SphericalRigidBody::SetMomentum( const Float3 &worldG )
+{
+	this->rigid.SetLinearMomentum( worldG );
+}
