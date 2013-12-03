@@ -54,13 +54,13 @@ void chat(Client &client)
 	string msgSend = "";
 
 	ProtocolSet* set = new ProtocolSet;
-	ProtocolTest test;
-	test.numOfFloats = 5;
-	test.f = new float[test.numOfFloats];
-	float temp = 12345.5654f;
+	ProtocolPlayerPos test;
+	test.ID = 5;
+	test.matrix = new float[16];
+	float temp = 10;
 	for(int i = 0; i < 5; i++)
 	{
-		test.f[i] = temp;
+		test.matrix[i] = temp;
 		temp++;
 	}
 
@@ -78,9 +78,17 @@ void chat(Client &client)
 			break;
 		case PackageType_test:
 			cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
-			for(int i = 0; i < set->Protocol.pTest->numOfFloats; i++)
+			for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
 			{
 				cout << set->Protocol.pTest->f[i] << ' ' ;
+			}
+			cout << endl;
+			break;
+		case PackageType_player_pos:
+			cout << "Server: ID " << set->Protocol.pPlayerPos->ID << endl;
+			for(int i = 0; i < set->Protocol.pPlayerPos->nrOfFloats; i++)
+			{
+				cout << set->Protocol.pPlayerPos->matrix[i] << ' ';
 			}
 			cout << endl;
 			break;

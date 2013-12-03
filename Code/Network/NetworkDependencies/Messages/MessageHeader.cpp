@@ -111,7 +111,6 @@ void MessageHeader::PackFloat(float i, OysterByte& bytes)
 
 void MessageHeader::PackFloat(float i[], unsigned int elementCount, OysterByte& bytes)
 {
-	bytes.AddSize(4);
 	//Pack number of elements
 	PackUnsignedInt(elementCount, bytes);
 

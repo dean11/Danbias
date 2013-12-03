@@ -10,6 +10,7 @@
     <ClCompile Include="Listener.cpp" />
     <ClCompile Include="WinsockFunctions.cpp" />
     <ClCompile Include="OysterByte.cpp" />
+    <ClCompile Include="Messages\MessagePlayerPos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
@@ -27,5 +28,6 @@
     <ClInclude Include="OysterByte.h" />
     <ClInclude Include="IPostBox.h" />
     <ClInclude Include="PostBox.h" />
+    <ClInclude Include="Messages\MessagePlayerPos.h" />
   </ItemGroup>
 </Project>
