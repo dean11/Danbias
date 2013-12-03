@@ -96,7 +96,7 @@ int Connection::Recieve(OysterByte& bytes)
 {
 	int nBytes;
 
-	bytes.Clear(1000);
+	bytes.Resize(1000);
 	nBytes = recv(this->socket, bytes, 500, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
@@ -108,8 +108,6 @@ int Connection::Recieve(OysterByte& bytes)
 	}
 
 	std::cout << "Size of the recieved data: " << nBytes << " bytes" << std::endl;
-
-	//bytes.byteArray[nBytes] = '\0';
 
 	return 0;
 }
@@ -139,15 +137,24 @@ int Connection::InitiateSocket()
 	return 0;
 }
 
-void Connection::SetBlockingMode(bool blocking)
+int Connection::SetBlockingMode(bool blocking)
 {
-	//TODO: Implement this function. Setting the socket to blocking or non-blocking.
+	DWORD nonBlocking;
+
 	if(blocking)
 	{
-		//fcntl(this->socket, F_SETFL, O_NONBLOCK);
+		nonBlocking = 0;
 	}
 	else
 	{
-
+		nonBlocking = 1;
 	}
+
+	int result = ioctlsocket(this->socket, FIONBIO, &nonBlocking);
+	if(result != 0)
+	{
+		return WSAGetLastError();
+	}
+
+	return 0;
 }

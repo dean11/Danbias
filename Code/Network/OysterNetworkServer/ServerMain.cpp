@@ -18,10 +18,15 @@ using namespace Oyster::Network;
 using namespace ::Protocols;
 using namespace Utility;
 
+void PrintOutMessage(ProtocolSet* set);
+
 int main()
 {
-	OysterByte recvBuffer;
+	OysterByte sendBuffer;
+	OysterByte* recvBuffer = NULL;
+	ProtocolSet* set = new ProtocolSet;
 	IPostBox<int>* postBox = new PostBox<int>();
+	IPostBox<OysterByte*>* recvPostBox = new PostBox<OysterByte*>();
 
 	cout << "Server" << endl;
 	Translator t;
@@ -43,7 +48,7 @@ int main()
 	ProtocolPlayerPos test;
 	test.clientID = 0;
 	test.ID = 5;
-	test.nrOfFloats = 16;
+	test.nrOfFloats = 10;
 	test.matrix = new float[test.nrOfFloats];
 
 	for(int i = 0; i < (int)test.nrOfFloats; i++)
@@ -51,7 +56,7 @@ int main()
 		test.matrix[i] = (float)i;
 	}
 
-	t.Pack(test, recvBuffer);
+	t.Pack(test, sendBuffer);
 	
 	WinTimer timer;
 
@@ -59,14 +64,13 @@ int main()
 	int client = -1;
 	while(1)
 	{
-		client = -1;
-		postBox->FetchMessage(client);
-		if(client != -1)
+		//Fetch new clients from the postbox
+		if(postBox->FetchMessage(client))
 		{
 			cout << "Client connected: " << client << endl;
-			clients.push_back(new ThreadedClient(client));
+			clients.push_back(new ThreadedClient(recvPostBox, client));
 
-			clients.at(clients.size()-1)->Send(&recvBuffer);
+			clients.at(clients.size()-1)->Send(&sendBuffer);
 		}
 
 		//Send a message every 1 secounds to all clients.
@@ -76,51 +80,52 @@ int main()
 			timer.reset();
 			for(int i = 0; i < (int)clients.size(); i++)
 			{
-				clients.at(i)->Send(&recvBuffer);
+				clients.at(i)->Send(&sendBuffer);
 			}
 		}
-		Sleep(100);
+
+		//Fetch messages
+		if(recvPostBox->FetchMessage(recvBuffer))
+		{
+			t.Unpack(set, *recvBuffer);
+			delete recvBuffer;
+
+			PrintOutMessage(set);
+			set->Release();
+		}
+
+		Sleep(1);
 	}
 	listener.Shutdown();
 
-	/*
-	ProtocolSet* set = new ProtocolSet;
-
-	client1.Send(recvBuffer);
-
-	while(1)
-	{
-		client1.Recv(recvBuffer);
-
-		t.Unpack(set, recvBuffer);
-		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
-		cout << "Client1: " << set->Protocol.pTest->textMessage << endl;
-		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
-		{
-			cout << set->Protocol.pTest->f[i] << ' ';
-		}
-		cout << endl;
-		set->Release();
-		client2.Send(recvBuffer);
-
-		client2.Recv(recvBuffer);
-
-		t.Unpack(set, recvBuffer);
-		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
-		cout << "Client2: " << set->Protocol.pTest->textMessage << endl;
-		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
-		{
-			cout << set->Protocol.pTest->f[i] << ' ';
-		}
-		cout << endl;
-		set->Release();
-		client1.Send(recvBuffer);
-	}
-
-
-	ShutdownWinSock();
-	delete set;
-	*/
 	system("pause");
+
+	delete postBox;
 	return 0;
+}
+
+void PrintOutMessage(ProtocolSet* set)
+{
+	switch(set->type)
+	{
+	case PackageType_header:
+		break;
+	case PackageType_test:
+		cout <<"Client 2: " << set->Protocol.pTest->textMessage <<endl;
+		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
+		{
+			cout << set->Protocol.pTest->f[i] << ' ' ;
+		}
+		cout << endl;
+		break;
+
+	case PackageType_player_pos:
+		cout << "ID " << set->Protocol.pPlayerPos->ID << endl;
+		for(int i = 0; i < (int)set->Protocol.pPlayerPos->nrOfFloats; i++)
+		{
+			cout << set->Protocol.pPlayerPos->matrix[i] << ' ';
+		}
+		cout << endl;
+		break;
+	}
 }

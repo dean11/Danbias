@@ -20,7 +20,6 @@ namespace Oyster
 			Connection( int socket ) { this->socket = socket; };
 			virtual ~Connection();
 
-			
 			virtual int InitiateServer( unsigned short port );
 			virtual int InitiateClient();
 
@@ -32,9 +31,11 @@ namespace Oyster
 			
 			virtual int  Listen();
 
+			//Setting the socket to blocking/non-blocking mode.
+			int SetBlockingMode( bool blocking );
+
 		private:
 			int InitiateSocket();
-			void SetBlockingMode( bool blocking );
 
 			int socket;
 

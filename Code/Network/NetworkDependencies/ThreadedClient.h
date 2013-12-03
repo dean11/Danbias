@@ -20,6 +20,7 @@ namespace Oyster
 		public:
 			ThreadedClient();
 			ThreadedClient(unsigned int socket);
+			ThreadedClient(IPostBox<OysterByte*>* postBox, unsigned int socket);
 			virtual ~ThreadedClient();
 
 			int Send(OysterByte* byte);
@@ -27,8 +28,8 @@ namespace Oyster
 			int Connect(unsigned short port, const char serverName[]);
 
 			void setRecvPostBox(IPostBox<OysterByte*>* postBox);
-		private:
 
+		private:
 			virtual int Send();
 			virtual int Recv();
 
@@ -36,9 +37,7 @@ namespace Oyster
 			virtual void ThreadExit();
 			virtual bool DoWork();
 
-
-
-
+		private:
 			Connection* connection;
 			IPostBox<OysterByte*>* sendPostBox;
 			IPostBox<OysterByte*>* recvPostBox;

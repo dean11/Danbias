@@ -4,7 +4,6 @@
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 
-
 ThreadedClient::ThreadedClient()
 {
 	this->connection = new Connection();
@@ -17,6 +16,21 @@ ThreadedClient::ThreadedClient(unsigned int socket)
 	this->connection = new Connection(socket);
 	this->sendPostBox = new PostBox<OysterByte*>();
 	this->recvPostBox = NULL;
+
+	connection->SetBlockingMode(false);
+
+	thread.Create(this, true);
+}
+
+ThreadedClient::ThreadedClient(IPostBox<OysterByte*>* postBox, unsigned int socket)
+{
+	this->connection = new Connection(socket);
+	this->sendPostBox = new PostBox<OysterByte*>;
+	this->recvPostBox = postBox;
+
+	connection->SetBlockingMode(false);
+
+	thread.Create(this, true);
 }
 
 ThreadedClient::~ThreadedClient()
@@ -35,7 +49,9 @@ ThreadedClient::~ThreadedClient()
 
 int ThreadedClient::Send(OysterByte* byte)
 {
+	mutex.LockMutex();
 	this->sendPostBox->PostMessage(byte);
+	mutex.UnlockMutex();
 	return 0;
 }
 
@@ -43,13 +59,13 @@ int ThreadedClient::Send()
 {
 	int errorCode = 0;
 	mutex.LockMutex();
-	if(!sendPostBox->IsFull())
+	if(sendPostBox->IsFull())
 	{
 		OysterByte *temp = NULL;
 		sendPostBox->FetchMessage(temp);
 		errorCode = this->connection->Send(*temp);
-		mutex.UnlockMutex();
 	}
+	mutex.UnlockMutex();
 
 	return errorCode;
 }
@@ -57,42 +73,48 @@ int ThreadedClient::Send()
 int ThreadedClient::Recv()
 {
 	int errorCode = 0;
-	mutex.LockMutex();
-	if(!recvPostBox->IsFull())
+
+	OysterByte *temp = new OysterByte();
+	errorCode = this->connection->Recieve(*temp);
+	
+	if(errorCode == 0)
 	{
-		OysterByte *temp = NULL;
-		errorCode = this->connection->Recieve(*temp);
+		mutex.LockMutex();
 		recvPostBox->PostMessage(temp);
 		mutex.UnlockMutex();
 	}
+	else
+	{
+		delete temp;
+	}
+
 	return errorCode;
 }
 
 void ThreadedClient::ThreadEntry()
 {
-	std::cout<< "Thread started" << std::endl;
+	std::cout<< "Client Thread started" << std::endl;
 }
 
 void ThreadedClient::ThreadExit()
 {
-	std::cout << "Thread exit" << std::endl;
+	std::cout << "Client Thread exit" << std::endl;
 }
 
 bool ThreadedClient::DoWork()
 {
 	int errorCode;
 	errorCode = Send();
-
-	if(errorCode != 0)
+	/*if(errorCode != 0)
 	{
 		return false;
-	}
+	}*/
 
 	errorCode = Recv();
-	if(errorCode != 0)
+	/*if(errorCode != 0)
 	{
 		return false;
-	}
+	}*/
 
 	return true;
 }

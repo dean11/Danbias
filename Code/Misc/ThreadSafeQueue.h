@@ -132,6 +132,7 @@ namespace Oyster
 					this->front = NULL;
 					this->back = NULL;
 				}
+				mutex.UnlockMutex();
 				return item;
 			}
 
@@ -146,6 +147,7 @@ namespace Oyster
 			mutex.LockMutex();
 			if(front != NULL)
 			{
+				mutex.UnlockMutex();
 				return this->front->item;
 			}
 			mutex.UnlockMutex();

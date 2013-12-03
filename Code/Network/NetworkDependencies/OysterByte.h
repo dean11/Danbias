@@ -18,7 +18,8 @@ namespace Oyster
 			OysterByte(int cap);
 			virtual ~OysterByte();
 
-			void Clear(unsigned int cap);
+			void Clear();							//Resets size to 0
+			void Resize(unsigned int cap);			//Resizes the array with, it does not keep anything in it.
 
 			int GetSize();
 			unsigned char* GetByteArray();

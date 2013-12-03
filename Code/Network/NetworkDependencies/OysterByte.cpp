@@ -21,11 +21,18 @@ OysterByte::~OysterByte()
 	delete[] byteArray;
 }
 
-void OysterByte::Clear(unsigned int cap)
+void OysterByte::Clear()
 {
-	delete[] byteArray;
-	byteArray = new unsigned char[cap];
 	size = 0;
+}
+
+void OysterByte::Resize(unsigned int cap)
+{
+	if(capacity < cap)
+	{
+		delete[] byteArray;
+		byteArray = new unsigned char[cap];
+	}
 }
 
 int OysterByte::GetSize()
