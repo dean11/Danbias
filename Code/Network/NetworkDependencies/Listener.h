@@ -28,15 +28,14 @@ namespace Oyster
 
 				void SetPostBox(IPostBox<int>* postBox);
 
+			private:
 				//Thread functions
 				bool DoWork();
 				void ThreadEntry();
 				void ThreadExit();
 
-			private:
 				//Function that runs in the thread.
 				int Accept();
-
 
 			private:
 				::Oyster::Network::Connection* connection;

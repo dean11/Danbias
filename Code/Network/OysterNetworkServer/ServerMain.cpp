@@ -46,9 +46,9 @@ int main()
 	test.nrOfFloats = 16;
 	test.matrix = new float[test.nrOfFloats];
 
-	for(int i = 0; i < test.nrOfFloats; i++)
+	for(int i = 0; i < (int)test.nrOfFloats; i++)
 	{
-		test.matrix[i] = i;
+		test.matrix[i] = (float)i;
 	}
 
 	t.Pack(test, recvBuffer);

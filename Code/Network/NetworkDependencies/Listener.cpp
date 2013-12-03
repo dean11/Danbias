@@ -28,7 +28,7 @@ bool Listener::Init(unsigned int port)
 
 void Listener::Shutdown()
 {
-	thread.Terminate();
+	thread.Stop();
 }
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
