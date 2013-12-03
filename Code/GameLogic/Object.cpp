@@ -12,15 +12,16 @@ using namespace Oyster::Graphics::Model;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Physics;
 
-Object::Object(void)
+Object::Object(std::wstring objFile)
 {
 
-	model = new Model();
-	model = Oyster::Graphics::API::CreateModel(L"orca");
+	//model = new Model();
+	model = Oyster::Graphics::API::CreateModel(objFile);
 
 	API::SimpleBodyDescription sbDesc;
 	//sbDesc.centerPosition = 
 
+	//poi
 	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
 	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);

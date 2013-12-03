@@ -1,6 +1,6 @@
 #include "CollisionManager.h"
 
-
+using namespace Oyster;
 
 namespace GameLogic
 {
@@ -8,10 +8,10 @@ namespace GameLogic
 	namespace CollisionManager
 	{
 
-		void PlayerCollision(Oyster::Physics::ICustomBody &rigidBodyPlayer,Oyster::Physics::ICustomBody &obj)
+		Physics::ICustomBody::SubscriptMessage PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj)
 		{
-			Player *player = ((Player*)GameLogic::RefManager::getInstance()->GetMap(rigidBodyPlayer));
-			Object *realObj = GameLogic::RefManager::getInstance()->GetMap(obj);
+			Player *player = ((Player*)GameLogic::RefManager::getInstance()->GetMap(*rigidBodyPlayer));
+			Object *realObj = GameLogic::RefManager::getInstance()->GetMap(*obj);
 
 			switch (realObj->GetType())
 			{
@@ -24,6 +24,7 @@ namespace GameLogic
 			}
 
 			//spela ljud? ta skada? etc etc
+			return Physics::ICustomBody::SubscriptMessage_none;
 		}
 		
 		void PlayerVBox(Player &player, DynamicObject &box)
@@ -31,10 +32,10 @@ namespace GameLogic
 			//spela ljud? ta skada? etc etc
 		}
 		
-		void BoxCollision(Oyster::Physics::ICustomBody &rigidBodyBox, Oyster::Physics::ICustomBody &obj)
+		Physics::ICustomBody::SubscriptMessage BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj)
 		{
-			DynamicObject *box = ((DynamicObject*)GameLogic::RefManager::getInstance()->GetMap(rigidBodyBox));
-			Object *realObj = GameLogic::RefManager::getInstance()->GetMap(obj);
+			DynamicObject *box = ((DynamicObject*)GameLogic::RefManager::getInstance()->GetMap(*rigidBodyBox));
+			Object *realObj = GameLogic::RefManager::getInstance()->GetMap(*obj);
 
 			switch (realObj->GetType())
 			{
@@ -45,6 +46,8 @@ namespace GameLogic
 				PlayerVBox(*(Player*)realObj,*box);
 				break;
 			}
+
+			return Physics::ICustomBody::SubscriptMessage_none;
 		}
 	}
 }

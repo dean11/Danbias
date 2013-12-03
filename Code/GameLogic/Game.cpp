@@ -1,4 +1,5 @@
 #include "Game.h"
+
 using namespace GameLogic;
 
 Game::Game(void)
@@ -26,7 +27,13 @@ Game::~Game(void)
 
 void Game::Init()
 {
-	player = new Player();
+	//Oyster::Physics::API::SetSubscription("remove object");
+	
+	player = new Player(L"worldDummy");
+
+	box = new DynamicObject(L"crate");
+	//poi
+	//box = new physcTestObj("box");
 	camera = new Camera();
 }
 void Game::StartGame()
@@ -60,9 +67,11 @@ void Game::Update(keyInput keyPressed, float pitch, float yaw)
 		camera->Walk(0.1);
 	}
 	camera->UpdateViewMatrix();
+	//poi Oyster::Physics::API::Update();
 }
 void Game::Render()
 {
 	Oyster::Graphics::API::NewFrame(camera->View(), camera->Proj());
 	player->Render();
+	box->Render();
 }

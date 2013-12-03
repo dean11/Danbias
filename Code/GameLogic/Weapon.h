@@ -15,7 +15,7 @@ namespace GameLogic
 	{
 
 	public:
-		Weapon(void);
+		Weapon(std::wstring objFile);
 		~Weapon(void);
 
 	private:

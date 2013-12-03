@@ -15,7 +15,7 @@ namespace GameLogic
 	{
 	
 	public:
-		StaticObject(void);
+		StaticObject(std::wstring objFile);
 		~StaticObject(void);
 		
 	};

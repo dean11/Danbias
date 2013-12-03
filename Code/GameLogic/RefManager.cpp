@@ -2,7 +2,7 @@
 
 using namespace GameLogic;
 
-typedef std::pair<Oyster::Physics::ICustomBody*, Object*> mapData;
+typedef std::pair<const Oyster::Physics::ICustomBody*, Object*> mapData;
 
 RefManager* RefManager::instance = 0;
 
@@ -34,12 +34,12 @@ RefManager* RefManager::getInstance( )
 	return instance;
 }
 
-Object* RefManager::GetMap(Oyster::Physics::ICustomBody &body)
+Object* RefManager::GetMap(const Oyster::Physics::ICustomBody &body)
 {
 	return mapper[&body];
 }
 
-void RefManager::AddMapping(Oyster::Physics::ICustomBody &body, Object &obj)
+void RefManager::AddMapping( const Oyster::Physics::ICustomBody &body, Object &obj)
 {
 	mapper.insert(mapData(&body,&obj));
 }

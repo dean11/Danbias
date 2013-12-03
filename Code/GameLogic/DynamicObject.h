@@ -16,7 +16,7 @@ namespace GameLogic
 	{
 
 	public:
-		DynamicObject(void);
+		DynamicObject(std::wstring objFile);
 		~DynamicObject(void);
 
 		void Update();

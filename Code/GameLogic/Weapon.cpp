@@ -2,7 +2,8 @@
 
 using namespace GameLogic;
 
-Weapon::Weapon(void)
+Weapon::Weapon(std::wstring objFile)
+	:Object(objFile)
 {
 }
 

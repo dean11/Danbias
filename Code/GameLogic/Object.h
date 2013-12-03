@@ -25,7 +25,7 @@ namespace GameLogic
 			OBJECT_TYPE_PLAYER,
 			OBJECT_TYPE_BOX,
 		};
-		Object(void);
+		Object(std::wstring objFile );
 		virtual ~Object(void);
 
 		void Render();

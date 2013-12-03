@@ -2,7 +2,8 @@
 
 using namespace GameLogic;
 
-StaticObject::StaticObject(void)
+StaticObject::StaticObject(std::wstring objFile)
+	:Object(objFile)
 {
 }
 

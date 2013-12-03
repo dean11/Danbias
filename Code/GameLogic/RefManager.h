@@ -23,13 +23,13 @@ namespace GameLogic
 		void Release();
 		
 
-		Object* GetMap(Oyster::Physics::ICustomBody &body); //returns the object of an rigidBody, mainly used for CollisionHandler
-		void AddMapping(Oyster::Physics::ICustomBody &body, Object &obj); //adds a mapping with body as key and the object as a value
+		Object* GetMap(const Oyster::Physics::ICustomBody &body); //returns the object of an rigidBody, mainly used for CollisionHandler
+		void AddMapping(const Oyster::Physics::ICustomBody &body, Object &obj); //adds a mapping with body as key and the object as a value
 
 
 	private:
 		static RefManager* instance;
-		std::map<Oyster::Physics::ICustomBody*,Object*> mapper; //mapper points a rigidBody to an actual game object
+		std::map<const Oyster::Physics::ICustomBody*,Object*> mapper; //mapper points a rigidBody to an actual game object
 
 
 	};
