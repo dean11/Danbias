@@ -10,7 +10,6 @@
 	#define GFX_DLL_USAGE __declspec(dllimport)
 #endif
 
-
 namespace Oyster
 {
 	namespace Graphics
