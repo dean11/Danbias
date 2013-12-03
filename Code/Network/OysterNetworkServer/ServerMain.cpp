@@ -5,7 +5,7 @@
 #include "../NetworkDependencies/WinsockFunctions.h"
 #include "../NetworkDependencies/Listener.h"
 #include "../NetworkDependencies/Translator.h"
-#include "Client.h"
+#include "../NetworkDependencies/ThreadedClient.h"
 #include "../NetworkDependencies/OysterByte.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../../Misc/WinTimer.h"
@@ -55,7 +55,7 @@ int main()
 	
 	WinTimer timer;
 
-	vector<Client*> clients;
+	vector<ThreadedClient*> clients;
 	int client = -1;
 	while(1)
 	{
@@ -64,9 +64,9 @@ int main()
 		if(client != -1)
 		{
 			cout << "Client connected: " << client << endl;
-			clients.push_back(new Client(client));
+			clients.push_back(new ThreadedClient(client));
 
-			clients.at(clients.size()-1)->Send(recvBuffer);
+			clients.at(clients.size()-1)->Send(&recvBuffer);
 		}
 
 		//Send a message every 1 secounds to all clients.
@@ -76,7 +76,7 @@ int main()
 			timer.reset();
 			for(int i = 0; i < (int)clients.size(); i++)
 			{
-				clients.at(i)->Send(recvBuffer);
+				clients.at(i)->Send(&recvBuffer);
 			}
 		}
 		Sleep(100);

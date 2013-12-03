@@ -11,6 +11,8 @@
     <ClCompile Include="WinsockFunctions.cpp" />
     <ClCompile Include="OysterByte.cpp" />
     <ClCompile Include="Messages\MessagePlayerPos.cpp" />
+    <ClCompile Include="ThreadedClient.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
@@ -28,6 +30,11 @@
     <ClInclude Include="OysterByte.h" />
     <ClInclude Include="IPostBox.h" />
     <ClInclude Include="PostBox.h" />
+<<<<<<< HEAD
     <ClInclude Include="Messages\MessagePlayerPos.h" />
+=======
+    <ClInclude Include="IClient.h" />
+    <ClInclude Include="ThreadedClient.h" />
+>>>>>>> Client interface and class for both server and client. now using postbox system
   </ItemGroup>
 </Project>
