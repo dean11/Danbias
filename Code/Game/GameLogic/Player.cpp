@@ -1,13 +1,15 @@
 #include "Player.h"
 #include "OysterMath.h"
+#include "CollisionManager.h"
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
 
-Player::Player(void)
-	:Object()
+Player::Player(std::wstring objFile)
+	:Object( objFile )
 {
 	life = 100;
+	rigidBody->SetSubscription(CollisionManager::PlayerCollision);
 }
 Player::~Player(void)
 {
@@ -16,6 +18,7 @@ Player::~Player(void)
 
 void Player::Update(keyInput keyPressed)
 {
+
 	if(keyPressed != keyInput_none)
 	{
 		Move(keyPressed);
@@ -24,6 +27,7 @@ void Player::Update(keyInput keyPressed)
 
 void Player::Move(keyInput keyPressed)
 {
+
 	if(keyPressed == keyInput_A)
 	{
 		Oyster::Math::Float3 pos = this->rigidBody->GetCenter();

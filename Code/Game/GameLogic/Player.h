@@ -17,7 +17,7 @@ namespace GameLogic
 	{
 
 	public:
-		Player(void);
+		Player(std::wstring objFile);
 		~Player(void);
 
 		/********************************************************

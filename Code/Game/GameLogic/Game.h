@@ -21,6 +21,7 @@ namespace GameLogic
 		
 	private:
 		Level*		level;
+		DynamicObject* box;
 		Player*		player;
 		Camera*		camera;
 	};
