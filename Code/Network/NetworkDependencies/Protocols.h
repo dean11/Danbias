@@ -22,7 +22,7 @@ namespace Oyster
 				PackageType_header,
 				PackageType_test,
 				PackageType_input,
-				PackageType_update_position
+				PackageType_player_pos,
 			};
 
 			struct ProtocolHeader
@@ -45,6 +45,16 @@ namespace Oyster
 				virtual ~ProtocolTest() { delete[] f; }
 			};
 
+			struct ProtocolPlayerPos : public ProtocolHeader
+			{
+				int ID;
+				unsigned int nrOfFloats;
+				float *matrix;
+
+				ProtocolPlayerPos() { this->packageType = PackageType_player_pos; }
+				virtual ~ProtocolPlayerPos() { delete[] matrix; }
+			};
+
 
 			//Holding every protocol in an union.
 			//Used because we now don't have to type case our protocol when we recieve them.
@@ -56,6 +66,7 @@ namespace Oyster
 				{
 					ProtocolHeader* pHeader;
 					ProtocolTest *pTest;
+					ProtocolPlayerPos *pPlayerPos;
 
 				}Protocol;
 
@@ -73,6 +84,12 @@ namespace Oyster
 						if(Protocol.pTest)
 						{
 							delete Protocol.pTest;
+						}
+						break;
+					case PackageType_player_pos:
+						if(Protocol.pPlayerPos)
+						{
+							delete Protocol.pPlayerPos;
 						}
 						break;
 					}

@@ -17,6 +17,10 @@ void Translator::Pack( ProtocolHeader &header, OysterByte& bytes )
 	case PackageType_test:
 		message = new MessageTest();
 		break;
+
+	case PackageType_player_pos:
+		message = new MessagePlayerPos();
+		break;
 	}
 
 	if(message != NULL)
@@ -51,6 +55,12 @@ void Translator::Unpack(ProtocolSet* set, OysterByte& bytes )
 		message = new MessageTest();
 		set->Protocol.pTest = new ProtocolTest;
 		message->Unpack(bytes, *set->Protocol.pTest);
+		break;
+
+	case PackageType_player_pos:
+		message = new MessagePlayerPos();
+		set->Protocol.pPlayerPos = new ProtocolPlayerPos;
+		message->Unpack(bytes, *set->Protocol.pPlayerPos);
 		break;
 	}
 

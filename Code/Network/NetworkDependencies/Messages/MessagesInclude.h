@@ -7,5 +7,6 @@
 
 #include "MessageHeader.h"
 #include "MessageTest.h"
+#include "MessagePlayerPos.h"
 
 #endif

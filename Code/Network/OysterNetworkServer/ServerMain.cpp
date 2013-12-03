@@ -40,17 +40,15 @@ int main()
 
 	//Start listening
 	//Accept a client
-	ProtocolTest test;
+	ProtocolPlayerPos test;
 	test.clientID = 0;
-	test.size = 2;
-	test.textMessage = "hej";
-	test.numOfFloats = 0;
-	test.f = new float[test.numOfFloats];
-	float temp = 395.456f;
-	for(int i = 0; i < (int)test.numOfFloats; i++)
+	test.ID = 5;
+	test.nrOfFloats = 16;
+	test.matrix = new float[test.nrOfFloats];
+
+	for(int i = 0; i < test.nrOfFloats; i++)
 	{
-		test.f[i] = temp;
-		temp--;
+		test.matrix[i] = i;
 	}
 
 	t.Pack(test, recvBuffer);
