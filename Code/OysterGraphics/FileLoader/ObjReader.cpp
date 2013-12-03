@@ -2,7 +2,7 @@
 #include "..\Definitions\GraphicalDefinition.h"
 #include <sstream>
 #include <fstream>
-#include "TextureLoader.h"
+#include "GeneralLoader.h"
 
 using namespace std;
 OBJReader::OBJReader() 
@@ -24,7 +24,7 @@ void OBJReader::readOBJFile( std::wstring fileName )
 	float vertexData;
 	std::string face1, face2, face3;
 
-	inStream.open( fileName, std::fstream::in );
+	inStream.open( fileName + L".obj", std::fstream::in );
 	
 	if( inStream.is_open() )
 	{
@@ -94,6 +94,8 @@ void OBJReader::readOBJFile( std::wstring fileName )
 	}
 
 	inStream.close();
+
+	Mat = Oyster::Resource::OysterResource::LoadResource((fileName + L".jpg").c_str(),Oyster::Graphics::Loading::LoadTexture);
 }
 
 Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
@@ -117,9 +119,7 @@ Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()
 	modelInfo->Indexed = false;
 	modelInfo->VertexCount = (int)desc.NumElements;
 	modelInfo->Vertices = b;
-
-	//Oyster::Resource::OysterResource::LoadResource(L"Normal.png",(Oyster::Resource::CustomLoadFunction)Oyster::Graphics::Loading::LoadTexture);
-
+	modelInfo->Material.push_back((ID3D11ShaderResourceView*)Mat);
 
 	return modelInfo;
 }

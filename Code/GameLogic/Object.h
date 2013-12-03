@@ -18,16 +18,16 @@ namespace GameLogic
 {
 	class Object
 	{
-	public:
-		Object(void);
-		virtual ~Object(void);
+	public:		
 
 		enum OBJECT_TYPE
 		{
 			OBJECT_TYPE_PLAYER,
 			OBJECT_TYPE_BOX,
 		};
-		
+		Object(void);
+		virtual ~Object(void);
+
 		void Render();
 
 		OBJECT_TYPE GetType();

@@ -88,7 +88,10 @@ OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunc
 			resourcePrivate.SaveResource(resourceData);
 		}
 	}
-
+	if(!resourceData)
+	{
+		return 0;
+	}
 	return (OHRESOURCE)resourceData->GetResourceHandle();
 }
 

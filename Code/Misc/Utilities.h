@@ -31,6 +31,22 @@ namespace Utility
 		 ******************************************************************/
 		template<typename Type> void SafeDeleteArray( Type dynamicArray[] );
 
+		//! A simple reference counter with some extra functionality
+		struct ReferenceCount
+		{
+			private:
+				int count;
+
+			public:
+				ReferenceCount()		:count(0)									{ }
+				ReferenceCount(const ReferenceCount& o)								{ count = o.count; }
+				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count = o.count;  return *this;}
+				inline void Incref()												{ this->count++; }
+				inline void Incref(int c)											{ this->count += c; }
+				inline int  Decref()												{ return --this->count;}
+				inline void Reset()													{ this->count = 0; }
+		};
+
 		//! Wrapper to safely transfer dynamic ownership/responsibility
 		template<typename Type> struct UniquePointer
 		{
@@ -108,9 +124,9 @@ namespace Utility
 			mutable Type *ownedInstance;
 		};
 
-		template<typename Type>
-		struct UniqueArray
-		{ //! Wrapper to safely transfer dynamic ownership/responsibility
+		//! Wrapper to safely transfer dynamic ownership/responsibility
+		template<typename Type> struct UniqueArray
+		{
 		public:
 			/******************************************************************
 			 * Assigns assignedInstance ownership to this UniquePonter, old owned array will be deleted.
@@ -177,63 +193,40 @@ namespace Utility
 			mutable Type *ownedArray;
 		};
 
-		struct ReferenceCount
+		//! Wrapper to manage references on a pointer.
+		template<typename T> struct SmartPointer
 		{
 			private:
-				std::atomic<int> count;
+				ReferenceCount	*_rc;
+				T				*_ptr;
+
+				/** Destroys the pointer and returns the memory allocated. */
+				void Destroy();
 
 			public:
-				ReferenceCount()		:count(0)									{ }
-				ReferenceCount(const ReferenceCount& o)								{ count.store(o.count); }
-				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count.store(o.count);  return *this;}
-				inline void Incref()												{ this->count++; }
-				inline void Incref(int c)											{ this->count += c; }
-				inline int  Decref()												{ return --this->count;}
-				inline void Reset()													{ this->count = 0; }
+				SmartPointer();
+				SmartPointer(T* p);
+				SmartPointer(const SmartPointer& d);
+				virtual~SmartPointer();
+				SmartPointer<T>& operator= (const SmartPointer<T>& p);
+				SmartPointer<T>& operator= (T* p);
+				bool operator== (const SmartPointer<T>& d);
+				bool operator== (const T& p);
+				T& operator* ();
+				T* operator-> ();
+				operator T* ();
+				operator bool();
+
+				/**
+				*	Returns the connected pointer 
+				*/
+				T* Get();
+
+				/** Checks if the pointer is valid (not NULL)
+				*	Returns true for valid, else false. 
+				*/
+				bool IsValid();
 		};
-
-		namespace SmartPointer
-		{
-			//! Smart pointer for a regular object.
-			/** 
-			*	Regular objects, objects that is deleted normaly (ie not COM objects, or array pointers) 
-			*	can use this class to easy the use of dynamic memory 
-			*/
-			template<typename T>
-			struct StdSmartPointer
-			{
-				private:
-					ReferenceCount	*_rc;
-					T				*_ptr;
-
-					/** Destroys the pointer and returns the memory allocated. */
-					void Destroy();
-
-				public:
-					StdSmartPointer();
-					StdSmartPointer(T* p);
-					StdSmartPointer(const StdSmartPointer& d);
-					virtual~StdSmartPointer();
-					StdSmartPointer<T>& operator= (const StdSmartPointer<T>& p);
-					StdSmartPointer<T>& operator= (T* p);
-					bool operator== (const StdSmartPointer<T>& d);
-					bool operator== (const T& p);
-					T& operator* ();
-					T* operator-> ();
-					operator T* ();
-					operator bool();
-
-					/**
-					*	Returns the connected pointer */
-					T* Get();
-
-					/** Checks if the pointer is valid (not NULL)
-						Returns true for valid, else false. */
-					bool IsValid();
-			};
-		}
-
-
 	}
 
 	namespace String
@@ -378,6 +371,11 @@ namespace Utility
 
 		template<> inline unsigned long long AverageWithDelta<unsigned long long>( const unsigned long long &origin, const unsigned long long &delta )
 		{ return origin + (delta >> 1); }
+	}
+
+	namespace Thread
+	{
+		//Utilities for threading
 	}
 }
 

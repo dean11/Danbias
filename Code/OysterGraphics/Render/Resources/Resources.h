@@ -20,6 +20,7 @@ namespace Oyster
 				static Core::Buffer VPData;
 
 				static Core::Init::State Init();
+				static void Clean();
 			};
 		}
 	}

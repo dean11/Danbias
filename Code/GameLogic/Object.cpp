@@ -16,16 +16,12 @@ Object::Object(void)
 {
 
 	model = new Model();
-	model = Oyster::Graphics::API::CreateModel(L"bth.obj");
+	model = Oyster::Graphics::API::CreateModel(L"orca");
 
-	ICustomBody* temp = rigidBody = API::Instance().CreateSimpleRigidBody().Release();
+	API::SimpleBodyDescription sbDesc;
+	//sbDesc.centerPosition = 
 
-	rigidBody->SetCenter(Float3(50,0,0));
-	rigidBody->SetMass_KeepMomentum(30);
-	rigidBody->SetSize(Float3(2,2,2));
-	rigidBody->SetSubscription(true);
-	rigidBody->SetMomentOfInertiaTensor_KeepMomentum(Float4x4(MomentOfInertia::CreateCuboidMatrix(30, 2, 2, 2)));
-
+	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
 	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);
 
@@ -43,7 +39,6 @@ void Object::Render()
 {
 	this->rigidBody->GetOrientation(model->WorldMatrix);
 	Oyster::Graphics::API::RenderScene(model, 1);
-
 }
 
 Object::OBJECT_TYPE Object::GetType()

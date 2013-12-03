@@ -14,9 +14,9 @@ namespace Oyster
 
 				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection)
 				{
-					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,1));
+					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
 					Core::ShaderManager::SetShaderEffect(Graphics::Render::Resources::obj);
-					Preparations::Basic::BindBackBufferRTV(nullptr);
+					Preparations::Basic::BindBackBufferRTV();
 
 					Definitions::VP vp;
 					vp.V = View;
@@ -39,10 +39,11 @@ namespace Oyster
 							memcpy(data,&(models[i].WorldMatrix),sizeof(Math::Float4x4));
 							Resources::ModelData.Unmap();
 
-							//Set Materials :: NONE
+							
+							Model::ModelInfo* info = (Model::ModelInfo*)models[i].info;
 
-							Model
-								::ModelInfo* info = (Model::ModelInfo*)models[i].info;
+							Core::deviceContext->PSSetShaderResources(0,info->Material.size(),&(info->Material[0]));
+
 
 							info->Vertices->Apply();
 							if(info->Indexed)

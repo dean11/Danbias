@@ -172,20 +172,17 @@ bool InputClass::ReadMouse()
 	return true;
 }
 
-void InputClass::MouseMove(float &Pitch, float &RotateY )
+float InputClass::GetPitch( )
 {
-	//if left mouse button is pressed 
-	if (m_mouseState.rgbButtons[0])
-	{
-		float dx = (static_cast<float>( m_mouseState.lX)/150);
-		float dy = (static_cast<float>( m_mouseState.lY)/150);
-
-		//
-		Pitch=dy;
-		RotateY=dx;
-
-	}
+	float dy = (static_cast<float>( m_mouseState.lY)/5);
+	return -dy;
 }
+float InputClass::GetYaw( )
+{
+	float dX = (static_cast<float>( m_mouseState.lX)/5);
+	return -dX;
+}
+
 bool InputClass::IsMousePressed()
 {
 	if (m_mouseState.rgbButtons[0])

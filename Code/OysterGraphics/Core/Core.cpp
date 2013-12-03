@@ -1,4 +1,5 @@
 #include "Core.h"
+#include <vld.h>
 
 using namespace Oyster::Graphics;
 using std::string;

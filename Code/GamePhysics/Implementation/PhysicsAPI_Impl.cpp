@@ -11,6 +11,22 @@ using namespace ::Utility::DynamicMemory;
 
 API_Impl API_instance;
 
+namespace
+{
+	void OnPossibleCollision( Octree& worldScene, unsigned int protoTempRef, unsigned int deuterTempRef )
+	{ /** @todo TODO: OnPossibleCollision is a temporary solution .*/
+		auto proto = worldScene.GetCustomBody( protoTempRef );
+		auto deuter = worldScene.GetCustomBody( deuterTempRef );
+
+		float deltaWhen;
+		Float3 worldWhere;
+		if( deuter->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
+		{
+			proto->CallSubscription( proto, deuter );
+		}
+	}
+}
+
 Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius)
 {
 	return Formula::MomentOfInertia::Sphere(mass, radius);
@@ -80,8 +96,25 @@ void API_Impl::SetSubscription( API::EventAction_Destruction functionPointer )
 }
 
 void API_Impl::Update()
-{
-	/** @todo TODO: Fix this function.*/
+{ /** @todo TODO: Update is a temporary solution .*/
+	::std::vector<ICustomBody*> updateList;
+	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
+	for( ; proto != updateList.end(); ++proto )
+	{
+		this->worldScene.Visit( *proto, OnPossibleCollision );
+	}
+
+	proto = updateList.begin();
+	for( ; proto != updateList.end(); ++proto )
+	{
+		switch( (*proto)->Update(this->updateFrameLength) )
+		{
+		case UpdateState_altered:
+			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(*proto) );
+		case UpdateState_resting: default:
+			break;
+		}
+	}
 }
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )

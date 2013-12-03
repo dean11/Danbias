@@ -5,9 +5,8 @@ using namespace Oyster::Physics;
 using namespace Utility::DynamicMemory;
 
 DynamicObject::DynamicObject(void)
+	:Object()
 {
-	rigidBody = API::Instance().CreateSimpleRigidBody();
-	API::Instance().AddObject(rigidBody);
 }
 
 
@@ -17,5 +16,5 @@ DynamicObject::~DynamicObject(void)
 
 void DynamicObject::Update()
 {
-	//updatera objectet
+	//update object
 }

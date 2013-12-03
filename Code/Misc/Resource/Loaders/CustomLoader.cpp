@@ -16,7 +16,7 @@ OResource*	OResource::CustomLoader(const wchar_t filename[], CustomLoadFunction 
 	memset(&data, 0, sizeof(CustomData));
 
 	fnc(filename, data);
-
+	OHRESOURCE n = (OHRESOURCE)data.loadedData;
 	if(!data.loadedData)			
 	{
 		return 0;

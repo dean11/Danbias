@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////
+// Temp input handler, not stable!
+// When starting the program, don't click anywhere until the program starts  
+// because that breaks the input..
+//////////////////////////////////////////////////////////////////////////
+
 #ifndef _INPUTCLASS_H_
 #define _INPUTCLASS_H_
 
@@ -23,7 +29,6 @@ private:
 
 	bool ReadKeyboard();
 	bool ReadMouse();
-	
 
 public:
 
@@ -39,7 +44,11 @@ public:
 
 	bool IsKeyPressed(int key);
 	bool IsMousePressed();
-	void MouseMove(float &Pitch, float &RoateY);
+
+	// Call if mouse is pressed
+	float GetYaw();
+	float GetPitch();
+
 };
 
 #endif

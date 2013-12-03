@@ -176,8 +176,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameMode.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
@@ -187,8 +190,11 @@
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameMode.cpp" />
     <ClCompile Include="IGame.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />

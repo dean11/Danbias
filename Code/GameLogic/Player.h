@@ -13,27 +13,25 @@
 
 namespace GameLogic
 {
-	
-
 	class Player : public Object
 	{
 
 	public:
 		Player(void);
 		~Player(void);
-	
+
+		/********************************************************
+		* Update the position of the rigid body
+		* This will be done with physics later
+		********************************************************/
 		void Update(keyInput keyPressed);
 
-		void Move();
+		void Move(keyInput keyPressed);
 		void Shoot();
 	
-
 	private:
-		int life;
-		Weapon *weapon;
-		
-
+		int		life;
+		Weapon	*weapon;
 	};
-
 }
 #endif
