@@ -6,15 +6,15 @@
 #include "..\NetworkDependencies\Protocols.h"
 #include "../NetworkDependencies/OysterByte.h"
 #include "../../Misc/ThreadSafeQueue.h"
-#include "Client.h"
+#include "../NetworkDependencies/ThreadedClient.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
 using namespace std;
 using namespace Oyster::Network::Protocols;
-using namespace Oyster::Network::Client;
+using namespace Oyster::Network;
 
-void chat(Client &client);
+void chat(ThreadedClient &client);
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
 	cout << "Client" << endl;
 
 	//Create Client
-	Client client;
+	ThreadedClient client;
 
 	//Connect to server
 	errorCode = client.Connect(9876, "localhost");
@@ -38,7 +38,7 @@ int main()
 		wcout << "errorMessage: " << errorTest << endl;
 	}
 
-	chat(client);
+	//chat(client);
 
 	ShutdownWinSock();
 
@@ -46,7 +46,7 @@ int main()
 	return 0;
 }
 
-void chat(Client &client)
+void chat(ThreadedClient &client)
 {
 	Oyster::Network::Translator *t = new Oyster::Network::Translator();
 
@@ -65,7 +65,7 @@ void chat(Client &client)
 	}
 
 	bool chatDone = false;
-
+	/*
 	while(!chatDone)
 	{
 		client.Recv(msgRecv);
@@ -113,9 +113,10 @@ void chat(Client &client)
 		}
 
 		cin.clear();*/
-
+	/*
 	}
 
 	delete t;
 	delete set;
+	*/
 }
