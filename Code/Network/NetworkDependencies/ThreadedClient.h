@@ -10,6 +10,7 @@
 #include "../NetworkDependencies/PostBox.h"
 #include "../../Misc/Thread/OysterThread.h"
 #include "../../Misc/Thread/OysterMutex.h"
+#include "../../Misc/Utilities.h"
 
 namespace Oyster
 {
@@ -20,14 +21,14 @@ namespace Oyster
 		public:
 			ThreadedClient();
 			ThreadedClient(unsigned int socket);
-			ThreadedClient(IPostBox<OysterByte*>* postBox, unsigned int socket);
+			ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer< OysterByte >> *postBox, unsigned int socket);
 			virtual ~ThreadedClient();
 
-			int Send(OysterByte* byte);
+			int Send(Utility::DynamicMemory::SmartPointer< OysterByte > &byte);
 
 			int Connect(unsigned short port, const char serverName[]);
 
-			void setRecvPostBox(IPostBox<OysterByte*>* postBox);
+			void setRecvPostBox(IPostBox< Utility::DynamicMemory::SmartPointer< OysterByte >> *postBox);
 
 		private:
 			virtual int Send();
@@ -39,8 +40,8 @@ namespace Oyster
 
 		private:
 			Connection* connection;
-			IPostBox<OysterByte*>* sendPostBox;
-			IPostBox<OysterByte*>* recvPostBox;
+			IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *sendPostBox;
+			IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *recvPostBox;
 			Oyster::Thread::OysterThread thread;
 			OysterMutex mutex;
 

@@ -1,6 +1,7 @@
 #include "Listener.h"
 
 using namespace Oyster::Network::Server;
+using namespace Utility::DynamicMemory;
 
 Listener::Listener()
 {
@@ -31,7 +32,7 @@ void Listener::Shutdown()
 	thread.Stop();
 }
 
-void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
+void Listener::SetPostBox(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
 {
 	mutex.LockMutex();
 	this->postBox = postBox;
@@ -40,8 +41,8 @@ void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
 
 int Listener::Accept()
 {
-	int clientSocket = 0;
-	clientSocket = connection->Listen();
+	SmartPointer<int> clientSocket = SmartPointer<int>(new int());
+	*clientSocket = connection->Listen();
 
 	mutex.LockMutex();
 	postBox->PostMessage(clientSocket);

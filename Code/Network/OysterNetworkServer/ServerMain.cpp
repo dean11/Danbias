@@ -9,6 +9,8 @@
 #include "../NetworkDependencies/OysterByte.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../../Misc/WinTimer.h"
+#include "../../Misc/Utilities.h"
+#include "../../Misc/Utilities-Impl.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -17,20 +19,21 @@ using namespace Oyster::Network::Server;
 using namespace Oyster::Network;
 using namespace ::Protocols;
 using namespace Utility;
+using namespace ::Utility::DynamicMemory;
 
 void PrintOutMessage(ProtocolSet* set);
 
 int main()
-{
-	OysterByte sendBuffer;
-	OysterByte* recvBuffer = NULL;
+{ 
+	SmartPointer<OysterByte> sendBuffer = SmartPointer<OysterByte>(new OysterByte);
+	SmartPointer<OysterByte> recvBuffer = NULL;
 	ProtocolSet* set = new ProtocolSet;
-	IPostBox<int>* postBox = new PostBox<int>();
-	IPostBox<OysterByte*>* recvPostBox = new PostBox<OysterByte*>();
+	IPostBox<SmartPointer<int>> *postBox = new PostBox<SmartPointer<int>>();
+	IPostBox<SmartPointer<OysterByte>> *recvPostBox = new PostBox<SmartPointer<OysterByte>>();
 
 	cout << "Server" << endl;
 	Translator t;
-	int errorCode;
+	int errorCode = 0;
 
 	if(!InitWinSock())
 	{
@@ -61,16 +64,16 @@ int main()
 	WinTimer timer;
 
 	vector<ThreadedClient*> clients;
-	int client = -1;
+	SmartPointer<int> client = SmartPointer<int>();
 	while(1)
 	{
 		//Fetch new clients from the postbox
 		if(postBox->FetchMessage(client))
 		{
-			cout << "Client connected: " << client << endl;
-			clients.push_back(new ThreadedClient(recvPostBox, client));
+			cout << "Client connected: " << *client << endl;
+			clients.push_back(new ThreadedClient(recvPostBox, *client));
 
-			clients.at(clients.size()-1)->Send(&sendBuffer);
+			clients.at(clients.size()-1)->Send(sendBuffer);
 		}
 
 		//Send a message every 1 secounds to all clients.
@@ -80,14 +83,14 @@ int main()
 			timer.reset();
 			for(int i = 0; i < (int)clients.size(); i++)
 			{
-				clients.at(i)->Send(&sendBuffer);
+				clients.at(i)->Send(sendBuffer);
 			}
 		}
 
 		//Fetch messages
 		if(recvPostBox->FetchMessage(recvBuffer))
 		{
-			t.Unpack(set, *recvBuffer);
+			t.Unpack(set, recvBuffer);
 			delete recvBuffer;
 
 			PrintOutMessage(set);

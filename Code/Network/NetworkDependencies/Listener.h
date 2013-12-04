@@ -9,6 +9,7 @@
 #include "../NetworkDependencies/Connection.h"
 #include "../../Misc/Thread/OysterThread.h"
 #include "../../Misc/Thread/OysterMutex.h"
+#include "../../Misc/Utilities.h"
 #include "IPostBox.h"
 
 namespace Oyster
@@ -26,7 +27,7 @@ namespace Oyster
 				bool Init(unsigned int port);
 				void Shutdown();
 
-				void SetPostBox(IPostBox<int>* postBox);
+				void SetPostBox(IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox);
 
 			private:
 				//Thread functions
@@ -43,7 +44,7 @@ namespace Oyster
 				::Oyster::Thread::OysterThread thread;
 				OysterMutex mutex;
 
-				IPostBox<int>* postBox;
+				IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox;
 
 			};
 		}

@@ -118,62 +118,53 @@ namespace Oyster
 		Type ThreadSafeQueue<Type>::Pop()
 		{
 			mutex.LockMutex();
-			if(this->front != NULL)
-			{
-				Type item = this->front->item;
-				Node *destroyer = this->front;
-				this->front = front->next;
 			
-				delete destroyer;
-				this->nrOfNodes--;
+			Type item = this->front->item;
+			Node *destroyer = this->front;
+			this->front = front->next;
+			
+			delete destroyer;
+			this->nrOfNodes--;
 
-				if(nrOfNodes == 0)
-				{
-					this->front = NULL;
-					this->back = NULL;
-				}
-				mutex.UnlockMutex();
-				return item;
+			if(nrOfNodes == 0)
+			{
+				this->front = NULL;
+				this->back = NULL;
 			}
 
 			mutex.UnlockMutex();
-
-			return NULL;
+			return item;
 		}
 
 		template < typename Type >
 		Type ThreadSafeQueue<Type>::Front()
 		{
 			mutex.LockMutex();
-			if(front != NULL)
-			{
-				mutex.UnlockMutex();
-				return this->front->item;
-			}
+			
+			return this->front->item;
+			
 			mutex.UnlockMutex();
 
-			return NULL;
 		}
 
 		template < typename Type >
 		Type ThreadSafeQueue<Type>::Back()
 		{
 			mutex.LockMutex();
-			if(back != NULL)
-			{
-				return this->back->item;
-			}
+
+			return this->back->item;
+			
 			mutex.UnlockMutex();
 
-			return NULL;
 		}
 
 		template < typename Type >
 		int ThreadSafeQueue<Type>::Size()
 		{
-			//? behövs denna låsas?
 			mutex.LockMutex();
+
 			return this->nrOfNodes;
+
 			mutex.UnlockMutex();
 		}
 
@@ -181,7 +172,7 @@ namespace Oyster
 		bool ThreadSafeQueue<Type>::IsEmpty()
 		{
 			mutex.LockMutex();
-			if(nrOfNodes == 0 && this->front == NULL)
+			if(nrOfNodes == 0 || this->front == NULL)
 			{
 				mutex.UnlockMutex();
 				return true;
@@ -191,6 +182,7 @@ namespace Oyster
 			{
 				mutex.UnlockMutex();
 			}
+
 			return false;
 		}
 
