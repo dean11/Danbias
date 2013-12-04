@@ -459,12 +459,11 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Box &box, const Sphere &sphere )
 	{ // by Dan Andersson
-		Float4 vCenter = Float4( sphere.center - box.center, 1.0f ); // sphere's center in the box's view space
-		vCenter = InverseRotationMatrix( box.rotation ) * vCenter;
-		vCenter.w = 0.0f;
+		// center: sphere's center in the box's view space
+		Float4 center = TransformVector( InverseRotationMatrix(box.rotation), Float4(sphere.center - box.center, 0.0f) );
 
-		Float4 e = Max( Float4(-box.boundingOffset, 0.0f) - vCenter, Float4::null );
-		e += Max( vCenter - Float4(-box.boundingOffset, 0.0f), Float4::null );
+		Float4 e = Max( Float4(-box.boundingOffset, 0.0f) - center, Float4::null );
+		e += Max( center - Float4(box.boundingOffset, 0.0f), Float4::null );
 
 		if( e.Dot(e) > (sphere.radius * sphere.radius) ) return false;
 		return true;
