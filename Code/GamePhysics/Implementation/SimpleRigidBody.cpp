@@ -178,3 +178,8 @@ void SimpleRigidBody::SetSize( const Float3 &size )
 {
 	this->rigid.SetSize( size );
 }
+
+void SimpleRigidBody::SetMomentum( const Float3 &worldG )
+{
+	this->rigid.SetLinearMomentum( worldG );
+}

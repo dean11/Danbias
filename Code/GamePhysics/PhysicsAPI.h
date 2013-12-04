@@ -390,6 +390,12 @@ namespace Oyster
 			 * Use API::SetSize(...)
 			 ********************************************************/
 			virtual void SetSize( const ::Oyster::Math::Float3 &size ) = 0;
+
+			/********************************************************
+			 * To not be called if is in Engine
+			 * Use API::?? @todo TODO: 
+			 ********************************************************/
+			virtual void SetMomentum( const ::Oyster::Math::Float3 &worldG ) = 0;
 		};
 
 		struct API::SimpleBodyDescription
