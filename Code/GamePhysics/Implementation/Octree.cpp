@@ -39,7 +39,7 @@ void Octree::AddObject(UniquePointer< ICustomBody > customBodyRef)
 	data.next = NULL;
 	data.prev = NULL;
 	data.customBodyRef = customBodyRef;
-	this->mapReferences.insert(std::pair <ICustomBody*, unsigned int> (customBodyRef, this->leafData.size()));
+	this->mapReferences.insert(std::pair <ICustomBody*, unsigned int> (data.customBodyRef, this->leafData.size()));
 	this->leafData.push_back(data);
 
 	/*if(tempPtr != NULL)
