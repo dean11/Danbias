@@ -103,7 +103,8 @@ namespace Oyster { namespace Math3D
 	
 	Float4x4 & InverseRotationMatrix( const Float4x4 &rotation, Float4x4 &targetMem )
 	{
-		return targetMem = ::LinearAlgebra3D::InverseRotationMatrix( rotation );
+//		return targetMem = ::LinearAlgebra3D::InverseRotationMatrix( rotation );
+		return targetMem = rotation.GetTranspose();
 	}
 
 	Float4x4 & OrientationMatrix( const Float3x3 &rotation, const Float3 &translation, Float4x4 &targetMem )
