@@ -7,6 +7,20 @@
 
 using namespace Oyster::Network;
 
+Connection::Connection()
+{
+	this->socket = 0;
+	bool stillSending = false;
+	bool closed = true;
+}
+
+Connection::Connection(int socket)
+{
+	this->socket = socket;
+	bool stillSending = false;
+	bool closed = true;
+}
+
 Connection::~Connection()
 {
 	closesocket( this->socket );
@@ -30,6 +44,9 @@ int Connection::Connect(unsigned short port , const char serverName[])
 		return WSAGetLastError();
 	}
 	
+	closed = false;
+	stillSending = true;
+
 	//connection succesfull!
 	return 0;
 }
@@ -62,6 +79,9 @@ int Connection::InitiateServer(unsigned short port)
 		closesocket(this->socket);
 		return errorCode;
 	}
+
+	closed = false;
+	stillSending = true;
 
 	//Server started!
 	return 0;

@@ -16,8 +16,8 @@ namespace Oyster
 		{
 
 		public:
-			Connection() { this->socket = 0; };
-			Connection( int socket ) { this->socket = socket; };
+			Connection();
+			Connection( int socket );
 			virtual ~Connection();
 
 			virtual int InitiateServer( unsigned short port );
@@ -38,6 +38,9 @@ namespace Oyster
 			int InitiateSocket();
 
 			int socket;
+
+			bool stillSending;
+			bool closed;
 
 		};
 	}

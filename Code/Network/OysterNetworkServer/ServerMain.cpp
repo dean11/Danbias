@@ -120,7 +120,7 @@ void PrintOutMessage(ProtocolSet* set)
 		break;
 
 	case PackageType_player_pos:
-		cout << "ID " << set->Protocol.pPlayerPos->ID << endl;
+		//cout << "ID " << set->Protocol.pPlayerPos->ID << endl;
 		for(int i = 0; i < (int)set->Protocol.pPlayerPos->nrOfFloats; i++)
 		{
 			cout << set->Protocol.pPlayerPos->matrix[i] << ' ';
