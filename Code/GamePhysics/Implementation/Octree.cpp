@@ -184,6 +184,7 @@ unsigned int Octree::GetTemporaryReferenceOf( const ICustomBody* objRef ) const
 
 void Octree::SetAsAltered( unsigned int tempRef )
 {
+	this->leafData[tempRef].container = this->leafData[tempRef].customBodyRef->GetBoundingSphere();
 	//! @todo TODO: implement stub
 }
 
