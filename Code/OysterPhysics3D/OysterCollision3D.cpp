@@ -393,8 +393,8 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere )
 	{ // by Dan Andersson
-		Float3 e = Max( box.minVertex - sphere.center, Float3::null );
-		e += Max( sphere.center - box.maxVertex, Float3::null );
+		Float4 e = Max( Float4(box.minVertex - sphere.center, 0.0f), Float4::null );
+		e += Max( Float4(sphere.center - box.maxVertex, 0.0f), Float4::null );
 
 		if( e.Dot(e) > (sphere.radius * sphere.radius) ) return false;
 		return true;
@@ -459,12 +459,13 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Box &box, const Sphere &sphere )
 	{ // by Dan Andersson
-		Float3 e = sphere.center - box.center,
-			   centerL = Float3( e.Dot(box.xAxis), e.Dot(box.yAxis), e.Dot(box.zAxis) );
-		
-		e  = Max( (box.boundingOffset + centerL)*=-1.0f, Float3::null );
-		e += Max( centerL - box.boundingOffset, Float3::null );
-		
+		Float4 vCenter = Float4( sphere.center - box.center, 1.0f ); // sphere's center in the box's view space
+		vCenter = InverseRotationMatrix( box.rotation ) * vCenter;
+		vCenter.w = 0.0f;
+
+		Float4 e = Max( Float4(-box.boundingOffset, 0.0f) - vCenter, Float4::null );
+		e += Max( vCenter - Float4(-box.boundingOffset, 0.0f), Float4::null );
+
 		if( e.Dot(e) > (sphere.radius * sphere.radius) ) return false;
 		return true;
 	}
