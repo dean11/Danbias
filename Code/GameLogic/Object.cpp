@@ -16,7 +16,7 @@ Object::Object(void)
 {
 
 	model = new Model();
-	model = Oyster::Graphics::API::CreateModel(L"bth.obj");
+	model = Oyster::Graphics::API::CreateModel(L"orca");
 
 	API::SimpleBodyDescription sbDesc;
 	//sbDesc.centerPosition = 

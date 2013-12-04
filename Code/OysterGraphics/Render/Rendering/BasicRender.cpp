@@ -60,7 +60,8 @@ namespace Oyster
 				}
 				void Basic::EndFrame()
 				{
-					Core::swapChain->Present(0,0);
+					IDXGISwapChain* chain = Core::swapChain;
+					chain->Present(0,0);
 				}
 			}
 		}

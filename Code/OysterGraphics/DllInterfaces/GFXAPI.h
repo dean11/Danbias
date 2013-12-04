@@ -4,12 +4,11 @@
 #include "OysterMath.h"
 #include <Windows.h>
 
-#if defined GFX_DLL_EXPORT
+#ifdef GFX_DLL_EXPORT
 	#define GFX_DLL_USAGE __declspec(dllexport)
 #else
-	#define GFX_DLL_USAGE __declspec(dllimport)
+	#define GFX_DLL_USAGE
 #endif
-
 
 namespace Oyster
 {
