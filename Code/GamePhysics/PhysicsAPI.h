@@ -1,4 +1,4 @@
-#ifndef PHYSICS_API_H
+ #ifndef PHYSICS_API_H
 #define PHYSICS_API_H
 
 #include "OysterCollision3D.h"
@@ -31,15 +31,15 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE MomentOfInertia
 		{
 		public:
-			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 				
-			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 
-			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
+			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 
-			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
+			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 	
-			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
+			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 		};
 
 		class PHYSICS_DLL_USAGE API
