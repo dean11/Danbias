@@ -3,6 +3,7 @@
 
 namespace DanBias
 {
+
 #pragma region Server Data
 	class DanBiasServerPrivateData
 	{

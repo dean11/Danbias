@@ -17,7 +17,7 @@ Object::Object(std::wstring objFile)
 
 	//model = new Model();
 	model = Oyster::Graphics::API::CreateModel(objFile);
-
+	
 	API::SimpleBodyDescription sbDesc;
 	//sbDesc.centerPosition = 
 

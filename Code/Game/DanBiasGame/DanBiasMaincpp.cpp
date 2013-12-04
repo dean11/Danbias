@@ -9,7 +9,7 @@
 #include <Windows.h>
 
 #include "DllInterfaces/GFXAPI.h"
-#include "IGame.h"
+//#include "IGame.h"
 
 #include "L_inputClass.h"
 
@@ -28,7 +28,7 @@
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
 
-GameLogic::IGame* game;
+//GameLogic::IGame* game;
 InputClass* inputObj;
 
 
@@ -205,34 +205,34 @@ HRESULT InitGame()
 		MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 		return false;
 	}
-	game = new GameLogic::IGame();
+	/*game = new GameLogic::IGame();
 	game->Init();
 	game->StartGame();
-
+	*/
 	return S_OK;
 }
 
 HRESULT Update(float deltaTime)
 {
 	inputObj->Update();
-	GameLogic::keyInput key = GameLogic::keyInput_none;
+	//GameLogic::keyInput key = GameLogic::keyInput_none;
 
-	if(inputObj->IsKeyPressed(DIK_W))
-	{
-		key = GameLogic::keyInput_W;	
-	}
-	else if(inputObj->IsKeyPressed(DIK_A))
-	{
-		key = GameLogic::keyInput_A;	
-	}
-	else if(inputObj->IsKeyPressed(DIK_S))
-	{
-		key = GameLogic::keyInput_S;	
-	}
-	else if(inputObj->IsKeyPressed(DIK_D))
-	{
-		key = GameLogic::keyInput_D;	
-	}
+	//if(inputObj->IsKeyPressed(DIK_W))
+	//{
+	//	key = GameLogic::keyInput_W;	
+	//}
+	//else if(inputObj->IsKeyPressed(DIK_A))
+	//{
+	//	key = GameLogic::keyInput_A;	
+	//}
+	//else if(inputObj->IsKeyPressed(DIK_S))
+	//{
+	//	key = GameLogic::keyInput_S;	
+	//}
+	//else if(inputObj->IsKeyPressed(DIK_D))
+	//{
+	//	key = GameLogic::keyInput_D;	
+	//}
 
 	float pitch = 0;
 	float yaw	= 0;
@@ -243,7 +243,7 @@ HRESULT Update(float deltaTime)
 	yaw	= inputObj->GetYaw();
 	//}
 
-	game->Update(key, pitch, yaw);
+	//game->Update(key, pitch, yaw);
 
 	
 	return S_OK;
@@ -258,7 +258,7 @@ HRESULT Render(float deltaTime)
 		//std::cout<<"test";
 	}
 
-	game->Render();
+	//game->Render();
 	wchar_t title[255];
 	swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
 	SetWindowText(g_hWnd, title);
@@ -271,11 +271,11 @@ HRESULT Render(float deltaTime)
 HRESULT CleanUp()
 {
 	
-	if(game)
+	/*if(game)
 	{
-		delete game;
-		game = NULL;
-	}
+	delete game;
+	game = NULL;
+	}*/
 	return S_OK;
 }
 //--------------------------------------------------------------------------------------

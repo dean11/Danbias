@@ -7,10 +7,17 @@
 	#define DANBIAS_GAME_DLL __declspec(dllimport)
 #endif
 
+#define NOMINMAX
+#include <Windows.h>
+
+#include "DllInterfaces/GFXAPI.h"
+#include "L_inputClass.h"
+
 namespace DanBias
 {
 	extern "C"
 	{
+		
 		enum DanBiasClientReturn
 		{
 			DanBiasClientReturn_Error,
@@ -21,17 +28,42 @@ namespace DanBias
 		{
 			//Stuff goes here...
 			int port;
-		};
+			HINSTANCE hinst;
+			int nCmdShow;
 
+		};
+		LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+		
 		class DANBIAS_GAME_DLL DanBiasGame
 		{
 		public:
+			//--------------------------------------------------------------------------------------
+			// Interface API functions
+			//--------------------------------------------------------------------------------------
 			static DanBiasClientReturn Initiate(DanBiasGameDesc& desc);
 			static DanBiasClientReturn Run();
 			static void Release();
+
+		private:
+			
+			static HRESULT      InitWindow( HINSTANCE hInstance, int nCmdShow);
+			static HRESULT		InitDirect3D();
+			static HRESULT		InitGame();
+
+			static HRESULT Update(float deltaTime);
+			static HRESULT Render(float deltaTime);
+			static HRESULT CleanUp();
+		private:
+			static __int64 cntsPerSec;
+			static __int64 prevTimeStamp;
+			static float secsPerCnt;
+			static InputClass* inputObj;
+			static HINSTANCE			g_hInst;  
+			static HWND					g_hWnd;
 		};
+		
 
 	}//End Extern "C"
-} //End namspace DanBias
+} //End namespace DanBias
 
 #endif // !DANBIASGAME_DANBIASGAME_H
