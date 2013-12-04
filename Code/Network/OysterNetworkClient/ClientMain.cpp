@@ -16,6 +16,7 @@ using namespace std;
 using namespace Oyster::Network::Protocols;
 using namespace Oyster::Network;
 using namespace Utility;
+using namespace Utility::DynamicMemory;
 
 void chat(ThreadedClient &client);
 void PrintOutMessage(ProtocolSet* set);
@@ -54,12 +55,12 @@ int main()
 void chat(ThreadedClient &client)
 {
 	Oyster::Network::Translator *t = new Oyster::Network::Translator();
-	IPostBox<OysterByte*>* postBox = new PostBox<OysterByte*>;
+	IPostBox< SmartPointer<OysterByte >> *postBox = new PostBox< SmartPointer<OysterByte >>;
 
 	client.setRecvPostBox(postBox);
 
-	Oyster::Network::OysterByte* msgRecv = NULL;
-	Oyster::Network::OysterByte* msgSend = new OysterByte();
+	SmartPointer<OysterByte> msgRecv = NULL;
+	SmartPointer<OysterByte> msgSend = SmartPointer<OysterByte>(new OysterByte());
 
 	ProtocolSet* set = new ProtocolSet;
 	ProtocolPlayerPos test;
@@ -72,7 +73,7 @@ void chat(ThreadedClient &client)
 		test.matrix[i] = temp;
 		temp++;
 	}
-	t->Pack(test, *msgSend);
+	t->Pack(test, msgSend);
 
 	WinTimer timer;
 
@@ -81,7 +82,7 @@ void chat(ThreadedClient &client)
 		//Fetch new messages from the postbox
 		if(postBox->FetchMessage(msgRecv))
 		{
-			t->Unpack(set, *msgRecv);
+			t->Unpack(set, msgRecv);
 			delete msgRecv;
 
 			PrintOutMessage(set);
@@ -97,7 +98,6 @@ void chat(ThreadedClient &client)
 		}
 	}
 
-	delete msgSend;
 	delete postBox;
 	delete t;
 	delete set;

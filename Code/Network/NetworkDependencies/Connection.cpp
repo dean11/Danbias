@@ -99,11 +99,11 @@ int Connection::Disconnect()
 	return WSAGetLastError();
 }
 
-int Connection::Send(OysterByte& bytes)
+int Connection::Send(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 {
 	int nBytes;
 
-	nBytes = send(this->socket, bytes, bytes.GetSize(), 0);
+	nBytes = send(this->socket, *bytes, bytes->GetSize(), 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		return WSAGetLastError();
@@ -112,19 +112,20 @@ int Connection::Send(OysterByte& bytes)
 	return 0; 
 }
 
-int Connection::Recieve(OysterByte& bytes)
+int Connection::Recieve(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 {
 	int nBytes;
 
-	bytes.Resize(1000);
-	nBytes = recv(this->socket, bytes, 500, 0);
+	bytes.Get()->Resize(1000);
+	bytes->Resize(1000);
+	nBytes = recv(this->socket, *bytes , 500, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		return WSAGetLastError();
 	}
 	else
 	{
-		bytes.SetSize(nBytes);
+		bytes->SetSize(nBytes);
 	}
 
 	std::cout << "Size of the recieved data: " << nBytes << " bytes" << std::endl;

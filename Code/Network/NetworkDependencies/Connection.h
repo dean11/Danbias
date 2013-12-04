@@ -23,8 +23,8 @@ namespace Oyster
 			virtual int InitiateServer( unsigned short port );
 			virtual int InitiateClient();
 
-			virtual int Send( OysterByte& bytes );
-			virtual int  Recieve( OysterByte& bytes );
+			virtual int Send( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
+			virtual int  Recieve( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
 
 			virtual int Disconnect();
 			virtual int Connect( unsigned short port , const char serverName[] );

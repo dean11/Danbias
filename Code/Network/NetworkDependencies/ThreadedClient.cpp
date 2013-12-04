@@ -3,18 +3,19 @@
 #include <iostream>
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
+using namespace Utility::DynamicMemory;
 
 ThreadedClient::ThreadedClient()
 {
 	this->connection = new Connection();
-	this->sendPostBox = new PostBox<OysterByte*>();
+	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>();
 	this->recvPostBox = NULL;
 }
 
 ThreadedClient::ThreadedClient(unsigned int socket)
 {
 	this->connection = new Connection(socket);
-	this->sendPostBox = new PostBox<OysterByte*>();
+	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>();
 	this->recvPostBox = NULL;
 
 	connection->SetBlockingMode(false);
@@ -22,10 +23,10 @@ ThreadedClient::ThreadedClient(unsigned int socket)
 	thread.Create(this, true);
 }
 
-ThreadedClient::ThreadedClient(IPostBox<OysterByte*>* postBox, unsigned int socket)
+ThreadedClient::ThreadedClient(IPostBox<SmartPointer<OysterByte>>* postBox, unsigned int socket)
 {
 	this->connection = new Connection(socket);
-	this->sendPostBox = new PostBox<OysterByte*>;
+	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>;
 	this->recvPostBox = postBox;
 
 	connection->SetBlockingMode(false);
@@ -47,7 +48,7 @@ ThreadedClient::~ThreadedClient()
 	}
 }
 
-int ThreadedClient::Send(OysterByte* byte)
+int ThreadedClient::Send(SmartPointer<OysterByte> &byte)
 {
 	mutex.LockMutex();
 	this->sendPostBox->PostMessage(byte);
@@ -61,9 +62,9 @@ int ThreadedClient::Send()
 	mutex.LockMutex();
 	if(sendPostBox->IsFull())
 	{
-		OysterByte *temp = NULL;
+		SmartPointer<OysterByte> temp = NULL;
 		sendPostBox->FetchMessage(temp);
-		errorCode = this->connection->Send(*temp);
+		errorCode = this->connection->Send(temp);
 	}
 	mutex.UnlockMutex();
 
@@ -74,18 +75,14 @@ int ThreadedClient::Recv()
 {
 	int errorCode = 0;
 
-	OysterByte *temp = new OysterByte();
-	errorCode = this->connection->Recieve(*temp);
+	SmartPointer<OysterByte> temp = SmartPointer<OysterByte>(new OysterByte());
+	errorCode = this->connection->Recieve(temp);
 	
 	if(errorCode == 0)
 	{
 		mutex.LockMutex();
 		recvPostBox->PostMessage(temp);
 		mutex.UnlockMutex();
-	}
-	else
-	{
-		delete temp;
 	}
 
 	return errorCode;
@@ -137,7 +134,7 @@ int ThreadedClient::Connect(unsigned short port, const char serverName[])
 	return 0;
 }
 
-void ThreadedClient::setRecvPostBox(IPostBox<OysterByte*>* postBox)
+void ThreadedClient::setRecvPostBox(IPostBox<SmartPointer<OysterByte>> *postBox)
 {
 	this->mutex.LockMutex();
 	this->recvPostBox = postBox;
