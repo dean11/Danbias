@@ -101,6 +101,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OysterGraphics_$(PlatformShortName)D.lib;Input_$(PlatformShortName)D.lib;GamePhysics_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
