@@ -60,7 +60,7 @@ bool Ray::Contains( const ICollideable &target ) const
 	switch( target.type )
 	{
 	case Type_point: return Utility::Intersect( *this, *(Point*)&target, this->collisionDistance );
-	case Type_ray: Utility::Contains( *this, *(Ray*)&target );
+	case Type_ray: return Utility::Contains( *this, *(Ray*)&target );
 	default: return false;
 	}
 }
