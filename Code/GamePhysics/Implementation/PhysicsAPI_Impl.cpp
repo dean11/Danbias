@@ -20,7 +20,7 @@ namespace
 
 		float deltaWhen;
 		Float3 worldWhere;
-		if( deuter->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
+		if( proto->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
 		{
 			proto->CallSubscription( proto, deuter );
 		}
