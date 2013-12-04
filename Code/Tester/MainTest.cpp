@@ -42,7 +42,7 @@ HRESULT				InitDirect3D();
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 
-	BOOL b = SetDllDirectoryW(L"..\\..\\DLL");
+	BOOL b = SetDllDirectoryW(L"..\\DLL");
 	typedef struct tagLOADPARMS32
 	{ 
 		LPSTR lpEnvAddress;  // address of environment strings 
