@@ -1,3 +1,6 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
 #ifndef DANBIAS_SERVER_DANBIAS_SERVER_H
 #define DANBIAS_SERVER_DANBIAS_SERVER_H
 
@@ -29,7 +32,7 @@ namespace DanBias
 		public:
 			static DanBiasServerReturn Initiate(DanBiasServerDesc& desc);
 			static DanBiasServerReturn Run();
-			static void Release();
+			static DanBiasServerReturn Release();
 		};
 
 	}//End Extern "C"

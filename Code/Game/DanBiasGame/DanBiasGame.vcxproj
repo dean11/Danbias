@@ -182,8 +182,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DanBiasMaincpp.cpp" />
     <ClCompile Include="DLLMain.cpp" />
+    <ClCompile Include="DanBiasGame_Impl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DanBiasGame.h" />

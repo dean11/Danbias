@@ -8,7 +8,7 @@
 
 
 #if defined(DANBIAS_SERVER)
-#include "DanBiasServer.h"
+#include "IDanBiasServer.h"
 #elif defined(DANBIAS_CLIENT)
 #include "DanBiasGame.h"
 #endif
