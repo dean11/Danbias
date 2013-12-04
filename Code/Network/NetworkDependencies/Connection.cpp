@@ -116,7 +116,6 @@ int Connection::Recieve(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 {
 	int nBytes;
 
-	bytes.Get()->Resize(1000);
 	bytes->Resize(1000);
 	nBytes = recv(this->socket, *bytes , 500, 0);
 	if(nBytes == SOCKET_ERROR)
@@ -138,7 +137,7 @@ int Connection::Listen()
 	int clientSocket;
 	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{
-		return WSAGetLastError();
+		return INVALID_SOCKET;//WSAGetLastError();
 	}
 
 	return clientSocket;

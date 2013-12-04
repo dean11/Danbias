@@ -53,7 +53,7 @@ namespace Oyster
 		{
 			if(IsFull())
 			{
-				message = messages.Pop(); 
+				message = messages.Pop();
 				return true;
 			}
 			return false;

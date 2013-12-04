@@ -26,7 +26,7 @@ void PrintOutMessage(ProtocolSet* set);
 int main()
 { 
 	SmartPointer<OysterByte> sendBuffer = SmartPointer<OysterByte>(new OysterByte);
-	SmartPointer<OysterByte> recvBuffer = NULL;
+	SmartPointer<OysterByte> recvBuffer = SmartPointer<OysterByte>(new OysterByte());
 	ProtocolSet* set = new ProtocolSet;
 	IPostBox<SmartPointer<int>> *postBox = new PostBox<SmartPointer<int>>();
 	IPostBox<SmartPointer<OysterByte>> *recvPostBox = new PostBox<SmartPointer<OysterByte>>();
@@ -91,7 +91,6 @@ int main()
 		if(recvPostBox->FetchMessage(recvBuffer))
 		{
 			t.Unpack(set, recvBuffer);
-			delete recvBuffer;
 
 			PrintOutMessage(set);
 			set->Release();
@@ -100,8 +99,12 @@ int main()
 		Sleep(1);
 	}
 	listener.Shutdown();
+	Sleep(1000);
 
 	system("pause");
+
+	for(int i = 0; i < clients.size(); i++)
+		delete clients.at(i);
 
 	delete postBox;
 	return 0;

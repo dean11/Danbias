@@ -16,6 +16,7 @@ namespace Oyster
 		public:
 			OysterByte();
 			OysterByte(int cap);
+			OysterByte(const OysterByte& obj);
 			virtual ~OysterByte();
 
 			void Clear();							//Resets size to 0
@@ -27,6 +28,8 @@ namespace Oyster
 			void AddSize(unsigned int size);
 			void SetBytes(unsigned char* bytes);
 			void SetSize(unsigned int size);		//Only sets the private variable 'size'
+
+			OysterByte& operator =(const OysterByte& obj);
 
 			operator char*();
 			operator const char*();

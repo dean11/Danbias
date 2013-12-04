@@ -44,9 +44,12 @@ int Listener::Accept()
 	SmartPointer<int> clientSocket = SmartPointer<int>(new int());
 	*clientSocket = connection->Listen();
 
-	mutex.LockMutex();
-	postBox->PostMessage(clientSocket);
-	mutex.UnlockMutex();
+	if(*clientSocket != -1)
+	{
+		mutex.LockMutex();
+		postBox->PostMessage(clientSocket);
+		mutex.UnlockMutex();
+	}
 
 	return clientSocket;
 }

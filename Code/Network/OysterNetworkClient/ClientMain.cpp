@@ -59,7 +59,7 @@ void chat(ThreadedClient &client)
 
 	client.setRecvPostBox(postBox);
 
-	SmartPointer<OysterByte> msgRecv = NULL;
+	SmartPointer<OysterByte> msgRecv = SmartPointer<OysterByte>(new OysterByte());
 	SmartPointer<OysterByte> msgSend = SmartPointer<OysterByte>(new OysterByte());
 
 	ProtocolSet* set = new ProtocolSet;
@@ -83,7 +83,6 @@ void chat(ThreadedClient &client)
 		if(postBox->FetchMessage(msgRecv))
 		{
 			t->Unpack(set, msgRecv);
-			delete msgRecv;
 
 			PrintOutMessage(set);
 			set->Release();
