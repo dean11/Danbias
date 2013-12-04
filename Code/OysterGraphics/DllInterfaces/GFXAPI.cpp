@@ -63,7 +63,12 @@ namespace Oyster
 		{
 			Model::ModelInfo* info = (Model::ModelInfo*)model->info;
 			delete model;
-			info->Vertices->~Buffer();
+			SAFE_DELETE(info->Vertices);
+			if(info->Indexed)
+			{
+				SAFE_DELETE(info->Indecies);
+			}
+			delete info;
 		}
 
 		void API::Clean()

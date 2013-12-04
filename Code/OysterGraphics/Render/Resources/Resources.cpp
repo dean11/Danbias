@@ -3,7 +3,8 @@
 
 // /Bin/Executable/Tester ->
 // /Code/OysterGraphics/Shader/HLSL
-const std::wstring PathFromExeToHlsl = L"..\\..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\";
+const std::wstring PathFromExeToCso = L"..\\Content\\Shaders\\";
+const std::wstring PathFromExeToHlsl = L"..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\";
 const std::wstring VertexTransformDebug = L"TransformDebugVertex";
 const std::wstring VertexDebug = L"DebugVertex";
 const std::wstring PixelRed = L"DebugPixel";
@@ -42,6 +43,12 @@ namespace Oyster
 
 #else
 				/** Load Vertex Shader with Precompiled */
+				Core::ShaderManager::Init(PathFromExeToCso + L"DebugCameraVertex.cso",ShaderType::Vertex, VertexTransformDebug);
+				Core::ShaderManager::Init(PathFromExeToCso + L"DebugVertex.cso",ShaderType::Vertex, VertexDebug);
+
+				/** Load Pixel Shader with Precompiled */
+				Core::ShaderManager::Init(PathFromExeToCso + L"DebugPixel.cso",ShaderType::Pixel, PixelRed);
+				Core::ShaderManager::Init(PathFromExeToCso + L"TextureDebug.cso",ShaderType::Pixel, PixelTexture);
 #endif
 
 #pragma endregion

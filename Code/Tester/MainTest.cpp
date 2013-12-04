@@ -18,6 +18,7 @@
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
 Oyster::Graphics::Model::Model* m				= NULL;
+Oyster::Graphics::Model::Model* m2				= NULL;
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
 
@@ -41,7 +42,7 @@ HRESULT				InitDirect3D();
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 
-	BOOL b = SetDllDirectoryW(L"..\\..\\DLL");
+	BOOL b = SetDllDirectoryW(L"..\\DLL");
 	typedef struct tagLOADPARMS32
 	{ 
 		LPSTR lpEnvAddress;  // address of environment strings 
@@ -186,7 +187,9 @@ HRESULT InitDirect3D()
 #pragma endregion
 	
 #pragma region Obj
-	m =  Oyster::Graphics::API::CreateModel(L"orca");
+	m =  Oyster::Graphics::API::CreateModel(L"crate");
+	m2 = Oyster::Graphics::API::CreateModel(L"crate");
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 #pragma endregion
 	
 
@@ -203,6 +206,7 @@ HRESULT Update(float deltaTime)
 {
 	angle += Oyster::Math::pi/30000;
 	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,0,1)*-angle,Oyster::Math::Float3(0,4,0),Oyster::Math::Float3::null);
 	return S_OK;
 }
 
@@ -211,6 +215,7 @@ HRESULT Render(float deltaTime)
 	Oyster::Graphics::API::NewFrame(V,P);
 
 	Oyster::Graphics::API::RenderScene(m,1);
+	Oyster::Graphics::API::RenderScene(m2,1);
 
 	Oyster::Graphics::API::EndFrame();
 
