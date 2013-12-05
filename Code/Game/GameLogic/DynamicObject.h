@@ -6,21 +6,22 @@
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 
-#include "Object.h"
-
 namespace GameLogic
 {
 
 
-	class DynamicObject : public Object
+	class DynamicObject
 	{
 
 	public:
-		DynamicObject(std::wstring objFile);
+		DynamicObject();
 		~DynamicObject(void);
 
 		void Update();
 
+	private:
+		struct PrivateData;
+		PrivateData *myData;
 	};
 
 }

@@ -3,13 +3,28 @@
 using namespace GameLogic;
 
 
-GameMode::GameMode(void)
+struct GameMode::PrivateData
 {
+	PrivateData()
+	{
 
+	}
+
+	~PrivateData()
+	{
+
+	}
+
+}myData;
+
+
+GameMode::GameMode()
+{
+	myData = new PrivateData();
 }
 
 
 GameMode::~GameMode(void)
 {
-
+	delete myData;
 }
