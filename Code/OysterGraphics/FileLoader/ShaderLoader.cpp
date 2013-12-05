@@ -10,6 +10,8 @@ namespace Oyster
 	{
 		namespace Loading
 		{
+			void LoadShader(const wchar_t filename[], Oyster::Resource::CustomData& out, int type);
+
 			void UnloadShaderP(void* loadedData)
 			{
 				ID3D11PixelShader* ps = ((ID3D11PixelShader*)loadedData);

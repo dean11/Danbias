@@ -178,7 +178,7 @@
     <ClCompile Include="DllInterfaces\GFXAPI.cpp" />
     <ClCompile Include="FileLoader\ObjReader.cpp" />
     <ClCompile Include="FileLoader\ShaderLoader.cpp" />
-    <ClCompile Include="FileLoader\TextureLoader.cpp" />
+    <ClCompile Include="FileLoader\ModelLoader.cpp" />
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
     <ClCompile Include="Render\Rendering\BasicRender.cpp" />
     <ClCompile Include="Render\Resources\Resources.cpp" />
@@ -270,6 +270,8 @@
   <ItemGroup>
     <None Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\GBufferHeader.hlsli" />
     <None Include="Shader\HLSL\Deffered Shaders\Render\Defines.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\Render\LightCalc.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\Render\PosManipulation.hlsli" />
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

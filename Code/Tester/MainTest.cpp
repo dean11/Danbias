@@ -93,6 +93,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	}
 
 	Oyster::Graphics::API::DeleteModel(m);
+	Oyster::Graphics::API::DeleteModel(m2);
 	Oyster::Graphics::API::Clean();
 	return (int) msg.wParam;
 }
@@ -194,6 +195,8 @@ HRESULT InitDirect3D()
 	
 
 	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
+	Oyster::Graphics::API::SetProjection(P);
+	P.Invert();
 
 	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,5.4f));
 	V = Oyster::Math3D::InverseOrientationMatrix(V);
@@ -212,10 +215,11 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Graphics::API::NewFrame(V,P);
+	Oyster::Graphics::API::SetView(V);
+	Oyster::Graphics::API::NewFrame();
 
-	Oyster::Graphics::API::RenderScene(m,1);
-	Oyster::Graphics::API::RenderScene(m2,1);
+	Oyster::Graphics::API::RenderModel(*m);
+	Oyster::Graphics::API::RenderModel(*m2);
 
 	Oyster::Graphics::API::EndFrame();
 

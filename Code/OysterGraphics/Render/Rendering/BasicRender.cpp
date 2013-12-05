@@ -2,6 +2,8 @@
 #include "../Resources/Resources.h"
 #include "../../Definitions/GraphicalDefinition.h"
 #include "../../Model/ModelInfo.h"
+#include <map>
+#include <vector>
 
 namespace Oyster
 {

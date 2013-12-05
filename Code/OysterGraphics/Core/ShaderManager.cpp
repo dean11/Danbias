@@ -279,7 +279,7 @@ namespace Oyster
 
 		void Core::ShaderManager::Clean()
 		{
-			for(int i = 0; i < VData.size(); ++i)
+			for(int i = 0; i < (int)VData.size(); ++i)
 			{
 				delete[] VData[i].data;
 			}

@@ -159,10 +159,9 @@ namespace Oyster
 			void Resources::Clean()
 			{
 				Resources::ModelData.~Buffer();
-				Resources::VPData.~Buffer();
 				for(int i = 0; i < obj.CBuffers.Vertex.size(); ++i)
 				{
-					//SAFE_RELEASE(obj.CBuffers.Vertex[i]);
+					obj.CBuffers.Vertex[i]->~Buffer();
 				}
 				for(int i = 0; i < obj.CBuffers.Pixel.size(); ++i)
 				{
