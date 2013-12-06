@@ -110,7 +110,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>Input_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;DanBiasGame_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -126,7 +126,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>Input_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;DanBiasGame_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,7 +146,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;DanBiasServer_$(PlatformShortName).dll;DanBiasGame_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName).dll;DanBiasGame_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>Input_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;DanBiasServer_$(PlatformShortName).lib;DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -166,7 +166,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;DanBiasServer_$(PlatformShortName).dll;DanBiasGame_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName).dll;DanBiasGame_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>Input_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;DanBiasServer_$(PlatformShortName).lib;DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

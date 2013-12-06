@@ -4,8 +4,8 @@
 #define NOMINMAX
 #include <Windows.h>
 
-#define DANBIAS_SERVER
-//#define DANBIAS_CLIENT
+//#define DANBIAS_SERVER
+#define DANBIAS_CLIENT
 
 
 #if defined(DANBIAS_SERVER)

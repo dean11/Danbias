@@ -1,6 +1,11 @@
 #define NOMINMAX
 #include <Windows.h>
 #include "Include\DanBiasGame.h"
+#include "DllInterfaces/GFXAPI.h"
+#include "GameClientState/GameClientState.h"
+#include "GameClientState\GameState.h"
+#include "GameClientState\LobbyState.h"
+
 
 namespace DanBias
 {
@@ -26,9 +31,11 @@ namespace DanBias
 		}
 
 		public:
+		 Client::GameClientState* gameClientState;
 
 	} data;
 #pragma endregion
+	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
 
 	//--------------------------------------------------------------------------------------
 	// Interface API functions
@@ -41,7 +48,7 @@ namespace DanBias
 		if( FAILED( InitDirect3D() ) )
 			return DanBiasClientReturn_Error;
 
-		if( FAILED( InitGame() ) )
+		if( FAILED( InitInput() ) )
 			return DanBiasClientReturn_Error;
 
 		cntsPerSec = 0;
@@ -51,6 +58,10 @@ namespace DanBias
 		prevTimeStamp = 0;
 		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
+
+		// Start in lobby state
+		m_data->gameClientState = new  Client::LobbyState();
+		m_data->gameClientState->Init();
 		return DanBiasClientReturn_Sucess;
 	}
 
@@ -72,8 +83,10 @@ namespace DanBias
 				float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
 
 				//render
-				Update(dt);
-				Render(dt);
+				if(Update(dt) != S_OK)
+					return DanBiasClientReturn_Error;
+				if(Render(dt) != S_OK)
+					return DanBiasClientReturn_Error;
 
 				prevTimeStamp = currTimeStamp;
 			}
@@ -145,9 +158,9 @@ namespace DanBias
 	}
 
 	//--------------------------------------------------------------------------------------
-	// Init the input and the game
+	// Init the input
 	//-------------------------------------------------------------------------------------
-	HRESULT DanBiasGame::InitGame()
+	HRESULT DanBiasGame::InitInput()
 	{
 		inputObj = new InputClass;
 		if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
@@ -155,14 +168,32 @@ namespace DanBias
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
 		}
-	
 		return S_OK;
 	}
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
 		inputObj->Update();
+		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
+		state = m_data->gameClientState->Update();
 
+		if(state != Client::GameClientState::ClientState_Same)
+		{
+			m_data->gameClientState->Release();
+			switch (state)
+			{
+			case Client::GameClientState::ClientState_Lobby:
+				m_data->gameClientState = new Client::LobbyState();
+				break;
+			case Client::GameClientState::ClientState_Game:
+				m_data->gameClientState = new Client::GameState();
+				break;
+			default:
+				return E_FAIL;
+				break;
+			}
+			m_data->gameClientState->Init();
+		}
 		return S_OK;
 	}
 
@@ -174,13 +205,16 @@ namespace DanBias
 			isPressed = 1;
 		}
 
-		Oyster::Graphics::API::NewFrame(Oyster::Math3D::Float4x4::null, Oyster::Math3D::Float4x4::null);
-	
+		
+		//Oyster::Graphics::API::NewFrame(Oyster::Math3D::Float4x4::null, Oyster::Math3D::Float4x4::null);
+		
 		wchar_t title[255];
 		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
 		SetWindowText(g_hWnd, title);
-
-		Oyster::Graphics::API::EndFrame();
+	
+		m_data->gameClientState->Render();
+		
+		//Oyster::Graphics::API::EndFrame();
 
 		return S_OK;
 	}

@@ -71,7 +71,7 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -79,7 +79,7 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,7 +87,7 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -95,7 +95,7 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_CLIENT;DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_CLIENT;DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_CLIENT;DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,7 +163,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_CLIENT;DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)GameLogic;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,8 +178,14 @@
     <ProjectReference Include="..\..\Input\Input.vcxproj">
       <Project>{7e3990d2-3d94-465c-b58d-64a74b3ecf9b}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Misc\Misc.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\OysterGraphics\OysterGraphics.vcxproj">
       <Project>{0ec83e64-230e-48ef-b08c-6ac9651b4f82}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OysterMath\OysterMath.vcxproj">
+      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GameLogic\GameLogic.vcxproj">
       <Project>{b1195bb9-b3a5-47f0-906c-8dea384d1520}</Project>
@@ -188,9 +194,15 @@
   <ItemGroup>
     <ClCompile Include="DanBiasGame_Impl.cpp" />
     <ClCompile Include="DLLMain.cpp" />
+    <ClCompile Include="GameClientState\GameClientState.cpp" />
+    <ClCompile Include="GameClientState\GameState.cpp" />
+    <ClCompile Include="GameClientState\LobbyState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameClientState\GameClientState.h" />
+    <ClInclude Include="GameClientState\GameState.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
+    <ClInclude Include="GameClientState\LobbyState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
