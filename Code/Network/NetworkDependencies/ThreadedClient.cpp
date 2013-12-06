@@ -10,6 +10,8 @@ ThreadedClient::ThreadedClient()
 	this->connection = new Connection();
 	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>();
 	this->recvPostBox = NULL;
+
+	connection->SetBlockingMode(false);
 }
 
 ThreadedClient::ThreadedClient(unsigned int socket)
