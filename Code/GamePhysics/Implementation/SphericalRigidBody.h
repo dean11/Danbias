@@ -16,6 +16,10 @@ namespace Oyster { namespace Physics
 
 		::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const;
 		
+		State GetState() const;
+		State & GetState( State &targetMem = State() ) const;
+		void SetState( const State &state );
+
 		void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
 		bool IsAffectedByGravity() const;
 		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const;

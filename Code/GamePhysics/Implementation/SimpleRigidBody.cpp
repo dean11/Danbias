@@ -42,6 +42,23 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 	return new SimpleRigidBody( *this );
 }
 
+SimpleRigidBody::State SimpleRigidBody::GetState() const
+{
+	return State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
+{
+	return targetMem = State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
+{ /** @todo TODO: temporary solution! Need to know it's occtree */
+	this->rigid.box.boundingOffset = state.GetReach();
+	this->rigid.box.center = state.GetCenterPosition();
+	this->rigid.box.rotation = state.GetRotation();
+}
+
 void SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
 {
 	this->collisionAction( proto, deuter );

@@ -81,20 +81,45 @@ namespace Oyster { namespace Math2D
 
 namespace Oyster { namespace Math3D
 {
+	Float4 AngularAxis( const Float3x3 &rotationMatrix )
+	{
+		return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
+	}
+
+	Float4 AngularAxis( const Float4x4 &rotationMatrix )
+	{
+		return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
+	}
+
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::TranslationMatrix( position, targetMem ); }
+	{
+		return ::LinearAlgebra3D::TranslationMatrix( position, targetMem );
+	}
 
 	Float4x4 & RotationMatrix_AxisX( const Float &radian, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::RotationMatrix_AxisX( radian, targetMem ); }
+	{
+		return ::LinearAlgebra3D::RotationMatrix_AxisX( radian, targetMem );
+	}
 
 	Float4x4 & RotationMatrix_AxisY( const Float &radian, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::RotationMatrix_AxisY( radian, targetMem ); }
+	{
+		return ::LinearAlgebra3D::RotationMatrix_AxisY( radian, targetMem );
+	}
 
 	Float4x4 & RotationMatrix_AxisZ( const Float &radian, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::RotationMatrix_AxisZ( radian, targetMem ); }
+	{
+		return ::LinearAlgebra3D::RotationMatrix_AxisZ( radian, targetMem );
+	}
+
+	Float4x4 & RotationMatrix( const Float3 &angularAxis, Float4x4 &targetMem )
+	{
+		return targetMem = ::LinearAlgebra3D::RotationMatrix( angularAxis );
+	}
 
 	Float4x4 & RotationMatrix( const Float &radian, const Float3 &normalizedAxis, Float4x4 &targetMem )
-	{ return ::LinearAlgebra3D::RotationMatrix( normalizedAxis, radian, targetMem ); }
+	{
+		return ::LinearAlgebra3D::RotationMatrix( normalizedAxis, radian, targetMem );
+	}
 	
 	Float3x3 & InverseRotationMatrix( const Float3x3 &rotation, Float3x3 &targetMem )
 	{

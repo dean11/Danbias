@@ -36,6 +36,12 @@
     <ClInclude Include="Implementation\Octree.h">
       <Filter>Header Files\Implementation</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsStructs.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsStructs-Impl.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">

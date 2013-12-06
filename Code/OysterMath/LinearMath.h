@@ -11,6 +11,27 @@
 #include "Quaternion.h"
 #include <math.h>
 
+namespace std
+{
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> asin( const ::LinearAlgebra::Vector2<ScalarType> &vec )
+	{
+		return ::LinearAlgebra::Vector2<ScalarType>( asin(vec.x), asin(vec.y) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> asin( const ::LinearAlgebra::Vector3<ScalarType> &vec )
+	{
+		return ::LinearAlgebra::Vector3<ScalarType>( asin(vec.x), asin(vec.y), asin(vec.z) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> asin( const ::LinearAlgebra::Vector4<ScalarType> &vec )
+	{
+		return ::LinearAlgebra::Vector4<ScalarType>( asin(vec.x), asin(vec.y), asin(vec.z), asin(vec.w) );
+	}
+}
+
 // x2
 
 template<typename ScalarType>
@@ -234,6 +255,18 @@ namespace LinearAlgebra2D
 namespace LinearAlgebra3D
 {
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
+	{
+		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotationMatrix )
+	{
+		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 1, 0, 0, position.x,
@@ -286,7 +319,9 @@ namespace LinearAlgebra3D
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix_AxisZ( const ScalarType &radian, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
-	{ return ::LinearAlgebra2D::RotationMatrix( radian, targetMem ); }
+	{
+		return ::LinearAlgebra2D::RotationMatrix( radian, targetMem );
+	}
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix_AxisZ( const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
@@ -300,7 +335,21 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis, const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> RotationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &angularAxis )
+	{
+		ScalarType radian = angularAxis.GetMagnitude();
+		if( radian != 0 )
+		{
+			return RotationMatrix( angularAxis / radian, radian );
+		}
+		else
+		{
+			return ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
+		}
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis, const ScalarType &radian, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{ /// TODO: not verified
 		ScalarType r = radian * 0.5f,
 				   s = std::sin( r ),
@@ -462,7 +511,7 @@ namespace LinearAlgebra3D
 	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &vertFoV, const ScalarType &aspect, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{ 
 		ScalarType fov = 1 / ::std::tan( vertFoV * 0.5f ),
-					dDepth = farClip / (farClip - nearClip);
+				   dDepth = farClip / (farClip - nearClip);
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( fov / aspect, 0, 0, 0, 
 																   0, fov, 0, 0,
 																   0, 0, dDepth, -(dDepth * nearClip),
@@ -473,7 +522,7 @@ namespace LinearAlgebra3D
 	::LinearAlgebra::Matrix4x4<ScalarType> & ProjectionMatrix_Perspective( const ScalarType &left, const ScalarType &right, const ScalarType &top, const ScalarType &bottom, const ScalarType &nearClip, const ScalarType &farClip, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{ /** @todo TODO: not tested */
 		ScalarType fov = 1 / ::std::tan( vertFoV * 0.5f ),
-					dDepth = farClip / (farClip - nearClip);
+				   dDepth = farClip / (farClip - nearClip);
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 2*nearClip/(right - left), 0, -(right + left)/(right - left), 0,
 																   0, 2*nearClip/(top - bottom), -(top + bottom)/(top - bottom), 0,
 																   0, 0, dDepth, -(dDepth * nearClip),

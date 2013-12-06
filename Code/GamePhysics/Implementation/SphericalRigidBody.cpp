@@ -44,6 +44,23 @@ UniquePointer<ICustomBody> SphericalRigidBody::Clone() const
 	return new SphericalRigidBody( *this );
 }
 
+SphericalRigidBody::State SphericalRigidBody::GetState() const
+{
+	return State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
+{
+	return targetMem = State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
+{ /** @todo TODO: temporary solution! Need to know it's occtree */
+	this->rigid.box.boundingOffset = state.GetReach();
+	this->rigid.box.center = state.GetCenterPosition();
+	this->rigid.box.rotation = state.GetRotation();
+}
+
 void SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
 {
 	this->collisionAction( proto, deuter );
