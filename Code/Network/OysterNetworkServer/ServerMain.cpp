@@ -12,6 +12,9 @@
 #include "../../Misc/Utilities.h"
 #include "../../Misc/Utilities-Impl.h"
 
+#include "IServer.h"
+#include "ISession.h"
+
 #pragma comment(lib, "ws2_32.lib")
 
 using namespace std;
@@ -24,9 +27,15 @@ using namespace ::Utility::DynamicMemory;
 void PrintOutMessage(ProtocolSet* set);
 
 int main()
-{ 
-	SmartPointer<OysterByte> sendBuffer = SmartPointer<OysterByte>(new OysterByte);
-	SmartPointer<OysterByte> recvBuffer = SmartPointer<OysterByte>(new OysterByte());
+{
+	IServer server;
+	IServer::INIT_DESC initDesc;
+	server.Init(initDesc);
+	
+
+	//Old program
+	SmartPointer<OysterByte> sendBuffer = new OysterByte;
+	SmartPointer<OysterByte> recvBuffer = new OysterByte();
 	ProtocolSet* set = new ProtocolSet;
 	IPostBox<SmartPointer<int>> *postBox = new PostBox<SmartPointer<int>>();
 	IPostBox<SmartPointer<OysterByte>> *recvPostBox = new PostBox<SmartPointer<OysterByte>>();
@@ -64,7 +73,7 @@ int main()
 	WinTimer timer;
 
 	vector<ThreadedClient*> clients;
-	SmartPointer<int> client = SmartPointer<int>();
+	SmartPointer<int> client = int();
 	while(1)
 	{
 		//Fetch new clients from the postbox

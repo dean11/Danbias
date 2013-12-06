@@ -48,10 +48,12 @@ ThreadedClient::~ThreadedClient()
 	}
 }
 
-int ThreadedClient::Send(SmartPointer<OysterByte> &byte)
+int ThreadedClient::Send(SmartPointer<OysterByte>& byte)
 {
+	SmartPointer<OysterByte> temp = new OysterByte(*byte);
+
 	mutex.LockMutex();
-	this->sendPostBox->PostMessage(byte);
+	this->sendPostBox->PostMessage(temp);
 	mutex.UnlockMutex();
 	return 0;
 }
@@ -62,9 +64,9 @@ int ThreadedClient::Send()
 	mutex.LockMutex();
 	if(sendPostBox->IsFull())
 	{
-		SmartPointer<OysterByte> temp = NULL;
-		sendPostBox->FetchMessage(temp);
-		errorCode = this->connection->Send(temp);
+		//SmartPointer<OysterByte> temp = NULL;
+		//sendPostBox->FetchMessage(temp);
+		//errorCode = this->connection->Send(temp);
 	}
 	mutex.UnlockMutex();
 
@@ -75,7 +77,7 @@ int ThreadedClient::Recv()
 {
 	int errorCode = 0;
 	
-	SmartPointer<OysterByte> temp = new OysterByte();
+	/*SmartPointer<OysterByte> temp = new OysterByte();
 	errorCode = this->connection->Recieve(temp);
 	
 	if(errorCode == 0)
@@ -84,7 +86,7 @@ int ThreadedClient::Recv()
 		recvPostBox->PostMessage(temp);
 		mutex.UnlockMutex();
 	}
-
+	*/
 	return errorCode;
 }
 

@@ -59,8 +59,8 @@ void chat(ThreadedClient &client)
 
 	client.setRecvPostBox(postBox);
 
-	SmartPointer<OysterByte> msgRecv = SmartPointer<OysterByte>(new OysterByte());
-	SmartPointer<OysterByte> msgSend = SmartPointer<OysterByte>(new OysterByte());
+	SmartPointer<OysterByte> msgRecv = new OysterByte();
+	SmartPointer<OysterByte> msgSend = new OysterByte();
 
 	ProtocolSet* set = new ProtocolSet;
 	ProtocolPlayerPos test;

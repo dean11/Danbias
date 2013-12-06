@@ -24,7 +24,7 @@ namespace Oyster
 			ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer< OysterByte >> *postBox, unsigned int socket);
 			virtual ~ThreadedClient();
 
-			int Send(Utility::DynamicMemory::SmartPointer< OysterByte > &byte);
+			int Send(Utility::DynamicMemory::SmartPointer< OysterByte >& byte);
 
 			int Connect(unsigned short port, const char serverName[]);
 
