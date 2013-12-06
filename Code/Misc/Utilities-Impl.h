@@ -208,6 +208,12 @@ namespace Utility
 		template<typename T> SmartPointer<T>::SmartPointer()
 				:_rc(0), _ptr(0)
 			{ }
+		template<typename T> SmartPointer<T>::SmartPointer(UniquePointer<T>& p)
+				:_ptr(p.Release())
+		{ 
+			this->_rc = new ReferenceCount();
+			this->_rc->Incref();
+		}
 		template<typename T> SmartPointer<T>::SmartPointer(T* p)
 			:_ptr(p)
 		{ 
@@ -244,6 +250,30 @@ namespace Utility
 			}
 			return *this;
 		}
+		template<typename T> SmartPointer<T>& SmartPointer<T>::operator= (UniquePointer<T>& p)
+		{
+			//Last to go?
+			if(this->_rc)
+			{
+				if(this->_rc->Decref() == 0)
+				{
+					//Call child specific
+					Destroy();
+					this->_rc = new ReferenceCount();
+				}
+			}
+			else
+			{
+				if(p) this->_rc = new ReferenceCount();
+			}
+
+			if(this->_rc)
+				this->_rc->Incref();
+
+			this->_ptr = p.Release();
+
+			return *this;
+		}
 		template<typename T> SmartPointer<T>& SmartPointer<T>::operator= (T* p)
 		{
 			if (this->_ptr != p)
@@ -266,19 +296,19 @@ namespace Utility
 			}
 			return *this;
 		}
-		template<typename T> inline bool SmartPointer<T>::operator== (const SmartPointer<T>& d)
+		template<typename T> inline bool SmartPointer<T>::operator== (const SmartPointer<T>& d) const
 		{
 			return d._ptr == this->_ptr;
 		}
-		template<typename T> inline bool SmartPointer<T>::operator== (const T& p)
+		template<typename T> inline bool SmartPointer<T>::operator== (const T& p) const
 		{
 			return &p == this->_ptr;
 		}
-		template<typename T> inline bool SmartPointer<T>::operator!= (const SmartPointer<T>& d)
+		template<typename T> inline bool SmartPointer<T>::operator!= (const SmartPointer<T>& d) const
 		{
 			return d._ptr != this->_ptr;
 		}
-		template<typename T> inline bool SmartPointer<T>::operator!= (const T& p)
+		template<typename T> inline bool SmartPointer<T>::operator!= (const T& p) const
 		{
 			return &p != this->_ptr;
 		}
@@ -286,15 +316,31 @@ namespace Utility
 		{
 			return *this->_ptr;
 		}
+		template<typename T> inline const T& SmartPointer<T>::operator* () const
+		{
+			return *this->_ptr;
+		}
 		template<typename T> inline T* SmartPointer<T>::operator-> ()
 		{
 			return this->_ptr;
 		}
-		template<typename T> inline SmartPointer<T>::operator T* ()
+		template<typename T> inline const T* SmartPointer<T>::operator-> () const
 		{
 			return this->_ptr;
 		}
-		template<typename T> inline SmartPointer<T>::operator bool()
+		template<typename T> inline SmartPointer<T>::operator T* () const
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline SmartPointer<T>::operator const T* () const
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline SmartPointer<T>::operator T& () const
+		{
+			return *this->_ptr;
+		}
+		template<typename T> inline SmartPointer<T>::operator bool() const
 		{
 			return (this->_ptr != 0);
 		}
@@ -302,7 +348,7 @@ namespace Utility
 		{
 			return this->_ptr;
 		}
-		template<typename T> inline bool SmartPointer<T>::IsValid()
+		template<typename T> inline bool SmartPointer<T>::IsValid() const
 		{
 			return (this->_ptr != NULL)  ?	true : false;
 		}
