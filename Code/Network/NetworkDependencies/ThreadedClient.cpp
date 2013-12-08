@@ -1,4 +1,5 @@
 #include "ThreadedClient.h"
+#include "OysterByte.h"
 
 #include <iostream>
 using namespace Oyster::Network;
@@ -25,7 +26,7 @@ ThreadedClient::ThreadedClient(unsigned int socket)
 	thread.Create(this, true);
 }
 
-ThreadedClient::ThreadedClient(IPostBox<SmartPointer<OysterByte>>* postBox, unsigned int socket)
+ThreadedClient::ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>>* postBox, unsigned int socket)
 {
 	this->connection = new Connection(socket);
 	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>;
@@ -57,20 +58,23 @@ int ThreadedClient::Send(SmartPointer<OysterByte>& byte)
 	mutex.LockMutex();
 	this->sendPostBox->PostMessage(temp);
 	mutex.UnlockMutex();
+
 	return 0;
 }
 
 int ThreadedClient::Send()
 {
 	int errorCode = 0;
+
 	mutex.LockMutex();
 	if(sendPostBox->IsFull())
 	{
-		//SmartPointer<OysterByte> temp = NULL;
-		//sendPostBox->FetchMessage(temp);
-		//errorCode = this->connection->Send(temp);
+		SmartPointer<OysterByte> temp = new OysterByte;
+		sendPostBox->FetchMessage(temp);
+		errorCode = this->connection->Send(temp);
 	}
 	mutex.UnlockMutex();
+
 
 	return errorCode;
 }
@@ -78,8 +82,8 @@ int ThreadedClient::Send()
 int ThreadedClient::Recv()
 {
 	int errorCode = 0;
-	
-	/*SmartPointer<OysterByte> temp = new OysterByte();
+
+	SmartPointer<OysterByte> temp = new OysterByte;
 	errorCode = this->connection->Recieve(temp);
 	
 	if(errorCode == 0)
@@ -88,7 +92,7 @@ int ThreadedClient::Recv()
 		recvPostBox->PostMessage(temp);
 		mutex.UnlockMutex();
 	}
-	*/
+
 	return errorCode;
 }
 

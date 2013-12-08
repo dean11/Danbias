@@ -84,7 +84,7 @@ void chat(ThreadedClient &client)
 		{
 			t->Unpack(set, msgRecv);
 
-			PrintOutMessage(set);
+			//PrintOutMessage(set);
 			set->Release();
 		}
 

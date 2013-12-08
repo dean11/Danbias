@@ -5,9 +5,9 @@
 // Created by Sam Svensson 2013 //
 //////////////////////////////////
 
-#include "../NetworkDependencies/IClient.h"
 #include "../../Misc/Thread/IThreadObject.h"
-#include "../NetworkDependencies/PostBox.h"
+#include "PostBox.h"
+#include "Connection.h"
 #include "../../Misc/Thread/OysterThread.h"
 #include "../../Misc/Thread/OysterMutex.h"
 #include "../../Misc/Utilities.h"
@@ -16,19 +16,20 @@ namespace Oyster
 {
 	namespace Network
 	{
-		class ThreadedClient : public IClient, public Thread::IThreadObject
+		class OysterByte;
+		class ThreadedClient : public Thread::IThreadObject
 		{
 		public:
 			ThreadedClient();
 			ThreadedClient(unsigned int socket);
-			ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer< OysterByte >> *postBox, unsigned int socket);
+			ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *postBox, unsigned int socket);
 			virtual ~ThreadedClient();
 
-			int Send(Utility::DynamicMemory::SmartPointer< OysterByte >& byte);
+			int Send(Utility::DynamicMemory::SmartPointer<OysterByte>& byte);
 
 			int Connect(unsigned short port, const char serverName[]);
 
-			void setRecvPostBox(IPostBox< Utility::DynamicMemory::SmartPointer< OysterByte >> *postBox);
+			void setRecvPostBox(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *postBox);
 
 		private:
 			virtual int Send();

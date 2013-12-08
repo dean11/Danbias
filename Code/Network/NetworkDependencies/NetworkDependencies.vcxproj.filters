@@ -2,38 +2,34 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="Listener.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Messages\MessageHeader.cpp" />
-    <ClCompile Include="Messages\MessageTest.cpp" />
-    <ClCompile Include="Packing.cpp" />
-    <ClCompile Include="Translator.cpp" />
-    <ClCompile Include="Listener.cpp" />
-    <ClCompile Include="WinsockFunctions.cpp" />
-    <ClCompile Include="OysterByte.cpp" />
-    <ClCompile Include="ThreadedClient.cpp" /
     <ClCompile Include="Messages\MessagePlayerPos.cpp" />
+    <ClCompile Include="Messages\MessageTest.cpp" />
+    <ClCompile Include="OysterByte.cpp" />
+    <ClCompile Include="Packing.cpp" />
     <ClCompile Include="ThreadedClient.cpp" />
+    <ClCompile Include="Translator.cpp" />
+    <ClCompile Include="WinsockFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
     <ClInclude Include="IConnection.h" />
+    <ClInclude Include="IListener.h" />
+    <ClInclude Include="IPostBox.h" />
+    <ClInclude Include="Listener.h" />
     <ClInclude Include="Messages\MessageHeader.h" />
+    <ClInclude Include="Messages\MessagePlayerPos.h" />
+    <ClInclude Include="Messages\MessagesInclude.h" />
     <ClInclude Include="Messages\MessageTest.h" />
+    <ClInclude Include="OysterByte.h" />
     <ClInclude Include="Packing.h" />
     <ClInclude Include="ITranslate.h" />
-    <ClInclude Include="Protocols.h" />
-    <ClInclude Include="Translator.h" />
-    <ClInclude Include="Messages\MessagesInclude.h" />
-    <ClInclude Include="Listener.h" />
-    <ClInclude Include="IListener.h" />
-    <ClInclude Include="WinsockFunctions.h" />
-    <ClInclude Include="OysterByte.h" />
-    <ClInclude Include="IPostBox.h" />
     <ClInclude Include="PostBox.h" />
-    <ClInclude Include="IClient.h" />
+    <ClInclude Include="Protocols.h" />
     <ClInclude Include="ThreadedClient.h" />
-    <ClInclude Include="Messages\MessagePlayerPos.h" />
-    <ClInclude Include="IClient.h" />
-    <ClInclude Include="ThreadedClient.h" />
+    <ClInclude Include="Translator.h" />
+    <ClInclude Include="WinsockFunctions.h" />
   </ItemGroup>
 </Project>

@@ -5,30 +5,44 @@
 // Created by Pontus Fransson 2013 //
 /////////////////////////////////////
 
-class IServer
+#include "IClient.h"
+
+namespace Oyster
 {
-	class ISession;
-
-public:
-	struct INIT_DESC
+	namespace Network
 	{
+		namespace Server
+		{
+			class IServer
+			{
+				class ISession;
+			public:
+				struct INIT_DESC
+				{
+					unsigned short port;		//Port the server should be accepting clients on.
+					void (*proc)(IClient*);
+				};
 
-	};
+				IServer();
+				virtual ~IServer();
 
-	IServer();
-	virtual ~IServer();
+				virtual bool Init(INIT_DESC& initDesc);
+				virtual bool Start();
+				virtual bool Stop();
+				virtual bool Shutdown();
 
-	virtual bool Init(INIT_DESC& initDesc);
-	virtual bool Start();
-	virtual bool Stop();
-	virtual bool Shutdown();
+				virtual void AddSession(ISession* session);
+				virtual void RemoveSession(ISession* session);
 
-	virtual void AddSession(ISession* session);
-	virtual void RemoveSession(ISession* session);
+				virtual bool IsStarted() const;
 
-private:
+			private:
+				struct PrivateData;
+				PrivateData* privateData;
 
-
-};
+			};
+		}
+	}
+}
 
 #endif

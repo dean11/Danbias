@@ -13,6 +13,7 @@
 #include "../../Misc/Utilities-Impl.h"
 
 #include "IServer.h"
+#include "IClient.h"
 #include "ISession.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -25,18 +26,15 @@ using namespace Utility;
 using namespace ::Utility::DynamicMemory;
 
 void PrintOutMessage(ProtocolSet* set);
+void clientProc(IClient* client);
+vector<ThreadedClient*> clients;
 
 int main()
 {
-	IServer server;
-	IServer::INIT_DESC initDesc;
-	server.Init(initDesc);
-	
-
-	//Old program
 	SmartPointer<OysterByte> sendBuffer = new OysterByte;
-	SmartPointer<OysterByte> recvBuffer = new OysterByte();
+	SmartPointer<OysterByte> recvBuffer = new OysterByte;
 	ProtocolSet* set = new ProtocolSet;
+	
 	IPostBox<SmartPointer<int>> *postBox = new PostBox<SmartPointer<int>>();
 	IPostBox<SmartPointer<OysterByte>> *recvPostBox = new PostBox<SmartPointer<OysterByte>>();
 
@@ -48,11 +46,18 @@ int main()
 	{
 		cout << "errorMessage: unable to start winsock" << endl;
 	}
-
+	/*
+	IServer server;
+	IServer::INIT_DESC initDesc;
+	initDesc.port = 9876;
+	initDesc.proc = clientProc;
+	server.Init(initDesc);
+	*/
 	//Create socket
 	Listener listener;
 	listener.Init(9876);
 	listener.SetPostBox(postBox);
+	listener.Start();
 	Sleep(1000);
 
 	//Start listening
@@ -72,7 +77,6 @@ int main()
 	
 	WinTimer timer;
 
-	vector<ThreadedClient*> clients;
 	SmartPointer<int> client = int();
 	while(1)
 	{
@@ -101,21 +105,22 @@ int main()
 		{
 			t.Unpack(set, recvBuffer);
 
-			PrintOutMessage(set);
+			//PrintOutMessage(set);
 			set->Release();
 		}
 
 		Sleep(1);
 	}
+	//server.Stop();
+	//server.Shutdown();
 	listener.Shutdown();
 	Sleep(1000);
 
 	system("pause");
 
-	for(int i = 0; i < clients.size(); i++)
+	for(int i = 0; i < (int)clients.size(); i++)
 		delete clients.at(i);
 
-	delete postBox;
 	return 0;
 }
 
@@ -143,4 +148,10 @@ void PrintOutMessage(ProtocolSet* set)
 		cout << endl;
 		break;
 	}
+}
+
+void clientProc(IClient* client)
+{
+	cout << "Proc" << endl;
+	//clients.push_back(client);
 }

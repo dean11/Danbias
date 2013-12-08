@@ -8,12 +8,13 @@
 class IClient
 {
 public:
+	IClient() {}
 	virtual ~IClient() {}
 
-	virtual void Disconnect() {};
-	virtual bool IsConnected() {};
+	virtual void Disconnect() {}
+	virtual bool IsConnected() {return true;}
 
-	virtual void Send() {};
+	virtual void Send() {}
 
 private:
 

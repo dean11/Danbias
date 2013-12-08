@@ -94,9 +94,9 @@ namespace Oyster
 		template < typename Type >
 		void ThreadSafeQueue<Type>::Push(Type item)
 		{
+			mutex.LockMutex();
 			Node *e = new Node(item);
 
-			mutex.LockMutex();
 			if(this->front != NULL)
 			{
 				this->back->next = e;
@@ -140,32 +140,33 @@ namespace Oyster
 		Type ThreadSafeQueue<Type>::Front()
 		{
 			mutex.LockMutex();
-			
-			return this->front->item;
-			
+			Type temp = this->front->item;
 			mutex.UnlockMutex();
-
+			
+			return temp;
+			
 		}
 
 		template < typename Type >
 		Type ThreadSafeQueue<Type>::Back()
 		{
 			mutex.LockMutex();
-
-			return this->back->item;
-			
+			Type temp = this->back->item;
 			mutex.UnlockMutex();
 
+			return temp;
+			
 		}
 
 		template < typename Type >
 		int ThreadSafeQueue<Type>::Size()
 		{
 			mutex.LockMutex();
-
-			return this->nrOfNodes;
-
+			int size = this->nrOfNodes;
 			mutex.UnlockMutex();
+
+			return size;
+
 		}
 
 		template < typename Type >
