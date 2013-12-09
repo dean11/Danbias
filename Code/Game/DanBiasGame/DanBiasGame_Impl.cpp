@@ -5,7 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
-
+#include "vld.h"
 
 namespace DanBias
 {
@@ -180,6 +180,9 @@ namespace DanBias
 		if(state != Client::GameClientState::ClientState_Same)
 		{
 			m_data->gameClientState->Release();
+			delete m_data->gameClientState;
+			m_data->gameClientState = NULL;
+
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_Lobby:
@@ -193,6 +196,7 @@ namespace DanBias
 				break;
 			}
 			m_data->gameClientState->Init();
+				 
 		}
 		return S_OK;
 	}
@@ -221,8 +225,12 @@ namespace DanBias
 
 	HRESULT DanBiasGame::CleanUp()
 	{
+		m_data->gameClientState->Release();
 		delete m_data->gameClientState;
 		delete m_data;
+		delete inputObj;
+
+		Oyster::Graphics::API::Clean();
 		return S_OK;
 	}	
 

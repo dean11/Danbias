@@ -1,5 +1,6 @@
 #include "GameState.h"
 #include "DllInterfaces/GFXAPI.h"
+#include "GameState/C_Player.h"
 using namespace DanBias::Client;
 
 struct  GameState::myData
@@ -7,7 +8,7 @@ struct  GameState::myData
 	myData(){}
 	Oyster::Math3D::Float4x4 view;
 	Oyster::Math3D::Float4x4 proj; 
-	Oyster::Graphics::Model::Model *model;
+	C_Object* player;
 }privData;
 
 GameState::GameState(void)
@@ -17,12 +18,14 @@ GameState::GameState(void)
 
 GameState::~GameState(void)
 {
+
 }
 bool GameState::Init()
 {
 	// load models
 	privData = new myData();
-	privData->model = Oyster::Graphics::API::CreateModel(L"crate");
+	privData->player = new C_Player;
+	privData->player->Init();
 
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	Oyster::Graphics::API::SetProjection(privData->proj);
@@ -46,11 +49,16 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 	Oyster::Graphics::API::NewFrame();
-	//Oyster::Graphics::API::RenderModel(*(privData->model));
+	privData->player->Render();
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
 bool GameState::Release()
 {
+	privData->player->Release();
+	delete privData->player;
+	privData->player = NULL;
+	delete privData;  
+	privData = NULL;
 	return true;
 }

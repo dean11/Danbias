@@ -169,9 +169,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DynamicObject.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="GameMode.h" />
-    <ClInclude Include="IGame.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
@@ -183,15 +181,12 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMode.cpp" />
-    <ClCompile Include="IGame.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RefManager.cpp" />
     <ClCompile Include="StaticObject.cpp" />
-    <ClCompile Include="TestGLMain.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
