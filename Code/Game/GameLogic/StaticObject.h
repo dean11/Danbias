@@ -11,13 +11,16 @@
 namespace GameLogic
 {
 
-	class StaticObject : public Object
+	class StaticObject
 	{
 	
 	public:
-		StaticObject(std::wstring objFile);
+		StaticObject();
 		~StaticObject(void);
-		
+
+	private:
+		struct PrivateData;
+		PrivateData *myData;
 	};
 
 }

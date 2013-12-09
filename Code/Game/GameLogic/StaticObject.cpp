@@ -2,12 +2,28 @@
 
 using namespace GameLogic;
 
-StaticObject::StaticObject(std::wstring objFile)
-	:Object(objFile)
+struct StaticObject::PrivateData
 {
+	PrivateData()
+	{
+
+	}
+
+	~PrivateData()
+	{
+
+	}
+
+}myData;
+
+
+StaticObject::StaticObject()
+{
+	myData = new PrivateData();
 }
 
 
 StaticObject::~StaticObject(void)
 {
+	delete myData;
 }

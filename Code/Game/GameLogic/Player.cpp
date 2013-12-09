@@ -1,57 +1,48 @@
 #include "Player.h"
 #include "OysterMath.h"
 #include "CollisionManager.h"
+#include "Weapon.h"
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
 
-Player::Player(std::wstring objFile)
-	:Object( objFile )
+struct Player::PrivateData
 {
-	life = 100;
-	rigidBody->SetSubscription(CollisionManager::PlayerCollision);
+	PrivateData()
+	{
+		weapon = new Weapon();
+	}
+	~PrivateData()
+	{
+		if (weapon)
+		{
+			delete weapon;
+		}
+	}
+
+	int life;
+	Weapon *weapon;
+
+}myData;
+
+Player::Player()
+{
+	myData = new PrivateData();
+
 }
 Player::~Player(void)
 {
-	delete this->rigidBody;
+	delete myData;
 }
 
-void Player::Update(keyInput keyPressed)
+void Player::Update()
 {
-
-	if(keyPressed != keyInput_none)
-	{
-		Move(keyPressed);
-	}
+	
 }
 
-void Player::Move(keyInput keyPressed)
+void Player::Move()
 {
 
-	if(keyPressed == keyInput_A)
-	{
-		Oyster::Math::Float3 pos = this->rigidBody->GetCenter();
-		pos.x -= 0.1;
-		rigidBody->SetCenter(pos);
-	}
-	if(keyPressed == keyInput_D)
-	{
-		Oyster::Math::Float3 pos = this->rigidBody->GetCenter();
-		pos.x += 0.1;
-		rigidBody->SetCenter(pos);
-	}
-	if(keyPressed == keyInput_S)
-	{
-		Oyster::Math::Float3 pos = this->rigidBody->GetCenter();
-		pos.y -= 0.1;
-		rigidBody->SetCenter(pos);
-	}
-	if(keyPressed == keyInput_W)
-	{
-		Oyster::Math::Float3 pos = this->rigidBody->GetCenter();
-		pos.y += 0.1;
-		rigidBody->SetCenter(pos);
-	}
 }
 void Player::Shoot()
 {
