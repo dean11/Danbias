@@ -71,7 +71,9 @@ void Game::Update(keyInput keyPressed, float pitch, float yaw)
 }
 void Game::Render()
 {
-	Oyster::Graphics::API::NewFrame(camera->View(), camera->Proj());
+	Oyster::Graphics::API::SetView(camera->View());
+	Oyster::Graphics::API::SetProjection(camera->Proj());
+	Oyster::Graphics::API::NewFrame();
 	player->Render();
 	box->Render();
 }

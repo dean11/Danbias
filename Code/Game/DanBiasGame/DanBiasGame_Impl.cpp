@@ -175,7 +175,7 @@ namespace DanBias
 	{
 		inputObj->Update();
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-		state = m_data->gameClientState->Update();
+		state = m_data->gameClientState->Update(deltaTime, inputObj);
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
@@ -221,6 +221,8 @@ namespace DanBias
 
 	HRESULT DanBiasGame::CleanUp()
 	{
+		delete m_data->gameClientState;
+		delete m_data;
 		return S_OK;
 	}	
 
