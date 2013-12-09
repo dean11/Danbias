@@ -8,6 +8,12 @@ Listener::Listener()
 	connection = NULL;
 }
 
+Listener::Listener(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
+{
+	connection = NULL;
+	this->postBox = postBox;
+}
+
 Listener::~Listener()
 {
 	if(connection)
@@ -16,15 +22,35 @@ Listener::~Listener()
 	}
 }
 
+//Starts the thread immediate
 bool Listener::Init(unsigned int port)
 {
 	connection = new Connection();
-
 	connection->InitiateServer(port);
 
 	thread.Create(this, true);
 
 	return true;
+}
+
+bool Listener::Init(unsigned int port, bool start)
+{
+	connection = new Connection();
+	connection->InitiateServer(port);
+
+	thread.Create(this, start);
+
+	return true;
+}
+
+void Listener::Start()
+{
+	thread.Start();
+}
+
+void Listener::Stop()
+{
+	thread.Stop();
 }
 
 void Listener::Shutdown()
@@ -34,9 +60,11 @@ void Listener::Shutdown()
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
 {
-	mutex.LockMutex();
+	stdMutex.lock();
+	//mutex.LockMutex();
 	this->postBox = postBox;
-	mutex.UnlockMutex();
+	//mutex.UnlockMutex();
+	stdMutex.unlock();
 }
 
 int Listener::Accept()
@@ -46,9 +74,11 @@ int Listener::Accept()
 
 	if(*clientSocket != -1)
 	{
-		mutex.LockMutex();
+		stdMutex.lock();
+		//mutex.LockMutex();
 		postBox->PostMessage(clientSocket);
-		mutex.UnlockMutex();
+		//mutex.UnlockMutex();
+		stdMutex.unlock();
 	}
 
 	return clientSocket;
@@ -61,13 +91,10 @@ bool Listener::DoWork()
 	return true;
 }
 
-#include <iostream>
 void Listener::ThreadEntry()
 {
-	std::cout << "Thread started" << std::endl;
 }
 
 void Listener::ThreadExit()
 {
-	std::cout << "Thread stopped" << std::endl;
 }

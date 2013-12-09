@@ -1,4 +1,5 @@
 #include "ThreadedClient.h"
+#include "OysterByte.h"
 
 #include <iostream>
 using namespace Oyster::Network;
@@ -25,7 +26,7 @@ ThreadedClient::ThreadedClient(unsigned int socket)
 	thread.Create(this, true);
 }
 
-ThreadedClient::ThreadedClient(IPostBox<SmartPointer<OysterByte>>* postBox, unsigned int socket)
+ThreadedClient::ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>>* postBox, unsigned int socket)
 {
 	this->connection = new Connection(socket);
 	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>;
@@ -50,41 +51,37 @@ ThreadedClient::~ThreadedClient()
 	}
 }
 
-int ThreadedClient::Send(SmartPointer<OysterByte> &byte)
+void ThreadedClient::Send(SmartPointer<OysterByte>& byte)
 {
-	mutex.LockMutex();
 	this->sendPostBox->PostMessage(byte);
-	mutex.UnlockMutex();
-	return 0;
 }
 
 int ThreadedClient::Send()
 {
 	int errorCode = 0;
-	mutex.LockMutex();
+
 	if(sendPostBox->IsFull())
 	{
-		SmartPointer<OysterByte> temp = NULL;
+		SmartPointer<OysterByte> temp = new OysterByte;
 		sendPostBox->FetchMessage(temp);
 		errorCode = this->connection->Send(temp);
 	}
-	mutex.UnlockMutex();
 
 	return errorCode;
 }
 
 int ThreadedClient::Recv()
 {
-	int errorCode = 0;
+	int errorCode = -1;
 	
-	SmartPointer<OysterByte> temp = new OysterByte();
+	SmartPointer<OysterByte> temp = new OysterByte;
 	errorCode = this->connection->Recieve(temp);
 	
 	if(errorCode == 0)
 	{
-		mutex.LockMutex();
+		stdMutex.lock();
 		recvPostBox->PostMessage(temp);
-		mutex.UnlockMutex();
+		stdMutex.unlock();
 	}
 
 	return errorCode;
@@ -100,6 +97,8 @@ void ThreadedClient::ThreadExit()
 	std::cout << "Client Thread exit" << std::endl;
 }
 
+#include <Windows.h>
+
 bool ThreadedClient::DoWork()
 {
 	int errorCode;
@@ -114,7 +113,7 @@ bool ThreadedClient::DoWork()
 	{
 		return false;
 	}*/
-
+	Sleep(1);
 	return true;
 }
 
@@ -138,7 +137,7 @@ int ThreadedClient::Connect(unsigned short port, const char serverName[])
 
 void ThreadedClient::setRecvPostBox(IPostBox<SmartPointer<OysterByte>> *postBox)
 {
-	this->mutex.LockMutex();
+	stdMutex.lock();
 	this->recvPostBox = postBox;
-	this->mutex.UnlockMutex();
+	stdMutex.unlock();
 }

@@ -6,11 +6,11 @@
 /////////////////////////////////////
 
 #include "IListener.h"
-#include "../NetworkDependencies/Connection.h"
+#include "Connection.h"
+#include "IPostBox.h"
 #include "../../Misc/Thread/OysterThread.h"
 #include "../../Misc/Thread/OysterMutex.h"
 #include "../../Misc/Utilities.h"
-#include "IPostBox.h"
 
 namespace Oyster
 {
@@ -18,13 +18,18 @@ namespace Oyster
 	{
 		namespace Server
 		{
-			class Listener : public ::Oyster::Thread::IThreadObject
+			class Listener : public IListener, public ::Oyster::Thread::IThreadObject
 			{
 			public:
 				Listener();
+				Listener(Oyster::Network::IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox);
 				~Listener();
 
 				bool Init(unsigned int port);
+				bool Init(unsigned int port, bool start);
+				void Start();
+				void Stop();
+
 				void Shutdown();
 
 				void SetPostBox(IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox);
@@ -43,6 +48,7 @@ namespace Oyster
 
 				::Oyster::Thread::OysterThread thread;
 				OysterMutex mutex;
+				std::mutex stdMutex;
 
 				IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox;
 

@@ -165,7 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
-    <ClInclude Include="IClient.h" />
     <ClInclude Include="IConnection.h" />
     <ClInclude Include="IListener.h" />
     <ClInclude Include="IPostBox.h" />

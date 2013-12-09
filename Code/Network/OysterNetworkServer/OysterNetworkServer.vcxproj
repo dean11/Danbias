@@ -154,7 +154,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IServer.cpp" />
     <ClCompile Include="ServerMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IClient.h" />
+    <ClInclude Include="IServer.h" />
+    <ClInclude Include="ISession.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

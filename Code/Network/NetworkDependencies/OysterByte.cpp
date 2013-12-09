@@ -18,7 +18,7 @@ OysterByte::OysterByte(int cap)
 
 OysterByte::OysterByte(const OysterByte& obj)
 {
-	delete[] this->byteArray;
+	//delete[] this->byteArray;
 	this->byteArray = new unsigned char[obj.capacity];
 
 	for(int i = 0; i < obj.size; i++)

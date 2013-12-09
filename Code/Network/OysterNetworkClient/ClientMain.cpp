@@ -59,8 +59,8 @@ void chat(ThreadedClient &client)
 
 	client.setRecvPostBox(postBox);
 
-	SmartPointer<OysterByte> msgRecv = SmartPointer<OysterByte>(new OysterByte());
-	SmartPointer<OysterByte> msgSend = SmartPointer<OysterByte>(new OysterByte());
+	SmartPointer<OysterByte> msgRecv = new OysterByte();
+	SmartPointer<OysterByte> msgSend = new OysterByte();
 
 	ProtocolSet* set = new ProtocolSet;
 	ProtocolPlayerPos test;
@@ -84,7 +84,7 @@ void chat(ThreadedClient &client)
 		{
 			t->Unpack(set, msgRecv);
 
-			PrintOutMessage(set);
+			//PrintOutMessage(set);
 			set->Release();
 		}
 
@@ -95,6 +95,7 @@ void chat(ThreadedClient &client)
 			timer.reset();
 			client.Send(msgSend);
 		}
+		Sleep(1);
 	}
 
 	delete postBox;
