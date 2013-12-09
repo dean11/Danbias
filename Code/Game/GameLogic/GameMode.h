@@ -15,7 +15,8 @@ namespace GameLogic
 			GameMode(void);
 			~GameMode(void);
 		private:
-			//variabels that control what game rules the level runs on
+			struct PrivateData;
+			PrivateData *myData;
 	};
 
 }

@@ -1,22 +1,29 @@
 #include "DynamicObject.h"
-#include "CollisionManager.h"
 
 using namespace GameLogic;
-using namespace Oyster::Physics;
-using namespace Utility::DynamicMemory;
 
-DynamicObject::DynamicObject(std::wstring objFile)
-	:Object(objFile)
+struct DynamicObject::PrivateData
 {
-	rigidBody->SetSubscription(CollisionManager::BoxCollision);
+	PrivateData()
+	{
+
+	}
+
+	~PrivateData()
+	{
+
+	}
+
+}myData;
+
+
+DynamicObject::DynamicObject()
+{
+	myData = new PrivateData();
 }
 
 
 DynamicObject::~DynamicObject(void)
 {
-}
-
-void DynamicObject::Update()
-{
-	//update object
+	delete myData;
 }

@@ -1,14 +1,8 @@
 //////////////////////////////////////////////////
 //Created by Erik and Linda of the GameLogic team
 //////////////////////////////////////////////////
-
-
 #ifndef LEVEL_H
 #define LEVEL_H
-
-#include "StaticObject.h"
-#include "DynamicObject.h"
-#include "GameMode.h"
 
 namespace GameLogic
 {
@@ -21,15 +15,8 @@ namespace GameLogic
 		~Level(void);
 
 	private:
-		StaticObject** staticObjects;
-		int nrOfStaticObjects;
-
-		DynamicObject** dynamicObjects;
-		int nrOfDynamicObjects;
-
-		GameMode* gameMode;
-
-
+		struct PrivateData;
+		PrivateData *myData;
 
 	};
 

@@ -2,12 +2,27 @@
 
 using namespace GameLogic;
 
-Weapon::Weapon(std::wstring objFile)
-	:Object(objFile)
+struct Weapon::PrivateData
 {
+	PrivateData()
+	{
+		
+	}
+
+	~PrivateData()
+	{
+
+	}
+
+}myData;
+
+Weapon::Weapon()
+{
+	myData = new PrivateData();
 }
 
 
 Weapon::~Weapon(void)
 {
+	delete myData;
 }
