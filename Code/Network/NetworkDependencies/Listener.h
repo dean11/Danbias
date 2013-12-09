@@ -22,7 +22,7 @@ namespace Oyster
 			{
 			public:
 				Listener();
-				Listener(Oyster::Network::IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox);
+				Listener(Oyster::Network::IPostBox<int>* postBox);
 				~Listener();
 
 				bool Init(unsigned int port);
@@ -32,7 +32,7 @@ namespace Oyster
 
 				void Shutdown();
 
-				void SetPostBox(IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox);
+				void SetPostBox(IPostBox<int>* postBox);
 
 			private:
 				//Thread functions
@@ -50,7 +50,7 @@ namespace Oyster
 				OysterMutex mutex;
 				std::mutex stdMutex;
 
-				IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox;
+				IPostBox<int>* postBox;
 
 			};
 		}

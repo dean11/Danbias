@@ -201,6 +201,7 @@ namespace Utility
 				T				*_ptr;
 
 				/** Destroys the pointer and returns the memory allocated. */
+				void Destroy();
 
 			public:
 				SmartPointer();
@@ -216,7 +217,6 @@ namespace Utility
 				operator T* ();
 				operator bool();
 				
-				void Destroy();
 				/**
 				*	Returns the connected pointer 
 				*/

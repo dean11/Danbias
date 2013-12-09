@@ -8,7 +8,7 @@ Listener::Listener()
 	connection = NULL;
 }
 
-Listener::Listener(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
+Listener::Listener(Oyster::Network::IPostBox<int>* postBox)
 {
 	connection = NULL;
 	this->postBox = postBox;
@@ -58,7 +58,7 @@ void Listener::Shutdown()
 	thread.Stop();
 }
 
-void Listener::SetPostBox(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
+void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
 {
 	stdMutex.lock();
 	//mutex.LockMutex();
@@ -69,10 +69,10 @@ void Listener::SetPostBox(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
 
 int Listener::Accept()
 {
-	SmartPointer<int> clientSocket = SmartPointer<int>(new int());
-	*clientSocket = connection->Listen();
+	int clientSocket = -1;
+	clientSocket = connection->Listen();
 
-	if(*clientSocket != -1)
+	if(clientSocket != -1)
 	{
 		stdMutex.lock();
 		//mutex.LockMutex();

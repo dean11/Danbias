@@ -15,7 +15,6 @@ namespace Oyster
 		{
 			class IServer
 			{
-				class ISession;
 			public:
 				struct INIT_DESC
 				{
@@ -30,9 +29,6 @@ namespace Oyster
 				virtual bool Start();
 				virtual bool Stop();
 				virtual bool Shutdown();
-
-				virtual void AddSession(ISession* session);
-				virtual void RemoveSession(ISession* session);
 
 				virtual bool IsStarted() const;
 

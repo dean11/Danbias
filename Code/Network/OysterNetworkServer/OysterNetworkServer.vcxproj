@@ -156,11 +156,13 @@
   <ItemGroup>
     <ClCompile Include="IServer.cpp" />
     <ClCompile Include="ServerMain.cpp" />
+    <ClCompile Include="TestClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IClient.h" />
     <ClInclude Include="IServer.h" />
-    <ClInclude Include="ISession.h" />
+    <ClInclude Include="RecieverObject.h" />
+    <ClInclude Include="TestClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

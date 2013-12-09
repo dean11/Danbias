@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Listener.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Messages\MessageHeader.cpp" />
     <ClCompile Include="Messages\MessagePlayerPos.cpp" />
     <ClCompile Include="Messages\MessageTest.cpp" />
