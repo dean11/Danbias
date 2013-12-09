@@ -46,7 +46,7 @@ namespace Network
 			float					netFloat;
 			double					netDouble;
 			char*					netCharPtr;
-
+			
 			NetAttributeValue(){ memset(this, 0, sizeof(NetAttributeValue)); }
 			NetAttributeValue(bool				v)	: netBool	(v) {}
 			NetAttributeValue(char				v)	: netChar	(v) {}
@@ -67,34 +67,19 @@ namespace Network
 			NetAttributeValue value;
 			NetAttributeContainer() { type = NetAttributeType_UNKNOWN; }
 		};
+		class CustomNetProtocol;
+		struct CustomProtocolObject
+		{
+			virtual CustomNetProtocol* GetProtocol() = 0;
+		};
+
 		class NET_PROTOCOL_EXPORT CustomNetProtocol
 		{
 		public:
 			CustomNetProtocol();
 			~CustomNetProtocol();
 
-			NetAttributeContainer* operator[](int ID);
-
-			NetAttributeContainer* BuildValue(NetAttributeContainer value, short attributeId);
-			NetAttributeContainer* BuildValue(NetAttributeValue value, NetAttributeType type, short attributeId);
-			NetAttributeContainer* BuildValue(const bool				& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const char				& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const unsigned char		& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const short				& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const unsigned short		& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const int					& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const unsigned int		& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const __int64				& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const unsigned __int64	& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const float				& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const double				& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const std::string			& attribute, short attributeId);
-			NetAttributeContainer* BuildValue(const char				* attribute, short attributeId);
-
-			//void SetArrayValue(NetAttributeContainer attribute[], unsigned int attributeCount, int attributeId);
-
-			NetAttributeContainer& GetSingleValue(int attributeID);
-			//NetAttributeContainer* GetArrayValue(int attributeID);
+			NetAttributeContainer& operator[](int ID);
 
 		private:
 			struct PrivateData;

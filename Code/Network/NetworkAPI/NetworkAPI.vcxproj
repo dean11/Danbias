@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{460D625F-2AC9-4559-B809-0BA89CEAEDF4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>NetworkProtocol</RootNamespace>
-    <ProjectName>NetworkProtocol</ProjectName>
+    <RootNamespace>NetworkAPI</RootNamespace>
+    <ProjectName>NetworkAPI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
