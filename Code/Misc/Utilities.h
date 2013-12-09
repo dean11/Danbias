@@ -231,6 +231,11 @@ namespace Utility
 				T* Get();
 				T* Get() const;
 
+				/**
+				*	Releases one reference of the pointer and set value to null, making the current SmartPointer invalid.
+				*/
+				int Release();
+
 				/** Checks if the pointer is valid (not NULL)
 				*	Returns true for valid, else false. 
 				*/

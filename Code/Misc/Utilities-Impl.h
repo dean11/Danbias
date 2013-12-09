@@ -228,10 +228,7 @@ namespace Utility
 		}
 		template<typename T> SmartPointer<T>::~SmartPointer()
 		{
-			if (this->_rc && this->_rc->Decref() == 0)
-			{
-				Destroy();
-			}
+			this->Release();
 		}
 		template<typename T> SmartPointer<T>& SmartPointer<T>::operator= (const SmartPointer<T>& p)
 		{
@@ -347,6 +344,20 @@ namespace Utility
 		template<typename T> inline T* SmartPointer<T>::Get()
 		{
 			return this->_ptr;
+		}
+		template<typename T> inline T* SmartPointer<T>::Get() const
+		{
+			return this->_ptr;
+		}
+		template<typename T> int SmartPointer<T>::Release()
+		{
+			int returnVal = 0;
+			
+			if(this->_rc && ((returnVal = this->_rc->Decref()) == 0))
+			{
+				Destroy();
+			}
+			return returnVal;
 		}
 		template<typename T> inline bool SmartPointer<T>::IsValid() const
 		{
