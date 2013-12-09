@@ -189,6 +189,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameClientState\GameState\C_UIobject.cpp" />
     <ClCompile Include="DanBiasGame_Impl.cpp" />
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameClientState\GameState\C_DynamicObj.cpp" />
@@ -200,6 +201,7 @@
     <ClCompile Include="GameClientState\C_Object.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameClientState\GameState\C_UIobject.h" />
     <ClInclude Include="GameClientState\GameState\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\GameClientState.h" />
     <ClInclude Include="GameClientState\GameState.h" />

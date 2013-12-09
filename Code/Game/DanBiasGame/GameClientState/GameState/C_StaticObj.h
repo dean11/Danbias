@@ -12,7 +12,7 @@ private:
 public:
 	C_StaticObj(void);
 	virtual ~C_StaticObj(void);
-	void Init();
+	void Init(ModelInitData modelInit);
 	void setPos();
 
 	void Render();

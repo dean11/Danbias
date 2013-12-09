@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DANBIAS_CLIENT_GAMECLIENTSTATE_H
+#define DANBIAS_CLIENT_GAMECLIENTSTATE_H
+
 #include "GameClientState.h"
 namespace DanBias
 {
@@ -18,3 +20,4 @@ public:
 	bool Render();
 	bool Release();
 };};};
+#endif // ! DANBIAS_CLIENT_GAMECLIENTSTATE_H

@@ -18,11 +18,13 @@ C_DynamicObj::~C_DynamicObj(void)
 {
 	 
 }
-void C_DynamicObj::Init()
+void C_DynamicObj::Init(ModelInitData modelInit)
 {
 	// load models
 	privData = new myData();
-	privData->model = Oyster::Graphics::API::CreateModel(L"crate");
+	privData->model = Oyster::Graphics::API::CreateModel(modelInit.modelPath);
+	privData->model->WorldMatrix = modelInit.world;
+	privData->model->Visible = modelInit.visible;
 }
 void C_DynamicObj::setPos()
 {

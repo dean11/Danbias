@@ -1,9 +1,10 @@
 #pragma once
+#include "../C_Object.h"
 namespace DanBias
 {
 	namespace Client
 	{
-class C_DynamicObj
+class C_DynamicObj : private C_Object
 {
 private:
 	struct myData;
@@ -11,7 +12,7 @@ private:
 public:
 	C_DynamicObj(void);
 	virtual ~C_DynamicObj(void);
-	void Init();
+	void Init(ModelInitData modelInit);
 	void setPos();
 
 	void Render();

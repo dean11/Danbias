@@ -13,7 +13,7 @@ private:
 public:
 	C_Player(void);
 	~C_Player(void);
-	void Init();
+	void Init(ModelInitData modelInit);
 	void setPos();
 
 	void Render();

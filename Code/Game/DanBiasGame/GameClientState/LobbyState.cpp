@@ -26,10 +26,16 @@ LobbyState::~LobbyState(void)
 }
 bool LobbyState::Init()
 {
+	ModelInitData modelData;
+
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	modelData.visible = true;
+	modelData.modelPath = L"crate";
 	// load models
 	privData = new myData();
 	privData->object = new C_StaticObj();
-	privData->object->Init();
+
+	privData->object->Init(modelData);
 
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);

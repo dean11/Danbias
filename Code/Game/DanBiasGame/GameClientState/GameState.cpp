@@ -22,10 +22,15 @@ GameState::~GameState(void)
 }
 bool GameState::Init()
 {
+	ModelInitData modelData;
+
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	modelData.visible = true;
+	modelData.modelPath = L"worldDummy";
 	// load models
 	privData = new myData();
 	privData->player = new C_Player;
-	privData->player->Init();
+	privData->player->Init(modelData);
 
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	Oyster::Graphics::API::SetProjection(privData->proj);

@@ -1,26 +1,24 @@
-
-#include "C_StaticObj.h"
+#include "C_UIobject.h"
 #include "DllInterfaces/GFXAPI.h"
 using namespace DanBias::Client;
 
-struct  C_StaticObj::myData
+struct  C_UIobject::myData
 {
 	myData(){}
+	Oyster::Math3D::Float4x4 view;
+	Oyster::Math3D::Float4x4 proj; 
 	Oyster::Graphics::Model::Model *model;
-	// light
-	// sound
-	// effect
 }privData;
-C_StaticObj::C_StaticObj(void)
+
+C_UIobject::C_UIobject(void)
 {
 }
 
 
-C_StaticObj::~C_StaticObj(void)
+C_UIobject::~C_UIobject(void)
 {
-	
 }
-void C_StaticObj::Init(ModelInitData modelInit)
+void C_UIobject::Init(ModelInitData modelInit)
 {
 	// load models
 	privData = new myData();
@@ -29,16 +27,16 @@ void C_StaticObj::Init(ModelInitData modelInit)
 	privData->model->Visible = modelInit.visible;
 
 }
-void C_StaticObj::setPos()
+void C_UIobject::setPos()
 {
 
 }
 
-void C_StaticObj::Render()
+void C_UIobject::Render()
 {
 	Oyster::Graphics::API::RenderModel(*(privData->model));
 }
-void C_StaticObj::Release()
+void C_UIobject::Release()
 {
 	Oyster::Graphics::API::DeleteModel(privData->model);
 	delete privData; 

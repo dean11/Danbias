@@ -20,11 +20,15 @@ C_Player::~C_Player(void)
 	 
 }
 
-void C_Player::Init()
+void C_Player::Init(ModelInitData modelInit)
 {
 	// load models
 	privData = new myData();
-	privData->model = Oyster::Graphics::API::CreateModel(L"crate");
+	privData->model = Oyster::Graphics::API::CreateModel(modelInit.modelPath);
+	privData->model->WorldMatrix = modelInit.world;
+	privData->model->Visible = modelInit.visible;
+
+
 }
 void C_Player::setPos()
 {
