@@ -12,6 +12,8 @@
 #include "../../Misc/Thread/OysterMutex.h"
 #include "../../Misc/Utilities.h"
 
+#include <mutex>
+
 namespace Oyster
 {
 	namespace Network
@@ -25,7 +27,7 @@ namespace Oyster
 			ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *postBox, unsigned int socket);
 			virtual ~ThreadedClient();
 
-			int Send(Utility::DynamicMemory::SmartPointer<OysterByte>& byte);
+			void Send(Utility::DynamicMemory::SmartPointer<OysterByte>& byte);
 
 			int Connect(unsigned short port, const char serverName[]);
 
@@ -44,7 +46,7 @@ namespace Oyster
 			IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *sendPostBox;
 			IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *recvPostBox;
 			Oyster::Thread::OysterThread thread;
-			OysterMutex mutex;
+			std::mutex stdMutex;
 
 		};
 	}

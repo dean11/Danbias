@@ -48,6 +48,7 @@ namespace Oyster
 
 				::Oyster::Thread::OysterThread thread;
 				OysterMutex mutex;
+				std::mutex stdMutex;
 
 				IPostBox<Utility::DynamicMemory::SmartPointer<int>>* postBox;
 

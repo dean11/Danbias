@@ -76,6 +76,12 @@ int main()
 	t.Pack(test, sendBuffer);
 	
 	WinTimer timer;
+	
+	/* DEBUGGING: Connect 25 clients
+	for(int i = 0; i < 25; i++)
+	{
+		clients.push_back(new ThreadedClient(recvPostBox, 1));
+	}*/
 
 	SmartPointer<int> client = int();
 	while(1)

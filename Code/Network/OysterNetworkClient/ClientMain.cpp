@@ -95,6 +95,7 @@ void chat(ThreadedClient &client)
 			timer.reset();
 			client.Send(msgSend);
 		}
+		Sleep(1);
 	}
 
 	delete postBox;

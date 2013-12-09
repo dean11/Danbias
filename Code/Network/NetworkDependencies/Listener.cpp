@@ -60,9 +60,11 @@ void Listener::Shutdown()
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<SmartPointer<int>>* postBox)
 {
-	mutex.LockMutex();
+	stdMutex.lock();
+	//mutex.LockMutex();
 	this->postBox = postBox;
-	mutex.UnlockMutex();
+	//mutex.UnlockMutex();
+	stdMutex.unlock();
 }
 
 int Listener::Accept()
@@ -72,9 +74,11 @@ int Listener::Accept()
 
 	if(*clientSocket != -1)
 	{
-		mutex.LockMutex();
+		stdMutex.lock();
+		//mutex.LockMutex();
 		postBox->PostMessage(clientSocket);
-		mutex.UnlockMutex();
+		//mutex.UnlockMutex();
+		stdMutex.unlock();
 	}
 
 	return clientSocket;
