@@ -32,7 +32,7 @@ struct Player::PrivateData
 	PLAYER_STATE playerState;
 
 	ICustomBody *rigidBody;
-
+	
 }myData;
 
 Player::Player()
@@ -110,10 +110,10 @@ bool Player::IsIdle()
 	return (myData->playerState == PLAYER_STATE_IDLE);
 }
 
-//Oyster::Math::Float3 Player::GetPos()
-//{
-//	return myData->rigidBody->GetCenter();
-//}
+Oyster::Math::Float3 Player::GetPos()
+{
+	return myData->rigidBody->GetCenter();
+}
 
 /********************************************************
 * Respawns the player on a new chosen position

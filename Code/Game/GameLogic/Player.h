@@ -4,6 +4,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "GameLogicStates.h"
+#include "OysterMath.h"
 
 namespace GameLogic
 {
@@ -23,7 +24,7 @@ namespace GameLogic
 		bool IsJumping();
 		bool IsIdle();
 
-		//Oyster::Math::Float3 GetPos();
+		Oyster::Math::Float3 GetPos();
 		void Respawn();
 
 	private:

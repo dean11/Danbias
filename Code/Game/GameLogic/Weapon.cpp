@@ -14,7 +14,7 @@ struct Weapon::PrivateData
 
 	~PrivateData()
 	{
-
+		delete SelectedAttatchment;
 	}
 
 	WEAPON_STATE weaponState;
@@ -38,7 +38,7 @@ Weapon::~Weapon(void)
 }
 
 /********************************************************
-* Uses the weapon based on the input given and the current state of the weapon
+* Uses the weapon based on the input given and the current chosen attatchment
 ********************************************************/
 void Weapon::UseWeapon(const WEAPON_FIRE &fireInput)
 {

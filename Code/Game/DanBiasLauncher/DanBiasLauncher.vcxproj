@@ -110,8 +110,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>Input_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;DanBiasGame_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>Input_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;DanBiasGame_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -194,9 +194,6 @@
     </ProjectReference>
     <ProjectReference Include="..\DanBiasServer\DanBiasServer.vcxproj">
       <Project>{52380daa-0f4a-4d97-8e57-98df39319caf}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GameLogic\GameLogic.vcxproj">
-      <Project>{b1195bb9-b3a5-47f0-906c-8dea384d1520}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
