@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DANBIAS_CLIENT_COBJECT_H
+#define DANBIAS_CLIENT_COBJECT_H
 #include "DllInterfaces/GFXAPI.h"
 namespace DanBias
 {
@@ -24,4 +25,4 @@ public:
 	virtual void Render() = 0;
 	virtual void Release() = 0;
 };};};
-
+#endif

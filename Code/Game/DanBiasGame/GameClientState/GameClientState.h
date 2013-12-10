@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DANBIAS_CLIENT_GAMECLIENTSTATE_H
+#define DANBIAS_CLIENT_GAMECLIENTSTATE_H
+
 #define NOMINMAX
 #include "L_inputClass.h"
 
@@ -27,3 +29,4 @@ public:
 };
 };
 };
+#endif

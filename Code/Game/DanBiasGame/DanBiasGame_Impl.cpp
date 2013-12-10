@@ -32,6 +32,7 @@ namespace DanBias
 
 		public:
 		 Client::GameClientState* gameClientState;
+		 // gameClient; 
 
 	} data;
 #pragma endregion
@@ -174,6 +175,7 @@ namespace DanBias
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
 		inputObj->Update();
+
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
 		state = m_data->gameClientState->Update(deltaTime, inputObj);
 
@@ -195,7 +197,7 @@ namespace DanBias
 				return E_FAIL;
 				break;
 			}
-			m_data->gameClientState->Init();
+			m_data->gameClientState->Init(); // send game client
 				 
 		}
 		return S_OK;
@@ -208,17 +210,12 @@ namespace DanBias
 		{
 			isPressed = 1;
 		}
-
-		
-		//Oyster::Graphics::API::NewFrame(Oyster::Math3D::Float4x4::null, Oyster::Math3D::Float4x4::null);
 		
 		wchar_t title[255];
 		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
 		SetWindowText(g_hWnd, title);
 	
 		m_data->gameClientState->Render();
-		
-		//Oyster::Graphics::API::EndFrame();
 
 		return S_OK;
 	}
