@@ -56,7 +56,7 @@ WindowShell::~WindowShell()
 
 
 
-bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
+bool WindowShell::createWin(WINDOW_INIT_DESC &desc)
 {
 	if(pData->hWnd)
 	{
@@ -68,14 +68,15 @@ bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
 		MessageBox(0, L"No callback function for window messages was found!" ,L"Error", 0);
 		return false;
 	}
-	if(!desc.hInstance)
-	{
-		MessageBox(0, L"No HINSTANCE was specified!" ,L"Error", 0);
-		return false;
-	}
-	if(desc.windowSize < 0)
+	if(desc.windowSize.x < 0 || desc.windowSize.y < 0)
 	{
 		MessageBox(0, L"Size specified for window is invalid!" ,L"Error", 0);
+		return false;
+	}
+
+	if(!desc.hInstance)
+	{
+		desc.hInstance = GetModuleHandle(0);
 	}
 
 
@@ -87,7 +88,7 @@ bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
 	WNDCLASSEX wc;
 	wc.cbSize		 = sizeof(WNDCLASSEX);
 	wc.hIconSm		= NULL;
-	wc.style         = CS_HREDRAW | CS_VREDRAW;
+	wc.style         = desc.windowClassStyle;
 	wc.lpfnWndProc   = desc.windowProcCallback; 
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = 0;
@@ -112,7 +113,7 @@ bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
 	pData->hWnd = CreateWindow(	
 								L"MainWindowClass" , 
 								desc.windowName.c_str(),
-								WS_OVERLAPPEDWINDOW, 
+								desc.windowStyle, 
 								desc.windowPosition.x, 
 								desc.windowPosition.y, 
 								desc.windowSize.x, 
@@ -138,7 +139,7 @@ bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
 	
 	return true;
 }
-int WindowShell::createChildWin(INIT_DESC_CHILD_WINDOW &desc)
+int WindowShell::createChildWin(CHILD_WINDOW_INIT_DESC &desc)
 {
 	ChildWin win;
 

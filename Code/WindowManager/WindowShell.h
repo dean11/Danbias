@@ -5,72 +5,45 @@
 #include <string>
 
 
-struct Point2D
-{
-	int x;
-	int y;
-	Point2D()
-	{
-		x = 0;
-		y = 0;
-	}
-	Point2D(int _x, int _y)
-	{
-		x = _x;
-		y = _y;
-	}
-	Point2D(int _p)
-	{
-		x = _p;
-		y = _p;
-	}
-	operator POINT() const
-	{
-		return Point2D(x, y);
-	}
-	bool operator<(int i)
-	{
-		bool a = x<i;
-		bool b = y<i;
-		return (a || b);
-	}
-};
-
 class WindowShell
 {
 	public:
-		struct INIT_DESC_WINDOW
+		struct WINDOW_INIT_DESC
 		{
 			HINSTANCE			hInstance;
 			std::wstring		windowName;
-			Point2D				windowSize;
-			Point2D				windowPosition;
+			POINT				windowSize;
+			POINT				windowPosition;
 			WNDPROC				windowProcCallback;
+			UINT				windowClassStyle;
+			UINT				windowStyle;
 							
-			INIT_DESC_WINDOW()
+			WINDOW_INIT_DESC()
 			{
 				hInstance			= NULL;
-				windowName			= L"Child window";
+				windowName			= L"MADAFACKA";
 				windowSize.x		= 800;
 				windowSize.y		= 600;
 				windowPosition.x	= 0;
 				windowPosition.y	= 0;
 				windowProcCallback	= NULL;
+				windowClassStyle	= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+				windowStyle			= WS_OVERLAPPEDWINDOW;
 			}
 		};
-		struct INIT_DESC_CHILD_WINDOW
+		struct CHILD_WINDOW_INIT_DESC
 		{
 			std::wstring	name;
 			DWORD			style;
-			Point2D			topLeftPos;
-			Point2D			windowSize;
+			POINT			topLeftPos;
+			POINT			windowSize;
 			WNDPROC			windowProcCallback;
 
-			INIT_DESC_CHILD_WINDOW()
+			CHILD_WINDOW_INIT_DESC()
 			{
 				name				= L"Child Window";
 				style				= WS_CHILD;
-				topLeftPos			= Point2D(0,0);
+				memset(&topLeftPos, 0, sizeof(POINT));
 				windowSize.x		= 300;
 				windowSize.y		= 200;
 				windowProcCallback	= NULL;
@@ -94,9 +67,9 @@ class WindowShell
 		const int		getChildID			(HWND hwnd) const;
 
 		/* Creates an empty window */
-		bool			createWin			(INIT_DESC_WINDOW&);
+		bool			createWin			(WINDOW_INIT_DESC&);
 		/*Creates a child window and returns the id of child window or -1 if failed*/
-		int				createChildWin		(INIT_DESC_CHILD_WINDOW&);
+		int				createChildWin		(CHILD_WINDOW_INIT_DESC&);
 		/* Removes a child window */
 		bool			removeChild			(int id);
 		/* Removes a child window */

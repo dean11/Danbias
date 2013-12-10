@@ -2,6 +2,8 @@
 #include "../Resources/Resources.h"
 #include "../../Definitions/GraphicalDefinition.h"
 #include "../../Model/ModelInfo.h"
+#include <map>
+#include <vector>
 
 namespace Oyster
 {
@@ -60,7 +62,8 @@ namespace Oyster
 				}
 				void Basic::EndFrame()
 				{
-					Core::swapChain->Present(0,0);
+					IDXGISwapChain* chain = Core::swapChain;
+					chain->Present(0,0);
 				}
 			}
 		}

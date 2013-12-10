@@ -4,12 +4,11 @@
 #include "OysterMath.h"
 #include <Windows.h>
 
-#if defined GFX_DLL_EXPORT
+#ifdef GFX_DLL_EXPORT
 	#define GFX_DLL_USAGE __declspec(dllexport)
 #else
-	#define GFX_DLL_USAGE __declspec(dllimport)
+	#define GFX_DLL_USAGE
 #endif
-
 
 namespace Oyster
 {
@@ -29,9 +28,14 @@ namespace Oyster
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
 			static void Clean();
-			//! @brief from Oyster::Math Float4x4, expects corect methods
-			static void NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection);
-			static void RenderScene(Oyster::Graphics::Model::Model* models, int count);
+
+			static void SetView(Oyster::Math::Float4x4& View);
+			static void SetProjection(Oyster::Math::Float4x4& Projection);
+
+			//! @brief will internally use last values from SetView and SetProjection
+			static void NewFrame();
+			static void RenderScene(Oyster::Graphics::Model::Model models[], int count);
+			static void RenderModel(Oyster::Graphics::Model::Model& model);
 			static void EndFrame();
 
 			static Oyster::Graphics::Model::Model* CreateModel(std::wstring filename);
