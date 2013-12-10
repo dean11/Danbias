@@ -21,7 +21,7 @@ OysterByte::OysterByte(const OysterByte& obj)
 	//delete[] this->byteArray;
 	this->byteArray = new unsigned char[obj.capacity];
 
-	for(int i = 0; i < obj.size; i++)
+	for(int i = 0; i < (int)obj.size; i++)
 	{
 		this->byteArray[i] = obj.byteArray[i];
 	}
@@ -85,7 +85,7 @@ OysterByte& OysterByte::operator =(const OysterByte& obj)
 	delete[] this->byteArray;
 	this->byteArray = new unsigned char[obj.capacity];
 
-	for(int i = 0; i < obj.size; i++)
+	for(int i = 0; i < (int)obj.size; i++)
 	{
 		this->byteArray[i] = obj.byteArray[i];
 	}

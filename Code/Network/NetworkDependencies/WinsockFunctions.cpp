@@ -24,7 +24,7 @@ std::wstring GetErrorMessage(int errorCode)
 		(LPWSTR)&lpMessage,
 		0 ,
 		NULL );
-	
+
 	if(bufLen)
 	{
 		retVal = lpMessage;

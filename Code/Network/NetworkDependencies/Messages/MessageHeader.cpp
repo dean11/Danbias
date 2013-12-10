@@ -130,7 +130,7 @@ void MessageHeader::PackDouble(double i, OysterByte& bytes)
 
 void MessageHeader::PackStr(char str[], OysterByte& bytes)
 {
-	int totalSize = 2 + strlen(str);
+	int totalSize = 2 + (int)strlen(str);
 	bytes.AddSize(totalSize);
 	Packing::Pack(&bytes.GetByteArray()[size], str);
 	size += totalSize;
@@ -138,7 +138,7 @@ void MessageHeader::PackStr(char str[], OysterByte& bytes)
 
 void MessageHeader::PackStr(std::string str, OysterByte& bytes)
 {
-	int totalSize = 2 + str.length();
+	int totalSize = 2 + (int)str.length();
 	bytes.AddSize(totalSize);
 	Packing::Pack(&bytes.GetByteArray()[size], str);
 	size += totalSize;
@@ -243,7 +243,7 @@ double MessageHeader::UnpackDouble(OysterByte& bytes)
 std::string MessageHeader::UnpackStr(OysterByte& bytes)
 {
 	std::string str = Packing::UnpackStr(&bytes.GetByteArray()[size]);
-	size += 2 + str.length();
+	size += 2 + (int)str.length();
 	return str;
 }
 

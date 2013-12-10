@@ -135,9 +135,9 @@ int Connection::Recieve(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 int Connection::Listen()
 {
 	int clientSocket;
-	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
+	if((clientSocket = (int)accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{
-		return INVALID_SOCKET;//WSAGetLastError();
+		return (int)INVALID_SOCKET;//WSAGetLastError();
 	}
 
 	return clientSocket;
@@ -148,7 +148,7 @@ int Connection::Listen()
 ///////////////////////////////////////
 int Connection::InitiateSocket()
 {
-	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
+	this->socket = (int)::socket(AF_INET, SOCK_STREAM, 0);
 	if(this->socket == SOCKET_ERROR)
 	{
 		return WSAGetLastError();

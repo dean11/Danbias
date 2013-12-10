@@ -1,7 +1,9 @@
-#include "IServer.h"
+#include "NetworkServer.h"
+#include "NetworkClient.h"
+
 #include "../NetworkDependencies/Listener.h"
-#include "IClient.h"
 #include "../NetworkDependencies/PostBox.h"
+
 #include "../../Misc/Utilities.h"
 #include "../../Misc/Thread/OysterThread.h"
 
@@ -14,7 +16,7 @@ using namespace Oyster::Thread;
 			PrivateData
 *************************************/
 
-struct IServer::PrivateData : public IThreadObject
+struct NetworkServer::PrivateData : public IThreadObject
 {
 	PrivateData();
 	~PrivateData();
@@ -41,19 +43,19 @@ struct IServer::PrivateData : public IThreadObject
 
 };
 
-IServer::PrivateData::PrivateData()
+NetworkServer::PrivateData::PrivateData()
 {
 	listener = 0;
 	started = false;
 	postBox = new PostBox<int>;
 }
 
-IServer::PrivateData::~PrivateData()
+NetworkServer::PrivateData::~PrivateData()
 {
 	Shutdown();
 }
 
-bool IServer::PrivateData::Init(INIT_DESC& initDesc)
+bool NetworkServer::PrivateData::Init(INIT_DESC& initDesc)
 {
 	//Check if it's a valid port
 	if(initDesc.port == 0)
@@ -72,7 +74,7 @@ bool IServer::PrivateData::Init(INIT_DESC& initDesc)
 	return true;
 }
 
-bool IServer::PrivateData::Start()
+bool NetworkServer::PrivateData::Start()
 {
 	//Start listener
 	((Listener*)listener)->Start();
@@ -83,7 +85,7 @@ bool IServer::PrivateData::Start()
 	return true;
 }
 
-bool IServer::PrivateData::Stop()
+bool NetworkServer::PrivateData::Stop()
 {
 	if(listener)
 	{
@@ -97,7 +99,7 @@ bool IServer::PrivateData::Stop()
 	return true;
 }
 
-bool IServer::PrivateData::Shutdown()
+bool NetworkServer::PrivateData::Shutdown()
 {
 	//Stop server main thread
 	thread.Stop();
@@ -120,7 +122,7 @@ bool IServer::PrivateData::Shutdown()
 }
 
 //Checks for new clients and sends them to the proc function.
-void IServer::PrivateData::CheckForNewClient()
+void NetworkServer::PrivateData::CheckForNewClient()
 {
 	if(postBox->IsFull())
 	{
@@ -133,13 +135,16 @@ void IServer::PrivateData::CheckForNewClient()
 			return;
 		}
 
-		//Create the new client
-		IClient* client = new IClient();
-		initDesc.proc(client);
+		//Create client and Proc function if the pointer is not NULL
+		if(initDesc.proc)
+		{
+			Oyster::Network::NetworkClient* client = new Oyster::Network::NetworkClient();
+			initDesc.proc((NetworkClient*)client);
+		}
 	}
 }
 
-bool IServer::PrivateData::DoWork()
+bool NetworkServer::PrivateData::DoWork()
 {
 	CheckForNewClient();
 
@@ -147,15 +152,15 @@ bool IServer::PrivateData::DoWork()
 }
 
 /*************************************
-			IServer
+			NetworkServer
 *************************************/
 
-IServer::IServer()
+NetworkServer::NetworkServer()
 {
 	privateData = new PrivateData();
 }
 
-IServer::~IServer()
+NetworkServer::~NetworkServer()
 {
 	if(privateData)
 	{
@@ -163,35 +168,35 @@ IServer::~IServer()
 	}
 }
 
-bool IServer::Init(INIT_DESC& initDesc)
+bool NetworkServer::Init(INIT_DESC& initDesc)
 {
 	privateData->Init(initDesc);
 
 	return true;
 }
 
-bool IServer::Start()
+bool NetworkServer::Start()
 {
 	privateData->Start();
 
 	return true;
 }
 
-bool IServer::Stop()
+bool NetworkServer::Stop()
 {
 	privateData->Stop();
 
 	return true;
 }
 
-bool IServer::Shutdown()
+bool NetworkServer::Shutdown()
 {
 	privateData->Shutdown();
 
 	return true;
 }
 
-bool IServer::IsStarted() const
+bool NetworkServer::IsStarted() const
 {
 	return privateData->started;
 }

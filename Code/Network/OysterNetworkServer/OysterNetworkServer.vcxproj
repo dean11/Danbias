@@ -149,18 +149,18 @@
     <ProjectReference Include="..\..\Misc\Misc.vcxproj">
       <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\NetworkAPI\NetworkAPI.vcxproj">
+      <Project>{460d625f-2ac9-4559-b809-0ba89ceaedf4}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\NetworkDependencies\NetworkDependencies.vcxproj">
       <Project>{c5aa09d0-6594-4cd3-bd92-1d380c7b3b50}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IServer.cpp" />
     <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="TestClass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IClient.h" />
-    <ClInclude Include="IServer.h" />
     <ClInclude Include="RecieverObject.h" />
     <ClInclude Include="TestClass.h" />
   </ItemGroup>

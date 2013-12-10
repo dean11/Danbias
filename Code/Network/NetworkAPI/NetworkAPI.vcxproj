@@ -161,9 +161,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CustomNetProtocol.cpp" />
+    <ClCompile Include="NetworkServer.cpp" />
+    <ClCompile Include="NetworkClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomNetProtocol.h" />
+    <ClInclude Include="NetworkServer.h" />
+    <ClInclude Include="NetworkClient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetworkDependencies\NetworkDependencies.vcxproj">
+      <Project>{c5aa09d0-6594-4cd3-bd92-1d380c7b3b50}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

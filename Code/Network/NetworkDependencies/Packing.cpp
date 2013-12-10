@@ -100,7 +100,7 @@ namespace Oyster
 			//string
 			void Pack(unsigned char buffer[], char str[])
 			{
-				short len = strlen(str);
+				short len = (short)strlen(str);
 				Pack(buffer, len);
 				buffer += 2;
 				memcpy(buffer, str, len);
@@ -108,7 +108,7 @@ namespace Oyster
 
 			void Pack(unsigned char buffer[], std::string& str)
 			{
-				short len = str.length();
+				short len = (short)str.length();
 				Pack(buffer, len);
 				buffer += 2;
 				memcpy(buffer, str.c_str(), len);
