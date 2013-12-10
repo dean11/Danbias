@@ -166,10 +166,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AttatchmentMassDriver.h" />
+    <ClInclude Include="AttatchmentSocket.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="GameMode.h" />
+    <ClInclude Include="IAttatchment.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
@@ -178,10 +181,13 @@
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AttatchmentMassDriver.cpp" />
+    <ClCompile Include="AttatchmentSocket.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="IAttatchment.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />

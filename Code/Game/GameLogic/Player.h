@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////
 #ifndef PLAYER_H
 #define PLAYER_H
+#include "GameLogicStates.h"
+#include "OysterMath.h"
 
 namespace GameLogic
 {
@@ -13,14 +15,18 @@ namespace GameLogic
 		Player(void);
 		~Player(void);
 
-		/********************************************************
-		* Update the position of the rigid body
-		* This will be done with physics later
-		********************************************************/
 		void Update();
-		void Move();
-		void Shoot();
-	
+		void Move(const PLAYER_MOVEMENT &movement);
+		void Shoot(const WEAPON_FIRE &fireInput);
+		void Jump();
+
+		bool IsWalking();
+		bool IsJumping();
+		bool IsIdle();
+
+		Oyster::Math::Float3 GetPos();
+		void Respawn();
+
 	private:
 		struct PrivateData;
 		PrivateData *myData;

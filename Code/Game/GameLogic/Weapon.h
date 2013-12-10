@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////
 #ifndef WEAPON_H
 #define WEAPON_H
+#include "GameLogicStates.h"
 
 namespace GameLogic
 {
@@ -11,10 +12,20 @@ namespace GameLogic
 	{
 
 	public:
+		
+
 		Weapon(void);
 		~Weapon(void);
 
-	private:
+		void UseWeapon(const WEAPON_FIRE &fireInput);
+
+
+		bool IsFireing();
+		bool IsIdle();
+		bool IsReloading();
+
+
+	private:	
 		struct PrivateData;
 		PrivateData *myData;
 	};
