@@ -27,7 +27,7 @@ namespace Oyster
 
 				bool Init(unsigned int port);
 				bool Init(unsigned int port, bool start);
-				void Start();
+				bool Start();
 				void Stop();
 
 				void Shutdown();

@@ -1,3 +1,8 @@
+#ifndef INCLUDE_WINSOCK_LIB
+#define INCLUDE_WINSOCK_LIB
+	#pragma comment(lib, "ws2_32.lib")
+#endif
+
 #include "WinsockFunctions.h"
 #include <WinSock2.h>
 

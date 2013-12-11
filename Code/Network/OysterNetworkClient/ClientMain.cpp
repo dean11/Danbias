@@ -2,7 +2,6 @@
 #include <WinSock2.h>
 #include <vld.h>
 #include "../NetworkDependencies/WinsockFunctions.h"
-#include "..\NetworkDependencies\Translator.h"
 #include "..\NetworkDependencies\Protocols.h"
 #include "../NetworkDependencies/OysterByte.h"
 #include "../../Misc/ThreadSafeQueue.h"
@@ -44,6 +43,12 @@ int main()
 	}
 
 	chat(*client);
+
+	while(1)
+	{
+
+	}
+
 	delete client;
 
 	ShutdownWinSock();
@@ -54,10 +59,10 @@ int main()
 
 void chat(ThreadedClient &client)
 {
-	Oyster::Network::Translator *t = new Oyster::Network::Translator();
+	/*Oyster::Network::Translator *t = new Oyster::Network::Translator();
 	IPostBox< SmartPointer<OysterByte >> *postBox = new PostBox< SmartPointer<OysterByte >>;
 
-	client.setRecvPostBox(postBox);
+	//client.setRecvPostBox(postBox);
 
 	SmartPointer<OysterByte> msgRecv = new OysterByte();
 	SmartPointer<OysterByte> msgSend = new OysterByte();
@@ -80,7 +85,7 @@ void chat(ThreadedClient &client)
 	while(1)
 	{
 		//Fetch new messages from the postbox
-		if(postBox->FetchMessage(msgRecv))
+		//if(postBox->FetchMessage(msgRecv))
 		{
 			t->Unpack(set, msgRecv);
 
@@ -93,14 +98,14 @@ void chat(ThreadedClient &client)
 		{
 			cout << "Sending to server." << endl;
 			timer.reset();
-			client.Send(msgSend);
+			//client.Send(msgSend);
 		}
 		Sleep(1);
 	}
 
 	delete postBox;
 	delete t;
-	delete set;
+	delete set;*/
 }
 
 void PrintOutMessage(ProtocolSet* set)

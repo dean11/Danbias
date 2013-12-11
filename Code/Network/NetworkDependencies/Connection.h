@@ -24,12 +24,15 @@ namespace Oyster
 			virtual int InitiateClient();
 
 			virtual int Send( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
-			virtual int  Recieve( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
+			virtual int Recieve( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
 
 			virtual int Disconnect();
 			virtual int Connect( unsigned short port , const char serverName[] );
 			
 			virtual int  Listen();
+
+			bool IsSending();
+			bool IsConnected();
 
 			//Setting the socket to blocking/non-blocking mode.
 			int SetBlockingMode( bool blocking );

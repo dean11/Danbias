@@ -3,8 +3,8 @@
 /////////////////////////////////////////////////////////////////////
 #include "CustomNetProtocol.h"
 #include <map>
-
-using namespace Network;
+#include "Translator.h"
+using namespace Oyster::Network;
 
 
 struct CustomNetProtocol::PrivateData

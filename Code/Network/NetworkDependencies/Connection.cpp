@@ -94,9 +94,14 @@ int Connection::InitiateClient()
 
 int Connection::Disconnect()
 {
-	closesocket(this->socket);
+	int result = closesocket(this->socket);
 
-	return WSAGetLastError();
+	if(result == SOCKET_ERROR)
+	{
+		return WSAGetLastError();
+	}
+
+	return 0;
 }
 
 int Connection::Send(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
@@ -117,9 +122,10 @@ int Connection::Recieve(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 	int nBytes;
 
 	bytes->Resize(1000);
-	nBytes = recv(this->socket, *bytes , 500, 0);
+	nBytes = recv(this->socket, *bytes, 1000, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
+		bytes->SetSize(0);
 		return WSAGetLastError();
 	}
 	else
@@ -127,11 +133,10 @@ int Connection::Recieve(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 		bytes->SetSize(nBytes);
 	}
 
-	std::cout << "Size of the recieved data: " << nBytes << " bytes" << std::endl;
-
 	return 0;
 }
 
+//Listen will only return the correct socket or -1 for failure.
 int Connection::Listen()
 {
 	int clientSocket;
@@ -143,18 +148,14 @@ int Connection::Listen()
 	return clientSocket;
 }
 
-///////////////////////////////////////
-//Private functions
-///////////////////////////////////////
-int Connection::InitiateSocket()
+bool Connection::IsSending()
 {
-	this->socket = (int)::socket(AF_INET, SOCK_STREAM, 0);
-	if(this->socket == SOCKET_ERROR)
-	{
-		return WSAGetLastError();
-	}
+	return stillSending;
+}
 
-	return 0;
+bool Connection::IsConnected()
+{
+	return !closed;
 }
 
 int Connection::SetBlockingMode(bool blocking)
@@ -172,6 +173,20 @@ int Connection::SetBlockingMode(bool blocking)
 
 	int result = ioctlsocket(this->socket, FIONBIO, &nonBlocking);
 	if(result != 0)
+	{
+		return WSAGetLastError();
+	}
+
+	return 0;
+}
+
+///////////////////////////////////////
+//Private functions
+///////////////////////////////////////
+int Connection::InitiateSocket()
+{
+	this->socket = (int)::socket(AF_INET, SOCK_STREAM, 0);
+	if(this->socket == SOCKET_ERROR)
 	{
 		return WSAGetLastError();
 	}

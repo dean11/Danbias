@@ -1,9 +1,8 @@
 #include "TestClass.h"
 #include "../../Misc/WinTimer.h"
 #include <iostream>
-
+/*
 using namespace Oyster::Network;
-using namespace ::Server;
 using namespace ::Protocols;
 using namespace Utility;
 using namespace ::DynamicMemory;
@@ -18,7 +17,6 @@ Test::Test()
 
 	NetworkServer::INIT_DESC initDesc;
 	initDesc.port = 9876;
-	initDesc.proc = NULL;
 	server.Init(initDesc);
 	server.Start();
 
@@ -32,7 +30,7 @@ Test::Test()
 		test.matrix[i] = (float)i;
 	}
 
-	t.Pack(test, sendBuffer);
+	//t.Pack(test, sendBuffer);
 }
 
 Test::~Test()
@@ -43,7 +41,7 @@ Test::~Test()
 	server.Stop();
 }
 
-void Test::ProcFunc(Utility::DynamicMemory::SmartPointer<Oyster::Network::OysterByte> msg)
+void Test::ProcFunction(CustomNetProtocol& protocol)
 {
 
 	return;
@@ -83,4 +81,4 @@ void Test::PrintOutMessage(ProtocolSet* set)
 		cout << endl;
 		break;
 	}
-}
+}*/
