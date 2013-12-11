@@ -95,7 +95,7 @@ void OBJReader::readOBJFile( std::wstring fileName )
 
 	inStream.close();
 
-	Mat = Oyster::Resource::OysterResource::LoadResource((fileName + L".jpg").c_str(),Oyster::Graphics::Loading::LoadTexture);
+	Mat = Oyster::Resource::OysterResource::LoadResource((fileName + L".png").c_str(),Oyster::Graphics::Loading::LoadTexture);
 }
 
 Oyster::Graphics::Model::ModelInfo* OBJReader::toModel()

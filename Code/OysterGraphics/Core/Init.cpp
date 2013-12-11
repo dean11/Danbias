@@ -32,7 +32,8 @@ namespace Oyster
 			log << "DirectX running in debug mode.\n";
 				createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 			#endif
-
+			
+			createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 
 			D3D_FEATURE_LEVEL featureLevelsToTry[] = 
 			{

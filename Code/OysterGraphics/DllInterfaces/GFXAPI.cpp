@@ -4,11 +4,18 @@
 #include "../Render/Rendering/Render.h"
 #include "../FileLoader/ObjReader.h"
 #include "../../Misc/Resource/OysterResource.h"
+#include "../FileLoader/GeneralLoader.h"
 
 namespace Oyster
 {
 	namespace Graphics
 	{
+		namespace
+		{
+			Math::Float4x4 View;
+			Math::Float4x4 Projection;
+		}
+
 		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
 		{
 			Core::resolution = resulotion;
@@ -26,14 +33,29 @@ namespace Oyster
 			return API::Sucsess;
 		}
 
-		void API::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection)
+		void API::SetProjection(Math::Float4x4& projection)
+		{
+			Projection = projection;
+		}
+
+		void API::SetView(Math::Float4x4& view)
+		{
+			View = view;
+		}
+
+		void API::NewFrame()
 		{
 			Render::Rendering::Basic::NewFrame(View, Projection);
 		}
 
-		void API::RenderScene(Model::Model* models, int count)
+		void API::RenderScene(Model::Model models[], int count)
 		{
 			Render::Rendering::Basic::RenderScene(models,count);
+		}
+
+		void API::RenderModel(Model::Model& m)
+		{
+			Render::Rendering::Basic::RenderScene(&m,1);
 		}
 
 		void API::EndFrame()
@@ -52,9 +74,7 @@ namespace Oyster
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
 
-			OBJReader or;
-			or.readOBJFile(filename);
-			m->info = or.toModel();
+			m->info = Oyster::Resource::OysterResource::LoadResource(filename.c_str(),Oyster::Graphics::Loading::LoadOBJ);
 
 			return m;
 		}
@@ -63,7 +83,7 @@ namespace Oyster
 		{
 			Model::ModelInfo* info = (Model::ModelInfo*)model->info;
 			delete model;
-			info->Vertices->~Buffer();
+			Oyster::Resource::OysterResource::ReleaseResource((Oyster::Resource::OHRESOURCE)info);
 		}
 
 		void API::Clean()
@@ -72,6 +92,14 @@ namespace Oyster
 			Oyster::Resource::OysterResource::Clean();
 			Oyster::Graphics::Core::ShaderManager::Clean();
 			Oyster::Graphics::Render::Resources::Clean();
+
+			SAFE_RELEASE(Core::depthStencil);
+			SAFE_RELEASE(Core::backBufferRTV);
+			SAFE_RELEASE(Core::backBufferUAV);
+
+			SAFE_RELEASE(Core::swapChain);
+			SAFE_RELEASE(Core::deviceContext);
+			SAFE_RELEASE(Core::device);
 		}
 	}
 }

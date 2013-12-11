@@ -120,11 +120,12 @@ void OysterResource::Clean()
 		//Remove all the references
 		while (!OResource::Release(i->second));
 		
-		const wchar_t* temp = i->second->GetResourceFilename();
+		std::wstring temp = i->second->GetResourceFilename();
 		delete resourcePrivate.resources[temp];
-		resourcePrivate.resources.erase(temp);
+		
 
 	}
+	resourcePrivate.resources.clear();
 }
 void OysterResource::ReleaseResource(const OHRESOURCE& resourceData)
 {
@@ -133,7 +134,7 @@ void OysterResource::ReleaseResource(const OHRESOURCE& resourceData)
 	{
 		if(OResource::Release(t))
 		{
-			const wchar_t* temp = t->GetResourceFilename();
+			std::wstring temp = t->GetResourceFilename();
 			delete resourcePrivate.resources[temp];
 			resourcePrivate.resources.erase(temp);
 		}
@@ -146,7 +147,7 @@ void OysterResource::ReleaseResource(const wchar_t filename[])
 	{
 		if(OResource::Release(t))
 		{
-			const wchar_t* temp = t->GetResourceFilename();
+			std::wstring temp = t->GetResourceFilename();
 			delete resourcePrivate.resources[temp];
 			resourcePrivate.resources.erase(temp);
 		}

@@ -34,8 +34,14 @@ WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			((MINMAXINFO*)lParam)->ptMinTrackSize.y = 100; 
 		break;
 
+		case WM_KEYDOWN:
+			if(wParam == VK_ESCAPE)
+				PostQuitMessage(0);
+		break;
+
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
+
 	}
 	return 0;
 }
@@ -84,39 +90,18 @@ int WINAPI WinMain( HINSTANCE hInst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 {
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-
-
 /********************************************
  *			Description of a window			*
  *******************************************/
-	WindowShell::INIT_DESC_WINDOW wDesc;
-	wDesc.hInstance = hInst;
-	wDesc.windowName = L"Glare";
-	wDesc.windowPosition = Point2D(50);
-	wDesc.windowSize = Point2D(1024, 800);
+	WindowShell::WINDOW_INIT_DESC wDesc;
+	//wDesc.hInstance = hInst;
+	wDesc.windowPosition.x = 50;
+	wDesc.windowPosition.y = 50;
+	wDesc.windowSize.x = 1024;
+	wDesc.windowSize.x = 800;
 	wDesc.windowProcCallback = WndProc;
 
-
-
-/********************************************
- *		Description of a child window		*
- *******************************************/
-	WindowShell::INIT_DESC_CHILD_WINDOW cDesc;
-	cDesc.name = L"Child";
-	cDesc.style = WS_EX_RIGHTSCROLLBAR;
-	cDesc.topLeftPos = Point2D();
-	cDesc.windowProcCallback = ChildWndProc;
-	cDesc.windowSize = Point2D(80);
-
-
-
-/************************************************************
- *		Initializing main window and several children		*
- ************************************************************/
 	WindowShell::self()->createWin(wDesc);
-	WindowShell::self()->createChildWin(cDesc);
-	WindowShell::self()->createChildWin(cDesc);
-	WindowShell::self()->createChildWin(cDesc);
 
 
 
@@ -134,7 +119,7 @@ int WINAPI WinMain( HINSTANCE hInst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		}
 		else
         {	
-			
+
         }
     }
 

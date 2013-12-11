@@ -18,6 +18,7 @@
 HINSTANCE				g_hInst					= NULL;  
 HWND					g_hWnd					= NULL;
 Oyster::Graphics::Model::Model* m				= NULL;
+Oyster::Graphics::Model::Model* m2				= NULL;
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
 
@@ -41,7 +42,7 @@ HRESULT				InitDirect3D();
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
 
-	BOOL b = SetDllDirectoryW(L"..\\..\\DLL");
+	BOOL b = SetDllDirectoryW(L"..\\DLL");
 	typedef struct tagLOADPARMS32
 	{ 
 		LPSTR lpEnvAddress;  // address of environment strings 
@@ -92,6 +93,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	}
 
 	Oyster::Graphics::API::DeleteModel(m);
+	Oyster::Graphics::API::DeleteModel(m2);
 	Oyster::Graphics::API::Clean();
 	return (int) msg.wParam;
 }
@@ -186,11 +188,15 @@ HRESULT InitDirect3D()
 #pragma endregion
 	
 #pragma region Obj
-	m =  Oyster::Graphics::API::CreateModel(L"orca");
+	m =  Oyster::Graphics::API::CreateModel(L"crate");
+	m2 = Oyster::Graphics::API::CreateModel(L"crate");
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 #pragma endregion
 	
 
 	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
+	Oyster::Graphics::API::SetProjection(P);
+	P.Invert();
 
 	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,5.4f));
 	V = Oyster::Math3D::InverseOrientationMatrix(V);
@@ -203,14 +209,17 @@ HRESULT Update(float deltaTime)
 {
 	angle += Oyster::Math::pi/30000;
 	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,0,1)*-angle,Oyster::Math::Float3(0,4,0),Oyster::Math::Float3::null);
 	return S_OK;
 }
 
 HRESULT Render(float deltaTime)
 {
-	Oyster::Graphics::API::NewFrame(V,P);
+	Oyster::Graphics::API::SetView(V);
+	Oyster::Graphics::API::NewFrame();
 
-	Oyster::Graphics::API::RenderScene(m,1);
+	Oyster::Graphics::API::RenderModel(*m);
+	Oyster::Graphics::API::RenderModel(*m2);
 
 	Oyster::Graphics::API::EndFrame();
 

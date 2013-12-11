@@ -27,7 +27,8 @@ namespace Oyster
 			void UnloadShaderD(void* loadedData);
 			void LoadShaderD(const wchar_t filename[], Oyster::Resource::CustomData& out);
 
-			void LoadShader(const wchar_t filename[], Oyster::Resource::CustomData& out, int type);
+			void UnloadOBJ(void* loadedData);
+			void LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out);
 		}
 	}
 }
