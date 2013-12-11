@@ -5,7 +5,8 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
-
+#include "PlayerProtocols.h"
+#include "NetworkClient.h"
 
 #include "L_inputClass.h"
 #include "vld.h"
@@ -19,6 +20,36 @@ namespace DanBias
 	HWND DanBiasGame::g_hWnd			= NULL;
 
 #pragma region Game Data
+
+
+	struct MyRecieverObject // :public PontusRecieverObject
+	{
+		 Oyster::Network::NetworkClient nwClient;
+		
+		static void ProtocolRecieved(Network::CustomNetProtocol* p)
+		{
+			int pType = ((*p)[0]).value.netInt;
+			switch (pType)
+			{
+			case protocol_PlayerNavigation:
+				
+				break;
+			case protocol_PlayerPosition:
+				//int x = ((*p)[1]).value.netInt; 
+				//int y = ((*p)[2]).value.netInt; 
+				//int z = ((*p)[3]).value.netInt; 
+				break;
+
+
+			case protocol_ObjectPosition:
+				// DanBiasGame::protocolRecived();
+				break;
+
+			default:
+				break;
+			}			
+		}
+	};
 	class DanBiasGamePrivateData
 	{
 
@@ -35,12 +66,21 @@ namespace DanBias
 		public:
 		 Client::GameClientState* gameClientState;
 		 InputClass* inputObj;
+		 GameLogic::Protocol_PlayerMovement player_move;
+		 //Oyster::Network::NetworkClient nwClient;
+		MyRecieverObject r;
+
 		 // gameClient; 
 
 	} data;
 #pragma endregion
-	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
 
+
+	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
+	void DanBiasGame::protocolRecived()
+	{
+		//m_data->gameClientState.setPos()
+	}
 	//--------------------------------------------------------------------------------------
 	// Interface API functions
 	//--------------------------------------------------------------------------------------

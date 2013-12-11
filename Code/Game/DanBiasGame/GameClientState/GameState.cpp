@@ -12,6 +12,7 @@ struct  GameState::myData
 	Oyster::Math3D::Float4x4 proj; 
 	C_Object* object[3];
 	int modelCount;
+	//Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
 }privData;
 
@@ -86,6 +87,8 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 	case gameStateState_playing:
 		// read server data
 		// update objects
+		// Client.send(obj);
+
 		if(KeyInput->IsKeyPressed(DIK_L))
 			privData->state = GameState::gameStateState_end;
 		break;

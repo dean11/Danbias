@@ -54,6 +54,8 @@ namespace DanBias
 			static HRESULT Update(float deltaTime);
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
+
+			static void protocolRecived();
 		private:
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;
