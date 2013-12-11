@@ -216,7 +216,7 @@ namespace Utility
 				T* operator-> ();
 				operator T* ();
 				operator bool();
-
+				
 				/**
 				*	Returns the connected pointer 
 				*/

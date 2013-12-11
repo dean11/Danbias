@@ -5,6 +5,9 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
+
+
+#include "L_inputClass.h"
 #include "vld.h"
 
 namespace DanBias
@@ -12,7 +15,6 @@ namespace DanBias
 	__int64 DanBiasGame::cntsPerSec		= 0;
 	__int64 DanBiasGame::prevTimeStamp	= 0;
 	float DanBiasGame::secsPerCnt		= 0;
-	InputClass* DanBiasGame::inputObj	= NULL;
 	HINSTANCE DanBiasGame::g_hInst		= NULL;
 	HWND DanBiasGame::g_hWnd			= NULL;
 
@@ -32,6 +34,7 @@ namespace DanBias
 
 		public:
 		 Client::GameClientState* gameClientState;
+		 InputClass* inputObj;
 		 // gameClient; 
 
 	} data;
@@ -163,8 +166,8 @@ namespace DanBias
 	//-------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitInput()
 	{
-		inputObj = new InputClass;
-		if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
+		m_data->inputObj = new InputClass;
+		if(!m_data->inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -174,10 +177,10 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		inputObj->Update();
+		m_data->inputObj->Update();
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-		state = m_data->gameClientState->Update(deltaTime, inputObj);
+		state = m_data->gameClientState->Update(deltaTime, m_data->inputObj);
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
@@ -206,7 +209,7 @@ namespace DanBias
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
 		int isPressed = 0;
-		if(inputObj->IsKeyPressed(DIK_A))
+		if(m_data->inputObj->IsKeyPressed(DIK_A))
 		{
 			isPressed = 1;
 		}
@@ -224,8 +227,9 @@ namespace DanBias
 	{
 		m_data->gameClientState->Release();
 		delete m_data->gameClientState;
+		delete m_data->inputObj;
 		delete m_data;
-		delete inputObj;
+		
 
 		Oyster::Graphics::API::Clean();
 		return S_OK;

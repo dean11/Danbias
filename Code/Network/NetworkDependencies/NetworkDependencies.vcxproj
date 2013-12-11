@@ -153,11 +153,12 @@
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Listener.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Messages\MessageHeader.cpp" />
+    <ClCompile Include="Messages\MessagePlayerPos.cpp" />
     <ClCompile Include="Messages\MessageTest.cpp" />
     <ClCompile Include="OysterByte.cpp" />
     <ClCompile Include="Packing.cpp" />
+    <ClCompile Include="ThreadedClient.cpp" />
     <ClCompile Include="Translator.cpp" />
     <ClCompile Include="WinsockFunctions.cpp" />
   </ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="IPostBox.h" />
     <ClInclude Include="Listener.h" />
     <ClInclude Include="Messages\MessageHeader.h" />
+    <ClInclude Include="Messages\MessagePlayerPos.h" />
     <ClInclude Include="Messages\MessagesInclude.h" />
     <ClInclude Include="Messages\MessageTest.h" />
     <ClInclude Include="OysterByte.h" />
@@ -175,6 +177,7 @@
     <ClInclude Include="ITranslate.h" />
     <ClInclude Include="PostBox.h" />
     <ClInclude Include="Protocols.h" />
+    <ClInclude Include="ThreadedClient.h" />
     <ClInclude Include="Translator.h" />
     <ClInclude Include="WinsockFunctions.h" />
   </ItemGroup>

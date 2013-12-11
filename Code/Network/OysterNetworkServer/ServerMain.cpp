@@ -3,126 +3,53 @@
 #include <vector>
 #include <vld.h>
 #include "../NetworkDependencies/WinsockFunctions.h"
-#include "../NetworkDependencies/Listener.h"
-#include "../NetworkDependencies/Translator.h"
-#include "Client.h"
-#include "../NetworkDependencies/OysterByte.h"
-#include "../NetworkDependencies/PostBox.h"
-#include "../../Misc/WinTimer.h"
-
-#pragma comment(lib, "ws2_32.lib")
+#include "TestClass.h"
 
 using namespace std;
-using namespace Oyster::Network::Server;
-using namespace Oyster::Network;
-using namespace ::Protocols;
-using namespace Utility;
+
+void clientProc(Oyster::Network::NetworkClient* client);
 
 int main()
 {
-	OysterByte recvBuffer;
-	IPostBox<int>* postBox = new PostBox<int>();
-
-	cout << "Server" << endl;
-	Translator t;
-	int errorCode;
-
 	if(!InitWinSock())
 	{
 		cout << "errorMessage: unable to start winsock" << endl;
 	}
 
-	//Create socket
-	Listener listener;
-	listener.Init(9876);
-	listener.SetPostBox(postBox);
-	Sleep(1000);
+	Test test;
 
-	//Start listening
-	//Accept a client
-	ProtocolTest test;
-	test.clientID = 0;
-	test.size = 2;
-	test.textMessage = "hej";
-	test.numOfFloats = 0;
-	test.f = new float[test.numOfFloats];
-	float temp = 395.456f;
-	for(int i = 0; i < (int)test.numOfFloats; i++)
-	{
-		test.f[i] = temp;
-		temp--;
-	}
+	cout << "Server" << endl;
 
-	t.Pack(test, recvBuffer);
-	
-	WinTimer timer;
+	test.mainLoop();
 
-	vector<Client*> clients;
-	int client = -1;
 	while(1)
 	{
-		client = -1;
-		postBox->FetchMessage(client);
-		if(client != -1)
-		{
-			cout << "Client connected: " << client << endl;
-			clients.push_back(new Client(client));
-
-			clients.at(clients.size()-1)->Send(recvBuffer);
-		}
-
-		//Send a message every 1 secounds to all clients.
+		//Fetch new clients from the postbox
+		/*
+		//Send a message every 1 seconds to all clients.
 		if(timer.getElapsedSeconds() > 1)
 		{
 			cout << "Sending to " << clients.size() << " clients." << endl;
 			timer.reset();
 			for(int i = 0; i < (int)clients.size(); i++)
 			{
-				clients.at(i)->Send(recvBuffer);
+				clients.at(i)->Send(sendBuffer);
 			}
-		}
-		Sleep(100);
-	}
-	listener.Shutdown();
+		}*/
 
-	/*
-	ProtocolSet* set = new ProtocolSet;
-
-	client1.Send(recvBuffer);
-
-	while(1)
-	{
-		client1.Recv(recvBuffer);
-
-		t.Unpack(set, recvBuffer);
-		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
-		cout << "Client1: " << set->Protocol.pTest->textMessage << endl;
-		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
+		/*//Fetch messages
+		if(recvPostBox->FetchMessage(recvBuffer))
 		{
-			cout << set->Protocol.pTest->f[i] << ' ';
-		}
-		cout << endl;
-		set->Release();
-		client2.Send(recvBuffer);
+			t.Unpack(set, recvBuffer);
 
-		client2.Recv(recvBuffer);
-
-		t.Unpack(set, recvBuffer);
-		cout << set->Protocol.pTest->clientID << ' ' << set->Protocol.pTest->packageType << ' ' << set->Protocol.pTest->size << endl;
-		cout << "Client2: " << set->Protocol.pTest->textMessage << endl;
-		for(int i = 0; i < (int)set->Protocol.pTest->numOfFloats; i++)
-		{
-			cout << set->Protocol.pTest->f[i] << ' ';
-		}
-		cout << endl;
-		set->Release();
-		client1.Send(recvBuffer);
+			//PrintOutMessage(set);
+			set->Release();
+		}*/
 	}
 
+	Sleep(1000);
 
-	ShutdownWinSock();
-	delete set;
-	*/
 	system("pause");
+
 	return 0;
 }

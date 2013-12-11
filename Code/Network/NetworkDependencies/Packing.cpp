@@ -87,7 +87,7 @@ namespace Oyster
 			//floating point (32, 64-bit)
 			void Pack(unsigned char buffer[], float i)
 			{
-				int tempFloat = Pack754(i, 32, 8);
+				int tempFloat = (int)Pack754(i, 32, 8);
 				Pack(buffer, tempFloat);
 			}
 
@@ -100,7 +100,7 @@ namespace Oyster
 			//string
 			void Pack(unsigned char buffer[], char str[])
 			{
-				short len = strlen(str);
+				short len = (short)strlen(str);
 				Pack(buffer, len);
 				buffer += 2;
 				memcpy(buffer, str, len);
@@ -108,7 +108,7 @@ namespace Oyster
 
 			void Pack(unsigned char buffer[], std::string& str)
 			{
-				short len = str.length();
+				short len = (short)str.length();
 				Pack(buffer, len);
 				buffer += 2;
 				memcpy(buffer, str.c_str(), len);
@@ -153,7 +153,7 @@ namespace Oyster
 				fnorm = fnorm - 1.0;
 
 				// calculate the binary form (non-float) of the significand data
-				significand = fnorm * ((1LL << significandbits) + 0.5f);
+				significand = (long long)(fnorm * ((1LL << significandbits) + 0.5f));
 
 				// get the biased exponent
 				exp = shift + ((1 << (expbits - 1)) - 1); // shift + bias
@@ -169,7 +169,7 @@ namespace Oyster
 			//bool (1-bit)
 			bool Unpackb(unsigned char buffer[])
 			{
-				return (bool)buffer;
+				return buffer;
 			}
 
 			//char (8-bit)
@@ -305,7 +305,7 @@ namespace Oyster
 					return 0.0;
 
 				// pull the significand
-				result = (i&((1LL << significandbits) - 1)); // mask
+				result = (long double)(i&((1LL << significandbits) - 1)); // mask
 				result /= (1LL << significandbits); // convert back to float
 				result += 1.0f; // add the one back on
 

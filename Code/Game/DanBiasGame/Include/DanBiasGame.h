@@ -11,8 +11,6 @@
 #include <Windows.h>
 
 
-#include "L_inputClass.h"
-
 
 namespace DanBias
 {
@@ -60,7 +58,7 @@ namespace DanBias
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;
 			static float secsPerCnt;
-			static InputClass* inputObj;
+			
 			static HINSTANCE			g_hInst;  
 			static HWND					g_hWnd;
 			static DanBiasGamePrivateData* m_data;
