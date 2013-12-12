@@ -5,6 +5,8 @@
 // Created by Dennis Andersen 2013 //
 /////////////////////////////////////
 
+#include <memory>
+
 namespace Oyster
 {
 	namespace Network
@@ -37,10 +39,16 @@ namespace Oyster
 
 		union RecieverObject
 		{
-			ClientConnectCallbackMethod		clientConnectFnc;
-			ProtocolRecieverFunction		protocolRecieverFnc;
-			ClientConnectedObject			*clientConnectObject;
-			ProtocolRecieverObject			*protocolRecievedObject;
+			ClientConnectCallbackMethod		clientConnectFnc;			// !< A function pointer for sending or recieving NetworkClient
+			ProtocolRecieverFunction		protocolRecieverFnc;		// !< A function pointer for sending or recieving CustomNetProtocol
+			ClientConnectedObject			*clientConnectObject;		// !< An object for sending or recieving NetworkClient
+			ProtocolRecieverObject			*protocolRecievedObject;	// !< An object for sending or recieving CustomNetProtocol
+
+			RecieverObject()								{ memset(this, 0, sizeof(RecieverObject)); }
+			RecieverObject(ClientConnectCallbackMethod	o)	{ clientConnectFnc = o; }
+			RecieverObject(ProtocolRecieverFunction		o)	{ protocolRecieverFnc = o; }
+			RecieverObject(ClientConnectedObject*		o)	{ clientConnectObject = o; }
+			RecieverObject(ProtocolRecieverObject*		o)	{ protocolRecievedObject = o; }
 		};
 	}
 }

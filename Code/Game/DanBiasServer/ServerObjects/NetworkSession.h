@@ -22,8 +22,8 @@ namespace DanBias
 		void Kick(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client);
 		void Kick();
 
-		void Send(Network::CustomNetProtocol& protocol);
-		void Send(Network::CustomNetProtocol& protocol, int ID);
+		void Send(Oyster::Network::CustomNetProtocol& protocol);
+		void Send(Oyster::Network::CustomNetProtocol& protocol, int ID);
 
 		//TODO: Do more lobby features
 

@@ -13,7 +13,7 @@
 
 namespace GameLogic
 {
-	struct Protocol_PlayerMovement :public Network::CustomProtocolObject
+	struct Protocol_PlayerMovement :public Oyster::Network::CustomProtocolObject
 	{
 		int ProtocolID;
 		bool bForward;
@@ -27,15 +27,15 @@ namespace GameLogic
 		{
 			this->protocol[0].value = ProtocolID		= protocol_PlayerNavigation;
 
-			this->protocol[0].type = Network::NetAttributeType_Int;
-			this->protocol[1].type = Network::NetAttributeType_Bool;
-			this->protocol[2].type = Network::NetAttributeType_Bool;
-			this->protocol[3].type = Network::NetAttributeType_Bool;
-			this->protocol[4].type = Network::NetAttributeType_Bool;
-			this->protocol[5].type = Network::NetAttributeType_Bool;
-			this->protocol[6].type = Network::NetAttributeType_Bool;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Bool;
 		}
-		Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			this->protocol[1].value = bForward;
 			this->protocol[2].value = bBackward;
@@ -48,7 +48,7 @@ namespace GameLogic
 		}
 
 		private:
-			Network::CustomNetProtocol protocol;
+			Oyster::Network::CustomNetProtocol protocol;
 	};
 }
 

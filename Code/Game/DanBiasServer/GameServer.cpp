@@ -7,18 +7,18 @@
 #include "GameServer.h"
 #include "Utilities.h"
 #include "ServerInitReader.h"
+#include <TEST_PROTOCOLS.h>
 
 namespace DanBias
 {
 	using namespace Oyster::Network;
 
-	//void GameServer::ClientConnectCallbackFunction(Oyster::Network::NetworkClient& connectedClient)
-	//{
-	//	if(
-	//}
 	void GameServer::ClientConnectCallback(NetworkClient &client)
 	{
-		
+		printf("Client connected!\n");
+		GameLogic::Protocol_TEST t;
+		t.text = "Hello";
+		client.Send(t);
 	}
 	GameServer::GameServer()
 		:	initiated(0)
@@ -42,9 +42,10 @@ namespace DanBias
 		if(!LoadIniFile(data)) return DanBiasServerReturn_Error;
 
 		NetworkServer::INIT_DESC serverDesc;
-		serverDesc.port = data.port;
 		this->maxClients = data.clients;
-		serverDesc.callback = this;
+		serverDesc.port = data.port;
+		serverDesc.recvObj = this;
+		serverDesc.callbackType = Oyster::Network::NetworkClientCallbackType_Object;
 
 		if(!this->server->Init(serverDesc))								return DanBiasServerReturn_Error;
 		if(!WindowShell::CreateConsoleWindow())							return DanBiasServerReturn_Error;
@@ -55,9 +56,11 @@ namespace DanBias
 	}
 	DanBiasServerReturn GameServer::Run()
 	{
-		if(this->running)		return DanBiasServerReturn_Error;
-		if(this->released)		return DanBiasServerReturn_Error;
-		if(!this->initiated)	return DanBiasServerReturn_Error;
+		if(this->running)			return DanBiasServerReturn_Error;
+		if(this->released)			return DanBiasServerReturn_Error;
+		if(!this->initiated)		return DanBiasServerReturn_Error;
+
+		if(!this->server->Start())	return DanBiasServerReturn_Error;
 
 		this->running = true;
 		while (this->running)
@@ -70,6 +73,9 @@ namespace DanBias
 	}
 	DanBiasServerReturn GameServer::Release()
 	{
+		this->server->Shutdown();
+		delete this->server;
+		delete this->mainLobby;
 		this->released = true;
 		return DanBiasServerReturn_Sucess;
 	}
