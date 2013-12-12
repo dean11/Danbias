@@ -147,6 +147,12 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 {
 	using namespace ::Oyster::Math; // deliberate inheritance from ::Oyster::Math namespace
 
+	//! Extracts the angularAxis from rotationMatrix
+	Float4 AngularAxis( const Float3x3 &rotationMatrix );
+
+	//! Extracts the angularAxis from rotationMatrix
+	Float4 AngularAxis( const Float4x4 &rotationMatrix );
+
 	/// Sets and returns targetMem to a translationMatrix with position as translation. 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
 
@@ -158,6 +164,9 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the global Z-axis
 	Float4x4 & RotationMatrix_AxisZ( const Float &radian, Float4x4 &targetMem = Float4x4() );
+
+	/// Sets and returns targetMem as an counterclockwise rotation matrix around the angularAxis.
+	Float4x4 & RotationMatrix( const Float3 &angularAxis, Float4x4 &targetMem = Float4x4() );
 
 	/// Sets and returns targetMem as an counterclockwise rotation matrix around the normalizedAxis.
 	/// Please make sure normalizedAxis is normalized.

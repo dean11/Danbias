@@ -62,6 +62,7 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 	switch(movement)
 	{
 		case PLAYER_MOVEMENT_FORWARD:
+			
 			break;
 
 		case PLAYER_MOVEMENT_BACKWARD:

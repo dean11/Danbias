@@ -16,6 +16,11 @@ namespace Oyster { namespace Physics
 
 		::Utility::DynamicMemory::UniquePointer<ICustomBody> Clone() const;
 		
+		State GetState() const;
+		State & GetState( State &targetMem = State() ) const;
+		void SetState( const State &state );
+		::Oyster::Math::Float3 GetRigidLinearVelocity() const;
+
 		void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
 		bool IsAffectedByGravity() const;
 		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const;
@@ -42,6 +47,7 @@ namespace Oyster { namespace Physics
 		void SetRotation( const ::Oyster::Math::Float4x4 &rotation );
 		void SetOrientation( const ::Oyster::Math::Float4x4 &orientation );
 		void SetSize( const ::Oyster::Math::Float3 &size );
+		void SetMomentum( const ::Oyster::Math::Float3 &worldG );
 
 	private:
 		::Oyster::Physics3D::RigidBody rigid;
