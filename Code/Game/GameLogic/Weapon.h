@@ -4,6 +4,8 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 #include "GameLogicStates.h"
+#include "IAttatchment.h"
+#include "Player.h"
 
 namespace GameLogic
 {
@@ -15,14 +17,24 @@ namespace GameLogic
 		
 
 		Weapon(void);
+		Weapon(int nrOfAttatchmentSockets);
 		~Weapon(void);
 
-		void UseWeapon(const WEAPON_FIRE &fireInput);
+		void Use(const WEAPON_FIRE &fireInput);
 
+		void AddNewAttatchment(IAttatchment *attatchment, Player *owner);
+		void SwitchAttatchment(IAttatchment *attatchment, int socketID, Player *owner);
+		void RemoveAttatchment(int socketID);
+
+		void SelectAttatchment(int socketID);
 
 		bool IsFireing();
 		bool IsIdle();
 		bool IsReloading();
+		bool IsValidSocket(int socketID);
+
+		int GetCurrentSocketID();
+		
 
 
 	private:	

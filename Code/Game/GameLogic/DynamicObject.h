@@ -1,27 +1,24 @@
 //////////////////////////////////////////////////
 //Created by Erik and Linda of the GameLogic team
 //////////////////////////////////////////////////
-
-
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
+#include "Object.h"
 
 namespace GameLogic
 {
 
 
-	class DynamicObject
+	class DynamicObject : public Object
 	{
 
 	public:
 		DynamicObject();
+		DynamicObject(void* collisionFunc, OBJECT_TYPE type);
 		~DynamicObject(void);
 
-		void Update();
-
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+
 	};
 
 }

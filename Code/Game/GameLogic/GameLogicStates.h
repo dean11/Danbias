@@ -36,6 +36,13 @@ namespace GameLogic
 		WEAPON_STATE_IDLE = 1,
 		WEAPON_STATE_RELOADING = 2,
 	};
-}
+
+	enum OBJECT_TYPE
+	{
+		OBJECT_TYPE_PLAYER = 0,
+		OBJECT_TYPE_BOX = 1,
+		OBJECT_TYPE_UNKNOWN = 2,
+	};
+};
 
 #endif

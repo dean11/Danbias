@@ -5,10 +5,11 @@
 #define PLAYER_H
 #include "GameLogicStates.h"
 #include "OysterMath.h"
+#include "Object.h"
 
 namespace GameLogic
 {
-	class Player
+	class Player : public Object
 	{
 
 	public:
@@ -17,7 +18,7 @@ namespace GameLogic
 
 		void Update();
 		void Move(const PLAYER_MOVEMENT &movement);
-		void Shoot(const WEAPON_FIRE &fireInput);
+		void UseWeapon(const WEAPON_FIRE &fireInput);
 		void Jump();
 
 		bool IsWalking();
@@ -25,7 +26,11 @@ namespace GameLogic
 		bool IsIdle();
 
 		Oyster::Math::Float3 GetPos();
+		Oyster::Math::Float3 GetLookDir();
+
 		void Respawn();
+
+		void DamageLife(int damage);
 
 	private:
 		struct PrivateData;

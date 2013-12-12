@@ -3,22 +3,6 @@
 
 using namespace GameLogic;
 
-struct IAttatchment::PrivateData
-{
-	PrivateData()
-	{
-
-	}
-
-	~PrivateData()
-	{
-
-	}
-
-
-
-}myData;
-
 IAttatchment::IAttatchment(void)
 {
 }

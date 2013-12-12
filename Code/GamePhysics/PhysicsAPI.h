@@ -17,6 +17,13 @@ namespace Oyster
 		class API;
 		class ICustomBody;
 
+		namespace Struct
+		{
+			struct SimpleBodyDescription;
+			struct SphericalBodyDescription;
+			struct CustomBodyState;
+		}
+
 		enum UpdateState
 		{
 			UpdateState_resting,
@@ -31,22 +38,22 @@ namespace Oyster
 		class PHYSICS_DLL_USAGE MomentOfInertia
 		{
 		public:
-			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
-				
-			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius);
+			static ::Oyster::Math::Float4x4 & CreateSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
+			
+			static ::Oyster::Math::Float4x4 & CreateHollowSphereMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 
-			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth );
+			static ::Oyster::Math::Float4x4 & CreateCuboidMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 
-			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius );
+			static ::Oyster::Math::Float4x4 & CreateCylinderMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 	
-			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length );
+			static ::Oyster::Math::Float4x4 & CreateRodMatrix( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length, ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() );
 		};
 
 		class PHYSICS_DLL_USAGE API
 		{
 		public:
-			struct SimpleBodyDescription;
-			struct SphericalBodyDescription;
+			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
+			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
 
 			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
 
@@ -236,7 +243,15 @@ namespace Oyster
 				SubscriptMessage_ignore_collision_response
 			};
 
+			/********************************************************
+			 * @param gameObjectRef: a pointer to the object in the game owning the rigid body.
+			 ********************************************************/
+			void* gameObjectRef;
+
 			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
+			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
+			typedef Struct::CustomBodyState State;
 
 			virtual ~ICustomBody() {};
 
@@ -250,6 +265,26 @@ namespace Oyster
 			 * @todo TODO: need doc
 			 ********************************************************/
 			virtual void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
+
+			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual State GetState() const = 0;
+
+			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual State & GetState( State &targetMem ) const = 0;
+
+			/********************************************************
+			 * @return the linear velocity of the rigid body in a vector.
+			 ********************************************************/
+			virtual Math::Float3 GetRigidLinearVelocity() const = 0;
+
+			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual void SetState( const State &state ) = 0;
 
 			/********************************************************
 			 * @return true if Engine should apply gravity on this object.
@@ -390,49 +425,16 @@ namespace Oyster
 			 * Use API::SetSize(...)
 			 ********************************************************/
 			virtual void SetSize( const ::Oyster::Math::Float3 &size ) = 0;
-		};
 
-		struct API::SimpleBodyDescription
-		{
-			::Oyster::Math::Float4x4 rotation;
-			::Oyster::Math::Float3 centerPosition;
-			::Oyster::Math::Float3 size;
-			::Oyster::Math::Float mass;
-			::Oyster::Math::Float4x4 inertiaTensor;
-			ICustomBody::EventAction_Collision subscription;
-			bool ignoreGravity;
-
-			SimpleBodyDescription()
-			{
-				this->rotation = ::Oyster::Math::Float4x4::identity;
-				this->centerPosition = ::Oyster::Math::Float3::null;
-				this->size = ::Oyster::Math::Float3( 1.0f );
-				this->mass = 12.0f;
-				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
-				this->subscription = NULL;
-				this->ignoreGravity = false;
-			}
-		};
-
-		struct API::SphericalBodyDescription
-		{
-			::Oyster::Math::Float4x4 rotation;
-			::Oyster::Math::Float3 centerPosition;
-			::Oyster::Math::Float radius;
-			::Oyster::Math::Float mass;
-			ICustomBody::EventAction_Collision subscription;
-			bool ignoreGravity;
-
-			SphericalBodyDescription()
-			{
-				this->rotation = ::Oyster::Math::Float4x4::identity;
-				this->centerPosition = ::Oyster::Math::Float3::null;
-				this->radius = 0.5f;
-				this->mass = 10.0f;
-				this->subscription = NULL;
-				this->ignoreGravity = false;
-			}
+			/********************************************************
+			 * To not be called if is in Engine
+			 * Use API::?? @todo TODO: 
+			 ********************************************************/
+			virtual void SetMomentum( const ::Oyster::Math::Float3 &worldG ) = 0;
 		};
 	}
 }
+
+#include "PhysicsStructs.h"
+
 #endif

@@ -52,11 +52,13 @@ namespace DanBias
 			static HRESULT Update(float deltaTime);
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
+
+			static void protocolRecived();
 		private:
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;
 			static float secsPerCnt;
-			static InputClass* inputObj;
+			
 			static HINSTANCE			g_hInst;  
 			static HWND					g_hWnd;
 			static DanBiasGamePrivateData* m_data;

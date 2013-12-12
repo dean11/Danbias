@@ -176,7 +176,6 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="RefManager.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
@@ -191,7 +190,6 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="RefManager.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>

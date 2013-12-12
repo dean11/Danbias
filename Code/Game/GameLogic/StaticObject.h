@@ -11,16 +11,16 @@
 namespace GameLogic
 {
 
-	class StaticObject
+	class StaticObject : public Object
 	{
 	
 	public:
 		StaticObject();
+		StaticObject(void* collisionFunc, OBJECT_TYPE type);
 		~StaticObject(void);
 
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+
 	};
 
 }

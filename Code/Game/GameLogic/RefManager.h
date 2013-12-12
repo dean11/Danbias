@@ -8,7 +8,6 @@
 
 #include<map>
 #include "Object.h"
-#include "PhysicsAPI.h"
 
 namespace GameLogic
 {

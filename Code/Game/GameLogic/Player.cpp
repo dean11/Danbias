@@ -15,8 +15,7 @@ struct Player::PrivateData
 		life = 100;
 		playerState = PLAYER_STATE_IDLE;
 
-		rigidBody->SetSubscription(CollisionManager::PlayerCollision);
-
+		lookDir = Oyster::Math::Float3(1,0,0);
 	}
 
 	~PrivateData()
@@ -30,16 +29,16 @@ struct Player::PrivateData
 	int life;
 	Weapon *weapon;
 	PLAYER_STATE playerState;
-
-	ICustomBody *rigidBody;
+	Oyster::Math::Float3 lookDir;
 	
 }myData;
 
 Player::Player()
+	:Object(CollisionManager::PlayerCollision, OBJECT_TYPE_PLAYER)
 {
 	myData = new PrivateData();
-
 }
+
 Player::~Player(void)
 {
 	delete myData;
@@ -61,12 +60,16 @@ void Player::Update()
 ********************************************************/
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
+	Oyster::Math::Float3 currentVelocity = rigidBody->GetRigidLinearVelocity();
+
 	switch(movement)
 	{
 		case PLAYER_MOVEMENT_FORWARD:
+			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
 			break;
 
 		case PLAYER_MOVEMENT_BACKWARD:
+			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
 			break;
 
 		case PLAYER_MOVEMENT_LEFT:
@@ -83,9 +86,9 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 /********************************************************
 * Uses the players weapon based on user input
 ********************************************************/
-void Player::Shoot(const WEAPON_FIRE &fireInput)
+void Player::UseWeapon(const WEAPON_FIRE &fireInput)
 {
-	myData->weapon->UseWeapon(fireInput);
+	myData->weapon->Use(fireInput);
 }
 
 /********************************************************
@@ -94,7 +97,7 @@ void Player::Shoot(const WEAPON_FIRE &fireInput)
 ********************************************************/
 void Player::Jump()
 {
-
+	API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-Oyster::Math::Float3(0,1,0) * 100);
 }
 
 bool Player::IsWalking()
@@ -112,7 +115,12 @@ bool Player::IsIdle()
 
 Oyster::Math::Float3 Player::GetPos()
 {
-	return myData->rigidBody->GetCenter();
+	return rigidBody->GetCenter();
+}
+
+Oyster::Math::Float3 Player::GetLookDir()
+{
+	return myData->lookDir;
 }
 
 /********************************************************
@@ -122,4 +130,10 @@ Oyster::Math::Float3 Player::GetPos()
 void Player::Respawn()
 {
 
+}
+
+
+void Player::DamageLife(int damage)
+{
+	myData->life -= damage;
 }
