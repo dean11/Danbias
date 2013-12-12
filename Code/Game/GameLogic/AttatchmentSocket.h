@@ -11,6 +11,8 @@ namespace GameLogic
 		~AttatchmentSocket(void);
 
 		IAttatchment* GetAttatchment();
+		void SetAttatchment(IAttatchment *attatchment);
+		void RemoveAttatchment();
 
 	private:
 		struct PrivateData;

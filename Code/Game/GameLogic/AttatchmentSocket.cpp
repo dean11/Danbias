@@ -14,7 +14,7 @@ struct AttatchmentSocket::PrivateData
 
 	}
 
-	IAttatchment *Attatchment;
+	IAttatchment *attatchment;
 
 
 }myData;
@@ -30,5 +30,23 @@ AttatchmentSocket::~AttatchmentSocket(void)
 
 IAttatchment* AttatchmentSocket::GetAttatchment()
 {
-	return myData->Attatchment;
+	return myData->attatchment;
+}
+
+void AttatchmentSocket::SetAttatchment(IAttatchment *attatchment)
+{
+	if (myData->attatchment)
+	{
+		delete myData->attatchment;
+	}
+
+	myData->attatchment = attatchment;
+}
+
+void AttatchmentSocket::RemoveAttatchment()
+{
+	if (myData->attatchment)
+	{
+		delete myData->attatchment;
+	}
 }

@@ -14,6 +14,8 @@ namespace GameLogic
 		Level(void);
 		~Level(void);
 
+		void CreateBox();
+
 	private:
 		struct PrivateData;
 		PrivateData *myData;

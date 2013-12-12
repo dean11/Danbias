@@ -9,14 +9,10 @@ struct Level::PrivateData
 {
 	PrivateData()
 	{
-		gameMode = new GameMode();
+		
 	}
 	~PrivateData()
 	{
-		if (gameMode)
-		{
-			delete gameMode;
-		}
 	}
 
 
@@ -40,3 +36,5 @@ Level::~Level(void)
 {
 	delete myData;
 }
+
+

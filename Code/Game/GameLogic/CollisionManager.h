@@ -3,9 +3,8 @@
 
 #include "Object.h"
 #include "PhysicsAPI.h"
-#include "RefManager.h"
-#include "DynamicObject.h"
-#include "Player.h"
+//#include "DynamicObject.h"
+//#include "Player.h"
 
 namespace GameLogic
 {
@@ -18,8 +17,8 @@ namespace GameLogic
 		Oyster::Physics::ICustomBody::SubscriptMessage BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj);
 
 		//these are the specific collision case functions
-		void PlayerVBox(Player &player, DynamicObject &box);
-		void BoxVBox(DynamicObject &box1, DynamicObject &box2);
+		//void PlayerVBox(Player &player, DynamicObject &box);
+		//void BoxVBox(DynamicObject &box1, DynamicObject &box2);
 			
 	};
 

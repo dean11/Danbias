@@ -15,8 +15,6 @@ struct Player::PrivateData
 		life = 100;
 		playerState = PLAYER_STATE_IDLE;
 
-		rigidBody->SetSubscription(CollisionManager::PlayerCollision);
-
 	}
 
 	~PrivateData()
@@ -30,16 +28,16 @@ struct Player::PrivateData
 	int life;
 	Weapon *weapon;
 	PLAYER_STATE playerState;
-
-	ICustomBody *rigidBody;
+	Oyster::Math::Float3 lookDir;
 	
 }myData;
 
 Player::Player()
+	:Object(CollisionManager::PlayerCollision, OBJECT_TYPE_PLAYER)
 {
 	myData = new PrivateData();
-
 }
+
 Player::~Player(void)
 {
 	delete myData;
@@ -83,9 +81,9 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 /********************************************************
 * Uses the players weapon based on user input
 ********************************************************/
-void Player::Shoot(const WEAPON_FIRE &fireInput)
+void Player::UseWeapon(const WEAPON_FIRE &fireInput)
 {
-	myData->weapon->UseWeapon(fireInput);
+	myData->weapon->Use(fireInput);
 }
 
 /********************************************************
@@ -112,7 +110,7 @@ bool Player::IsIdle()
 
 Oyster::Math::Float3 Player::GetPos()
 {
-	return myData->rigidBody->GetCenter();
+	return rigidBody->GetCenter();
 }
 
 /********************************************************

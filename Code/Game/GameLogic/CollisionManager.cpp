@@ -1,4 +1,9 @@
 #include "CollisionManager.h"
+#include "RefManager.h"
+#include "PhysicsAPI.h"
+#include "Object.h"
+#include "DynamicObject.h"
+#include "Player.h"
 
 using namespace Oyster;
 
@@ -15,22 +20,21 @@ namespace GameLogic
 
 			switch (realObj->GetType())
 			{
-			case Object::OBJECT_TYPE_BOX:
-				PlayerVBox(*player,(*(DynamicObject*) realObj));
+			case OBJECT_TYPE_BOX:
+				//PlayerVBox(*player,(*(DynamicObject*) realObj));
 				break;
-			case Object::OBJECT_TYPE_PLAYER:
+			case OBJECT_TYPE_PLAYER:
 
 				break;
 			}
 
-			//spela ljud? ta skada? etc etc
 			return Physics::ICustomBody::SubscriptMessage_none;
 		}
 		
-		void PlayerVBox(Player &player, DynamicObject &box)
+		/*	void PlayerVBox(Player &player, DynamicObject &box)
 		{
-			//spela ljud? ta skada? etc etc
-		}
+		spela ljud? ta skada? etc etc
+		}*/
 		
 		Physics::ICustomBody::SubscriptMessage BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj)
 		{
@@ -39,11 +43,11 @@ namespace GameLogic
 
 			switch (realObj->GetType())
 			{
-			case Object::OBJECT_TYPE_BOX:
+			case OBJECT_TYPE_BOX:
 				
 				break;
-			case Object::OBJECT_TYPE_PLAYER:
-				PlayerVBox(*(Player*)realObj,*box);
+			case OBJECT_TYPE_PLAYER:
+				//PlayerVBox(*(Player*)realObj,*box);
 				break;
 			}
 

@@ -1,29 +1,23 @@
 #include "DynamicObject.h"
+#include "CollisionManager.h"
 
 using namespace GameLogic;
 
-struct DynamicObject::PrivateData
-{
-	PrivateData()
-	{
-
-	}
-
-	~PrivateData()
-	{
-
-	}
-
-}myData;
-
 
 DynamicObject::DynamicObject()
+	:Object()
 {
-	myData = new PrivateData();
+	
+}
+
+DynamicObject::DynamicObject(void* collisionFunc, OBJECT_TYPE type)
+	:Object(collisionFunc, type)
+{
+
 }
 
 
 DynamicObject::~DynamicObject(void)
 {
-	delete myData;
+
 }
