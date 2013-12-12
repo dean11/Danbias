@@ -55,14 +55,16 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &fireInp
 }
 
 /********************************************************
-* This is a specific functionallity of the weapon
+* Pushes objects in a cone in front of the weapon when fired
 ********************************************************/
 void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &fireInput)
 {
 	//create coneRigidBody that will then collide with object and push them in the aimed direction
 }
 
-
+/********************************************************
+* Pulls the player in the direction he is looking, used for fast movement(kinda like a jetpack)
+********************************************************/
 void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &fireInput)
 {
 	Oyster::Physics::API::Instance().ApplyForceAt(owner->GetRigidBody(), owner->GetRigidBody()->GetCenter(), owner->GetLookDir() * 100);

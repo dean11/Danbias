@@ -15,6 +15,7 @@ struct Player::PrivateData
 		life = 100;
 		playerState = PLAYER_STATE_IDLE;
 
+		lookDir = Oyster::Math::Float3(1,0,0);
 	}
 
 	~PrivateData()
