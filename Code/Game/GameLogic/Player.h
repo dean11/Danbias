@@ -26,7 +26,11 @@ namespace GameLogic
 		bool IsIdle();
 
 		Oyster::Math::Float3 GetPos();
+		Oyster::Math::Float3 GetLookDir();
+
 		void Respawn();
+
+		void DamageLife(int damage);
 
 	private:
 		struct PrivateData;

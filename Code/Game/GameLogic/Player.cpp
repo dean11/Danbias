@@ -59,13 +59,16 @@ void Player::Update()
 ********************************************************/
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
+	Oyster::Math::Float3 currentVelocity = rigidBody->GetRigidLinearVelocity();
+
 	switch(movement)
 	{
 		case PLAYER_MOVEMENT_FORWARD:
-			
+			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
 			break;
 
 		case PLAYER_MOVEMENT_BACKWARD:
+			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
 			break;
 
 		case PLAYER_MOVEMENT_LEFT:
@@ -93,7 +96,7 @@ void Player::UseWeapon(const WEAPON_FIRE &fireInput)
 ********************************************************/
 void Player::Jump()
 {
-
+	API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-Oyster::Math::Float3(0,1,0) * 100);
 }
 
 bool Player::IsWalking()
@@ -114,6 +117,11 @@ Oyster::Math::Float3 Player::GetPos()
 	return rigidBody->GetCenter();
 }
 
+Oyster::Math::Float3 Player::GetLookDir()
+{
+	return myData->lookDir;
+}
+
 /********************************************************
 * Respawns the player on a new chosen position
 * This resets a set of variables such as life, ammo etcetc
@@ -121,4 +129,10 @@ Oyster::Math::Float3 Player::GetPos()
 void Player::Respawn()
 {
 
+}
+
+
+void Player::DamageLife(int damage)
+{
+	myData->life -= damage;
 }

@@ -1,4 +1,5 @@
 #include "AttatchmentMassDriver.h"
+#include "PhysicsAPI.h"
 
 using namespace GameLogic;
 
@@ -19,11 +20,20 @@ struct AttatchmentMassDriver::PrivateData
 
 AttatchmentMassDriver::AttatchmentMassDriver(void)
 {
+	myData = new PrivateData();
+	this->owner = 0;
+}
+
+AttatchmentMassDriver::AttatchmentMassDriver(Player &owner)
+{
+	myData = new PrivateData();
+	this->owner = &owner;
 }
 
 
 AttatchmentMassDriver::~AttatchmentMassDriver(void)
 {
+	delete myData;
 }
 
 /********************************************************
@@ -31,7 +41,17 @@ AttatchmentMassDriver::~AttatchmentMassDriver(void)
 ********************************************************/
 void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &fireInput)
 {
-	ForcePush(fireInput);
+	//switch case to determin what functionallity to use in the attatchment
+	switch (fireInput)
+	{
+	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
+		ForcePush(fireInput);
+	break;
+	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
+		ForcePull(fireInput);
+		break;
+	}
+	
 }
 
 /********************************************************
@@ -39,7 +59,13 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &fireInp
 ********************************************************/
 void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &fireInput)
 {
-	
+	//create coneRigidBody that will then collide with object and push them in the aimed direction
+}
+
+
+void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &fireInput)
+{
+	Oyster::Physics::API::Instance().ApplyForceAt(owner->GetRigidBody(), owner->GetRigidBody()->GetCenter(), owner->GetLookDir() * 100);
 }
 
 

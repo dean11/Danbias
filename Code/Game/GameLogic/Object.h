@@ -8,7 +8,7 @@
 
 #include "PhysicsAPI.h"
 #include "GameLogicStates.h"
-#include "CollisionManager.h"
+
 
 namespace GameLogic
 {
@@ -20,6 +20,8 @@ namespace GameLogic
 		~Object(void);
 
 		OBJECT_TYPE GetType();
+
+		Oyster::Physics::ICustomBody* GetRigidBody();
 
 	private:
 		OBJECT_TYPE type;

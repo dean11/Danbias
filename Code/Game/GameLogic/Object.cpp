@@ -1,6 +1,6 @@
 #include "Object.h"
 #include "OysterMath.h"
-#include "RefManager.h"
+#include "CollisionManager.h"
 
 
 using namespace GameLogic;
@@ -16,7 +16,7 @@ Object::Object()
 	//poi
 	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
-	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);
+	rigidBody->gameObjectRef = this;
 
 	this->type = OBJECT_TYPE_UNKNOWN;
 
@@ -32,7 +32,7 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
 
-	GameLogic::RefManager::getInstance()->AddMapping(*rigidBody, *this);
+	rigidBody->gameObjectRef = this;
 
 	this->type = type;
 }
@@ -47,4 +47,9 @@ Object::~Object(void)
 OBJECT_TYPE Object::GetType()
 {
 	return this->type;
+}
+
+Oyster::Physics::ICustomBody* Object::GetRigidBody()
+{
+	return this->rigidBody;
 }

@@ -5,6 +5,7 @@
 #define WEAPON_H
 #include "GameLogicStates.h"
 #include "IAttatchment.h"
+#include "Player.h"
 
 namespace GameLogic
 {
@@ -21,8 +22,8 @@ namespace GameLogic
 
 		void Use(const WEAPON_FIRE &fireInput);
 
-		void AddNewAttatchment(IAttatchment *attatchment);
-		void SwitchAttatchment(IAttatchment *attatchment, int socketID);
+		void AddNewAttatchment(IAttatchment *attatchment, Player *owner);
+		void SwitchAttatchment(IAttatchment *attatchment, int socketID, Player *owner);
 		void RemoveAttatchment(int socketID);
 
 		void SelectAttatchment(int socketID);

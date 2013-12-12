@@ -8,6 +8,7 @@ namespace GameLogic
 	{
 	public:
 		AttatchmentMassDriver(void);
+		AttatchmentMassDriver(Player &owner);
 		~AttatchmentMassDriver(void);
 
 
@@ -15,6 +16,7 @@ namespace GameLogic
 
 	private:
 		void ForcePush(const WEAPON_FIRE &fireInput);
+		void ForcePull(const WEAPON_FIRE &fireInput);
 
 	private:
 		struct PrivateData;

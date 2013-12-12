@@ -3,8 +3,6 @@
 
 #include "Object.h"
 #include "PhysicsAPI.h"
-//#include "DynamicObject.h"
-//#include "Player.h"
 
 namespace GameLogic
 {
