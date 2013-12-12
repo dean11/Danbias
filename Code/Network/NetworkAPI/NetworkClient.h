@@ -19,6 +19,7 @@ namespace Oyster
 	{
 		extern "C"
 		{
+			struct CustomProtocolObject;
 			class NET_PROTOCOL_EXPORT NetworkClient
 			{
 			public:
@@ -33,7 +34,7 @@ namespace Oyster
 
 				bool IsConnected();
 
-				void Send(CustomNetProtocol& protocol);
+				void Send(CustomProtocolObject& protocol);
 
 				void SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type);
 

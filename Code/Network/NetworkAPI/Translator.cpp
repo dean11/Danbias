@@ -8,6 +8,7 @@
 #include "../NetworkDependencies/Messages/MessageHeader.h"
 #include "../NetworkDependencies/OysterByte.h"
 
+
 using namespace Oyster::Network;
 using namespace ::Messages;
 using namespace Utility::DynamicMemory;

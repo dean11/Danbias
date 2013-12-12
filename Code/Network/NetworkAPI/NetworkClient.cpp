@@ -233,9 +233,9 @@ bool NetworkClient::IsConnected()
 	return privateData->connection->IsConnected();
 }
 
-void NetworkClient::Send(CustomNetProtocol& protocol)
+void NetworkClient::Send(CustomProtocolObject& protocol)
 {
-	this->privateData->Send(protocol);
+	this->privateData->Send(*protocol.GetProtocol());
 }
 
 void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type)
