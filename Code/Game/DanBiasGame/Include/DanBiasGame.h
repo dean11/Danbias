@@ -10,9 +10,7 @@
 #define NOMINMAX
 #include <Windows.h>
 
-
-#include "L_inputClass.h"
-
+#define DANBIAS_CLIENT
 
 namespace DanBias
 {
@@ -24,8 +22,6 @@ namespace DanBias
 			DanBiasClientReturn_Error,
 			DanBiasClientReturn_Sucess,
 		};
-
-
 
 		struct DanBiasGameDesc
 		{

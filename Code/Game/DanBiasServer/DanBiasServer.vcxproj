@@ -73,28 +73,32 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -102,13 +106,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DANBIAS_SERVER;DANBIAS_SERVER_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\;$(SolutionDir)Game\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,13 +123,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DANBIAS_SERVER;DANBIAS_SERVER_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\;$(SolutionDir)Game\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -134,8 +142,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>DANBIAS_SERVER;DANBIAS_SERVER_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\;$(SolutionDir)Game\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,6 +152,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,8 +163,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>DANBIAS_SERVER;DANBIAS_SERVER_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\;$(SolutionDir)Game\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,18 +173,28 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="IDanBiasServer.cpp" />
+    <ClCompile Include="Include\DanBiasServerAPI.cpp" />
     <ClCompile Include="DLLMain.cpp" />
-    <ClCompile Include="DBServer.cpp" />
+    <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="ServerObjects\ClientObject.cpp" />
+    <ClCompile Include="ServerObjects\Lobby\GameLobby.cpp" />
+    <ClCompile Include="ServerObjects\GameSession.cpp" />
+    <ClCompile Include="ServerObjects\Lobby\MainLobby.cpp" />
+    <ClCompile Include="ServerObjects\NetworkSession.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DBServer.h" />
-    <ClInclude Include="Include\IDanBiasServer.h" />
-    <ClInclude Include="Include\ServerWrapper.h" />
-    <ClInclude Include="MainLobby.h" />
+    <ClInclude Include="GameServer.h" />
+    <ClInclude Include="Include\DanBiasServerAPI.h" />
+    <ClInclude Include="ServerInitReader.h" />
+    <ClInclude Include="ServerObjects\ClientObject.h" />
+    <ClInclude Include="ServerObjects\GameSession.h" />
+    <ClInclude Include="ServerObjects\Lobby\GameLobby.h" />
+    <ClInclude Include="ServerObjects\Lobby\MainLobby.h" />
+    <ClInclude Include="ServerObjects\NetworkSession.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Misc\Misc.vcxproj">

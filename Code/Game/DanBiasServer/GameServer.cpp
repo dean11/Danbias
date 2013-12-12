@@ -1,0 +1,103 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
+#include <Windows.h>
+#include <WindowShell.h>
+
+#include "GameServer.h"
+#include "Utilities.h"
+#include "ServerInitReader.h"
+
+namespace DanBias
+{
+	using namespace Oyster::Network;
+
+	//void GameServer::ClientConnectCallbackFunction(Oyster::Network::NetworkClient& connectedClient)
+	//{
+	//	if(
+	//}
+	void GameServer::ClientConnectCallback(NetworkClient &client)
+	{
+		
+	}
+	GameServer::GameServer()
+		:	initiated(0)
+		,	running(0)
+		,	released(0)
+		,	maxClients(0)
+		,	mainLobby(0)
+		,	server(0)
+	{
+	}
+	GameServer::~GameServer()
+	{
+
+	}
+	DanBiasServerReturn GameServer::Create()
+	{
+		this->server = new NetworkServer();
+		this->mainLobby = new MainLobby();
+		
+		InitData data;
+		if(!LoadIniFile(data)) return DanBiasServerReturn_Error;
+
+		NetworkServer::INIT_DESC serverDesc;
+		serverDesc.port = data.port;
+		this->maxClients = data.clients;
+		serverDesc.callback = this;
+
+		if(!this->server->Init(serverDesc))								return DanBiasServerReturn_Error;
+		if(!WindowShell::CreateConsoleWindow())							return DanBiasServerReturn_Error;
+		if(!WindowShell::CreateWin(WindowShell::WINDOW_INIT_DESC()))	return DanBiasServerReturn_Error;
+
+		this->initiated = true;
+		return DanBiasServerReturn_Sucess;
+	}
+	DanBiasServerReturn GameServer::Run()
+	{
+		if(this->running)		return DanBiasServerReturn_Error;
+		if(this->released)		return DanBiasServerReturn_Error;
+		if(!this->initiated)	return DanBiasServerReturn_Error;
+
+		this->running = true;
+		while (this->running)
+		{
+			if(!WindowShell::Frame()) 
+				break;
+		}
+
+		return DanBiasServerReturn_Sucess;
+	}
+	DanBiasServerReturn GameServer::Release()
+	{
+		this->released = true;
+		return DanBiasServerReturn_Sucess;
+	}
+
+	bool GameServer::LoadIniFile(InitData& ini)
+	{
+		std::ifstream in;
+		std::string f = GetInitPath(InitPath_ServerIni);
+		in.open(f, std::ios::in);
+		if(!in.is_open()) return false;
+
+		std::string buffer;
+		while (!in.eof())
+		{
+			in >> buffer;
+
+			if(buffer == "port")
+			{
+				in >> ini.port;
+			}
+			else if(buffer == "clients")
+			{
+				in >> ini.clients;
+			}
+
+		}
+
+		in.close();
+		return true;
+	}
+}//End namespace DanBias

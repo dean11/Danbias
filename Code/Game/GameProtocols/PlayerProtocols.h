@@ -1,7 +1,12 @@
+//////////////////////////////////////////////////////////
+// Created 2013											//
+// Dennis Andersen, Linda Andersson						//
+//////////////////////////////////////////////////////////
+
 #ifndef GAMELOGIC_PLAYER_PROTOCOLS_H
 #define GAMELOGIC_PLAYER_PROTOCOLS_H
 
-#include "CustomNetProtocol.h"
+#include <CustomNetProtocol.h>
 #include "ProtocolIdentificationID.h"
 
 
@@ -20,24 +25,24 @@ namespace GameLogic
 		
 		Protocol_PlayerMovement()
 		{
-			protocol[0]->value = ProtocolID		= protocol_PlayerNavigation;
+			this->protocol[0].value = ProtocolID		= protocol_PlayerNavigation;
 
-			protocol[0]->type = Network::NetAttributeType_Int;
-			protocol[1]->type = Network::NetAttributeType_Bool;
-			protocol[2]->type = Network::NetAttributeType_Bool;
-			protocol[3]->type = Network::NetAttributeType_Bool;
-			protocol[4]->type = Network::NetAttributeType_Bool;
-			protocol[5]->type = Network::NetAttributeType_Bool;
-			protocol[6]->type = Network::NetAttributeType_Bool;
+			this->protocol[0].type = Network::NetAttributeType_Int;
+			this->protocol[1].type = Network::NetAttributeType_Bool;
+			this->protocol[2].type = Network::NetAttributeType_Bool;
+			this->protocol[3].type = Network::NetAttributeType_Bool;
+			this->protocol[4].type = Network::NetAttributeType_Bool;
+			this->protocol[5].type = Network::NetAttributeType_Bool;
+			this->protocol[6].type = Network::NetAttributeType_Bool;
 		}
 		Network::CustomNetProtocol* GetProtocol() override
 		{
-			protocol[1]->value = bForward;
-			protocol[2]->value = bBackward;
-			protocol[3]->value = bTurnLeft;
-			protocol[4]->value = bTurnRight;
-			protocol[5]->value = bStrafeRight;
-			protocol[6]->value = bStrafeRight;
+			this->protocol[1].value = bForward;
+			this->protocol[2].value = bBackward;
+			this->protocol[3].value = bTurnLeft;
+			this->protocol[4].value = bTurnRight;
+			this->protocol[5].value = bStrafeRight;
+			this->protocol[6].value = bStrafeRight;
 
 			return &protocol;
 		}

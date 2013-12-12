@@ -1,26 +1,26 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "Include\IDanBiasServer.h"
-#include "DBServer.h"
+#include "DanBiasServerAPI.h"
+#include "..\GameServer.h"
 
 namespace DanBias
 {
 
 #pragma region Server Data
-	static DBServer server;
+	static GameServer server;
 #pragma endregion
 
 
-	DanBiasServerReturn DanBiasServer::Initiate(DanBiasServerDesc& desc)
+	DanBiasServerReturn DanBiasServerAPI::Initiate()
 	{
-		return server.Create(desc);
+		return server.Create();
 	}
-	DanBiasServerReturn DanBiasServer::Run()
+	DanBiasServerReturn DanBiasServerAPI::Run()
 	{
 		return server.Run();
 	}
-	DanBiasServerReturn DanBiasServer::Release()
+	DanBiasServerReturn DanBiasServerAPI::Release()
 	{
 		return server.Release();
 	}
