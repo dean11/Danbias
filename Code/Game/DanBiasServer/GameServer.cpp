@@ -18,9 +18,10 @@ namespace DanBias
 	{
 		printf("Client connected!\n");
 		GameLogic::Protocol_TEST t;
-		t.text = "Hello";
+		t.text = 'A';
 		client.Send(t);
-		c = client;
+		Sleep(50000);
+		this->mainLobby->AttachClient(Utility::DynamicMemory::SmartPointer<NetworkClient>(new NetworkClient(client)));
 	}
 	GameServer::GameServer()
 		:	initiated(0)

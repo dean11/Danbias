@@ -125,7 +125,7 @@ int NetworkClient::PrivateData::Send()
 	postBoxMutex.lock();
 	if(sendPostBox->IsFull())
 	{
-		SmartPointer<OysterByte> temp = new OysterByte;
+		SmartPointer<OysterByte> temp = new OysterByte();
 		this->translator.Pack(temp, sendPostBox->FetchMessage());
 		errorCode = this->connection->Send(temp);
 	}
