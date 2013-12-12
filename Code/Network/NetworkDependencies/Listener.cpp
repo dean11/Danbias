@@ -1,10 +1,17 @@
 #include "Listener.h"
 
 using namespace Oyster::Network::Server;
+using namespace Utility::DynamicMemory;
 
 Listener::Listener()
 {
 	connection = NULL;
+}
+
+Listener::Listener(Oyster::Network::IPostBox<int>* postBox)
+{
+	connection = NULL;
+	this->postBox = postBox;
 }
 
 Listener::~Listener()
@@ -15,10 +22,10 @@ Listener::~Listener()
 	}
 }
 
+//Starts the thread immediate
 bool Listener::Init(unsigned int port)
 {
 	connection = new Connection();
-
 	connection->InitiateServer(port);
 
 	thread.Create(this, true);
@@ -26,26 +33,53 @@ bool Listener::Init(unsigned int port)
 	return true;
 }
 
+bool Listener::Init(unsigned int port, bool start)
+{
+	connection = new Connection();
+	connection->InitiateServer(port);
+
+	thread.Create(this, start);
+
+	return true;
+}
+
+void Listener::Start()
+{
+	thread.Start();
+}
+
+void Listener::Stop()
+{
+	thread.Stop();
+}
+
 void Listener::Shutdown()
 {
-	thread.Terminate();
+	thread.Stop();
 }
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
 {
-	mutex.LockMutex();
+	stdMutex.lock();
+	//mutex.LockMutex();
 	this->postBox = postBox;
-	mutex.UnlockMutex();
+	//mutex.UnlockMutex();
+	stdMutex.unlock();
 }
 
 int Listener::Accept()
 {
-	int clientSocket = 0;
+	int clientSocket = -1;
 	clientSocket = connection->Listen();
 
-	mutex.LockMutex();
-	postBox->PostMessage(clientSocket);
-	mutex.UnlockMutex();
+	if(clientSocket != -1)
+	{
+		stdMutex.lock();
+		//mutex.LockMutex();
+		postBox->PostMessage(clientSocket);
+		//mutex.UnlockMutex();
+		stdMutex.unlock();
+	}
 
 	return clientSocket;
 }
@@ -57,13 +91,10 @@ bool Listener::DoWork()
 	return true;
 }
 
-#include <iostream>
 void Listener::ThreadEntry()
 {
-	std::cout << "Thread started" << std::endl;
 }
 
 void Listener::ThreadExit()
 {
-	std::cout << "Thread stopped" << std::endl;
 }

@@ -16,16 +16,36 @@ OysterByte::OysterByte(int cap)
 	byteArray = new unsigned char[capacity];
 }
 
+OysterByte::OysterByte(const OysterByte& obj)
+{
+	//delete[] this->byteArray;
+	this->byteArray = new unsigned char[obj.capacity];
+
+	for(int i = 0; i < (int)obj.size; i++)
+	{
+		this->byteArray[i] = obj.byteArray[i];
+	}
+	this->size = obj.size;
+	this->capacity = obj.capacity;
+}
+
 OysterByte::~OysterByte()
 {
 	delete[] byteArray;
 }
 
-void OysterByte::Clear(unsigned int cap)
+void OysterByte::Clear()
 {
-	delete[] byteArray;
-	byteArray = new unsigned char[cap];
 	size = 0;
+}
+
+void OysterByte::Resize(unsigned int cap)
+{
+	if(capacity < cap)
+	{
+		delete[] byteArray;
+		byteArray = new unsigned char[cap];
+	}
 }
 
 int OysterByte::GetSize()
@@ -58,6 +78,21 @@ void OysterByte::SetBytes(unsigned char* bytes)
 void OysterByte::SetSize(unsigned int size)
 {
 	this->size = size;
+}
+
+OysterByte& OysterByte::operator =(const OysterByte& obj)
+{
+	delete[] this->byteArray;
+	this->byteArray = new unsigned char[obj.capacity];
+
+	for(int i = 0; i < (int)obj.size; i++)
+	{
+		this->byteArray[i] = obj.byteArray[i];
+	}
+	this->size = obj.size;
+	this->capacity = obj.capacity;
+
+	return *this;
 }
 
 OysterByte::operator char*()

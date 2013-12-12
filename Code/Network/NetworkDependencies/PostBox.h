@@ -23,7 +23,7 @@ namespace Oyster
 			virtual ~PostBox();
 
 			virtual void PostMessage(T& message);
-			virtual void FetchMessage(T& message);
+			virtual bool FetchMessage(T& message);
 			virtual bool IsFull();
 
 		private:
@@ -49,13 +49,14 @@ namespace Oyster
 		}
 
 		template <class T>
-		void PostBox<T>::FetchMessage(T& message)
+		bool PostBox<T>::FetchMessage(T& message)
 		{
 			if(IsFull())
 			{
-				message = messages.Front();
-				messages.Pop();
+				message = messages.Pop();
+				return true;
 			}
+			return false;
 		}
 
 		template <class T>

@@ -15,7 +15,7 @@ namespace Oyster
 		public:
 			virtual ~IPostBox() {}
 			virtual void PostMessage(T& message) = 0;
-			virtual void FetchMessage(T& message) = 0;
+			virtual bool FetchMessage(T& message) = 0;
 			virtual bool IsFull() = 0;
 
 		};

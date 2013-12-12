@@ -20,8 +20,8 @@ namespace Oyster
 			Translator () {  };
 			~Translator() {  };
 
-			void Pack (Protocols::ProtocolHeader &header, OysterByte& bytes );
-			void Unpack (Protocols::ProtocolSet* set, OysterByte& bytes );
+			void Pack (Protocols::ProtocolHeader &header, Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
+			void Unpack (Protocols::ProtocolSet* set, Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
 
 		private:
 

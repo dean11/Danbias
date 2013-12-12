@@ -1,6 +1,7 @@
 #include "GeneralLoader.h"
 #include "..\Core\Dx11Includes.h"
 #include "..\Core\Core.h"
+#include "ObjReader.h"
 
 HRESULT CreateWICTextureFromFileEx( ID3D11Device* d3dDevice,
 											 ID3D11DeviceContext* d3dContext,
@@ -35,6 +36,30 @@ void Oyster::Graphics::Loading::UnloadTexture(void* data)
 	SAFE_RELEASE(srv);
 }
 
+void Oyster::Graphics::Loading::LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out)
+{
+	OBJReader obj;
+	obj.readOBJFile(filename);
+	Model::ModelInfo* info;
+	info = obj.toModel();
+	out.loadedData = info;
+	out.resourceUnloadFnc = Oyster::Graphics::Loading::UnloadOBJ;
+}
+
+void Oyster::Graphics::Loading::UnloadOBJ(void* data)
+{
+	Model::ModelInfo* info = (Model::ModelInfo*) data;
+	SAFE_DELETE(info->Vertices);
+	if(info->Indexed)
+	{
+		SAFE_DELETE(info->Indecies);
+	}
+	for(int i =0;i<info->Material.size();++i)
+	{
+		Oyster::Resource::OysterResource::ReleaseResource(info->Material[i]);
+	}
+	delete info;
+}
 
 #include <wrl.h>
 #include <memory>

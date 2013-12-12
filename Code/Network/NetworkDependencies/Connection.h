@@ -16,27 +16,31 @@ namespace Oyster
 		{
 
 		public:
-			Connection() { this->socket = 0; };
-			Connection( int socket ) { this->socket = socket; };
+			Connection();
+			Connection( int socket );
 			virtual ~Connection();
 
-			
 			virtual int InitiateServer( unsigned short port );
 			virtual int InitiateClient();
 
-			virtual int Send( OysterByte& bytes );
-			virtual int  Recieve( OysterByte& bytes );
+			virtual int Send( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
+			virtual int  Recieve( Utility::DynamicMemory::SmartPointer<OysterByte> &bytes );
 
 			virtual int Disconnect();
 			virtual int Connect( unsigned short port , const char serverName[] );
 			
 			virtual int  Listen();
 
+			//Setting the socket to blocking/non-blocking mode.
+			int SetBlockingMode( bool blocking );
+
 		private:
 			int InitiateSocket();
-			void SetBlockingMode( bool blocking );
 
 			int socket;
+
+			bool stillSending;
+			bool closed;
 
 		};
 	}

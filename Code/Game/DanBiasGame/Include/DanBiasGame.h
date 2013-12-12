@@ -10,8 +10,7 @@
 #define NOMINMAX
 #include <Windows.h>
 
-#include "DllInterfaces/GFXAPI.h"
-#include "L_inputClass.h"
+
 
 namespace DanBias
 {
@@ -24,6 +23,8 @@ namespace DanBias
 			DanBiasClientReturn_Sucess,
 		};
 
+
+
 		struct DanBiasGameDesc
 		{
 			//Stuff goes here...
@@ -33,7 +34,7 @@ namespace DanBias
 
 		};
 		LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-		
+		class DanBiasGamePrivateData;
 		class DANBIAS_GAME_DLL DanBiasGame
 		{
 		public:
@@ -48,18 +49,21 @@ namespace DanBias
 			
 			static HRESULT      InitWindow( HINSTANCE hInstance, int nCmdShow);
 			static HRESULT		InitDirect3D();
-			static HRESULT		InitGame();
+			static HRESULT		InitInput();
 
 			static HRESULT Update(float deltaTime);
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
+
+			static void protocolRecived();
 		private:
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;
 			static float secsPerCnt;
-			static InputClass* inputObj;
+			
 			static HINSTANCE			g_hInst;  
 			static HWND					g_hWnd;
+			static DanBiasGamePrivateData* m_data;
 		};
 		
 

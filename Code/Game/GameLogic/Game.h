@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "IGame.h"
 #include "Camera.h"
+#include "DynamicObject.h"
 
 namespace GameLogic
 {

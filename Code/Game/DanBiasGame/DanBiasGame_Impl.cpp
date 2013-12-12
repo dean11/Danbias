@@ -1,17 +1,55 @@
 #define NOMINMAX
 #include <Windows.h>
 #include "Include\DanBiasGame.h"
+#include "DllInterfaces/GFXAPI.h"
+#include "GameClientState/GameClientState.h"
+#include "GameClientState\GameState.h"
+#include "GameClientState\LobbyState.h"
+#include "PlayerProtocols.h"
+#include "NetworkClient.h"
+
+#include "L_inputClass.h"
+#include "vld.h"
 
 namespace DanBias
 {
 	__int64 DanBiasGame::cntsPerSec		= 0;
 	__int64 DanBiasGame::prevTimeStamp	= 0;
 	float DanBiasGame::secsPerCnt		= 0;
-	InputClass* DanBiasGame::inputObj	= NULL;
 	HINSTANCE DanBiasGame::g_hInst		= NULL;
 	HWND DanBiasGame::g_hWnd			= NULL;
 
 #pragma region Game Data
+
+
+	struct MyRecieverObject // :public PontusRecieverObject
+	{
+		 Oyster::Network::NetworkClient nwClient;
+		
+		static void ProtocolRecieved(Network::CustomNetProtocol* p)
+		{
+			int pType = ((*p)[0]).value.netInt;
+			switch (pType)
+			{
+			case protocol_PlayerNavigation:
+				
+				break;
+			case protocol_PlayerPosition:
+				//int x = ((*p)[1]).value.netInt; 
+				//int y = ((*p)[2]).value.netInt; 
+				//int z = ((*p)[3]).value.netInt; 
+				break;
+
+
+			case protocol_ObjectPosition:
+				// DanBiasGame::protocolRecived();
+				break;
+
+			default:
+				break;
+			}			
+		}
+	};
 	class DanBiasGamePrivateData
 	{
 
@@ -26,10 +64,23 @@ namespace DanBias
 		}
 
 		public:
+		 Client::GameClientState* gameClientState;
+		 InputClass* inputObj;
+		 GameLogic::Protocol_PlayerMovement player_move;
+		 //Oyster::Network::NetworkClient nwClient;
+		MyRecieverObject r;
+
+		 // gameClient; 
 
 	} data;
 #pragma endregion
 
+
+	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
+	void DanBiasGame::protocolRecived()
+	{
+		//m_data->gameClientState.setPos()
+	}
 	//--------------------------------------------------------------------------------------
 	// Interface API functions
 	//--------------------------------------------------------------------------------------
@@ -41,7 +92,7 @@ namespace DanBias
 		if( FAILED( InitDirect3D() ) )
 			return DanBiasClientReturn_Error;
 
-		if( FAILED( InitGame() ) )
+		if( FAILED( InitInput() ) )
 			return DanBiasClientReturn_Error;
 
 		cntsPerSec = 0;
@@ -51,6 +102,10 @@ namespace DanBias
 		prevTimeStamp = 0;
 		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
+
+		// Start in lobby state
+		m_data->gameClientState = new  Client::LobbyState();
+		m_data->gameClientState->Init();
 		return DanBiasClientReturn_Sucess;
 	}
 
@@ -72,8 +127,10 @@ namespace DanBias
 				float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
 
 				//render
-				Update(dt);
-				Render(dt);
+				if(Update(dt) != S_OK)
+					return DanBiasClientReturn_Error;
+				if(Render(dt) != S_OK)
+					return DanBiasClientReturn_Error;
 
 				prevTimeStamp = currTimeStamp;
 			}
@@ -145,48 +202,76 @@ namespace DanBias
 	}
 
 	//--------------------------------------------------------------------------------------
-	// Init the input and the game
+	// Init the input
 	//-------------------------------------------------------------------------------------
-	HRESULT DanBiasGame::InitGame()
+	HRESULT DanBiasGame::InitInput()
 	{
-		inputObj = new InputClass;
-		if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
+		m_data->inputObj = new InputClass;
+		if(!m_data->inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
 		}
-	
 		return S_OK;
 	}
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		inputObj->Update();
+		m_data->inputObj->Update();
 
+		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
+		state = m_data->gameClientState->Update(deltaTime, m_data->inputObj);
+
+		if(state != Client::GameClientState::ClientState_Same)
+		{
+			m_data->gameClientState->Release();
+			delete m_data->gameClientState;
+			m_data->gameClientState = NULL;
+
+			switch (state)
+			{
+			case Client::GameClientState::ClientState_Lobby:
+				m_data->gameClientState = new Client::LobbyState();
+				break;
+			case Client::GameClientState::ClientState_Game:
+				m_data->gameClientState = new Client::GameState();
+				break;
+			default:
+				return E_FAIL;
+				break;
+			}
+			m_data->gameClientState->Init(); // send game client
+				 
+		}
 		return S_OK;
 	}
 
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
 		int isPressed = 0;
-		if(inputObj->IsKeyPressed(DIK_A))
+		if(m_data->inputObj->IsKeyPressed(DIK_A))
 		{
 			isPressed = 1;
 		}
-
-		Oyster::Graphics::API::NewFrame(Oyster::Math3D::Float4x4::null, Oyster::Math3D::Float4x4::null);
-	
+		
 		wchar_t title[255];
 		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
 		SetWindowText(g_hWnd, title);
-
-		Oyster::Graphics::API::EndFrame();
+	
+		m_data->gameClientState->Render();
 
 		return S_OK;
 	}
 
 	HRESULT DanBiasGame::CleanUp()
 	{
+		m_data->gameClientState->Release();
+		delete m_data->gameClientState;
+		delete m_data->inputObj;
+		delete m_data;
+		
+
+		Oyster::Graphics::API::Clean();
 		return S_OK;
 	}	
 
