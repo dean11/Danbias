@@ -65,6 +65,7 @@ namespace Oyster
 				float* UnpackFloat(unsigned int& elementCount, OysterByte& bytes);
 				double UnpackDouble(OysterByte& bytes);
 
+				char* UnpackCStr(OysterByte& bytes);
 				std::string UnpackStr(OysterByte& bytes);
 
 				//Sets the this->size to the first position in msg

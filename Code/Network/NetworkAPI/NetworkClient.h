@@ -27,6 +27,9 @@ namespace Oyster
 				NetworkClient(unsigned int socket);
 				NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type);
 				NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket);
+				NetworkClient(const NetworkClient& obj);
+				
+				NetworkClient& operator =(const NetworkClient& obj);
 				virtual ~NetworkClient();
 
 				bool Connect(unsigned short port, const char serverIP[]);

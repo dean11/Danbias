@@ -279,6 +279,20 @@ namespace Oyster
 			}
 
 			//string
+			char* UnpackCStr(unsigned char buffer[])
+			{
+				short len = UnpackS(buffer);
+				char* str = new char[len];
+
+				buffer += 2;
+				for(int i = 0; i < len; i++)
+				{
+					str[i] = buffer[i];
+				}
+
+				return str;
+			}
+
 			std::string UnpackStr(unsigned char buffer[])
 			{
 				short len = UnpackS(buffer);

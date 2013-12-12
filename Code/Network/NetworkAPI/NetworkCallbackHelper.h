@@ -26,7 +26,7 @@ namespace Oyster
 
 		class NetworkClient;
 		class CustomNetProtocol;
-		typedef void (*ClientConnectCallbackMethod)(NetworkClient&);
+		typedef void (*ClientConnectCallbackMethod)(NetworkClient);
 		typedef void(*ProtocolRecieverFunction)(CustomNetProtocol& protocol);
 		struct ClientConnectedObject
 		{
