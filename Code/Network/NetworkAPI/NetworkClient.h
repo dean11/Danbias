@@ -41,6 +41,8 @@ namespace Oyster
 
 				void SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type);
 
+				bool operator ==(const NetworkClient& obj);
+
 			private:
 				struct PrivateData;
 				PrivateData* privateData;

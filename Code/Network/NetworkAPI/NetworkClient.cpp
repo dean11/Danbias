@@ -52,9 +52,15 @@ struct NetworkClient::PrivateData : public IThreadObject
 	std::mutex postBoxMutex;
 
 	Translator translator;
+
+	//ID
+	static unsigned int currID;
+	const unsigned int ID;
 };
 
-NetworkClient::PrivateData::PrivateData()
+unsigned int NetworkClient::PrivateData::currID = 0;
+
+NetworkClient::PrivateData::PrivateData() : ID(currID++)
 {
 	InitWinSock();
 
@@ -67,7 +73,7 @@ NetworkClient::PrivateData::PrivateData()
 	Start();
 }
 
-NetworkClient::PrivateData::PrivateData(unsigned int socket)
+NetworkClient::PrivateData::PrivateData(unsigned int socket) : ID(currID++)
 {
 	InitWinSock();
 
@@ -259,4 +265,9 @@ void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCal
 	privateData->recvObj = SmartPointer<RecieverObject>(&recvObj);
 	privateData->callbackType = type;
 	privateData->recvObjMutex.unlock();
+}
+
+bool NetworkClient::operator ==(const NetworkClient& obj)
+{
+	return (this->privateData->ID == obj.privateData->ID);
 }
