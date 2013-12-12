@@ -86,17 +86,17 @@ NetworkClient::PrivateData::~PrivateData()
 {
 	thread.Stop();
 
-	if(connection)
+	/*if(connection)
 	{
 		delete connection;
 		connection = NULL;
-	}
+	}*/
 
-	if(sendPostBox)
+	/*if(sendPostBox)
 	{
 		delete sendPostBox;
 		sendPostBox = NULL;
-	}
+	}*/
 
 	callbackType = NetworkProtocolCallbackType_Unknown;
 
