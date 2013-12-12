@@ -1,20 +1,24 @@
 #include "NetworkSession.h"
-
+#include <mutex>
 
 namespace DanBias
 {
 	NetworkSession::NetworkSession()
 	{
+
 	}
 	NetworkSession::~NetworkSession()
 	{
+
 	}
 
 	void NetworkSession::AttachClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
 	{
+
 	}
 	void NetworkSession::DetachClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
 	{
+
 	}
 	void NetworkSession::DetachClient(short ID)
 	{
@@ -23,6 +27,7 @@ namespace DanBias
 	
 	void NetworkSession::Kick(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
 	{
+
 	}
 	void NetworkSession::Kick()
 	{

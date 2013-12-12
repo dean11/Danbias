@@ -3,11 +3,13 @@
 /////////////////////////////////////////////////////////////////////
 #include <Windows.h>
 #include <WindowShell.h>
+#include <iostream>
 
 #include "GameServer.h"
 #include "Utilities.h"
 #include "ServerInitReader.h"
 #include <TEST_PROTOCOLS.h>
+#include <Thread\OysterThread.h>
 
 namespace DanBias
 {
@@ -17,10 +19,7 @@ namespace DanBias
 	void GameServer::ClientConnectCallback(NetworkClient client)
 	{
 		printf("Client connected!\n");
-		GameLogic::Protocol_TEST t;
-		t.text = 'A';
-		client.Send(t);
-		Sleep(50000);
+
 		this->mainLobby->AttachClient(Utility::DynamicMemory::SmartPointer<NetworkClient>(new NetworkClient(client)));
 	}
 	GameServer::GameServer()
@@ -64,6 +63,8 @@ namespace DanBias
 		if(!this->initiated)		return DanBiasServerReturn_Error;
 
 		if(!this->server->Start())	return DanBiasServerReturn_Error;
+
+		
 
 		this->running = true;
 		while (this->running)

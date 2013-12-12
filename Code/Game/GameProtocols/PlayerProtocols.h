@@ -51,7 +51,7 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_PlayerPosition :public Network::CustomProtocolObject
+	struct Protocol_PlayerPosition :public Oyster::Network::CustomProtocolObject
 	{
 		float position[3];
 		// look at dir 
@@ -59,14 +59,14 @@ namespace GameLogic
 		Protocol_PlayerPosition()
 		{
 			this->protocol[0].value = protocol_PlayerPosition;
-			this->protocol[0].type = Network::NetAttributeType_Int;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
 
-			this->protocol[1].type = Network::NetAttributeType_Float;
-			this->protocol[2].type = Network::NetAttributeType_Float;
-			this->protocol[3].type = Network::NetAttributeType_Float;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			
 		}
-		Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			
 			this->protocol[1].value = position[0];
@@ -76,7 +76,7 @@ namespace GameLogic
 		}
 
 	private:
-		Network::CustomNetProtocol protocol;
+		Oyster::Network::CustomNetProtocol protocol;
 	};
 
 }

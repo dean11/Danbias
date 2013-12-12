@@ -7,6 +7,6 @@
 #define protocol_PlayerPosition		1
 #define protocol_ObjectPosition		2
 
-#define PROTOCOL_TEST	2
+#define PROTOCOL_TEST				1000
 
 #endif // !GAMEPROTOCOL_PROTOCOL_DEFINITION_ID_H
