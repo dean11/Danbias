@@ -56,7 +56,8 @@ struct Translator::PrivateData
 		auto it = ((MyCastingStruct*)protocol.privateData)->attributes.begin();
 		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
 
-		size = 4 + 2;	//size(int) + number of chars(short)
+		size = 4;	//size(int)
+		bytes->AddSize(4);
 		message.SetSize(size);
 
 		//Find all the data types
@@ -66,6 +67,7 @@ struct Translator::PrivateData
 		}
 
 		message.PackShort(size, *bytes);
+		size += 2;
 
 		for(int i = 0; i < (int)headerString.size(); i++)
 		{
@@ -81,7 +83,7 @@ struct Translator::PrivateData
 		auto it = ((MyCastingStruct*)protocol.privateData)->attributes.begin();
 		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
 
-		for(int i = 0; i < (int)headerString.size(); i++)
+		for(int i = 0; i < (int)headerString.size(); i++, it++)
 		{
 			switch((int)headerString.at(i))
 			{

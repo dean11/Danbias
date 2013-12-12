@@ -17,6 +17,7 @@ Listener::Listener(Oyster::Network::IPostBox<int>* postBox)
 
 Listener::~Listener()
 {
+	Stop();
 	if(connection)
 	{
 		delete connection;
