@@ -77,6 +77,8 @@ NetworkClient::PrivateData::PrivateData(unsigned int socket)
 	sendPostBox = new PostBox<CustomNetProtocol>;
 	this->thread.Create(this, false);
 
+	connection->SetBlockingMode(false);
+
 	Start();
 }
 
@@ -214,6 +216,8 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 		privateData->Start();
 		return true;
 	}
+
+	privateData->connection->SetBlockingMode(false);
 
 	//Connect has failed
 	return false;
