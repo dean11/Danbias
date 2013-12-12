@@ -42,7 +42,10 @@ using namespace Utility::DynamicMemory;
 	
 		ThreadData() {}
 		~ThreadData() {}
-		ThreadData(const ThreadData&)	{};
+		ThreadData(const ThreadData&)	
+		{};
+		const ThreadData& operator =(const ThreadData& o)	
+		{};
 	};
 	struct OysterThread::PrivateData
 	{
@@ -60,9 +63,14 @@ using namespace Utility::DynamicMemory;
 		{
 			threadData = o.threadData;
 		}
+		const PrivateData& operator=(const PrivateData& o)
+		{
+			threadData = o.threadData;
+		}
 		~PrivateData()
 		{
 			//@todo TODO: Make detatch avalible.
+			//if(!this->threadData->workerThread->joinable())
 			this->threadData->workerThread->detach();
 
 			this->threadData->owner = 0;
@@ -75,8 +83,6 @@ using namespace Utility::DynamicMemory;
 #pragma endregion
 
 
-int tempId = 0;
-std::vector<int> IDS;
 static void ThreadingFunction(SmartPointer<ThreadData> &origin)
 {
 
@@ -159,6 +165,8 @@ OysterThread::OysterThread(const OysterThread& original)
 }
 const OysterThread& OysterThread::operator=(const OysterThread& original)
 {
+	delete this->privateData;
+	this->privateData = new PrivateData(*original.privateData);
 	return *this;
 }
 OysterThread::~OysterThread()											   

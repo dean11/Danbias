@@ -13,12 +13,14 @@ namespace DanBias
 {
 	using namespace Oyster::Network;
 
+	
 	void GameServer::ClientConnectCallback(NetworkClient client)
 	{
 		printf("Client connected!\n");
 		GameLogic::Protocol_TEST t;
 		t.text = "Hello";
 		client.Send(t);
+		c = client;
 	}
 	GameServer::GameServer()
 		:	initiated(0)
