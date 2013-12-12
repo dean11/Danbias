@@ -191,7 +191,7 @@ struct Translator::PrivateData
 				protocol[i].value.netDouble = message.UnpackDouble(*bytes);
 				break;
 			case NetAttributeType_CharArray:
-				//protocol[i].value.netCharPtr = message.UnpackStr(*bytes).c_str();
+				protocol[i].value.netCharPtr = message.UnpackCStr(*bytes);
 				break;
 			default:
 				numberOfUnknownTypes++;

@@ -40,11 +40,11 @@ struct NetworkClient::PrivateData : public IThreadObject
 
 	bool DoWork();
 
-	Connection* connection;
+	SmartPointer<Connection> connection;
 
-	IPostBox<CustomNetProtocol> *sendPostBox;
+	SmartPointer<IPostBox<CustomNetProtocol>> sendPostBox;
 	
-	RecieverObject recvObj;
+	SmartPointer<RecieverObject> recvObj;
 	NetworkProtocolCallbackType callbackType;
 
 	Oyster::Thread::OysterThread thread;
@@ -152,11 +152,11 @@ int NetworkClient::PrivateData::Recv()
 			recvObjMutex.lock();
 			if(callbackType == NetworkProtocolCallbackType_Function)
 			{
-				recvObj.protocolRecieverFnc(protocol);
+				recvObj->protocolRecieverFnc(protocol);
 			}
 			else if(callbackType == NetworkProtocolCallbackType_Object)
 			{
-				recvObj.protocolRecievedObject->ProtocolRecievedCallback(protocol);
+				recvObj->protocolRecievedObject->ProtocolRecievedCallback(protocol);
 			}
 			recvObjMutex.unlock();
 		}
@@ -187,14 +187,29 @@ NetworkClient::NetworkClient(unsigned int socket)
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
 	privateData = new PrivateData();
-	this->privateData->recvObj = recvObj;
+	this->privateData->recvObj = SmartPointer<RecieverObject>(&recvObj);;
 }
 
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket)
 {
 	privateData = new PrivateData(socket);
-	this->privateData->recvObj = recvObj;
+	this->privateData->recvObj = SmartPointer<RecieverObject>(&recvObj);
 	this->privateData->callbackType = type;
+}
+
+NetworkClient::NetworkClient(const NetworkClient& obj)
+{
+	this->privateData = new PrivateData();
+
+	this->privateData = obj.privateData;
+}
+
+NetworkClient& NetworkClient::operator =(const NetworkClient& obj)
+{
+	delete privateData;
+	this->privateData = new PrivateData();
+	this->privateData = obj.privateData;
+	return *this;
 }
 
 NetworkClient::~NetworkClient()
@@ -241,7 +256,7 @@ void NetworkClient::Send(CustomProtocolObject& protocol)
 void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
 	privateData->recvObjMutex.lock();
-	privateData->recvObj = recvObj;
+	privateData->recvObj = SmartPointer<RecieverObject>(&recvObj);
 	privateData->callbackType = type;
 	privateData->recvObjMutex.unlock();
 }

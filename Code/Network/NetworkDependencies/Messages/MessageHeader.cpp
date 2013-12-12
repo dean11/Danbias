@@ -240,6 +240,13 @@ double MessageHeader::UnpackDouble(OysterByte& bytes)
 	return i;
 }
 
+char* MessageHeader::UnpackCStr(OysterByte& bytes)
+{
+	char* str = Packing::UnpackCStr(&bytes.GetByteArray()[size]);
+	size += 2 + (int)strlen(str);
+	return str;
+}
+
 std::string MessageHeader::UnpackStr(OysterByte& bytes)
 {
 	std::string str = Packing::UnpackStr(&bytes.GetByteArray()[size]);
