@@ -34,7 +34,7 @@ int main()
 	ThreadedClient* client = new ThreadedClient;
 
 	//Connect to server
-	errorCode = client->Connect(9876, "localhost");
+	errorCode = client->Connect(15151, "193.11.186.101");
 
 	if(errorCode != 0)
 	{
