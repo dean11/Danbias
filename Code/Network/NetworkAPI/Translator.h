@@ -48,6 +48,8 @@ namespace Oyster
 			public:
 				Translator ();
 				~Translator();
+				Translator(const Translator& obj);
+				const Translator& operator=(const Translator& obj);
 
 				void Pack(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes, CustomNetProtocol& protocol);
 

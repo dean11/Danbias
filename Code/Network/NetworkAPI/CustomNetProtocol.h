@@ -82,6 +82,8 @@ namespace Oyster
 			public:
 				CustomNetProtocol();
 				~CustomNetProtocol();
+				CustomNetProtocol(const CustomNetProtocol& o);
+				const CustomNetProtocol& operator=(const CustomNetProtocol& o);
 
 				NetAttributeContainer& operator[](int ID);
 

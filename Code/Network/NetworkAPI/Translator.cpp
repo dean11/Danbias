@@ -220,6 +220,16 @@ Translator::~Translator()
 		privateData = NULL;
 	}
 }
+Translator::Translator(const Translator& obj)
+{
+	this->privateData = new PrivateData(*obj.privateData);
+}
+const Translator& Translator::operator=(const Translator& obj)
+{
+	delete this->privateData;
+	this->privateData = new PrivateData(*obj.privateData);
+	return *this;
+}
 
 void Translator::Pack(SmartPointer<OysterByte> &bytes, CustomNetProtocol& protocol)
 {

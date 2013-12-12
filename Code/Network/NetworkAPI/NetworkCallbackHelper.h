@@ -30,7 +30,7 @@ namespace Oyster
 		typedef void(*ProtocolRecieverFunction)(CustomNetProtocol& protocol);
 		struct ClientConnectedObject
 		{
-			virtual void ClientConnectCallback(NetworkClient &client) = 0;
+			virtual void ClientConnectCallback(NetworkClient client) = 0;
 		};
 		struct ProtocolRecieverObject
 		{

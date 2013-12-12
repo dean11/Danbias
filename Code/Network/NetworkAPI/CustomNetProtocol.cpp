@@ -13,12 +13,34 @@ struct CustomNetProtocol::PrivateData
 
 	PrivateData()
 	{ }
+	PrivateData( const CustomNetProtocol::PrivateData& o)
+	{ 
+		for (auto i = o.attributes.begin(); i != o.attributes.end(); i++)
+		{
+			if(i->second.type == NetAttributeType_CharArray)
+			{
+				size_t size = strlen(i->second.value.netCharPtr);
+				if(size == 0) continue;
+
+				attributes[i->first];
+				attributes[i->first].value.netCharPtr = new char[size + 1];
+				//strcpy_s(attributes[i->first].value.netCharPtr, size + 1, i->second.value.netCharPtr);
+				memcpy(&attributes[i->first].value.netCharPtr[0], &i->second.value.netCharPtr[0], size + 1);
+			}
+			else
+			{
+				attributes[i->first] = i->second;
+			}
+		}
+		attributes = o.attributes; 
+	}
 	~PrivateData()
 	{
 		for (auto i = attributes.begin(); i != attributes.end(); i++)
 		{
 			RemoveAttribute(i->first);
 		}
+		attributes.clear();
 	}
 	void RemoveAttribute(int ID)
 	{
@@ -28,7 +50,8 @@ struct CustomNetProtocol::PrivateData
 		switch (i->second.type)
 		{
 			case NetAttributeType_CharArray:
-				delete [] i->second.value.netCharPtr;
+				//delete [] i->second.value.netCharPtr;
+				i->second.value.netCharPtr = 0;
 			break;
 		}
 	}
@@ -40,6 +63,16 @@ struct CustomNetProtocol::PrivateData
 CustomNetProtocol::CustomNetProtocol()
 {
 	this->privateData = new PrivateData();
+}
+CustomNetProtocol::CustomNetProtocol(const CustomNetProtocol& o)
+{
+	this->privateData = new PrivateData(*o.privateData);
+}
+const CustomNetProtocol& CustomNetProtocol::operator=(const CustomNetProtocol& o)
+{
+	delete this->privateData;
+	this->privateData = new PrivateData(*o.privateData);
+	return *this;
 }
 CustomNetProtocol::~CustomNetProtocol()
 {
