@@ -11,7 +11,7 @@
 	#define NET_PROTOCOL_EXPORT __declspec(dllimport)
 #endif
 
-class RecieverObject;
+#include "NetworkCallbackHelper.h"
 
 namespace Oyster
 {
@@ -23,12 +23,19 @@ namespace Oyster
 			{
 			public:
 				NetworkClient();
+				NetworkClient(unsigned int socket);
+				NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type);
+				NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket);
 				virtual ~NetworkClient();
 
-				virtual void Disconnect();
-				virtual bool IsConnected();
+				bool Connect(unsigned short port, const char serverIP[]);
+				void Disconnect();
 
-				virtual void Send();
+				bool IsConnected();
+
+				void Send(CustomNetProtocol& protocol);
+
+				void SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type);
 
 			private:
 				struct PrivateData;

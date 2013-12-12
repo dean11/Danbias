@@ -9,7 +9,6 @@
     <ClCompile Include="OysterByte.cpp" />
     <ClCompile Include="Packing.cpp" />
     <ClCompile Include="ThreadedClient.cpp" />
-    <ClCompile Include="Translator.cpp" />
     <ClCompile Include="WinsockFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -28,7 +27,6 @@
     <ClInclude Include="PostBox.h" />
     <ClInclude Include="Protocols.h" />
     <ClInclude Include="ThreadedClient.h" />
-    <ClInclude Include="Translator.h" />
     <ClInclude Include="WinsockFunctions.h" />
   </ItemGroup>
 </Project>

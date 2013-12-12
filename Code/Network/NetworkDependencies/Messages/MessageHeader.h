@@ -24,7 +24,6 @@ namespace Oyster
 				virtual void Pack(Protocols::ProtocolHeader& header, OysterByte& bytes );
 				virtual void Unpack(OysterByte& bytes, Protocols::ProtocolHeader& header);
 
-			protected:
 				//Pack variables to messages
 				void PackBool(bool i, OysterByte& bytes);
 
@@ -47,10 +46,6 @@ namespace Oyster
 				void PackStr(char str[], OysterByte& bytes);
 				void PackStr(std::string str, OysterByte& bytes);
 
-				//Maybe
-				//TODO: Add Pack functions for Vec2, 3, 4 and maybe Matrix. Etc.
-				
-
 				//Unpack variables from message
 				bool UnpackBool(OysterByte& bytes);
 
@@ -72,12 +67,10 @@ namespace Oyster
 
 				std::string UnpackStr(OysterByte& bytes);
 
-				//Maybe
-				//TODO: Add Unpack functions for Vec2, 3, 4 and maybe Matrix. Etc.
-
-
 				//Sets the this->size to the first position in msg
 				void SetSize(OysterByte& bytes);
+
+				void SetSize(unsigned int size);
 
 			private:
 				unsigned int size;

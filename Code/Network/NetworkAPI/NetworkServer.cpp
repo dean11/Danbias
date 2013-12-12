@@ -1,8 +1,13 @@
+#ifndef INCLUDE_WINSOCK_LIB
+#define INCLUDE_WINSOCK_LIB
+	#pragma comment(lib, "ws2_32.lib")
+#endif
+
 #include "NetworkServer.h"
-#include "NetworkClient.h"
 
 #include "../NetworkDependencies/Listener.h"
 #include "../NetworkDependencies/PostBox.h"
+#include "../NetworkDependencies/WinsockFunctions.h"
 
 #include "../../Misc/Utilities.h"
 #include "../../Misc/Thread/OysterThread.h"
@@ -23,12 +28,12 @@ struct NetworkServer::PrivateData : public IThreadObject
 
 	bool Init(INIT_DESC& initDesc);
 	bool Start();
-	bool Stop();
-	bool Shutdown();
+	void Stop();
+	void Shutdown();
 
 	void CheckForNewClient();
 
-	virtual bool DoWork();
+	bool DoWork();
 
 	//
 	IListener* listener;
@@ -63,13 +68,22 @@ bool NetworkServer::PrivateData::Init(INIT_DESC& initDesc)
 		return false;
 	}
 
+	if(!InitWinSock())
+		return false;
+
 	this->initDesc = initDesc;
 
 	//Initiate listener
 	listener = new Listener(postBox);
-	((Listener*)listener)->Init(this->initDesc.port, false);
+	if(!((Listener*)listener)->Init(this->initDesc.port, false))
+	{
+		return false;
+	}
 
-	thread.Create(this, false);
+	if(thread.Create(this, false) == OYSTER_THREAD_ERROR_FAILED)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -77,15 +91,22 @@ bool NetworkServer::PrivateData::Init(INIT_DESC& initDesc)
 bool NetworkServer::PrivateData::Start()
 {
 	//Start listener
-	((Listener*)listener)->Start();
+	if(!((Listener*)listener)->Start())
+	{
+		return false;
+	}
+
 	started = true;
 
-	thread.Start();
+	if(thread.Start() == OYSTER_THREAD_ERROR_FAILED)
+	{
+		return false;
+	}
 
 	return true;
 }
 
-bool NetworkServer::PrivateData::Stop()
+void NetworkServer::PrivateData::Stop()
 {
 	if(listener)
 	{
@@ -95,11 +116,9 @@ bool NetworkServer::PrivateData::Stop()
 	started = false;
 
 	thread.Stop();
-
-	return true;
 }
 
-bool NetworkServer::PrivateData::Shutdown()
+void NetworkServer::PrivateData::Shutdown()
 {
 	//Stop server main thread
 	thread.Stop();
@@ -118,7 +137,7 @@ bool NetworkServer::PrivateData::Shutdown()
 
 	started = false;
 
-	return true;
+	ShutdownWinSock();
 }
 
 //Checks for new clients and sends them to the proc function.
@@ -126,8 +145,7 @@ void NetworkServer::PrivateData::CheckForNewClient()
 {
 	if(postBox->IsFull())
 	{
-		int clientSocketNum;
-		postBox->FetchMessage(clientSocketNum);
+		int clientSocketNum = postBox->FetchMessage();
 
 		//Safety check that is probably not needed.
 		if(clientSocketNum == -1)
@@ -136,10 +154,15 @@ void NetworkServer::PrivateData::CheckForNewClient()
 		}
 
 		//Create client and Proc function if the pointer is not NULL
-		if(initDesc.proc)
+		if(initDesc.callbackType == NetworkClientCallbackType_Function)
 		{
-			Oyster::Network::NetworkClient* client = new Oyster::Network::NetworkClient();
-			initDesc.proc((NetworkClient*)client);
+			Oyster::Network::NetworkClient client(clientSocketNum);
+			initDesc.recvObj.clientConnectFnc(client);
+		}
+		else if(initDesc.callbackType == NetworkClientCallbackType_Object)
+		{
+			Oyster::Network::NetworkClient client(clientSocketNum);
+			initDesc.recvObj.clientConnectObject->ClientConnectCallback(client);
 		}
 	}
 }
@@ -170,30 +193,32 @@ NetworkServer::~NetworkServer()
 
 bool NetworkServer::Init(INIT_DESC& initDesc)
 {
-	privateData->Init(initDesc);
+	if(!privateData->Init(initDesc))
+	{
+		return false;
+	}
 
 	return true;
 }
 
 bool NetworkServer::Start()
 {
-	privateData->Start();
+	if(!privateData->Start())
+	{
+		return false;
+	}
 
 	return true;
 }
 
-bool NetworkServer::Stop()
+void NetworkServer::Stop()
 {
 	privateData->Stop();
-
-	return true;
 }
 
-bool NetworkServer::Shutdown()
+void NetworkServer::Shutdown()
 {
 	privateData->Shutdown();
-
-	return true;
 }
 
 bool NetworkServer::IsStarted() const

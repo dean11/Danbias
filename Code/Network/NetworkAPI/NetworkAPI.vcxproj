@@ -163,11 +163,14 @@
     <ClCompile Include="CustomNetProtocol.cpp" />
     <ClCompile Include="NetworkServer.cpp" />
     <ClCompile Include="NetworkClient.cpp" />
+    <ClCompile Include="Translator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomNetProtocol.h" />
+    <ClInclude Include="NetworkCallbackHelper.h" />
     <ClInclude Include="NetworkServer.h" />
     <ClInclude Include="NetworkClient.h" />
+    <ClInclude Include="Translator.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetworkDependencies\NetworkDependencies.vcxproj">

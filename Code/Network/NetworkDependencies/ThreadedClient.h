@@ -9,7 +9,6 @@
 #include "PostBox.h"
 #include "Connection.h"
 #include "../../Misc/Thread/OysterThread.h"
-#include "../../Misc/Thread/OysterMutex.h"
 #include "../../Misc/Utilities.h"
 
 #include <mutex>
@@ -18,33 +17,39 @@ namespace Oyster
 {
 	namespace Network
 	{
+		class CustomNetProtocol;
 		class OysterByte;
 		class ThreadedClient : public Thread::IThreadObject
 		{
 		public:
 			ThreadedClient();
 			ThreadedClient(unsigned int socket);
-			ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *postBox, unsigned int socket);
+			ThreadedClient(IPostBox<CustomNetProtocol*> *postBox, unsigned int socket);
 			virtual ~ThreadedClient();
 
-			void Send(Utility::DynamicMemory::SmartPointer<OysterByte>& byte);
+			void Send(CustomNetProtocol* protocol);
+
+			bool IsConnected();
 
 			int Connect(unsigned short port, const char serverName[]);
 
-			void setRecvPostBox(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *postBox);
+			void Disconnect();
 
-		private:
+			void setRecvPostBox(IPostBox<CustomNetProtocol*> *postBox);
+
+		protected:
 			virtual int Send();
 			virtual int Recv();
 
+			//These functions should not be called by any other than the thread.
 			virtual void ThreadEntry();
 			virtual void ThreadExit();
 			virtual bool DoWork();
 
-		private:
+		protected:
 			Connection* connection;
-			IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *sendPostBox;
-			IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>> *recvPostBox;
+			IPostBox<CustomNetProtocol*> *sendPostBox;
+			IPostBox<CustomNetProtocol*> *recvPostBox;
 			Oyster::Thread::OysterThread thread;
 			std::mutex stdMutex;
 

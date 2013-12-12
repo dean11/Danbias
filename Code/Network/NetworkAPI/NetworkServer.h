@@ -11,44 +11,41 @@
 	#define NET_PROTOCOL_EXPORT __declspec(dllimport)
 #endif
 
-#pragma comment(lib, "ws2_32.lib")
-
-//#include "NetworkClient.h"
+#include "NetworkClient.h"
+#include "NetworkCallbackHelper.h"
 
 namespace Oyster
 {
 	namespace Network
 	{
-		namespace Server
+		extern "C"
 		{
-			extern "C"
+			class NET_PROTOCOL_EXPORT NetworkServer
 			{
-				class NET_PROTOCOL_EXPORT NetworkServer
+			public:
+				struct INIT_DESC
 				{
-				public:
-					class NetworkClient;
-					struct INIT_DESC
-					{
-						unsigned short port;		//Port the server should be accepting clients on.
-						void (*proc)(NetworkClient*);
-					};
-
-					NetworkServer();
-					virtual ~NetworkServer();
-
-					virtual bool Init(INIT_DESC& initDesc);
-					virtual bool Start();
-					virtual bool Stop();
-					virtual bool Shutdown();
-
-					virtual bool IsStarted() const;
-
-				private:
-					struct PrivateData;
-					PrivateData* privateData;
-
+					unsigned short port;		//Port the server should be accepting clients on.
+					
+					NetworkClientCallbackType callbackType; //The recieverObject type. Function or object.
+					RecieverObject recvObj;		//The functions that is called when a new client has connected.
 				};
-			}
+
+				NetworkServer();
+				virtual ~NetworkServer();
+
+				bool Init(INIT_DESC& initDesc);
+				bool Start();
+				void Stop();
+				void Shutdown();
+
+				bool IsStarted() const;
+
+			private:
+				struct PrivateData;
+				PrivateData* privateData;
+
+			};
 		}
 	}
 }

@@ -9,7 +9,7 @@ using namespace Utility::DynamicMemory;
 ThreadedClient::ThreadedClient()
 {
 	this->connection = new Connection();
-	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>();
+	this->sendPostBox = new PostBox<CustomNetProtocol*>;
 	this->recvPostBox = NULL;
 
 	connection->SetBlockingMode(false);
@@ -18,7 +18,7 @@ ThreadedClient::ThreadedClient()
 ThreadedClient::ThreadedClient(unsigned int socket)
 {
 	this->connection = new Connection(socket);
-	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>();
+	this->sendPostBox = new PostBox<CustomNetProtocol*>;
 	this->recvPostBox = NULL;
 
 	connection->SetBlockingMode(false);
@@ -26,10 +26,10 @@ ThreadedClient::ThreadedClient(unsigned int socket)
 	thread.Create(this, true);
 }
 
-ThreadedClient::ThreadedClient(IPostBox<Utility::DynamicMemory::SmartPointer<OysterByte>>* postBox, unsigned int socket)
+ThreadedClient::ThreadedClient(IPostBox<CustomNetProtocol*>* postBox, unsigned int socket)
 {
 	this->connection = new Connection(socket);
-	this->sendPostBox = new PostBox<SmartPointer<OysterByte>>;
+	this->sendPostBox = new PostBox<CustomNetProtocol*>;
 	this->recvPostBox = postBox;
 
 	connection->SetBlockingMode(false);
@@ -51,9 +51,19 @@ ThreadedClient::~ThreadedClient()
 	}
 }
 
-void ThreadedClient::Send(SmartPointer<OysterByte>& byte)
+void ThreadedClient::Send(CustomNetProtocol* protocol)
 {
-	this->sendPostBox->PostMessage(byte);
+	this->sendPostBox->PostMessage(protocol);
+}
+
+bool ThreadedClient::IsConnected()
+{
+	return connection->IsConnected();
+}
+
+void ThreadedClient::Disconnect()
+{
+	connection->Disconnect();
 }
 
 int ThreadedClient::Send()
@@ -62,9 +72,9 @@ int ThreadedClient::Send()
 
 	if(sendPostBox->IsFull())
 	{
-		SmartPointer<OysterByte> temp = new OysterByte;
-		sendPostBox->FetchMessage(temp);
-		errorCode = this->connection->Send(temp);
+		OysterByte temp;
+		sendPostBox->FetchMessage();
+		//errorCode = this->connection->Send(temp);
 	}
 
 	return errorCode;
@@ -76,11 +86,11 @@ int ThreadedClient::Recv()
 	
 	SmartPointer<OysterByte> temp = new OysterByte;
 	errorCode = this->connection->Recieve(temp);
-	
+
 	if(errorCode == 0)
 	{
 		stdMutex.lock();
-		recvPostBox->PostMessage(temp);
+		//recvPostBox->PostMessage(temp);
 		stdMutex.unlock();
 	}
 
@@ -135,7 +145,7 @@ int ThreadedClient::Connect(unsigned short port, const char serverName[])
 	return 0;
 }
 
-void ThreadedClient::setRecvPostBox(IPostBox<SmartPointer<OysterByte>> *postBox)
+void ThreadedClient::setRecvPostBox(IPostBox<CustomNetProtocol*> *postBox)
 {
 	stdMutex.lock();
 	this->recvPostBox = postBox;

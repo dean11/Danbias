@@ -251,3 +251,8 @@ void MessageHeader::SetSize(OysterByte& bytes)
 {
 	Packing::Pack(bytes, size);
 }
+
+void MessageHeader::SetSize(unsigned int size)
+{
+	this->size = size;
+}
