@@ -243,6 +243,11 @@ namespace Oyster
 				SubscriptMessage_ignore_collision_response
 			};
 
+			/********************************************************
+			 * @param gameObjectRef: a pointer to the object in the game owning the rigid body.
+			 ********************************************************/
+			void* gameObjectRef;
+
 			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
@@ -270,6 +275,11 @@ namespace Oyster
 			 * @todo TODO: need doc
 			 ********************************************************/
 			virtual State & GetState( State &targetMem ) const = 0;
+
+			/********************************************************
+			 * @return the linear velocity of the rigid body in a vector.
+			 ********************************************************/
+			virtual Math::Float3 GetRigidLinearVelocity() const = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc

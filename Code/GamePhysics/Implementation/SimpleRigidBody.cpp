@@ -124,6 +124,12 @@ Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
 	return targetMem = this->rigid.GetView();
 }
 
+Float3 SimpleRigidBody::GetRigidLinearVelocity() const
+{
+	return this->rigid.GetLinearVelocity();
+}
+
+
 UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
 	this->rigid.Update_LeapFrog( timeStepLength );
