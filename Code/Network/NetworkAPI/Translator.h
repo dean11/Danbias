@@ -51,10 +51,10 @@ namespace Oyster
 				Translator(const Translator& obj);
 				const Translator& operator=(const Translator& obj);
 
-				void Pack(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes, CustomNetProtocol& protocol);
+				void Pack(OysterByte &bytes, CustomNetProtocol& protocol);
 
 				//Returns false if it discovers any faulty stuff with the package.
-				bool Unpack(CustomNetProtocol& protocol, Utility::DynamicMemory::SmartPointer<OysterByte> &bytes);
+				bool Unpack(CustomNetProtocol& protocol, OysterByte &bytes);
 
 			private:
 				struct PrivateData;

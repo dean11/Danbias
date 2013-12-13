@@ -2,24 +2,34 @@
 #define DANBIASSERVER_NETWORK_SESSION_H
 
 #include "Utilities.h"
-#include "ClientObject.h"
+#include <PostBox\PostBox.h>
 #include <PlayerProtocols.h>
 #include <vector>
 
 namespace DanBias
 {
+	class ClientObject;
 	class NetworkSession
 	{
+	public:
+		struct ClientEvent
+		{
+			ClientObject* reciever;
+			Oyster::Network::CustomNetProtocol protocol;
+			ClientEvent()  { reciever = 0; }
+			~ClientEvent() { }
+		};
+
 	public:
 		NetworkSession();
 		~NetworkSession();
 
-		void AttachClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client);
+		void AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		
-		void DetachClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client);
+		void DetachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		void DetachClient(short ID);
 		
-		void Kick(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client);
+		void Kick(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		void Kick();
 
 		void Send(Oyster::Network::CustomNetProtocol& protocol);
@@ -28,10 +38,8 @@ namespace DanBias
 		//TODO: Do more lobby features
 
 	protected:
-		Oyster::Network::NetworkClient* operator[](int Identification);
-
-	private:
 		std::vector<Utility::DynamicMemory::SmartPointer<ClientObject>> clients;
+		Oyster::PostBox<DanBias::NetworkSession::ClientEvent> box;
 	};
 }//End namespace DanBias
 #endif // !DANBIASSERVER_NETWORK_SESSION_H

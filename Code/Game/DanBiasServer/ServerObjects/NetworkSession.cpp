@@ -1,3 +1,4 @@
+#include "ClientObject.h"
 #include "NetworkSession.h"
 #include <mutex>
 
@@ -12,11 +13,20 @@ namespace DanBias
 
 	}
 
-	void NetworkSession::AttachClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
+	void NetworkSession::AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client)
 	{
-
+		for (unsigned int i = 0; i < this->clients.size(); i++)
+		{
+			if(!this->clients[i])
+			{
+				this->clients[i] = client;
+				//this->clients[i]->SetPostbox(&this->box);
+				return;
+			}
+		}
+		this->clients.push_back(client);
 	}
-	void NetworkSession::DetachClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
+	void NetworkSession::DetachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client)
 	{
 
 	}
@@ -25,17 +35,12 @@ namespace DanBias
 
 	}
 	
-	void NetworkSession::Kick(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
+	void NetworkSession::Kick(Utility::DynamicMemory::SmartPointer<ClientObject> client)
 	{
 
 	}
 	void NetworkSession::Kick()
 	{
 
-	}
-
-	Oyster::Network::NetworkClient* NetworkSession::operator[](int Identification)
-	{
-		return 0;
 	}
 }//End namespace DanBias

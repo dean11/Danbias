@@ -13,6 +13,7 @@
 
 #include "NetworkClient.h"
 #include "NetworkCallbackHelper.h"
+#include <vld.h>
 
 namespace Oyster
 {

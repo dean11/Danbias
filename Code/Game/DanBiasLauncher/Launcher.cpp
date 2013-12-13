@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////
 #define NOMINMAX
 #include <Windows.h>
-
+#include <vld.h>
 #include "DanBiasServerAPI.h"
 //#include "DanBiasGame.h"
 

@@ -5,6 +5,7 @@
 #define NETWORK_CUSTOM_NETWORK_PROTOCOL_H
 
 #include <string>
+#include <vld.h>
 
 #ifdef CUSTOM_NET_PROTOCOL_EXPORT
 	#define NET_PROTOCOL_EXPORT __declspec(dllexport)

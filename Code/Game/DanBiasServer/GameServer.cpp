@@ -10,17 +10,19 @@
 #include "ServerInitReader.h"
 #include <TEST_PROTOCOLS.h>
 #include <Thread\OysterThread.h>
+#include "ServerObjects\ClientObject.h"
 
 namespace DanBias
 {
 	using namespace Oyster::Network;
 
 	
-	void GameServer::ClientConnectCallback(NetworkClient client)
+	void GameServer::ClientConnectCallback(NetworkClient& client)
 	{
 		printf("Client connected!\n");
 
-		this->mainLobby->AttachClient(Utility::DynamicMemory::SmartPointer<NetworkClient>(new NetworkClient(client)));
+		Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
+		this->mainLobby->AttachClient(c);
 	}
 	GameServer::GameServer()
 		:	initiated(0)
@@ -64,13 +66,11 @@ namespace DanBias
 
 		if(!this->server->Start())	return DanBiasServerReturn_Error;
 
-		
-
-		this->running = true;
-		while (this->running)
+		while (true)
 		{
-			if(!WindowShell::Frame()) 
-				break;
+			if(!WindowShell::Frame())	break;
+
+			this->mainLobby->Frame();
 		}
 
 		return DanBiasServerReturn_Sucess;

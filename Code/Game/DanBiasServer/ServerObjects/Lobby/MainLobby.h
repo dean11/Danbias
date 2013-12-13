@@ -1,5 +1,5 @@
-#ifndef DANBIASGAME_GAMELOBBY_H
-#define DANBIASGAME_GAMELOBBY_H
+#ifndef DANBIASSERVER_MAINLOBBY_H
+#define DANBIASSERVER_MAINLOBBY_H
 
 #include "..\NetworkSession.h"
 #include <thread>
@@ -13,6 +13,8 @@ namespace DanBias
 		MainLobby();
 		~MainLobby();
 		void Release();
+
+		void Frame();
 
 	private:
 

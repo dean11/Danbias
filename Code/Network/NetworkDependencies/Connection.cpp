@@ -9,7 +9,7 @@ using namespace Oyster::Network;
 
 Connection::Connection()
 {
-	this->socket = 0;
+	this->socket = -1;
 	bool stillSending = false;
 	bool closed = true;
 }
@@ -104,11 +104,11 @@ int Connection::Disconnect()
 	return 0;
 }
 
-int Connection::Send(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
+int Connection::Send(OysterByte &bytes)
 {
 	int nBytes;
 
-	nBytes = send(this->socket, *bytes, bytes->GetSize(), 0);
+	nBytes = send(this->socket, bytes, bytes.GetSize(), 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		return WSAGetLastError();
@@ -117,20 +117,20 @@ int Connection::Send(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
 	return 0; 
 }
 
-int Connection::Recieve(Utility::DynamicMemory::SmartPointer<OysterByte> &bytes)
+int Connection::Recieve(OysterByte &bytes)
 {
 	int nBytes;
 
-	bytes->Resize(1000);
-	nBytes = recv(this->socket, *bytes, 1000, 0);
+	bytes.Resize(1000);
+	nBytes = recv(this->socket, bytes, 1000, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
-		bytes->SetSize(0);
+		bytes.SetSize(0);
 		return WSAGetLastError();
 	}
 	else
 	{
-		bytes->SetSize(nBytes);
+		bytes.SetSize(nBytes);
 	}
 
 	return 0;

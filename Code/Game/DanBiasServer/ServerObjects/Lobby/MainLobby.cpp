@@ -13,6 +13,14 @@ namespace DanBias
 	}
 	void MainLobby::Release()
 	{
+		this->clients.clear();
+	}
 
+	void MainLobby::Frame()
+	{
+		if(!this->box.IsEmpty())
+		{
+
+		}
 	}
 }//End namespace DanBias
