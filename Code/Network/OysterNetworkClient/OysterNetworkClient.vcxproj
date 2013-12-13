@@ -73,21 +73,21 @@
     <LibraryPath>$(OutDir)..\DLL\;$(LibraryPath);$(SolutionDir)..\External\Lib\NetworkAPI;$(SolutionDir)..\Bin\DLL;C:\Program Files (x86)\Visual Leak Detector\lib\Win32</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
     <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
     <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
     <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
