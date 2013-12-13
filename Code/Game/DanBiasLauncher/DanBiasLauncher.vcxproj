@@ -110,7 +110,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

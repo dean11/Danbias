@@ -72,7 +72,7 @@
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
     <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)Network/NetworkAPI;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network/NetworkAPI;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -106,13 +106,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_CLIENT;DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Game/GameProtocols;$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OysterGraphics_$(PlatformShortName)D.lib;Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
