@@ -168,7 +168,6 @@
   <ItemGroup>
     <ClInclude Include="AttatchmentMassDriver.h" />
     <ClInclude Include="AttatchmentSocket.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="GameMode.h" />
@@ -182,7 +181,6 @@
   <ItemGroup>
     <ClCompile Include="AttatchmentMassDriver.cpp" />
     <ClCompile Include="AttatchmentSocket.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="GameMode.cpp" />

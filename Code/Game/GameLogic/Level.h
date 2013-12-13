@@ -14,7 +14,7 @@ namespace GameLogic
 		Level(void);
 		~Level(void);
 
-		void CreateBox();
+		void InitiateLevel(std::string levelPath);
 
 	private:
 		struct PrivateData;
