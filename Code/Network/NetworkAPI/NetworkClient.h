@@ -37,10 +37,12 @@ namespace Oyster
 
 				bool IsConnected();
 
+				//Adds the protocol to the queue of protocols to be sent.
 				void Send(CustomProtocolObject& protocol);
 
 				void SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type);
 
+				//Compares the internal ID.
 				bool operator ==(const NetworkClient& obj);
 
 			private:
