@@ -35,9 +35,7 @@ struct Translator::PrivateData
 		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
 
 		size = 4;	//size(int)
-		bytes.AddSize(4);
-
-		message.SetSize(size);
+		message.PackInt(size, bytes);
 
 		//Find all the data types
 		for(; it != end; it++)
@@ -46,6 +44,7 @@ struct Translator::PrivateData
 		}
 
 		message.PackShort(size, bytes);
+		size += 2;
 
 		for(int i = 0; i < (int)headerString.size(); i++)
 		{

@@ -38,7 +38,12 @@ struct ClientDataContainer
 
 	Translator translator;
 
+	//ID
+	static unsigned int currID;
+	const unsigned int ID;
+
 	ClientDataContainer(IThreadObject* o)
+		: ID(currID++)
 	{
 		InitWinSock();
 		callbackType = NetworkProtocolCallbackType_Unknown;
@@ -46,7 +51,7 @@ struct ClientDataContainer
 		connection.SetBlockingMode(false);
 	}
 	ClientDataContainer(IThreadObject* o, unsigned int socket )
-		:connection(socket)
+		:connection(socket), ID(currID++)
 	{
 		InitWinSock();
 		callbackType = NetworkProtocolCallbackType_Unknown;
@@ -64,6 +69,8 @@ struct ClientDataContainer
 	}
 	
 };
+unsigned int ClientDataContainer::currID = 0;
+
 struct NetworkClient::PrivateData : public IThreadObject
 {
 	Utility::DynamicMemory::SmartPointer<ClientDataContainer> data;
@@ -233,4 +240,9 @@ void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCal
 		privateData->data->recvObj = recvObj;
 		privateData->data->callbackType = type;
 	privateData->data->recvObjMutex.unlock();
+}
+
+bool NetworkClient::operator ==(const NetworkClient& obj)
+{
+	return (this->privateData->data->ID == obj.privateData->data->ID);
 }

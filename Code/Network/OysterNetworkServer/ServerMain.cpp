@@ -2,7 +2,6 @@
 #include <vector>
 #include <vld.h>
 #include "../NetworkDependencies/WinsockFunctions.h"
-#include "../NetworkAPI/Translator.h"
 
 using namespace std;
 
