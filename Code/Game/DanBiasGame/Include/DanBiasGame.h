@@ -1,6 +1,8 @@
 #ifndef DANBIASGAME_DANBIASGAME_H
 #define DANBIASGAME_DANBIASGAME_H
 
+#define DANBIAS_CLIENT_L
+
 #if defined (DANBIAS_GAME_DLL_EXPORT)
 	#define DANBIAS_GAME_DLL __declspec(dllexport)
 #else
@@ -10,7 +12,7 @@
 #define NOMINMAX
 #include <Windows.h>
 
-#define DANBIAS_CLIENT
+
 
 namespace DanBias
 {
@@ -53,7 +55,6 @@ namespace DanBias
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
 
-			static void protocolRecived();
 		private:
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;

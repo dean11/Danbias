@@ -1,6 +1,7 @@
 #ifndef DANBIASSERVER_NETWORK_SESSION_H
 #define DANBIASSERVER_NETWORK_SESSION_H
 
+#define NOMINMAX
 #include "Utilities.h"
 #include <PostBox\PostBox.h>
 #include <PlayerProtocols.h>
@@ -26,10 +27,9 @@ namespace DanBias
 
 		void AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		
-		void DetachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		void DetachClient(short ID);
+		void DetachClient();
 		
-		void Kick(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		void Kick();
 
 		void Send(Oyster::Network::CustomNetProtocol& protocol);

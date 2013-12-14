@@ -8,11 +8,12 @@
 
 #include "PhysicsAPI.h"
 #include "GameLogicStates.h"
+#include "GameLogicDef.h"
 
 
 namespace GameLogic
 {
-	class Object
+	class DANBIAS_GAMELOGIC_DLL Object
 	{
 	public:		
 		Object();

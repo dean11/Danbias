@@ -2,6 +2,7 @@
 #include "StaticObject.h"
 #include "DynamicObject.h"
 #include "GameMode.h"
+#include "Player.h"
 
 using namespace GameLogic;
 
@@ -15,6 +16,8 @@ struct Level::PrivateData
 	{
 	}
 
+	Player *players;
+	int nrOfPlayers;
 
 	StaticObject** staticObjects;
 	int nrOfStaticObjects;
@@ -35,6 +38,11 @@ Level::Level(void)
 Level::~Level(void)
 {
 	delete myData;
+}
+
+void Level::InitiateLevel(std::string levelPath)
+{
+
 }
 
 

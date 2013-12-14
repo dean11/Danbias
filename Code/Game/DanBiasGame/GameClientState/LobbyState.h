@@ -32,5 +32,8 @@ public:
 
 	bool Render();
 	bool Release();
+	void Protocol(ProtocolStruct* protocol)override;
+	void PlayerJoinProtocol(PlayerName* name);
+
 };};};
 #endif // ! DANBIAS_CLIENT_GAMECLIENTSTATE_H

@@ -127,7 +127,7 @@ theBegining:
 		return;
 	}
 
-theEnd:
+//theEnd:
 	
 	if(w->owner)	w->owner->ThreadExit();
 	w->state = OYSTER_THREAD_STATE_DEAD;

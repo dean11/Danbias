@@ -6,10 +6,11 @@
 #include "GameLogicStates.h"
 #include "OysterMath.h"
 #include "Object.h"
+#include "GameLogicDef.h"
 
 namespace GameLogic
 {
-	class Player : public Object
+	class DANBIAS_GAMELOGIC_DLL Player : public Object
 	{
 
 	public:

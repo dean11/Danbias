@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////
 #ifndef LEVEL_H
 #define LEVEL_H
+#include <string>
 
 namespace GameLogic
 {
@@ -14,7 +15,7 @@ namespace GameLogic
 		Level(void);
 		~Level(void);
 
-		void CreateBox();
+		void InitiateLevel(std::string levelPath);
 
 	private:
 		struct PrivateData;

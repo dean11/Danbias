@@ -23,13 +23,18 @@ public:
 	GameState(void);
 	~GameState(void);
 	bool Init();
-	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput);
-	bool LoadModels(std::wstring mapFile);
-	bool InitCamera(Oyster::Math::Float3 startPos);
+	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
+	bool LoadModels(std::wstring mapFile) ;
+	bool InitCamera(Oyster::Math::Float3 startPos) ;
 	gameStateState LoadGame();
 
-	bool Render();
-	bool Release();
+	bool Render()override;
+	bool Release()override;
+
+	void Protocol(ProtocolStruct* pos)override;
+	void PlayerPosProtocol(PlayerPos* pos);
+	void ObjectPosProtocol(ObjPos* pos);
+	//void Protocol(LightPos pos);
 };
 };
 };

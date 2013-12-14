@@ -17,6 +17,15 @@ void ClientObject::SetPostbox(Oyster::PostBox<NetworkSession::ClientEvent>* box)
 {
 	this->box = box;
 }
+GameLogic::Player* ClientObject::Logic_Object()
+{
+	return &this->logicPlayer;
+}
+Oyster::Network::NetworkClient* ClientObject::NetClient_Object()
+{
+	return &this->client;
+}
+
 void ClientObject::ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol)
 {
 	if(!this->box) return;

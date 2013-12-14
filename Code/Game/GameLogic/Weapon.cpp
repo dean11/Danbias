@@ -9,9 +9,10 @@ struct Weapon::PrivateData
 	PrivateData()
 	{
 		weaponState = WEAPON_STATE_IDLE;
-		SelectedAttatchment = 0;
+		selectedAttatchment = 0;
 		currentNrOfAttatchments = 0;
 		selectedSocketID = 0;
+		maxNrOfSockets = 0;
 	}
 
 	~PrivateData()
@@ -21,10 +22,10 @@ struct Weapon::PrivateData
 	WEAPON_STATE weaponState;
 
 	AttatchmentSocket **attatchmentSockets;
-	int MaxNrOfSockets;
+	int maxNrOfSockets;
 	int currentNrOfAttatchments;
 
-	IAttatchment *SelectedAttatchment;
+	IAttatchment *selectedAttatchment;
 	int selectedSocketID;
 
 }myData;
@@ -37,7 +38,7 @@ Weapon::Weapon()
 Weapon::Weapon(int MaxNrOfSockets)
 {
 	myData = new PrivateData();
-	myData->MaxNrOfSockets = MaxNrOfSockets;
+	myData->maxNrOfSockets = MaxNrOfSockets;
 	myData->attatchmentSockets = new AttatchmentSocket*[MaxNrOfSockets];
 	for (int i = 0; i < MaxNrOfSockets; i++)
 	{
@@ -56,7 +57,7 @@ Weapon::~Weapon(void)
 ********************************************************/
 void Weapon::Use(const WEAPON_FIRE &fireInput)
 {
-	myData->SelectedAttatchment->UseAttatchment(fireInput);
+	myData->selectedAttatchment->UseAttatchment(fireInput);
 }
 
 /********************************************************
@@ -83,7 +84,7 @@ bool Weapon::IsReloading()
 
 bool Weapon::IsValidSocket(int socketID)
 {
-	if(socketID < myData->MaxNrOfSockets && socketID >= 0)
+	if(socketID < myData->maxNrOfSockets && socketID >= 0)
 	{
 		if (myData->attatchmentSockets[socketID]->GetAttatchment() != 0)
 		{
@@ -100,16 +101,16 @@ int Weapon::GetCurrentSocketID()
 }
 
 
-void Weapon::AddNewAttatchment(IAttatchment *attatchment)
+void Weapon::AddNewAttatchment(IAttatchment *attatchment, Player *owner)
 {
-	if(myData->currentNrOfAttatchments < myData->MaxNrOfSockets)
+	if(myData->currentNrOfAttatchments < myData->maxNrOfSockets)
 	{
 		myData->attatchmentSockets[myData->currentNrOfAttatchments]->SetAttatchment(attatchment);
 		myData->currentNrOfAttatchments++;
 	}
 }
 
-void Weapon::SwitchAttatchment(IAttatchment *attatchment, int socketID)
+void Weapon::SwitchAttatchment(IAttatchment *attatchment, int socketID, Player *owner)
 {
 	if (IsValidSocket(socketID))
 	{
@@ -129,7 +130,7 @@ void Weapon::SelectAttatchment(int socketID)
 {
 	if (IsValidSocket(socketID))
 	{
-		myData->SelectedAttatchment = myData->attatchmentSockets[socketID]->GetAttatchment();
+		myData->selectedAttatchment = myData->attatchmentSockets[socketID]->GetAttatchment();
 		myData->selectedSocketID = socketID;
 	}
 	

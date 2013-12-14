@@ -4,6 +4,8 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <vld.h>
+
+
 #include "DanBiasServerAPI.h"
 //#include "DanBiasGame.h"
 
@@ -20,7 +22,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		DanBias::DanBiasServerAPI::Run();
 		DanBias::DanBiasServerAPI::Release();
 	}
-#elif defined(DANBIAS_CLIENT)
+#elif defined(DANBIAS_CLIENT_L)
 	if(SetDllDirectory(L"..\\DLL") == FALSE)
 	{
 		return cmdShow;

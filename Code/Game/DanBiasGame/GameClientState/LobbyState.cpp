@@ -119,3 +119,13 @@ bool LobbyState::Release()
 	privData = NULL;
 	return true;
 }
+void LobbyState::Protocol(ProtocolStruct* protocol)
+{
+	if((PlayerName*)protocol)
+		PlayerJoinProtocol((PlayerName*)protocol);
+	
+}
+void LobbyState::PlayerJoinProtocol(PlayerName* name)
+{
+
+}
