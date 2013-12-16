@@ -41,11 +41,12 @@ int main()
 	errorCode = client.Connect(15151, "127.0.0.1");
 	client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
-	if(errorCode != 0)
+	if(errorCode != 1)
 	{
+		printf("%d", errorCode);
 		cout << "FAILED" << endl;
 	}
-	client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
+	//client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
 	cout << "Done" << endl;
 

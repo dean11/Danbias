@@ -49,6 +49,7 @@ struct ClientDataContainer
 		callbackType = NetworkProtocolCallbackType_Unknown;
 		sendPostBox = new PostBox<CustomNetProtocol>();
 		connection.SetBlockingMode(false);
+		connection.InitiateClient();
 	}
 	ClientDataContainer(IThreadObject* o, unsigned int socket )
 		:connection(socket), ID(currID++)
@@ -56,6 +57,7 @@ struct ClientDataContainer
 		InitWinSock();
 		callbackType = NetworkProtocolCallbackType_Unknown;
 		sendPostBox = new PostBox<CustomNetProtocol>();
+		connection.InitiateClient();
 		connection.SetBlockingMode(false);
 	}
 	~ClientDataContainer()
