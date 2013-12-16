@@ -205,27 +205,41 @@ namespace Utility
 
 			public:
 				SmartPointer();
+				SmartPointer(UniquePointer<T>& up);
 				SmartPointer(T* p);
 				SmartPointer(const SmartPointer& d);
 				virtual~SmartPointer();
 				SmartPointer<T>& operator= (const SmartPointer<T>& p);
+				SmartPointer<T>& operator= (UniquePointer<T>& p);
 				SmartPointer<T>& operator= (T* p);
-				bool operator== (const SmartPointer<T>& d);
-				bool operator== (const T& p);
+				bool operator== (const SmartPointer<T>& d) const;
+				bool operator== (const T& p) const;
+				bool operator!= (const SmartPointer<T>& d) const;
+				bool operator!= (const T& p) const;
 				T& operator* ();
+				const T& operator* () const;
 				T* operator-> ();
-				operator T* ();
-				operator bool();
-
+				const T* operator-> () const;
+				operator T* () const;
+				operator const T* () const;
+				operator T& () const;
+				operator bool() const;
+				
 				/**
 				*	Returns the connected pointer 
 				*/
 				T* Get();
+				T* Get() const;
+
+				/**
+				*	Releases one reference of the pointer and set value to null, making the current SmartPointer invalid.
+				*/
+				int Release();
 
 				/** Checks if the pointer is valid (not NULL)
 				*	Returns true for valid, else false. 
 				*/
-				bool IsValid();
+				bool IsValid() const;
 		};
 	}
 

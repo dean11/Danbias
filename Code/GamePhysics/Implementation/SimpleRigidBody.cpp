@@ -42,6 +42,23 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 	return new SimpleRigidBody( *this );
 }
 
+SimpleRigidBody::State SimpleRigidBody::GetState() const
+{
+	return State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
+{
+	return targetMem = State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
+{ /** @todo TODO: temporary solution! Need to know it's occtree */
+	this->rigid.box.boundingOffset = state.GetReach();
+	this->rigid.box.center = state.GetCenterPosition();
+	this->rigid.box.rotation = state.GetRotation();
+}
+
 void SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
 {
 	this->collisionAction( proto, deuter );
@@ -106,6 +123,12 @@ Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
 {
 	return targetMem = this->rigid.GetView();
 }
+
+Float3 SimpleRigidBody::GetRigidLinearVelocity() const
+{
+	return this->rigid.GetLinearVelocity();
+}
+
 
 UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
@@ -177,4 +200,9 @@ void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
 void SimpleRigidBody::SetSize( const Float3 &size )
 {
 	this->rigid.SetSize( size );
+}
+
+void SimpleRigidBody::SetMomentum( const Float3 &worldG )
+{
+	this->rigid.SetLinearMomentum( worldG );
 }

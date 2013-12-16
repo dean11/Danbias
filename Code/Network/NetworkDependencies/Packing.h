@@ -73,6 +73,7 @@ namespace Oyster
 			double Unpackd(unsigned char buffer[]);
 
 			//string
+			char* UnpackCStr(unsigned char buffer[]);
 			std::string UnpackStr(unsigned char buffer[]);
 
 			long double Unpack754(unsigned __int64 i, unsigned bits, unsigned expbits);

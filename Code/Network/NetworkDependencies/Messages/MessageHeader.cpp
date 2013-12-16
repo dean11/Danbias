@@ -41,77 +41,76 @@ void MessageHeader::Unpack(OysterByte& bytes, ProtocolHeader& header)
 
 void MessageHeader::PackBool(bool i, OysterByte& bytes)
 {
-	bytes.AddSize(1);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 1;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackChar(char i, OysterByte& bytes)
 {
-	bytes.AddSize(1);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 1;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackUnsignedChar(unsigned char i, OysterByte& bytes)
 {
-	bytes.AddSize(1);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 1;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackShort(short i, OysterByte& bytes)
 {
-	bytes.AddSize(2);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 2;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackUnsignedShort(unsigned short i, OysterByte& bytes)
 {
-	bytes.AddSize(2);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 2;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackInt(int i, OysterByte& bytes)
 {
-	bytes.AddSize(4);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 4;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackUnsignedInt(unsigned int i, OysterByte& bytes)
 {
-	bytes.AddSize(4);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 4;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackInt64(__int64 i, OysterByte& bytes)
 {
-	bytes.AddSize(8);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 8;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackUnsignedInt64(unsigned __int64 i, OysterByte& bytes)
 {
-	bytes.AddSize(8);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 8;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackFloat(float i, OysterByte& bytes)
 {
-	bytes.AddSize(4);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 4;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackFloat(float i[], unsigned int elementCount, OysterByte& bytes)
 {
-	bytes.AddSize(4);
 	//Pack number of elements
 	PackUnsignedInt(elementCount, bytes);
 
@@ -124,14 +123,14 @@ void MessageHeader::PackFloat(float i[], unsigned int elementCount, OysterByte& 
 
 void MessageHeader::PackDouble(double i, OysterByte& bytes)
 {               
-	bytes.AddSize(8);
+	bytes.AddSize(sizeof(i));
 	Packing::Pack(&bytes.GetByteArray()[size], i);
-	size += 8;
+	size += sizeof(i);
 }
 
 void MessageHeader::PackStr(char str[], OysterByte& bytes)
 {
-	int totalSize = 2 + strlen(str);
+	int totalSize = sizeof(short) + (int)strlen(str);
 	bytes.AddSize(totalSize);
 	Packing::Pack(&bytes.GetByteArray()[size], str);
 	size += totalSize;
@@ -139,7 +138,7 @@ void MessageHeader::PackStr(char str[], OysterByte& bytes)
 
 void MessageHeader::PackStr(std::string str, OysterByte& bytes)
 {
-	int totalSize = 2 + str.length();
+	int totalSize = sizeof(short) + (int)str.length();
 	bytes.AddSize(totalSize);
 	Packing::Pack(&bytes.GetByteArray()[size], str);
 	size += totalSize;
@@ -152,70 +151,70 @@ void MessageHeader::PackStr(std::string str, OysterByte& bytes)
 bool MessageHeader::UnpackBool(OysterByte& bytes)
 {
 	bool i = Packing::Unpackb(&bytes.GetByteArray()[size]);
-	size += 1;
+	size += sizeof(i);
 	return i;
 }
 
 char MessageHeader::UnpackChar(OysterByte& bytes)
 {
 	char i = Packing::Unpackc(&bytes.GetByteArray()[size]);
-	size += 1;
+	size += sizeof(i);
 	return i;
 }
 
 unsigned char MessageHeader::UnpackUnsignedChar(OysterByte& bytes)
 {
 	unsigned char i = Packing::UnpackC(&bytes.GetByteArray()[size]);
-	size += 1;
+	size += sizeof(i);
 	return i;
 }
 
 short MessageHeader::UnpackShort(OysterByte& bytes)
 {
 	short i = Packing::Unpacks(&bytes.GetByteArray()[size]);
-	size += 2;
+	size += sizeof(i);
 	return i;
 }
 
 unsigned short MessageHeader::UnpackUnsignedShort(OysterByte& bytes)
 {
 	unsigned short i = Packing::UnpackS(&bytes.GetByteArray()[size]);
-	size += 2;
+	size += sizeof(i);
 	return i;
 }
 
 int MessageHeader::UnpackInt(OysterByte& bytes)
 {
 	int i = Packing::Unpacki(&bytes.GetByteArray()[size]);
-	size += 4;
+	size += sizeof(i);
 	return i;
 }
 
 unsigned int MessageHeader::UnpackUnsignedInt(OysterByte& bytes)
 {
 	unsigned int i = Packing::UnpackI(&bytes.GetByteArray()[size]);
-	size += 4;
+	size += sizeof(i);
 	return i;
 }
 
 __int64 MessageHeader::UnpackInt64(OysterByte& bytes)
 {
 	__int64 i = Packing::Unpacki64(&bytes.GetByteArray()[size]);
-	size += 8;
+	size += sizeof(i);
 	return i;
 }
 
 unsigned __int64 MessageHeader::UnpackUnsignedInt64(OysterByte& bytes)
 {
 	unsigned __int64 i = Packing::UnpackI64(&bytes.GetByteArray()[size]);
-	size += 8;
+	size += sizeof(i);
 	return i;
 }
 
 float MessageHeader::UnpackFloat(OysterByte& bytes)
 {
 	float i = Packing::Unpackf(&bytes.GetByteArray()[size]);
-	size += 4;
+	size += sizeof(i);
 	return i;
 }
 
@@ -237,18 +236,30 @@ float* MessageHeader::UnpackFloat(unsigned int& elementCount, OysterByte& bytes)
 double MessageHeader::UnpackDouble(OysterByte& bytes)
 {
 	double i = Packing::Unpackd(&bytes.GetByteArray()[size]);
-	size += 8;
+	size += sizeof(i);
 	return i;
+}
+
+char* MessageHeader::UnpackCStr(OysterByte& bytes)
+{
+	char* str = Packing::UnpackCStr(&bytes.GetByteArray()[size]);
+	size += sizeof(short) + (int)strlen(str);
+	return str;
 }
 
 std::string MessageHeader::UnpackStr(OysterByte& bytes)
 {
 	std::string str = Packing::UnpackStr(&bytes.GetByteArray()[size]);
-	size += 2 + str.length();
+	size += sizeof(short) + (int)str.length();
 	return str;
 }
 
 void MessageHeader::SetSize(OysterByte& bytes)
 {
 	Packing::Pack(bytes, size);
+}
+
+void MessageHeader::SetSize(unsigned int size)
+{
+	this->size = size;
 }

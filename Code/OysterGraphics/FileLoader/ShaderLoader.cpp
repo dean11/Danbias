@@ -10,6 +10,8 @@ namespace Oyster
 	{
 		namespace Loading
 		{
+			void LoadShader(const wchar_t filename[], Oyster::Resource::CustomData& out, int type);
+
 			void UnloadShaderP(void* loadedData)
 			{
 				ID3D11PixelShader* ps = ((ID3D11PixelShader*)loadedData);
@@ -165,14 +167,16 @@ namespace Oyster
 				data.data = new char[data.size];
 				memcpy(data.data,Shader->GetBufferPointer(),data.size);
 #else
+				std::ifstream stream;
+
 				stream.open(filename, std::ifstream::in | std::ifstream::binary);
 				if(stream.good())
 				{
 					stream.seekg(0, std::ios::end);
-					sd.size = size_t(stream.tellg());
-					sd.data = new char[sd.size];
+					data.size = size_t(stream.tellg());
+					data.data = new char[data.size];
 					stream.seekg(0, std::ios::beg);
-					stream.read(&sd.data[0], sd.size);
+					stream.read(&data.data[0], data.size);
 					stream.close();
 				}
 				else
@@ -180,7 +184,6 @@ namespace Oyster
 					memset(&out,0,sizeof(out));
 					return;
 				}
-
 #endif
 				out.loadedData = Core::ShaderManager::CreateShader(data, Core::ShaderManager::ShaderType(type));
 			}

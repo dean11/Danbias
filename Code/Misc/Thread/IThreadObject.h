@@ -26,7 +26,9 @@ namespace Oyster
 			*/
 			virtual void ThreadExit()	{ }
 			/**
-			*	This function is required to get threading working.
+			*	This function is required to get threading working. 
+			*	Note that this function is NOT thread safe.
+			*	OBS! Do not highjack the looping.
 			*/
 			virtual bool DoWork			( ) = 0;
 		};

@@ -1,69 +1,118 @@
 #include "Listener.h"
 
 using namespace Oyster::Network::Server;
+using namespace Utility::DynamicMemory;
+using namespace Oyster::Thread;
 
 Listener::Listener()
 {
 	connection = NULL;
 }
 
+Listener::Listener(Oyster::Network::IPostBox<int>* postBox)
+{
+	connection = NULL;
+	this->postBox = postBox;
+}
+
 Listener::~Listener()
 {
 	if(connection)
 	{
+		this->thread.Terminate();
 		delete connection;
+		connection = 0;
 	}
 }
 
+//Starts the thread immediate
 bool Listener::Init(unsigned int port)
 {
 	connection = new Connection();
-
 	connection->InitiateServer(port);
 
-	thread.Create(this, true);
+	if(thread.Create(this, true) == OYSTER_THREAD_ERROR_FAILED)
+	{
+		return false;
+	}
 
 	return true;
 }
 
+bool Listener::Init(unsigned int port, bool start)
+{
+	connection = new Connection();
+	if(connection->InitiateServer(port) != 0)
+	{
+		return false;
+	}
+
+	if(thread.Create(this, start) == OYSTER_THREAD_ERROR_FAILED)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Listener::Start()
+{
+	if(thread.Start() == OYSTER_THREAD_ERROR_FAILED)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void Listener::Stop()
+{
+	thread.Stop();
+}
+
 void Listener::Shutdown()
 {
-	thread.Terminate();
+	thread.Stop();
 }
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
 {
-	mutex.LockMutex();
+	stdMutex.lock();
 	this->postBox = postBox;
-	mutex.UnlockMutex();
+	stdMutex.unlock();
 }
 
 int Listener::Accept()
 {
-	int clientSocket = 0;
+	int clientSocket = -1;
 	clientSocket = connection->Listen();
 
-	mutex.LockMutex();
-	postBox->PostMessage(clientSocket);
-	mutex.UnlockMutex();
+	if(clientSocket != -1)
+	{
+		stdMutex.lock();
+		postBox->PostMessage(clientSocket);
+		stdMutex.unlock();
+	}
 
 	return clientSocket;
 }
 
 bool Listener::DoWork()
 {
-	Accept();
+	int result = Accept();
+
+	if(result == -1)
+	{
+		//Do something?
+	}
 
 	return true;
 }
 
-#include <iostream>
 void Listener::ThreadEntry()
 {
-	std::cout << "Thread started" << std::endl;
 }
 
 void Listener::ThreadExit()
 {
-	std::cout << "Thread stopped" << std::endl;
 }

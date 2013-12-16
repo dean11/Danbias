@@ -44,6 +44,23 @@ UniquePointer<ICustomBody> SphericalRigidBody::Clone() const
 	return new SphericalRigidBody( *this );
 }
 
+SphericalRigidBody::State SphericalRigidBody::GetState() const
+{
+	return State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
+{
+	return targetMem = State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+}
+
+void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
+{ /** @todo TODO: temporary solution! Need to know it's occtree */
+	this->rigid.box.boundingOffset = state.GetReach();
+	this->rigid.box.center = state.GetCenterPosition();
+	this->rigid.box.rotation = state.GetRotation();
+}
+
 void SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
 {
 	this->collisionAction( proto, deuter );
@@ -107,6 +124,11 @@ Float4x4 & SphericalRigidBody::GetOrientation( Float4x4 &targetMem ) const
 Float4x4 & SphericalRigidBody::GetView( Float4x4 &targetMem ) const
 {
 	return targetMem = this->rigid.GetView();
+}
+
+Float3 SphericalRigidBody::GetRigidLinearVelocity() const
+{
+	return this->rigid.GetLinearVelocity();
 }
 
 UpdateState SphericalRigidBody::Update( Float timeStepLength )
@@ -183,4 +205,9 @@ void SphericalRigidBody::SetSize( const Float3 &size )
 {
 	this->rigid.SetSize( size );
 	this->body.radius = 0.5f * Min( Min( size.x, size.y ), size.z ); // inline Min( FloatN )?
+}
+
+void SphericalRigidBody::SetMomentum( const Float3 &worldG )
+{
+	this->rigid.SetLinearMomentum( worldG );
 }

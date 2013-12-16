@@ -157,6 +157,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IQueue.h" />
+    <ClInclude Include="PostBox\IPostBox.h" />
+    <ClInclude Include="PostBox\PostBox.h" />
     <ClInclude Include="Resource\OysterResource.h" />
     <ClInclude Include="Resource\OResource.h" />
     <ClInclude Include="ThreadSafeQueue.h" />

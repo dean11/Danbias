@@ -1,102 +1,103 @@
 #include "WindowShell.h"
 #include <vector>
 
+// debug window include
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
 
-struct ChildWin;
-struct _PrSt;
 
 #pragma region Declarations
 
-	namespace
-	{
-		//Private data
-		static WindowShell* instance = NULL;
-		int childIdCounter = 0;
-		_PrSt *pData = NULL;
-	}
-
-	struct ChildWin
-	{
-		int id;
-		HWND hWnd;
-
-		ChildWin()
-		{
-			hWnd = NULL;
-			childIdCounter++;
-			id = childIdCounter;
-		}
-		int ID() const { return id; }
-	};
-	struct _PrSt
+	struct _PrivateDataContainer
 	{
 		HINSTANCE							hIns;
 		HWND								hWnd;
-		std::vector<ChildWin>				childWindows;
+		HWND								parent;
+		bool								consoleWindow;
+		WNDPROC								callback;
+		const wchar_t*						windowClassName;
+		_PrivateDataContainer()
+			:	hIns(0)
+			,	hWnd(0)
+			,	parent(0)
+			,	consoleWindow(0)
+		{ }
+		~_PrivateDataContainer()   { if(this->consoleWindow) FreeConsole(); }
 
-		_PrSt()
-		{
-			hIns = NULL;
-			hWnd = NULL;
-		}
-	};
+	} __windowShellData;
 
 #pragma endregion
 
-
-
-WindowShell::WindowShell()
+LRESULT CALLBACK DefaultWindowCallback(HWND h, UINT m, WPARAM w, LPARAM l)
 {
-	pData = new _PrSt();
+	PAINTSTRUCT ps;
+		HDC hdc;
+
+		switch (m) 
+		{
+			case WM_PAINT:
+				hdc = BeginPaint(h, &ps);
+				EndPaint(h, &ps);
+			break;
+
+			case WM_DESTROY:
+				PostQuitMessage(0);
+			break;
+
+			case WM_KEYDOWN:
+				switch(w)
+				{
+					case VK_ESCAPE:
+						PostQuitMessage(0);
+					break;
+				}
+			break;
+		}
+
+	return DefWindowProc(h, m, w, l);
 }
-WindowShell::~WindowShell()
+
+HINSTANCE WindowShell::GetHINSTANCE()
 {
-	delete pData;
+	return __windowShellData.hIns;
 }
-
-
-
-bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
+HWND WindowShell::GetHWND()
 {
-	if(pData->hWnd)
-	{
-		MessageBox(0, L"There is already a window registered\nPlease use child windows to create more windows!" ,L"Error", 0);
-		return false;
-	}
-	if(!desc.windowProcCallback)
-	{
-		MessageBox(0, L"No callback function for window messages was found!" ,L"Error", 0);
-		return false;
-	}
-	if(!desc.hInstance)
-	{
-		MessageBox(0, L"No HINSTANCE was specified!" ,L"Error", 0);
-		return false;
-	}
-	if(desc.windowSize < 0)
-	{
-		MessageBox(0, L"Size specified for window is invalid!" ,L"Error", 0);
-	}
+	return __windowShellData.hWnd;
+}
+HWND WindowShell::GetParent()
+{
+	return __windowShellData.parent;
+}
+bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
+{
+	if(__windowShellData.hWnd)		return false;
+	if(!desc.windowProcCallback)	desc.windowProcCallback = DefaultWindowCallback;
+	if(!desc.hInstance)				desc.hInstance = GetModuleHandle(0);
+	if(desc.windowSize.x <= 0)		desc.windowSize.x = 50;
+	if(desc.windowSize.y <= 0)		desc.windowSize.y = 50;
 
-
-	pData->hIns = desc.hInstance;
-
+	
+	__windowShellData.parent			= desc.parent;
+	__windowShellData.hIns				= desc.hInstance;
+	__windowShellData.windowClassName	= L"MainWindowShellClassName";
 
 		#pragma region Register
 	
 	WNDCLASSEX wc;
 	wc.cbSize		 = sizeof(WNDCLASSEX);
 	wc.hIconSm		= NULL;
-	wc.style         = CS_HREDRAW | CS_VREDRAW;
+	wc.style         = desc.windowClassStyle;
 	wc.lpfnWndProc   = desc.windowProcCallback; 
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = 0;
-	wc.hInstance     = pData->hIns;
-	wc.hIcon         = LoadIcon(0, IDI_APPLICATION);
-	wc.hCursor       = LoadCursor(0, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wc.lpszMenuName  = 0;
-	wc.lpszClassName = L"MainWindowClass";
+	wc.hInstance     = __windowShellData.hIns;
+	wc.hIcon         = desc.icon;
+	wc.hCursor       = desc.cursor;
+	wc.hbrBackground = desc.background;
+	wc.lpszMenuName  = NULL;
+	wc.lpszClassName = __windowShellData.windowClassName;
 
 	if( !RegisterClassEx(&wc) )
 	{
@@ -109,168 +110,131 @@ bool WindowShell::createWin(INIT_DESC_WINDOW &desc)
 		#pragma region Create window
 
 
-	pData->hWnd = CreateWindow(	
-								L"MainWindowClass" , 
-								desc.windowName.c_str(),
-								WS_OVERLAPPEDWINDOW, 
-								desc.windowPosition.x, 
-								desc.windowPosition.y, 
-								desc.windowSize.x, 
-								desc.windowSize.y, 
-								0, 
-								0, 
-								pData->hIns, 
-								0
-							  ); 
+	RECT rectW;
+	int width;
+	int height;
+	DWORD style = desc.windowStyle;
+	bool windowed = false;
+
+	width = desc.windowSize.x + GetSystemMetrics(SM_CXFIXEDFRAME)*2;
+	height = desc.windowSize.y + GetSystemMetrics(SM_CYFIXEDFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
+
+	rectW.left=(GetSystemMetrics(SM_CXSCREEN)-width)/2;
+	rectW.top=(GetSystemMetrics(SM_CYSCREEN)-height)/2;
+	rectW.right=rectW.left+width;
+	rectW.bottom=rectW.top+height;
 	
-	if( !pData->hWnd )
+	
+	if(__windowShellData.parent)
 	{
-		MessageBox(0, L"Failed to create window", L"Error!", 0);
+		rectW.left		= 0;
+		rectW.top		= 0;
+		rectW.right		= desc.windowSize.x;
+		rectW.bottom	= desc.windowSize.y;
+		style			= WS_CHILD | WS_VISIBLE; 
+		windowed		= true;
+	}
+
+	if(windowed)
+	{
+		__windowShellData.hWnd = CreateWindowEx(
+									0,
+									__windowShellData.windowClassName , 
+									desc.windowName,
+									style, 
+									rectW.left, 
+									rectW.top, 
+									rectW.right - rectW.left, 
+									rectW.bottom - rectW.top, 
+									__windowShellData.parent, 
+									NULL, 
+									__windowShellData.hIns, 
+									NULL
+								  ); 
+	}
+	else
+	{
+		__windowShellData.hWnd = CreateWindowEx(	
+									0,
+									__windowShellData.windowClassName , 
+									desc.windowName,
+									style, 
+									desc.windowPosition.x, 
+									desc.windowPosition.y, 
+									desc.windowSize.x, 
+									desc.windowSize.y, 
+									0, 
+									0, 
+									__windowShellData.hIns, 
+									0
+								  );
+	}
+	
+	if( !__windowShellData.hWnd )
+	{
+		printf("Failed to create window handle : Code ( %ul )", GetLastError());
+		//MessageBox(0, L"Failed to create window", L"Error!", 0);
 		return false;
 	}
 
 		#pragma endregion
 
-	
+
 	//Show and update window
-	ShowWindow(pData->hWnd, SW_SHOW);
-	UpdateWindow(pData->hWnd);
+	ShowWindow(__windowShellData.hWnd, SW_SHOW);
+	UpdateWindow(__windowShellData.hWnd);
 	
 	return true;
 }
-int WindowShell::createChildWin(INIT_DESC_CHILD_WINDOW &desc)
+bool WindowShell::CreateConsoleWindow(bool redirectStdOut, const wchar_t* title)
 {
-	ChildWin win;
+	// allocate a console for this app
+	if(AllocConsole() == FALSE)	return false;
 
-
-	char idStr[3];
-	_itoa_s(win.id, idStr, 10);
-	std::string next = idStr;
-	std::wstring str = std::wstring(next.begin(), next.end());
-	std::wstring childClassName = L"ChildWindow_";
-	childClassName += str;
-
-	WNDCLASSEX wcex;
-	wcex.cbSize	= sizeof(WNDCLASSEX);
-	wcex.style = CS_VREDRAW;
-	wcex.lpfnWndProc = desc.windowProcCallback;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = pData->hIns;
-	wcex.hIcon = NULL;
-	wcex.hCursor = LoadCursor(0, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = childClassName.c_str();
-	wcex.hIconSm = NULL;
-
-	if(!RegisterClassEx(&wcex))
+	if(redirectStdOut)
 	{
-		MessageBox(0, L"", 0, 0);
-	}
-
-	if(!desc.style)
-		desc.style = WS_EX_CLIENTEDGE;
-
-	win.hWnd =	CreateWindowEx
-				(
-					desc.style,
-					childClassName.c_str(), 
-					desc.name.c_str(), 
-					WS_CAPTION | WS_SYSMENU ,
-					desc.topLeftPos.x,  desc.topLeftPos.y, 
-					desc.windowSize.x, desc.windowSize.y, 
-					pData->hWnd,
-					NULL,
-					pData->hIns, 
-					NULL
-				);
-
-
-	if (win.hWnd)
-	{
-		pData->childWindows.push_back(win);
-		ShowWindow(win.hWnd, 5);
-		UpdateWindow(win.hWnd);
-	}
-	else
-	{
-		DWORD err = GetLastError();
-		MessageBox(0, L"Failed to create child window", L"Error!", MB_OK);
-		return false;
-	}
-
-	return win.id;
-}
-bool WindowShell::removeChild(int id)
-{
-	for (int i = 0; i < (int)pData->childWindows.size(); i++)
-	{
-		if(id == pData->childWindows[i].id)
+		// redirect unbuffered STDOUT to the console
+		HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+		int fileDescriptor = _open_osfhandle((intptr_t)consoleHandle, _O_TEXT);
+		FILE *fp = _fdopen( fileDescriptor, "w" );
+		*stdout = *fp;
+		setvbuf( stdout, NULL, _IONBF, 0 );
+	
+	
+		// give the console window a bigger buffer size
+		CONSOLE_SCREEN_BUFFER_INFO csbi;
+		if ( GetConsoleScreenBufferInfo(consoleHandle, &csbi) )
 		{
-			pData->childWindows.erase(pData->childWindows.begin() + i);
-			return true;
+			COORD bufferSize;
+			bufferSize.X = csbi.dwSize.X;
+			bufferSize.Y = 50;
+			SetConsoleScreenBufferSize(consoleHandle, bufferSize);
 		}
 	}
 
-	return false;
+	// give the console window a nicer title
+	SetConsoleTitle(title);
+
+	return true;
 }
-bool WindowShell::removeChild(HWND hwnd)
+bool WindowShell::Frame()
 {
-	for (int i = 0; i < (int)pData->childWindows.size(); i++)
+	MSG msg = {0};
+	while (true)
 	{
-		if(hwnd == pData->childWindows[i].hWnd)
+		if(!__windowShellData.parent)
 		{
-			pData->childWindows.erase(pData->childWindows.begin() + i);
-			return true;
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{ 
+				if (msg.message == WM_QUIT)	return false;
+
+				DispatchMessage(&msg);
+				continue;
+			}
 		}
+
+		break;
 	}
 
-	return false;
-}
-
-
-
-const HINSTANCE WindowShell::getHINSTANCE() const
-{
-	return pData->hIns;
-}
-const HWND WindowShell::getHWND() const
-{
-	return pData->hWnd;
-}
-const HWND WindowShell::getChildHWND(int id) const
-{
-	for(int i = 0; i<(int)pData->childWindows.size(); i++)
-	{
-		if(id == pData->childWindows[i].id)
-			return pData->childWindows[i].hWnd;
-	}
-
-	return NULL;
-}
-const int WindowShell::getChildID(HWND hwnd) const
-{
-	for(int i = 0; i<(int)pData->childWindows.size(); i++)
-	{
-		if(hwnd == pData->childWindows[i].hWnd)
-			return pData->childWindows[i].id;
-	}
-
-	return -1;
-}
-
-
-
-WindowShell* WindowShell::self()
-{
-	if(!instance)
-		instance = new WindowShell();
-
-	return instance;
-}
-void WindowShell::destroy()
-{
-	delete instance;
-	instance = NULL;
+	return true;
 }

@@ -14,6 +14,7 @@ namespace Oyster
 			class IListener
 			{
 			public:
+				virtual ~IListener() {}
 				virtual bool Init(unsigned int port) = 0;
 				virtual int Accept() = 0;
 

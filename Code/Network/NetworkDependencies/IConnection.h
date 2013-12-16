@@ -5,6 +5,8 @@
 // Created by Sam Svensson 2013 //
 //////////////////////////////////
 
+#include "../../Misc/Utilities.h"
+
 namespace Oyster
 {
 	namespace Network
@@ -17,8 +19,8 @@ namespace Oyster
 			
 			//sends and recieve functions with bytearrays, 
 			//will send to the users connection via socket
-			virtual int Send( OysterByte& bytes ) = 0;
-			virtual int  Recieve( OysterByte& bytes) = 0;
+			virtual int Send( OysterByte &bytes ) = 0;
+			virtual int  Recieve( OysterByte &bytes) = 0;
 
 			//initiates sockets and address for server and client
 			virtual int InitiateServer( unsigned short port ) { return false; };

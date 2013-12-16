@@ -7,6 +7,20 @@
 
 using namespace Oyster::Network;
 
+Connection::Connection()
+{
+	this->socket = -1;
+	bool stillSending = false;
+	bool closed = true;
+}
+
+Connection::Connection(int socket)
+{
+	this->socket = socket;
+	bool stillSending = false;
+	bool closed = true;
+}
+
 Connection::~Connection()
 {
 	closesocket( this->socket );
@@ -30,6 +44,9 @@ int Connection::Connect(unsigned short port , const char serverName[])
 		return WSAGetLastError();
 	}
 	
+	closed = false;
+	stillSending = true;
+
 	//connection succesfull!
 	return 0;
 }
@@ -63,6 +80,9 @@ int Connection::InitiateServer(unsigned short port)
 		return errorCode;
 	}
 
+	closed = false;
+	stillSending = true;
+
 	//Server started!
 	return 0;
 }
@@ -74,12 +94,17 @@ int Connection::InitiateClient()
 
 int Connection::Disconnect()
 {
-	closesocket(this->socket);
+	int result = closesocket(this->socket);
 
-	return WSAGetLastError();
+	if(result == SOCKET_ERROR)
+	{
+		return WSAGetLastError();
+	}
+
+	return 0;
 }
 
-int Connection::Send(OysterByte& bytes)
+int Connection::Send(OysterByte &bytes)
 {
 	int nBytes;
 
@@ -92,14 +117,15 @@ int Connection::Send(OysterByte& bytes)
 	return 0; 
 }
 
-int Connection::Recieve(OysterByte& bytes)
+int Connection::Recieve(OysterByte &bytes)
 {
 	int nBytes;
 
-	bytes.Clear(1000);
-	nBytes = recv(this->socket, bytes, 500, 0);
+	bytes.Resize(1000);
+	nBytes = recv(this->socket, bytes, 1000, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
+		bytes.SetSize(0);
 		return WSAGetLastError();
 	}
 	else
@@ -107,22 +133,52 @@ int Connection::Recieve(OysterByte& bytes)
 		bytes.SetSize(nBytes);
 	}
 
-	std::cout << "Size of the recieved data: " << nBytes << " bytes" << std::endl;
-
-	//bytes.byteArray[nBytes] = '\0';
-
 	return 0;
 }
 
+//Listen will only return the correct socket or -1 for failure.
 int Connection::Listen()
 {
 	int clientSocket;
-	if((clientSocket = accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
+	if((clientSocket = (int)accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
+	{
+		return (int)INVALID_SOCKET;//WSAGetLastError();
+	}
+
+	return clientSocket;
+}
+
+bool Connection::IsSending()
+{
+	return stillSending;
+}
+
+bool Connection::IsConnected()
+{
+	return !closed;
+}
+
+int Connection::SetBlockingMode(bool blocking)
+{
+	DWORD nonBlocking;
+
+	if(blocking)
+	{
+		nonBlocking = 0;
+	}
+	else
+	{
+		nonBlocking = 1;
+	}
+
+	int result = ioctlsocket(this->socket, FIONBIO, &nonBlocking);
+	if(result != 0)
 	{
 		return WSAGetLastError();
 	}
 
-	return clientSocket;
+	//Success
+	return 0;
 }
 
 ///////////////////////////////////////
@@ -130,24 +186,11 @@ int Connection::Listen()
 ///////////////////////////////////////
 int Connection::InitiateSocket()
 {
-	this->socket = ::socket(AF_INET, SOCK_STREAM, 0);
+	this->socket = (int)::socket(AF_INET, SOCK_STREAM, 0);
 	if(this->socket == SOCKET_ERROR)
 	{
 		return WSAGetLastError();
 	}
 
 	return 0;
-}
-
-void Connection::SetBlockingMode(bool blocking)
-{
-	//TODO: Implement this function. Setting the socket to blocking or non-blocking.
-	if(blocking)
-	{
-		//fcntl(this->socket, F_SETFL, O_NONBLOCK);
-	}
-	else
-	{
-
-	}
 }
