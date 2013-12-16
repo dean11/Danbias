@@ -6,8 +6,8 @@
 #include <vld.h>
 
 
-#include "DanBiasServerAPI.h"
-//#include "DanBiasGame.h"
+//#include "DanBiasServerAPI.h"
+#include "DanBiasGame.h"
 
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
