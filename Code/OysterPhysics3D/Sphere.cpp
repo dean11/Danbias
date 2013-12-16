@@ -53,7 +53,7 @@ bool Sphere::Intersects( const ICollideable &target, ::Oyster::Math::Float3 &wor
 	case Type_point: return Utility::Intersect( *this, *(Point*)&target, worldPointOfContact );
 	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance, worldPointOfContact );
 	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target, worldPointOfContact );
-	case Type_plane: return Utility::Intersect( *(Plane*)&target, *this, worldPointOfContact );
+	//case Type_plane: return Utility::Intersect( *(Plane*)&target, *this, worldPointOfContact );
 	// case Type_triangle: return false; // TODO: 
 	case Type_box_axis_aligned: return false; // return Utility::Intersect( *(BoxAxisAligned*)&target, *this, worldPointOfContact );
 	case Type_box: return false; // return Utility::Intersect( *(Box*)&target, *this, worldPointOfContact );
