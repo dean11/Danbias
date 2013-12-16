@@ -84,7 +84,7 @@ int ThreadedClient::Recv()
 {
 	int errorCode = -1;
 	
-	SmartPointer<OysterByte> temp = new OysterByte;
+	OysterByte temp;
 	errorCode = this->connection->Recieve(temp);
 
 	if(errorCode == 0)

@@ -18,9 +18,6 @@ using namespace Oyster::Network;
 using namespace Utility;
 using namespace Utility::DynamicMemory;
 
-void chat(ThreadedClient &client);
-void PrintOutMessage(ProtocolSet* set);
-
 void proc(CustomNetProtocol& protocol)
 {
 
@@ -40,14 +37,13 @@ int main()
 	NetworkClient client;
 
 	//Connect to server
-	errorCode = client.Connect(15151, "193.11.186.101");
+	if(client.Connect(15151, "localhost"))
+	{
+		cout << "FAILED" << endl;
+	}
 	client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
-	if(errorCode != 0)
-	{
-		wstring errorTest = GetErrorMessage(errorCode);
-		wcout << "errorMessage: " << errorTest << endl;
-	}
+	cout << "Done" << endl;
 
 	while(1)
 	{
