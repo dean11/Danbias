@@ -6,6 +6,7 @@
 #ifndef OYSTER_COLLISION_3D_ICOLLIDEABLE_H
 #define OYSTER_COLLISION_3D_ICOLLIDEABLE_H
 
+#include "OysterMath.h"
 #include "Utilities.h"
 
 namespace Oyster { namespace Collision3D //! Contains a collection of 3D shapes and intercollission algorithms.

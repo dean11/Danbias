@@ -7,6 +7,7 @@
 #define OYSTER_COLLISION_3D_UNIVERSE_H
 
 #include "ICollideable.h"
+#include "OysterMath.h"
 
 namespace Oyster { namespace Collision3D
 {

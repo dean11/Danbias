@@ -10,7 +10,6 @@
 #ifndef OYSTER_COLLISION_3D_RAY_H
 #define OYSTER_COLLISION_3D_RAY_H
 
-#include "OysterMath.h"
 #include "ICollideable.h"
 
 namespace Oyster { namespace Collision3D
