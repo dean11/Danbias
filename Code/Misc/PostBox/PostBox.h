@@ -54,7 +54,7 @@ namespace Oyster
 	template <class T>
 	bool PostBox<T>::IsEmpty()
 	{
-		return !messages.IsEmpty();
+		return messages.IsEmpty();
 	}
 }
 

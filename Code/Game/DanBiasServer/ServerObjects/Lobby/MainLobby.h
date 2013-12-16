@@ -15,7 +15,7 @@ namespace DanBias
 		void Frame();
 
 	private:
-		void ParseEvent(NetEvent& e);
+		void ParseEvents();
 
 	};
 }//End namespace DanBias
