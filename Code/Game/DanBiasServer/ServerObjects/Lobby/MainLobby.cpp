@@ -18,25 +18,26 @@ namespace DanBias
 
 	void MainLobby::Frame()
 	{
-		if(!this->box.IsEmpty())
-		{
-			NetEvent &e = this->box.Fetch();
-			ParseEvent(e);
-		}
+		ParseEvents();
 	}
 
 //////// Private
-	void MainLobby::ParseEvent(NetEvent& e)
+	void MainLobby::ParseEvents()
 	{
-		static const short i = MAXSHORT;
-		if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
-
-		short f = e.protocol[0].value.netShort;
-
-		switch (f)
+		if(!this->box.IsEmpty())
 		{
-		default:
-			break;
+			NetEvent &e = this->box.Fetch();
+
+			if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
+
+			short f = e.protocol[0].value.netShort;
+
+			switch (f)
+			{
+				default:
+					
+				break;
+			}
 		}
 	}
 

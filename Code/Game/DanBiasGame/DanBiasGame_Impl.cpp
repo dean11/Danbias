@@ -30,41 +30,39 @@ namespace DanBias
 	void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
 
-	int pType = p[0].value.netInt;
-	Client::GameClientState::ProtocolStruct* protocol; 
-	switch (pType)
-	{
-	case protocol_PlayerNavigation:
+		int pType = p[0].value.netInt;
+		Client::GameClientState::ProtocolStruct* protocolData; 
+		switch (pType)
+		{
+		case protocol_PlayerNavigation:
 
-	break;
-	case protocol_PlayerPosition:
-	protocol = new Client::GameClientState::PlayerPos;
-	for(int i = 0; i< 3; i++)
-	{
-	((Client::GameClientState::PlayerPos*)protocol)->playerPos[i] = p[i].value.netFloat;
-	}
-	gameClientState->Protocol(protocol);
-	delete protocol;
-	protocol = NULL;
-	break;
-
-
-	case protocol_ObjectPosition:
-	protocol = new Client::GameClientState::ObjPos;
-	for(int i = 0; i< 16; i++)
-	{
-	((Client::GameClientState::ObjPos*)protocol)->worldPos[i] = p[i].value.netFloat;
-	}
-	gameClientState->Protocol(protocol);
-	delete protocol;
-	protocol = NULL;
-	break;
-
-	default:
-	break;
-	}	
+			break;
+		case protocol_PlayerPosition:
+			protocolData = new Client::GameClientState::PlayerPos;
+			for(int i = 0; i< 3; i++)
+			{
+				((Client::GameClientState::PlayerPos*)protocolData)->playerPos[i] = p[i].value.netFloat;
+			}
+			gameClientState->Protocol(protocolData);
+			delete protocolData;
+			protocolData = NULL;
+			break;
 
 
+		case protocol_ObjectPosition:
+			protocolData = new Client::GameClientState::ObjPos;
+			for(int i = 0; i< 16; i++)
+			{
+				((Client::GameClientState::ObjPos*)protocolData)->worldPos[i] = p[i].value.netFloat;
+			}
+			gameClientState->Protocol(protocolData);
+			delete protocolData;
+			protocolData = NULL;
+			break;
+
+		default:
+			break;
+		}	
 	}
 	};
 	class DanBiasGamePrivateData
@@ -112,12 +110,18 @@ namespace DanBias
 		prevTimeStamp = 0;
 		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
-
-		// Start in lobby state
-		m_data->gameClientState = new  Client::LobbyState();
-		m_data->gameClientState->Init();
 		m_data->r = new MyRecieverObject;
 		m_data->r->nwClient = new Oyster::Network::NetworkClient();
+		m_data->r->nwClient->Connect(desc.port, desc.IP);
+		if (!m_data->r->nwClient->IsConnected())
+		{
+			// failed to connect
+			return DanBiasClientReturn_Error;
+		}
+		// Start in lobby state
+		m_data->gameClientState = new  Client::LobbyState();
+		m_data->gameClientState->Init(m_data->r->nwClient);
+
 
 		return DanBiasClientReturn_Sucess;
 	}
@@ -253,7 +257,7 @@ namespace DanBias
 				return E_FAIL;
 				break;
 			}
-			m_data->gameClientState->Init(); // send game client
+			m_data->gameClientState->Init(m_data->r->nwClient); // send game client
 				 
 		}
 		return S_OK;

@@ -192,26 +192,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameClientState\Obj\C_UIobject.cpp" />
+    <ClCompile Include="GameClientState\C_obj\C_DynamicObj.cpp" />
+    <ClCompile Include="GameClientState\C_obj\C_Player.cpp" />
+    <ClCompile Include="GameClientState\C_obj\C_StaticObj.cpp" />
+    <ClCompile Include="GameClientState\C_obj\C_UIobject.cpp" />
     <ClCompile Include="DanBiasGame_Impl.cpp" />
     <ClCompile Include="DLLMain.cpp" />
-    <ClCompile Include="GameClientState\Obj\C_DynamicObj.cpp" />
     <ClCompile Include="GameClientState\GameClientState.cpp" />
     <ClCompile Include="GameClientState\GameState.cpp" />
     <ClCompile Include="GameClientState\LobbyState.cpp" />
-    <ClCompile Include="GameClientState\Obj\C_Player.cpp" />
-    <ClCompile Include="GameClientState\Obj\C_StaticObj.cpp" />
     <ClCompile Include="GameClientState\C_Object.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameClientState\Obj\C_UIobject.h" />
-    <ClInclude Include="GameClientState\Obj\C_DynamicObj.h" />
+    <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
+    <ClInclude Include="GameClientState\C_obj\C_Player.h" />
+    <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />
+    <ClInclude Include="GameClientState\C_obj\C_UIobject.h" />
     <ClInclude Include="GameClientState\GameClientState.h" />
     <ClInclude Include="GameClientState\GameState.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />
-    <ClInclude Include="GameClientState\Obj\C_Player.h" />
-    <ClInclude Include="GameClientState\Obj\C_StaticObj.h" />
     <ClInclude Include="GameClientState\C_Object.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

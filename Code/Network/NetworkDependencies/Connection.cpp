@@ -177,6 +177,7 @@ int Connection::SetBlockingMode(bool blocking)
 		return WSAGetLastError();
 	}
 
+	//Success
 	return 0;
 }
 

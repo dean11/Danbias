@@ -1,9 +1,9 @@
 #include "LobbyState.h"
 #include "DllInterfaces/GFXAPI.h"
 #include "OysterMath.h"
-#include "Obj/C_Player.h"
-#include "Obj/C_StaticObj.h"
-#include "Obj/C_DynamicObj.h"
+#include "C_obj/C_Player.h"
+#include "C_obj/C_StaticObj.h"
+#include "C_obj/C_DynamicObj.h"
 
 using namespace DanBias::Client;
 
@@ -28,7 +28,7 @@ LobbyState::~LobbyState(void)
 	
 }
 
-bool LobbyState::Init()
+bool LobbyState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
 	
