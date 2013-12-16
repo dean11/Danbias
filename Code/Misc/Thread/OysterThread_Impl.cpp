@@ -59,10 +59,12 @@ using namespace Utility::DynamicMemory;
 	};
 	struct OysterThread::PrivateData
 	{
+		bool isCreated;
 		SmartPointer<ThreadData> threadData;
 	
 		PrivateData()
 		{
+			isCreated = false;
 			threadData = new ThreadData();
 			threadData->first = true;
 			threadData->owner = 0;
@@ -73,6 +75,7 @@ using namespace Utility::DynamicMemory;
 		}
 		PrivateData(const PrivateData& o)
 		{
+			isCreated = o.isCreated;
 			threadData = o.threadData;
 		}
 		const PrivateData& operator=(const PrivateData& o)
@@ -276,4 +279,7 @@ void OysterThread::SetPriority(OYSTER_THREAD_PRIORITY priority)
 {
 	this->privateData->threadData->prio = priority;
 }
-
+bool OysterThread::IsCreated() const
+{
+	return privateData->isCreated;
+}

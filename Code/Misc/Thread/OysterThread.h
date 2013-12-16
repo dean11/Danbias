@@ -47,6 +47,8 @@ namespace Oyster
 			OYSTER_THREAD_ERROR Swap(const OysterThread* other);
 			bool IsActive();
 			void SetPriority(OYSTER_THREAD_PRIORITY priority);
+
+			bool IsCreated() const;
 		};
 	} 
 }
