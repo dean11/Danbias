@@ -251,6 +251,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Point &pointA, const Point &pointB, ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 
@@ -286,6 +287,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Ray &ray, const Point &point, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 	
@@ -338,11 +340,13 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Sphere &sphere, const Point &point, ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 	
 	bool Intersect( const Sphere &sphere, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 	
@@ -411,21 +415,25 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Plane &plane, const Point &point, const ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 	
 	bool Intersect( const Plane &plane, const Ray &ray, ::Oyster::Math::Float &connectDistance, const ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 	
 	bool Intersect( const Plane &plane, const Sphere &sphere, const ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 	
 	bool Intersect( const Plane &planeA, const Plane &planeB, const ::Oyster::Math::Float3& worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 
@@ -438,6 +446,16 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		if( point.center.z < box.minVertex.z ) return false;
 		if( point.center.z > box.maxVertex.z ) return false;
 		return true;
+	}
+
+	bool Intersect( const BoxAxisAligned &box, const Point &point, Float3 &worldPointOfContact )
+	{ // by Dan Andersson
+		if( Intersect(box, point) )
+		{
+			worldPointOfContact = point.center;
+			return true;
+		}
+		return false;
 	}
 
 	bool Intersect( const BoxAxisAligned &box, const Ray &ray, Float &connectDistance )
@@ -456,6 +474,16 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true;
 	}
 
+	bool Intersect( const BoxAxisAligned &box, const Ray &ray, Float &connectDistance, Float3 &worldPointOfContact )
+	{ // by Dan Andersson
+		if( Intersect(box, ray, connectDistance) )
+		{
+			worldPointOfContact = ray.origin + ray.direction * connectDistance;
+			return true;
+		}
+		return false;
+	}
+
 	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere )
 	{ // by Dan Andersson
 		Float4 e = Max( Float4(box.minVertex - sphere.center, 0.0f), Float4::null );
@@ -465,6 +493,12 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true;
 	}
 
+	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere, Float3 &worldPointOfContact )
+	{
+		//! @todo TODO: implement stub
+		return Intersect( box, sphere );
+	}
+
 	bool Intersect( const BoxAxisAligned &box, const Plane &plane )
 	{ // by Dan Andersson
 		Float e, d;
@@ -472,6 +506,12 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		if( d - e > 0.0f ) return false; // is beneath
 		if( d + e < 0.0f ) return false; // is above
 		return true;
+	}
+
+	bool Intersect( const BoxAxisAligned &box, const Plane &plane, Float3 &worldPointOfContact )
+	{
+		//! @todo TODO: implement stub
+		return Intersect( box, plane );
 	}
 
 //	bool Intersect( const BoxAxisAligned &box, const Triangle &triangle )
@@ -507,6 +547,16 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true;
 	}
 
+	bool Intersect( const Box &box, const Point &point, Float3 &worldPointOfContact )
+	{ // by Dan Andersson
+		if( Intersect(box, point) )
+		{
+			worldPointOfContact = point.center;
+			return true;
+		}
+		return false;
+	}
+
 	bool Intersect( const Box &box, const Ray &ray, Float &connectDistance )
 	{ // by Dan Andersson
 		Float tMin = ::std::numeric_limits<Float>::max(),
@@ -522,6 +572,16 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true;
 	}
 
+	bool Intersect( const Box &box, const Ray &ray, Float &connectDistance, Float3 &worldPointOfContact )
+	{ // by Dan Andersson
+		if( Intersect(box, ray, connectDistance) )
+		{
+			worldPointOfContact = ray.origin + ray.direction * connectDistance;
+			return true;
+		}
+		return false;
+	}
+
 	bool Intersect( const Box &box, const Sphere &sphere )
 	{ // by Dan Andersson
 		// center: sphere's center in the box's view space
@@ -534,6 +594,12 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true;
 	}
 
+	bool Intersect( const Box &box, const Sphere &sphere, Float3 &worldPointOfContact )
+	{
+		//! @todo TODO: implement stub
+		return Intersect( box, sphere );
+	}
+
 	bool Intersect( const Box &box, const Plane &plane )
 	{// by Dan Andersson
 		Float e, d;
@@ -541,6 +607,12 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		if( d - e > 0.0f ) return false; // is beneath
 		if( d + e < 0.0f ) return false; // is above
 		return true;	
+	}
+
+	bool Intersect( const Box &box, const Plane &plane, Float3 &worldPointOfContact )
+	{
+		//! @todo TODO: implement stub
+		return Intersect( box, plane );
 	}
 
 	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB )
