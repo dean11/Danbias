@@ -348,7 +348,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 	
 	bool Intersect( const Sphere &sphereA, const Sphere &sphereB, const ::Oyster::Math::Float3& worldPointOfContact )
 	{
-		Ray sphereRay(sphereA, Float3(sphereB.center-sphereA.center).Normalize());
+		//Ray sphereRay(sphereA, Float3(sphereB.center-sphereA.center).Normalize());
 
 
 		return false;
