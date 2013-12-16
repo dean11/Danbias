@@ -29,9 +29,9 @@ void C_StaticObj::Init(ModelInitData modelInit)
 	privData->model->Visible = modelInit.visible;
 
 }
-void C_StaticObj::setPos()
+void C_StaticObj::setPos(Oyster::Math::Float4x4 world)
 {
-
+	privData->model->WorldMatrix  = world;
 }
 
 void C_StaticObj::Render()

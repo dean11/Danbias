@@ -34,28 +34,32 @@ namespace DanBias
 		Client::GameClientState::ProtocolStruct* protocolData; 
 		switch (pType)
 		{
-		case protocol_PlayerNavigation:
+		case protocol_Gamplay_PlayerNavigation:
 
 			break;
-		case protocol_PlayerPosition:
+		case protocol_Gamplay_PlayerPosition:
 			protocolData = new Client::GameClientState::PlayerPos;
 			for(int i = 0; i< 3; i++)
 			{
 				((Client::GameClientState::PlayerPos*)protocolData)->playerPos[i] = p[i].value.netFloat;
 			}
-			gameClientState->Protocol(protocolData);
+			if(dynamic_cast<Client::GameState*>(gameClientState))
+				((Client::GameState*)gameClientState)->Protocol(protocolData);
 			delete protocolData;
 			protocolData = NULL;
 			break;
 
 
-		case protocol_ObjectPosition:
+		case protocol_Gamplay_ObjectPosition:
 			protocolData = new Client::GameClientState::ObjPos;
 			for(int i = 0; i< 16; i++)
 			{
 				((Client::GameClientState::ObjPos*)protocolData)->worldPos[i] = p[i].value.netFloat;
 			}
-			gameClientState->Protocol(protocolData);
+
+			if(dynamic_cast<Client::GameState*>(gameClientState))
+				((Client::GameState*)gameClientState)->Protocol(protocolData);
+			
 			delete protocolData;
 			protocolData = NULL;
 			break;
@@ -79,9 +83,9 @@ namespace DanBias
 		}
 
 	public:
-		Client::GameClientState* gameClientState;
+		//Client::GameClientState* gameClientState;
 		InputClass* inputObj;
-		MyRecieverObject* r;
+		MyRecieverObject* recieverObj;
 
 	} data;
 #pragma endregion
@@ -110,17 +114,17 @@ namespace DanBias
 		prevTimeStamp = 0;
 		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
-		m_data->r = new MyRecieverObject;
-		m_data->r->nwClient = new Oyster::Network::NetworkClient();
-		m_data->r->nwClient->Connect(desc.port, desc.IP);
-		if (!m_data->r->nwClient->IsConnected())
+		m_data->recieverObj = new MyRecieverObject;
+		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient();
+		m_data->recieverObj->nwClient->Connect(desc.port, desc.IP);
+		if (!m_data->recieverObj->nwClient->IsConnected())
 		{
 			// failed to connect
 			return DanBiasClientReturn_Error;
 		}
 		// Start in lobby state
-		m_data->gameClientState = new  Client::LobbyState();
-		m_data->gameClientState->Init(m_data->r->nwClient);
+		m_data->recieverObj->gameClientState = new  Client::LobbyState();
+		m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient);
 
 
 		return DanBiasClientReturn_Sucess;
@@ -237,27 +241,27 @@ namespace DanBias
 		m_data->inputObj->Update();
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-		state = m_data->gameClientState->Update(deltaTime, m_data->inputObj);
+		state = m_data->recieverObj->gameClientState->Update(deltaTime, m_data->inputObj);
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
-			m_data->gameClientState->Release();
-			delete m_data->gameClientState;
-			m_data->gameClientState = NULL;
+			m_data->recieverObj->gameClientState->Release();
+			delete m_data->recieverObj->gameClientState;
+			m_data->recieverObj->gameClientState = NULL;
 
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_Lobby:
-				m_data->gameClientState = new Client::LobbyState();
+				m_data->recieverObj->gameClientState = new Client::LobbyState();
 				break;
 			case Client::GameClientState::ClientState_Game:
-				m_data->gameClientState = new Client::GameState();
+				m_data->recieverObj->gameClientState = new Client::GameState();
 				break;
 			default:
 				return E_FAIL;
 				break;
 			}
-			m_data->gameClientState->Init(m_data->r->nwClient); // send game client
+			m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient); // send game client
 				 
 		}
 		return S_OK;
@@ -275,15 +279,18 @@ namespace DanBias
 		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
 		SetWindowText(g_hWnd, title);
 	
-		m_data->gameClientState->Render();
+		m_data->recieverObj->gameClientState->Render();
 
 		return S_OK;
 	}
 
 	HRESULT DanBiasGame::CleanUp()
 	{
-		m_data->gameClientState->Release();
-		delete m_data->gameClientState;
+		m_data->recieverObj->gameClientState->Release();
+		delete m_data->recieverObj->gameClientState;
+		m_data->recieverObj->nwClient->Disconnect();
+		delete m_data->recieverObj->nwClient;
+		delete m_data->recieverObj;
 		delete m_data->inputObj;
 		delete m_data;
 		

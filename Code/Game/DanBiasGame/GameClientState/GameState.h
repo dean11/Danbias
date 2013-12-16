@@ -32,6 +32,8 @@ public:
 	bool Release()override;
 
 	void Protocol(ProtocolStruct* pos)override;
+	void Protocol(PlayerPos* pos);
+	void Protocol(ObjPos* pos);
 	void PlayerPosProtocol(PlayerPos* pos);
 	void ObjectPosProtocol(ObjPos* pos);
 	//void Protocol(LightPos pos);

@@ -14,7 +14,7 @@ public:
 	C_StaticObj(void);
 	virtual ~C_StaticObj(void);
 	void Init(ModelInitData modelInit);
-	void setPos();
+	void setPos(Oyster::Math::Float4x4 world);
 
 	void Render();
 	void Release();

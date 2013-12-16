@@ -14,7 +14,7 @@ public:
 	C_DynamicObj(void);
 	virtual ~C_DynamicObj(void);
 	void Init(ModelInitData modelInit);
-	void setPos();
+	void setPos(Oyster::Math::Float4x4 world);
 
 	void Render();
 	void Release();

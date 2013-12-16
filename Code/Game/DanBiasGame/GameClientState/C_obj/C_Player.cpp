@@ -30,9 +30,9 @@ void C_Player::Init(ModelInitData modelInit)
 
 
 }
-void C_Player::setPos()
+void C_Player::setPos(Oyster::Math::Float4x4 world)
 {
-
+	privData->model->WorldMatrix  = world;
 }
 
 void C_Player::Render()

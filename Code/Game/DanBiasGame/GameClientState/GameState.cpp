@@ -118,7 +118,8 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			{
 				movePlayer.bStrafeRight = true;
 			}
-
+			//PlayerPos* posPlayer;
+			//Protocol(posPlayer);
 
 			privData->nwClient->Send(movePlayer);
 
@@ -169,12 +170,45 @@ void GameState::Protocol(ProtocolStruct* pos)
 	else if((PlayerPos*)pos)
 		PlayerPosProtocol((PlayerPos*)pos);
 }
+
+void DanBias::Client::GameState::Protocol( PlayerPos* pos )
+{
+	Oyster::Math::Float4x4 world, translate;
+
+	world = Oyster::Math::Float4x4::identity;
+	translate = Oyster::Math::Float4x4::identity;
+	translate = Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(pos->playerPos[0],pos->playerPos[1],pos->playerPos[2] ));
+	world = translate;
+	privData->object[0]->setPos( world );
+}
+
+void DanBias::Client::GameState::Protocol( ObjPos* pos )
+{
+	Oyster::Math::Float4x4 world;
+	for(int i = 0; i<16; i++)
+	{
+		world[i] = pos->worldPos[i];
+	}
+	privData->object[1]->setPos(world);
+}
+
 void GameState::PlayerPosProtocol(PlayerPos* pos)
 {
+	Oyster::Math::Float4x4 world, translate;
 
+	world = Oyster::Math::Float4x4::identity;
+	translate = Oyster::Math::Float4x4::identity;
+	translate = Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(pos->playerPos[0],pos->playerPos[1],pos->playerPos[2] ));
+	world = translate;
+	privData->object[0]->setPos( world );
 }
 void GameState::ObjectPosProtocol(ObjPos* pos)
 {
-
+	Oyster::Math::Float4x4 world;
+	for(int i = 0; i<16; i++)
+	{
+		world[i] = pos->worldPos[i];
+	}
+	privData->object[1]->setPos(world);
 }
 //void GameState::Protocol(LightPos pos);
