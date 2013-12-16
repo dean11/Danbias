@@ -1,22 +1,14 @@
 #include <iostream>
-#include <WinSock2.h>
 #include <vld.h>
 #include "../NetworkDependencies/WinsockFunctions.h"
 #include "..\NetworkDependencies\Protocols.h"
 #include "../NetworkDependencies/OysterByte.h"
-#include "../../Misc/ThreadSafeQueue.h"
-#include "../NetworkDependencies/ThreadedClient.h"
 #include "../../Misc/WinTimer.h"
 #include "../../Misc/Utilities.h"
 #include "../NetworkAPI/NetworkClient.h"
 
-#pragma comment(lib, "ws2_32.lib")
-
 using namespace std;
-using namespace Oyster::Network::Protocols;
 using namespace Oyster::Network;
-using namespace Utility;
-using namespace Utility::DynamicMemory;
 
 void proc(CustomNetProtocol& protocol)
 {
