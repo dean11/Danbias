@@ -1,7 +1,7 @@
 #include "GameState.h"
 #include "DllInterfaces/GFXAPI.h"
-#include "Obj/C_Player.h"
-#include "Obj/C_DynamicObj.h"
+#include "C_obj/C_Player.h"
+#include "C_obj/C_DynamicObj.h"
 #include "NetworkClient.h"
 #include "PlayerProtocols.h"
 
@@ -28,11 +28,12 @@ GameState::~GameState(void)
 {
 
 }
-bool GameState::Init()
+bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	// load models
 	privData = new myData();
 	privData->state = gameStateState_loading;
+	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
 	return true;
 }
@@ -92,12 +93,37 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 		// update objects
 		// Client.send(obj);
 		{
-		GameLogic::Protocol_PlayerMovement movePlayer;
-	
-		//privData->nwClient->Send(movePlayer);
+			GameLogic::Protocol_PlayerMovement movePlayer;
+			movePlayer.bForward = false;
+			movePlayer.bBackward = false;
+			movePlayer.bStrafeLeft = false;
+			movePlayer.bStrafeRight = false;
+			movePlayer.bTurnLeft = false;
+			movePlayer.bTurnRight = false;
 
-		if(KeyInput->IsKeyPressed(DIK_L))
-			privData->state = GameState::gameStateState_end;
+
+			if(KeyInput->IsKeyPressed(DIK_W))
+			{
+				movePlayer.bForward = true;
+			}
+			if(KeyInput->IsKeyPressed(DIK_S))
+			{
+				movePlayer.bBackward = true;
+			}
+			if(KeyInput->IsKeyPressed(DIK_A))
+			{
+				movePlayer.bStrafeLeft = true;
+			}
+			if(KeyInput->IsKeyPressed(DIK_D))
+			{
+				movePlayer.bStrafeRight = true;
+			}
+
+
+			privData->nwClient->Send(movePlayer);
+
+			if(KeyInput->IsKeyPressed(DIK_L))
+				privData->state = GameState::gameStateState_end;
 		}
 		break;
 	case gameStateState_end:

@@ -17,7 +17,7 @@ private:
 public:
 	LobbyState(void);
 	~LobbyState(void);
-	bool Init();
+	bool Init(Oyster::Network::NetworkClient* nwClient);
 	bool LoadModels(std::wstring file);
 	bool InitCamera(Oyster::Math::Float3 startPos);
 	ClientState Update(float deltaTime, InputClass* KeyInput);

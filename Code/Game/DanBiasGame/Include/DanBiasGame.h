@@ -1,7 +1,7 @@
 #ifndef DANBIASGAME_DANBIASGAME_H
 #define DANBIASGAME_DANBIASGAME_H
 
-#define DANBIAS_CLIENT_L
+#define DANBIAS_CLIENT
 
 #if defined (DANBIAS_GAME_DLL_EXPORT)
 	#define DANBIAS_GAME_DLL __declspec(dllexport)
