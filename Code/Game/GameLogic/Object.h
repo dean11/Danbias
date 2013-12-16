@@ -7,41 +7,27 @@
 #define OBJECT_H
 
 #include "PhysicsAPI.h"
-#include "DllInterfaces/GFXAPI.h"
-
-#include "Model/Model.h"
-#include "Utilities.h"
-
+#include "GameLogicStates.h"
+#include "GameLogicDef.h"
 
 
 namespace GameLogic
 {
-	class Object
+	class DANBIAS_GAMELOGIC_DLL Object
 	{
 	public:		
-
-		enum OBJECT_TYPE
-		{
-			OBJECT_TYPE_PLAYER,
-			OBJECT_TYPE_BOX,
-		};
-		Object(std::wstring objFile );
-		virtual ~Object(void);
-
-		void Render();
+		Object();
+		Object(void* collisionFunc, OBJECT_TYPE type);
+		~Object(void);
 
 		OBJECT_TYPE GetType();
 
+		Oyster::Physics::ICustomBody* GetRigidBody();
+
 	private:
 		OBJECT_TYPE type;
-
 	protected:
-		//either a model pointer or an ID to an arraypos filled with models that are to be rendered
-		//rigidBody
-
 		Oyster::Physics::ICustomBody *rigidBody;
-		Oyster::Graphics::Model::Model *model;
-
 	};
 
 }

@@ -5,6 +5,10 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
+#include "PlayerProtocols.h"
+#include "NetworkClient.h"
+
+#include "L_inputClass.h"
 #include "vld.h"
 
 namespace DanBias
@@ -12,11 +16,57 @@ namespace DanBias
 	__int64 DanBiasGame::cntsPerSec		= 0;
 	__int64 DanBiasGame::prevTimeStamp	= 0;
 	float DanBiasGame::secsPerCnt		= 0;
-	InputClass* DanBiasGame::inputObj	= NULL;
 	HINSTANCE DanBiasGame::g_hInst		= NULL;
 	HWND DanBiasGame::g_hWnd			= NULL;
 
 #pragma region Game Data
+
+
+	struct MyRecieverObject :public Oyster::Network::ProtocolRecieverObject
+	{
+	Oyster::Network::NetworkClient* nwClient;
+	Client::GameClientState* gameClientState;
+	
+	void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& p) override
+	{
+
+	int pType = p[0].value.netInt;
+	Client::GameClientState::ProtocolStruct* protocol; 
+	switch (pType)
+	{
+	case protocol_PlayerNavigation:
+
+	break;
+	case protocol_PlayerPosition:
+	protocol = new Client::GameClientState::PlayerPos;
+	for(int i = 0; i< 3; i++)
+	{
+	((Client::GameClientState::PlayerPos*)protocol)->playerPos[i] = p[i].value.netFloat;
+	}
+	gameClientState->Protocol(protocol);
+	delete protocol;
+	protocol = NULL;
+	break;
+
+
+	case protocol_ObjectPosition:
+	protocol = new Client::GameClientState::ObjPos;
+	for(int i = 0; i< 16; i++)
+	{
+	((Client::GameClientState::ObjPos*)protocol)->worldPos[i] = p[i].value.netFloat;
+	}
+	gameClientState->Protocol(protocol);
+	delete protocol;
+	protocol = NULL;
+	break;
+
+	default:
+	break;
+	}	
+
+
+	}
+	};
 	class DanBiasGamePrivateData
 	{
 
@@ -30,12 +80,15 @@ namespace DanBias
 
 		}
 
-		public:
-		 Client::GameClientState* gameClientState;
-		 // gameClient; 
+	public:
+		Client::GameClientState* gameClientState;
+		InputClass* inputObj;
+		MyRecieverObject* r;
 
 	} data;
 #pragma endregion
+
+
 	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
 
 	//--------------------------------------------------------------------------------------
@@ -63,6 +116,9 @@ namespace DanBias
 		// Start in lobby state
 		m_data->gameClientState = new  Client::LobbyState();
 		m_data->gameClientState->Init();
+		m_data->r = new MyRecieverObject;
+		m_data->r->nwClient = new Oyster::Network::NetworkClient();
+
 		return DanBiasClientReturn_Sucess;
 	}
 
@@ -163,8 +219,8 @@ namespace DanBias
 	//-------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitInput()
 	{
-		inputObj = new InputClass;
-		if(!inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
+		m_data->inputObj = new InputClass;
+		if(!m_data->inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -174,10 +230,10 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		inputObj->Update();
+		m_data->inputObj->Update();
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-		state = m_data->gameClientState->Update(deltaTime, inputObj);
+		state = m_data->gameClientState->Update(deltaTime, m_data->inputObj);
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
@@ -206,7 +262,7 @@ namespace DanBias
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
 		int isPressed = 0;
-		if(inputObj->IsKeyPressed(DIK_A))
+		if(m_data->inputObj->IsKeyPressed(DIK_A))
 		{
 			isPressed = 1;
 		}
@@ -224,8 +280,9 @@ namespace DanBias
 	{
 		m_data->gameClientState->Release();
 		delete m_data->gameClientState;
+		delete m_data->inputObj;
 		delete m_data;
-		delete inputObj;
+		
 
 		Oyster::Graphics::API::Clean();
 		return S_OK;

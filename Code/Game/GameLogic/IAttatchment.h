@@ -1,6 +1,11 @@
+//////////////////////////////////////////////////
+//Created by Erik of the GameLogic team
+//////////////////////////////////////////////////
+
 #ifndef IATTATCHMENT_H
 #define IATTATCHMENT_H
 #include "GameLogicStates.h"
+#include "Player.h"
 
 namespace GameLogic
 {
@@ -16,9 +21,10 @@ namespace GameLogic
 
 		virtual void UseAttatchment(const WEAPON_FIRE &fireInput) = 0;
 
-	private:	
-		struct PrivateData;
-		PrivateData *myData;
+	private:
+
+	protected:
+		Player *owner;
 
 	};
 }

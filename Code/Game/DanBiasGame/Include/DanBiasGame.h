@@ -1,6 +1,8 @@
 #ifndef DANBIASGAME_DANBIASGAME_H
 #define DANBIASGAME_DANBIASGAME_H
 
+#define DANBIAS_CLIENT_L
+
 #if defined (DANBIAS_GAME_DLL_EXPORT)
 	#define DANBIAS_GAME_DLL __declspec(dllexport)
 #else
@@ -10,8 +12,6 @@
 #define NOMINMAX
 #include <Windows.h>
 
-
-#include "L_inputClass.h"
 
 
 namespace DanBias
@@ -24,8 +24,6 @@ namespace DanBias
 			DanBiasClientReturn_Error,
 			DanBiasClientReturn_Sucess,
 		};
-
-
 
 		struct DanBiasGameDesc
 		{
@@ -56,11 +54,12 @@ namespace DanBias
 			static HRESULT Update(float deltaTime);
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
+
 		private:
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;
 			static float secsPerCnt;
-			static InputClass* inputObj;
+			
 			static HINSTANCE			g_hInst;  
 			static HWND					g_hWnd;
 			static DanBiasGamePrivateData* m_data;

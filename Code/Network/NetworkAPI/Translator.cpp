@@ -17,28 +17,6 @@ using namespace std;
 struct MyCastingStruct
 {
 	std::map<int, NetAttributeContainer> attributes;
-
-	/*MyCastingStruct()
-	{ }
-	~MyCastingStruct()
-	{
-		for (auto i = attributes.begin(); i != attributes.end(); i++)
-		{
-			RemoveAttribute(i->first);
-		}
-	}
-	void RemoveAttribute(int ID)
-	{
-		auto i = attributes.find(ID);
-		if(i == attributes.end()) return;
-
-		switch (i->second.type)
-		{
-			case NetAttributeType_CharArray:
-				delete [] i->second.value.netCharPtr;
-			break;
-		}
-	}*/
 };
 
 // TODO: Check if the package has been packed correctly.
@@ -220,6 +198,16 @@ Translator::~Translator()
 		delete privateData;
 		privateData = NULL;
 	}
+}
+Translator::Translator(const Translator& obj)
+{
+	this->privateData = new PrivateData(*obj.privateData);
+}
+const Translator& Translator::operator=(const Translator& obj)
+{
+	delete this->privateData;
+	this->privateData = new PrivateData(*obj.privateData);
+	return *this;
 }
 
 void Translator::Pack(OysterByte &bytes, CustomNetProtocol& protocol)

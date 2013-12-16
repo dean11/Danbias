@@ -3,16 +3,12 @@
 /////////////////////////////////////////////////
 #define NOMINMAX
 #include <Windows.h>
-
-//#define DANBIAS_SERVER
-#define DANBIAS_CLIENT
+#include <vld.h>
 
 
-#if defined(DANBIAS_SERVER)
-#include "IDanBiasServer.h"
-#elif defined(DANBIAS_CLIENT)
-#include "DanBiasGame.h"
-#endif
+#include "DanBiasServerAPI.h"
+//#include "DanBiasGame.h"
+
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {
@@ -21,16 +17,12 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	{
 		return cmdShow;
 	}
-	// Server starter code goes here
-	DanBias::DanBiasServerDesc desc;
-	desc.port = 0;
-	
-	if( DanBias::DanBiasServer::Initiate(desc) == DanBias::DanBiasServerReturn_Sucess)
+	if( DanBias::DanBiasServerAPI::Initiate() == DanBias::DanBiasServerReturn_Sucess)
 	{
-		DanBias::DanBiasServer::Run();
-		DanBias::DanBiasServer::Release();
+		DanBias::DanBiasServerAPI::Run();
+		DanBias::DanBiasServerAPI::Release();
 	}
-#elif defined(DANBIAS_CLIENT)
+#elif defined(DANBIAS_CLIENT_L)
 	if(SetDllDirectory(L"..\\DLL") == FALSE)
 	{
 		return cmdShow;

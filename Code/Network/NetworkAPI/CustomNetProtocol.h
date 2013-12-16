@@ -5,6 +5,7 @@
 #define NETWORK_CUSTOM_NETWORK_PROTOCOL_H
 
 #include <string>
+#include <vld.h>
 
 #ifdef CUSTOM_NET_PROTOCOL_EXPORT
 	#define NET_PROTOCOL_EXPORT __declspec(dllexport)
@@ -82,6 +83,8 @@ namespace Oyster
 			public:
 				CustomNetProtocol();
 				~CustomNetProtocol();
+				CustomNetProtocol(const CustomNetProtocol& o);
+				const CustomNetProtocol& operator=(const CustomNetProtocol& o);
 
 				NetAttributeContainer& operator[](int ID);
 

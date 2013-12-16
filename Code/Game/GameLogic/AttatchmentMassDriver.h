@@ -1,3 +1,6 @@
+//////////////////////////////////////////////////
+//Created by Erik of the GameLogic team
+//////////////////////////////////////////////////
 #ifndef ATTATCHMENTMASSDRIVER_H
 #define ATTATCHMENTMASSDRIVER_H
 #include "IAttatchment.h"
@@ -8,6 +11,7 @@ namespace GameLogic
 	{
 	public:
 		AttatchmentMassDriver(void);
+		AttatchmentMassDriver(Player &owner);
 		~AttatchmentMassDriver(void);
 
 
@@ -15,6 +19,7 @@ namespace GameLogic
 
 	private:
 		void ForcePush(const WEAPON_FIRE &fireInput);
+		void ForcePull(const WEAPON_FIRE &fireInput);
 
 	private:
 		struct PrivateData;

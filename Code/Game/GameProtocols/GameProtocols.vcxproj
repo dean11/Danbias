@@ -154,8 +154,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LobbyProtocols.h" />
+    <ClInclude Include="ObjectProtocols.h" />
     <ClInclude Include="PlayerProtocols.h" />
     <ClInclude Include="ProtocolIdentificationID.h" />
+    <ClInclude Include="TEST_PROTOCOLS.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

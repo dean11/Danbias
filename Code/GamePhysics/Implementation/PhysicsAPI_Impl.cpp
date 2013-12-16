@@ -20,36 +20,36 @@ namespace
 
 		float deltaWhen;
 		Float3 worldWhere;
-		if( deuter->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
+		if( proto->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
 		{
 			proto->CallSubscription( proto, deuter );
 		}
 	}
 }
 
-Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius)
+Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
 {
-	return Formula::MomentOfInertia::Sphere(mass, radius);
+	return targetMem = Formula::MomentOfInertia::Sphere(mass, radius);
 }
 
-Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const Float mass, const Float radius)
+Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const Float mass, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
 {
-	return Formula::MomentOfInertia::HollowSphere(mass, radius);
+	return targetMem = Formula::MomentOfInertia::HollowSphere(mass, radius);
 }
 
-Float4x4 & MomentOfInertia::CreateCuboidMatrix( const Float mass, const Float height, const Float width, const Float depth )
+Float4x4 & MomentOfInertia::CreateCuboidMatrix( const Float mass, const Float height, const Float width, const Float depth, ::Oyster::Math::Float4x4 &targetMem )
 {
-	return Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
+	return targetMem = Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
 }
 
-Float4x4 & MomentOfInertia::CreateCylinderMatrix( const Float mass, const Float height, const Float radius )
+Float4x4 & MomentOfInertia::CreateCylinderMatrix( const Float mass, const Float height, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
 {
-	return Formula::MomentOfInertia::Cylinder(mass, height, radius);
+	return targetMem = Formula::MomentOfInertia::Cylinder(mass, height, radius);
 }
 
-Float4x4 & MomentOfInertia::CreateRodMatrix( const Float mass, const Float length )
+Float4x4 & MomentOfInertia::CreateRodMatrix( const Float mass, const Float length, ::Oyster::Math::Float4x4 &targetMem )
 {
-	return Formula::MomentOfInertia::RodCenter(mass, length);
+	return targetMem = Formula::MomentOfInertia::RodCenter(mass, length);
 }
 
 API & API::Instance()

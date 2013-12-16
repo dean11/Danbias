@@ -2,28 +2,22 @@
 
 using namespace GameLogic;
 
-struct StaticObject::PrivateData
-{
-	PrivateData()
-	{
-
-	}
-
-	~PrivateData()
-	{
-
-	}
-
-}myData;
 
 
 StaticObject::StaticObject()
+	:Object()
 {
-	myData = new PrivateData();
+	
+}
+
+StaticObject::StaticObject(void* collisionFunc, OBJECT_TYPE type)
+	:Object(collisionFunc,type)
+{
+
 }
 
 
 StaticObject::~StaticObject(void)
 {
-	delete myData;
+
 }

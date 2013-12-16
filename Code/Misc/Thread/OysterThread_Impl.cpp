@@ -31,43 +31,57 @@ using namespace Utility::DynamicMemory;
 
 	struct ThreadData
 	{
-		std::atomic<OYSTER_THREAD_STATE>	state;			//<! The current thread state.
+		OYSTER_THREAD_STATE	state;							//<! The current thread state.
+		OYSTER_THREAD_PRIORITY prio;						//<! The thread priority
 		SmartPointer<std::thread> workerThread;				//<! The worker thread.
 		std::thread::id callingThread;						//<! The owner thread.
 		IThreadObject *owner;								//<! The owner of the thread as IThread.
 		std::atomic<int> msec;								//<! A timer in miliseconds.
-
-		//OysterMutex mutexLock;							//<! The lock, locking the member variabls.
-		//OYSTER_THREAD_STATE	state;						//<! The current thread state.
+		bool first;
 	
 		ThreadData() {}
-		~ThreadData() {}
-		ThreadData(const ThreadData&)	{};
+		~ThreadData() 
+		{
+			this->owner = 0;
+			this->state = OYSTER_THREAD_STATE_DEAD;
+
+			if(this->workerThread)
+			{
+				//@todo TODO: Make detatch avalible.
+				if(this->workerThread->joinable())
+					this->workerThread->detach();
+			}
+		}
+		ThreadData(const ThreadData&)	
+		{};
+		const ThreadData& operator =(const ThreadData& o)	
+		{};
 	};
 	struct OysterThread::PrivateData
 	{
 		SmartPointer<ThreadData> threadData;
 	
 		PrivateData()
-			:threadData(new ThreadData())
 		{
+			threadData = new ThreadData();
+			threadData->first = true;
 			threadData->owner = 0;
 			threadData->workerThread = 0;
 			threadData->callingThread;
 			threadData->state = OYSTER_THREAD_STATE_STOPED;
+			threadData->prio = OYSTER_THREAD_PRIORITY_3;
 		}
 		PrivateData(const PrivateData& o)
 		{
 			threadData = o.threadData;
 		}
+		const PrivateData& operator=(const PrivateData& o)
+		{
+			threadData = o.threadData;
+		}
 		~PrivateData()
 		{
-			//@todo TODO: Make detatch avalible.
-			this->threadData->workerThread->detach();
-
-			this->threadData->owner = 0;
-
-			this->threadData->state = OYSTER_THREAD_STATE_DEAD;
+			threadData.Release();
 		}
 
 	};
@@ -75,77 +89,47 @@ using namespace Utility::DynamicMemory;
 #pragma endregion
 
 
-int tempId = 0;
-std::vector<int> IDS;
 static void ThreadingFunction(SmartPointer<ThreadData> &origin)
 {
 
-	bool shouldContinue;
+	bool shouldContinue = true;
 	SmartPointer<ThreadData> w = origin;
 
 theBegining:
 
-	while(w->state == OYSTER_THREAD_STATE_STOPED)
+	while(w->state == OYSTER_THREAD_STATE_STOPED)	std::this_thread::yield();
+
+	if(w->owner)	w->owner->ThreadEntry();
+	w->first = false;
+	while (w->state != OYSTER_THREAD_STATE_STOPED && w->state != OYSTER_THREAD_STATE_DEAD && shouldContinue)		
 	{
-		std::this_thread::yield();
-	}
-
-//	w->mutexLock.LockMutex();
-	if(w->owner)
-	{
-		w->owner->ThreadEntry();
-	}
-//	w->mutexLock.UnlockMutex();
-
-	while (w->state != OYSTER_THREAD_STATE_STOPED && w->state != OYSTER_THREAD_STATE_DEAD)		
-	{
-//		w->mutexLock.LockMutex();
+		switch (w->prio)
 		{
-			if(w->owner)
-			{
-				shouldContinue = w->owner->DoWork();
-			}
+			case Oyster::Thread::OYSTER_THREAD_PRIORITY_2:
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			break;
+			case Oyster::Thread::OYSTER_THREAD_PRIORITY_3:
+				std::this_thread::yield();
+			break;
 		}
-//		w->mutexLock.UnlockMutex();	
-
-		if(!shouldContinue)
-		{
-			goto theEnd;
-		}
-		if(w->state == OYSTER_THREAD_STATE_DEAD)
-		{
-			goto theEnd;	
-		}
-		else if(w->state == OYSTER_THREAD_STATE_RESET)
-		{
-			goto theBegining;	
-		}
-		else if(w->msec > 0)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(w->msec));
-		}
-
-		while (w->state == OYSTER_THREAD_STATE_PAUSED)
-		{
-			std::this_thread::yield();
-		}
+		if(w->owner)									shouldContinue = w->owner->DoWork();
+		
+		if(w->state == OYSTER_THREAD_STATE_RESET)		goto theBegining;
+		else if(w->msec > 0)							std::this_thread::sleep_for(std::chrono::milliseconds(w->msec));
+		
+		while (w->state == OYSTER_THREAD_STATE_PAUSED)	std::this_thread::yield();
 	}
 
 	if(w->state == OYSTER_THREAD_STATE_DEAD)
 	{
-		w->workerThread->detach();
+		if(w->workerThread->joinable())		w->workerThread->detach();
+
 		return;
 	}
 
-theEnd:
-
-//	w->mutexLock.LockMutex();	
-	if(w->owner)
-	{
-		w->owner->ThreadExit();
-	}
-//	w->mutexLock.UnlockMutex();
-
+//theEnd:
+	
+	if(w->owner)	w->owner->ThreadExit();
 	w->state = OYSTER_THREAD_STATE_DEAD;
 }
 
@@ -159,6 +143,8 @@ OysterThread::OysterThread(const OysterThread& original)
 }
 const OysterThread& OysterThread::operator=(const OysterThread& original)
 {
+	delete this->privateData;
+	this->privateData = new PrivateData(*original.privateData);
 	return *this;
 }
 OysterThread::~OysterThread()											   
@@ -200,7 +186,7 @@ OYSTER_THREAD_ERROR OysterThread::Start()
 	this->privateData->threadData->state = OYSTER_THREAD_STATE_RUNNING;
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
-void OysterThread::Stop()
+void OysterThread::Stop(bool wait)
 {
 	//this->privateData->threadData->mutexLock.LockMutex();
 	this->privateData->threadData->state = OYSTER_THREAD_STATE_STOPED;
@@ -221,10 +207,8 @@ void OysterThread::Pause(int msec)
 	}
 	else
 	{
-		//this->privateData->threadData->mutexLock.LockMutex();
 		this->privateData->threadData->state = OYSTER_THREAD_STATE_PAUSED;
 		this->privateData->threadData->msec = msec;
-		//this->privateData->threadData->mutexLock.UnlockMutex();
 	}
 }
 void OysterThread::Resume()
@@ -246,26 +230,35 @@ OYSTER_THREAD_ERROR OysterThread::Reset(IThreadObject* worker)
 
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
-void OysterThread::Terminate()
+void OysterThread::Terminate(bool wait)
 {
 	this->privateData->threadData->state = OYSTER_THREAD_STATE_DEAD;
 }
 void OysterThread::Wait()
 {
 	if(this->privateData->threadData->state == OYSTER_THREAD_STATE_DEAD)
-	{
-		return;
-	}
+	{ return; }
 
-	if(this->privateData->threadData->workerThread->get_id() == std::this_thread::get_id())	return;
+	if(	this->privateData->threadData->workerThread 
+		&& 
+		this->privateData->threadData->workerThread->get_id() == std::this_thread::get_id())	
+	  return;
 	
-	this->privateData->threadData->workerThread->join();
+	//if(this->privateData->threadData->state == OYSTER_THREAD_STATE_STOPED)
+	if(this->privateData->threadData->first)
+	{ return; }
+
+	if(this->privateData->threadData->workerThread)
+		if(this->privateData->threadData->workerThread->joinable())
+			this->privateData->threadData->workerThread->join();
 }
 void OysterThread::Wait(int msec)
 {
 	if(this->privateData->threadData->workerThread->get_id() == std::this_thread::get_id())	return;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(msec));
+	//TODO: Sync with thread.
+
+	//std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 }
 OYSTER_THREAD_ERROR OysterThread::Swap(const OysterThread* other)
 {
@@ -278,5 +271,9 @@ bool OysterThread::IsActive()
 		return true;
 
 	return false;
+}
+void OysterThread::SetPriority(OYSTER_THREAD_PRIORITY priority)
+{
+	this->privateData->threadData->prio = priority;
 }
 

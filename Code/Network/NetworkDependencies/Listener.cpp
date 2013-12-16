@@ -19,7 +19,9 @@ Listener::~Listener()
 {
 	if(connection)
 	{
+		this->thread.Terminate();
 		delete connection;
+		connection = 0;
 	}
 }
 

@@ -2,6 +2,8 @@
 #include "DllInterfaces/GFXAPI.h"
 #include "Obj/C_Player.h"
 #include "Obj/C_DynamicObj.h"
+#include "NetworkClient.h"
+#include "PlayerProtocols.h"
 
 using namespace DanBias::Client;
 
@@ -12,7 +14,9 @@ struct  GameState::myData
 	Oyster::Math3D::Float4x4 proj; 
 	C_Object* object[3];
 	int modelCount;
+	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
+
 }privData;
 
 GameState::GameState(void)
@@ -32,7 +36,7 @@ bool GameState::Init()
 	privData->state = LoadGame();
 	return true;
 }
-GameState::gameStateState GameState::LoadGame()
+GameState::gameStateState GameState::LoadGame() 
 {
 	LoadModels(L"map");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
@@ -86,8 +90,15 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 	case gameStateState_playing:
 		// read server data
 		// update objects
+		// Client.send(obj);
+		{
+		GameLogic::Protocol_PlayerMovement movePlayer;
+	
+		//privData->nwClient->Send(movePlayer);
+
 		if(KeyInput->IsKeyPressed(DIK_L))
 			privData->state = GameState::gameStateState_end;
+		}
 		break;
 	case gameStateState_end:
 		return ClientState_Lobby;
@@ -124,3 +135,20 @@ bool GameState::Release()
 	privData = NULL;
 	return true;
 }
+
+void GameState::Protocol(ProtocolStruct* pos)
+{
+	if((ObjPos*)pos)
+		ObjectPosProtocol((ObjPos*)pos);
+	else if((PlayerPos*)pos)
+		PlayerPosProtocol((PlayerPos*)pos);
+}
+void GameState::PlayerPosProtocol(PlayerPos* pos)
+{
+
+}
+void GameState::ObjectPosProtocol(ObjPos* pos)
+{
+
+}
+//void GameState::Protocol(LightPos pos);

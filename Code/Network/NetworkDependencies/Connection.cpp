@@ -9,7 +9,7 @@ using namespace Oyster::Network;
 
 Connection::Connection()
 {
-	this->socket = 0;
+	this->socket = -1;
 	bool stillSending = false;
 	bool closed = true;
 }

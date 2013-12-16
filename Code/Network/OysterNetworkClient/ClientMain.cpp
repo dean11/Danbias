@@ -37,7 +37,11 @@ int main()
 	NetworkClient client;
 
 	//Connect to server
-	if(client.Connect(15151, "localhost"))
+	//errorCode = client->Connect(15151, "193.11.186.101");
+	errorCode = client.Connect(15151, "127.0.0.1");
+	client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
+
+	if(errorCode != 0)
 	{
 		cout << "FAILED" << endl;
 	}

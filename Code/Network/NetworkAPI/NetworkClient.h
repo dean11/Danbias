@@ -12,6 +12,7 @@
 #endif
 
 #include "NetworkCallbackHelper.h"
+#include <vld.h>
 
 namespace Oyster
 {
@@ -44,6 +45,9 @@ namespace Oyster
 
 				//Compares the internal ID.
 				bool operator ==(const NetworkClient& obj);
+				bool operator ==(const int& ID);
+
+				int Id() const;
 
 			private:
 				struct PrivateData;
