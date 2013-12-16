@@ -4,7 +4,6 @@
 #include "SphericalRigidBody.h"
 
 using namespace ::Oyster::Physics;
-using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
@@ -25,31 +24,6 @@ namespace
 			proto->CallSubscription( proto, deuter );
 		}
 	}
-}
-
-Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::Sphere(mass, radius);
-}
-
-Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const Float mass, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::HollowSphere(mass, radius);
-}
-
-Float4x4 & MomentOfInertia::CreateCuboidMatrix( const Float mass, const Float height, const Float width, const Float depth, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
-}
-
-Float4x4 & MomentOfInertia::CreateCylinderMatrix( const Float mass, const Float height, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::Cylinder(mass, height, radius);
-}
-
-Float4x4 & MomentOfInertia::CreateRodMatrix( const Float mass, const Float length, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::RodCenter(mass, length);
 }
 
 API & API::Instance()

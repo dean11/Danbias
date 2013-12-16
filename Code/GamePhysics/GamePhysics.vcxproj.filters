@@ -42,6 +42,12 @@
     <ClInclude Include="PhysicsStructs-Impl.h">
       <Filter>Header Files\Include</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsFormula.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsFormula-Impl.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp">
