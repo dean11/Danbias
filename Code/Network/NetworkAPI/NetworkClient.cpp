@@ -166,6 +166,7 @@ NetworkClient::NetworkClient()
 NetworkClient::NetworkClient(unsigned int socket)
 {
 	privateData = new PrivateData(socket);
+	this->privateData->data->thread.Create(this->privateData, true);
 }
 
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type)
@@ -179,6 +180,7 @@ NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType
 	privateData = new PrivateData(socket);
 	this->privateData->data->recvObj = SmartPointer<RecieverObject>(&recvObj);
 	this->privateData->data->callbackType = type;
+	this->privateData->data->thread.Create(this->privateData, true);
 }
 
 NetworkClient::NetworkClient(const NetworkClient& obj)
@@ -209,7 +211,10 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 	//Connect has succeeded
 	if(result == 0)
 	{
-		privateData->data->thread.Start();
+		if(this->privateData->data->thread.IsCreated()) return false;
+
+		this->privateData->data->thread.Create(this->privateData, true);
+
 		return true;
 	}
 
