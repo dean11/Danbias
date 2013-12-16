@@ -22,7 +22,7 @@ private:
 public:
 	GameState(void);
 	~GameState(void);
-	bool Init();
+	bool Init(Oyster::Network::NetworkClient* nwClient);
 	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
 	bool LoadModels(std::wstring mapFile) ;
 	bool InitCamera(Oyster::Math::Float3 startPos) ;

@@ -6,8 +6,8 @@
 #include <vld.h>
 
 
-#include "DanBiasServerAPI.h"
-//#include "DanBiasGame.h"
+//#include "DanBiasServerAPI.h"
+#include "DanBiasGame.h"
 
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
@@ -22,7 +22,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		DanBias::DanBiasServerAPI::Run();
 		DanBias::DanBiasServerAPI::Release();
 	}
-#elif defined(DANBIAS_CLIENT_L)
+#elif defined(DANBIAS_CLIENT)
 	if(SetDllDirectory(L"..\\DLL") == FALSE)
 	{
 		return cmdShow;
@@ -30,6 +30,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	// Game client starter code goes here
 	DanBias::DanBiasGameDesc gameDesc;
 	gameDesc.port = 1;
+	gameDesc.IP = "10.1010.303";
 	gameDesc.hinst = hinst;
 	gameDesc.nCmdShow = cmdShow;
 
