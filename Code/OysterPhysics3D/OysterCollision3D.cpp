@@ -249,6 +249,11 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true; // Passed all tests, is in same position
 	}
 
+	bool Intersect( const Point &pointA, const Point &pointB, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+
 	bool Intersect( const Ray &ray, const Point &point, Float &connectDistance )
 	{ // by Dan Andersson
 		Float connectOffsetSquared;
@@ -276,6 +281,16 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		}
 
 		connectDistanceA = connectDistanceB = 0.0f;
+		return false;
+	}
+
+	bool Intersect( const Ray &ray, const Point &point, ::Oyster::Math::Float &connectDistance, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+	
+	bool Intersect( const Ray &rayA, const Ray &rayB, ::Oyster::Math::Float &connectDistanceA, ::Oyster::Math::Float &connectDistanceB, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
 		return false;
 	}
 
@@ -321,6 +336,24 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return false;
 	}
 
+	bool Intersect( const Sphere &sphere, const Point &point, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+	
+	bool Intersect( const Sphere &sphere, const Ray &ray, ::Oyster::Math::Float &connectDistance, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+	
+	bool Intersect( const Sphere &sphereA, const Sphere &sphereB, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		Ray sphereRay(sphereA, Float3(sphereB.center-sphereA.center).Normalize());
+
+
+		return false;
+	}
+
 	bool Intersect( const Plane &plane, const Point &point )
 	{ // by Dan Andersson
 		Float connectOffset;
@@ -362,6 +395,26 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		else if( planeA.normal == -planeB.normal )  // they are still parallell
 			return (planeA.phasing == -planeB.phasing);
 		return true; // none parallell planes ALWAYS intersects somewhere
+	}
+
+	bool Intersect( const Plane &plane, const Point &point, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+	
+	bool Intersect( const Plane &plane, const Ray &ray, ::Oyster::Math::Float &connectDistance, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+	
+	bool Intersect( const Plane &plane, const Sphere &sphere, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
+	}
+	
+	bool Intersect( const Plane &planeA, const Plane &planeB, const ::Oyster::Math::Float3& worldPointOfContact )
+	{
+		return false;
 	}
 
 	bool Intersect( const BoxAxisAligned &box, const Point &point )
