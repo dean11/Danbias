@@ -246,3 +246,13 @@ bool NetworkClient::operator ==(const NetworkClient& obj)
 {
 	return (this->privateData->data->ID == obj.privateData->data->ID);
 }
+
+bool NetworkClient::operator ==(const int& ID)
+{
+	return this->privateData->data->ID == ID;
+}
+
+int NetworkClient::Id() const
+{
+	return this->privateData->data->ID;
+}

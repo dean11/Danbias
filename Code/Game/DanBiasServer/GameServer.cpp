@@ -54,7 +54,6 @@ namespace DanBias
 
 		if(!this->server->Init(serverDesc))								return DanBiasServerReturn_Error;
 		if(!WindowShell::CreateConsoleWindow())							return DanBiasServerReturn_Error;
-		if(!WindowShell::CreateWin(WindowShell::WINDOW_INIT_DESC()))	return DanBiasServerReturn_Error;
 
 		this->initiated = true;
 		return DanBiasServerReturn_Sucess;

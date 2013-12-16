@@ -1,10 +1,14 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
 #ifndef DANBIASSERVER_NETWORK_SESSION_H
 #define DANBIASSERVER_NETWORK_SESSION_H
 
 #define NOMINMAX
 #include "Utilities.h"
 #include <PostBox\PostBox.h>
-#include <PlayerProtocols.h>
+#include <CustomNetProtocol.h>
+#include <NetworkClient.h>
 #include <vector>
 
 namespace DanBias
@@ -13,12 +17,10 @@ namespace DanBias
 	class NetworkSession
 	{
 	public:
-		struct ClientEvent
+		struct NetEvent
 		{
 			ClientObject* reciever;
 			Oyster::Network::CustomNetProtocol protocol;
-			ClientEvent()  { reciever = 0; }
-			~ClientEvent() { }
 		};
 
 	public:
@@ -27,6 +29,8 @@ namespace DanBias
 
 		void AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 		
+		void DetachClient(Oyster::Network::NetworkClient* client);
+		void DetachClient(ClientObject* client);
 		void DetachClient(short ID);
 		void DetachClient();
 		
@@ -36,10 +40,11 @@ namespace DanBias
 		void Send(Oyster::Network::CustomNetProtocol& protocol, int ID);
 
 		//TODO: Do more lobby features
+		//virtual void 
 
 	protected:
 		std::vector<Utility::DynamicMemory::SmartPointer<ClientObject>> clients;
-		Oyster::PostBox<DanBias::NetworkSession::ClientEvent> box;
+		Oyster::PostBox<DanBias::NetworkSession::NetEvent> box;
 	};
 }//End namespace DanBias
 #endif // !DANBIASSERVER_NETWORK_SESSION_H

@@ -187,6 +187,7 @@
     <ClCompile Include="ServerObjects\NetworkSession.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="Include\DanBiasServerAPI.h" />
     <ClInclude Include="ServerInitReader.h" />

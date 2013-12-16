@@ -2,8 +2,6 @@
 #define DANBIASSERVER_MAINLOBBY_H
 
 #include "..\NetworkSession.h"
-#include <thread>
-#include <future>
 
 namespace DanBias
 {
@@ -17,7 +15,7 @@ namespace DanBias
 		void Frame();
 
 	private:
-
+		void ParseEvent(NetEvent& e);
 
 	};
 }//End namespace DanBias

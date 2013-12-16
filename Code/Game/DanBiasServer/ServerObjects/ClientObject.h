@@ -9,7 +9,8 @@
 
 namespace DanBias
 {
-	class ClientObject :public Oyster::Network::ProtocolRecieverObject
+	class ClientObject 
+		:public Oyster::Network::ProtocolRecieverObject
 	{
 	public:
 		ClientObject(const Oyster::Network::NetworkClient& client);
@@ -20,8 +21,8 @@ namespace DanBias
 		GameLogic::Player*				Logic_Object();
 		Oyster::Network::NetworkClient* NetClient_Object();
 	
-	private:
-		void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol) override;
+		/** This method is NOT threadsafe. */
+		virtual void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol) override;
 	
 	private:
 		GameLogic::Player logicPlayer;
