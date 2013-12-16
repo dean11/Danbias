@@ -57,6 +57,12 @@ bool BoxAxisAligned::Intersects( const ICollideable &target ) const
 	}
 }
 
+bool BoxAxisAligned::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+{
+	//! @todo TODO: implement stub properly
+	return this->Intersects( target );
+}
+
 bool BoxAxisAligned::Contains( const ICollideable &target ) const
 {
 	switch( target.type )

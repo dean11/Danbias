@@ -34,7 +34,7 @@ namespace Oyster { namespace Collision3D //! Contains a collection of 3D shapes 
 		virtual ~ICollideable();
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const = 0;
-		virtual bool Intersects( const ICollideable &target, Oyster::Math::Float3 &worldPointOfContact ) const = 0;
+		virtual bool Intersects( const ICollideable &target, ::Oyster::Math::Float3 &worldPointOfContact ) const = 0;
 		virtual bool Intersects( const ICollideable &target ) const = 0;
 		virtual bool Contains( const ICollideable &target ) const = 0;
 	};

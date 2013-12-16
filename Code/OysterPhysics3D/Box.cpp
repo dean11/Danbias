@@ -54,6 +54,12 @@ bool Box::Intersects( const ICollideable &target ) const
 	}
 }
 
+bool Box::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+{
+	//! @todo TODO: implement stub properly
+	return this->Intersects( target );
+}
+
 bool Box::Contains( const ICollideable &target ) const
 {
 	switch( target.type )
