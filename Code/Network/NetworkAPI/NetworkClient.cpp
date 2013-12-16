@@ -241,7 +241,7 @@ void NetworkClient::Send(CustomProtocolObject& protocol)
 
 void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
-	if (type == NetworkProtocolCallbackType_Unknown) return;
+	if (type == NetworkProtocolCallbackType_Unknown) return;	//It should probably still be set even if it is unknown.
 
 	privateData->data->recvObjMutex.lock();
 		privateData->data->recvObj = recvObj;

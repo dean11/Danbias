@@ -14,6 +14,8 @@ void proc(NetworkClient client)
 
 int main()
 {
+	SetDllDirectory("..\\DLL\\");
+
 	NetworkServer server;
 	Oyster::Network::NetworkServer::INIT_DESC desc;
 	desc.port = 15151;
