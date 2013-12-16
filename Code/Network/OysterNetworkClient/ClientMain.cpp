@@ -25,6 +25,7 @@ void proc(CustomNetProtocol& protocol)
 
 int main()
 {
+	SetDllDirectory("..\\DLL\\");
 	int errorCode;
 
 	char msgRecv[255] = "\0";
