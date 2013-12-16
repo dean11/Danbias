@@ -45,7 +45,7 @@ bool Sphere::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool Sphere::Intersects( const ICollideable &target, const ::Oyster::Math::Float3 &worldPointOfContact ) const
+bool Sphere::Intersects( const ICollideable &target, ::Oyster::Math::Float3 &worldPointOfContact ) const
 {
 	switch( target.type )
 	{
