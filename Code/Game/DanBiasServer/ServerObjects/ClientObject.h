@@ -16,7 +16,7 @@ namespace DanBias
 		ClientObject(const Oyster::Network::NetworkClient& client);
 		~ClientObject();
 
-		void SetPostbox(Oyster::PostBox<NetworkSession::ClientEvent>* box);
+		void SetPostbox(Oyster::PostBox<NetworkSession::NetEvent>* box);
 
 		GameLogic::Player*				Logic_Object();
 		Oyster::Network::NetworkClient* NetClient_Object();
@@ -27,7 +27,7 @@ namespace DanBias
 	private:
 		GameLogic::Player logicPlayer;
 		Oyster::Network::NetworkClient client;
-		Oyster::IPostBox<DanBias::NetworkSession::ClientEvent>* box;
+		Oyster::IPostBox<DanBias::NetworkSession::NetEvent>* box;
 	};
 
 }//End namespace DanBias

@@ -13,7 +13,7 @@ ClientObject::~ClientObject()
 	this->client.Disconnect();
 }
 
-void ClientObject::SetPostbox(Oyster::PostBox<NetworkSession::ClientEvent>* box)
+void ClientObject::SetPostbox(Oyster::PostBox<NetworkSession::NetEvent>* box)
 {
 	this->box = box;
 }
@@ -30,7 +30,7 @@ void ClientObject::ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& 
 {
 	if(!this->box) return;
 
-	NetworkSession::ClientEvent _event;
+	NetworkSession::NetEvent _event;
 	_event.protocol = protocol;
 	_event.reciever = this;
 
