@@ -29,6 +29,7 @@ namespace DanBias
 		{
 			//Stuff goes here...
 			int port;
+			const char* IP; 
 			HINSTANCE hinst;
 			int nCmdShow;
 
