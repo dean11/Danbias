@@ -45,6 +45,24 @@ bool Sphere::Intersects( const ICollideable &target ) const
 	}
 }
 
+bool Sphere::Intersects( const ICollideable &target, const ::Oyster::Math::Float3 &worldPointOfContact ) const
+{
+	switch( target.type )
+	{
+	case Type_universe: return true;
+	case Type_point: return Utility::Intersect( *this, *(Point*)&target, worldPointOfContact );
+	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance, worldPointOfContact );
+	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target, worldPointOfContact );
+	case Type_plane: return Utility::Intersect( *(Plane*)&target, *this, worldPointOfContact );
+	// case Type_triangle: return false; // TODO: 
+	case Type_box_axis_aligned: return Utility::Intersect( *(BoxAxisAligned*)&target, *this, worldPointOfContact );
+	case Type_box: return Utility::Intersect( *(Box*)&target, *this, worldPointOfContact );
+	case Type_frustrum: return false; // TODO: 
+	default: worldPointOfContact = Float3::null;
+		return false;
+	}
+}
+
 bool Sphere::Contains( const ICollideable &target ) const
 {
 	switch( target.type )
