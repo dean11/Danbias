@@ -166,6 +166,8 @@
     <ClInclude Include="Implementation\SimpleRigidBody.h" />
     <ClInclude Include="Implementation\SphericalRigidBody.h" />
     <ClInclude Include="PhysicsAPI.h" />
+    <ClInclude Include="PhysicsFormula-Impl.h" />
+    <ClInclude Include="PhysicsFormula.h" />
     <ClInclude Include="PhysicsStructs-Impl.h" />
     <ClInclude Include="PhysicsStructs.h" />
   </ItemGroup>
