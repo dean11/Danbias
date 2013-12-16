@@ -5,8 +5,8 @@
 #include "Frustrum.h"
 #include "OysterCollision3D.h"
 
-using namespace Oyster::Math;
-using namespace Oyster::Collision3D;
+using namespace ::Oyster::Math;
+using namespace ::Oyster::Collision3D;
 
 namespace PrivateStatic
 {
@@ -216,6 +216,12 @@ bool Frustrum::Intersects( const ICollideable &target ) const
 	// case Type_line: return false; // TODO: 
 	default: return false;
 	}
+}
+
+bool Frustrum::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+{
+	//! @todo TODO: implement stub properly
+	return this->Intersects( target );
 }
 
 bool Frustrum::Contains( const ICollideable &target ) const
