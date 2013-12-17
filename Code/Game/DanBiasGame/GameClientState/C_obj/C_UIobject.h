@@ -14,7 +14,7 @@ namespace DanBias
 			C_UIobject(void);
 			virtual ~C_UIobject(void);
 			void Init(ModelInitData modelInit);
-			void setPos();
+			void setPos(Oyster::Math::Float4x4 world);
 
 			void Render();
 			void Release();

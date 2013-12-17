@@ -26,9 +26,9 @@ void C_DynamicObj::Init(ModelInitData modelInit)
 	privData->model->WorldMatrix = modelInit.world;
 	privData->model->Visible = modelInit.visible;
 }
-void C_DynamicObj::setPos()
+void C_DynamicObj::setPos(Oyster::Math::Float4x4 world)
 {
-
+	privData->model->WorldMatrix  = world;
 }
 
 void C_DynamicObj::Render()

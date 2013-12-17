@@ -19,6 +19,7 @@ public:
 	};
 	struct  ObjPos :public ProtocolStruct
 	{
+		int object_ID;
 		float worldPos[16]; 
 	};
 	struct  PlayerPos :public ProtocolStruct

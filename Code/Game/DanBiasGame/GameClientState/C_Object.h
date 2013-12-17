@@ -20,7 +20,7 @@ private:
 public:
 
 	virtual void Init(ModelInitData modelInit) = 0;
-	virtual void setPos() = 0;
+	virtual void setPos(Oyster::Math::Float4x4 world) = 0;
 
 	virtual void Render() = 0;
 	virtual void Release() = 0;
