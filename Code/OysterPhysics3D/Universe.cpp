@@ -10,20 +10,24 @@ Universe::Universe() : ICollideable(Type_universe) {}
 Universe::~Universe() {}
 
 Universe & Universe::operator = ( const Universe &universe )
-{ return *this; }
+{
+	return *this;
+}
 
 UniquePointer<ICollideable> Universe::Clone( ) const
-{ return UniquePointer<ICollideable>( new Universe(*this) ); }
+{
+	return UniquePointer<ICollideable>( new Universe(*this) );
+}
 
 bool Universe::Intersects( const ICollideable &target ) const
 { // universe touches everything
 	switch( target.type )
 	{
 	case Type_ray:
-		((Ray*)&target)->collisionDistance = 0.0f;
+		((const Ray&)target).collisionDistance = 0.0f;
 		break;
 	case Type_line:
-		((Line*)&target)->ray.collisionDistance = 0.0f;
+		((const Line&)target).ray.collisionDistance = 0.0f;
 		break;
 	default: break;
 	}
@@ -36,32 +40,32 @@ bool Universe::Intersects( const ICollideable &target, Float3 &worldPointOfConta
 	switch( target.type )
 	{
 	case Type_point:
-		worldPointOfContact = ((Point*)&target)->center;
+		worldPointOfContact = ((const Point&)target).center;
 		break;
 	case Type_sphere:
-		worldPointOfContact = ((Sphere*)&target)->center;
+		worldPointOfContact = ((const Sphere&)target).center;
 		break;
 	case Type_plane:
-		worldPointOfContact = ((Plane*)&target)->normal * ((Plane*)&target)->phasing;
+		worldPointOfContact = ((const Plane&)target).normal * ((const Plane&)target).phasing;
 		break;
 	case Type_box_axis_aligned:
-		worldPointOfContact = Average( ((BoxAxisAligned*)&target)->minVertex, ((BoxAxisAligned*)&target)->maxVertex );
+		worldPointOfContact = Average( ((const BoxAxisAligned&)target).minVertex, ((const BoxAxisAligned&)target).maxVertex );
 		break;
 	case Type_box:
-		worldPointOfContact = ((Box*)&target)->center;
+		worldPointOfContact = ((const Box&)target).center;
 		break;
 	case Type_frustrum:
-		worldPointOfContact = Average( ((Frustrum*)&target)->leftPlane.normal * ((Frustrum*)&target)->leftPlane.phasing, ((Frustrum*)&target)->rightPlane.normal * ((Frustrum*)&target)->rightPlane.phasing );
-		worldPointOfContact = Average( worldPointOfContact, Average( ((Frustrum*)&target)->bottomPlane.normal * ((Frustrum*)&target)->bottomPlane.phasing, ((Frustrum*)&target)->topPlane.normal * ((Frustrum*)&target)->topPlane.phasing ) );
-		worldPointOfContact = Average( worldPointOfContact, Average( ((Frustrum*)&target)->nearPlane.normal * ((Frustrum*)&target)->nearPlane.phasing, ((Frustrum*)&target)->farPlane.normal * ((Frustrum*)&target)->farPlane.phasing ) );
+		worldPointOfContact = Average( ((const Frustrum&)target).leftPlane.normal * ((const Frustrum&)target).leftPlane.phasing, ((const Frustrum&)target).rightPlane.normal * ((const Frustrum&)target).rightPlane.phasing );
+		worldPointOfContact = Average( worldPointOfContact, Average( ((const Frustrum&)target).bottomPlane.normal * ((const Frustrum&)target).bottomPlane.phasing, ((const Frustrum&)target).topPlane.normal * ((const Frustrum&)target).topPlane.phasing ) );
+		worldPointOfContact = Average( worldPointOfContact, Average( ((const Frustrum&)target).nearPlane.normal * ((const Frustrum&)target).nearPlane.phasing, ((const Frustrum&)target).farPlane.normal * ((const Frustrum&)target).farPlane.phasing ) );
 		break;
 	case Type_ray:
-		((Ray*)&target)->collisionDistance = 0.0f;
-		worldPointOfContact = ((Ray*)&target)->origin;
+		((const Ray&)target).collisionDistance = 0.0f;
+		worldPointOfContact = ((const Ray&)target).origin;
 		break;
 	case Type_line:
-		((Line*)&target)->ray.collisionDistance = 0.0f;
-		worldPointOfContact = ((Line*)&target)->ray.origin;
+		((const Line&)target).ray.collisionDistance = 0.0f;
+		worldPointOfContact = ((const Line&)target).ray.origin;
 		break;
 	default:
 		worldPointOfContact = Float3::null;
@@ -72,5 +76,6 @@ bool Universe::Intersects( const ICollideable &target, Float3 &worldPointOfConta
 }
 
 bool Universe::Contains( const ICollideable &target ) const
-{ return true; } // universe contains everything
-
+{ // universe contains everything
+	return true;
+}

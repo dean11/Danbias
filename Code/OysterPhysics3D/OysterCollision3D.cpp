@@ -796,6 +796,20 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries.xyz, boxA.boundingOffset, boxA.rotation, offset );
 	}
 
+	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB, ::Oyster::Math::Float3 &worldPointOfContact )
+	{ // by Dan Andersson
+		Float4 alignedOffsetBoundaries = (Float4(boxB.maxVertex, 1.0f) - Float4(boxB.minVertex, 1.0f)) * 0.5f,
+			   offset = Float4(boxA.center, 1.0f) - Average( Float4(boxB.maxVertex, 1.0f), Float4(boxB.minVertex, 1.0f) );
+		
+		Float4 pointOfContact;
+		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries.xyz, boxA.boundingOffset, boxA.rotation, offset, pointOfContact ) )
+		{
+			worldPointOfContact = pointOfContact.xyz;
+			return true;
+		}
+		else return false;
+	}
+
 	bool Intersect( const Box &boxA, const Box &boxB )
 	{ // by Dan Andersson
 		Float4x4 rotationB = TransformMatrix( InverseRotationMatrix(boxA.rotation), boxB.rotation );
@@ -812,7 +826,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		Float4 pointOfContact;
 		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, rotationB, posB, pointOfContact ) )
 		{
-			TransformVector( boxA.rotation, pointOfContact, pointOfContact );
+			worldPointOfContact = TransformVector( boxA.rotation, pointOfContact, pointOfContact ).xyz;
 			return true;
 		}
 		else return false;
