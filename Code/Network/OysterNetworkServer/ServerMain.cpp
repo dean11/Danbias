@@ -51,7 +51,6 @@ int main()
 		m.lock();
 		cout << clients.size() << endl;
 		m.unlock();
-		break;
 	}
 
 	server.Stop();
