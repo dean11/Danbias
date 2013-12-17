@@ -156,12 +156,12 @@ void NetworkServer::PrivateData::CheckForNewClient()
 		//Create client and Proc function if the pointer is not NULL
 		if(initDesc.callbackType == NetworkClientCallbackType_Function)
 		{
-			Oyster::Network::NetworkClient client(clientSocketNum);
+			Oyster::Network::NetworkClient *client = new Oyster::Network::NetworkClient(clientSocketNum);
 			initDesc.recvObj.clientConnectFnc(client);
 		}
 		else if(initDesc.callbackType == NetworkClientCallbackType_Object)
 		{
-			Oyster::Network::NetworkClient client(clientSocketNum);
+			Oyster::Network::NetworkClient *client = new Oyster::Network::NetworkClient(clientSocketNum);
 			initDesc.recvObj.clientConnectObject->ClientConnectCallback(client);
 		}
 	}

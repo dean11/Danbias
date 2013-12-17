@@ -26,11 +26,11 @@ namespace Oyster
 
 		class NetworkClient;
 		class CustomNetProtocol;
-		typedef void (*ClientConnectCallbackMethod)(NetworkClient);
+		typedef void (*ClientConnectCallbackMethod)(NetworkClient*);
 		typedef void(*ProtocolRecieverFunction)(CustomNetProtocol& protocol);
 		struct ClientConnectedObject
 		{
-			virtual void ClientConnectCallback(NetworkClient& client) = 0;
+			virtual void ClientConnectCallback(NetworkClient* client) = 0;
 		};
 		struct ProtocolRecieverObject
 		{

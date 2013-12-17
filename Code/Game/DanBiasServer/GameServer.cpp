@@ -18,7 +18,7 @@ namespace DanBias
 	using namespace Oyster::Network;
 
 	
-	void GameServer::ClientConnectCallback(NetworkClient& client)
+	void GameServer::ClientConnectCallback(NetworkClient* client)
 	{
 		printf("Client connected!\n");
 

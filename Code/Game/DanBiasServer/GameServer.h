@@ -23,7 +23,7 @@ namespace DanBias
 
 	private:
 		//static void ClientConnectCallbackFunction(Oyster::Network::NetworkClient& connectedClient);
-		void ClientConnectCallback(Oyster::Network::NetworkClient& client) override;
+		void ClientConnectCallback(Oyster::Network::NetworkClient* client) override;
 
 		bool initiated;
 		bool running;

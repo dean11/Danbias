@@ -7,23 +7,37 @@
 
 using namespace Oyster::Network;
 
+int CloseSocket(int &socket)
+{
+	if(socket == -1) return 0;
+
+	if(closesocket( socket ) == SOCKET_ERROR)
+	{
+		return WSAGetLastError();
+	}
+
+	socket = -1;
+
+	return 0;
+}
+
 Connection::Connection()
 {
 	this->socket = -1;
-	bool stillSending = false;
-	bool closed = true;
+	this->stillSending = false;
+	this->closed = true;
 }
 
 Connection::Connection(int socket)
 {
 	this->socket = socket;
-	bool stillSending = false;
-	bool closed = true;
+	this->stillSending = true;
+	this->closed = false;
 }
 
 Connection::~Connection()
 {
-	closesocket( this->socket );
+	CloseSocket( this->socket );
 }
 
 int Connection::Connect(unsigned short port , const char serverName[])
@@ -68,7 +82,7 @@ int Connection::InitiateServer(unsigned short port)
 	if(bind(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
 		errorCode = WSAGetLastError();
-		closesocket(this->socket);
+		CloseSocket(this->socket);
 		return errorCode;
 	}
 
@@ -76,7 +90,7 @@ int Connection::InitiateServer(unsigned short port)
 	if(listen(this->socket, 5) == SOCKET_ERROR)
 	{
 		errorCode = WSAGetLastError();
-		closesocket(this->socket);
+		CloseSocket(this->socket);
 		return errorCode;
 	}
 
@@ -94,14 +108,7 @@ int Connection::InitiateClient()
 
 int Connection::Disconnect()
 {
-	int result = closesocket(this->socket);
-
-	if(result == SOCKET_ERROR)
-	{
-		return WSAGetLastError();
-	}
-
-	return 0;
+	return CloseSocket(this->socket);
 }
 
 int Connection::Send(OysterByte &bytes)
@@ -186,6 +193,8 @@ int Connection::SetBlockingMode(bool blocking)
 ///////////////////////////////////////
 int Connection::InitiateSocket()
 {
+	if(this->socket != -1) return 0;
+
 	this->socket = (int)::socket(AF_INET, SOCK_STREAM, 0);
 	if(this->socket == SOCKET_ERROR)
 	{

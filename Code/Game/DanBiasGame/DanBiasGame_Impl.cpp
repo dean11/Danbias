@@ -34,10 +34,10 @@ namespace DanBias
 		Client::GameClientState::ProtocolStruct* protocolData; 
 		switch (pType)
 		{
-		case protocol_PlayerNavigation:
+		case protocol_Gamplay_PlayerNavigation:
 
 			break;
-		case protocol_PlayerPosition:
+		case protocol_Gamplay_PlayerPosition:
 			protocolData = new Client::GameClientState::PlayerPos;
 			for(int i = 0; i< 3; i++)
 			{
@@ -49,7 +49,7 @@ namespace DanBias
 			break;
 
 
-		case protocol_ObjectPosition:
+		case protocol_Gamplay_ObjectPosition:
 			protocolData = new Client::GameClientState::ObjPos;
 			for(int i = 0; i< 16; i++)
 			{

@@ -85,10 +85,10 @@ struct NetworkClient::PrivateData : public IThreadObject
 	{
 		if(!this->data)return true;
 		if(!this->data->connection.IsConnected()) return true;
-
+		
 		Send();
 		Recv();
-
+		
 		return true;
 	}
 
@@ -122,32 +122,30 @@ struct NetworkClient::PrivateData : public IThreadObject
 	{
 		int errorCode = -1;
 
-		if(this->data->callbackType == NetworkProtocolCallbackType_Function)
-		{
-			OysterByte temp = OysterByte();
-			errorCode = this->data->connection.Recieve(temp);
-
-			if(errorCode == 0)
-			{
-				CustomNetProtocol protocol;
-				bool ok = this->data->translator.Unpack(protocol, temp);
+		OysterByte temp = OysterByte();
+		errorCode = this->data->connection.Recieve(temp);
 		
-				//Check if the protocol was unpacked correctly
-				if(ok)
+		if(errorCode == 0 && temp.GetSize())
+		{
+			CustomNetProtocol protocol;
+			bool ok = this->data->translator.Unpack(protocol, temp);
+		
+			//Check if the protocol was unpacked correctly
+			if(ok)
+			{
+				this->data->recvObjMutex.lock();
+				if(this->data->callbackType == NetworkProtocolCallbackType_Function)
 				{
-					this->data->recvObjMutex.lock();
-					if(this->data->callbackType == NetworkProtocolCallbackType_Function)
-					{
-						this->data->recvObj.protocolRecieverFnc(protocol);
-					}
-					else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
-					{
-						this->data->recvObj.protocolRecievedObject->ProtocolRecievedCallback(protocol);
-					}
-					this->data->recvObjMutex.unlock();
+					this->data->recvObj.protocolRecieverFnc(protocol);
 				}
+				else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
+				{
+					this->data->recvObj.protocolRecievedObject->ProtocolRecievedCallback(protocol);
+				}
+				this->data->recvObjMutex.unlock();
 			}
 		}
+	
 		return errorCode;
 	}
 

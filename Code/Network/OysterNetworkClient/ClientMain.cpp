@@ -7,6 +7,8 @@
 #include "../../Misc/Utilities.h"
 #include "../NetworkAPI/NetworkClient.h"
 
+#include "..\..\Game\GameProtocols\PlayerProtocols.h"
+
 using namespace std;
 using namespace Oyster::Network;
 
@@ -34,6 +36,8 @@ int main()
 	errorCode = client.Connect(15151, "127.0.0.1");
 	client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
+	
+
 	if(errorCode != 1)
 	{
 		printf("%d", errorCode);
@@ -41,11 +45,14 @@ int main()
 	}
 	//client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
-	cout << "Done" << endl;
+	std::cout << "Done" << endl;
 
+	GameLogic::Protocol_PlayerMovement p;
 	while(1)
 	{
-
+		std::cout << ". ";
+		client.Send(p);
+		Sleep(100000);
 	}
 
 	ShutdownWinSock();

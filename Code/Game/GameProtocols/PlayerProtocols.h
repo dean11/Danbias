@@ -15,7 +15,6 @@ namespace GameLogic
 {
 	struct Protocol_PlayerMovement :public Oyster::Network::CustomProtocolObject
 	{
-		int ProtocolID;
 		bool bForward;
 		bool bBackward;
 		bool bTurnLeft;
@@ -25,9 +24,9 @@ namespace GameLogic
 		
 		Protocol_PlayerMovement()
 		{
-			this->protocol[0].value = ProtocolID		= protocol_Gamplay_PlayerNavigation;
+			this->protocol[0].value = protocol_Gamplay_PlayerNavigation;
 
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
@@ -68,7 +67,6 @@ namespace GameLogic
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-			
 			this->protocol[1].value = position[0];
 			this->protocol[2].value = position[1];
 			this->protocol[3].value = position[2];
