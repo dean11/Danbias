@@ -76,6 +76,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 //	bool Intersect( const Box &box, const Triangle &triangle, ? );
 	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB );
 	bool Intersect( const Box &boxA, const Box &boxB );
+	bool Intersect( const Box &boxA, const Box &boxB, ::Oyster::Math::Float3 &worldPointOfContact );
 	
 	bool Intersect( const Frustrum &frustrum, const Point &point );
 	bool Intersect( const Frustrum &frustrum, const Ray &ray, ::Oyster::Math::Float &connectDistance );
