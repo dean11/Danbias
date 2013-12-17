@@ -91,7 +91,6 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 	case gameStateState_playing:
 		// read server data
 		// update objects
-		// Client.send(obj);
 		{
 			GameLogic::Protocol_PlayerMovement movePlayer;
 			movePlayer.bForward = false;
@@ -117,12 +116,15 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			if(KeyInput->IsKeyPressed(DIK_D))
 			{
 				movePlayer.bStrafeRight = true;
+			} 
+
+			if (privData->nwClient->IsConnected())
+			{
+				privData->nwClient->Send(movePlayer);
 			}
-			//PlayerPos* posPlayer;
-			//Protocol(posPlayer);
-
-			privData->nwClient->Send(movePlayer);
-
+			
+			// send event data
+			//  
 			if(KeyInput->IsKeyPressed(DIK_L))
 				privData->state = GameState::gameStateState_end;
 		}
@@ -177,8 +179,8 @@ void DanBias::Client::GameState::Protocol( PlayerPos* pos )
 
 	world = Oyster::Math::Float4x4::identity;
 	translate = Oyster::Math::Float4x4::identity;
-	translate = Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(pos->playerPos[0],pos->playerPos[1],pos->playerPos[2] ));
-	world = translate;
+	translate = Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(pos->playerPos[0],pos->playerPos[1],pos->playerPos[2]));
+	world = world * translate;
 	privData->object[0]->setPos( world );
 }
 
@@ -189,7 +191,7 @@ void DanBias::Client::GameState::Protocol( ObjPos* pos )
 	{
 		world[i] = pos->worldPos[i];
 	}
-	privData->object[1]->setPos(world);
+	privData->object[pos->object_ID]->setPos(world);
 }
 
 void GameState::PlayerPosProtocol(PlayerPos* pos)

@@ -10,15 +10,15 @@ using namespace Oyster::Network;
 Connection::Connection()
 {
 	this->socket = -1;
-	bool stillSending = false;
-	bool closed = true;
+	this->stillSending = false;
+	this->closed = true;
 }
 
 Connection::Connection(int socket)
 {
 	this->socket = socket;
-	bool stillSending = false;
-	bool closed = true;
+	this->stillSending = true;
+	this->closed = false;
 }
 
 Connection::~Connection()

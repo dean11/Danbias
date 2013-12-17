@@ -52,9 +52,10 @@ namespace DanBias
 
 		case protocol_Gamplay_ObjectPosition:
 			protocolData = new Client::GameClientState::ObjPos;
+			((Client::GameClientState::ObjPos*)protocolData)->object_ID = p[1].value.netInt;
 			for(int i = 0; i< 16; i++)
 			{
-				((Client::GameClientState::ObjPos*)protocolData)->worldPos[i] = p[i].value.netFloat;
+				((Client::GameClientState::ObjPos*)protocolData)->worldPos[i] = p[i+2].value.netFloat;
 			}
 
 			if(dynamic_cast<Client::GameState*>(gameClientState))
