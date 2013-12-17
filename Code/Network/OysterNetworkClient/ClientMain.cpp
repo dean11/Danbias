@@ -41,11 +41,21 @@ int main()
 	}
 	//client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
+	OysterByte bytes, bytes2, bytes3;
+	bytes.AddSize(4);
+	bytes2.AddSize(5);
+	strcpy_s(bytes, 5, "asda");
+	strcpy_s(bytes2, 6, "asdab");
+	bytes += bytes2;
+	bytes += bytes;
+	bytes += bytes;
+	bytes3 = bytes;
+
 	cout << "Done" << endl;
 
 	while(1)
 	{
-
+		
 	}
 
 	ShutdownWinSock();
