@@ -32,7 +32,6 @@ struct CustomNetProtocol::PrivateData
 				attributes[i->first] = i->second;
 			}
 		}
-		attributes = o.attributes; 
 	}
 	~PrivateData()
 	{

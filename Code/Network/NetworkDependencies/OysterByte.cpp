@@ -44,6 +44,7 @@ void OysterByte::Resize(unsigned int cap)
 	{
 		delete[] byteArray;
 		byteArray = new unsigned char[cap];
+		capacity = cap;
 	}
 }
 
@@ -107,6 +108,25 @@ OysterByte::operator const char*()
 OysterByte::operator unsigned char*()
 {
 	return byteArray;
+}
+
+OysterByte& OysterByte::operator +=(const OysterByte& obj)
+{
+	int newSize = this->size + obj.size;
+
+	if(newSize >= (int)capacity)
+	{
+		IncreaseCapacity(this->size);
+	}
+
+	for(int i = size, j = 0; i < newSize; i++, j++)
+	{
+		this->byteArray[i] = obj.byteArray[j];
+	}
+
+	this->size = newSize;
+
+	return *this;
 }
 
 /////////////
