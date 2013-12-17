@@ -92,6 +92,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 		// read server data
 		// update objects
 		{
+			bool send = false;
 			GameLogic::Protocol_PlayerMovement movePlayer;
 			movePlayer.bForward = false;
 			movePlayer.bBackward = false;
@@ -104,21 +105,25 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			if(KeyInput->IsKeyPressed(DIK_W))
 			{
 				movePlayer.bForward = true;
+				send = true;
 			}
 			if(KeyInput->IsKeyPressed(DIK_S))
 			{
 				movePlayer.bBackward = true;
+				send = true;
 			}
 			if(KeyInput->IsKeyPressed(DIK_A))
 			{
 				movePlayer.bStrafeLeft = true;
+				send = true;
 			}
 			if(KeyInput->IsKeyPressed(DIK_D))
 			{
 				movePlayer.bStrafeRight = true;
+				send = true;
 			} 
 
-			if (privData->nwClient->IsConnected())
+			if (privData->nwClient->IsConnected() && send)
 			{
 				privData->nwClient->Send(movePlayer);
 			}
@@ -167,13 +172,18 @@ bool GameState::Release()
 
 void GameState::Protocol(ProtocolStruct* pos)
 {
+	// move message 
+	/*
+	if ((KeyInput*)pos)
+	{
+	}
 	if((ObjPos*)pos)
 		ObjectPosProtocol((ObjPos*)pos);
 	else if((PlayerPos*)pos)
-		PlayerPosProtocol((PlayerPos*)pos);
+		PlayerPosProtocol((PlayerPos*)pos);*/
 }
 
-void DanBias::Client::GameState::Protocol( PlayerPos* pos )
+void GameState::Protocol( PlayerPos* pos )
 {
 	Oyster::Math::Float4x4 world, translate;
 
@@ -184,7 +194,7 @@ void DanBias::Client::GameState::Protocol( PlayerPos* pos )
 	privData->object[0]->setPos( world );
 }
 
-void DanBias::Client::GameState::Protocol( ObjPos* pos )
+void GameState::Protocol( ObjPos* pos )
 {
 	Oyster::Math::Float4x4 world;
 	for(int i = 0; i<16; i++)
@@ -192,6 +202,15 @@ void DanBias::Client::GameState::Protocol( ObjPos* pos )
 		world[i] = pos->worldPos[i];
 	}
 	privData->object[pos->object_ID]->setPos(world);
+}
+
+void GameState::Protocol( KeyInput* pos )
+{
+	bool key = false;
+	for (int i = 0; i < 6; i++)
+	{
+		key = pos->key[i];
+	}
 }
 
 void GameState::PlayerPosProtocol(PlayerPos* pos)

@@ -31,38 +31,55 @@ namespace DanBias
 	{
 
 		int pType = p[0].value.netInt;
-		Client::GameClientState::ProtocolStruct* protocolData; 
+		//Client::GameClientState::ProtocolStruct* protocolData; 
 		switch (pType)
 		{
 		case protocol_Gamplay_PlayerNavigation:
+			{
 
+		
+				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
+				for(int i = 0; i< 6; i++)
+				{
+					protocolData->key[i] = p[i+1].value.netBool;
+				}
+
+				((Client::GameState*)gameClientState)->Protocol(protocolData);
+				delete protocolData;
+				protocolData = NULL;
+			}
 			break;
 		case protocol_Gamplay_PlayerPosition:
-			protocolData = new Client::GameClientState::PlayerPos;
-			for(int i = 0; i< 3; i++)
 			{
-				((Client::GameClientState::PlayerPos*)protocolData)->playerPos[i] = p[i].value.netFloat;
+				Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
+				for(int i = 0; i< 3; i++)
+				{
+					protocolData->playerPos[i] = p[i].value.netFloat;
+				}
+				//if(dynamic_cast<Client::GameState*>(gameClientState))
+				gameClientState->Protocol(protocolData);
+				delete protocolData;
+				protocolData = NULL;
 			}
-			if(dynamic_cast<Client::GameState*>(gameClientState))
-				((Client::GameState*)gameClientState)->Protocol(protocolData);
-			delete protocolData;
-			protocolData = NULL;
 			break;
 
 
 		case protocol_Gamplay_ObjectPosition:
-			protocolData = new Client::GameClientState::ObjPos;
-			((Client::GameClientState::ObjPos*)protocolData)->object_ID = p[1].value.netInt;
-			for(int i = 0; i< 16; i++)
 			{
-				((Client::GameClientState::ObjPos*)protocolData)->worldPos[i] = p[i+2].value.netFloat;
-			}
 
-			if(dynamic_cast<Client::GameState*>(gameClientState))
-				((Client::GameState*)gameClientState)->Protocol(protocolData);
+				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
+				protocolData->object_ID = p[1].value.netInt;
+				for(int i = 0; i< 16; i++)
+				{
+					protocolData->worldPos[i] = p[i+2].value.netFloat;
+				}
+
+		
+				gameClientState->Protocol(protocolData);
 			
-			delete protocolData;
-			protocolData = NULL;
+				delete protocolData;
+				protocolData = NULL;
+			}
 			break;
 
 		default:
@@ -116,8 +133,10 @@ namespace DanBias
 		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
 		m_data->recieverObj = new MyRecieverObject;
-		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient();
+		
+		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
 		m_data->recieverObj->nwClient->Connect(desc.port, desc.IP);
+
 		if (!m_data->recieverObj->nwClient->IsConnected())
 		{
 			// failed to connect
