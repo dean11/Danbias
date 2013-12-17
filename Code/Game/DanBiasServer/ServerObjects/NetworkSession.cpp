@@ -3,6 +3,8 @@
 #include "NetworkSession.h"
 #include <mutex>
 
+static std::mutex ClientListLock;
+
 namespace DanBias
 {
 	NetworkSession::NetworkSession()
@@ -16,16 +18,27 @@ namespace DanBias
 
 	void NetworkSession::AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client)
 	{
-		for (unsigned int i = 0; i < this->clients.size(); i++)
+		while (!ClientListLock.try_lock()); //Possible Deadlock
+
+		int k = -1;
+		for (unsigned int i = 0; (k == -1) && i < this->clients.size(); i++)
 		{
 			if(!this->clients[i])
-			{
-				this->clients[i] = client;
-				this->clients[i]->SetPostbox(&this->box);
-				return;
-			}
+				k = i;
 		}
-		this->clients.push_back(client);
+
+		if(k == -1)
+		{
+			this->clients.push_back(client);
+			this->clients[this->clients.size() - 1]->SetPostbox(&this->box);
+		}
+		else
+		{
+			this->clients[k]->SetPostbox(&this->box);
+		}
+		
+		ClientListLock.unlock();
+		
 	}
 
 	void NetworkSession::DetachClient(Oyster::Network::NetworkClient* client)

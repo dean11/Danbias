@@ -238,6 +238,11 @@ void NetworkClient::Send(CustomProtocolObject& protocol)
 	this->privateData->Send(protocol.GetProtocol());
 }
 
+void NetworkClient::Send(CustomNetProtocol* protocol)
+{
+	this->privateData->Send(protocol);
+}
+
 void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
 	if (type == NetworkProtocolCallbackType_Unknown) return;	//It should probably still be set even if it is unknown.

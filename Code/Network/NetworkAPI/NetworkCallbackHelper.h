@@ -35,6 +35,7 @@ namespace Oyster
 		struct ProtocolRecieverObject
 		{
 			virtual void ProtocolRecievedCallback(CustomNetProtocol& protocol) = 0;
+			virtual void DisconnectedCallback(CustomNetProtocol& protocol) { };
 		};
 
 		union RecieverObject

@@ -28,6 +28,7 @@ Oyster::Network::NetworkClient* ClientObject::NetClient_Object()
 
 void ClientObject::ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol)
 {
+	//this->client->Send(&protocol);
 	if(!this->box) return;
 
 	NetworkSession::NetEvent _event;
