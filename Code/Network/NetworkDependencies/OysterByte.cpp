@@ -60,13 +60,14 @@ unsigned char* OysterByte::GetByteArray()
 
 void OysterByte::AddSize(unsigned int size)
 {
-	int oldSize = this->size;
-	this->size += size;
+	int newCapacity = this->size + size;
 
-	if(this->size >= capacity)
+	if(newCapacity >= capacity)
 	{
-		IncreaseCapacity(oldSize);
+		IncreaseCapacity(newCapacity);
 	}
+
+	this->size += size;
 }
 
 void OysterByte::SetBytes(unsigned char* bytes)
@@ -113,17 +114,17 @@ OysterByte::operator unsigned char*()
 OysterByte& OysterByte::operator +=(const OysterByte& obj)
 {
 	int newSize = this->size + obj.size;
-
+	
 	if(newSize >= (int)capacity)
 	{
-		IncreaseCapacity(this->size);
+		IncreaseCapacity(newSize);
 	}
 
 	for(int i = size, j = 0; i < newSize; i++, j++)
 	{
 		this->byteArray[i] = obj.byteArray[j];
 	}
-
+	
 	this->size = newSize;
 
 	return *this;
@@ -133,12 +134,12 @@ OysterByte& OysterByte::operator +=(const OysterByte& obj)
 // Private //
 /////////////
 
-void OysterByte::IncreaseCapacity(unsigned int oldSize)
+void OysterByte::IncreaseCapacity(unsigned int newCapacity)
 {
-	capacity = size * 2;
+	capacity = newCapacity * 2;
 	unsigned char* temp = new unsigned char[capacity];
 	
-	for(int i = 0; i < (int)oldSize; i++)
+	for(int i = 0; i < (int)this->size; i++)
 	{
 		temp[i] = byteArray[i];
 	}
