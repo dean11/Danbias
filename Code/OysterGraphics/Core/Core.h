@@ -30,82 +30,87 @@ namespace Oyster
 			static ID3D11UnorderedAccessView* backBufferUAV;
 			//DepthStencil
 			static ID3D11DepthStencilView* depthStencil;
+			static ID3D11ShaderResourceView* depthStencilUAV;
 			//ViewPort
 			static D3D11_VIEWPORT* viewPort;
 
 			static  Oyster::Math::Float2 resolution;
 
+			static ID3D11ShaderResourceView* srvNULL[16];
+			static ID3D11RenderTargetView* rtvNULL[8];
+			static ID3D11UnorderedAccessView* uavNULL[8];
+
 			class Buffer
 			{
 				public:
-			enum BUFFER_TYPE
-			{
-				VERTEX_BUFFER,
-				INDEX_BUFFER,
-				CONSTANT_BUFFER_VS,
-				CONSTANT_BUFFER_GS,
-				CONSTANT_BUFFER_PS,
-				CONSTANT_BUFFER_CS,
-				STRUCTURED_BUFFER,
-				BUFFER_TYPE_COUNT
-			};
-
-			enum BUFFER_USAGE
-			{
-				BUFFER_DEFAULT,
-				BUFFER_STREAM_OUT_TARGET,
-				BUFFER_CPU_WRITE,
-				BUFFER_CPU_WRITE_DISCARD,
-				BUFFER_CPU_READ,
-				BUFFER_USAGE_COUNT,
-				BUFFER_USAGE_IMMUTABLE
-			};
-
-			struct BUFFER_INIT_DESC
-			{
-				BUFFER_TYPE		Type;
-				UINT32			NumElements;
-				UINT32			ElementSize;
-				BUFFER_USAGE	Usage;
-				void*			InitData;
-
-				BUFFER_INIT_DESC()
+				enum BUFFER_TYPE
 				{
-					InitData = NULL;
-					Usage = BUFFER_DEFAULT;
-				}
-			};
-		protected:
-			ID3D11Buffer*	mBuffer;
-			BUFFER_TYPE		mType;
-			BUFFER_USAGE	mUsage;
+					VERTEX_BUFFER,
+					INDEX_BUFFER,
+					CONSTANT_BUFFER_VS,
+					CONSTANT_BUFFER_GS,
+					CONSTANT_BUFFER_PS,
+					CONSTANT_BUFFER_CS,
+					STRUCTURED_BUFFER,
+					BUFFER_TYPE_COUNT
+				};
 
-			UINT32			mElementSize;
-			UINT32			mElementCount;
-		public:
-			Buffer();
-			virtual ~Buffer();
+				enum BUFFER_USAGE
+				{
+					BUFFER_DEFAULT,
+					BUFFER_STREAM_OUT_TARGET,
+					BUFFER_CPU_WRITE,
+					BUFFER_CPU_WRITE_DISCARD,
+					BUFFER_CPU_READ,
+					BUFFER_USAGE_COUNT,
+					BUFFER_USAGE_IMMUTABLE
+				};
 
-			HRESULT Init(const BUFFER_INIT_DESC& initDesc);
+				struct BUFFER_INIT_DESC
+				{
+					BUFFER_TYPE		Type;
+					UINT32			NumElements;
+					UINT32			ElementSize;
+					BUFFER_USAGE	Usage;
+					void*			InitData;
 
-			void* Map();
-			void Unmap();
+					BUFFER_INIT_DESC()
+					{
+						InitData = NULL;
+						Usage = BUFFER_DEFAULT;
+					}
+				};
+			protected:
+				ID3D11Buffer*	mBuffer;
+				BUFFER_TYPE		mType;
+				BUFFER_USAGE	mUsage;
 
-			operator ID3D11Buffer*();
-			operator const ID3D11Buffer*() const;
+				UINT32			mElementSize;
+				UINT32			mElementCount;
+			public:
+				Buffer();
+				virtual ~Buffer();
 
-			HRESULT Apply(UINT32 misc = 0) const;
+				HRESULT Init(const BUFFER_INIT_DESC& initDesc);
 
-			ID3D11Buffer* GetBufferPointer();
-			UINT32 GetVertexSize();
-			UINT32 GetElementCount();
+				void* Map();
+				void Unmap();
+
+				operator ID3D11Buffer*();
+				operator const ID3D11Buffer*() const;
+
+				HRESULT Apply(UINT32 misc = 0) const;
+
+				ID3D11Buffer* GetBufferPointer();
+				UINT32 GetVertexSize();
+				UINT32 GetElementCount();
 			};
 		
 
-			class ShaderManager
+			class PipelineManager
 			{
 			public:
-				struct ShaderEffect
+				struct RenderPass
 				{
 					struct
 					{
@@ -125,16 +130,36 @@ namespace Oyster
 						ID3D11SamplerState	**SampleState;
 						int SampleCount;
 						ID3D11BlendState	*BlendState;
+						
 					}RenderStates;
 
 					struct
 					{
-						std::vector<Buffer*> Vertex;
-						std::vector<Buffer*> Geometry;
-						std::vector<Buffer*> Pixel;
+						std::vector<ID3D11Buffer*> Vertex;
+						std::vector<ID3D11Buffer*> Geometry;
+						std::vector<ID3D11Buffer*> Pixel;
+						std::vector<ID3D11Buffer*> Compute;
 					}CBuffers;
 
-					ShaderEffect()
+					struct
+					{
+						std::vector<ID3D11ShaderResourceView*> Vertex;
+						std::vector<ID3D11ShaderResourceView*> Geometry;
+						std::vector<ID3D11ShaderResourceView*> Pixel;
+						std::vector<ID3D11ShaderResourceView*> Compute;
+					}SRV;
+					
+					std::vector<ID3D11RenderTargetView*> RTV;
+
+					struct
+					{
+						std::vector<ID3D11UnorderedAccessView*> Pixel;
+						std::vector<ID3D11UnorderedAccessView*> Compute;
+					}UAV;
+
+					ID3D11DepthStencilView* depth;
+
+					RenderPass()
 					{
 						RenderStates.BlendState=NULL;
 						RenderStates.DepthStencil=NULL;
@@ -164,7 +189,7 @@ namespace Oyster
 					char* data;
 				};
 
-				static void SetShaderEffect(ShaderEffect);
+				static void SetRenderPass(RenderPass);
 
 				static void CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC *desc, int ElementCount,int VertexIndex,ID3D11InputLayout *&Layout);
 
@@ -192,6 +217,7 @@ namespace Oyster
 				};
 
 				static void Clean();
+				static void CleanPipeline();
 			};
 
 			//Set resulotion Before Calling Full Init
@@ -200,7 +226,7 @@ namespace Oyster
 			public:
 				enum State
 				{
-					Sucsess,
+					Success,
 					Fail
 				};
 
@@ -217,6 +243,12 @@ namespace Oyster
 				static State FullInit(HWND Window, bool MSAA_Quality, bool Fullscreen);
 
 				static State ReInitialize(HWND Window, bool MSAA_Quality, bool Fullscreen);
+
+				static State CreateLinkedShaderResourceFromTexture(ID3D11RenderTargetView** rtv, ID3D11ShaderResourceView** srv, ID3D11UnorderedAccessView** uav);
+
+				static State CreateLinkedShaderResourceFromStructuredBuffer(Buffer** Structured, ID3D11ShaderResourceView** srv, ID3D11UnorderedAccessView** uav);
+				static State CreateLinkedShaderResourceFromStructuredBuffer(void* InitData, int numElem, int ElemSize, Buffer** Structured, ID3D11ShaderResourceView** srv, ID3D11UnorderedAccessView** uav);
+
 			};
 		};
 	}

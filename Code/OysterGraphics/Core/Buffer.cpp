@@ -205,3 +205,13 @@ Core::Buffer::operator const ID3D11Buffer *() const
 {
 	return this->mBuffer;
 }
+
+UINT32 Core::Buffer::GetElementCount()
+{
+	return this->mElementCount;
+}
+
+UINT32 Core::Buffer::GetVertexSize()
+{
+	return this->mElementSize;
+}
