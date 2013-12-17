@@ -31,7 +31,7 @@ int main()
 
 	//Connect to server
 	//errorCode = client->Connect(15151, "193.11.186.101");
-	errorCode = client.Connect(15151, "127.0.0.1");
+	errorCode = client.Connect(15151, "193.11.187.62");
 	client.SetRecieverObject(proc, NetworkProtocolCallbackType_Function);
 
 	if(errorCode != 1)

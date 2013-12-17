@@ -48,8 +48,8 @@ struct ClientDataContainer
 		InitWinSock();
 		callbackType = NetworkProtocolCallbackType_Unknown;
 		sendPostBox = new PostBox<CustomNetProtocol>();
-		connection.SetBlockingMode(false);
 		connection.InitiateClient();
+		connection.SetBlockingMode(false);
 	}
 	ClientDataContainer(IThreadObject* o, unsigned int socket )
 		:connection(socket), ID(currID++)
@@ -204,16 +204,16 @@ NetworkClient::~NetworkClient()
 
 bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 {
+	privateData->data->connection.SetBlockingMode(true);
 	int result = this->privateData->data->connection.Connect(port, serverIP);
 	
 	//Connect has succeeded
 	if(result == 0)
 	{
 		privateData->data->thread.Start();
+		privateData->data->connection.SetBlockingMode(false);
 		return true;
 	}
-
-	privateData->data->connection.SetBlockingMode(false);
 
 	//Connect has failed
 	return false;

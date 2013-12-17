@@ -4,12 +4,14 @@
 #include <mutex>
 #include "../NetworkDependencies/WinsockFunctions.h"
 #include "../NetworkAPI/NetworkServer.h"
+#include "../NetworkAPI/CustomNetProtocol.h"
+#include "../NetworkAPI/NetworkCallbackHelper.h"
 
 using namespace Oyster::Network;
 using namespace std;
 
-vector<NetworkClient> clients;
 std::mutex m;
+vector<NetworkClient> clients;
 
 void proc(NetworkClient client)
 {
