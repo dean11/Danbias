@@ -44,7 +44,7 @@ struct Translator::PrivateData
 			headerString.push_back(it->second.type);
 		}
 
-		message.PackShort(size, bytes);
+		message.PackShort(headerString.size(), bytes);
 		size += 2;
 
 		for(int i = 0; i < (int)headerString.size(); i++)
@@ -217,6 +217,7 @@ void Translator::Pack(OysterByte &bytes, CustomNetProtocol& protocol)
 
 	privateData->PackHeader(bytes, protocol);
 	privateData->PackMessage(bytes, protocol);
+	this->privateData->headerString.clear();
 }
 
 bool Translator::Unpack(CustomNetProtocol& protocol, OysterByte &bytes)
@@ -227,6 +228,6 @@ bool Translator::Unpack(CustomNetProtocol& protocol, OysterByte &bytes)
 	}
 
 	privateData->UnpackMessage(protocol, bytes);
-
+	this->privateData->headerString.clear();
 	return true;
 }

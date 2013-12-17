@@ -50,6 +50,7 @@ struct ClientDataContainer
 		sendPostBox = new PostBox<CustomNetProtocol>();
 		connection.InitiateClient();
 		connection.SetBlockingMode(false);
+		
 	}
 	ClientDataContainer(IThreadObject* o, unsigned int socket )
 		:connection(socket), ID(currID++)
@@ -170,13 +171,14 @@ NetworkClient::NetworkClient(unsigned int socket)
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
 	privateData = new PrivateData();
-	this->privateData->data->recvObj = SmartPointer<RecieverObject>(&recvObj);;
+	this->privateData->data->callbackType = type;
+	this->privateData->data->recvObj = recvObj;
 }
 
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket)
 {
 	privateData = new PrivateData(socket);
-	this->privateData->data->recvObj = SmartPointer<RecieverObject>(&recvObj);
+	this->privateData->data->recvObj = recvObj;
 	this->privateData->data->callbackType = type;
 	this->privateData->data->thread.Create(this->privateData, true);
 }
@@ -213,11 +215,11 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 		if(this->privateData->data->thread.IsCreated()) return false;
 
 		this->privateData->data->thread.Create(this->privateData, true);
-
+		privateData->data->connection.SetBlockingMode(false);
 		return true;
 	}
 
-	privateData->data->connection.SetBlockingMode(false);
+	
 
 	//Connect has failed
 	return false;

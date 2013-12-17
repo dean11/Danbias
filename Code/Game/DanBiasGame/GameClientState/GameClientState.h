@@ -22,6 +22,10 @@ public:
 		int object_ID;
 		float worldPos[16]; 
 	};
+	struct  KeyInput :public ProtocolStruct
+	{
+		bool key[6]; 
+	};
 	struct  PlayerPos :public ProtocolStruct
 	{
 		float playerPos[3]; 
