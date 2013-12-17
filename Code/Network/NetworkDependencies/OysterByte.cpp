@@ -44,6 +44,7 @@ void OysterByte::Resize(unsigned int cap)
 	{
 		delete[] byteArray;
 		byteArray = new unsigned char[cap];
+		capacity = cap;
 	}
 }
 
