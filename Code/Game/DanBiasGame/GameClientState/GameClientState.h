@@ -22,6 +22,12 @@ public:
 		int object_ID;
 		float worldPos[16]; 
 	};
+	struct  NewObj :public ProtocolStruct
+	{
+		int object_ID;
+		char* path;
+		float worldPos[16]; 
+	};
 	struct  KeyInput :public ProtocolStruct
 	{
 		bool key[6]; 

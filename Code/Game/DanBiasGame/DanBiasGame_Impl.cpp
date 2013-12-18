@@ -8,16 +8,13 @@
 #include "PlayerProtocols.h"
 #include "NetworkClient.h"
 
+#include "../WindowManager/WindowShell.h"
 #include "L_inputClass.h"
-//#include "vld.h"
+#include "WinTimer.h"
+#include "vld.h"
 
 namespace DanBias
 {
-	__int64 DanBiasGame::cntsPerSec		= 0;
-	__int64 DanBiasGame::prevTimeStamp	= 0;
-	float DanBiasGame::secsPerCnt		= 0;
-	HINSTANCE DanBiasGame::g_hInst		= NULL;
-	HWND DanBiasGame::g_hWnd			= NULL;
 
 #pragma region Game Data
 
@@ -29,14 +26,11 @@ namespace DanBias
 	
 	void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
-
 		int pType = p[0].value.netInt;
-		//Client::GameClientState::ProtocolStruct* protocolData; 
 		switch (pType)
 		{
 		case protocol_Gamplay_PlayerNavigation:
 			{
-
 		
 				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
 				for(int i = 0; i< 6; i++)
@@ -44,7 +38,8 @@ namespace DanBias
 					protocolData->key[i] = p[i+1].value.netBool;
 				}
 
-				((Client::GameState*)gameClientState)->Protocol(protocolData);
+				if(dynamic_cast<Client::GameState*>(gameClientState))
+					((Client::GameState*)gameClientState)->Protocol(protocolData);
 				delete protocolData;
 				protocolData = NULL;
 			}
@@ -56,14 +51,31 @@ namespace DanBias
 				{
 					protocolData->playerPos[i] = p[i].value.netFloat;
 				}
-				//if(dynamic_cast<Client::GameState*>(gameClientState))
-				gameClientState->Protocol(protocolData);
+				if(dynamic_cast<Client::GameState*>(gameClientState))
+					((Client::GameState*)gameClientState)->Protocol(protocolData);
 				delete protocolData;
 				protocolData = NULL;
 			}
 			break;
 
+		case protocol_Gamplay_CreateObject:
+			{
 
+				Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
+				protocolData->object_ID = p[1].value.netInt;
+				protocolData->path = p[2].value.netCharPtr;
+				for(int i = 0; i< 16; i++)
+				{
+					protocolData->worldPos[i] = p[i+3].value.netFloat;
+				}
+
+				if(dynamic_cast<Client::GameState*>(gameClientState))
+					((Client::GameState*)gameClientState)->Protocol(protocolData);
+
+				delete protocolData;
+				protocolData = NULL;
+			}
+			break;
 		case protocol_Gamplay_ObjectPosition:
 			{
 
@@ -74,8 +86,8 @@ namespace DanBias
 					protocolData->worldPos[i] = p[i+2].value.netFloat;
 				}
 
-		
-				gameClientState->Protocol(protocolData);
+				if(dynamic_cast<Client::GameState*>(gameClientState))
+					((Client::GameState*)gameClientState)->Protocol(protocolData);
 			
 				delete protocolData;
 				protocolData = NULL;
@@ -102,7 +114,9 @@ namespace DanBias
 
 	public:
 		//Client::GameClientState* gameClientState;
+		WindowShell* window;
 		InputClass* inputObj;
+		Utility::WinTimer* timer;
 		MyRecieverObject* recieverObj;
 
 	} data;
@@ -116,7 +130,8 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
 	{
-		if( FAILED( InitWindow( desc.hinst, desc.nCmdShow ) ))
+
+		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )
@@ -124,13 +139,6 @@ namespace DanBias
 
 		if( FAILED( InitInput() ) )
 			return DanBiasClientReturn_Error;
-
-		cntsPerSec = 0;
-		QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
-		secsPerCnt = 1.0f / (float)cntsPerSec;
-
-		prevTimeStamp = 0;
-		QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
 		m_data->recieverObj = new MyRecieverObject;
 		
@@ -144,37 +152,26 @@ namespace DanBias
 		}
 		// Start in lobby state
 		m_data->recieverObj->gameClientState = new  Client::LobbyState();
-		m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient);
+		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient))
+			return DanBiasClientReturn_Error;
 
-
+		 m_data->timer = new Utility::WinTimer();
+		 m_data->timer->reset();
 		return DanBiasClientReturn_Sucess;
 	}
 
 	DanBiasClientReturn DanBiasGame::Run()
 	{
 		// Main message loop
-		MSG msg = {0};
-		while(WM_QUIT != msg.message)
+		while(m_data->window->Frame())
 		{
-			if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE) )
-			{
-				TranslateMessage( &msg );
-				DispatchMessage( &msg );
-			}
-			else
-			{
-				__int64 currTimeStamp = 0;
-				QueryPerformanceCounter((LARGE_INTEGER*)&currTimeStamp);
-				float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;
+			float dt = m_data->timer->getElapsedSeconds();
+			m_data->timer->reset();
 
-				//render
-				if(Update(dt) != S_OK)
-					return DanBiasClientReturn_Error;
-				if(Render(dt) != S_OK)
-					return DanBiasClientReturn_Error;
-
-				prevTimeStamp = currTimeStamp;
-			}
+			if(Update(dt) != S_OK)
+				return DanBiasClientReturn_Error;
+			if(Render(dt) != S_OK)
+				return DanBiasClientReturn_Error;
 		}
 		return DanBiasClientReturn_Sucess;
 	}
@@ -184,60 +181,12 @@ namespace DanBias
 		CleanUp();
 	}
 
-
-	//--------------------------------------------------------------------------------------
-	// Register class and create window
-	//--------------------------------------------------------------------------------------
-	HRESULT DanBiasGame::InitWindow( HINSTANCE hInstance, int nCmdShow )
-	{
-		// Register class
-		WNDCLASSEX wcex;
-		wcex.cbSize = sizeof(WNDCLASSEX); 
-		wcex.style          = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc    = WndProc;
-		wcex.cbClsExtra     = 0;
-		wcex.cbWndExtra     = 0;
-		wcex.hInstance      = hInstance;
-		wcex.hIcon          = 0;
-		wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
-		wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-		wcex.lpszMenuName   = NULL;
-		wcex.lpszClassName  = L"BTH_D3D_Template";
-		wcex.hIconSm        = 0;
-		if( !RegisterClassEx(&wcex) )
-			return E_FAIL;
-
-		// Adjust and create window
-		g_hInst = hInstance; 
-		RECT rc = { 0, 0, 1024, 768 };
-		AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-
-		if(!(g_hWnd = CreateWindow(
-			L"BTH_D3D_Template",
-			L"BTH - Direct3D 11.0 Template",
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			rc.right - rc.left,
-			rc.bottom - rc.top,
-			NULL,
-			NULL,
-			hInstance,
-			NULL)))
-		{
-			return E_FAIL;
-		}
-		ShowWindow( g_hWnd, nCmdShow );
-
-		return S_OK;
-	}
-
 	//--------------------------------------------------------------------------------------
 	// Create Direct3D with Oyster Graphics
 	//--------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitDirect3D()
 	{
-		if(Oyster::Graphics::API::Init(g_hWnd, false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
 		return S_OK;
 	}
@@ -245,10 +194,10 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	// Init the input
 	//-------------------------------------------------------------------------------------
-	HRESULT DanBiasGame::InitInput()
+	HRESULT DanBiasGame::InitInput() 
 	{
 		m_data->inputObj = new InputClass;
-		if(!m_data->inputObj->Initialize(g_hInst, g_hWnd, 1024, 768))
+		if(!m_data->inputObj->Initialize(m_data->window->GetHINSTANCE(), m_data->window->GetHWND(), m_data->window->GetHeight(), m_data->window->GetWidth()))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -258,6 +207,7 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
+		
 		m_data->inputObj->Update();
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
@@ -297,7 +247,7 @@ namespace DanBias
 		
 		wchar_t title[255];
 		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
-		SetWindowText(g_hWnd, title);
+		SetWindowText(m_data->window->GetHWND(), title);
 	
 		m_data->recieverObj->gameClientState->Render();
 
@@ -318,41 +268,5 @@ namespace DanBias
 		Oyster::Graphics::API::Clean();
 		return S_OK;
 	}	
-
-	//--------------------------------------------------------------------------------------
-	// Called every time the application receives a message
-	//--------------------------------------------------------------------------------------
-	LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
-	{
-		PAINTSTRUCT ps;
-		HDC hdc;
-
-		switch (message) 
-		{
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			EndPaint(hWnd, &ps);
-			break;
-
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-
-		case WM_KEYDOWN:
-
-			switch(wParam)
-			{
-			case VK_ESCAPE:
-				PostQuitMessage(0);
-				break;
-			}
-			break;
-
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-
-		return 0;
-	}
 
 } //End namespace DanBias
