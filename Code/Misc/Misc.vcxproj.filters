@@ -92,5 +92,8 @@
     <ClInclude Include="PostBox\IPostBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Game\GameLogic\GID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

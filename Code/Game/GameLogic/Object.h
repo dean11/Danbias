@@ -21,11 +21,13 @@ namespace GameLogic
 		~Object(void);
 
 		OBJECT_TYPE GetType();
+		int GetID();
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 
 	private:
 		OBJECT_TYPE type;
+		int objectID;
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
 	};

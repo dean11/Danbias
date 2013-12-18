@@ -156,6 +156,7 @@
     <ClCompile Include="WinTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Game\GameLogic\GID.h" />
     <ClInclude Include="IQueue.h" />
     <ClInclude Include="PostBox\IPostBox.h" />
     <ClInclude Include="PostBox\PostBox.h" />
