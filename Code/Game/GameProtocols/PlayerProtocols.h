@@ -51,6 +51,34 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
+	struct Protocol_PlayerMouse :public Oyster::Network::CustomProtocolObject
+	{
+
+		float dxMouse;
+		float dyMouse;
+		
+
+		Protocol_PlayerMouse()
+		{
+			this->protocol[0].value = protocol_Gamplay_PlayerMouseMovement;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = dxMouse;
+			this->protocol[2].value = dyMouse;
+
+			return &protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
 	struct Protocol_PlayerPosition :public Oyster::Network::CustomProtocolObject
 	{
 		

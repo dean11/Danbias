@@ -111,7 +111,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Misc\Misc_$(PlatformShortName)D.lib;WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -128,7 +128,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Misc\Misc_$(PlatformShortName)D.lib;WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -149,7 +149,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Misc\Misc_$(PlatformShortName).lib;WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -170,7 +170,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Misc\Misc_$(PlatformShortName).lib;WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>

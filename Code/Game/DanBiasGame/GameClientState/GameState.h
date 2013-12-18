@@ -35,6 +35,7 @@ public:
 	void Protocol(PlayerPos* pos);
 	void Protocol(ObjPos* pos);
 	void Protocol(KeyInput* pos);
+	void Protocol( NewObj* pos );
 	void PlayerPosProtocol(PlayerPos* pos);
 	void ObjectPosProtocol(ObjPos* pos);
 	//void Protocol(LightPos pos);

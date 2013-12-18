@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////
 // Created 2013											//
 // Dennis Andersen, Linda Andersson						//
 //////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ public:
 		{
 			parent				= 0;
 			hInstance			= NULL;
-			windowName			= L"MADAFACKA";
+			windowName			= L"おはよう";
 			windowSize.x		= 800;
 			windowSize.y		= 600;
 			windowPosition.x	= 0;

@@ -8,8 +8,11 @@
 /* THERE CAN ABSOLUTLEY NOT BE TWO DEFINITIONS WITH THE SAME ID!! */
 
 #define protocol_Gamplay_PlayerNavigation			0
-#define protocol_Gamplay_PlayerPosition				1
-#define protocol_Gamplay_ObjectPosition				2
+#define protocol_Gamplay_PlayerMouseMovement		1
+#define protocol_Gamplay_PlayerPosition				2
+#define protocol_Gamplay_CreateObject				3
+#define protocol_Gamplay_ObjectPosition				4
+
 
 #define protocol_Lobby_Msg							100
 

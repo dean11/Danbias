@@ -1,4 +1,4 @@
-#include "GameState.h"
+﻿#include "GameState.h"
 #include "DllInterfaces/GFXAPI.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
@@ -126,6 +126,15 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			{
 				privData->nwClient->Send(movePlayer);
 			}
+
+			//send delta mouse movement 
+			if (KeyInput->IsMousePressed())
+			{
+				GameLogic::Protocol_PlayerMouse deltaMouseMove;
+				deltaMouseMove.dxMouse = KeyInput->GetYaw();
+				deltaMouseMove.dyMouse = KeyInput->GetPitch();
+				//privData->nwClient->Send(deltaMouseMove);
+			}
 			
 			// send event data
 			//  
@@ -201,6 +210,25 @@ void GameState::Protocol( ObjPos* pos )
 		world[i] = pos->worldPos[i];
 	}
 	privData->object[pos->object_ID]->setPos(world);
+}
+
+void GameState::Protocol( NewObj* pos )
+{
+
+	Oyster::Math::Float4x4 world;
+	for(int i = 0; i<16; i++)
+	{
+		world[i] = pos->worldPos[i];
+	}
+	ModelInitData modelData;
+
+	modelData.world = world;
+	modelData.visible = true;
+	const char* path = pos->path;
+	modelData.modelPath = std::wstring(path, path + strlen(path));  
+	// load models
+	privData->object[pos->object_ID] = new C_Player();
+	privData->object[pos->object_ID]->Init(modelData);
 }
 
 void GameState::Protocol( KeyInput* pos )

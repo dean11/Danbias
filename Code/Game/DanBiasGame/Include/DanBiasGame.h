@@ -33,7 +33,7 @@ namespace DanBias
 			int nCmdShow;
 
 		};
-		LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+		
 		class DanBiasGamePrivateData;
 		class DANBIAS_GAME_DLL DanBiasGame
 		{
@@ -55,11 +55,8 @@ namespace DanBias
 			static HRESULT CleanUp();
 
 		private:
-			static __int64 cntsPerSec;
-			static __int64 prevTimeStamp;
-			static float secsPerCnt;
-
 			static DanBiasGamePrivateData* m_data;
+
 		};
 		
 
