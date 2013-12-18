@@ -10,10 +10,15 @@ using namespace ::Oyster::Math3D;
 
 Point::Point( ) : ICollideable(Type_point)
 {
-	this->center = Float3::null;
+	this->center = Float4::standard_unit_w;
 }
 
 Point::Point( const Float3 &pos ) : ICollideable(Type_point)
+{
+	this->center = Float4( pos, 1.0f );
+}
+
+Point::Point( const Float4 &pos ) : ICollideable(Type_point)
 {
 	this->center = pos;
 }
@@ -48,7 +53,7 @@ bool Point::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool Point::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Point::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	switch( target.type )
 	{

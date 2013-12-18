@@ -46,12 +46,12 @@ UniquePointer<ICustomBody> SphericalRigidBody::Clone() const
 
 SphericalRigidBody::State SphericalRigidBody::GetState() const
 {
-	return State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+	return State( this->rigid.box.boundingOffset.xyz, this->rigid.box.center.xyz, AngularAxis(this->rigid.box.rotation).xyz, this->rigid.linearMomentum, this->rigid.angularMomentum );
 }
 
 SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
 {
-	return targetMem = State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+	return targetMem = State( this->rigid.box.boundingOffset.xyz, this->rigid.box.center.xyz, AngularAxis(this->rigid.box.rotation).xyz, this->rigid.linearMomentum, this->rigid.angularMomentum );
 }
 
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
@@ -61,9 +61,9 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	this->rigid.box.rotation = state.GetRotation();
 }
 
-void SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
 {
-	this->collisionAction( proto, deuter );
+	return this->collisionAction( proto, deuter );
 }
 
 bool SphericalRigidBody::IsAffectedByGravity() const
@@ -71,23 +71,19 @@ bool SphericalRigidBody::IsAffectedByGravity() const
 	return !this->ignoreGravity;
 }
 
-bool SphericalRigidBody::Intersects( const ICustomBody &object, Float timeStepLength, Float &deltaWhen, Float3 &worldPointOfContact ) const
-{
-	if( object.Intersects(this->body) )
-	{ //! @todo TODO: better implementation needed
-		deltaWhen = timeStepLength;
-		worldPointOfContact = Average( this->body.center, object.GetCenter() );
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
 bool SphericalRigidBody::Intersects( const ICollideable &shape ) const
 {
-	return this->rigid.box.Intersects( shape );
+	return Sphere( this->rigid.box.center, this->rigid.box.boundingOffset.x ).Intersects( shape );
+}
+
+bool SphericalRigidBody::Intersects( const ICollideable &shape, Float4 &worldPointOfContact ) const
+{
+	return Sphere( this->rigid.box.center, this->rigid.box.boundingOffset.x ).Intersects( shape, worldPointOfContact );
+}
+
+bool SphericalRigidBody::Intersects( const ICustomBody &object, Float4 &worldPointOfContact ) const
+{
+	return object.Intersects( Sphere(this->rigid.box.center, this->rigid.box.boundingOffset.x), worldPointOfContact );
 }
 
 Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
@@ -95,7 +91,7 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 	return targetMem = this->body;
 }
 
-Float3 & SphericalRigidBody::GetNormalAt( const Float3 &worldPos, Float3 &targetMem ) const
+Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
 	//! @todo TODO: better implementation needed
 	return targetMem = (worldPos - this->rigid.box.center).GetNormalized();

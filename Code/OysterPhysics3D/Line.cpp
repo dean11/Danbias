@@ -55,7 +55,7 @@ bool Line::Intersects( const ICollideable &target ) const
 	return false;
 }
 
-bool Line::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Line::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	if( target.type == Type_universe )
 	{

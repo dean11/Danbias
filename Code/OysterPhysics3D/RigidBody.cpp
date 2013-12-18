@@ -119,12 +119,12 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 		rotationAxis /= deltaRadian;
 
 		// using rotationAxis, deltaRadian and deltaPos to create a matrix to update the box
-		this->box.center += deltaPos;
+		this->box.center.xyz += deltaPos;
 		TransformMatrix( RotationMatrix(deltaRadian, rotationAxis), this->box.rotation, this->box.rotation );
 	}
 	else
 	{ // no rotation, only use deltaPos to translate the RigidBody
-		this->box.center += deltaPos;
+		this->box.center.xyz += deltaPos;
 	}
 
 	// update momentums and clear impulseForceSum and impulseTorqueSum
@@ -141,7 +141,7 @@ void RigidBody::ApplyImpulseForce( const Float3 &worldF )
 
 void RigidBody::ApplyImpulseForceAt( const Float3 &worldF, const Float3 &worldPos )
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	if( worldOffset != Float3::null )
 	{
 		this->impulseForceSum += VectorProjection( worldF, worldOffset );
@@ -160,7 +160,7 @@ void RigidBody::ApplyLinearImpulseAcceleration( const Float3 &worldA )
 
 void RigidBody::ApplyLinearImpulseAccelerationAt( const Float3 &worldA, const Float3 &worldPos )
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	if( worldOffset != Float3::null )
 	{
 		this->impulseForceSum += Formula::ImpulseForce( this->mass, VectorProjection(worldA, worldOffset) );
@@ -188,22 +188,22 @@ void RigidBody::ApplyAngularImpulseAcceleration( const Float3 &worldA )
 
 Float3 & RigidBody::AccessBoundingReach()
 { // by Dan Andersson
-	return this->box.boundingOffset;
+	return this->box.boundingOffset.xyz;
 }
 
 const Float3 & RigidBody::AccessBoundingReach() const
 { // by Dan Andersson
-	return this->box.boundingOffset;
+	return this->box.boundingOffset.xyz;
 }
 
 Float3 & RigidBody::AccessCenter()
 { // by Dan Andersson
-	return this->box.center;
+	return this->box.center.xyz;
 }
 
 const Float3 & RigidBody::AccessCenter() const
 { // by Dan Andersson
-	return this->box.center;
+	return this->box.center.xyz;
 }
 
 const Float4x4 & RigidBody::GetMomentOfInertia() const
@@ -218,7 +218,7 @@ const Float & RigidBody::GetMass() const
 
 const Float4x4 RigidBody::GetOrientation() const
 { // by Dan Andersson
-	return OrientationMatrix( this->box.rotation, this->box.center );
+	return OrientationMatrix( this->box.rotation, this->box.center.xyz );
 }
 
 Float4x4 RigidBody::GetView() const
@@ -228,17 +228,17 @@ Float4x4 RigidBody::GetView() const
 
 const Float3 & RigidBody::GetBoundingReach() const
 { // by Dan Andersson
-	return this->box.boundingOffset;
+	return this->box.boundingOffset.xyz;
 }
 
 Float3 RigidBody::GetSize() const
 { // by Dan Andersson
-	return 2.0f * this->box.boundingOffset;
+	return 2.0f * this->box.boundingOffset.xyz;
 }
 
 const Float3 & RigidBody::GetCenter() const
 { // by Dan Andersson
-	return this->box.center;
+	return this->box.center.xyz;
 }
 
 const Float3 & RigidBody::GetImpulsTorque() const
@@ -283,7 +283,7 @@ Float3 RigidBody::GetLinearVelocity() const
 
 void RigidBody::GetMomentumAt( const Float3 &worldPos, const Float3 &surfaceNormal, Float3 &normalMomentum, Float3 &tangentialMomentum ) const
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	Float3 momentum = Formula::TangentialLinearMomentum( this->angularMomentum, worldOffset );
 	momentum += this->linearMomentum;
 
@@ -391,21 +391,21 @@ void RigidBody::SetLinearVelocity( const Float3 &worldV )
 
 void RigidBody::SetImpulseForceAt( const Float3 &worldForce, const Float3 &worldPos )
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	this->impulseForceSum = VectorProjection( worldForce, worldOffset );
 	this->impulseTorqueSum = Formula::ImpulseTorque( worldForce, worldOffset );
 }
 
 void RigidBody::SetLinearMomentumAt( const Float3 &worldG, const Float3 &worldPos )
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	this->linearMomentum = VectorProjection( worldG, worldOffset );
 	this->angularMomentum = Formula::AngularMomentum( worldG, worldOffset );
 }
 
 void RigidBody::SetImpulseAccelerationAt( const Float3 &worldA, const Float3 &worldPos )
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	this->impulseForceSum = Formula::ImpulseForce( this->mass, VectorProjection(worldA, worldOffset) );
 	this->impulseTorqueSum = Formula::ImpulseTorque( this->box.rotation * this->momentOfInertiaTensor,
 													 Formula::AngularImpulseAcceleration(worldA, worldOffset) );
@@ -413,7 +413,7 @@ void RigidBody::SetImpulseAccelerationAt( const Float3 &worldA, const Float3 &wo
 
 void RigidBody::SetLinearVelocityAt( const Float3 &worldV, const Float3 &worldPos )
 { // by Dan Andersson
-	Float3 worldOffset = worldPos - this->box.center;
+	Float3 worldOffset = worldPos - this->box.center.xyz;
 	this->linearMomentum = Formula::LinearMomentum( this->mass, VectorProjection(worldV, worldOffset) );
 	this->angularMomentum = Formula::AngularMomentum( this->box.rotation * this->momentOfInertiaTensor,
 													  Formula::AngularVelocity(worldV, worldOffset) );

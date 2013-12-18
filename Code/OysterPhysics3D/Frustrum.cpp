@@ -76,12 +76,12 @@ namespace PrivateStatic
 
 Frustrum::Frustrum() : ICollideable(Type_frustrum)
 {
-	this->leftPlane   = Plane( Float3::standard_unit_x, -0.5f );
-	this->rightPlane  = Plane(-Float3::standard_unit_x,  0.5f ),
-	this->bottomPlane = Plane( Float3::standard_unit_y, -0.5f );
-	this->topPlane	  = Plane(-Float3::standard_unit_y,  0.5f );
-	this->nearPlane	  = Plane( Float3::standard_unit_z, -0.5f );
-	this->farPlane	  = Plane(-Float3::standard_unit_z,  0.5f );
+	this->leftPlane   = Plane( Float4::standard_unit_x, -0.5f );
+	this->rightPlane  = Plane(-Float4::standard_unit_x,  0.5f ),
+	this->bottomPlane = Plane( Float4::standard_unit_y, -0.5f );
+	this->topPlane	  = Plane(-Float4::standard_unit_y,  0.5f );
+	this->nearPlane	  = Plane( Float4::standard_unit_z, -0.5f );
+	this->farPlane	  = Plane(-Float4::standard_unit_z,  0.5f );
 }
 
 Frustrum::Frustrum( const Float4x4 &vp ) : ICollideable(Type_frustrum)
@@ -220,7 +220,7 @@ bool Frustrum::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool Frustrum::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Frustrum::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	//! @todo TODO: implement stub properly
 	return this->Intersects( target );

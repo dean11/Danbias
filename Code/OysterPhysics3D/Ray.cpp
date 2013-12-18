@@ -10,15 +10,15 @@ using namespace ::Oyster::Math3D;
 
 Ray::Ray( ) : ICollideable(Type_ray)
 {
-	this->origin = Float3::null;
-	this->direction = Float3::standard_unit_z;
+	this->origin = Float4::standard_unit_w;
+	this->direction = Float4::standard_unit_z;
 	this->collisionDistance = 0.0f;
 }
 
-Ray::Ray( const Float3 &o, const ::Oyster::Math::Float3 &d ) : ICollideable(Type_ray)
+Ray::Ray( const Float3 &o, const Float3 &d ) : ICollideable(Type_ray)
 {
-	this->origin = o;
-	this->direction = d;
+	this->origin = Float4( o, 1.0f );
+	this->direction = Float4( d, 0.0f );
 	this->collisionDistance = 0.0f;
 }
 
@@ -47,15 +47,15 @@ bool Ray::Intersects( const ICollideable &target ) const
 	case Type_ray:				return Utility::Intersect( *this, (const Ray&)target, this->collisionDistance, ((const Ray&)target).collisionDistance );
 	case Type_sphere:			return Utility::Intersect( (const Sphere&)target, *this, this->collisionDistance );
 	case Type_plane:			return Utility::Intersect( (const Plane&)target, *this, this->collisionDistance );
-	// case Type_triangle: return false; // TODO: 
+	//case Type_triangle:			return false; // TODO: 
 	case Type_box_axis_aligned:	return Utility::Intersect( (const BoxAxisAligned&)target, *this, this->collisionDistance );
 	case Type_box:				return Utility::Intersect( (const Box&)target, *this, this->collisionDistance );
-	case Type_frustrum:			return false; // TODO: 
+	//case Type_frustrum:			return false; // TODO: 
 	default:					return false;
 	}
 }
 
-bool Ray::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Ray::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	switch( target.type )
 	{

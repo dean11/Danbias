@@ -21,10 +21,10 @@ namespace Oyster { namespace Collision3D
 		{
 			struct
 			{
-				::Oyster::Math::Float3 origin,
+				::Oyster::Math::Float4 origin,
 									   direction; /// Assumed to be normalized
 			};
-			char byte[2*sizeof(::Oyster::Math::Float3)];
+			char byte[2*sizeof(::Oyster::Math::Float4)];
 		};
 		mutable float collisionDistance;
 
@@ -36,7 +36,7 @@ namespace Oyster { namespace Collision3D
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable &target ) const;
-		bool Intersects( const ICollideable &target, ::Oyster::Math::Float3 &worldPointOfContact ) const;
+		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Contains( const ICollideable &target ) const;
 	};
 } }

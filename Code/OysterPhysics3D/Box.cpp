@@ -18,8 +18,8 @@ Box::Box( ) : ICollideable(Type_box)
 Box::Box( const Float4x4 &r, const Float3 &p, const Float3 &s ) : ICollideable(Type_box)
 {
 	this->rotation = r;
-	this->center = p;
-	this->boundingOffset = Float3(s*0.5);
+	this->center = Float4( p, 1.0f );
+	this->boundingOffset = Float4( s * 0.5f , 0.0f);
 }
 
 Box::~Box( ) {}
@@ -54,7 +54,7 @@ bool Box::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool Box::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Box::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	switch( target.type )
 	{

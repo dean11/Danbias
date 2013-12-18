@@ -35,7 +35,7 @@ bool Universe::Intersects( const ICollideable &target ) const
 	return true;
 }
 
-bool Universe::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Universe::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 { // universe touches everything
 	switch( target.type )
 	{

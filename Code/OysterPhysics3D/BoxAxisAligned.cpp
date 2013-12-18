@@ -14,16 +14,16 @@ BoxAxisAligned::BoxAxisAligned( ) : ICollideable(Type_box_axis_aligned)
 	this->maxVertex = Float3( 0.5f, 0.5f, 0.5f );
 }
 
-BoxAxisAligned::BoxAxisAligned( const Float3 &_minVertex, const Float3 &_maxVertex ) : ICollideable(Type_box_axis_aligned)
+BoxAxisAligned::BoxAxisAligned( const Float3 &minVertex, const Float3 &maxVertex ) : ICollideable(Type_box_axis_aligned)
 {
-	this->minVertex = _minVertex;
-	this->maxVertex = _maxVertex;
+	this->minVertex = Float4( minVertex, 1.0f );
+	this->maxVertex = Float4( maxVertex, 1.0f );
 }
 
 BoxAxisAligned::BoxAxisAligned( const Float &leftClip, const Float &rightClip, const Float &topClip, const Float &bottomClip, const Float &nearClip, const Float &farClip ) : ICollideable(Type_box_axis_aligned)
 {
-	this->minVertex = Float3( leftClip, bottomClip, nearClip );
-	this->maxVertex = Float3( rightClip, topClip, farClip );
+	this->minVertex = Float4( leftClip, bottomClip, nearClip, 1.0f );
+	this->maxVertex = Float4( rightClip, topClip, farClip, 1.0f );
 }
 
 BoxAxisAligned::~BoxAxisAligned( ) {}
@@ -57,7 +57,7 @@ bool BoxAxisAligned::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool BoxAxisAligned::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool BoxAxisAligned::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	//! @todo TODO: implement stub properly
 	return this->Intersects( target );

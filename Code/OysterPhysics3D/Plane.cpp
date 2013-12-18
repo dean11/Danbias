@@ -10,11 +10,11 @@ using namespace ::Oyster::Math;
 
 Plane::Plane( ) : ICollideable(Type_plane)
 {
-	this->normal = Float3::standard_unit_z;
+	this->normal = Float4::standard_unit_z;
 	this->phasing = 0.0f;
 }
 
-Plane::Plane( const Float3 &n, const Float &p ) : ICollideable(Type_plane)
+Plane::Plane( const Float4 &n, const Float &p ) : ICollideable(Type_plane)
 {
 	this->normal = n;
 	this->phasing = p;
@@ -52,7 +52,7 @@ bool Plane::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool Plane::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Plane::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	switch( target.type )
 	{

@@ -133,15 +133,6 @@ namespace Oyster
 			virtual void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF ) = 0;
 
 			/********************************************************
-			 * Apply force on an object.
-			 * @param objRefA: A pointer to the ICustomBody representing a physical object.
-			 * @param objRefB: A pointer to the ICustomBody representing a physical object.
-			 * @param deltaWhen: The elapsed simulation time since last update frame. [s]
-			 * @param worldPointOfContact: Point of Collision, relative to the world origo. (Not relative to the objects) [m]
-			 ********************************************************/
-			virtual void ApplyCollisionResponse( const ICustomBody* objRefA, const ICustomBody* objRefB, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) = 0;
-
-			/********************************************************
 			 * Sets the MomentOfInertia tensor matrix of an object without changing it's angular velocity.
 			 * Noticeable effect: The angular momentum will change. Changing the amount of kinetic energy.
 			 * @param objRef: A pointer to the ICustomBody representing a physical object.
@@ -229,6 +220,7 @@ namespace Oyster
 				SubscriptMessage_ignore_collision_response
 			};
 
+			// @todo TODO: give SubscriptMessage pointOfContact(Float4) and a kineticEnergyLoss (Float). proto and deuter wont have to be pointers
 			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
@@ -245,7 +237,7 @@ namespace Oyster
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
+			virtual SubscriptMessage CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
@@ -268,20 +260,26 @@ namespace Oyster
 			virtual bool IsAffectedByGravity() const = 0;
 
 			/********************************************************
-			 * Performs a detailed Intersect test and returns if, when and where.
-			 * @param object: What this is intersect testing against.
-			 * @param timeStepLength: The value set by API::SetDeltaTime(...)
-			 * @param deltaWhen: Time in seconds since last update frame til timeOfContact. 0.0f <= deltaWhen <= timeStepLength
-			 * @param worldPointOfContact: Where at timeOfContact, this and object touches eachother.
-			 * @return true if this truly intersects with object.
-			 ********************************************************/
-			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const = 0;
-			
-			/********************************************************
 			 * param shape: Any defined sample shape.
 			 * @return true if this truly intersects with shape.
 			 ********************************************************/
 			virtual bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const = 0;
+
+			/********************************************************
+			 * Performs a detailed Intersect test and returns if, when and where.
+			 * @param shape: Any defined sample shape.
+			 * @param worldPointOfContact: Where at timeOfContact, this and object touches eachother.
+			 * @return true if this truly intersects with object.
+			 ********************************************************/
+			virtual bool Intersects( const ::Oyster::Collision3D::ICollideable &shape, ::Oyster::Math::Float4 &worldPointOfContact ) const = 0;
+
+			/********************************************************
+			 * Performs a detailed Intersect test and returns if, when and where.
+			 * @param object: What this is intersect testing against.
+			 * @param worldPointOfContact: Where at timeOfContact, this and object touches eachother.
+			 * @return true if this truly intersects with object.
+			 ********************************************************/
+			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float4 &worldPointOfContact ) const = 0;
 
 			/********************************************************
 			 * Required by Engine's Collision Search.
@@ -296,7 +294,7 @@ namespace Oyster
 			 * @param targetMem: Provided memory that written into and then returned.
 			 * @return a surface normal in worldSpace.
 			 ********************************************************/
-			virtual ::Oyster::Math::Float3 & GetNormalAt( const ::Oyster::Math::Float3 &worldPos, ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
+			virtual ::Oyster::Math::Float4 & GetNormalAt( const ::Oyster::Math::Float4 &worldPos, ::Oyster::Math::Float4 &targetMem = ::Oyster::Math::Float4() ) const = 0;
 			
 			/********************************************************
 			 * The gravity normal will have same direction as the total gravity force pulling on this and have the magnitude of 1.0f.
