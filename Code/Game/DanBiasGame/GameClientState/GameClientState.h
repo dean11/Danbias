@@ -28,6 +28,11 @@ public:
 		char* path;
 		float worldPos[16]; 
 	};
+	struct  RemoveObj :public ProtocolStruct
+	{
+		int object_ID;
+		//particle effect
+	};
 	struct  KeyInput :public ProtocolStruct
 	{
 		bool key[6]; 

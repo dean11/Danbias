@@ -4,6 +4,7 @@
 #include "C_obj/C_DynamicObj.h"
 #include "NetworkClient.h"
 #include "PlayerProtocols.h"
+#include "ControlProtocols.h"
 
 using namespace DanBias::Client;
 
@@ -83,10 +84,15 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 	switch (privData->state)
 	{
 	case gameStateState_loading:
-		// load map
-		// wait for all players
-		LoadGame();
-		privData->state = gameStateState_playing;
+		{
+			// load map
+			// wait for all players
+			LoadGame();
+			GameLogic::Protocol_Status gameStatus;
+			gameStatus.status = GameLogic::Protocol_Status::States_ready;
+			privData->nwClient->Send(gameStatus);
+			privData->state = gameStateState_playing;
+		}
 		break;
 	case gameStateState_playing:
 		// read server data
@@ -180,15 +186,7 @@ bool GameState::Release()
 
 void GameState::Protocol(ProtocolStruct* pos)
 {
-	// move message 
-	/*
-	if ((KeyInput*)pos)
-	{
-	}
-	if((ObjPos*)pos)
-		ObjectPosProtocol((ObjPos*)pos);
-	else if((PlayerPos*)pos)
-		PlayerPosProtocol((PlayerPos*)pos);*/
+	
 }
 
 void GameState::Protocol( PlayerPos* pos )
@@ -224,6 +222,7 @@ void GameState::Protocol( NewObj* pos )
 
 	modelData.world = world;
 	modelData.visible = true;
+	//not sure if this is good parsing rom char* to wstring
 	const char* path = pos->path;
 	modelData.modelPath = std::wstring(path, path + strlen(path));  
 	// load models
@@ -238,6 +237,11 @@ void GameState::Protocol( KeyInput* pos )
 	{
 		key = pos->key[i];
 	}
+}
+
+void DanBias::Client::GameState::Protocol( RemoveObj* obj )
+{
+	privData->object[obj->object_ID]->Release( );
 }
 
 void GameState::PlayerPosProtocol(PlayerPos* pos)
