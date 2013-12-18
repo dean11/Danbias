@@ -6,7 +6,7 @@
 
 #define NOMINMAX
 #include "Utilities.h"
-#include <PostBox\PostBox.h>
+#include <PostBox\IPostBox.h>
 #include <CustomNetProtocol.h>
 #include <NetworkClient.h>
 #include <vector>
@@ -40,11 +40,11 @@ namespace DanBias
 		void Send(Oyster::Network::CustomNetProtocol& protocol, int ID);
 
 		//TODO: Do more lobby features
-		//virtual void 
+		void SetPostbox(Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box);
 
 	protected:
 		std::vector<Utility::DynamicMemory::SmartPointer<ClientObject>> clients;
-		Oyster::PostBox<DanBias::NetworkSession::NetEvent> box;
+		Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box;
 	};
 }//End namespace DanBias
 #endif // !DANBIASSERVER_NETWORK_SESSION_H
