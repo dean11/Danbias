@@ -2,15 +2,15 @@
 
 using namespace DanBias;
 
-ClientObject::ClientObject(const Oyster::Network::NetworkClient& client)
+ClientObject::ClientObject(Oyster::Network::NetworkClient* client)
 {
 	this->client = client;
-	this->client.SetRecieverObject(this, Oyster::Network::NetworkProtocolCallbackType_Object);
+	this->client->SetRecieverObject(this, Oyster::Network::NetworkProtocolCallbackType_Object);
 	this->box = 0;
 }
 ClientObject::~ClientObject()
 {
-	this->client.Disconnect();
+	this->client->Disconnect();
 }
 
 void ClientObject::SetPostbox(Oyster::PostBox<NetworkSession::NetEvent>* box)
@@ -23,11 +23,12 @@ GameLogic::Player* ClientObject::Logic_Object()
 }
 Oyster::Network::NetworkClient* ClientObject::NetClient_Object()
 {
-	return &this->client;
+	return this->client;
 }
 
 void ClientObject::ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol)
 {
+	//this->client->Send(&protocol);
 	if(!this->box) return;
 
 	NetworkSession::NetEvent _event;

@@ -40,6 +40,7 @@ namespace Oyster
 
 				//Adds the protocol to the queue of protocols to be sent.
 				void Send(CustomProtocolObject& protocol);
+				void Send(CustomNetProtocol* protocol);
 
 				void SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type);
 

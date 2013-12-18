@@ -13,7 +13,7 @@ namespace DanBias
 		:public Oyster::Network::ProtocolRecieverObject
 	{
 	public:
-		ClientObject(const Oyster::Network::NetworkClient& client);
+		ClientObject(Oyster::Network::NetworkClient* client);
 		~ClientObject();
 
 		void SetPostbox(Oyster::PostBox<NetworkSession::NetEvent>* box);
@@ -26,7 +26,7 @@ namespace DanBias
 	
 	private:
 		GameLogic::Player logicPlayer;
-		Oyster::Network::NetworkClient client;
+		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client;
 		Oyster::IPostBox<DanBias::NetworkSession::NetEvent>* box;
 	};
 

@@ -59,10 +59,12 @@ using namespace Utility::DynamicMemory;
 	};
 	struct OysterThread::PrivateData
 	{
+		bool isCreated;
 		SmartPointer<ThreadData> threadData;
 	
 		PrivateData()
 		{
+			isCreated = false;
 			threadData = new ThreadData();
 			threadData->first = true;
 			threadData->owner = 0;
@@ -73,6 +75,7 @@ using namespace Utility::DynamicMemory;
 		}
 		PrivateData(const PrivateData& o)
 		{
+			isCreated = o.isCreated;
 			threadData = o.threadData;
 		}
 		const PrivateData& operator=(const PrivateData& o)
@@ -81,7 +84,13 @@ using namespace Utility::DynamicMemory;
 		}
 		~PrivateData()
 		{
-			threadData.Release();
+			//if(threadData.Release() == 0)
+			//{
+			//	if(this->threadData->workerThread->joinable())
+			//	{
+			//		this->threadData->workerThread->join();
+			//	}
+			//}
 		}
 
 	};
@@ -109,10 +118,12 @@ theBegining:
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			break;
 			case Oyster::Thread::OYSTER_THREAD_PRIORITY_3:
-				std::this_thread::yield();
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				//std::this_thread::yield();
 			break;
 		}
-		if(w->owner)									shouldContinue = w->owner->DoWork();
+		if(w->owner)									
+			shouldContinue = w->owner->DoWork();
 		
 		if(w->state == OYSTER_THREAD_STATE_RESET)		goto theBegining;
 		else if(w->msec > 0)							std::this_thread::sleep_for(std::chrono::milliseconds(w->msec));
@@ -122,7 +133,8 @@ theBegining:
 
 	if(w->state == OYSTER_THREAD_STATE_DEAD)
 	{
-		if(w->workerThread->joinable())		w->workerThread->detach();
+		if(w->workerThread->joinable())		
+			w->workerThread->detach();
 
 		return;
 	}
@@ -156,6 +168,7 @@ OysterThread::~OysterThread()
 OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start)	  
 {
 	if(!this->privateData)							return OYSTER_THREAD_ERROR_FAILED;
+	if(this->IsCreated())							return OYSTER_THREAD_ERROR_FAILED;
 	if(this->privateData->threadData->workerThread)	return OYSTER_THREAD_ERROR_FAILED;
 
 	this->privateData->threadData->owner = worker;
@@ -172,6 +185,8 @@ OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start)
 	{
 		this->privateData->threadData->state = OYSTER_THREAD_STATE_RUNNING;
 	}
+
+	this->privateData->isCreated = true;
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
 OYSTER_THREAD_ERROR OysterThread::Start()
@@ -276,4 +291,7 @@ void OysterThread::SetPriority(OYSTER_THREAD_PRIORITY priority)
 {
 	this->privateData->threadData->prio = priority;
 }
-
+bool OysterThread::IsCreated() const
+{
+	return privateData->isCreated;
+}

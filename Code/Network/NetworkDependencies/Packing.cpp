@@ -169,7 +169,7 @@ namespace Oyster
 			//bool (1-bit)
 			bool Unpackb(unsigned char buffer[])
 			{
-				return buffer;
+				return *buffer;
 			}
 
 			//char (8-bit)
@@ -282,13 +282,15 @@ namespace Oyster
 			char* UnpackCStr(unsigned char buffer[])
 			{
 				short len = UnpackS(buffer);
-				char* str = new char[len];
+				char* str = new char[len+1];
 
 				buffer += 2;
 				for(int i = 0; i < len; i++)
 				{
 					str[i] = buffer[i];
 				}
+
+				str[len] = '\0';
 
 				return str;
 			}

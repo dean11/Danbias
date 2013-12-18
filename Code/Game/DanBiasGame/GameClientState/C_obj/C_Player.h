@@ -15,7 +15,7 @@ public:
 	C_Player(void);
 	~C_Player(void);
 	void Init(ModelInitData modelInit);
-	void setPos();
+	void setPos(Oyster::Math::Float4x4 world);
 
 	void Render();
 	void Release();

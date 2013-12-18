@@ -48,8 +48,9 @@ struct ClientDataContainer
 		InitWinSock();
 		callbackType = NetworkProtocolCallbackType_Unknown;
 		sendPostBox = new PostBox<CustomNetProtocol>();
-		connection.SetBlockingMode(false);
 		connection.InitiateClient();
+		connection.SetBlockingMode(false);
+		
 	}
 	ClientDataContainer(IThreadObject* o, unsigned int socket )
 		:connection(socket), ID(currID++)
@@ -85,10 +86,10 @@ struct NetworkClient::PrivateData : public IThreadObject
 	{
 		if(!this->data)return true;
 		if(!this->data->connection.IsConnected()) return true;
-
+		
 		Send();
 		Recv();
-
+		
 		return true;
 	}
 
@@ -122,32 +123,30 @@ struct NetworkClient::PrivateData : public IThreadObject
 	{
 		int errorCode = -1;
 
-		if(this->data->callbackType == NetworkProtocolCallbackType_Function)
-		{
-			OysterByte temp = OysterByte();
-			errorCode = this->data->connection.Recieve(temp);
-
-			if(errorCode == 0)
-			{
-				CustomNetProtocol protocol;
-				bool ok = this->data->translator.Unpack(protocol, temp);
+		OysterByte temp = OysterByte();
+		errorCode = this->data->connection.Recieve(temp);
 		
-				//Check if the protocol was unpacked correctly
-				if(ok)
+		if(errorCode == 0 && temp.GetSize())
+		{
+			CustomNetProtocol protocol;
+			bool ok = this->data->translator.Unpack(protocol, temp);
+		
+			//Check if the protocol was unpacked correctly
+			if(ok)
+			{
+				this->data->recvObjMutex.lock();
+				if(this->data->callbackType == NetworkProtocolCallbackType_Function)
 				{
-					this->data->recvObjMutex.lock();
-					if(this->data->callbackType == NetworkProtocolCallbackType_Function)
-					{
-						this->data->recvObj.protocolRecieverFnc(protocol);
-					}
-					else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
-					{
-						this->data->recvObj.protocolRecievedObject->ProtocolRecievedCallback(protocol);
-					}
-					this->data->recvObjMutex.unlock();
+					this->data->recvObj.protocolRecieverFnc(protocol);
 				}
+				else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
+				{
+					this->data->recvObj.protocolRecievedObject->ProtocolRecievedCallback(protocol);
+				}
+				this->data->recvObjMutex.unlock();
 			}
 		}
+	
 		return errorCode;
 	}
 
@@ -166,19 +165,22 @@ NetworkClient::NetworkClient()
 NetworkClient::NetworkClient(unsigned int socket)
 {
 	privateData = new PrivateData(socket);
+	this->privateData->data->thread.Create(this->privateData, true);
 }
 
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
 	privateData = new PrivateData();
-	this->privateData->data->recvObj = SmartPointer<RecieverObject>(&recvObj);;
+	this->privateData->data->callbackType = type;
+	this->privateData->data->recvObj = recvObj;
 }
 
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket)
 {
 	privateData = new PrivateData(socket);
-	this->privateData->data->recvObj = SmartPointer<RecieverObject>(&recvObj);
+	this->privateData->data->recvObj = recvObj;
 	this->privateData->data->callbackType = type;
+	this->privateData->data->thread.Create(this->privateData, true);
 }
 
 NetworkClient::NetworkClient(const NetworkClient& obj)
@@ -204,16 +206,20 @@ NetworkClient::~NetworkClient()
 
 bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 {
+	privateData->data->connection.SetBlockingMode(true);
 	int result = this->privateData->data->connection.Connect(port, serverIP);
 	
 	//Connect has succeeded
 	if(result == 0)
 	{
-		privateData->data->thread.Start();
+		if(this->privateData->data->thread.IsCreated()) return false;
+
+		this->privateData->data->thread.Create(this->privateData, true);
+		privateData->data->connection.SetBlockingMode(false);
 		return true;
 	}
 
-	privateData->data->connection.SetBlockingMode(false);
+	
 
 	//Connect has failed
 	return false;
@@ -234,9 +240,14 @@ void NetworkClient::Send(CustomProtocolObject& protocol)
 	this->privateData->Send(protocol.GetProtocol());
 }
 
+void NetworkClient::Send(CustomNetProtocol* protocol)
+{
+	this->privateData->Send(protocol);
+}
+
 void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type)
 {
-	if (type == NetworkProtocolCallbackType_Unknown) return;
+	if (type == NetworkProtocolCallbackType_Unknown) return;	//It should probably still be set even if it is unknown.
 
 	privateData->data->recvObjMutex.lock();
 		privateData->data->recvObj = recvObj;
