@@ -249,7 +249,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true; // Passed all tests, is in same position
 	}
 
-	bool Intersect( const Point &pointA, const Point &pointB, ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Point &pointA, const Point &pointB, ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
@@ -285,13 +285,13 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return false;
 	}
 
-	bool Intersect( const Ray &ray, const Point &point, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Ray &ray, const Point &point, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
 	}
 	
-	bool Intersect( const Ray &rayA, const Ray &rayB, ::Oyster::Math::Float &connectDistanceA, ::Oyster::Math::Float &connectDistanceB, ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Ray &rayA, const Ray &rayB, ::Oyster::Math::Float &connectDistanceA, ::Oyster::Math::Float &connectDistanceB, ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		return false;
 	}
@@ -338,34 +338,35 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return false;
 	}
 
-	bool Intersect( const Sphere &sphere, const Point &point, ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Sphere &sphere, const Point &point, ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
 	}
 	
-	bool Intersect( const Sphere &sphere, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Sphere &sphere, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
 	}
 	
-	bool Intersect( const Sphere &sphereA, const Sphere &sphereB, ::Oyster::Math::Float3& worldPointOfContact )
-	{
-		//Float3 C = sphereA.center;
-		//C -= sphereB.center;
-		//Float r = (sphereA.radius + sphereB.radius);
+	bool Intersect( const Sphere &sphereA, const Sphere &sphereB, ::Oyster::Math::Float3 &worldPointOfContact )
+	{ // by Robin Engman
+		Float3 C = sphereA.center;
+		C -= sphereB.center;
+		Float r = sphereA.radius + sphereB.radius;
 
-		//if (r*r >= C.Dot(C))
-		//{
-		//	Float distance;
+		if ( r*r >= C.Dot(C) )
+		{
+			Float distance;
+			Ray ray(sphereB.center, C.Normalize());
 
-		//	Intersect(sphereA, Ray(sphereB.center, C.Normalize()), distance);
+			Intersect( sphereA, ray, distance );
 
-		//	worldPointOfContact = sphereB.center+C.Normalize()*distance;
+			worldPointOfContact = ray.origin + ray.direction*distance;
 
-		//	return true; // Intersect detected!
-		//}
+			return true;
+		}
 
 		return false;
 	}
@@ -413,25 +414,25 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		return true; // none parallell planes ALWAYS intersects somewhere
 	}
 
-	bool Intersect( const Plane &plane, const Point &point, const ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Plane &plane, const Point &point, const ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
 	}
 	
-	bool Intersect( const Plane &plane, const Ray &ray, ::Oyster::Math::Float &connectDistance, const ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Plane &plane, const Ray &ray, ::Oyster::Math::Float &connectDistance, const ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
 	}
 	
-	bool Intersect( const Plane &plane, const Sphere &sphere, const ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Plane &plane, const Sphere &sphere, const ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
 	}
 	
-	bool Intersect( const Plane &planeA, const Plane &planeB, const ::Oyster::Math::Float3& worldPointOfContact )
+	bool Intersect( const Plane &planeA, const Plane &planeB, const ::Oyster::Math::Float3 &worldPointOfContact )
 	{
 		//! @todo TODO: implement Stub
 		return false;
@@ -494,9 +495,18 @@ namespace Oyster { namespace Collision3D { namespace Utility
 	}
 
 	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere, Float3 &worldPointOfContact )
-	{
-		//! @todo TODO: implement stub
-		return Intersect( box, sphere );
+	{ // by Robin Engman
+		
+		if(Intersect(box, sphere))
+		{
+			Float distance;
+			Float3 boxMiddle = (box.maxVertex - box.minVertex)*0.5f;
+			Ray ray(boxMiddle, Float3(sphere.center - boxMiddle).Normalize());
+			Intersect( sphere, ray, distance );
+			worldPointOfContact = ray.origin + ray.direction * distance;
+		}
+	
+		return false;
 	}
 
 	bool Intersect( const BoxAxisAligned &box, const Plane &plane )
@@ -595,9 +605,17 @@ namespace Oyster { namespace Collision3D { namespace Utility
 	}
 
 	bool Intersect( const Box &box, const Sphere &sphere, Float3 &worldPointOfContact )
-	{
-		//! @todo TODO: implement stub
-		return Intersect( box, sphere );
+	{ // by Robin Engman
+		if( Intersect(box, sphere) )
+		{
+			Float distance;
+			Ray ray( sphere.center, Float3(box.center - sphere.center) );
+		
+			Intersect( box, ray, distance );
+			worldPointOfContact = ray.origin + ray.direction*distance;
+		}
+		
+		return false;
 	}
 
 	bool Intersect( const Box &box, const Plane &plane )
