@@ -198,23 +198,25 @@ void Frustrum::WriteToByte( unsigned int &nextIndex, unsigned char targetMem[] )
 }
 
 ::Utility::DynamicMemory::UniquePointer<ICollideable> Frustrum::Clone( ) const
-{ return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Frustrum(*this) ); }
+{
+	return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Frustrum(*this) );
+}
 
 bool Frustrum::Intersects( const ICollideable &target ) const
 {
 	switch( target.type )
 	{
-	case Type_universe: return true;
-	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
-	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance );
-	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target );
-	case Type_plane: return Utility::Intersect( *this, *(Plane*)&target );
-	// case Type_triangle: return false; // TODO: 
-	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)&target );
-	case Type_box: return Utility::Intersect( *this, *(Box*)&target );
-	case Type_frustrum: return Utility::Intersect( *this, *(Frustrum*)&target );
-	// case Type_line: return false; // TODO: 
-	default: return false;
+	case Type_universe:			return true;
+	case Type_point:			return Utility::Intersect( *this, (const Point&)target );
+	case Type_ray:				return Utility::Intersect( *this, (const Ray&)target, ((const Ray&)target).collisionDistance );
+	case Type_sphere:			return Utility::Intersect( *this, (const Sphere&)target );
+	case Type_plane:			return Utility::Intersect( *this, (const Plane&)target );
+	//case Type_triangle:			return false; // TODO: 
+	case Type_box_axis_aligned:	return Utility::Intersect( *this, (const BoxAxisAligned&)target );
+	case Type_box:				return Utility::Intersect( *this, (const Box&)target );
+	case Type_frustrum:			return Utility::Intersect( *this, (const Frustrum&)target );
+	//case Type_line:				return false; // TODO: 
+	default:					return false;
 	}
 }
 
@@ -228,15 +230,15 @@ bool Frustrum::Contains( const ICollideable &target ) const
 {
 	switch( target.type )
 	{
-	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
-	// case Type_ray: return false; // TODO: 
-	// case Type_sphere: return false; // TODO: 
-	// case Type_plane: return false; // TODO: 
-	// case Type_triangle: return false; // TODO: 
-	// case Type_box_axis_aligned: return false; // TODO: 
-	// case Type_box: return false; // TODO: 
-	// case Type_frustrum: return false; // TODO: 
-	// case Type_line: return false; // TODO: 
-	default: return false;
+	case Type_point:			return Utility::Intersect( *this, (const Point&)target );
+	//case Type_ray:				return false; // TODO: 
+	//case Type_sphere:				return false; // TODO: 
+	//case Type_plane:				return false; // TODO: 
+	//case Type_triangle:			return false; // TODO: 
+	//case Type_box_axis_aligned:	return false; // TODO: 
+	//case Type_box:				return false; // TODO: 
+	//case Type_frustrum:			return false; // TODO: 
+	//case Type_line:				return false; // TODO: 
+	default:					return false;
 	}
 }

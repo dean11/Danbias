@@ -81,7 +81,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			centerDistance = box.center.Dot(plane.normal) + plane.phasing; // distance between box center and plane
 		}
 
-		bool SeperatingAxisTest_AxisAlignedVsTransformedBox( const Float3 &boundingOffsetA, const Float3 &boundingOffsetB, const Float4x4 &rotationB, const Float3 &worldOffset )
+		bool SeperatingAxisTest_AxisAlignedVsTransformedBox( const Float3 &boundingOffsetA, const Float3 &boundingOffsetB, const Float4x4 &rotationB, const Float4 &worldOffset )
 		{ // by Dan Andersson
 
 			/*****************************************************************
@@ -121,19 +121,19 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			}
 
 			// s = RB.v[0].xyz
-			if( Abs(worldOffset.Dot(rotationB.v[0].xyz)) > boundingOffsetA.Dot(absRotationB.v[0].xyz) + boundingOffsetB.x )
+			if( Abs(worldOffset.Dot(rotationB.v[0])) > boundingOffsetA.Dot(absRotationB.v[0].xyz) + boundingOffsetB.x )
 			{ // |t dot s| > hA dot |s| + hB dot |s * RB| -->> |t dot s| > hA dot |s| + hB dot |{1, 0, 0}| -->> |t dot s| > hA dot |s| + hB.x
 				return false;
 			}
 
 			// s = RB.v[1].xyz
-			if( Abs(worldOffset.Dot(rotationB.v[1].xyz)) > boundingOffsetA.Dot(absRotationB.v[1].xyz) + boundingOffsetB.y )
+			if( Abs(worldOffset.Dot(rotationB.v[1])) > boundingOffsetA.Dot(absRotationB.v[1].xyz) + boundingOffsetB.y )
 			{ // |t dot s| > hA dot |s| + hB.y
 				return false;
 			}
 
 			// s = RB.v[2].xyz
-			if( Abs(worldOffset.Dot(rotationB.v[2].xyz)) > boundingOffsetA.Dot(absRotationB.v[2].xyz) + boundingOffsetB.z )
+			if( Abs(worldOffset.Dot(rotationB.v[2])) > boundingOffsetA.Dot(absRotationB.v[2].xyz) + boundingOffsetB.z )
 			{ // |t dot s| > hA dot |s| + hB.z
 				return false;
 			}
@@ -201,6 +201,179 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			d += boundingOffsetB.y * absRotationB.v[0].z;
 			if( Abs(worldOffset.y*rotationB.v[2].x - worldOffset.x*rotationB.v[2].y) > d ) return false;
 
+			return true;
+		}
+
+		bool SeperatingAxisTest_AxisAlignedVsTransformedBox( const Float3 &boundingOffsetA, const Float3 &boundingOffsetB, const Float4x4 &rotationB, const Float4 &worldOffset, Float4 &worldPointOfContact )
+		{ // by Dan Andersson
+
+			/*****************************************************************
+			 * Uses the Seperating Axis Theorem
+			 * if( |t dot s| > hA dot |s * RA| + hB dot |s * RB| ) then not intersecting
+			 *     |t dot s| > hA dot |s| + hB dot |s * RB| .. as RA = I
+			 *
+			 * t: objectB's offset from objectA														[worldOffset]
+			 * s: current comparison axis
+			 * hA: boundingReach vector of objectA. Only absolute values is assumed.				[boundingOffsetA]
+			 * hB: boundingReach vector of objectB. Only absolute values is assumed.				[boundingOffsetB]
+			 * RA: rotation matrix of objectA. Is identity matrix here, thus omitted.
+			 * RB: rotation matrix of objectB. Is transformed into objectA's view at this point.	[rotationB]
+			 *
+			 * Note: s * RB = (RB^T * s)^T = (RB^-1 * s)^T .... vector == vector^T
+			 *****************************************************************/
+
+			/*****************************************************************
+			 * Distance Alghorithm based on .. something Dan came up with
+			 * pi = si * ( (t dot si) * (hA dot |si|) / (hA dot |si| + hB dot |si * RB|) )
+			 * p = estimated point of contact
+			 *   = ( p1 + p2 + ... + p5 + p6 ) / 2
+			 *****************************************************************/
+
+			const Float4 &t = worldOffset;
+			Float4  s = Float4::standard_unit_x,
+				   hA = Float4( boundingOffsetA, 0.0f ),
+				   hB = Float4( boundingOffsetB, 0.0f );
+			Float centerSeperation = t.Dot(s),
+				  eA = hA.Dot( Abs(s) ),
+				  edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+			worldPointOfContact = s * ( centerSeperation * eA / edgeSeperation );
+
+			s = Float4::standard_unit_y;
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+
+			s = Float4::standard_unit_z;
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+
+			s = rotationB.v[0];
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+
+			s = rotationB.v[1];
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+
+			s = rotationB.v[2];
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation ); // enough point of contact data gathered for approximative result.
+
+			s = Float4( Float3::standard_unit_x.Cross(rotationB.v[0].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_x.Cross(rotationB.v[1].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_x.Cross(rotationB.v[2].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_y.Cross(rotationB.v[0].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_y.Cross(rotationB.v[1].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_y.Cross(rotationB.v[2].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_z.Cross(rotationB.v[0].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_z.Cross(rotationB.v[1].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			s = Float4( Float3::standard_unit_z.Cross(rotationB.v[2].xyz), 0.0f );
+			centerSeperation = t.Dot(s);
+			eA = hA.Dot( Abs(s) );
+			edgeSeperation = eA + hB.Dot( Abs(s * rotationB) );
+			if( Abs(centerSeperation) > edgeSeperation )
+			{ // no intersection
+				return false;
+			}
+
+			worldPointOfContact *= 0.5f;
 			return true;
 		}
 	}
@@ -293,6 +466,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 	
 	bool Intersect( const Ray &rayA, const Ray &rayB, ::Oyster::Math::Float &connectDistanceA, ::Oyster::Math::Float &connectDistanceB, ::Oyster::Math::Float3 &worldPointOfContact )
 	{
+		//! @todo TODO: implement Stub
 		return false;
 	}
 
@@ -635,20 +809,45 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB )
 	{ // by Dan Andersson
-		Float3 alignedOffsetBoundaries = (boxB.maxVertex - boxB.minVertex) * 0.5f,
-			   offset = boxA.center - Average( boxB.minVertex, boxB.maxVertex );
-		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries, boxA.boundingOffset, boxA.rotation, offset );
+		Float4 alignedOffsetBoundaries = (Float4(boxB.maxVertex, 1.0f) - Float4(boxB.minVertex, 1.0f)) * 0.5f,
+			   offset = Float4(boxA.center, 1.0f) - Average( Float4(boxB.maxVertex, 1.0f), Float4(boxB.minVertex, 1.0f) );
+		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries.xyz, boxA.boundingOffset, boxA.rotation, offset );
+	}
+
+	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB, ::Oyster::Math::Float3 &worldPointOfContact )
+	{ // by Dan Andersson
+		Float4 alignedOffsetBoundaries = (Float4(boxB.maxVertex, 1.0f) - Float4(boxB.minVertex, 1.0f)) * 0.5f,
+			   offset = Float4(boxA.center, 1.0f) - Average( Float4(boxB.maxVertex, 1.0f), Float4(boxB.minVertex, 1.0f) );
+		
+		Float4 pointOfContact;
+		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries.xyz, boxA.boundingOffset, boxA.rotation, offset, pointOfContact ) )
+		{
+			worldPointOfContact = pointOfContact.xyz;
+			return true;
+		}
+		else return false;
 	}
 
 	bool Intersect( const Box &boxA, const Box &boxB )
 	{ // by Dan Andersson
-		Float4x4 orientationA = OrientationMatrix(boxA.rotation, boxA.center),
-				 orientationB = OrientationMatrix(boxB.rotation, boxB.center),
-				 invOrientationA = InverseOrientationMatrix( orientationA );
+		Float4x4 rotationB = TransformMatrix( InverseRotationMatrix(boxA.rotation), boxB.rotation );
+		Float4 posB = boxB.center - boxA.center;
 
-		orientationB = TransformMatrix( invOrientationA, orientationB );
+		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, rotationB, posB );
+	}
 
-		return Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, ExtractRotationMatrix(orientationB), orientationB.v[3].xyz );
+	bool Intersect( const Box &boxA, const Box &boxB, Float3 &worldPointOfContact )
+	{
+		Float4x4 rotationB = TransformMatrix( InverseRotationMatrix(boxA.rotation), boxB.rotation );
+		Float4 posB = boxB.center - boxA.center;
+
+		Float4 pointOfContact;
+		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, rotationB, posB, pointOfContact ) )
+		{
+			worldPointOfContact = TransformVector( boxA.rotation, pointOfContact, pointOfContact ).xyz;
+			return true;
+		}
+		else return false;
 	}
 
 	bool Intersect( const Frustrum &frustrum, const Point &point )
