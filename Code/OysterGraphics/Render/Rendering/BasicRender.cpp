@@ -1,5 +1,5 @@
 #include "Render.h"
-#include "../Resources/Resources.h"
+#include "../Resources/Deffered.h"
 #include "../../Definitions/GraphicalDefinition.h"
 #include "../../Model/ModelInfo.h"
 #include <map>
@@ -13,22 +13,34 @@ namespace Oyster
 		{
 			namespace Rendering
 			{
+				Definitions::Pointlight pl;
 
-				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection)
+				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
-					Core::ShaderManager::SetShaderEffect(Graphics::Render::Resources::obj);
-					Preparations::Basic::BindBackBufferRTV();
+					Preparations::Basic::ClearRTV(Resources::Deffered::GBufferRTV,Resources::Deffered::GBufferSize,Math::Float4(1,0,0,1));
+					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Deffered::GeometryPass);
 
 					Definitions::VP vp;
 					vp.V = View;
 					vp.P = Projection;
 
-					void* data = Resources::VPData.Map();
+					void* data = Resources::Deffered::VPData.Map();
 					memcpy(data, &vp, sizeof(Definitions::VP));
-					Resources::VPData.Unmap();
+					Resources::Deffered::VPData.Unmap();
 
-					Resources::VPData.Apply();
+					Definitions::LightConstants lc;
+					lc.InvProj =  Projection.GetInverse();
+					lc.Pixels = Core::resolution;
+					lc.Lights = numLights;
+
+					data = Resources::Deffered::LightConstantsData.Map();
+					memcpy(data, &lc, sizeof(Definitions::LightConstants));
+					Resources::Deffered::LightConstantsData.Unmap();
+
+					data = Resources::Deffered::PointLightsData.Map();
+					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
+					Resources::Deffered::PointLightsData.Unmap();
 				}
 
 				void Basic::RenderScene(Model::Model* models, int count)
@@ -37,14 +49,17 @@ namespace Oyster
 					{
 						if(models[i].Visible)
 						{
-							void* data  = Resources::ModelData.Map();
+							void* data  = Resources::Deffered::ModelData.Map();
 							memcpy(data,&(models[i].WorldMatrix),sizeof(Math::Float4x4));
-							Resources::ModelData.Unmap();
+							Resources::Deffered::ModelData.Unmap();
 
 							
 							Model::ModelInfo* info = (Model::ModelInfo*)models[i].info;
 
-							Core::deviceContext->PSSetShaderResources(0,info->Material.size(),&(info->Material[0]));
+							if(info->Material.size())
+							{
+								Core::deviceContext->PSSetShaderResources(0,info->Material.size(),&(info->Material[0]));
+							}
 
 
 							info->Vertices->Apply();
@@ -62,8 +77,11 @@ namespace Oyster
 				}
 				void Basic::EndFrame()
 				{
-					IDXGISwapChain* chain = Core::swapChain;
-					chain->Present(0,0);
+					Core::PipelineManager::SetRenderPass(Resources::Deffered::LightPass);
+
+					Core::deviceContext->Dispatch((Core::resolution.x + 15U) / 16U,(Core::resolution.y + 15U) / 16U,1);
+
+					Core::swapChain->Present(0,0);
 				}
 			}
 		}

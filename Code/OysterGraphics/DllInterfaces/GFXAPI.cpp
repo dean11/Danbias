@@ -1,6 +1,7 @@
 #include "GFXAPI.h"
 #include "../Core/Core.h"
-#include "../Render/Resources/Resources.h"
+#include "../Render/Resources/Debug.h"
+#include "../Render/Resources/Deffered.h"
 #include "../Render/Rendering/Render.h"
 #include "../FileLoader/ObjReader.h"
 #include "../../Misc/Resource/OysterResource.h"
@@ -14,6 +15,7 @@ namespace Oyster
 		{
 			Math::Float4x4 View;
 			Math::Float4x4 Projection;
+			std::vector<Definitions::Pointlight> Lights;
 		}
 
 		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
@@ -24,10 +26,13 @@ namespace Oyster
 			{
 				return API::Fail;
 			}
-			if(Render::Resources::Init() == Core::Init::Fail)
+#ifdef _DEBUG
+			if(Render::Resources::Debug::Init() == Core::Init::Fail)
 			{
 				return API::Fail;
 			}
+#endif
+			Render::Resources::Deffered::Init();
 
 			Render::Preparations::Basic::SetViewPort();
 			return API::Sucsess;
@@ -45,7 +50,14 @@ namespace Oyster
 
 		void API::NewFrame()
 		{
-			Render::Rendering::Basic::NewFrame(View, Projection);
+			if(Lights.size())
+			{
+				Render::Rendering::Basic::NewFrame(View, Projection, &Lights[0], Lights.size());
+			}
+			else
+			{
+				Render::Rendering::Basic::NewFrame(View, Projection, NULL, 0);
+			}
 		}
 
 		void API::RenderScene(Model::Model models[], int count)
@@ -90,16 +102,31 @@ namespace Oyster
 		{
 			SAFE_DELETE(Core::viewPort);
 			Oyster::Resource::OysterResource::Clean();
-			Oyster::Graphics::Core::ShaderManager::Clean();
-			Oyster::Graphics::Render::Resources::Clean();
+			Oyster::Graphics::Core::PipelineManager::Clean();
+
+#ifdef _DEBUG
+			Oyster::Graphics::Render::Resources::Debug::Clean();
+#endif
+			Oyster::Graphics::Render::Resources::Deffered::Clean();
 
 			SAFE_RELEASE(Core::depthStencil);
+			SAFE_RELEASE(Core::depthStencilUAV);
 			SAFE_RELEASE(Core::backBufferRTV);
 			SAFE_RELEASE(Core::backBufferUAV);
 
 			SAFE_RELEASE(Core::swapChain);
 			SAFE_RELEASE(Core::deviceContext);
 			SAFE_RELEASE(Core::device);
+		}
+
+		void API::AddLight(Definitions::Pointlight light)
+		{
+			Lights.push_back(light);
+		}
+
+		void API::ClearLights()
+		{
+			Lights.clear();
 		}
 	}
 }

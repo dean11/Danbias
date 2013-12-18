@@ -21,9 +21,6 @@
     <ClCompile Include="Core\Core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ShaderManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,19 +30,25 @@
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Resources\Resources.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FileLoader\ObjReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FileLoader\TextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DllInterfaces\GFXAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileLoader\ShaderLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLoader\ModelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Resources\Deffered.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Resources\Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\PipelineManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,9 +68,6 @@
     <ClInclude Include="Model\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Resources\Resources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Definitions\GraphicalDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -83,19 +83,27 @@
     <ClInclude Include="FileLoader\GeneralLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Resources\Deffered.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Resources\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugVertex.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\PixelGatherData.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\VertexGatherData.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\TextureDebug.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\Render\LightPass.hlsl" />
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\LightPass.hlsl" />
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\PixelGatherData.hlsl" />
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\VertexGatherData.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\HLSL\Deffered Shaders\GatherGBuffer\GBufferHeader.hlsli" />
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
-    <None Include="Shader\HLSL\Deffered Shaders\Render\Defines.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\Defines.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\GBufferHeader.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\LightCalc.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\PosManipulation.hlsli" />
   </ItemGroup>
 </Project>

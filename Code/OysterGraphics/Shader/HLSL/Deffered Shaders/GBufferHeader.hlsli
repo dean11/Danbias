@@ -3,10 +3,10 @@ struct VertexIn
 	float3 pos			: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
-	float3 tangent		: TANGENT;
-	float3 biTangent	: BITANGENT;
-	float4 boneIndex	: BONEINDEX;
-	float4 boneWeight	: BONEWEIGHT;
+	//float3 tangent		: TANGENT;
+	//float3 biTangent	: BITANGENT;
+	//float4 boneIndex	: BONEINDEX;
+	//float4 boneWeight	: BONEWEIGHT;
 };
 
 struct VertexOut
@@ -15,8 +15,8 @@ struct VertexOut
 	float4 ViewPos		: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
-	float3 tangent		: TANGENT;
-	float3 biTangent	: BITANGENT;
+	//float3 tangent		: TANGENT;
+	//float3 biTangent	: BITANGENT;
 };
 
 struct PixelOut
@@ -26,7 +26,9 @@ struct PixelOut
 };
 
 Texture2D Diffuse		: register(t0);
-Texture2D Specular		: register(t1);
+Texture2D Normal		: register(t1);
+
+SamplerState S1 : register(s0);
 
 cbuffer PerFrame : register(b0)
 {

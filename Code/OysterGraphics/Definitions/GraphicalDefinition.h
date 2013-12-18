@@ -1,5 +1,5 @@
-#include "..\OysterGraphics\Core\Dx11Includes.h"
 #include "OysterMath.h"
+#pragma once
 
 namespace Oyster
 {
@@ -29,6 +29,22 @@ namespace Oyster
 				Oyster::Math::Float3 biTangent;
 				Oyster::Math::Float4 boneIndex;
 				Oyster::Math::Float4 boneWeights;
+			};
+
+			struct LightConstants
+			{
+				Math::Float4x4 InvProj;
+				Math::Float2 Pixels;
+				int Lights;
+				float Pad;
+			};
+
+			struct Pointlight
+			{
+				Math::Float3 Pos;
+				float Radius;
+				Math::Float3 Color;
+				float Bright;
 			};
 
 		}
