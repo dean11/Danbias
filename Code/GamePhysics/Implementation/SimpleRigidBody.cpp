@@ -97,8 +97,52 @@ Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	//! @todo TODO: better implementation needed
-	return targetMem = (worldPos - this->rigid.box.center).GetNormalized();
+	Float4 offset = worldPos - this->rigid.box.center;
+	Float distance = offset.Dot( offset );
+	Float3 normal = Float3::standard_unit_z;
+
+	if( distance != 0.0f )
+	{
+		Ray ray( Float4::standard_unit_w, offset / (Float)::std::sqrt(distance) );
+		Float minDistance = numeric_limits<Float>::max();
+
+		if( ray.Intersects(Plane(this->rigid.box.xAxis, this->rigid.box.boundingOffset.x)) )
+		{ // check along x-axis
+			if( ray.collisionDistance < 0.0f )
+				normal = -this->rigid.box.xAxis.xyz;
+			else
+				normal = this->rigid.box.xAxis.xyz;
+
+			minDistance = Abs( ray.collisionDistance );
+		}
+
+		if( ray.Intersects(Plane(this->rigid.box.yAxis, this->rigid.box.boundingOffset.y)) )
+		{ // check along y-axis
+			distance = Abs( ray.collisionDistance ); // recycling memory
+			if( minDistance > distance )
+			{
+				if( ray.collisionDistance < 0.0f )
+					normal = -this->rigid.box.yAxis.xyz;
+				else
+					normal = this->rigid.box.yAxis.xyz;
+
+				minDistance = distance;
+			}
+		}
+
+		if( ray.Intersects(Plane(this->rigid.box.zAxis, this->rigid.box.boundingOffset.z)) )
+		{ // check along z-axis
+			if( minDistance > Abs( ray.collisionDistance ) )
+			{
+				if( ray.collisionDistance < 0.0f )
+					normal = -this->rigid.box.zAxis.xyz;
+				else
+					normal = this->rigid.box.zAxis.xyz;
+			}
+		}
+	}
+	targetMem.xyz = normal;
+	return targetMem;
 }
 
 Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
