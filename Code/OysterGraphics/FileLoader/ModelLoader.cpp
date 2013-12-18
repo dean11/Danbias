@@ -2,6 +2,7 @@
 #include "..\Core\Dx11Includes.h"
 #include "..\Core\Core.h"
 #include "ObjReader.h"
+#include "..\..\Misc\Resource\OysterResource.h"
 
 HRESULT CreateWICTextureFromFileEx( ID3D11Device* d3dDevice,
 											 ID3D11DeviceContext* d3dContext,
@@ -38,10 +39,27 @@ void Oyster::Graphics::Loading::UnloadTexture(void* data)
 
 void Oyster::Graphics::Loading::LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out)
 {
-	OBJReader obj;
-	obj.readOBJFile(filename);
-	Model::ModelInfo* info;
-	info = obj.toModel();
+	FileLoaders::ObjReader* obj = FileLoaders::ObjReader::LoadFile(filename);
+	Model::ModelInfo* info = new Model::ModelInfo();
+	Oyster::FileLoaders::ObjReader::Vertex* vdata;
+	int count;
+	obj->GetVertexData(&vdata, count);
+	info->Vertices = new Core::Buffer();
+	Core::Buffer::BUFFER_INIT_DESC desc;
+	desc.ElementSize = sizeof(FileLoaders::ObjReader::Vertex);
+	desc.NumElements = count;
+	desc.InitData = vdata;
+	desc.Type = Core::Buffer::VERTEX_BUFFER;
+	desc.Usage = Core::Buffer::BUFFER_USAGE_IMMUTABLE;
+
+	info->VertexCount = count;
+	info->Vertices->Init(desc);
+	info->Indexed = false;
+
+	void* texture = Oyster::Resource::OysterResource::LoadResource((std::wstring(filename)+ L".png").c_str(),Graphics::Loading::LoadTexture);
+
+	info->Material.push_back((ID3D11ShaderResourceView*)texture);
+
 	out.loadedData = info;
 	out.resourceUnloadFnc = Oyster::Graphics::Loading::UnloadOBJ;
 }
