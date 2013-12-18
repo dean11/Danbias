@@ -3,6 +3,8 @@
 #include "DynamicObject.h"
 #include "GameMode.h"
 #include "Player.h"
+#include "PhysicsAPI.h"
+#include "TeamManager.h"
 
 using namespace GameLogic;
 
@@ -16,8 +18,7 @@ struct Level::PrivateData
 	{
 	}
 
-	Player *players;
-	int nrOfPlayers;
+	TeamManager *teamManager;
 
 	StaticObject** staticObjects;
 	int nrOfStaticObjects;
@@ -26,6 +27,8 @@ struct Level::PrivateData
 	int nrOfDynamicObjects;
 
 	GameMode* gameMode;
+
+	Oyster::Physics::ICustomBody *rigidBodyLevel;
 
 }myData;
 
@@ -43,6 +46,21 @@ Level::~Level(void)
 void Level::InitiateLevel(std::string levelPath)
 {
 
+}
+
+void Level::AddPlayerToTeam(Player *player, int teamID)
+{
+	myData->teamManager->AddPlayerToTeam(player,teamID);
+}
+
+void Level::CreateTeam(int teamSize)
+{
+	myData->teamManager->CreateTeam(teamSize);
+}
+
+void Level::RespawnPlayer(Player *player)
+{
+	myData->teamManager->RespawnPlayerRandom(player);
 }
 
 
