@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameSessionManager.cpp" />
     <ClCompile Include="Include\DanBiasServerAPI.cpp" />
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameServer.cpp" />
@@ -189,6 +190,7 @@
   <ItemGroup>
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="GameServer.h" />
+    <ClInclude Include="GameSessionManager.h" />
     <ClInclude Include="Include\DanBiasServerAPI.h" />
     <ClInclude Include="ServerInitReader.h" />
     <ClInclude Include="ServerObjects\ClientObject.h" />

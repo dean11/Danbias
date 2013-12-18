@@ -156,7 +156,10 @@
     <ClCompile Include="WinTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DynamicArray.h" />
+    <ClInclude Include="GID.h" />
     <ClInclude Include="IQueue.h" />
+    <ClInclude Include="OysterCallback.h" />
     <ClInclude Include="PostBox\IPostBox.h" />
     <ClInclude Include="PostBox\PostBox.h" />
     <ClInclude Include="Resource\OysterResource.h" />

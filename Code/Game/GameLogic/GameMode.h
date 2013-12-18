@@ -8,7 +8,6 @@
 
 namespace GameLogic
 {
-
 	class GameMode
 	{
 		public:

@@ -154,6 +154,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameProtocols.h" />
     <ClInclude Include="ObjectProtocols.h" />
     <ClInclude Include="PlayerProtocols.h" />
     <ClInclude Include="ProtocolIdentificationID.h" />

@@ -14,13 +14,14 @@ namespace DanBias
 	{
 	public:
 		ClientObject(Oyster::Network::NetworkClient* client);
-		~ClientObject();
+		virtual~ClientObject();
 
 		void SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box);
 
 		GameLogic::Player*				Logic_Object();
 		Oyster::Network::NetworkClient* NetClient_Object();
 	
+	private:
 		/** This method is NOT threadsafe. */
 		virtual void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol) override;
 	

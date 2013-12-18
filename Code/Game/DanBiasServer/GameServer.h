@@ -15,7 +15,7 @@ namespace DanBias
 	{
 	public:
 		GameServer();
-		~GameServer();
+		virtual~GameServer();
 
 		DanBiasServerReturn Create();
 		DanBiasServerReturn Run();

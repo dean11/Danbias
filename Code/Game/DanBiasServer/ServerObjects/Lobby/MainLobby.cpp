@@ -1,19 +1,21 @@
 #include "MainLobby.h"
 #include <PlayerProtocols.h>
+#include <PostBox\PostBox.h>
 
 namespace DanBias
 {
 	MainLobby::MainLobby()
 	{
-
+		this->box = new Oyster::PostBox<DanBias::NetworkSession::NetEvent>();
 	}
 	MainLobby::~MainLobby()
 	{
-
+		delete this->box;
+		this->box = 0;
 	}
 	void MainLobby::Release()
 	{
-		this->DetachClient();
+		this->CloseSession(0);
 	}
 
 	void MainLobby::Frame()
@@ -24,7 +26,7 @@ namespace DanBias
 //////// Private
 	void MainLobby::ParseEvents()
 	{
-		if(!this->box->IsEmpty())
+		if(this->box && !this->box->IsEmpty())
 		{
 			NetEvent &e = this->box->Fetch();
 

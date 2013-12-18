@@ -92,5 +92,14 @@
     <ClInclude Include="PostBox\IPostBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OysterCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
