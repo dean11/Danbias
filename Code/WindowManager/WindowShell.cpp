@@ -217,6 +217,24 @@ bool WindowShell::CreateConsoleWindow(bool redirectStdOut, const wchar_t* title)
 
 	return true;
 }
+unsigned int WindowShell::GetWidth()
+{
+	if(!__windowShellData.hWnd) return -1;
+
+	RECT rect;
+	GetWindowRect(__windowShellData.hWnd, &rect);
+
+	return (rect.right - rect.left);
+}
+unsigned int WindowShell::GetHeight()
+{
+	if(!__windowShellData.hWnd) return -1;
+
+	RECT rect;
+	GetWindowRect(__windowShellData.hWnd, &rect);
+
+	return (rect.bottom - rect.top);
+}
 bool WindowShell::Frame()
 {
 	MSG msg = {0};

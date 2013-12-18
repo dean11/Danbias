@@ -101,7 +101,6 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			movePlayer.bTurnLeft = false;
 			movePlayer.bTurnRight = false;
 
-
 			if(KeyInput->IsKeyPressed(DIK_W))
 			{
 				movePlayer.bForward = true;

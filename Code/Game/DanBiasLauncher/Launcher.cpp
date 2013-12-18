@@ -29,7 +29,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	// Game client starter code goes here
 	DanBias::DanBiasGameDesc gameDesc;
 	gameDesc.port = 15151;
-	gameDesc.IP = "193.11.186.101";
+	gameDesc.IP = "193.11.184.196";
 	gameDesc.hinst = hinst;
 	gameDesc.nCmdShow = cmdShow;
 

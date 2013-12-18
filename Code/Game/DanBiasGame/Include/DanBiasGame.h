@@ -18,7 +18,6 @@ namespace DanBias
 {
 	extern "C"
 	{
-		
 		enum DanBiasClientReturn
 		{
 			DanBiasClientReturn_Error,
@@ -48,7 +47,6 @@ namespace DanBias
 
 		private:
 			
-			static HRESULT      InitWindow( HINSTANCE hInstance, int nCmdShow);
 			static HRESULT		InitDirect3D();
 			static HRESULT		InitInput();
 
@@ -60,9 +58,7 @@ namespace DanBias
 			static __int64 cntsPerSec;
 			static __int64 prevTimeStamp;
 			static float secsPerCnt;
-			
-			static HINSTANCE			g_hInst;  
-			static HWND					g_hWnd;
+
 			static DanBiasGamePrivateData* m_data;
 		};
 		

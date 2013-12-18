@@ -55,6 +55,9 @@ public:
 	static bool			CreateWin			(WINDOW_INIT_DESC&);
 	static bool			CreateConsoleWindow	(bool redirectStdOut = true, const wchar_t* title = L"Debug Output");
 
+	static unsigned int GetWidth();
+	static unsigned int GetHeight();
+
 	/** Procces window messages if avalible. If the return value was false, the window was destroyed. */
 	static bool			Frame				();
 };

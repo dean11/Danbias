@@ -71,7 +71,7 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network/NetworkAPI;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -79,24 +79,24 @@
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network/NetworkAPI;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network/NetworkAPI;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <LibraryPath>$(SolutionDir)..\External\Lib\Input;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\External\Lib\;$(SolutionDir)..\Bin\DLL;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Network/NetworkAPI;$(IncludePath);C:\Program Files %28x86%29\Visual Leak Detector\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,7 +111,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>OysterGraphics_$(PlatformShortName)D.lib;Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -123,13 +123,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameProtocols;$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GameProtocols_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -142,15 +142,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameProtocols;$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>GameProtocols_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>OysterGraphics_x86.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,15 +163,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameProtocols;$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;$(SolutionDir)OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>GameProtocols_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>OysterGraphics_x86.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
