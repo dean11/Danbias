@@ -21,6 +21,7 @@ cbuffer LightConstants : register(b0)
 	float2 Pixels;
 	int Lights;
 	float Pad;
+	float4x4 View;
 }
 
 Texture2D DiffuseGlow : register(t0);

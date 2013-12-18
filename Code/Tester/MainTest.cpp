@@ -210,7 +210,7 @@ HRESULT InitDirect3D()
 	Oyster::Graphics::Definitions::Pointlight pl;
 	pl.Color = Oyster::Math::Float3(1,1,1);
 	pl.Bright = 1;
-	pl.Pos = (V * Oyster::Math::Float4(Oyster::Math::Float3(0,0,5.4f), 1)).xyz;
+	pl.Pos = Oyster::Math::Float3(0,0,5.4f);
 	pl.Radius = 15;
 
 	Oyster::Graphics::API::AddLight(pl);

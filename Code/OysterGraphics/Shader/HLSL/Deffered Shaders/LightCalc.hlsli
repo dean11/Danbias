@@ -4,7 +4,8 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 {
 	DiffSpec output;
 	float4 normalSpec = NormalSpec[texCoord];
-	float3 lightVec = pl.Pos - pos.xyz;
+	float4 LPos = mul(View, float4(pl.Pos, 1));
+	float3 lightVec = LPos.xyz - pos.xyz;
 	float d = length(lightVec);
 	lightVec = lightVec/d;
 

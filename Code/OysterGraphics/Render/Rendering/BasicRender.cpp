@@ -33,6 +33,7 @@ namespace Oyster
 					lc.InvProj =  Projection.GetInverse();
 					lc.Pixels = Core::resolution;
 					lc.Lights = numLights;
+					lc.View = View;
 
 					data = Resources::Deffered::LightConstantsData.Map();
 					memcpy(data, &lc, sizeof(Definitions::LightConstants));

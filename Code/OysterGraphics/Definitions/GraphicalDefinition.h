@@ -37,6 +37,7 @@ namespace Oyster
 				Math::Float2 Pixels;
 				int Lights;
 				float Pad;
+				Oyster::Math::Float4x4 View;
 			};
 
 			struct Pointlight
