@@ -26,6 +26,10 @@ AttatchmentSocket::AttatchmentSocket(void)
 
 AttatchmentSocket::~AttatchmentSocket(void)
 {
+	if (myData->attatchment)
+	{
+		delete myData->attatchment;
+	}
 }
 
 IAttatchment* AttatchmentSocket::GetAttatchment()

@@ -29,7 +29,7 @@ int main()
 	Oyster::Network::NetworkServer::INIT_DESC desc;
 	desc.port = 15151;
 	desc.callbackType = NetworkClientCallbackType_Function;
-	desc.recvObj = proc;
+	//desc.recvObj = proc;
 
 	if(!server.Init(desc))
 	{

@@ -9,7 +9,7 @@
 #include "NetworkClient.h"
 
 #include "L_inputClass.h"
-#include "vld.h"
+//#include "vld.h"
 
 namespace DanBias
 {

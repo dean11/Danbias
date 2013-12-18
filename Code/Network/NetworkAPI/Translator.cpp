@@ -217,17 +217,18 @@ void Translator::Pack(OysterByte &bytes, CustomNetProtocol& protocol)
 
 	privateData->PackHeader(bytes, protocol);
 	privateData->PackMessage(bytes, protocol);
-	this->privateData->headerString.clear();
 }
 
 bool Translator::Unpack(CustomNetProtocol& protocol, OysterByte &bytes)
 {
+	this->privateData->headerString.clear();
+
 	if(!privateData->UnpackHeader(protocol, bytes))
 	{
 		return false;
 	}
 
 	privateData->UnpackMessage(protocol, bytes);
-	this->privateData->headerString.clear();
+
 	return true;
 }

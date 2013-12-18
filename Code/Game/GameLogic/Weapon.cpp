@@ -49,6 +49,12 @@ Weapon::Weapon(int MaxNrOfSockets)
 
 Weapon::~Weapon(void)
 {
+	for (int i = 0; i < myData->currentNrOfAttatchments; i++)
+	{
+		delete myData->attatchmentSockets[i];
+	}
+	delete[] myData->attatchmentSockets;
+
 	delete myData;
 }
 
@@ -57,7 +63,11 @@ Weapon::~Weapon(void)
 ********************************************************/
 void Weapon::Use(const WEAPON_FIRE &fireInput)
 {
-	myData->selectedAttatchment->UseAttatchment(fireInput);
+	if (myData->selectedAttatchment)
+	{
+		myData->selectedAttatchment->UseAttatchment(fireInput);
+	}
+	
 }
 
 /********************************************************
