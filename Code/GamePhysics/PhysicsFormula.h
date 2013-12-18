@@ -17,8 +17,8 @@ namespace Oyster { namespace Physics { namespace Formula
 	namespace CollisionResponse
 	{
 		::Oyster::Math::Float Impulse( ::Oyster::Math::Float coeffOfRestitution,
-										::Oyster::Math::Float massA, ::Oyster::Math::Float momentumA,
-										::Oyster::Math::Float massB, ::Oyster::Math::Float momentumB );
+									   ::Oyster::Math::Float massA, ::Oyster::Math::Float momentumA,
+									   ::Oyster::Math::Float massB, ::Oyster::Math::Float momentumB );
 	}
 } } }
 

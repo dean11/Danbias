@@ -31,7 +31,6 @@ namespace Oyster
 			void DestroyObject( const ICustomBody* objRef );
 
 			void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
-			void ApplyCollisionResponse( const ICustomBody* objRefA, const ICustomBody* objRefB, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact );
 
 			void SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );
 			void SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );

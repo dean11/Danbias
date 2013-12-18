@@ -17,11 +17,51 @@ namespace
 		auto proto = worldScene.GetCustomBody( protoTempRef );
 		auto deuter = worldScene.GetCustomBody( deuterTempRef );
 
-		float deltaWhen;
-		Float3 worldWhere;
-		if( proto->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
+		Float4 worldPointOfContact;
+		if( proto->Intersects(*deuter, worldPointOfContact) )
 		{
-			proto->CallSubscription( proto, deuter );
+			switch( proto->CallSubscription(proto, deuter) )
+			{
+			case ICustomBody::SubscriptMessage_ignore_collision_response:
+				break;
+			default:
+				{ // Apply CollisionResponse in pure gather pattern
+					ICustomBody::State protoState; proto->GetState( protoState );
+					ICustomBody::State deuterState; proto->GetState( deuterState );
+
+					Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact ),
+						   deuterG = deuterState.GetLinearMomentum( worldPointOfContact );
+
+					// calc from perspective of deuter
+					Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
+					Float protoG_Magnitude = protoG.Dot( normal ),
+						  deuterG_Magnitude = deuterG.Dot( normal );
+
+					// bounce
+					Float4 sumJ = normal * Formula::CollisionResponse::Impulse( deuterState.GetRestitutionCoeff(),
+																				deuterState.GetMass(), deuterG_Magnitude,
+																				protoState.GetMass(), protoG_Magnitude );
+
+					// @todo TODO: friction
+					// sumJ -= ;
+
+					// calc from perspective of proto
+					proto->GetNormalAt( worldPointOfContact, normal );
+					protoG_Magnitude = protoG.Dot( normal ),
+					deuterG_Magnitude = deuterG.Dot( normal );
+					
+					// bounce
+					sumJ += normal * Formula::CollisionResponse::Impulse( protoState.GetRestitutionCoeff(),
+																		  protoState.GetMass(), protoG_Magnitude,
+																		  deuterState.GetMass(), deuterG_Magnitude );
+					// @todo TODO: friction
+					// sumJ += ;
+
+					protoState.ApplyImpulse( sumJ, worldPointOfContact, normal );
+					proto->SetState( protoState );
+				}
+				break;					
+			}
 		}
 	}
 }
@@ -71,10 +111,16 @@ void API_Impl::SetSubscription( API::EventAction_Destruction functionPointer )
 
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
+	
+
+
 	::std::vector<ICustomBody*> updateList;
 	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
 	for( ; proto != updateList.end(); ++proto )
 	{
+		// Step 1: @todo TODO: Apply Gravity
+
+		// Step 2: Apply Collision Response
 		this->worldScene.Visit( *proto, OnPossibleCollision );
 	}
 
@@ -131,16 +177,6 @@ void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, 
 	if( tempRef != this->worldScene.invalid_ref )
 	{
 		//this->worldScene.GetCustomBody( tempRef )->Apply //!< @todo TODO: need function
-		this->worldScene.SetAsAltered( tempRef );		
-	}
-}
-
-void API_Impl::ApplyCollisionResponse( const ICustomBody* objRefA, const ICustomBody* objRefB, Float &deltaWhen, Float3 &worldPointOfContact )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRefA );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		//! @todo TODO: implement stub
 		this->worldScene.SetAsAltered( tempRef );		
 	}
 }

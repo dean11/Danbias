@@ -6,14 +6,20 @@ using namespace ::Oyster::Math;
 
 Sphere::Sphere( ) : ICollideable(Type_sphere)
 {
-	this->center = Float3::null;
+	this->center = Float4::standard_unit_w;
 	this->radius = 0.0f;
 }
 
-Sphere::Sphere( const Float3 &_position, const Float &_radius ) : ICollideable(Type_sphere)
+Sphere::Sphere( const Float3 &p, const Float &r ) : ICollideable(Type_sphere)
 {
-	this->center = _position;
-	this->radius = _radius;
+	this->center = Float4( p, 1.0f );
+	this->radius = r;
+}
+
+Sphere::Sphere( const Float4 &p, const Float &r ) : ICollideable(Type_sphere)
+{
+	this->center = p;
+	this->radius = r;
 }
 
 Sphere::~Sphere( ) {}
@@ -47,7 +53,7 @@ bool Sphere::Intersects( const ICollideable &target ) const
 	}
 }
 
-bool Sphere::Intersects( const ICollideable &target, Float3 &worldPointOfContact ) const
+bool Sphere::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
 {
 	switch( target.type )
 	{

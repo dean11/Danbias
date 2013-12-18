@@ -20,13 +20,14 @@ namespace Oyster { namespace Physics
 		void SetState( const State &state );
 		::Oyster::Math::Float3 GetRigidLinearVelocity() const;
 
-		void CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
+		SubscriptMessage CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
 		bool IsAffectedByGravity() const;
-		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float timeStepLength, ::Oyster::Math::Float &deltaWhen, ::Oyster::Math::Float3 &worldPointOfContact ) const;
 		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const;
+		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape, ::Oyster::Math::Float4 &worldPointOfContact ) const;
+		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 
 		::Oyster::Collision3D::Sphere &	GetBoundingSphere( ::Oyster::Collision3D::Sphere &targetMem = ::Oyster::Collision3D::Sphere() ) const;
-		::Oyster::Math::Float3 &		GetNormalAt( const ::Oyster::Math::Float3 &worldPos, ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const;
+		::Oyster::Math::Float4 &		GetNormalAt( const ::Oyster::Math::Float4 &worldPos, ::Oyster::Math::Float4 &targetMem = ::Oyster::Math::Float4() ) const;
 		::Oyster::Math::Float3 &		GetGravityNormal( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const;
 		::Oyster::Math::Float3 &		GetCenter( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const;
 		::Oyster::Math::Float4x4 &		GetRotation( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
