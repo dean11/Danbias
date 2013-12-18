@@ -82,7 +82,7 @@ bool TeamManager::AddPlayerToTeam(Player *player,int teamID)
 
 bool TeamManager::AddPlayerToTeam(Player *player)
 {
-	
+	return false;
 }
 
 bool TeamManager::IsValidTeam(int teamID)
