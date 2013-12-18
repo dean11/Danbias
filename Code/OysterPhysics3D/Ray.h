@@ -30,6 +30,7 @@ namespace Oyster { namespace Collision3D
 
 		Ray( );
 		Ray( const ::Oyster::Math::Float3 &origin, const ::Oyster::Math::Float3 &normalizedDirection );
+		Ray( const ::Oyster::Math::Float4 &origin, const ::Oyster::Math::Float4 &normalizedDirection );
 		virtual ~Ray( );
 
 		Ray & operator = ( const Ray &ray );

@@ -22,6 +22,13 @@ Ray::Ray( const Float3 &o, const Float3 &d ) : ICollideable(Type_ray)
 	this->collisionDistance = 0.0f;
 }
 
+Ray::Ray( const Float4 &o, const Float4 &d ) : ICollideable(Type_ray)
+{
+	this->origin = o;
+	this->direction = d;
+	this->collisionDistance = 0.0f;
+}
+
 Ray::~Ray( ) {}
 
 Ray & Ray::operator = ( const Ray &ray )

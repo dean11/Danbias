@@ -671,14 +671,14 @@ namespace Oyster { namespace Collision3D { namespace Utility
 
 	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere, Float4 &worldPointOfContact )
 	{ // by Robin Engman
-		
-		if(Intersect(box, sphere))
+		if( Intersect(box, sphere) )
 		{
 			Float distance;
-			Float3 boxMiddle = (box.maxVertex - box.minVertex)*0.5f;
-			Ray ray(boxMiddle, Float3(sphere.center - boxMiddle).Normalize());
+			Float4 boxMiddle = (box.maxVertex - box.minVertex) * 0.5f;
+			Ray ray( boxMiddle, (sphere.center - boxMiddle).Normalize() );
 			Intersect( sphere, ray, distance );
 			worldPointOfContact = ray.origin + ray.direction * distance;
+			return true;
 		}
 	
 		return false;
@@ -784,10 +784,11 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		if( Intersect(box, sphere) )
 		{
 			Float distance;
-			Ray ray( sphere.center, Float3(box.center - sphere.center) );
+			Ray ray( sphere.center, box.center - sphere.center );
 		
 			Intersect( box, ray, distance );
 			worldPointOfContact = ray.origin + ray.direction*distance;
+			return true;
 		}
 		
 		return false;
