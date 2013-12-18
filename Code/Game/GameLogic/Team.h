@@ -4,6 +4,8 @@
 
 #ifndef TEAM_H
 #define TEAM_H
+#include "Player.h"
+
 namespace GameLogic
 {
 
