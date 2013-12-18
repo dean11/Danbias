@@ -30,11 +30,11 @@ namespace DanBias
 			if(k == -1)
 			{
 				this->clients.push_back(client);
-				this->clients[this->clients.size() - 1]->SetPostbox(&this->box);
+				this->clients[this->clients.size() - 1]->SetPostbox(this->box);
 			}
 			else
 			{
-				this->clients[k]->SetPostbox(&this->box);
+				this->clients[k]->SetPostbox(this->box);
 			}
 		
 		ClientListLock.unlock();

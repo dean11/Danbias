@@ -17,6 +17,8 @@ namespace DanBias
 	private:
 		void ParseEvents();
 
+	private:
+		//NetworkSession *
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H

@@ -24,9 +24,9 @@ namespace DanBias
 //////// Private
 	void MainLobby::ParseEvents()
 	{
-		if(!this->box.IsEmpty())
+		if(!this->box->IsEmpty())
 		{
-			NetEvent &e = this->box.Fetch();
+			NetEvent &e = this->box->Fetch();
 
 			if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
 

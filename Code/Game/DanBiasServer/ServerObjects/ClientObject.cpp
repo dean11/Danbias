@@ -13,7 +13,7 @@ ClientObject::~ClientObject()
 	this->client->Disconnect();
 }
 
-void ClientObject::SetPostbox(Oyster::PostBox<NetworkSession::NetEvent>* box)
+void ClientObject::SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box)
 {
 	this->box = box;
 }

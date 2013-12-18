@@ -16,7 +16,7 @@ namespace DanBias
 		ClientObject(Oyster::Network::NetworkClient* client);
 		~ClientObject();
 
-		void SetPostbox(Oyster::PostBox<NetworkSession::NetEvent>* box);
+		void SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box);
 
 		GameLogic::Player*				Logic_Object();
 		Oyster::Network::NetworkClient* NetClient_Object();
