@@ -38,9 +38,10 @@ namespace Oyster { namespace Physics { namespace Formula
 	{
 		inline ::Oyster::Math::Float Impulse( ::Oyster::Math::Float e, ::Oyster::Math::Float mA, ::Oyster::Math::Float gA, ::Oyster::Math::Float mB, ::Oyster::Math::Float gB )
 		{
-			return (e+1) * (mB*gA - mA*gB) / (mA + mB);
+			return (e + 1) * (mB*gA - mA*gB) / (mA + mB);
 		}
 	}
+
 } } }
 
 #endif

@@ -16,6 +16,8 @@ RigidBody::RigidBody( const Box &b, Float m, const Float4x4 &inertiaTensor )
 	this->linearMomentum = Float3::null;
 	this->impulseTorqueSum = Float3::null;
 	this->impulseForceSum = Float3::null;
+	this->restitutionCoeff = 1.0f;
+	this->frictionCoeff = 1.0f;
 
 	if( m != 0.0f )
 	{
@@ -43,6 +45,8 @@ RigidBody & RigidBody::operator = ( const RigidBody &body )
 	this->linearMomentum = body.linearMomentum;
 	this->impulseTorqueSum = body.impulseTorqueSum;
 	this->impulseForceSum = body.impulseForceSum;
+	this->restitutionCoeff = body.restitutionCoeff;
+	this->frictionCoeff = body.frictionCoeff;
 	this->mass = body.mass;
 	this->momentOfInertiaTensor = body.momentOfInertiaTensor;
 	return *this;

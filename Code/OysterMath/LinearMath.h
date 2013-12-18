@@ -267,6 +267,12 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
+	{
+		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 1) );
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 1, 0, 0, position.x,
@@ -400,18 +406,35 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /** @todo TODO: not tested */
-		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &angularAxis, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType radian = angularAxis.Dot( angularAxis );
 		if( radian > 0 )
 		{
 			radian = ::std::sqrt( radian );
-			return OrientationMatrix( sumDeltaAngularAxis / radian, radian, sumTranslation, targetMem );
+			return OrientationMatrix( angularAxis / radian, radian, translation, targetMem );
 		}
 		else
 		{
 			targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
-			targetMem.v[3].xyz = sumTranslation;
+			targetMem.v[3].xyz = translation;
+			return targetMem;
+		}
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Vector3<ScalarType> &angularAxis, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType radian = angularAxis.Dot( angularAxis );
+		if( radian > 0 )
+		{
+			radian = ::std::sqrt( radian );
+			return InverseOrientationMatrix( OrientationMatrix(angularAxis / radian, radian, translation, targetMem) );
+		}
+		else
+		{
+			targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
+			targetMem.v[3].xyz = -translation;
 			return targetMem;
 		}
 	}

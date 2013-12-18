@@ -19,7 +19,7 @@ SphericalRigidBody::SphericalRigidBody()
 
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
 {
-	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition, Float3(2.0f * desc.radius) ),
+	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition.xyz, Float3(2.0f * desc.radius) ),
 							 desc.mass,
 							 Formula::MomentOfInertia::CreateSphereMatrix( desc.mass, desc.radius ) );
 	this->gravityNormal = Float3::null;
@@ -46,12 +46,18 @@ UniquePointer<ICustomBody> SphericalRigidBody::Clone() const
 
 SphericalRigidBody::State SphericalRigidBody::GetState() const
 {
-	return State( this->rigid.box.boundingOffset.xyz, this->rigid.box.center.xyz, AngularAxis(this->rigid.box.rotation).xyz, this->rigid.linearMomentum, this->rigid.angularMomentum );
+	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+				  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
+				  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
+				  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
 }
 
 SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
 {
-	return targetMem = State( this->rigid.box.boundingOffset.xyz, this->rigid.box.center.xyz, AngularAxis(this->rigid.box.rotation).xyz, this->rigid.linearMomentum, this->rigid.angularMomentum );
+	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+							  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
+							  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
+							  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
 }
 
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
@@ -93,7 +99,6 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	//! @todo TODO: better implementation needed
 	return targetMem = (worldPos - this->rigid.box.center).GetNormalized();
 }
 
@@ -102,25 +107,25 @@ Float3 & SphericalRigidBody::GetGravityNormal( Float3 &targetMem ) const
 	return targetMem = this->gravityNormal;	
 }
 
-Float3 & SphericalRigidBody::GetCenter( Float3 &targetMem ) const
-{
-	return targetMem = this->rigid.box.center;
-}
-
-Float4x4 & SphericalRigidBody::GetRotation( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.box.rotation;
-}
-
-Float4x4 & SphericalRigidBody::GetOrientation( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.GetOrientation();
-}
-
-Float4x4 & SphericalRigidBody::GetView( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.GetView();
-}
+//Float3 & SphericalRigidBody::GetCenter( Float3 &targetMem ) const
+//{
+//	return targetMem = this->rigid.box.center;
+//}
+//
+//Float4x4 & SphericalRigidBody::GetRotation( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.box.rotation;
+//}
+//
+//Float4x4 & SphericalRigidBody::GetOrientation( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.GetOrientation();
+//}
+//
+//Float4x4 & SphericalRigidBody::GetView( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.GetView();
+//}
 
 Float3 SphericalRigidBody::GetRigidLinearVelocity() const
 {
@@ -160,50 +165,50 @@ void SphericalRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 	this->gravityNormal = normalizedVector;
 }
 
-void SphericalRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
-{
-	this->rigid.SetMomentOfInertia_KeepVelocity( localI );
-}
-
-void SphericalRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
-{
-	this->rigid.SetMomentOfInertia_KeepMomentum( localI );
-}
-
-void SphericalRigidBody::SetMass_KeepVelocity( Float m )
-{
-	this->rigid.SetMass_KeepVelocity( m );
-}
-
-void SphericalRigidBody::SetMass_KeepMomentum( Float m )
-{
-	this->rigid.SetMass_KeepMomentum( m );
-}
-
-void SphericalRigidBody::SetCenter( const Float3 &worldPos )
-{
-	this->rigid.SetCenter( worldPos );
-	this->body.center = worldPos;
-}
-
-void SphericalRigidBody::SetRotation( const Float4x4 &rotation )
-{
-	this->rigid.SetRotation( rotation );
-}
-
-void SphericalRigidBody::SetOrientation( const Float4x4 &orientation )
-{
-	this->rigid.SetOrientation( orientation );
-	this->body.center = orientation.v[3].xyz;
-}
-
-void SphericalRigidBody::SetSize( const Float3 &size )
-{
-	this->rigid.SetSize( size );
-	this->body.radius = 0.5f * Min( Min( size.x, size.y ), size.z ); // inline Min( FloatN )?
-}
-
-void SphericalRigidBody::SetMomentum( const Float3 &worldG )
-{
-	this->rigid.SetLinearMomentum( worldG );
-}
+//void SphericalRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
+//{
+//	this->rigid.SetMomentOfInertia_KeepVelocity( localI );
+//}
+//
+//void SphericalRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
+//{
+//	this->rigid.SetMomentOfInertia_KeepMomentum( localI );
+//}
+//
+//void SphericalRigidBody::SetMass_KeepVelocity( Float m )
+//{
+//	this->rigid.SetMass_KeepVelocity( m );
+//}
+//
+//void SphericalRigidBody::SetMass_KeepMomentum( Float m )
+//{
+//	this->rigid.SetMass_KeepMomentum( m );
+//}
+//
+//void SphericalRigidBody::SetCenter( const Float3 &worldPos )
+//{
+//	this->rigid.SetCenter( worldPos );
+//	this->body.center = worldPos;
+//}
+//
+//void SphericalRigidBody::SetRotation( const Float4x4 &rotation )
+//{
+//	this->rigid.SetRotation( rotation );
+//}
+//
+//void SphericalRigidBody::SetOrientation( const Float4x4 &orientation )
+//{
+//	this->rigid.SetOrientation( orientation );
+//	this->body.center = orientation.v[3].xyz;
+//}
+//
+//void SphericalRigidBody::SetSize( const Float3 &size )
+//{
+//	this->rigid.SetSize( size );
+//	this->body.radius = 0.5f * Min( Min( size.x, size.y ), size.z ); // inline Min( FloatN )?
+//}
+//
+//void SphericalRigidBody::SetMomentum( const Float3 &worldG )
+//{
+//	this->rigid.SetLinearMomentum( worldG );
+//}

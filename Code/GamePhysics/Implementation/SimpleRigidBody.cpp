@@ -18,7 +18,7 @@ SimpleRigidBody::SimpleRigidBody()
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {
-	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition, desc.size  ),
+	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition.xyz, desc.size.xyz  ),
 							 desc.mass,
 							 desc.inertiaTensor );
 	this->gravityNormal = Float3::null;
@@ -44,12 +44,18 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 
 SimpleRigidBody::State SimpleRigidBody::GetState() const
 {
-	return State( this->rigid.box.boundingOffset.xyz, this->rigid.box.center.xyz, AngularAxis(this->rigid.box.rotation).xyz, this->rigid.linearMomentum, this->rigid.angularMomentum );
+	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+				  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
+				  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
+				  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
 }
 
 SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
 {
-	return targetMem = State( this->rigid.box.boundingOffset.xyz, this->rigid.box.center.xyz, AngularAxis(this->rigid.box.rotation).xyz, this->rigid.linearMomentum, this->rigid.angularMomentum );
+	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+					   this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
+					   this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
+					   Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
@@ -100,25 +106,25 @@ Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
 	return targetMem = this->gravityNormal;	
 }
 
-Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
-{
-	return targetMem = this->rigid.box.center;
-}
-
-Float4x4 & SimpleRigidBody::GetRotation( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.box.rotation;
-}
-
-Float4x4 & SimpleRigidBody::GetOrientation( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.GetOrientation();
-}
-
-Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.GetView();
-}
+//Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
+//{
+//	return targetMem = this->rigid.box.center;
+//}
+//
+//Float4x4 & SimpleRigidBody::GetRotation( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.box.rotation;
+//}
+//
+//Float4x4 & SimpleRigidBody::GetOrientation( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.GetOrientation();
+//}
+//
+//Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.GetView();
+//}
 
 Float3 SimpleRigidBody::GetRigidLinearVelocity() const
 {
@@ -158,47 +164,47 @@ void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 	this->gravityNormal = normalizedVector;
 }
 
-void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
-{
-	this->rigid.SetMomentOfInertia_KeepVelocity( localI );
-}
-
-void SimpleRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
-{
-	this->rigid.SetMomentOfInertia_KeepMomentum( localI );
-}
-
-void SimpleRigidBody::SetMass_KeepVelocity( Float m )
-{
-	this->rigid.SetMass_KeepVelocity( m );
-}
-
-void SimpleRigidBody::SetMass_KeepMomentum( Float m )
-{
-	this->rigid.SetMass_KeepMomentum( m );
-}
-
-void SimpleRigidBody::SetCenter( const Float3 &worldPos )
-{
-	this->rigid.SetCenter( worldPos );
-}
-
-void SimpleRigidBody::SetRotation( const Float4x4 &rotation )
-{
-	this->rigid.SetRotation( rotation );
-}
-
-void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
-{
-	this->rigid.SetOrientation( orientation );
-}
-
-void SimpleRigidBody::SetSize( const Float3 &size )
-{
-	this->rigid.SetSize( size );
-}
-
-void SimpleRigidBody::SetMomentum( const Float3 &worldG )
-{
-	this->rigid.SetLinearMomentum( worldG );
-}
+//void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
+//{
+//	this->rigid.SetMomentOfInertia_KeepVelocity( localI );
+//}
+//
+//void SimpleRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
+//{
+//	this->rigid.SetMomentOfInertia_KeepMomentum( localI );
+//}
+//
+//void SimpleRigidBody::SetMass_KeepVelocity( Float m )
+//{
+//	this->rigid.SetMass_KeepVelocity( m );
+//}
+//
+//void SimpleRigidBody::SetMass_KeepMomentum( Float m )
+//{
+//	this->rigid.SetMass_KeepMomentum( m );
+//}
+//
+//void SimpleRigidBody::SetCenter( const Float3 &worldPos )
+//{
+//	this->rigid.SetCenter( worldPos );
+//}
+//
+//void SimpleRigidBody::SetRotation( const Float4x4 &rotation )
+//{
+//	this->rigid.SetRotation( rotation );
+//}
+//
+//void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
+//{
+//	this->rigid.SetOrientation( orientation );
+//}
+//
+//void SimpleRigidBody::SetSize( const Float3 &size )
+//{
+//	this->rigid.SetSize( size );
+//}
+//
+//void SimpleRigidBody::SetMomentum( const Float3 &worldG )
+//{
+//	this->rigid.SetLinearMomentum( worldG );
+//}

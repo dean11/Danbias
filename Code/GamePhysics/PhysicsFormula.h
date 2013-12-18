@@ -2,6 +2,7 @@
 #define PHYSICS_FORMULA_H
 
 #include "OysterMath.h"
+#include "OysterPhysics3D.h"
 
 namespace Oyster { namespace Physics { namespace Formula
 {

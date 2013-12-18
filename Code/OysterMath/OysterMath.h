@@ -153,6 +153,9 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	//! Extracts the angularAxis from rotationMatrix
 	Float4 AngularAxis( const Float4x4 &rotationMatrix );
 
+	//! Extracts the angularAxis from orientationMatrix
+	Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
+
 	/// Sets and returns targetMem to a translationMatrix with position as translation. 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
 
@@ -191,19 +194,26 @@ namespace Oyster { namespace Math3D /// Oyster's native math library specialized
 	 * @param sumTranslation: sum of all the translation vectors.
 	 * @param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
 	 * @return targetMem
-	 * @todo TODO: not tested
 	 *******************************************************************/
 	Float4x4 & OrientationMatrix( const Float3 &normalizedAxis, const Float & deltaRadian, const Float3 &sumTranslation, Float4x4 &targetMem = Float4x4() );
 
 	/*******************************************************************
 	 *	Sets and returns targetMem as an orientation Matrix
-	 *	@param sumDeltaAngularAxis: sum of all ( (1/I) * ( L x D ) )-vectorproducts. There I is known as "moment of inertia", L as "angular momentum vector" and D the "lever vector".
-	 *	@param sumTranslation: sum of all the translation vectors.
+	 *	@param angularAxis: sum of all ( (1/I) * ( L x D ) )-vectorproducts. There I is known as "moment of inertia", L as "angular momentum vector" and D the "lever vector".
+	 *	@param translation: sum of all the translation vectors.
 	 *	@param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
 	 *	@return targetMem
-	 *	@todo TODO: not tested
 	 *******************************************************************/
-	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem = Float4x4() );
+	Float4x4 & OrientationMatrix( const Float3 &angularAxis, const Float3 &translation, Float4x4 &targetMem = Float4x4() );
+
+	/*******************************************************************
+	 *	Sets and returns targetMem as a view Matrix
+	 *	@param angularAxis: sum of all ( (1/I) * ( L x D ) )-vectorproducts. There I is known as "moment of inertia", L as "angular momentum vector" and D the "lever vector".
+	 *	@param translation: sum of all the translation vectors.
+	 *	@param targetMem: is set to a rigibody matrix that rotate counterclockwise and then translates.
+	 *	@return targetMem
+	 *******************************************************************/
+	Float4x4 & ViewMatrix( const Float3 &angularAxis, const Float3 &translation, Float4x4 &targetMem = Float4x4() );
 
 	/*******************************************************************
 	 *	Sets and returns targetMem as an orientation Matrix

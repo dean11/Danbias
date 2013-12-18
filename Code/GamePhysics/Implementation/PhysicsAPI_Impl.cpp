@@ -171,91 +171,91 @@ void API_Impl::DestroyObject( const ICustomBody* objRef )
 	}
 }
 
-void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		//this->worldScene.GetCustomBody( tempRef )->Apply //!< @todo TODO: need function
-		this->worldScene.SetAsAltered( tempRef );		
-	}
-}
-
-void API_Impl::SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const Float4x4 &localI )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepVelocity( localI );
-	}
-}
-
-void API_Impl::SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const Float4x4 &localI )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepMomentum( localI );
-	}
-}
-
-void API_Impl::SetMass_KeepVelocity( const ICustomBody* objRef, Float m )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepVelocity( m );
-	}
-}
-
-void API_Impl::SetMass_KeepMomentum( const ICustomBody* objRef, Float m )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepMomentum( m );
-	}
-}
-
-void API_Impl::SetCenter( const ICustomBody* objRef, const Float3 &worldPos )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		//this->worldScene.GetCustomBody( tempRef )->Set //!< @todo TODO: need function
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
-
-void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetRotation( rotation );
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
-
-void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetOrientation( orientation );
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
-
-void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetSize( size );
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
+//void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		//this->worldScene.GetCustomBody( tempRef )->Apply //!< @todo TODO: need function
+//		this->worldScene.SetAsAltered( tempRef );		
+//	}
+//}
+//
+//void API_Impl::SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const Float4x4 &localI )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepVelocity( localI );
+//	}
+//}
+//
+//void API_Impl::SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const Float4x4 &localI )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepMomentum( localI );
+//	}
+//}
+//
+//void API_Impl::SetMass_KeepVelocity( const ICustomBody* objRef, Float m )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepVelocity( m );
+//	}
+//}
+//
+//void API_Impl::SetMass_KeepMomentum( const ICustomBody* objRef, Float m )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepMomentum( m );
+//	}
+//}
+//
+//void API_Impl::SetCenter( const ICustomBody* objRef, const Float3 &worldPos )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		//this->worldScene.GetCustomBody( tempRef )->Set //!< @todo TODO: need function
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
+//
+//void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetRotation( rotation );
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
+//
+//void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetOrientation( orientation );
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
+//
+//void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetSize( size );
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
 
 UniquePointer<ICustomBody> API_Impl::CreateRigidBody( const API::SimpleBodyDescription &desc ) const
 {

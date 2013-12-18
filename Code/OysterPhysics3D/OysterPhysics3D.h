@@ -13,6 +13,60 @@ namespace Oyster { namespace Physics3D
 	{ /// Library of 3D physics related formulas
 
 		/******************************************************************
+		 * Returns the linear momentum of a mass in motion.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 LinearMomentum( const ::Oyster::Math::Float &mass, const ::Oyster::Math::Float4 &linearVelocity )
+		{
+			return linearVelocity * mass;
+		}
+
+		/******************************************************************
+		 * Returns the linear momentum of a mass in motion.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 LinearVelocity( const ::Oyster::Math::Float &mass, const ::Oyster::Math::Float4 &linearMomentum )
+		{
+			return linearMomentum / mass;
+		}
+
+		/******************************************************************
+		 * Returns the world angular momentum of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 AngularMomentum( const ::Oyster::Math::Float4 linearMomentum, const ::Oyster::Math::Float4 &worldOffset )
+		{
+			return ::Oyster::Math::Float4( worldOffset.xyz.Cross(linearMomentum.xyz), 0.0f );
+		}
+
+		/******************************************************************
+		 * Returns the world angular momentum of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 AngularMomentum( const ::Oyster::Math::Float4x4 &worldMomentOfInertia, const ::Oyster::Math::Float4 &angularVelocity )
+		{
+			return worldMomentOfInertia * angularVelocity;
+		}
+
+		/******************************************************************
+		 * Returns the world angular velocity of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 AngularVelocity( const ::Oyster::Math::Float4x4 &worldMomentOfInertiaInversed, const ::Oyster::Math::Float4 &angularMomentum )
+		{
+			return worldMomentOfInertiaInversed * angularMomentum;
+		}
+
+		/******************************************************************
+		 * Returns the world tangential momentum at worldPos, of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 TangentialLinearMomentum( const ::Oyster::Math::Float4 &angularMomentum, const ::Oyster::Math::Float4 &worldOffset )
+		{
+			return ::Oyster::Math::Float4( angularMomentum.xyz.Cross(worldOffset.xyz), 0.0f );
+		}
+
+		/******************************************************************
 		 * Returns the linear kinetic energy of a mass in motion.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
@@ -190,12 +244,6 @@ namespace Oyster { namespace Physics3D
 		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float4x4 & momentOfInertia, const ::Oyster::Math::Float3 &angularImpulseAcceleration )
 		{
 			return ( momentOfInertia * ::Oyster::Math::Float4(angularImpulseAcceleration, 0.0f) ).xyz;
-		}
-
-		inline ::Oyster::Math::Float3 Impulse(  )
-		{
-			//! @todo TODO: implement calculation for impulse. Hijack Mattias Eriksson
-			return ::Oyster::Math::Float3::null;
 		}
 
 		namespace MomentOfInertia
