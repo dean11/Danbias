@@ -269,7 +269,7 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
 	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 1) );
+		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
 	}
 
 	template<typename ScalarType>
@@ -332,7 +332,7 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, ::LinearAlgebra::Matrix4x4<ScalarType> targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
 
@@ -344,7 +344,7 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
 
@@ -356,7 +356,7 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector4<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector4<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
 
@@ -368,14 +368,14 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		OrientationMatrix( rotationQuaternion, translation, targetMem );
 		return InverseOrientationMatrix( targetMem, targetMem );
 	}
 
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector4<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector4<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		OrientationMatrix( rotationQuaternion, translation, targetMem );
 		return InverseOrientationMatrix( targetMem, targetMem );
