@@ -40,6 +40,34 @@ namespace Oyster { namespace Physics { namespace Formula
 		{
 			return (e + 1) * (mB*gA - mA*gB) / (mA + mB);
 		}
+
+		inline ::Oyster::Math::Float4 Friction( ::Oyster::Math::Float i, ::Oyster::Math::Float4 iN, ::Oyster::Math::Float4 momA, ::Oyster::Math::Float sFA, ::Oyster::Math::Float dFA, ::Oyster::Math::Float mA, ::Oyster::Math::Float4 momB, ::Oyster::Math::Float sFB, ::Oyster::Math::Float dFB, ::Oyster::Math::Float mB )
+		{
+			// FRICTION
+			// Relative momentum after normal impulse
+			::Oyster::Math::Float4 relativeMomentum = momB - momA;
+
+			::Oyster::Math::Float4 tanFriction = relativeMomentum - relativeMomentum.Dot( iN )*iN;
+			tanFriction.Normalize();
+
+			::Oyster::Math::Float magnitudeFriction = -relativeMomentum.Dot( tanFriction );
+			magnitudeFriction = magnitudeFriction*mA*mB/( mA + mB );
+
+			::Oyster::Math::Float mu = 0.5f*( sFA + sFB );
+ 
+			::Oyster::Math::Float4 frictionImpulse;
+			if( abs(magnitudeFriction) < i*mu )
+			{
+				frictionImpulse = magnitudeFriction*tanFriction;
+			}
+			else
+			{
+				::Oyster::Math::Float dynamicFriction = 0.5f*( dFA + dFB );
+				frictionImpulse = -i*tanFriction*dynamicFriction;
+			}
+ 
+			return ( 1 / mA )*frictionImpulse;
+		}
 	}
 
 } } }

@@ -20,6 +20,13 @@ namespace Oyster { namespace Physics { namespace Formula
 		::Oyster::Math::Float Impulse( ::Oyster::Math::Float coeffOfRestitution,
 									   ::Oyster::Math::Float massA, ::Oyster::Math::Float momentumA,
 									   ::Oyster::Math::Float massB, ::Oyster::Math::Float momentumB );
+
+		::Oyster::Math::Float4 Friction( ::Oyster::Math::Float impulse, ::Oyster::Math::Float4 impulseNormal, 
+										 ::Oyster::Math::Float4 momentumA, ::Oyster::Math::Float staticFrictionA, 
+										 ::Oyster::Math::Float dynamicFrictionA, ::Oyster::Math::Float massA, 
+										 ::Oyster::Math::Float4 momentumB, ::Oyster::Math::Float staticFrictionB, 
+										 ::Oyster::Math::Float dynamicFrictionB, ::Oyster::Math::Float massB );
+		
 	}
 } } }
 

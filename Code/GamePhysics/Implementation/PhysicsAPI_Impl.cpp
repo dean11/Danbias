@@ -7,6 +7,7 @@ using namespace ::Oyster::Physics;
 using namespace ::Oyster::Math;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
+using namespace ::Utility::Value;
 
 API_Impl API_instance;
 
@@ -43,32 +44,10 @@ namespace
 																				protoState.GetMass(), protoG_Magnitude );;
 					Float4 sumJ = normal*impulse;
 					
-					// FRICTION
-					// Relative momentum after normal impulse
-					Float4 relativeMomentum = deuterState.GetLinearMomentum() - protoState.GetLinearMomentum();
-
-					Float4 tanFriction = relativeMomentum - relativeMomentum.Dot(normal)*normal;
-					tanFriction.Normalize();
-
-					Float magnitudeFriction =  -relativeMomentum.Dot(tanFriction);
-					magnitudeFriction = magnitudeFriction/( 1/protoState.GetMass() + 1/deuterState.GetMass() );
-
-					float mu = 0.5f;
- 
-					Float4 frictionImpulse;
-					if( abs(magnitudeFriction) < impulse*mu )
-					{
-						frictionImpulse = magnitudeFriction*tanFriction;
-					}
-					else
-					{
-					  Float dynamicFriction = 0.5f;
-					  frictionImpulse = -impulse*tanFriction*dynamicFriction;
-					}
- 
-					// Apply
-					sumJ -= ( 1 / protoState.GetMass() )*frictionImpulse;
-					// FRICTION END
+					sumJ -= Formula::CollisionResponse::Friction( impulse, normal, protoState.GetLinearMomentum(), 
+																	protoState.GetFrictionCoeff(), 0.2f, protoState.GetMass(), 
+																	deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff(), 
+																	0.2f, deuterState.GetMass());
 
 					// calc from perspective of proto
 					proto->GetNormalAt( worldPointOfContact, normal );
