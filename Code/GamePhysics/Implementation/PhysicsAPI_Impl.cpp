@@ -28,7 +28,7 @@ namespace
 			default:
 				{ // Apply CollisionResponse in pure gather pattern
 					ICustomBody::State protoState; proto->GetState( protoState );
-					ICustomBody::State deuterState; proto->GetState( deuterState );
+					ICustomBody::State deuterState; deuter->GetState( deuterState );
 
 					Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact ),
 						   deuterG = deuterState.GetLinearMomentum( worldPointOfContact );
