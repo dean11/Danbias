@@ -28,11 +28,12 @@ namespace Oyster { namespace Physics
 			this->ignoreGravity = false;
 		}
 
-		inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float frictionCoeff, const ::Oyster::Math::Float4x4 &inertiaTensor, const ::Oyster::Math::Float4 &reach, const ::Oyster::Math::Float4 &centerPos, const ::Oyster::Math::Float4 &rotation, const ::Oyster::Math::Float4 &linearMomentum, const ::Oyster::Math::Float4 &angularMomentum )
+		inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float staticFrictionCoeff, ::Oyster::Math::Float kineticFrictionCoeff, const ::Oyster::Math::Float4x4 &inertiaTensor, const ::Oyster::Math::Float4 &reach, const ::Oyster::Math::Float4 &centerPos, const ::Oyster::Math::Float4 &rotation, const ::Oyster::Math::Float4 &linearMomentum, const ::Oyster::Math::Float4 &angularMomentum )
 		{
 			this->mass = mass;
 			this->restitutionCoeff = restitutionCoeff;
-			this->frictionCoeff = frictionCoeff;
+			this->staticFrictionCoeff = staticFrictionCoeff;
+			this->kineticFrictionCoeff = kineticFrictionCoeff;
 			this->inertiaTensor = inertiaTensor;
 			this->reach = ::Oyster::Math::Float4( reach.xyz, 0.0f );
 			this->centerPos = ::Oyster::Math::Float4( centerPos.xyz, 1.0f );
@@ -47,7 +48,8 @@ namespace Oyster { namespace Physics
 		{
 			this->mass = state.mass;
 			this->restitutionCoeff = state.restitutionCoeff;
-			this->frictionCoeff = state.frictionCoeff;
+			this->staticFrictionCoeff = state.staticFrictionCoeff;
+			this->kineticFrictionCoeff = state.kineticFrictionCoeff;
 			this->inertiaTensor = state.inertiaTensor;
 			this->reach = state.reach;
 			this->centerPos = state.centerPos;
@@ -71,9 +73,14 @@ namespace Oyster { namespace Physics
 			return this->restitutionCoeff;
 		}
 
-		inline const ::Oyster::Math::Float CustomBodyState::GetFrictionCoeff() const
+		inline const ::Oyster::Math::Float CustomBodyState::GetFrictionCoeff_Static() const
 		{
-			return this->frictionCoeff;
+			return this->staticFrictionCoeff;
+		}
+
+		inline const ::Oyster::Math::Float CustomBodyState::GetFrictionCoeff_Kinetic() const
+		{
+			return this->kineticFrictionCoeff;
 		}
 
 		inline const ::Oyster::Math::Float4x4 & CustomBodyState::GetMomentOfInertia() const
@@ -163,9 +170,10 @@ namespace Oyster { namespace Physics
 			this->restitutionCoeff = e;
 		}
 
-		inline void CustomBodyState::SetFrictionCoeff( ::Oyster::Math::Float u )
+		inline void CustomBodyState::SetFrictionCoeff( ::Oyster::Math::Float staticU, ::Oyster::Math::Float kineticU )
 		{
-			this->frictionCoeff = u;
+			this->staticFrictionCoeff = staticU;
+			this->kineticFrictionCoeff = kineticU;
 		}
 
 		inline void CustomBodyState::SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &tensor )

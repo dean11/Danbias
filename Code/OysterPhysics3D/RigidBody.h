@@ -19,7 +19,7 @@ namespace Oyster { namespace Physics3D
 							   linearMomentum,		/** The linear momentum G (kg*m/s).									(worldValue) */
 							   impulseTorqueSum,	/** The impulse torque T (Nm) that will be consumed each update.	(worldValue) */
 							   impulseForceSum;		/** The impulse force F (N) that will be consumed each update.		(worldValue) */
-		::Oyster::Math::Float restitutionCoeff, frictionCoeff;
+		::Oyster::Math::Float restitutionCoeff, frictionCoeff_Static, frictionCoeff_Kinetic;
 
 		RigidBody( const ::Oyster::Collision3D::Box &box = ::Oyster::Collision3D::Box(),
 				   ::Oyster::Math::Float mass = 12.0f,

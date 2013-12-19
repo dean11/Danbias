@@ -46,7 +46,8 @@ UniquePointer<ICustomBody> SphericalRigidBody::Clone() const
 
 SphericalRigidBody::State SphericalRigidBody::GetState() const
 {
-	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
+				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 				  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
 				  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
 				  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
@@ -54,7 +55,8 @@ SphericalRigidBody::State SphericalRigidBody::GetState() const
 
 SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
 {
-	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
+							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 							  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
 							  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
 							  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );

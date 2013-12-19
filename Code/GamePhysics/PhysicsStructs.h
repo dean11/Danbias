@@ -38,7 +38,8 @@ namespace Oyster { namespace Physics
 		public:
 			CustomBodyState( ::Oyster::Math::Float mass						= 1.0f,
 							 ::Oyster::Math::Float restitutionCoeff			= 1.0f,
-							 ::Oyster::Math::Float frictionCoeff			= 1.0f,
+							 ::Oyster::Math::Float staticFrictionCoeff		= 1.0f,
+							 ::Oyster::Math::Float kineticFrictionCoeff		= 1.0f,
 							 const ::Oyster::Math::Float4x4 &inertiaTensor	= ::Oyster::Math::Float4x4::identity,
 							 const ::Oyster::Math::Float4 &reach			= ::Oyster::Math::Float4::null,
 							 const ::Oyster::Math::Float4 &centerPos		= ::Oyster::Math::Float4::standard_unit_w,
@@ -50,7 +51,8 @@ namespace Oyster { namespace Physics
 
 			const ::Oyster::Math::Float		 GetMass() const;
 			const ::Oyster::Math::Float		 GetRestitutionCoeff() const;
-			const ::Oyster::Math::Float		 GetFrictionCoeff() const;
+			const ::Oyster::Math::Float		 GetFrictionCoeff_Static() const;
+			const ::Oyster::Math::Float		 GetFrictionCoeff_Kinetic() const;
 			const ::Oyster::Math::Float4x4 & GetMomentOfInertia() const;
 			const ::Oyster::Math::Float4 &	 GetReach() const;
 				  ::Oyster::Math::Float4	 GetSize() const;
@@ -68,7 +70,7 @@ namespace Oyster { namespace Physics
 			void SetMass_KeepMomentum( ::Oyster::Math::Float m );
 			void SetMass_KeepVelocity( ::Oyster::Math::Float m );
 			void SetRestitutionCoeff( ::Oyster::Math::Float e );
-			void SetFrictionCoeff( ::Oyster::Math::Float u );
+			void SetFrictionCoeff( ::Oyster::Math::Float staticU, ::Oyster::Math::Float kineticU );
 			void SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &tensor );
 			void SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &tensor );
 			void SetSize( const ::Oyster::Math::Float4 &size );
@@ -93,7 +95,7 @@ namespace Oyster { namespace Physics
 			bool IsDisturbed() const;
 
 		private:
-			::Oyster::Math::Float mass, restitutionCoeff, frictionCoeff;
+			::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, kineticFrictionCoeff;
 			::Oyster::Math::Float4x4 inertiaTensor;
 			::Oyster::Math::Float4 reach, centerPos, angularAxis;
 			::Oyster::Math::Float4 linearMomentum, angularMomentum;

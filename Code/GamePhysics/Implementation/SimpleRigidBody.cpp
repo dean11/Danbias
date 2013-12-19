@@ -44,7 +44,8 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 
 SimpleRigidBody::State SimpleRigidBody::GetState() const
 {
-	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
+	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
+				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 				  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
 				  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
 				  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
@@ -52,10 +53,11 @@ SimpleRigidBody::State SimpleRigidBody::GetState() const
 
 SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
 {
-	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff, this->rigid.frictionCoeff,
-					   this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
-					   this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
-					   Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
+	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
+							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
+							  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
+							  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
+							  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
