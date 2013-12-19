@@ -124,7 +124,13 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	return targetMem = (worldPos - this->rigid.box.center).GetNormalized();
+	targetMem = worldPos - this->rigid.box.center;
+	Float magnitude = targetMem.GetMagnitude();
+	if( magnitude != 0.0f )
+	{ // sanity check
+		targetMem.Normalize();
+	}
+	return targetMem;
 }
 
 Float3 & SphericalRigidBody::GetGravityNormal( Float3 &targetMem ) const
