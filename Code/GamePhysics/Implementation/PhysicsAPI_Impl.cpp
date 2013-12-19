@@ -54,7 +54,7 @@ namespace
 					deuterG_Magnitude = deuterG.Dot( normal );
 					
 					// bounce
-					sumJ += normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
+					sumJ -= normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
 																		 protoState.GetMass(), protoG_Magnitude,
 																		 deuterState.GetMass(), deuterG_Magnitude );
 					// FRICTION

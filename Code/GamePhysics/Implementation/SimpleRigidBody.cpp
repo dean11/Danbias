@@ -8,6 +8,39 @@ using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::Value;
 
+namespace Private
+{
+	const Float epsilon = (const Float)1e-20;
+
+	// Float calculations can suffer roundingerrors. Which is where epsilon = 1e-20 comes into the picture
+	inline bool EqualsZero( const Float &value )
+	{ // by Dan Andersson
+		return Abs( value ) < epsilon;
+	}
+
+	inline bool Contains( const Plane &container, const Float4 &pos )
+	{ // by Dan Andersson
+		return EqualsZero( container.normal.Dot( pos ) + container.phasing );
+	}
+
+	// revision of Ray Vs Plane intersect test, there ray is more of an axis
+	bool Intersects( const Ray &axis, const Plane &plane, Float &connectDistance )
+	{ // by Dan Andersson
+		Float c = plane.normal.Dot(axis.direction);
+		if( EqualsZero(c) )
+		{ // axis is parallell with the plane. (axis direction orthogonal with the planar normal)
+			connectDistance = 0.0f;
+			return Contains( plane, axis.origin );
+		}
+
+		connectDistance = -plane.phasing;
+		connectDistance -= plane.normal.Dot( axis.origin );
+		connectDistance /= c;
+
+		return true;
+	}
+}
+
 SimpleRigidBody::SimpleRigidBody()
 {
 	this->rigid = RigidBody( Box(Float4x4::identity, Float3::null, Float3(1.0f)), 16.0f, Float4x4::identity );
@@ -128,25 +161,25 @@ Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem
 
 	if( distance != 0.0f )
 	{ // sanity check
-		Ray ray( Float4::standard_unit_w, offset / (Float)::std::sqrt(distance) );
+		Ray axis( Float4::standard_unit_w, offset / (Float)::std::sqrt(distance) );
 		Float minDistance = numeric_limits<Float>::max();
 
-		if( ray.Intersects(Plane(this->rigid.box.xAxis, this->rigid.box.boundingOffset.x)) )
+		if( Private::Intersects(axis, Plane(this->rigid.box.xAxis, -this->rigid.box.boundingOffset.x), axis.collisionDistance) )
 		{ // check along x-axis
-			if( ray.collisionDistance < 0.0f )
+			if( axis.collisionDistance < 0.0f )
 				normal = -this->rigid.box.xAxis.xyz;
 			else
 				normal = this->rigid.box.xAxis.xyz;
 
-			minDistance = Abs( ray.collisionDistance );
+			minDistance = Abs( axis.collisionDistance );
 		}
 
-		if( ray.Intersects(Plane(this->rigid.box.yAxis, this->rigid.box.boundingOffset.y)) )
+		if( Private::Intersects(axis, Plane(this->rigid.box.yAxis, -this->rigid.box.boundingOffset.y), axis.collisionDistance) )
 		{ // check along y-axis
-			distance = Abs( ray.collisionDistance ); // recycling memory
+			distance = Abs( axis.collisionDistance ); // recycling memory
 			if( minDistance > distance )
 			{
-				if( ray.collisionDistance < 0.0f )
+				if( axis.collisionDistance < 0.0f )
 					normal = -this->rigid.box.yAxis.xyz;
 				else
 					normal = this->rigid.box.yAxis.xyz;
@@ -155,11 +188,11 @@ Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem
 			}
 		}
 
-		if( ray.Intersects(Plane(this->rigid.box.zAxis, this->rigid.box.boundingOffset.z)) )
+		if( Private::Intersects(axis, Plane(this->rigid.box.zAxis, -this->rigid.box.boundingOffset.z), axis.collisionDistance) )
 		{ // check along z-axis
-			if( minDistance > Abs( ray.collisionDistance ) )
+			if( minDistance > Abs( axis.collisionDistance ) )
 			{
-				if( ray.collisionDistance < 0.0f )
+				if( axis.collisionDistance < 0.0f )
 					normal = -this->rigid.box.zAxis.xyz;
 				else
 					normal = this->rigid.box.zAxis.xyz;
