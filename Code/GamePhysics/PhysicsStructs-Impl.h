@@ -35,11 +35,11 @@ namespace Oyster { namespace Physics
 			this->staticFrictionCoeff = staticFrictionCoeff;
 			this->kineticFrictionCoeff = kineticFrictionCoeff;
 			this->inertiaTensor = inertiaTensor;
-			this->reach = ::Oyster::Math::Float4( reach.xyz, 0.0f );
-			this->centerPos = ::Oyster::Math::Float4( centerPos.xyz, 1.0f );
-			this->angularAxis = ::Oyster::Math::Float4( rotation.xyz, 0.0f );
-			this->linearMomentum = ::Oyster::Math::Float4( linearMomentum.xyz, 0.0f );
-			this->angularMomentum = ::Oyster::Math::Float4( angularMomentum.xyz, 0.0f );
+			this->reach = reach;
+			this->centerPos = centerPos;
+			this->angularAxis = rotation;
+			this->linearMomentum = linearMomentum;
+			this->angularMomentum = angularMomentum;
 			this->linearImpulse = this->angularImpulse = ::Oyster::Math::Float4::null;
 			this->isSpatiallyAltered = this->isDisturbed = false;
 		}
