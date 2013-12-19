@@ -5,23 +5,11 @@
 #include <Windows.h>
 #include <vld.h>
 
-//#include "DanBiasServerAPI.h"
 #include "DanBiasGame.h"
 
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {
-#if defined(DANBIAS_SERVER)
-	if(SetDllDirectory(L"..\\DLL") == FALSE)
-	{
-		return cmdShow;
-	}
-	if( DanBias::DanBiasServerAPI::Initiate() == DanBias::DanBiasServerReturn_Sucess)
-	{
-		DanBias::DanBiasServerAPI::Run();
-		DanBias::DanBiasServerAPI::Release();
-	}
-#elif defined(DANBIAS_CLIENT)
 	if(SetDllDirectory(L"..\\DLL") == FALSE)
 	{
 		return cmdShow;
@@ -29,8 +17,8 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	// Game client starter code goes here
 	DanBias::DanBiasGameDesc gameDesc;
 	gameDesc.port = 15151;
-	//gameDesc.IP = "193.11.184.196"; //Erik
-	gameDesc.IP = "193.11.186.101"; 
+	gameDesc.IP = "193.11.184.196";
+	gameDesc.IP = "127.0.0.1";
 	gameDesc.hinst = hinst;
 	gameDesc.nCmdShow = cmdShow;
 
@@ -39,7 +27,6 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		DanBias::DanBiasGame::Run();
 		DanBias::DanBiasGame::Release();
 	}
-#endif
 
 	return cmdShow;
 }

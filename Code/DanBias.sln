@@ -44,6 +44,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkAPI", "Network\Netwo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameProtocols", "Game\GameProtocols\GameProtocols.vcxproj", "{DA2AA800-ED64-4649-8B3B-E7F1E3968B78}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DanBiasServerLauncher", "Game\DanBiasServerLauncher\DanBiasServerLauncher.vcxproj", "{060B1890-CBF3-4808-BA99-A4776222093B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -265,6 +267,18 @@ Global
 		{DA2AA800-ED64-4649-8B3B-E7F1E3968B78}.Release|Win32.Build.0 = Release|Win32
 		{DA2AA800-ED64-4649-8B3B-E7F1E3968B78}.Release|x64.ActiveCfg = Release|x64
 		{DA2AA800-ED64-4649-8B3B-E7F1E3968B78}.Release|x64.Build.0 = Release|x64
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Debug|Win32.Build.0 = Debug|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Debug|x64.ActiveCfg = Debug|x64
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Debug|x64.Build.0 = Debug|x64
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Release|Win32.ActiveCfg = Release|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Release|Win32.Build.0 = Release|Win32
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Release|x64.ActiveCfg = Release|x64
+		{060B1890-CBF3-4808-BA99-A4776222093B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -279,5 +293,6 @@ Global
 		{52380DAA-0F4A-4D97-8E57-98DF39319CAF} = {20720CA7-795C-45AD-A302-9383A6DD503A}
 		{8690FDDF-C5B7-4C42-A337-BD5243F29B85} = {20720CA7-795C-45AD-A302-9383A6DD503A}
 		{DA2AA800-ED64-4649-8B3B-E7F1E3968B78} = {20720CA7-795C-45AD-A302-9383A6DD503A}
+		{060B1890-CBF3-4808-BA99-A4776222093B} = {20720CA7-795C-45AD-A302-9383A6DD503A}
 	EndGlobalSection
 EndGlobal
