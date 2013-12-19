@@ -11,7 +11,7 @@ namespace GameLogic
 	struct Protocol_CreateObject :public Oyster::Network::CustomProtocolObject
 	{
 		int object_ID;
-		char path[255];
+		char *path;
 		float worldMatrix[16];
 
 
