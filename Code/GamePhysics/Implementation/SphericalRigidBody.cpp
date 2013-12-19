@@ -14,6 +14,7 @@ SphericalRigidBody::SphericalRigidBody()
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
 	this->ignoreGravity = false;
+	this->scene = nullptr;
 	this->body = Sphere( Float3::null, 0.5f );
 }
 
@@ -34,6 +35,7 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	}
 
 	this->ignoreGravity = desc.ignoreGravity;
+	this->scene = nullptr;
 	this->body = Sphere( desc.centerPosition, desc.radius );
 }
 
@@ -63,10 +65,31 @@ SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::St
 }
 
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
-{ /** @todo TODO: temporary solution! Need to know it's occtree */
+{
 	this->rigid.box.boundingOffset = state.GetReach();
 	this->rigid.box.center = state.GetCenterPosition();
 	this->rigid.box.rotation = state.GetRotation();
+	this->rigid.angularMomentum = state.GetAngularMomentum().xyz;
+	this->rigid.linearMomentum = state.GetLinearMomentum().xyz;
+	this->rigid.impulseTorqueSum += state.GetAngularImpulse().xyz;
+	this->rigid.impulseForceSum += state.GetLinearImpulse().xyz;
+	this->rigid.restitutionCoeff = state.GetRestitutionCoeff();
+	this->rigid.frictionCoeff_Static = state.GetFrictionCoeff_Static();
+	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
+
+	if( this->scene )
+	{
+		if( state.IsSpatiallyAltered() )
+		{
+			unsigned int tempRef = this->scene->GetTemporaryReferenceOf( this );
+			this->scene->SetAsAltered( tempRef );
+			this->scene->EvaluatePosition( tempRef );
+		}
+		else if( state.IsDisturbed() )
+		{
+			this->scene->SetAsAltered( this->scene->GetTemporaryReferenceOf(this) );
+		}
+	}
 }
 
 ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
@@ -156,7 +179,12 @@ void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision fun
 	}
 }
 
-void SphericalRigidBody::SetGravity( bool ignore)
+void SphericalRigidBody::SetScene( void *scene )
+{
+	this->scene = (Octree*)scene;
+}
+
+void SphericalRigidBody::SetGravity( bool ignore )
 {
 	this->ignoreGravity = ignore;
 	this->gravityNormal = Float3::null;

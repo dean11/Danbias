@@ -4,6 +4,7 @@
 #include "..\PhysicsAPI.h"
 #include "RigidBody.h"
 #include "Sphere.h"
+#include "Octree.h"
 
 namespace Oyster { namespace Physics
 {
@@ -37,6 +38,7 @@ namespace Oyster { namespace Physics
 
 		UpdateState Update( ::Oyster::Math::Float timeStepLength );
 
+		void SetScene( void *scene );
 		void SetSubscription( EventAction_Collision functionPointer );
 		void SetGravity( bool ignore);
 		void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector );
@@ -55,6 +57,7 @@ namespace Oyster { namespace Physics
 		::Oyster::Math::Float3 gravityNormal;
 		EventAction_Collision collisionAction;
 		bool ignoreGravity;
+		Octree *scene;
 		::Oyster::Collision3D::Sphere body;
 	};
 } }

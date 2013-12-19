@@ -31,6 +31,7 @@ Octree& Octree::operator=(const Octree& orig)
 
 void Octree::AddObject(UniquePointer< ICustomBody > customBodyRef)
 {
+	customBodyRef->SetScene( this );
 	Data data;
 	//Data* tempPtr = this->worldNode.dataPtr;
 

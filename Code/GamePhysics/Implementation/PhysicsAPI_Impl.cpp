@@ -44,10 +44,9 @@ namespace
 																				protoState.GetMass(), protoG_Magnitude );;
 					Float4 sumJ = normal*impulse;
 					
-					sumJ -= Formula::CollisionResponse::Friction( impulse, normal, protoState.GetLinearMomentum(), 
-																	protoState.GetFrictionCoeff(), 0.2f, protoState.GetMass(), 
-																	deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff(), 
-																	0.2f, deuterState.GetMass());
+					sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
+																  protoState.GetLinearMomentum(),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+																  deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 
 					// calc from perspective of proto
 					proto->GetNormalAt( worldPointOfContact, normal );

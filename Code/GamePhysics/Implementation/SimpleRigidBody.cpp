@@ -14,6 +14,7 @@ SimpleRigidBody::SimpleRigidBody()
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
 	this->ignoreGravity = false;
+	this->scene = nullptr;
 }
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
@@ -33,6 +34,7 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	}
 
 	this->ignoreGravity = desc.ignoreGravity;
+	this->scene = nullptr;
 }
 
 SimpleRigidBody::~SimpleRigidBody() {}
@@ -61,10 +63,31 @@ SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targ
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
-{ /** @todo TODO: temporary solution! Need to know it's occtree */
+{
 	this->rigid.box.boundingOffset = state.GetReach();
 	this->rigid.box.center = state.GetCenterPosition();
 	this->rigid.box.rotation = state.GetRotation();
+	this->rigid.angularMomentum = state.GetAngularMomentum().xyz;
+	this->rigid.linearMomentum = state.GetLinearMomentum().xyz;
+	this->rigid.impulseTorqueSum += state.GetAngularImpulse().xyz;
+	this->rigid.impulseForceSum += state.GetLinearImpulse().xyz;
+	this->rigid.restitutionCoeff = state.GetRestitutionCoeff();
+	this->rigid.frictionCoeff_Static = state.GetFrictionCoeff_Static();
+	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
+
+	if( this->scene )
+	{
+		if( state.IsSpatiallyAltered() )
+		{
+			unsigned int tempRef = this->scene->GetTemporaryReferenceOf( this );
+			this->scene->SetAsAltered( tempRef );
+			this->scene->EvaluatePosition( tempRef );
+		}
+		else if( state.IsDisturbed() )
+		{
+			this->scene->SetAsAltered( this->scene->GetTemporaryReferenceOf(this) );
+		}
+	}
 }
 
 ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
@@ -185,6 +208,11 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 	// compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
 	return UpdateState_altered;
+}
+
+void SimpleRigidBody::SetScene( void *scene )
+{
+	this->scene = (Octree*)scene;
 }
 
 void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )

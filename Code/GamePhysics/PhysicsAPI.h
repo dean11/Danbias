@@ -339,6 +339,13 @@ namespace Oyster
 			virtual UpdateState Update( ::Oyster::Math::Float timeStepLength ) = 0;
 			
 			/********************************************************
+			 * Sets which scene this ICustomBody is within.
+			 * Reserved to only be used by the scene.
+			 * @todo TODO: create an IScene interface
+			 ********************************************************/
+			virtual void SetScene( void *scene ) = 0;
+
+			/********************************************************
 			 * Sets the function that will be called by the engine
 			 * whenever a collision occurs.
 			 * @param functionPointer: If NULL, an empty default function will be set.
