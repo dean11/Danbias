@@ -2,7 +2,6 @@
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
 #define NOMINMAX
-#include "Test\TEST.h"
 #include <Windows.h>
 #include <WindowShell.h>
 #include <iostream>

@@ -19,34 +19,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{52380DAA-0F4A-4D97-8E57-98DF39319CAF}</ProjectGuid>
+    <ProjectGuid>{060B1890-CBF3-4808-BA99-A4776222093B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DanBiasServer</RootNamespace>
+    <RootNamespace>DanBiasServerLauncher</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -70,35 +68,35 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Game\GameLogic\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)OysterMath\;$(SolutionDir)GamePhysics\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OysterPhysics3D\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Game\GameLogic\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)OysterMath\;$(SolutionDir)GamePhysics\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OysterPhysics3D\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Game\GameLogic\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)OysterMath\;$(SolutionDir)GamePhysics\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OysterPhysics3D\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Game\GameLogic\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)OysterMath\;$(SolutionDir)GamePhysics\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)OysterPhysics3D\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,15 +104,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Game\DanBiasServer\Include;$(SolutionDir)Game\DanBiasGame\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll;GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
-      <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,15 +120,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Game\DanBiasServer\Include;$(SolutionDir)Game\DanBiasGame\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll;GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
-      <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName)D.dll;DanBiasGame_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -142,17 +138,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Game\DanBiasServer\Include;$(SolutionDir)Game\DanBiasGame\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll;GamePhysics_$(PlatformShortName).dll</DelayLoadDLLs>
-      <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName).dll;DanBiasGame_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>DanBiasServer_$(PlatformShortName).lib;DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,54 +158,20 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>DANBIAS_SERVER_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Game\DanBiasServer\Include;$(SolutionDir)Game\DanBiasGame\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll;GamePhysics_$(PlatformShortName).dll</DelayLoadDLLs>
-      <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>DanBiasServer_$(PlatformShortName).dll;DanBiasGame_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>DanBiasServer_$(PlatformShortName).lib;DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Helpers\GameSessionManager.cpp" />
-    <ClCompile Include="Helpers\ProtocolParser.cpp" />
-    <ClCompile Include="Include\DanBiasServerAPI.cpp" />
-    <ClCompile Include="DLLMain.cpp" />
-    <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="ServerObjects\ClientObject.cpp" />
-    <ClCompile Include="ServerObjects\Lobby\GameLobby.cpp" />
-    <ClCompile Include="ServerObjects\GameSession.cpp" />
-    <ClCompile Include="ServerObjects\Lobby\MainLobby.cpp" />
-    <ClCompile Include="ServerObjects\NetworkSession.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Event\EventManager.h" />
-    <ClInclude Include="GameServer.h" />
-    <ClInclude Include="Helpers\GameSessionManager.h" />
-    <ClInclude Include="Include\DanBiasServerAPI.h" />
-    <ClInclude Include="Helpers\ServerInitReader.h" />
-    <ClInclude Include="ServerObjects\ClientObject.h" />
-    <ClInclude Include="ServerObjects\GameSession.h" />
-    <ClInclude Include="ServerObjects\Lobby\GameLobby.h" />
-    <ClInclude Include="ServerObjects\Lobby\MainLobby.h" />
-    <ClInclude Include="ServerObjects\NetworkSession.h" />
-    <ClInclude Include="Helpers\ProtocolParser.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\GamePhysics\GamePhysics.vcxproj">
-      <Project>{104fa3e9-94d9-4e1d-a941-28a03bc8a095}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Misc\Misc.vcxproj">
-      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OysterMath\OysterMath.vcxproj">
-      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
-    </ProjectReference>
+    <ClCompile Include="ServerLauncher.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

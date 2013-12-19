@@ -299,5 +299,7 @@ bool OysterThread::IsActive()
 }
 bool OysterThread::IsCreated() const
 {
+	if(!privateData->data) return false;
+
 	return privateData->data->isCreated;
 }
