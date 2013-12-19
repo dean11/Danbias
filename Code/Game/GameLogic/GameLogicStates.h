@@ -1,23 +1,63 @@
 #ifndef GAMELOGICSTATES_H
 #define GAMELOGICSTATES_H
 
+#include "GameLogicDef.h"
 
 namespace GameLogic
 {
-	enum PLAYER_STATE
+	class DANBIAS_GAMELOGIC_DLL PLAYER_STATE
 	{
-		PLAYER_STATE_JUMPING = 0,
-		PLAYER_STATE_WALKING = 1,
-		PLAYER_STATE_IDLE = 2,
+		public:
+			PLAYER_STATE()
+			{
+
+			}
+			PLAYER_STATE(int value)
+			{
+				this->value = value;
+			}
+
+			static const int PLAYER_STATE_JUMPING = 0;
+			static const int PLAYER_STATE_WALKING = 1;
+			static const int PLAYER_STATE_IDLE = 2;
+			int value;
+
+	};
+	class DANBIAS_GAMELOGIC_DLL PLAYER_MOVEMENT
+	{
+		public:
+		PLAYER_MOVEMENT()
+		{
+
+		}
+		PLAYER_MOVEMENT(int value)
+		{
+			this->value = value;
+		}
+		static const int PLAYER_MOVEMENT_FORWARD = 0;
+		static const int PLAYER_MOVEMENT_BACKWARD = 1;
+		static const int PLAYER_MOVEMENT_LEFT = 2;
+		static const int PLAYER_MOVEMENT_RIGHT = 4;
+		static const int PLAYER_MOVEMENT_JUMP = 8;
+		int value;
 	};
 
-	enum PLAYER_MOVEMENT
+	class DANBIAS_GAMELOGIC_DLL OBJECT_TYPE
 	{
-		PLAYER_MOVEMENT_FORWARD = 0,
-		PLAYER_MOVEMENT_BACKWARD = 1,
-		PLAYER_MOVEMENT_LEFT = 2,
-		PLAYER_MOVEMENT_RIGHT = 4,
-		PLAYER_MOVEMENT_JUMP = 8,
+		public:
+		OBJECT_TYPE()
+		{
+
+		}
+		OBJECT_TYPE(int value)
+		{
+			this->value = value;
+		}
+		static const int OBJECT_TYPE_PLAYER = 0;
+		static const int OBJECT_TYPE_BOX = 1;
+		static const int OBJECT_TYPE_UNKNOWN = 2;
+
+		public: int value;
 	};
 
 	enum WEAPON_FIRE
@@ -37,12 +77,7 @@ namespace GameLogic
 		WEAPON_STATE_RELOADING = 2,
 	};
 
-	enum OBJECT_TYPE
-	{
-		OBJECT_TYPE_PLAYER = 0,
-		OBJECT_TYPE_BOX = 1,
-		OBJECT_TYPE_UNKNOWN = 2,
-	};
+	
 };
 
 #endif

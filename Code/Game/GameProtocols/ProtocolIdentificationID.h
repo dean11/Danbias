@@ -7,11 +7,13 @@
 
 /* THERE CAN ABSOLUTLEY NOT BE TWO DEFINITIONS WITH THE SAME ID!! */
 
-#define protocol_Gamplay_PlayerNavigation			0
-#define protocol_Gamplay_PlayerMouseMovement		1
-#define protocol_Gamplay_PlayerPosition				2
-#define protocol_Gamplay_CreateObject				3
-#define protocol_Gamplay_ObjectPosition				4
+#define protocol_ID_INDEX							0
+
+#define protocol_Gamplay_PlayerNavigation			300
+#define protocol_Gamplay_PlayerMouseMovement		301
+#define protocol_Gamplay_PlayerPosition				302
+#define protocol_Gamplay_CreateObject				303
+#define protocol_Gamplay_ObjectPosition				304
 
 
 #define protocol_Lobby_Msg							100

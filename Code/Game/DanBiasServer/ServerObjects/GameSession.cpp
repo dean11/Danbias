@@ -4,6 +4,10 @@
 #include <PostBox\PostBox.h>
 #include "ClientObject.h"
 
+#include "DynamicObject.h"
+#include "CollisionManager.h"
+#include "GameLogicStates.h"
+
 
 #define ERIK
 
@@ -83,6 +87,8 @@ namespace DanBias
 		return true;
 	}
 	
+
+
 ////private:
 	void GameSession::Init()
 	{
@@ -125,13 +131,20 @@ namespace DanBias
 
 
 #pragma region TESTING
+
+using namespace GameLogic;
+
+	void ConvertToMovement(ClientObject* reciever, CustomNetProtocol& inputToConvert);
+	
 	//VARIABLES GOES HERE
 	int i = 0;
-	GameLogic::Player erik;
+	DynamicObject* objectBox;
 
 		void GameSession::EricLogicInitFunc()
 		{
-		
+			CollisionManager::BoxCollision(0,0);
+
+			objectBox = new DynamicObject(CollisionManager::BoxCollision, OBJECT_TYPE::OBJECT_TYPE_BOX);
 		}
 		void GameSession::EricLogicFrameFunc()
 		{
@@ -139,7 +152,25 @@ namespace DanBias
 		}
 		void GameSession::EricsLogicTestingProtocalRecieved(ClientObject* reciever, CustomNetProtocol& protocol)
 		{
+			switch (protocol[protocol_ID_INDEX].value.netShort)
+			{
+			case protocol_Gamplay_PlayerNavigation:
+				ConvertToMovement(reciever, protocol);
+				break;
+			}
+		}
 
+
+		void ConvertToMovement(ClientObject* reciever,CustomNetProtocol& inputToConvert)
+		{	
+			if (inputToConvert[1].value.netBool == true)
+			{
+				reciever->Logic_Object()->Move(PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD);
+			}
+			if (inputToConvert[2].value.netBool == true)
+			{
+				reciever->Logic_Object()->Move(PLAYER_MOVEMENT::PLAYER_MOVEMENT_BACKWARD);
+			}
 		}
 #pragma endregion
 

@@ -14,7 +14,7 @@ struct Player::PrivateData
 		
 		life = 100;
 		teamID = -1;
-		playerState = PLAYER_STATE_IDLE;
+		playerState.value = PLAYER_STATE::PLAYER_STATE_IDLE;
 
 		lookDir = Oyster::Math::Float3(1,0,0);
 	}
@@ -36,7 +36,7 @@ struct Player::PrivateData
 }myData;
 
 Player::Player()
-	:Object(CollisionManager::PlayerCollision, OBJECT_TYPE_PLAYER)
+	:Object(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
 {
 	myData = new PrivateData();
 }
@@ -51,23 +51,23 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 {
 	Oyster::Math::Float3 currentVelocity = rigidBody->GetRigidLinearVelocity();
 
-	switch(movement)
+	switch(movement.value)
 	{
-		case PLAYER_MOVEMENT_FORWARD:
+	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD:
 			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
 			break;
 
-		case PLAYER_MOVEMENT_BACKWARD:
+	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_BACKWARD:
 			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
 			break;
 
-		case PLAYER_MOVEMENT_LEFT:
+	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_LEFT:
 			break;
 
-		case PLAYER_MOVEMENT_RIGHT:
+	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_RIGHT:
 			break;
 
-		case PLAYER_MOVEMENT_JUMP:
+	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_JUMP:
 			Jump();
 			break;
 	}
@@ -82,7 +82,7 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 {
 	API::Instance().SetCenter(rigidBody,spawnPoint);
 	myData->life = 100;
-	myData->playerState = PLAYER_STATE_IDLE;
+	myData->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	myData->lookDir = Oyster::Math::Float3(1,0,0);
 }
 
@@ -93,20 +93,21 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (myData->playerState == PLAYER_STATE_WALKING);
+	return (myData->playerState.value == PLAYER_STATE::PLAYER_STATE_WALKING);
 }
 bool Player::IsJumping()
 {
-	return (myData->playerState == PLAYER_STATE_JUMPING);
+	return (myData->playerState.value == PLAYER_STATE::PLAYER_STATE_JUMPING);
 }
 bool Player::IsIdle()
 {
-	return (myData->playerState == PLAYER_STATE_IDLE);
+	return (myData->playerState.value == PLAYER_STATE::PLAYER_STATE_IDLE);
 }
 
 Oyster::Math::Float3 Player::GetPos()
 {
 	return rigidBody->GetCenter();
+	return Oyster::Math::Float3(0,0,0);
 }
 
 Oyster::Math::Float3 Player::GetLookDir()
