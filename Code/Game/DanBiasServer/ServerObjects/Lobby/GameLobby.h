@@ -9,7 +9,8 @@ namespace DanBias
 	{
 	public:
 		GameLobby();
-		~GameLobby();
+		virtual~GameLobby();
+
 		void Release();
 
 	private:

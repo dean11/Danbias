@@ -1,5 +1,5 @@
-#ifndef GAMELOGIC_PLAYER_PROTOCOLS_H
-#define GAMELOGIC_PLAYER_PROTOCOLS_H
+#ifndef GAMELOGIC_OBJECT_PROTOCOLS_H
+#define GAMELOGIC_OBJECT_PROTOCOLS_H
 
 #include <CustomNetProtocol.h>
 #include "ProtocolIdentificationID.h"

@@ -56,4 +56,6 @@ bool Team::AddPlayer(Player *player)
 		myData->players[myData->nrOfPlayers] = player;
 		myData->nrOfPlayers++;
 	}
+
+	return true;
 }

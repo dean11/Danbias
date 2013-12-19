@@ -1,6 +1,7 @@
 #include "Object.h"
 #include "OysterMath.h"
 #include "CollisionManager.h"
+#include "GID.h"
 
 
 using namespace GameLogic;
@@ -18,6 +19,7 @@ Object::Object()
 
 	rigidBody->gameObjectRef = this;
 
+	this->objectID = GID();
 	this->type = OBJECT_TYPE_UNKNOWN;
 
 }
@@ -34,6 +36,8 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 
 	rigidBody->gameObjectRef = this;
 
+	this->objectID = GID();
+
 	this->type = type;
 }
 
@@ -47,6 +51,10 @@ Object::~Object(void)
 OBJECT_TYPE Object::GetType()
 {
 	return this->type;
+}
+int Object::GetID()
+{
+	return this->objectID;
 }
 
 Oyster::Physics::ICustomBody* Object::GetRigidBody()

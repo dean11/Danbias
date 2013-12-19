@@ -2,9 +2,11 @@
 #include "DllInterfaces/GFXAPI.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
-#include "NetworkClient.h"
 #include "PlayerProtocols.h"
 #include "ControlProtocols.h"
+#include "GameProtocols.h"
+#include "NetworkClient.h"
+
 
 using namespace DanBias::Client;
 
