@@ -124,10 +124,10 @@ Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem
 {
 	Float4 offset = worldPos - this->rigid.box.center;
 	Float distance = offset.Dot( offset );
-	Float3 normal = Float3::standard_unit_z;
+	Float3 normal = Float3::null;
 
 	if( distance != 0.0f )
-	{
+	{ // sanity check
 		Ray ray( Float4::standard_unit_w, offset / (Float)::std::sqrt(distance) );
 		Float minDistance = numeric_limits<Float>::max();
 
@@ -167,6 +167,7 @@ Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem
 		}
 	}
 	targetMem.xyz = normal;
+	targetMem.w = 0.0f;
 	return targetMem;
 }
 

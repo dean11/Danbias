@@ -130,6 +130,7 @@ Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &target
 	{ // sanity check
 		targetMem.Normalize();
 	}
+
 	return targetMem;
 }
 
