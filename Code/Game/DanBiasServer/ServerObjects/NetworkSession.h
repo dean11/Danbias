@@ -7,7 +7,7 @@
 #pragma warning(disable: 4150)
 
 #define NOMINMAX
-#include "Utilities.h"
+#include <Utilities.h>
 #include <DynamicArray.h>
 #include <PostBox\IPostBox.h>
 #include <CustomNetProtocol.h>
@@ -46,6 +46,9 @@ namespace DanBias
 		virtual void SetPostbox(Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box);
 
 		virtual void CloseSession(NetworkSession* clientDestination); //<! Closes the session and sends the clients to given sesison. If session is null, clients is kicked from server.
+
+		Utility::DynamicMemory::SmartPointer<ClientObject> FindClient(int ID);
+		Utility::DynamicMemory::SmartPointer<ClientObject> FindClient(ClientObject& obj);
 
 	protected:
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<ClientObject>> clients;

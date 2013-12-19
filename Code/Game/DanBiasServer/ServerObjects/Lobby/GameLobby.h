@@ -8,13 +8,15 @@ namespace DanBias
 	class GameLobby :public NetworkSession
 	{
 	public:
-		GameLobby();
+		GameLobby(Utility::DynamicMemory::SmartPointer<ClientObject> owner);
 		virtual~GameLobby();
 
 		void Release();
 
-	private:
+		void Join(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 
+	private:
+		void AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client, Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box = 0) override;
 
 	};
 }//End namespace DanBias

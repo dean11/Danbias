@@ -3,6 +3,8 @@
 
 #include "ObjectProtocols.h"
 #include "PlayerProtocols.h"
+#include "LobbyProtocols.h"
+
 #include "TEST_PROTOCOLS.h"
 
 

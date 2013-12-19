@@ -3,7 +3,7 @@
 
 namespace DanBias
 {
-	GameLobby::GameLobby()
+	GameLobby::GameLobby(Utility::DynamicMemory::SmartPointer<ClientObject> owner)
 	{
 
 	}
@@ -15,4 +15,11 @@ namespace DanBias
 	{
 
 	}
+	void GameLobby::Join(Utility::DynamicMemory::SmartPointer<ClientObject> client)
+	{
+		NetworkSession::AttachClient(client);
+	}
+
+	void GameLobby::AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client, Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box) 
+	{ }
 }//End namespace DanBias

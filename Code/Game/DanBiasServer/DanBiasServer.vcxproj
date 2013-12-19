@@ -113,7 +113,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll;GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -130,7 +130,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll;GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -151,7 +151,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll;GamePhysics_$(PlatformShortName).dll</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -172,12 +172,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll;GamePhysics_$(PlatformShortName).dll</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameSessionManager.cpp" />
+    <ClCompile Include="Helpers\GameSessionManager.cpp" />
+    <ClCompile Include="Helpers\ProtocolParser.cpp" />
     <ClCompile Include="Include\DanBiasServerAPI.cpp" />
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameServer.cpp" />
@@ -186,18 +187,21 @@
     <ClCompile Include="ServerObjects\GameSession.cpp" />
     <ClCompile Include="ServerObjects\Lobby\MainLobby.cpp" />
     <ClCompile Include="ServerObjects\NetworkSession.cpp" />
+    <ClCompile Include="Test\TEST.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="GameServer.h" />
-    <ClInclude Include="GameSessionManager.h" />
+    <ClInclude Include="Helpers\GameSessionManager.h" />
     <ClInclude Include="Include\DanBiasServerAPI.h" />
-    <ClInclude Include="ServerInitReader.h" />
+    <ClInclude Include="Helpers\ServerInitReader.h" />
     <ClInclude Include="ServerObjects\ClientObject.h" />
     <ClInclude Include="ServerObjects\GameSession.h" />
     <ClInclude Include="ServerObjects\Lobby\GameLobby.h" />
     <ClInclude Include="ServerObjects\Lobby\MainLobby.h" />
     <ClInclude Include="ServerObjects\NetworkSession.h" />
+    <ClInclude Include="Helpers\ProtocolParser.h" />
+    <ClInclude Include="Test\TEST.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GamePhysics\GamePhysics.vcxproj">

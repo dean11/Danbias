@@ -12,8 +12,16 @@ namespace Oyster
 	{
 		enum OYSTER_THREAD_ERROR
 		{
-			OYSTER_THREAD_ERROR_FAILED,
 			OYSTER_THREAD_ERROR_SUCCESS,
+			OYSTER_THREAD_ERROR_ThreadAlreadyCreated,
+			OYSTER_THREAD_ERROR_ThreadCreationFailed,
+			OYSTER_THREAD_ERROR_ThreadNotCreated,
+			OYSTER_THREAD_ERROR_ThreadHasNoWorker,
+			OYSTER_THREAD_ERROR_ThreadCannotWaintOnItselfe,
+			OYSTER_THREAD_ERROR_ThreadCannotBeWaitedOn,
+			OYSTER_THREAD_ERROR_ThreadIsDead,
+
+			OYSTER_THREAD_ERROR_FAILED,
 		};
 		enum OYSTER_THREAD_PRIORITY
 		{
@@ -34,21 +42,22 @@ namespace Oyster
 			const OysterThread& operator=(const OysterThread& original);
 			virtual~OysterThread();
 
-			OYSTER_THREAD_ERROR Create(IThreadObject* worker, bool start);
+			OYSTER_THREAD_ERROR Create(IThreadObject* worker, bool start, bool detach = false);
 			OYSTER_THREAD_ERROR Start();
-			void Stop(bool wait = false);
-			void Pause();
-			void Pause(int mSec);
-			void Resume();
+			OYSTER_THREAD_ERROR Stop(bool wait = false);
+			OYSTER_THREAD_ERROR Pause();
+			OYSTER_THREAD_ERROR Pause(int mSec);
+			OYSTER_THREAD_ERROR Resume();
 			OYSTER_THREAD_ERROR Reset(IThreadObject* worker = 0);
-			void Terminate(bool wait = false);
-			void Wait();
-			void Wait(int mSec);
+			OYSTER_THREAD_ERROR Terminate(bool wait = true);
+			OYSTER_THREAD_ERROR Wait();
+			OYSTER_THREAD_ERROR Wait(int mSec);
 			OYSTER_THREAD_ERROR Swap(const OysterThread* other);
-			bool IsActive();
-			void SetPriority(OYSTER_THREAD_PRIORITY priority);
 
+			void SetPriority(OYSTER_THREAD_PRIORITY priority);
+			bool IsActive();
 			bool IsCreated() const;
+
 		};
 	} 
 }

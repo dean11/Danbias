@@ -10,7 +10,7 @@ namespace DanBias
 	{
 		InitPath_ServerIni,
 	};
-	std::string	GetInitPath(InitPath file)
+	static std::string	GetInitPath(InitPath file)
 	{
 		std::string type = "";
 		std::string path = "";

@@ -235,6 +235,10 @@ namespace Utility
 				*	Releases one reference of the pointer and set value to null, making the current SmartPointer invalid.
 				*/
 				int Release();
+				/**
+				*	Only test to release to check reference count.
+				*/
+				int ReleaseDummy();
 
 				/** Checks if the pointer is valid (not NULL)
 				*	Returns true for valid, else false. 

@@ -9,13 +9,10 @@ using namespace Oyster;
 namespace GameLogic
 {
 
-	namespace CollisionManager
-	{
-
 		void PlayerVBox(Player &player, DynamicObject &box);
 
 
-		Physics::ICustomBody::SubscriptMessage PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj)
+		Physics::ICustomBody::SubscriptMessage CollisionManager::PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj)
 		{
 			Player *player = ((Player*)(rigidBodyPlayer->gameObjectRef));
 			Object *realObj = (Object*)obj->gameObjectRef;
@@ -38,7 +35,7 @@ namespace GameLogic
 			player.DamageLife(20);
 		}
 		
-		Physics::ICustomBody::SubscriptMessage BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj)
+		Physics::ICustomBody::SubscriptMessage CollisionManager::BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj)
 		{
 			DynamicObject *box = (DynamicObject*)rigidBodyBox->gameObjectRef;
 			Object *realObj = (Object*)obj->gameObjectRef;
@@ -55,5 +52,5 @@ namespace GameLogic
 
 			return Physics::ICustomBody::SubscriptMessage_none;
 		}
-	}
+
 }

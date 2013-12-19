@@ -2,6 +2,8 @@
 #define DANBIASSERVER_MAINLOBBY_H
 
 #include "..\NetworkSession.h"
+#include "GameLobby.h"
+#include <GameProtocols.h>
 #include <PostBox\IPostBox.h>
 
 namespace DanBias
@@ -15,12 +17,20 @@ namespace DanBias
 
 		void Frame();
 
-	private:
-		void ParseEvents();
+		Oyster::IPostBox<NetworkSession::NetEvent>* GetPostbox();
 
 	private:
-		Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box;
-		
+		void ParseEvents();
+		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::ClientObject& c);
+
+		void CreateGame(GameLogic::Protocol_LobbyCreateGame& p, DanBias::ClientObject& c);
+		//void CreateJoin(GameLogic::Protocol_LobbyJoinGame& p, DanBias::ClientObject& c);
+
+		//void ProtocolRecievedCallback(CustomNetProtocol& protocol) override;
+
+	private:
+		Oyster::IPostBox<NetworkSession::NetEvent> *box;
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameLobby>> gameLobby;
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H

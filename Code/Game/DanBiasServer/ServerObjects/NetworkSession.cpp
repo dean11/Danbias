@@ -158,4 +158,23 @@ namespace DanBias
 		ClientListLock.unlock();
 	}
 
+	Utility::DynamicMemory::SmartPointer<ClientObject> NetworkSession::FindClient(int ID)
+	{
+		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		{
+			if(this->clients[i]->NetClient_Object()->Id() == ID)
+				return this->clients[i];
+		}
+		return Utility::DynamicMemory::SmartPointer<ClientObject>();
+	}
+	Utility::DynamicMemory::SmartPointer<ClientObject> NetworkSession::FindClient(ClientObject& obj)
+	{
+		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		{
+			if(this->clients[i]->NetClient_Object()->Id() == obj.NetClient_Object()->Id())
+				return this->clients[i];
+		}
+		return Utility::DynamicMemory::SmartPointer<ClientObject>();
+	}
+
 }//End namespace DanBias

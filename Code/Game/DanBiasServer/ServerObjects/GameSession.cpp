@@ -1,8 +1,9 @@
 
 #include <GameProtocols.h>
-#include "GameSession.h"
 #include <PostBox\PostBox.h>
+#include "GameSession.h"
 #include "ClientObject.h"
+#include "..\Helpers\ProtocolParser.h"
 
 
 #define ERIK
@@ -10,29 +11,39 @@
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Network;
 using namespace Oyster;
+using namespace Oyster::Thread;
 
 namespace DanBias
 {
 	GameSession::GameSession()
 	{
-
+		this->box = 0;
 	}
 	GameSession::~GameSession()
 	{
-
+		delete this->box;
+		this->box = 0;
 	}
 
-	void GameSession::Run(const GameSessionDescription& desc)
+	void GameSession::Run(GameSessionDescription& desc)
 	{
-
+		if(this->Init(desc))
+		{
+			if(this->worker.Create(this, true, true) != OYSTER_THREAD_ERROR_SUCCESS) return;
+			this->worker.SetPriority(OYSTER_THREAD_PRIORITY_1);
+		}
 	}
 
+	void GameSession::Join(Utility::DynamicMemory::SmartPointer<ClientObject> client)
+	{
+		AttachClient(client, this->box);
+	}
+
+////private:	overriden NetworkSession functions
 	void GameSession::AttachClient(SmartPointer<ClientObject> client, Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box ) 
 	{
-		this->Init();
+		NetworkSession::AttachClient(client, box);
 	}
-
-////private:	//overriden NetworkSession functions
 	void GameSession::Close()
 	{
 
@@ -84,64 +95,69 @@ namespace DanBias
 	}
 	
 ////private:
-	void GameSession::Init()
+	bool GameSession::Init(GameSessionDescription& desc)
 	{
-#ifdef ERIK
-		EricLogicInitFunc();
-#else
-		
-#endif
+		if(desc.clients.Size() == 0)	return false;
+		this->box = new PostBox<NetEvent>();
+		this->owner = desc.owner;
+		for (unsigned int i = 0; i < desc.clients.Size(); i++)
+		{
+			desc.clients[i]->SetPostbox(this->box);
+			this->clients.Push(desc.clients[i]);
+		}
+
+		return true;
 	}
 	void GameSession::Frame()
 	{
-#ifdef ERIK
-		EricLogicFrameFunc();
-#else
-		
-#endif
 	}
 	void GameSession::ParseEvents()
 	{
 		if(this->box && !this->box->IsEmpty())
 		{
 			NetEvent &e = this->box->Fetch();
-
-#ifdef ERIK
-			EricsLogicTestingProtocalRecieved(e.reciever, e.protocol);
-#else
+		
 			if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
 
-			short f = e.protocol[0].value.netShort;
-
-			switch (f)
+			ParseProtocol(e.protocol, *e.reciever);
+		}
+	}
+	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::ClientObject& c)
+	{
+		switch (p[0].value.netShort)
+		{
+			case protocol_Gamplay_PlayerNavigation:
 			{
-				default:
-					
-				break;
+				if(p[1].value.netBool)	//bool bForward;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
+				if(p[2].value.netBool)	//bool bBackward;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
+				if(p[5].value.netBool)	//bool bStrafeRight;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+				if(p[6].value.netBool)	//bool bStrafeLeft;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
 			}
-#endif
+			break;
+			case protocol_Gamplay_PlayerMouseMovement:
+			
+			break;
+			case protocol_Gamplay_PlayerPosition:
+			
+			break;
+			case protocol_Gamplay_CreateObject:
+			
+			break;
+			case protocol_Gamplay_ObjectPosition:
+			
+			break;
 		}
 	}
 
-
-#pragma region TESTING
+#ifdef ERIK
 	//VARIABLES GOES HERE
-	int i = 0;
-	GameLogic::Player erik;
-
-		void GameSession::EricLogicInitFunc()
-		{
-		
-		}
-		void GameSession::EricLogicFrameFunc()
-		{
-			
-		}
-		void GameSession::EricsLogicTestingProtocalRecieved(ClientObject* reciever, CustomNetProtocol& protocol)
-		{
-
-		}
-#pragma endregion
+	
+	
+#endif
 
 }//End namespace DanBias
 
