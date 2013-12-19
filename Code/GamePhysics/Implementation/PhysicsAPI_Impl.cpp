@@ -38,12 +38,37 @@ namespace
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
 					// bounce
-					Float4 sumJ = normal * Formula::CollisionResponse::Impulse( deuterState.GetRestitutionCoeff(),
+					Float impulse = Formula::CollisionResponse::Impulse( deuterState.GetRestitutionCoeff(),
 																				deuterState.GetMass(), deuterG_Magnitude,
-																				protoState.GetMass(), protoG_Magnitude );
+																				protoState.GetMass(), protoG_Magnitude );;
+					Float4 sumJ = normal*impulse;
+					
+					// FRICTION
+					// Relative momentum after normal impulse
+					Float4 relativeMomentum = deuterState.GetLinearMomentum() - protoState.GetLinearMomentum();
 
-					// @todo TODO: friction
-					// sumJ -= ;
+					Float4 tanFriction = relativeMomentum - relativeMomentum.Dot(normal)*normal;
+					tanFriction.Normalize();
+
+					Float magnitudeFriction =  -relativeMomentum.Dot(tanFriction);
+					magnitudeFriction = magnitudeFriction/( 1/protoState.GetMass() + 1/deuterState.GetMass() );
+
+					float mu = 0.5f;
+ 
+					Float4 frictionImpulse;
+					if( abs(magnitudeFriction) < impulse*mu )
+					{
+						frictionImpulse = magnitudeFriction*tanFriction;
+					}
+					else
+					{
+					  Float dynamicFriction = 0.5f;
+					  frictionImpulse = -impulse*tanFriction*dynamicFriction;
+					}
+ 
+					// Apply
+					sumJ -= ( 1 / protoState.GetMass() )*frictionImpulse;
+					// FRICTION END
 
 					// calc from perspective of proto
 					proto->GetNormalAt( worldPointOfContact, normal );
@@ -54,8 +79,10 @@ namespace
 					sumJ += normal * Formula::CollisionResponse::Impulse( protoState.GetRestitutionCoeff(),
 																		  protoState.GetMass(), protoG_Magnitude,
 																		  deuterState.GetMass(), deuterG_Magnitude );
-					// @todo TODO: friction
-					// sumJ += ;
+					// FRICTION
+					// Apply
+					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
+					// FRICTION END
 
 					protoState.ApplyImpulse( sumJ, worldPointOfContact, normal );
 					proto->SetState( protoState );
