@@ -4,6 +4,7 @@
 #include "GameSession.h"
 #include "ClientObject.h"
 #include "..\Helpers\ProtocolParser.h"
+#include <GameLogicStates.h>
 
 
 #define ERIK

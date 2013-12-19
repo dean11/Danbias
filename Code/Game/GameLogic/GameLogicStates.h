@@ -5,6 +5,14 @@
 
 namespace GameLogic
 {
+	enum PLAYER_MOVEMENT
+	{
+		PLAYER_MOVEMENT_FORWARD = 0,
+		PLAYER_MOVEMENT_BACKWARD = 1,
+		PLAYER_MOVEMENT_LEFT = 2,
+		PLAYER_MOVEMENT_RIGHT = 4,
+		PLAYER_MOVEMENT_JUMP = 8,
+	};
 	class DANBIAS_GAMELOGIC_DLL PLAYER_STATE
 	{
 		public:
@@ -23,9 +31,10 @@ namespace GameLogic
 			int value;
 
 	};
+	/*
 	class DANBIAS_GAMELOGIC_DLL PLAYER_MOVEMENT
 	{
-		public:
+	public:
 		PLAYER_MOVEMENT()
 		{
 
@@ -41,6 +50,7 @@ namespace GameLogic
 		static const int PLAYER_MOVEMENT_JUMP = 8;
 		int value;
 	};
+	*/
 
 	class DANBIAS_GAMELOGIC_DLL OBJECT_TYPE
 	{
