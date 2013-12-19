@@ -36,7 +36,7 @@ namespace Oyster { namespace Physics { namespace Formula
 
 	namespace CollisionResponse
 	{
-		inline ::Oyster::Math::Float Impulse( ::Oyster::Math::Float e, ::Oyster::Math::Float mA, ::Oyster::Math::Float gA, ::Oyster::Math::Float mB, ::Oyster::Math::Float gB )
+		inline ::Oyster::Math::Float Bounce( ::Oyster::Math::Float e, ::Oyster::Math::Float mA, ::Oyster::Math::Float gA, ::Oyster::Math::Float mB, ::Oyster::Math::Float gB )
 		{
 			return (e + 1) * (mB*gA - mA*gB) / (mA + mB);
 		}

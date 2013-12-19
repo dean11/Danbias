@@ -39,9 +39,9 @@ namespace
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
 					// bounce
-					Float impulse = Formula::CollisionResponse::Impulse( deuterState.GetRestitutionCoeff(),
-																				deuterState.GetMass(), deuterG_Magnitude,
-																				protoState.GetMass(), protoG_Magnitude );;
+					Float impulse = Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
+																		deuterState.GetMass(), deuterG_Magnitude,
+																		protoState.GetMass(), protoG_Magnitude );;
 					Float4 sumJ = normal*impulse;
 					
 					sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
@@ -54,9 +54,9 @@ namespace
 					deuterG_Magnitude = deuterG.Dot( normal );
 					
 					// bounce
-					sumJ += normal * Formula::CollisionResponse::Impulse( protoState.GetRestitutionCoeff(),
-																		  protoState.GetMass(), protoG_Magnitude,
-																		  deuterState.GetMass(), deuterG_Magnitude );
+					sumJ += normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
+																		 protoState.GetMass(), protoG_Magnitude,
+																		 deuterState.GetMass(), deuterG_Magnitude );
 					// FRICTION
 					// Apply
 					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
