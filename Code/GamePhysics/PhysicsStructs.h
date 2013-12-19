@@ -62,8 +62,78 @@ namespace Oyster { namespace Physics
 
 			bool isSpatiallyAltered, isDisturbed;
 		};
+
+		/**
+		###############################################################################
+		Can't define structs inside structs in a union therefor they are declared here.
+		###############################################################################
+		*/
+		struct GravityWell
+		{
+			::Oyster::Math::Float3 position;
+			::Oyster::Math::Float mass;
+
+			GravityWell( );
+			GravityWell( const GravityWell& gravityWell );
+			GravityWell& operator=( const GravityWell& gravityWell );
+		};
+
+		struct GravityDirected
+		{
+			::Oyster::Math::Float3 impulse;
+
+			GravityDirected( );
+			GravityDirected( const GravityDirected& gravityDirected );
+			GravityDirected& operator=( const GravityDirected& gravityDirected );
+		};
+
+		struct GravityDirectedField
+		{
+			::Oyster::Math::Float3 normalizedDirection;
+			::Oyster::Math::Float mass;
+			::Oyster::Math::Float magnitude;
+
+			GravityDirectedField( );
+			GravityDirectedField( const GravityDirectedField& gravityDirectedField );
+			GravityDirectedField& operator=( const GravityDirectedField& gravityDirectedField );
+		};
+
+		struct Gravity
+		{
+			enum GravityType
+			{
+				GravityType_Undefined		= -1,
+				GravityType_Well			= 0,
+				GravityType_Directed		= 1,
+				GravityType_DirectedField	= 2,
+			} gravityType;
+
+			union
+			{
+				struct
+				{
+					GravityWell well;
+				};
+
+				struct
+				{
+					GravityDirected directed;
+				};
+
+				struct
+				{
+					GravityDirectedField directedField;
+				};
+			};
+
+			Gravity( );
+			Gravity( const Gravity& gravity );
+			Gravity& operator=( const Gravity& gravity );
+			
+		};
 	}
 } }
+
 
 #include "PhysicsStructs-Impl.h"
 
