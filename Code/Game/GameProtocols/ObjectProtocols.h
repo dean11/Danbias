@@ -11,14 +11,14 @@ namespace GameLogic
 	struct Protocol_CreateObject :public Oyster::Network::CustomProtocolObject
 	{
 		int object_ID;
-		char path[255];
+		char *path;
 		float worldMatrix[16];
 
 
 		Protocol_CreateObject()
 		{
-			this->protocol[0].value = protocol_Gamplay_CreateObject;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[0].value = protocol_Gameplay_CreateObject;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray; 
@@ -79,7 +79,7 @@ namespace GameLogic
 
 		Protocol_ObjectPosition()
 		{
-			this->protocol[0].value = protocol_Gamplay_ObjectPosition;
+			this->protocol[0].value = protocol_Gameplay_ObjectPosition;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
 									
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
@@ -129,6 +129,27 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
+	struct Protocol_RemoveObject :public Oyster::Network::CustomProtocolObject
+	{
+		int object_ID;
+
+		Protocol_RemoveObject()
+		{
+			this->protocol[0].value = protocol_Gameplay_RemoveObject;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+
+			this->protocol[1].value = object_ID;
+			return &protocol;		 
+		}							 
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

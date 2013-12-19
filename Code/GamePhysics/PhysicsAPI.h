@@ -232,10 +232,12 @@ namespace Oyster
 		protected:
 			virtual ~API() {}
 		};
-	
+
+		
 		//! The root interface for all physical representations processable by the engine.
 		class PHYSICS_DLL_USAGE ICustomBody
 		{
+			
 		public:
 			enum SubscriptMessage
 			{

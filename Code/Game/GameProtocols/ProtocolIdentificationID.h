@@ -8,6 +8,17 @@
 /* THERE CAN ABSOLUTLEY NOT BE TWO DEFINITIONS WITH THE SAME ID!! */
 
 
+#define protocol_ID_INDEX							0
+
+#define protocol_Gameplay_PlayerNavigation			300
+#define protocol_Gameplay_PlayerMouseMovement		301
+#define protocol_Gameplay_PlayerPosition			302
+#define protocol_Gameplay_CreateObject				303
+#define protocol_Gameplay_RemoveObject				304
+#define protocol_Gameplay_ObjectPosition			305
+
+
+#define protocol_Status					50
 
 /***********************************/
 /********* RESERVERD PROTOCOLS *****/

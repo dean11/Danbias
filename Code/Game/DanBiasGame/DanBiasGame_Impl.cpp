@@ -6,6 +6,8 @@
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
 #include "PlayerProtocols.h"
+#include "ControlProtocols.h"
+#include "GameProtocols.h"
 #include "NetworkClient.h"
 
 #include "../WindowManager/WindowShell.h"
@@ -29,9 +31,15 @@ namespace DanBias
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{
-		case protocol_Gamplay_PlayerNavigation:
+		case protocol_Status:
 			{
-		
+				GameLogic::Protocol_Status::States state;
+				state =  (GameLogic::Protocol_Status::States)p[1].value.netShort;
+
+			}
+			break;
+		case protocol_Gameplay_PlayerNavigation:
+			{
 				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
 				for(int i = 0; i< 6; i++)
 				{
@@ -44,7 +52,7 @@ namespace DanBias
 				protocolData = NULL;
 			}
 			break;
-		case protocol_Gamplay_PlayerPosition:
+		case protocol_Gameplay_PlayerPosition:
 			{
 				Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
 				for(int i = 0; i< 3; i++)
@@ -58,7 +66,7 @@ namespace DanBias
 			}
 			break;
 
-		case protocol_Gamplay_CreateObject:
+		case protocol_Gameplay_CreateObject:
 			{
 
 				Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
@@ -76,7 +84,19 @@ namespace DanBias
 				protocolData = NULL;
 			}
 			break;
-		case protocol_Gamplay_ObjectPosition:
+		case protocol_Gameplay_RemoveObject:
+			{
+				Client::GameClientState::RemoveObj* protocolData = new Client::GameClientState::RemoveObj;
+				protocolData->object_ID = p[1].value.netInt;
+
+				if(dynamic_cast<Client::GameState*>(gameClientState))
+					((Client::GameState*)gameClientState)->Protocol(protocolData);
+
+				delete protocolData;
+				protocolData = NULL;
+			}
+			break;
+		case protocol_Gameplay_ObjectPosition:
 			{
 
 				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
@@ -113,7 +133,6 @@ namespace DanBias
 		}
 
 	public:
-		//Client::GameClientState* gameClientState;
 		WindowShell* window;
 		InputClass* inputObj;
 		Utility::WinTimer* timer;
