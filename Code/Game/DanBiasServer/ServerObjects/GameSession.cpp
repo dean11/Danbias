@@ -143,9 +143,25 @@ using namespace GameLogic;
 
 		void GameSession::EricLogicInitFunc()
 		{
-			//CollisionManager::BoxCollision(0,0);
+			CollisionManager::BoxCollision(0,0);
 
-			//objectBox = new DynamicObject(CollisionManager::BoxCollision, OBJECT_TYPE::OBJECT_TYPE_BOX);
+			objectBox = new DynamicObject(CollisionManager::BoxCollision, OBJECT_TYPE::OBJECT_TYPE_BOX);
+
+			Protocol_CreateObject objectCreation;
+			objectCreation.object_ID = objectBox->GetID();
+			objectCreation.path = "crate";
+			Oyster::Math::Float4x4 worldMat = objectBox->GetRigidBody()->GetOrientation();
+
+			for (int i = 0; i < 16; i++)
+			{
+				objectCreation.worldMatrix[i] = worldMat[i];
+			}
+
+			for (int i = 0; i < clients.Size(); i++)
+			{
+				clients[i]->NetClient_Object()->Send(objectCreation);
+			}
+
 		}
 		void GameSession::EricLogicFrameFunc()
 		{
@@ -153,13 +169,31 @@ using namespace GameLogic;
 		}
 		void GameSession::EricsLogicTestingProtocalRecieved(ClientObject* reciever, CustomNetProtocol& protocol)
 		{
-
+			bool moved = false;
 			switch (protocol[protocol_ID_INDEX].value.netShort)
 			{
 			case protocol_Gameplay_PlayerNavigation:
 				ConvertToMovement(reciever, protocol);
+				moved = true;
 				break;
 			}
+
+			if (moved)
+			{
+				
+				Protocol_ObjectPosition playerMovement;
+
+				Oyster::Math::Float4x4 worldMat = reciever->Logic_Object()->GetRigidBody()->GetOrientation();
+				playerMovement.object_ID = reciever->Logic_Object()->GetID();
+				for (int i = 0; i < 16; i++)
+				{
+					playerMovement.worldMatrix[i] = worldMat[i]; 
+				}
+
+				reciever->NetClient_Object()->Send(playerMovement);
+			}
+
+
 		}
 
 
