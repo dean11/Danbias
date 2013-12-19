@@ -4,12 +4,13 @@
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 #include "Object.h"
+#include "GameLogicDef.h"
 
 namespace GameLogic
 {
 
 
-	class DynamicObject : public Object
+	class DANBIAS_GAMELOGIC_DLL DynamicObject : public Object
 	{
 
 	public:

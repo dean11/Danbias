@@ -7,12 +7,13 @@
 namespace GameLogic
 {
 
-	namespace CollisionManager
+	class CollisionManager
 	{
+	public:
 		//these are the main collision functions
 		//typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
-		Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj);
-		Oyster::Physics::ICustomBody::SubscriptMessage BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj);
+		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj);
+		static Oyster::Physics::ICustomBody::SubscriptMessage BoxCollision(const Oyster::Physics::ICustomBody *rigidBodyBox, const Oyster::Physics::ICustomBody *obj);
 
 		//these are the specific collision case functions
 		//void PlayerVBox(Player &player, DynamicObject &box);
