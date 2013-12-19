@@ -38,7 +38,8 @@ namespace Oyster { namespace Physics { namespace Formula
 	{
 		inline ::Oyster::Math::Float Bounce( ::Oyster::Math::Float e, ::Oyster::Math::Float mA, ::Oyster::Math::Float gA, ::Oyster::Math::Float mB, ::Oyster::Math::Float gB )
 		{
-			return (e + 1) * (mB*gA - mA*gB) / (mA + mB);
+			//return (e + 1) * (mB*gA - mA*gB) / (mA + mB);
+			return (e + 1) * (mA*gB - mB*gA) / (mA + mB);
 		}
 
 		inline ::Oyster::Math::Float4 Friction( ::Oyster::Math::Float i, ::Oyster::Math::Float4 iN, ::Oyster::Math::Float4 momA, ::Oyster::Math::Float sFA, ::Oyster::Math::Float dFA, ::Oyster::Math::Float mA, ::Oyster::Math::Float4 momB, ::Oyster::Math::Float sFB, ::Oyster::Math::Float dFB, ::Oyster::Math::Float mB )

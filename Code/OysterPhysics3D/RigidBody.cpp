@@ -108,13 +108,13 @@ void RigidBody::Update_LeapFrog( Float deltaTime )
 	// updating the linear
 	// dG = F  * dt
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
-	Float3 linearImpulse =  this->impulseForceSum * deltaTime; // aka deltaLinearMomentum
+	Float3 linearImpulse =  this->impulseForceSum; // HACK: * deltaTime; // aka deltaLinearMomentum
 	Float3 deltaPos = ( deltaTime / this->mass ) * ::Utility::Value::AverageWithDelta( this->linearMomentum, linearImpulse );
 
 	// updating the angular
 	// dH = T * dt
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
-	Float3 angularImpulse = this->impulseTorqueSum * deltaTime; // aka deltaAngularMomentum
+	Float3 angularImpulse = this->impulseTorqueSum; // HACK: * deltaTime; // aka deltaAngularMomentum
 	Float3 rotationAxis = Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(),
 													::Utility::Value::AverageWithDelta(this->angularMomentum, angularImpulse) );
 	

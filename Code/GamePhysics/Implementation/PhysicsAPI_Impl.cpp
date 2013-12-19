@@ -39,14 +39,13 @@ namespace
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
 					// bounce
-					Float impulse = Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
-																		deuterState.GetMass(), deuterG_Magnitude,
-																		protoState.GetMass(), protoG_Magnitude );;
-					Float4 sumJ = normal*impulse;
+					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
+																				   deuterState.GetMass(), deuterG_Magnitude,
+																				   protoState.GetMass(), protoG_Magnitude );
 					
-					sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
-																  protoState.GetLinearMomentum(),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
-																  deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
+					//sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
+					//											  protoState.GetLinearMomentum(),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+					//											  deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 
 					// calc from perspective of proto
 					proto->GetNormalAt( worldPointOfContact, normal );
@@ -54,18 +53,22 @@ namespace
 					deuterG_Magnitude = deuterG.Dot( normal );
 					
 					// bounce
-					sumJ -= normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
-																		 protoState.GetMass(), protoG_Magnitude,
-																		 deuterState.GetMass(), deuterG_Magnitude );
+					Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
+																				  protoState.GetMass(), protoG_Magnitude,
+																				  deuterState.GetMass(), deuterG_Magnitude );
+
+					Float4 bounce = Average( bounceD, bounceP );
+					//Float4 bounce = bounceD + bounceP;
+
 					// FRICTION
 					// Apply
 					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
 					// FRICTION END
 
-					protoState.ApplyImpulse( sumJ, worldPointOfContact, normal );
+					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}
-				break;					
+				break;
 			}
 		}
 	}
