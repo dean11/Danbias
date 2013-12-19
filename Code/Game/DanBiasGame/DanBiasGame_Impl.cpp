@@ -277,6 +277,7 @@ namespace DanBias
 		delete m_data->recieverObj->gameClientState;
 		m_data->recieverObj->nwClient->Disconnect();
 		delete m_data->recieverObj->nwClient;
+		delete m_data->timer;
 		delete m_data->recieverObj;
 		delete m_data->inputObj;
 		delete m_data;
