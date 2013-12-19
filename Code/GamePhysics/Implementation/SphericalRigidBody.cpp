@@ -10,7 +10,8 @@ using namespace ::Utility::Value;
 
 SphericalRigidBody::SphericalRigidBody()
 {
-	this->rigid = RigidBody( Box(Float4x4::identity, Float3::null, Float3(1.0f)), 10.0f, Float4x4::identity );
+	this->rigid = RigidBody();
+	this->rigid.SetMass_KeepMomentum( 10.0f );
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
 	this->ignoreGravity = false;
@@ -20,9 +21,13 @@ SphericalRigidBody::SphericalRigidBody()
 
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
 {
-	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition.xyz, Float3(2.0f * desc.radius) ),
-							 desc.mass,
-							 Formula::MomentOfInertia::CreateSphereMatrix( desc.mass, desc.radius ) );
+	this->rigid = RigidBody();
+	this->rigid.SetRotation( desc.rotation );
+	this->rigid.centerPos = desc.centerPosition;
+	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
+	this->rigid.SetMass_KeepMomentum( desc.mass );
+	this->rigid.SetMomentOfInertia_KeepMomentum( Formula::MomentOfInertia::CreateSphereMatrix( desc.mass, desc.radius ) );
+
 	this->gravityNormal = Float3::null;
 
 	if( desc.subscription )
@@ -50,31 +55,31 @@ SphericalRigidBody::State SphericalRigidBody::GetState() const
 {
 	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
 				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
-				  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
-				  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
-				  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
+				  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
+				  this->rigid.centerPos, this->rigid.axis,
+				  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
 }
 
 SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
 {
 	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
 							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
-							  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
-							  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
-							  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
+							  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
+							  this->rigid.centerPos, this->rigid.axis,
+							  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
 }
 
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 {
-	this->rigid.box.boundingOffset = state.GetReach();
-	this->rigid.box.center = state.GetCenterPosition();
-	this->rigid.box.rotation = state.GetRotation();
-	this->rigid.angularMomentum = state.GetAngularMomentum().xyz;
-	this->rigid.linearMomentum = state.GetLinearMomentum().xyz;
-	this->rigid.impulseTorqueSum += state.GetAngularImpulse().xyz;
-	this->rigid.impulseForceSum += state.GetLinearImpulse().xyz;
-	this->rigid.restitutionCoeff = state.GetRestitutionCoeff();
-	this->rigid.frictionCoeff_Static = state.GetFrictionCoeff_Static();
+	this->rigid.centerPos			  = state.GetCenterPosition();
+	this->rigid.SetRotation( state.GetRotation() );
+	this->rigid.boundingReach		  = state.GetReach();
+	this->rigid.momentum_Linear		  = state.GetLinearMomentum();
+	this->rigid.momentum_Angular	  = state.GetAngularMomentum();
+	this->rigid.impulse_Linear		 += state.GetLinearImpulse();
+	this->rigid.impulse_Angular		 += state.GetAngularImpulse();
+	this->rigid.restitutionCoeff	  = state.GetRestitutionCoeff();
+	this->rigid.frictionCoeff_Static  = state.GetFrictionCoeff_Static();
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
 
 	if( this->scene )
@@ -104,17 +109,17 @@ bool SphericalRigidBody::IsAffectedByGravity() const
 
 bool SphericalRigidBody::Intersects( const ICollideable &shape ) const
 {
-	return Sphere( this->rigid.box.center, this->rigid.box.boundingOffset.x ).Intersects( shape );
+	return Sphere( this->rigid.centerPos, this->rigid.boundingReach.x ).Intersects( shape );
 }
 
 bool SphericalRigidBody::Intersects( const ICollideable &shape, Float4 &worldPointOfContact ) const
 {
-	return Sphere( this->rigid.box.center, this->rigid.box.boundingOffset.x ).Intersects( shape, worldPointOfContact );
+	return Sphere( this->rigid.centerPos, this->rigid.boundingReach.x ).Intersects( shape, worldPointOfContact );
 }
 
 bool SphericalRigidBody::Intersects( const ICustomBody &object, Float4 &worldPointOfContact ) const
 {
-	return object.Intersects( Sphere(this->rigid.box.center, this->rigid.box.boundingOffset.x), worldPointOfContact );
+	return object.Intersects( Sphere(this->rigid.centerPos, this->rigid.boundingReach.x), worldPointOfContact );
 }
 
 Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
@@ -124,7 +129,7 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	targetMem = worldPos - this->rigid.box.center;
+	targetMem = worldPos - this->rigid.centerPos;
 	Float magnitude = targetMem.GetMagnitude();
 	if( magnitude != 0.0f )
 	{ // sanity check
@@ -141,7 +146,7 @@ Float3 & SphericalRigidBody::GetGravityNormal( Float3 &targetMem ) const
 
 //Float3 & SphericalRigidBody::GetCenter( Float3 &targetMem ) const
 //{
-//	return targetMem = this->rigid.box.center;
+//	return targetMem = this->rigid.centerPos;
 //}
 //
 //Float4x4 & SphericalRigidBody::GetRotation( Float4x4 &targetMem ) const
@@ -167,7 +172,7 @@ Float3 SphericalRigidBody::GetRigidLinearVelocity() const
 UpdateState SphericalRigidBody::Update( Float timeStepLength )
 {
 	this->rigid.Update_LeapFrog( timeStepLength );
-	this->body.center = this->rigid.GetCenter();
+	this->body.center = this->rigid.centerPos;
 
 	// compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;

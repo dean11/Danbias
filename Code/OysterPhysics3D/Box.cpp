@@ -22,6 +22,13 @@ Box::Box( const Float4x4 &r, const Float3 &p, const Float3 &s ) : ICollideable(T
 	this->boundingOffset = Float4( s * 0.5f , 0.0f);
 }
 
+Box::Box( const Float4x4 &r, const Float4 &p, const Float4 &s ) : ICollideable(Type_box)
+{
+	this->rotation = r;
+	this->center = p;
+	this->boundingOffset = s * 0.5f;
+}
+
 Box::~Box( ) {}
 
 Box & Box::operator = ( const Box &box )

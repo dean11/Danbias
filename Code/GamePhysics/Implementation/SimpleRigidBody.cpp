@@ -43,7 +43,8 @@ namespace Private
 
 SimpleRigidBody::SimpleRigidBody()
 {
-	this->rigid = RigidBody( Box(Float4x4::identity, Float3::null, Float3(1.0f)), 16.0f, Float4x4::identity );
+	this->rigid = RigidBody();
+	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
 	this->ignoreGravity = false;
@@ -52,9 +53,13 @@ SimpleRigidBody::SimpleRigidBody()
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {
-	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition.xyz, desc.size.xyz  ),
-							 desc.mass,
-							 desc.inertiaTensor );
+	this->rigid = RigidBody();
+	this->rigid.SetRotation( desc.rotation );
+	this->rigid.centerPos = desc.centerPosition;
+	this->rigid.SetSize( desc.size );
+	this->rigid.SetMass_KeepMomentum( desc.mass );
+	this->rigid.SetMomentOfInertia_KeepMomentum( desc.inertiaTensor );
+
 	this->gravityNormal = Float3::null;
 	
 	if( desc.subscription )
@@ -81,31 +86,31 @@ SimpleRigidBody::State SimpleRigidBody::GetState() const
 {
 	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
 				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
-				  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
-				  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
-				  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
+				  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
+				  this->rigid.centerPos, this->rigid.axis,
+				  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
 }
 
 SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
 {
 	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
 							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
-							  this->rigid.GetMomentOfInertia(), this->rigid.box.boundingOffset,
-							  this->rigid.box.center, AngularAxis(this->rigid.box.rotation),
-							  Float4(this->rigid.linearMomentum, 0.0f), Float4(this->rigid.angularMomentum, 0.0f) );
+							  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
+							  this->rigid.centerPos, this->rigid.axis,
+							  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 {
-	this->rigid.box.boundingOffset = state.GetReach();
-	this->rigid.box.center = state.GetCenterPosition();
-	this->rigid.box.rotation = state.GetRotation();
-	this->rigid.angularMomentum = state.GetAngularMomentum().xyz;
-	this->rigid.linearMomentum = state.GetLinearMomentum().xyz;
-	this->rigid.impulseTorqueSum += state.GetAngularImpulse().xyz;
-	this->rigid.impulseForceSum += state.GetLinearImpulse().xyz;
-	this->rigid.restitutionCoeff = state.GetRestitutionCoeff();
-	this->rigid.frictionCoeff_Static = state.GetFrictionCoeff_Static();
+	this->rigid.centerPos			  = state.GetCenterPosition();
+	this->rigid.SetRotation( state.GetRotation() );
+	this->rigid.boundingReach		  = state.GetReach();
+	this->rigid.momentum_Linear		  = state.GetLinearMomentum();
+	this->rigid.momentum_Angular	  = state.GetAngularMomentum();
+	this->rigid.impulse_Linear		 += state.GetLinearImpulse();
+	this->rigid.impulse_Angular		 += state.GetAngularImpulse();
+	this->rigid.restitutionCoeff	  = state.GetRestitutionCoeff();
+	this->rigid.frictionCoeff_Static  = state.GetFrictionCoeff_Static();
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
 
 	if( this->scene )
@@ -135,27 +140,27 @@ bool SimpleRigidBody::IsAffectedByGravity() const
 
 bool SimpleRigidBody::Intersects( const ICollideable &shape ) const
 {
-	return this->rigid.box.Intersects( shape );
+	return Box( this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize() ).Intersects( shape );
 }
 
 bool SimpleRigidBody::Intersects( const ICollideable &shape, Float4 &worldPointOfContact ) const
 {
-	return this->rigid.box.Intersects( shape, worldPointOfContact );
+	return Box( this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize() ).Intersects( shape, worldPointOfContact );
 }
 
 bool SimpleRigidBody::Intersects( const ICustomBody &object, Float4 &worldPointOfContact ) const
 {
-	return object.Intersects( this->rigid.box, worldPointOfContact );
+	return object.Intersects( Box(this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize()), worldPointOfContact );
 }
 
 Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
-	return targetMem = Sphere( this->rigid.box.center, this->rigid.box.boundingOffset.GetMagnitude() );
+	return targetMem = Sphere( this->rigid.centerPos, this->rigid.boundingReach.GetMagnitude() );
 }
 
 Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	Float4 offset = worldPos - this->rigid.box.center;
+	Float4 offset = worldPos - this->rigid.centerPos;
 	Float distance = offset.Dot( offset );
 	Float3 normal = Float3::null;
 
@@ -163,39 +168,40 @@ Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem
 	{ // sanity check
 		Ray axis( Float4::standard_unit_w, offset / (Float)::std::sqrt(distance) );
 		Float minDistance = numeric_limits<Float>::max();
-
-		if( Private::Intersects(axis, Plane(this->rigid.box.xAxis, -this->rigid.box.boundingOffset.x), axis.collisionDistance) )
+		Float4x4 rotationMatrix = this->rigid.GetRotationMatrix();
+		
+		if( Private::Intersects(axis, Plane(rotationMatrix.v[0], -this->rigid.boundingReach.x), axis.collisionDistance) )
 		{ // check along x-axis
 			if( axis.collisionDistance < 0.0f )
-				normal = -this->rigid.box.xAxis.xyz;
+				normal = -rotationMatrix.v[0].xyz;
 			else
-				normal = this->rigid.box.xAxis.xyz;
+				normal = rotationMatrix.v[0].xyz;
 
 			minDistance = Abs( axis.collisionDistance );
 		}
 
-		if( Private::Intersects(axis, Plane(this->rigid.box.yAxis, -this->rigid.box.boundingOffset.y), axis.collisionDistance) )
+		if( Private::Intersects(axis, Plane(rotationMatrix.v[1], -this->rigid.boundingReach.y), axis.collisionDistance) )
 		{ // check along y-axis
 			distance = Abs( axis.collisionDistance ); // recycling memory
 			if( minDistance > distance )
 			{
 				if( axis.collisionDistance < 0.0f )
-					normal = -this->rigid.box.yAxis.xyz;
+					normal = -rotationMatrix.v[1].xyz;
 				else
-					normal = this->rigid.box.yAxis.xyz;
+					normal = rotationMatrix.v[1].xyz;
 
 				minDistance = distance;
 			}
 		}
 
-		if( Private::Intersects(axis, Plane(this->rigid.box.zAxis, -this->rigid.box.boundingOffset.z), axis.collisionDistance) )
+		if( Private::Intersects(axis, Plane(rotationMatrix.v[2], -this->rigid.boundingReach.z), axis.collisionDistance) )
 		{ // check along z-axis
 			if( minDistance > Abs( axis.collisionDistance ) )
 			{
 				if( axis.collisionDistance < 0.0f )
-					normal = -this->rigid.box.zAxis.xyz;
+					normal = -rotationMatrix.v[2].xyz;
 				else
-					normal = this->rigid.box.zAxis.xyz;
+					normal = rotationMatrix.v[2].xyz;
 			}
 		}
 	}
@@ -211,7 +217,7 @@ Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
 
 //Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
 //{
-//	return targetMem = this->rigid.box.center;
+//	return targetMem = this->rigid.centerPos;
 //}
 //
 //Float4x4 & SimpleRigidBody::GetRotation( Float4x4 &targetMem ) const

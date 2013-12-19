@@ -28,6 +28,7 @@ namespace Oyster { namespace Collision3D
 
 		Box( );
 		Box( const ::Oyster::Math::Float4x4 &rotation, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &size );
+		Box( const ::Oyster::Math::Float4x4 &rotation, const ::Oyster::Math::Float4 &worldPos, const ::Oyster::Math::Float4 &size );
 		virtual ~Box( );
 
 		Box & operator = ( const Box &box );

@@ -193,6 +193,15 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
+		 * Returns the world angular velocity of a mass in rotation.
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 AngularVelocity( const ::Oyster::Math::Float4 &linearVelocity, const ::Oyster::Math::Float4 &worldOffset )
+		{
+			return ::Oyster::Math::Float4( worldOffset.xyz.Cross( linearVelocity.xyz ), 0.0f );
+		}
+
+		/******************************************************************
 		 * Returns the world tangential velocity at worldPos, of a mass in rotation.
 		 * @todo TODO: improve doc
 		 ******************************************************************/
@@ -238,12 +247,30 @@ namespace Oyster { namespace Physics3D
 		}
 
 		/******************************************************************
+		 * 
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 ImpulseTorque( const ::Oyster::Math::Float4 & impulseForce, const ::Oyster::Math::Float4 &worldOffset )
+		{
+			return ::Oyster::Math::Float4( worldOffset.xyz.Cross(impulseForce.xyz), 0.0f );
+		}
+
+		/******************************************************************
 		 * T = I*a
 		 * @todo TODO: improve doc
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 ImpulseTorque( const ::Oyster::Math::Float4x4 & momentOfInertia, const ::Oyster::Math::Float3 &angularImpulseAcceleration )
 		{
 			return ( momentOfInertia * ::Oyster::Math::Float4(angularImpulseAcceleration, 0.0f) ).xyz;
+		}
+
+		/******************************************************************
+		 * T = I*a
+		 * @todo TODO: improve doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float4 ImpulseTorque( const ::Oyster::Math::Float4x4 & momentOfInertia, const ::Oyster::Math::Float4 &angularImpulseAcceleration )
+		{
+			return momentOfInertia * angularImpulseAcceleration;
 		}
 
 		namespace MomentOfInertia

@@ -22,8 +22,10 @@ namespace LinearAlgebra
 			char byte[sizeof(ScalarType[2])];
 		};
 
+		static const Quaternion<ScalarType> null;
+		static const Quaternion<ScalarType> identity;
+
 		Quaternion( );
-		Quaternion( const Quaternion &quaternion );
 		Quaternion( const Vector3<ScalarType> &imaginary, const ScalarType &real );
 
 		operator ScalarType* ( );
@@ -53,40 +55,54 @@ namespace LinearAlgebra
 //	Body
 ///////////////////////////////////////////////////////////////////////////////////
 	
+	template<typename ScalarType> const Quaternion<ScalarType> Quaternion<ScalarType>::null = Quaternion<ScalarType>( Vector3<ScalarType>((ScalarType)0), (ScalarType)0 );
+	template<typename ScalarType> const Quaternion<ScalarType> Quaternion<ScalarType>::identity = Quaternion<ScalarType>( Vector3<ScalarType>((ScalarType)0), (ScalarType)1 );
+
 	template<typename ScalarType>
 	Quaternion<ScalarType>::Quaternion( ) : imaginary(), real() {}
 	
 	template<typename ScalarType>
-	Quaternion<ScalarType>::Quaternion( const Quaternion &quaternion )
-	{ this->imaginary = quaternion.imaginary; this->real = quaternion.real; }
-	
-	template<typename ScalarType>
-	Quaternion<ScalarType>::Quaternion( const Vector3<ScalarType> &_imaginary, const ScalarType &_real )
-	{ this->imaginary = _imaginary; this->real = _real; }
+	Quaternion<ScalarType>::Quaternion( const Vector3<ScalarType> &imaginary, const ScalarType &real )
+	{
+		this->imaginary = imaginary;
+		this->real = real;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType>::operator ScalarType* ( )
-	{ return this->element; }
+	{
+		return this->element;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType>::operator const ScalarType* ( ) const
-	{ return this->element; }
+	{
+		return this->element;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType>::operator char* ( )
-	{ return this->byte; }
+	{
+		return this->byte;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType>::operator const char* ( ) const
-	{ return this->byte; }
+	{
+		return this->byte;
+	}
 	
 	template<typename ScalarType>
 	inline ScalarType & Quaternion<ScalarType>::operator [] ( int i )
-	{ return this->element[i]; }
+	{
+		return this->element[i];
+	}
 	
 	template<typename ScalarType>
 	inline const ScalarType & Quaternion<ScalarType>::operator [] ( int i ) const
-	{ return this->element[i]; }
+	{
+		return this->element[i];
+	}
 	
 	template<typename ScalarType>
 	Quaternion<ScalarType> & Quaternion<ScalarType>::operator = ( const Quaternion<ScalarType> &quaternion )
@@ -154,27 +170,39 @@ namespace LinearAlgebra
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::operator * ( const ScalarType &scalar ) const
-	{ return Quaternion<ScalarType>(*this) *= scalar; }
+	{
+		return Quaternion<ScalarType>(*this) *= scalar;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::operator /  ( const ScalarType &scalar ) const
-	{ return Quaternion<ScalarType>(*this) /= scalar; }
+	{
+		return Quaternion<ScalarType>(*this) /= scalar;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::operator + ( const Quaternion<ScalarType> &quaternion ) const
-	{ return Quaternion<ScalarType>(*this) += quaternion; }
+	{
+		return Quaternion<ScalarType>(*this) += quaternion;
+	}
 	
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::operator - ( const Quaternion<ScalarType> &quaternion ) const
-	{ return Quaternion<ScalarType>(*this) -= quaternion; }
+	{
+		return Quaternion<ScalarType>(*this) -= quaternion;
+	}
 
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::operator - ( ) const
-	{ return Quaternion<ScalarType>(-this->imaginary, -this->real); }
+	{
+		return Quaternion<ScalarType>(-this->imaginary, -this->real);
+	}
 
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::GetConjugate( ) const
-	{ return Quaternion<ScalarType>(-this->imaginary, this->real ); }
+	{
+		return Quaternion<ScalarType>(-this->imaginary, this->real );
+	}
 }
 
 #endif

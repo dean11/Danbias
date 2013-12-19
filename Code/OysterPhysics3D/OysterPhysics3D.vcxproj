@@ -159,6 +159,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="RigidBody_Inline.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Spring.h" />
     <ClInclude Include="Universe.h" />
