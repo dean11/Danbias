@@ -784,9 +784,9 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		if( Intersect(box, sphere) )
 		{
 			Float distance;
-			Ray ray( sphere.center, box.center - sphere.center );
+			Ray ray( box.center, sphere.center - box.center );
 		
-			Intersect( box, ray, distance );
+			Intersect( sphere, ray, distance );
 			worldPointOfContact = ray.origin + ray.direction*distance;
 			return true;
 		}
