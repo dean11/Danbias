@@ -13,6 +13,7 @@ using namespace Utility::DynamicMemory;
 using namespace Oyster::Network;
 using namespace Oyster;
 using namespace Oyster::Thread;
+using namespace GameLogic;
 
 namespace DanBias
 {
@@ -61,13 +62,13 @@ namespace DanBias
 	{
 		return SmartPointer<ClientObject>();
 	}
-	void GameSession::Send(::CustomNetProtocol& protocol) 
+	void GameSession::Send(CustomNetProtocol& protocol) 
 	{
-
+		NetworkSession::Send(protocol);
 	}
 	void GameSession::Send(CustomNetProtocol& protocol, int ID) 
 	{
-
+		NetworkSession::Send(protocol, ID);
 	}
 	void GameSession::SetPostbox(IPostBox<NetworkSession::NetEvent> *box) 
 	{
@@ -104,6 +105,7 @@ namespace DanBias
 		for (unsigned int i = 0; i < desc.clients.Size(); i++)
 		{
 			desc.clients[i]->SetPostbox(this->box);
+			desc.clients[i]->CreatePlayer();
 			this->clients.Push(desc.clients[i]);
 		}
 
@@ -111,6 +113,7 @@ namespace DanBias
 	}
 	void GameSession::Frame()
 	{
+
 	}
 	void GameSession::ParseEvents()
 	{
@@ -137,6 +140,13 @@ namespace DanBias
 					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 				if(p[6].value.netBool)	//bool bStrafeLeft;
 					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+
+				Oyster::Math::Float4x4 p;
+				c.Logic_Object()->GetRigidBody()->GetOrientation(p);
+				
+				Protocol_ObjectPosition op(p);
+				op.object_ID = c.Logic_Object()->GetID();
+				this->Send(*op.GetProtocol());
 			}
 			break;
 			case protocol_Gamplay_PlayerMouseMovement:

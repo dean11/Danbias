@@ -57,14 +57,14 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	modelData.visible = true;
-	modelData.modelPath = L"worldDummy";
+	modelData.modelPath = L"..\\Content\\worldDummy";
 	// load models
 	privData->object[0] = new C_Player();
 	privData->object[0]->Init(modelData);
 
 	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
 	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"crate";
+	modelData.modelPath = L"..\\Content\\worldDummy";
 
 	privData->object[1] = new C_DynamicObj();
 	privData->object[1]->Init(modelData);

@@ -51,7 +51,7 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 {
 	Oyster::Math::Float3 currentVelocity = rigidBody->GetRigidLinearVelocity();
 
-	switch(movement.value)
+	switch(movement)
 	{
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD:
 			API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);

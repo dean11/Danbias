@@ -102,9 +102,12 @@ namespace GameLogic
 			this->protocol[17].type = Oyster::Network::NetAttributeType_Float;
 
 		}
+		Protocol_ObjectPosition(float m[16])
+		{
+			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
+		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = worldMatrix[1];
 			this->protocol[3].value = worldMatrix[2]; 
@@ -123,7 +126,7 @@ namespace GameLogic
 			this->protocol[16].value = worldMatrix[15];
 			this->protocol[17].value = worldMatrix[16];
 			return &protocol;		 
-		}							 
+		}	
 
 	private:
 		Oyster::Network::CustomNetProtocol protocol;

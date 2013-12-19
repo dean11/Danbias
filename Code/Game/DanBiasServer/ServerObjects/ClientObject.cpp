@@ -22,11 +22,18 @@ void ClientObject::SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box)
 }
 GameLogic::Player* ClientObject::Logic_Object()
 {
-	return &this->logicPlayer;
+	return this->logicPlayer;
 }
 Oyster::Network::NetworkClient* ClientObject::NetClient_Object()
 {
 	return this->client;
+}
+
+void ClientObject::CreatePlayer()
+{
+	if(this->logicPlayer) return;
+
+	this->logicPlayer = new GameLogic::Player();
 }
 
 void ClientObject::ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol)

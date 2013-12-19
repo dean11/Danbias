@@ -21,13 +21,16 @@ namespace DanBias
 
 		GameLogic::Player*				Logic_Object();
 		Oyster::Network::NetworkClient* NetClient_Object();
+
+	public:
+		void CreatePlayer();
 	
 	private:
 		/** This method is NOT threadsafe. */
 		virtual void ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol) override;
 	
 	private:
-		GameLogic::Player logicPlayer;
+		Utility::DynamicMemory::SmartPointer<GameLogic::Player> logicPlayer;
 		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client;
 		Oyster::IPostBox<DanBias::NetworkSession::NetEvent>* box;
 	};
