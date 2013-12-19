@@ -7,6 +7,7 @@ struct  C_StaticObj::myData
 {
 	myData(){}
 	Oyster::Graphics::Model::Model *model;
+	int ID;
 	// light
 	// sound
 	// effect
@@ -42,4 +43,8 @@ void C_StaticObj::Release()
 {
 	Oyster::Graphics::API::DeleteModel(privData->model);
 	delete privData; 
+}
+int C_StaticObj::GetId()
+{
+	return privData->ID;
 }

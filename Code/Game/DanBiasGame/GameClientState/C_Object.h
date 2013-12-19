@@ -8,6 +8,7 @@ namespace DanBias
 
 		struct  ModelInitData
 		{
+			int id;
 			std::wstring modelPath;
 			Oyster::Math::Float4x4 world; 
 			bool visible; 
@@ -24,5 +25,6 @@ public:
 
 	virtual void Render() = 0;
 	virtual void Release() = 0;
+	virtual int GetId() = 0;
 };};};
 #endif

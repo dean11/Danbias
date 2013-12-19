@@ -5,8 +5,8 @@
 #include <Windows.h>
 #include <vld.h>
 
-#include "DanBiasServerAPI.h"
-//#include "DanBiasGame.h"
+//#include "DanBiasServerAPI.h"
+#include "DanBiasGame.h"
 
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
@@ -29,7 +29,8 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	// Game client starter code goes here
 	DanBias::DanBiasGameDesc gameDesc;
 	gameDesc.port = 15151;
-	gameDesc.IP = "193.11.184.196";
+	//gameDesc.IP = "193.11.184.196"; //Erik
+	gameDesc.IP = "193.11.186.101"; 
 	gameDesc.hinst = hinst;
 	gameDesc.nCmdShow = cmdShow;
 

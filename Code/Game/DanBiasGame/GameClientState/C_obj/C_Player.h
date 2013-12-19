@@ -19,6 +19,7 @@ public:
 
 	void Render();
 	void Release();
+	int GetId();
 
 };};};
 #endif

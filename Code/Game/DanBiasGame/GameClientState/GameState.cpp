@@ -15,7 +15,7 @@ struct  GameState::myData
 	myData(){}
 	Oyster::Math3D::Float4x4 view;
 	Oyster::Math3D::Float4x4 proj; 
-	C_Object* object[3];
+	std::vector<C_Object*> object;
 	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
@@ -59,15 +59,17 @@ bool GameState::LoadModels(std::wstring mapFile)
 	modelData.visible = true;
 	modelData.modelPath = L"worldDummy";
 	// load models
-	privData->object[0] = new C_Player();
-	privData->object[0]->Init(modelData);
+	C_Object* obj =  new C_Player();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
 
 	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"crate";
 
-	privData->object[1] = new C_DynamicObj();
-	privData->object[1]->Init(modelData);
+	obj = new C_DynamicObj();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
 	return true;
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
@@ -174,7 +176,7 @@ bool GameState::Render()
 }
 bool GameState::Release()
 {
-	for (int i = 0; i < privData->modelCount; i++)
+	for (int i = 0; i < privData->object.size(); i++)
 	{
 		privData->object[i]->Release();
 		delete privData->object[i];
@@ -209,7 +211,11 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		world[i] = pos->worldPos[i];
 	}
-	privData->object[pos->object_ID]->setPos(world);
+	for (int i = 0; i < privData->object.size(); i++)
+	{
+		if(privData->object[i]->GetId() == pos->object_ID)
+			privData->object[i]->setPos(world);
+	}
 }
 
 void GameState::Protocol( NewObj* pos )
@@ -224,45 +230,29 @@ void GameState::Protocol( NewObj* pos )
 
 	modelData.world = world;
 	modelData.visible = true;
+	modelData.id = pos->object_ID;
 	//not sure if this is good parsing rom char* to wstring
 	const char* path = pos->path;
 	modelData.modelPath = std::wstring(path, path + strlen(path));  
 	// load models
-	privData->object[pos->object_ID] = new C_Player();
-	privData->object[pos->object_ID]->Init(modelData);
-}
+	C_Object* player = new C_Player();
+	player->Init(modelData);
 
-void GameState::Protocol( KeyInput* pos )
-{
-	bool key = false;
-	for (int i = 0; i < 6; i++)
-	{
-		key = pos->key[i];
-	}
+	privData->object.push_back(player);
+
 }
 
 void DanBias::Client::GameState::Protocol( RemoveObj* obj )
 {
-	privData->object[obj->object_ID]->Release( );
-}
-
-void GameState::PlayerPosProtocol(PlayerPos* pos)
-{
-	Oyster::Math::Float4x4 world, translate;
-
-	world = Oyster::Math::Float4x4::identity;
-	translate = Oyster::Math::Float4x4::identity;
-	translate = Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(pos->playerPos[0],pos->playerPos[1],pos->playerPos[2] ));
-	world = translate;
-	privData->object[0]->setPos( world );
-}
-void GameState::ObjectPosProtocol(ObjPos* pos)
-{
-	Oyster::Math::Float4x4 world;
-	for(int i = 0; i<16; i++)
+	for (int i = 0; i < privData->object.size(); i++)
 	{
-		world[i] = pos->worldPos[i];
+		if(privData->object[i]->GetId() == obj->object_ID)
+		{
+			privData->object.at(i)->Release();
+			privData->object.erase(privData->object.begin() + i );
+		}
 	}
-	privData->object[1]->setPos(world);
+	//privData->object[obj->object_ID]->Release( );
 }
+
 //void GameState::Protocol(LightPos pos);

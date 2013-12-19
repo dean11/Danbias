@@ -5,6 +5,7 @@ struct  C_DynamicObj::myData
 {
 	myData(){}
 	Oyster::Graphics::Model::Model *model;
+	int ID;
 	// light
 	// sound
 	// effect
@@ -39,4 +40,8 @@ void C_DynamicObj::Release()
 {
 	Oyster::Graphics::API::DeleteModel(privData->model);
 	delete privData; 
+}
+int C_DynamicObj::GetId()
+{
+	return privData->ID;
 }

@@ -18,5 +18,6 @@ namespace DanBias
 
 			void Render();
 			void Release();
+			int GetId();
 };};};
 #endif
