@@ -282,14 +282,17 @@ namespace Utility
 					{
 						//Call child specific
 						Destroy();
-						this->_rc = new ReferenceCount();
+						if(p)	this->_rc = new ReferenceCount();
 					}
 				}
-				else
+				else if(p)
+				{
 					this->_rc = new ReferenceCount();
-		
+				}
+
 				this->_ptr = p;
-				this->_rc->Incref();
+
+				if(p) this->_rc->Incref();
 			}
 			return *this;
 		}
@@ -358,6 +361,12 @@ namespace Utility
 				Destroy();
 			}
 			return returnVal;
+		}
+		template<typename T> int SmartPointer<T>::ReleaseDummy()
+		{
+			int val = this->_rc->Decref();
+			this->_rc->Incref();
+			return val;
 		}
 		template<typename T> inline bool SmartPointer<T>::IsValid() const
 		{

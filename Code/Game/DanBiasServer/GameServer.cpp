@@ -8,22 +8,36 @@
 
 #include "GameServer.h"
 #include "Utilities.h"
-#include "ServerInitReader.h"
-#include <TEST_PROTOCOLS.h>
+#include "Helpers\ServerInitReader.h"
 #include <Thread\OysterThread.h>
 #include "ServerObjects\ClientObject.h"
+#include "ServerObjects\GameSession.h"
+
+#include <CollisionManager.h>
 
 namespace DanBias
 {
 	using namespace Oyster::Network;
 
-	
+	static GameSession *myTest;
+
 	void GameServer::ClientConnectCallback(NetworkClient* client)
 	{
-		printf("Client connected!\n");
+		if(!myTest)
+		{
+			myTest = new GameSession();
+			Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
+			DanBias::GameSession::GameSessionDescription desc;
+			desc.owner = 0;
+			desc.clients.Push(c);
 
-		Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
-		this->mainLobby->AttachClient(c);
+			myTest->Run(desc);
+		}
+
+		//printf("Client connected with socket: %i\n", client->Id());
+		//
+		//Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
+		//this->mainLobby->AttachClient(c, this->mainLobby->GetPostbox());
 	}
 	GameServer::GameServer()
 		:	initiated(0)
@@ -32,8 +46,7 @@ namespace DanBias
 		,	maxClients(0)
 		,	mainLobby(0)
 		,	server(0)
-	{
-	}
+	{ }
 	GameServer::~GameServer()
 	{
 
@@ -78,9 +91,9 @@ namespace DanBias
 	}
 	DanBiasServerReturn GameServer::Release()
 	{
+		delete this->mainLobby;
 		this->server->Shutdown();
 		delete this->server;
-		delete this->mainLobby;
 		this->released = true;
 		return DanBiasServerReturn_Sucess;
 	}

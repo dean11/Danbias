@@ -1,6 +1,6 @@
 #include "GameSessionManager.h"
 
-#include "ServerObjects\GameSession.h"
+#include "..\ServerObjects\GameSession.h"
 #include "DynamicArray.h"
 
 struct GameSessionData
@@ -25,30 +25,30 @@ struct GameSessionData
 		return -1;
 	}
 
-} __gameSessionData;
+} gameSessionData;
 
 
 void GameSessionManager::AddSession(DanBias::GameSession* session)
 {
-	if(__gameSessionData.Existst(session) == -1)
+	if(gameSessionData.Existst(session) == -1)
 	{
-		int k = __gameSessionData.freeSpot;
+		int k = gameSessionData.freeSpot;
 
-		if( k == -1) k = __gameSessionData.GetFree();
+		if( k == -1) k = gameSessionData.GetFree();
 
-		if(k == -1) __gameSessionData.sessions.Push(session);
-		else		__gameSessionData.sessions[k] = session;
+		if(k == -1) gameSessionData.sessions.Push(session);
+		else		gameSessionData.sessions[k] = session;
 	}
 
 }
 void GameSessionManager::CloseSession(DanBias::GameSession* session)
 {
-	int i = __gameSessionData.Existst(session);
+	int i = gameSessionData.Existst(session);
 
 	//Moron check...
 	if(i == -1) return;
 
-	//__gameSessionData.sessions[i]->Close();
+	//gameSessionData.sessions[i]->Close();
 }
 
 

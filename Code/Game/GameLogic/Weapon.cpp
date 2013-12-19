@@ -13,6 +13,7 @@ struct Weapon::PrivateData
 		currentNrOfAttatchments = 0;
 		selectedSocketID = 0;
 		maxNrOfSockets = 0;
+		attatchmentSockets = 0;
 	}
 
 	~PrivateData()

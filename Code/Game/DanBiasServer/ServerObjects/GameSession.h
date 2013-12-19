@@ -14,19 +14,20 @@ namespace DanBias
 		struct GameSessionDescription
 		{
 			NetworkSession* owner;
-
+			Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<ClientObject>> clients;
 		};
 
 	public:
 		GameSession();
 		virtual~GameSession();
 
-		void Run(const GameSessionDescription& desc);
+		void Run(GameSessionDescription& desc);
 
-		void AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client, Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box = 0) override;
+		void Join(Utility::DynamicMemory::SmartPointer<ClientObject> client);
 
 	private:	//overriden NetworkSession functions
 		void Close();
+		void AttachClient(Utility::DynamicMemory::SmartPointer<ClientObject> client, Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box = 0) override;
 		Utility::DynamicMemory::SmartPointer<ClientObject> DetachClient(Oyster::Network::NetworkClient* client) override;
 		Utility::DynamicMemory::SmartPointer<ClientObject> DetachClient(ClientObject* client) override;
 		Utility::DynamicMemory::SmartPointer<ClientObject> DetachClient(short ID) override;
@@ -36,26 +37,20 @@ namespace DanBias
 		void CloseSession(NetworkSession* clientDestination) override;
 
 	private:	//overriden Threading functions
-		void ThreadEntry() override;
-		void ThreadExit() override;
+		void ThreadEntry( ) override;
+		void ThreadExit( ) override;
 		bool DoWork	( ) override;
 		
 	private:
-		void Init();
+		bool Init(GameSessionDescription& desc);
 		void Frame();
 		void ParseEvents();
+		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::ClientObject& c);
 
 	private:
 		NetworkSession* owner;
 		Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box;
 		Oyster::Thread::OysterThread worker;
-
-#pragma region TESTING
-		void EricLogicInitFunc();
-		void EricLogicFrameFunc();
-		void EricsLogicTestingProtocalRecieved(ClientObject* reciever, Oyster::Network::CustomNetProtocol& protocol);
-#pragma endregion
-
 
 	};//End GameSession
 }//End namespace DanBias

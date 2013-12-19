@@ -19,7 +19,7 @@ Listener::~Listener()
 {
 	if(connection)
 	{
-		this->thread.Terminate();
+		this->thread.Terminate(false);
 		delete connection;
 		connection = 0;
 	}
@@ -99,6 +99,7 @@ int Listener::Accept()
 
 bool Listener::DoWork()
 {
+	if(!this->connection) return false;
 	int result = Accept();
 
 	if(result == -1)

@@ -12,7 +12,10 @@ ClientObject::~ClientObject()
 {
 	this->client->Disconnect();
 }
-
+void ClientObject::SetProtocolCallback(Oyster::Network::ProtocolRecieverObject* object)
+{
+	this->NetClient_Object()->SetRecieverObject(object, Oyster::Network::NetworkProtocolCallbackType_Object);
+}
 void ClientObject::SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box)
 {
 	this->box = box;

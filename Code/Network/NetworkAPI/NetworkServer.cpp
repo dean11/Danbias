@@ -41,7 +41,7 @@ struct NetworkServer::PrivateData : public IThreadObject
 	bool started;
 
 	//Postbox for new clients
-	IPostBox<int> *postBox;
+	PostBox<int> postBox;
 
 	//Server thread
 	OysterThread thread;
@@ -52,7 +52,7 @@ NetworkServer::PrivateData::PrivateData()
 {
 	listener = 0;
 	started = false;
-	postBox = new PostBox<int>;
+	//postBox = new PostBox<int>;
 }
 
 NetworkServer::PrivateData::~PrivateData()
@@ -74,7 +74,7 @@ bool NetworkServer::PrivateData::Init(INIT_DESC& initDesc)
 	this->initDesc = initDesc;
 
 	//Initiate listener
-	listener = new Listener(postBox);
+	listener = new Listener(&postBox);
 	if(!((Listener*)listener)->Init(this->initDesc.port, false))
 	{
 		return false;
@@ -120,19 +120,10 @@ void NetworkServer::PrivateData::Stop()
 
 void NetworkServer::PrivateData::Shutdown()
 {
-	//Stop server main thread
-	thread.Stop();
-
 	if(listener)
 	{
 		delete listener;
 		listener = NULL;
-	}
-
-	if(postBox)
-	{
-		delete postBox;
-		postBox = NULL;
 	}
 
 	started = false;
@@ -143,9 +134,9 @@ void NetworkServer::PrivateData::Shutdown()
 //Checks for new clients and sends them to the proc function.
 void NetworkServer::PrivateData::CheckForNewClient()
 {
-	if(postBox->IsFull())
+	if(postBox.IsFull())
 	{
-		int clientSocketNum = postBox->FetchMessage();
+		int clientSocketNum = postBox.FetchMessage();
 
 		//Safety check that is probably not needed.
 		if(clientSocketNum == -1)

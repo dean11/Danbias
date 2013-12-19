@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="ControlProtocols.h" />
     <ClInclude Include="GameProtocols.h" />
+    <ClInclude Include="LobbyProtocols.h" />
     <ClInclude Include="ObjectProtocols.h" />
     <ClInclude Include="PlayerProtocols.h" />
     <ClInclude Include="ProtocolIdentificationID.h" />
