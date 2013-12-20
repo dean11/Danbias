@@ -251,7 +251,7 @@ namespace Oyster
 			/********************************************************
 			 * @return the linear velocity of the rigid body in a vector.
 			 ********************************************************/
-			virtual Math::Float3 GetRigidLinearVelocity() const = 0;
+			//virtual Math::Float3 GetRigidLinearVelocity() const = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc

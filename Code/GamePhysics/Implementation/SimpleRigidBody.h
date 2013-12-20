@@ -19,7 +19,7 @@ namespace Oyster { namespace Physics
 		State GetState() const;
 		State & GetState( State &targetMem ) const;
 		void SetState( const State &state );
-		::Oyster::Math::Float3 GetRigidLinearVelocity() const;
+		//::Oyster::Math::Float3 GetRigidLinearVelocity() const;
 
 		SubscriptMessage CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
 		bool IsAffectedByGravity() const;

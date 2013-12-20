@@ -173,10 +173,10 @@ Float3 & SphericalRigidBody::GetGravityNormal( Float3 &targetMem ) const
 //	return targetMem = this->rigid.GetView();
 //}
 
-Float3 SphericalRigidBody::GetRigidLinearVelocity() const
-{
-	return this->rigid.GetLinearVelocity();
-}
+//Float3 SphericalRigidBody::GetRigidLinearVelocity() const
+//{
+//	return this->rigid.GetLinearVelocity();
+//}
 
 UpdateState SphericalRigidBody::Update( Float timeStepLength )
 {
