@@ -41,7 +41,8 @@ namespace Oyster { namespace Physics
 			this->linearMomentum = linearMomentum;
 			this->angularMomentum = angularMomentum;
 			this->linearImpulse = this->angularImpulse = ::Oyster::Math::Float4::null;
-			this->isSpatiallyAltered = this->isDisturbed = false;
+			this->deltaPos = this->deltaAxis = ::Oyster::Math::Float4::null;
+			this->isSpatiallyAltered = this->isDisturbed = this->isForwarded = false;
 		}
 
 		inline CustomBodyState & CustomBodyState::operator = ( const CustomBodyState &state )
@@ -58,8 +59,11 @@ namespace Oyster { namespace Physics
 			this->angularMomentum = state.angularMomentum;
 			this->linearImpulse = state.linearImpulse;
 			this->angularImpulse = state.angularImpulse;
+			this->deltaPos = state.deltaPos;
+			this->deltaAxis = state.deltaAxis;
 			this->isSpatiallyAltered = state.isSpatiallyAltered;
 			this->isDisturbed = state.isDisturbed;
+			this->isForwarded = state.isForwarded;
 			return *this;
 		}
 
@@ -147,6 +151,16 @@ namespace Oyster { namespace Physics
 		inline const ::Oyster::Math::Float4 & CustomBodyState::GetAngularImpulse() const
 		{
 			return this->angularImpulse;
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetForward_DeltaPos() const
+		{
+			return this->deltaPos;
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetForward_DeltaAxis() const
+		{
+			return this->deltaAxis;
 		}
 
 		inline void CustomBodyState::SetMass_KeepMomentum( ::Oyster::Math::Float m )
@@ -287,6 +301,13 @@ namespace Oyster { namespace Physics
 			this->isDisturbed = true;
 		}
 
+		inline void CustomBodyState::ApplyForwarding( const ::Oyster::Math::Float4 &deltaPos, const ::Oyster::Math::Float4 &deltaAxis )
+		{
+			this->deltaPos += deltaPos;
+			this->deltaAxis += deltaAxis;
+			this->isDisturbed = this->isForwarded = true;
+		}
+
 		inline bool CustomBodyState::IsSpatiallyAltered() const
 		{
 			return this->isSpatiallyAltered;
@@ -295,6 +316,11 @@ namespace Oyster { namespace Physics
 		inline bool CustomBodyState::IsDisturbed() const
 		{
 			return this->isDisturbed;
+		}
+
+		inline bool CustomBodyState::IsForwarded() const
+		{
+			return this->isForwarded;
 		}
 	}
 } }

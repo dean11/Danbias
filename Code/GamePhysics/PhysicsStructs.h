@@ -66,6 +66,8 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float4 &	 GetAngularMomentum() const;
 			const ::Oyster::Math::Float4 &	 GetLinearImpulse() const;
 			const ::Oyster::Math::Float4 &	 GetAngularImpulse() const;
+			const ::Oyster::Math::Float4 &	 GetForward_DeltaPos() const;
+			const ::Oyster::Math::Float4 &	 GetForward_DeltaAxis() const;
 			
 			void SetMass_KeepMomentum( ::Oyster::Math::Float m );
 			void SetMass_KeepVelocity( ::Oyster::Math::Float m );
@@ -90,9 +92,11 @@ namespace Oyster { namespace Physics
 			void ApplyLinearImpulse( const ::Oyster::Math::Float4 &j );
 			void ApplyAngularImpulse( const ::Oyster::Math::Float4 &j );
 			void ApplyImpulse( const ::Oyster::Math::Float4 &j, const ::Oyster::Math::Float4 &at, const ::Oyster::Math::Float4 &normal );
+			void ApplyForwarding( const ::Oyster::Math::Float4 &deltaPos, const ::Oyster::Math::Float4 &deltaAxis );
 
 			bool IsSpatiallyAltered() const;
 			bool IsDisturbed() const;
+			bool IsForwarded() const;
 
 		private:
 			::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, kineticFrictionCoeff;
@@ -100,8 +104,9 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float4 reach, centerPos, angularAxis;
 			::Oyster::Math::Float4 linearMomentum, angularMomentum;
 			::Oyster::Math::Float4 linearImpulse, angularImpulse;
+			::Oyster::Math::Float4 deltaPos, deltaAxis; // Forwarding data sum
 
-			bool isSpatiallyAltered, isDisturbed;
+			bool isSpatiallyAltered, isDisturbed, isForwarded;
 		};
 	}
 } }
