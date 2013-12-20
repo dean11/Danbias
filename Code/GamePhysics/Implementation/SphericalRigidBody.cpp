@@ -14,7 +14,7 @@ SphericalRigidBody::SphericalRigidBody()
 	this->rigid.SetMass_KeepMomentum( 10.0f );
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
-	this->ignoreGravity = false;
+	this->ignoreGravity = this->isForwarded = false;
 	this->scene = nullptr;
 	this->body = Sphere( Float3::null, 0.5f );
 }
@@ -27,6 +27,8 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
 	this->rigid.SetMomentOfInertia_KeepMomentum( Formula::MomentOfInertia::CreateSphereMatrix( desc.mass, desc.radius ) );
+	this->deltaPos = Float4::null;
+	this->deltaAxis = Float4::null;
 
 	this->gravityNormal = Float3::null;
 
@@ -81,6 +83,13 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	this->rigid.restitutionCoeff	  = state.GetRestitutionCoeff();
 	this->rigid.frictionCoeff_Static  = state.GetFrictionCoeff_Static();
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
+
+	if( state.IsForwarded() )
+	{
+		this->deltaPos += state.GetForward_DeltaPos();
+		this->deltaAxis += state.GetForward_DeltaAxis();
+		this->isForwarded = false;
+	}
 
 	if( this->scene )
 	{
@@ -171,12 +180,25 @@ Float3 SphericalRigidBody::GetRigidLinearVelocity() const
 
 UpdateState SphericalRigidBody::Update( Float timeStepLength )
 {
+	if( this->isForwarded )
+	{
+		this->rigid.Move( this->deltaPos, this->deltaAxis );
+		this->deltaPos = Float4::null;
+		this->deltaAxis = Float4::null;
+		this->isForwarded = false;
+	}
+
 	this->rigid.Update_LeapFrog( timeStepLength );
 	this->body.center = this->rigid.centerPos;
 
 	// compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
 	return UpdateState_altered;
+}
+
+void SphericalRigidBody::Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime )
+{
+	this->rigid.Predict_LeapFrog( outDeltaPos, outDeltaAxis, actingLinearImpulse, actingAngularImpulse, deltaTime );
 }
 
 void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
