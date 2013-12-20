@@ -253,12 +253,15 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
 	if( this->isForwarded )
 	{
-	//	this->rigid.
+		this->rigid.Move( this->deltaPos, this->deltaAxis );
+		this->deltaPos = Float4::null;
+		this->deltaAxis = Float4::null;
+		this->isForwarded = false;
 	}
 
 	this->rigid.Update_LeapFrog( timeStepLength );
 
-	// compare previous and new state and return result
+	//! @todo TODO: compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
 	return UpdateState_altered;
 }
