@@ -117,6 +117,11 @@ void API_Impl::SetSubscription( API::EventAction_Destruction functionPointer )
 	}
 }
 
+float API_Impl::GetFrameTimeLength() const
+{
+	return this->updateFrameLength;
+}
+
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
 	

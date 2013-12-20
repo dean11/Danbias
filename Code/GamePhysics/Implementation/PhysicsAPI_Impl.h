@@ -20,6 +20,8 @@ namespace Oyster
 			void SetGravityConstant( float g );
 			void SetSubscription( EventAction_Destruction functionPointer );
 
+			float GetFrameTimeLength() const;
+
 			void Update();
 
 			bool IsInLimbo( const ICustomBody* objRef );
