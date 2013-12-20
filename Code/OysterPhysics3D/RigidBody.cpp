@@ -82,6 +82,13 @@ void RigidBody::Predict_LeapFrog( Float4 &outDeltaPos, Float4 &outDeltaAxis, con
 	outDeltaAxis = Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, actingAngularImpulse) );
 }
 
+void RigidBody::Move( const Float4 &deltaPos, const Float4 &deltaAxis )
+{
+	this->centerPos += deltaPos;
+	this->axis += deltaAxis;
+	this->rotation = Rotation( this->axis );
+}
+
 void RigidBody::ApplyImpulse( const Float4 &worldJ, const Float4 &atWorldPos )
 { // by Dan Andersson
 	Float4 worldOffset = atWorldPos - this->centerPos;
