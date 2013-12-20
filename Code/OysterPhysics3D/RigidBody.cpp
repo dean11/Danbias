@@ -8,6 +8,7 @@
 using namespace ::Oyster::Collision3D;
 using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math3D;
+using namespace ::Utility::Value;
 
 RigidBody::RigidBody( )
 { // by Dan Andersson
@@ -49,7 +50,7 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	
 	// updating the linear
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
-	this->centerPos += ( updateFrameLength / this->mass ) * ::Utility::Value::AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
+	this->centerPos += ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
 
 	// updating the angular
 	Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
@@ -57,7 +58,7 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
 
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
-	this->axis += Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), ::Utility::Value::AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
+	this->axis += Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
 	this->rotation = Rotation( this->axis );
 
 	// update momentums and clear impulse_Linear and impulse_Angular
@@ -65,6 +66,20 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	this->impulse_Linear = Float4::null;
 	this->momentum_Angular += this->impulse_Angular;
 	this->impulse_Angular = Float4::null;
+}
+
+void RigidBody::Predict_LeapFrog( Float4 &outDeltaPos, Float4 &outDeltaAxis, const Float4 &actingLinearImpulse, const Float4 &actingAngularImpulse, Float deltaTime )
+{
+	// updating the linear
+	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
+	outDeltaPos = ( deltaTime / this->mass ) * AverageWithDelta( this->momentum_Linear, actingLinearImpulse );
+
+	// updating the angular
+	Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
+	Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
+
+	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
+	outDeltaAxis = Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, actingAngularImpulse) );
 }
 
 void RigidBody::ApplyImpulse( const Float4 &worldJ, const Float4 &atWorldPos )

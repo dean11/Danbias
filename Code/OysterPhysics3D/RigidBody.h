@@ -30,6 +30,7 @@ namespace Oyster { namespace Physics3D
 		RigidBody & operator = ( const RigidBody &body );
 
 		void Update_LeapFrog( ::Oyster::Math::Float updateFrameLength );
+		void Predict_LeapFrog( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime );
 
 		void ApplyImpulse( const ::Oyster::Math::Float4 &worldJ, const ::Oyster::Math::Float4 &atWorldPos );
 		void ApplyImpulse_Linear( const ::Oyster::Math::Float4 &worldJ );
