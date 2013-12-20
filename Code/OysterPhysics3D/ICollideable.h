@@ -6,6 +6,7 @@
 #ifndef OYSTER_COLLISION_3D_ICOLLIDEABLE_H
 #define OYSTER_COLLISION_3D_ICOLLIDEABLE_H
 
+#include "OysterMath.h"
 #include "Utilities.h"
 
 namespace Oyster { namespace Collision3D //! Contains a collection of 3D shapes and intercollission algorithms.
@@ -34,6 +35,7 @@ namespace Oyster { namespace Collision3D //! Contains a collection of 3D shapes 
 		virtual ~ICollideable();
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const = 0;
+		virtual bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const = 0;
 		virtual bool Intersects( const ICollideable &target ) const = 0;
 		virtual bool Contains( const ICollideable &target ) const = 0;
 	};

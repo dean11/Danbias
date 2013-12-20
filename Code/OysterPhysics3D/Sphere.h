@@ -16,18 +16,20 @@ namespace Oyster { namespace Collision3D
 	public:
 		union
 		{
-			struct{ ::Oyster::Math::Float3 center; ::Oyster::Math::Float radius; };
-			char byte[sizeof(::Oyster::Math::Float3) + sizeof(::Oyster::Math::Float)];
+			struct{ ::Oyster::Math::Float4 center; ::Oyster::Math::Float radius; };
+			char byte[sizeof(::Oyster::Math::Float4) + sizeof(::Oyster::Math::Float)];
 		};
 
 		Sphere( );
 		Sphere( const ::Oyster::Math::Float3 &center, const ::Oyster::Math::Float &radius );
+		Sphere( const ::Oyster::Math::Float4 &center, const ::Oyster::Math::Float &radius );
 		virtual ~Sphere( );
 
 		Sphere & operator = ( const Sphere &sphere );
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable &target ) const;
+		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Contains( const ICollideable &target ) const;
 	};
 } }

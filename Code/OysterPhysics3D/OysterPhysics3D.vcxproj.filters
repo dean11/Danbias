@@ -75,6 +75,9 @@
     <ClInclude Include="RigidBody.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="RigidBody_Inline.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Box.cpp">

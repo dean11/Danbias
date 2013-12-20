@@ -18,8 +18,15 @@ Box::Box( ) : ICollideable(Type_box)
 Box::Box( const Float4x4 &r, const Float3 &p, const Float3 &s ) : ICollideable(Type_box)
 {
 	this->rotation = r;
+	this->center = Float4( p, 1.0f );
+	this->boundingOffset = Float4( s * 0.5f , 0.0f);
+}
+
+Box::Box( const Float4x4 &r, const Float4 &p, const Float4 &s ) : ICollideable(Type_box)
+{
+	this->rotation = r;
 	this->center = p;
-	this->boundingOffset = Float3(s*0.5);
+	this->boundingOffset = s * 0.5f;
 }
 
 Box::~Box( ) {}
@@ -41,16 +48,35 @@ bool Box::Intersects( const ICollideable &target ) const
 {
 	switch( target.type )
 	{
-	case Type_universe: return true;
-	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
-	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance );
-	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target );
-	case Type_plane: return Utility::Intersect( *this, *(Plane*)&target );
-	// case Type_triangle: return false; // TODO: : 
-	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)&target );
-	case Type_box: return Utility::Intersect( *this, *(Box*)&target );
-	// case Type_frustrum: return false; // TODO: : 
-	default: return false;
+	case Type_universe:			return true;
+	case Type_point:			return Utility::Intersect( *this, (const Point&)target );
+	case Type_ray:				return Utility::Intersect( *this, (const Ray&)target, ((const Ray&)target).collisionDistance );
+	case Type_sphere:			return Utility::Intersect( *this, (const Sphere&)target );
+	case Type_plane:			return Utility::Intersect( *this, (const Plane&)target );
+	// case Type_triangle:			return false; // TODO: : 
+	case Type_box_axis_aligned:	return Utility::Intersect( *this, (const BoxAxisAligned&)target );
+	case Type_box:				return Utility::Intersect( *this, (const Box&)target );
+	// case Type_frustrum:			return false; // TODO: : 
+	default:					return false;
+	}
+}
+
+bool Box::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
+{
+	switch( target.type )
+	{
+	case Type_universe:
+		worldPointOfContact = this->center;
+		return true;
+	case Type_point:			return Utility::Intersect( *this, (const Point&)target, worldPointOfContact );
+	case Type_ray:				return Utility::Intersect( *this, (const Ray&)target, ((const Ray&)target).collisionDistance, worldPointOfContact );
+	case Type_sphere:			return Utility::Intersect( *this, (const Sphere&)target, worldPointOfContact );
+	case Type_plane:			return Utility::Intersect( *this, (const Plane&)target, worldPointOfContact );
+	// case Type_triangle:			return false; // TODO: : 
+	case Type_box_axis_aligned:	return Utility::Intersect( *this, (const BoxAxisAligned&)target, worldPointOfContact );
+	case Type_box:				return Utility::Intersect( *this, (const Box&)target, worldPointOfContact );
+	// case Type_frustrum:			return false; // TODO: : 
+	default:					return false;
 	}
 }
 
@@ -58,12 +84,12 @@ bool Box::Contains( const ICollideable &target ) const
 {
 	switch( target.type )
 	{
-	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
-	// case Type_sphere: return false; // TODO: 
-	// case Type_triangle: return false; // TODO: 
-	// case Type_box_axis_aligned: return false; // TODO: 
-	// case Type_box: return false; // TODO: 
-	// case Type_frustrum: return false; // TODO: 
+	case Type_point:			return Utility::Intersect( *this, (const Point&)target );
+	//case Type_sphere:				return false; // TODO: 
+	//case Type_triangle:			return false; // TODO: 
+	//case Type_box_axis_aligned:	return false; // TODO: 
+	//case Type_box:				return false; // TODO: 
+	//case Type_frustrum:			return false; // TODO: 
 	default: return false;
 	}
 }

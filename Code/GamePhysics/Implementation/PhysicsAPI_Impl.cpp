@@ -4,10 +4,10 @@
 #include "SphericalRigidBody.h"
 
 using namespace ::Oyster::Physics;
-using namespace ::Oyster::Physics3D;
 using namespace ::Oyster::Math;
 using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
+using namespace ::Utility::Value;
 
 API_Impl API_instance;
 
@@ -18,38 +18,68 @@ namespace
 		auto proto = worldScene.GetCustomBody( protoTempRef );
 		auto deuter = worldScene.GetCustomBody( deuterTempRef );
 
-		float deltaWhen;
-		Float3 worldWhere;
-		if( proto->Intersects(*deuter, 1.0f, deltaWhen, worldWhere) )
+		Float4 worldPointOfContact;
+		if( proto->Intersects(*deuter, worldPointOfContact) )
 		{
-			proto->CallSubscription( proto, deuter );
+			switch( proto->CallSubscription(proto, deuter) )
+			{
+			case ICustomBody::SubscriptMessage_ignore_collision_response:
+				break;
+			default:
+				{ // Apply CollisionResponse in pure gather pattern
+					ICustomBody::State protoState; proto->GetState( protoState );
+					ICustomBody::State deuterState; deuter->GetState( deuterState );
+
+					Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact ),
+						   deuterG = deuterState.GetLinearMomentum( worldPointOfContact );
+
+					// calc from perspective of deuter
+					Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
+					Float protoG_Magnitude = protoG.Dot( normal ),
+						  deuterG_Magnitude = deuterG.Dot( normal );
+
+					// bounce
+					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
+																				   deuterState.GetMass(), deuterG_Magnitude,
+																				   protoState.GetMass(), protoG_Magnitude );
+					
+					//sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
+					//											  protoState.GetLinearMomentum(),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+					//											  deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
+
+					// calc from perspective of proto
+					proto->GetNormalAt( worldPointOfContact, normal );
+					protoG_Magnitude = protoG.Dot( normal ),
+					deuterG_Magnitude = deuterG.Dot( normal );
+					
+					// bounce
+					Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
+																				  protoState.GetMass(), protoG_Magnitude,
+																				  deuterState.GetMass(), deuterG_Magnitude );
+
+					Float4 bounce = Average( bounceD, bounceP );
+					//Float4 bounce = bounceD + bounceP;
+
+					// FRICTION
+					// Apply
+					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
+					// FRICTION END
+
+					Float4 forwardedDeltaPos, forwardedDeltaAxis;
+					{ // @todo TODO: is this right?
+						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
+							   bounceLinearImpulse = bounce - bounceAngularImpulse;
+						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
+					}
+					
+					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
+					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
+					proto->SetState( protoState );
+				}
+				break;
+			}
 		}
 	}
-}
-
-Float4x4 & MomentOfInertia::CreateSphereMatrix( const Float mass, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::Sphere(mass, radius);
-}
-
-Float4x4 & MomentOfInertia::CreateHollowSphereMatrix( const Float mass, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::HollowSphere(mass, radius);
-}
-
-Float4x4 & MomentOfInertia::CreateCuboidMatrix( const Float mass, const Float height, const Float width, const Float depth, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::Cuboid(mass, height, width, depth);
-}
-
-Float4x4 & MomentOfInertia::CreateCylinderMatrix( const Float mass, const Float height, const Float radius, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::Cylinder(mass, height, radius);
-}
-
-Float4x4 & MomentOfInertia::CreateRodMatrix( const Float mass, const Float length, ::Oyster::Math::Float4x4 &targetMem )
-{
-	return targetMem = Formula::MomentOfInertia::RodCenter(mass, length);
 }
 
 API & API::Instance()
@@ -95,12 +125,23 @@ void API_Impl::SetSubscription( API::EventAction_Destruction functionPointer )
 	}
 }
 
+float API_Impl::GetFrameTimeLength() const
+{
+	return this->updateFrameLength;
+}
+
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
+	
+
+
 	::std::vector<ICustomBody*> updateList;
 	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
 	for( ; proto != updateList.end(); ++proto )
 	{
+		// Step 1: @todo TODO: Apply Gravity
+
+		// Step 2: Apply Collision Response
 		this->worldScene.Visit( *proto, OnPossibleCollision );
 	}
 
@@ -151,101 +192,91 @@ void API_Impl::DestroyObject( const ICustomBody* objRef )
 	}
 }
 
-void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		//this->worldScene.GetCustomBody( tempRef )->Apply //!< @todo TODO: need function
-		this->worldScene.SetAsAltered( tempRef );		
-	}
-}
-
-void API_Impl::ApplyCollisionResponse( const ICustomBody* objRefA, const ICustomBody* objRefB, Float &deltaWhen, Float3 &worldPointOfContact )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRefA );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		//! @todo TODO: implement stub
-		this->worldScene.SetAsAltered( tempRef );		
-	}
-}
-
-void API_Impl::SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const Float4x4 &localI )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepVelocity( localI );
-	}
-}
-
-void API_Impl::SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const Float4x4 &localI )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepMomentum( localI );
-	}
-}
-
-void API_Impl::SetMass_KeepVelocity( const ICustomBody* objRef, Float m )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepVelocity( m );
-	}
-}
-
-void API_Impl::SetMass_KeepMomentum( const ICustomBody* objRef, Float m )
-{ // deprecated
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepMomentum( m );
-	}
-}
-
-void API_Impl::SetCenter( const ICustomBody* objRef, const Float3 &worldPos )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		//this->worldScene.GetCustomBody( tempRef )->Set //!< @todo TODO: need function
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
-
-void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetRotation( rotation );
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
-
-void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetOrientation( orientation );
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
-
-void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
-{
-	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
-	if( tempRef != this->worldScene.invalid_ref )
-	{
-		this->worldScene.GetCustomBody( tempRef )->SetSize( size );
-		this->worldScene.EvaluatePosition( tempRef );
-	}
-}
+//void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		//this->worldScene.GetCustomBody( tempRef )->Apply //!< @todo TODO: need function
+//		this->worldScene.SetAsAltered( tempRef );		
+//	}
+//}
+//
+//void API_Impl::SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const Float4x4 &localI )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepVelocity( localI );
+//	}
+//}
+//
+//void API_Impl::SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const Float4x4 &localI )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMomentOfInertiaTensor_KeepMomentum( localI );
+//	}
+//}
+//
+//void API_Impl::SetMass_KeepVelocity( const ICustomBody* objRef, Float m )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepVelocity( m );
+//	}
+//}
+//
+//void API_Impl::SetMass_KeepMomentum( const ICustomBody* objRef, Float m )
+//{ // deprecated
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetMass_KeepMomentum( m );
+//	}
+//}
+//
+//void API_Impl::SetCenter( const ICustomBody* objRef, const Float3 &worldPos )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		//this->worldScene.GetCustomBody( tempRef )->Set //!< @todo TODO: need function
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
+//
+//void API_Impl::SetRotation( const ICustomBody* objRef, const Float4x4 &rotation )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetRotation( rotation );
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
+//
+//void API_Impl::SetOrientation( const ICustomBody* objRef, const Float4x4 &orientation )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetOrientation( orientation );
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
+//
+//void API_Impl::SetSize( const ICustomBody* objRef, const Float3 &size )
+//{
+//	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
+//	if( tempRef != this->worldScene.invalid_ref )
+//	{
+//		this->worldScene.GetCustomBody( tempRef )->SetSize( size );
+//		this->worldScene.EvaluatePosition( tempRef );
+//	}
+//}
 
 UniquePointer<ICustomBody> API_Impl::CreateRigidBody( const API::SimpleBodyDescription &desc ) const
 {

@@ -10,8 +10,8 @@ namespace Oyster { namespace Physics
 		inline SimpleBodyDescription::SimpleBodyDescription()
 		{
 			this->rotation = ::Oyster::Math::Float4x4::identity;
-			this->centerPosition = ::Oyster::Math::Float3::null;
-			this->size = ::Oyster::Math::Float3( 1.0f );
+			this->centerPosition = ::Oyster::Math::Float4::null;
+			this->size = ::Oyster::Math::Float4( 1.0f );
 			this->mass = 12.0f;
 			this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
 			this->subscription = NULL;
@@ -21,31 +21,75 @@ namespace Oyster { namespace Physics
 		inline SphericalBodyDescription::SphericalBodyDescription()
 		{
 			this->rotation = ::Oyster::Math::Float4x4::identity;
-			this->centerPosition = ::Oyster::Math::Float3::null;
+			this->centerPosition = ::Oyster::Math::Float4::null;
 			this->radius = 0.5f;
 			this->mass = 10.0f;
 			this->subscription = NULL;
 			this->ignoreGravity = false;
 		}
 
-
-		inline CustomBodyState::CustomBodyState( const ::Oyster::Math::Float3 &reach, const ::Oyster::Math::Float3 &centerPos, const ::Oyster::Math::Float3 &rotation )
+		inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float staticFrictionCoeff, ::Oyster::Math::Float kineticFrictionCoeff, const ::Oyster::Math::Float4x4 &inertiaTensor, const ::Oyster::Math::Float4 &reach, const ::Oyster::Math::Float4 &centerPos, const ::Oyster::Math::Float4 &rotation, const ::Oyster::Math::Float4 &linearMomentum, const ::Oyster::Math::Float4 &angularMomentum )
 		{
-			this->reach = ::Oyster::Math::Float4( reach, 0.0f );
-			this->centerPos = ::Oyster::Math::Float4( centerPos, 1.0f );
-			this->angularAxis = ::Oyster::Math::Float4( rotation, 0.0f );
-			this->isSpatiallyAltered = this->isDisturbed = false;
+			this->mass = mass;
+			this->restitutionCoeff = restitutionCoeff;
+			this->staticFrictionCoeff = staticFrictionCoeff;
+			this->kineticFrictionCoeff = kineticFrictionCoeff;
+			this->inertiaTensor = inertiaTensor;
+			this->reach = reach;
+			this->centerPos = centerPos;
+			this->angularAxis = rotation;
+			this->linearMomentum = linearMomentum;
+			this->angularMomentum = angularMomentum;
+			this->linearImpulse = this->angularImpulse = ::Oyster::Math::Float4::null;
+			this->deltaPos = this->deltaAxis = ::Oyster::Math::Float4::null;
+			this->isSpatiallyAltered = this->isDisturbed = this->isForwarded = false;
 		}
 
 		inline CustomBodyState & CustomBodyState::operator = ( const CustomBodyState &state )
 		{
+			this->mass = state.mass;
+			this->restitutionCoeff = state.restitutionCoeff;
+			this->staticFrictionCoeff = state.staticFrictionCoeff;
+			this->kineticFrictionCoeff = state.kineticFrictionCoeff;
+			this->inertiaTensor = state.inertiaTensor;
 			this->reach = state.reach;
 			this->centerPos = state.centerPos;
 			this->angularAxis = state.angularAxis;
-
+			this->linearMomentum = state.linearMomentum;
+			this->angularMomentum = state.angularMomentum;
+			this->linearImpulse = state.linearImpulse;
+			this->angularImpulse = state.angularImpulse;
+			this->deltaPos = state.deltaPos;
+			this->deltaAxis = state.deltaAxis;
 			this->isSpatiallyAltered = state.isSpatiallyAltered;
 			this->isDisturbed = state.isDisturbed;
+			this->isForwarded = state.isForwarded;
 			return *this;
+		}
+
+		inline const ::Oyster::Math::Float CustomBodyState::GetMass() const
+		{
+			return this->mass;
+		}
+
+		inline const ::Oyster::Math::Float CustomBodyState::GetRestitutionCoeff() const
+		{
+			return this->restitutionCoeff;
+		}
+
+		inline const ::Oyster::Math::Float CustomBodyState::GetFrictionCoeff_Static() const
+		{
+			return this->staticFrictionCoeff;
+		}
+
+		inline const ::Oyster::Math::Float CustomBodyState::GetFrictionCoeff_Kinetic() const
+		{
+			return this->kineticFrictionCoeff;
+		}
+
+		inline const ::Oyster::Math::Float4x4 & CustomBodyState::GetMomentOfInertia() const
+		{
+			return this->inertiaTensor;
 		}
 
 		inline const ::Oyster::Math::Float4 & CustomBodyState::GetReach() const
@@ -73,25 +117,116 @@ namespace Oyster { namespace Physics
 			return ::Oyster::Math3D::RotationMatrix( this->GetAngularAxis().xyz );
 		}
 
-		inline void CustomBodyState::SetSize( const ::Oyster::Math::Float3 &size )
+		inline ::Oyster::Math::Float4x4 CustomBodyState::GetOrientation() const
+		{
+			return ::Oyster::Math3D::OrientationMatrix( this->angularAxis.xyz, this->centerPos.xyz );
+		}
+
+		inline ::Oyster::Math::Float4x4 CustomBodyState::GetView() const
+		{
+			return ::Oyster::Math3D::ViewMatrix( this->angularAxis.xyz, this->centerPos.xyz );
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetLinearMomentum() const
+		{
+			return this->linearMomentum;
+		}
+
+		inline ::Oyster::Math::Float4 CustomBodyState::GetLinearMomentum( const ::Oyster::Math::Float4 &at ) const
+		{
+			//return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, at - this->centerPos ); // C3083 error?
+			return this->linearMomentum + ::Oyster::Math::Float4( this->angularMomentum.xyz.Cross((at - this->centerPos).xyz), 0.0f );
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetAngularMomentum() const
+		{
+			return this->angularMomentum;
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetLinearImpulse() const
+		{
+			return this->linearImpulse;
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetAngularImpulse() const
+		{
+			return this->angularImpulse;
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetForward_DeltaPos() const
+		{
+			return this->deltaPos;
+		}
+
+		inline const ::Oyster::Math::Float4 & CustomBodyState::GetForward_DeltaAxis() const
+		{
+			return this->deltaAxis;
+		}
+
+		inline void CustomBodyState::SetMass_KeepMomentum( ::Oyster::Math::Float m )
+		{
+			this->mass = m;
+		}
+
+		inline void CustomBodyState::SetMass_KeepVelocity( ::Oyster::Math::Float m )
+		{
+			if( m != 0.0f )
+			{ // sanity block!
+				// Formula::LinearMomentum( m, Formula::LinearVelocity(this->mass, this->linearMomentum) )
+				// is the same as (this->linearMomentum / this->mass) * m = (m / this->mass) * this->linearMomentum
+				this->linearMomentum *= (m / this->mass);
+				this->mass = m;
+			}
+		}
+
+		inline void CustomBodyState::SetRestitutionCoeff( ::Oyster::Math::Float e )
+		{
+			this->restitutionCoeff = e;
+		}
+
+		inline void CustomBodyState::SetFrictionCoeff( ::Oyster::Math::Float staticU, ::Oyster::Math::Float kineticU )
+		{
+			this->staticFrictionCoeff = staticU;
+			this->kineticFrictionCoeff = kineticU;
+		}
+
+		inline void CustomBodyState::SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &tensor )
+		{
+			this->inertiaTensor = tensor;
+		}
+
+		inline void CustomBodyState::SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &tensor )
+		{
+			if( tensor.GetDeterminant() != 0.0f )
+			{ // sanity block!
+				::Oyster::Math::Float4x4 rotation = ::Oyster::Math3D::RotationMatrix(this->angularAxis.xyz);
+				//::Oyster::Math::Float4 w = ::Oyster::Physics3D::Formula::AngularVelocity( (rotation * this->inertiaTensor).GetInverse(), this->angularMomentum ); // C3083 error?
+				::Oyster::Math::Float4 w = (rotation * this->inertiaTensor).GetInverse() * this->angularMomentum;
+				this->inertiaTensor = tensor;
+				//this->angularMomentum = ::Oyster::Physics3D::Formula::AngularMomentum( rotation * tensor, w ); // C3083 error?
+				this->angularMomentum = rotation * tensor * w;
+			}
+		}
+		
+		inline void CustomBodyState::SetSize( const ::Oyster::Math::Float4 &size )
 		{
 			this->SetReach( 0.5f * size );
 		}
 
-		inline void CustomBodyState::SetReach( const ::Oyster::Math::Float3 &halfSize )
+		inline void CustomBodyState::SetReach( const ::Oyster::Math::Float4 &halfSize )
 		{
 			this->reach.xyz = halfSize;
 			this->reach = ::Utility::Value::Max( this->reach, ::Oyster::Math::Float4::null );
 			this->isSpatiallyAltered = this->isDisturbed = true;
 		}
 
-		inline void CustomBodyState::SetCenterPosition( const ::Oyster::Math::Float3 &centerPos )
+		inline void CustomBodyState::SetCenterPosition( const ::Oyster::Math::Float4 &centerPos )
 		{
 			this->centerPos.xyz = centerPos;
 			this->isSpatiallyAltered = this->isDisturbed = true;
 		}
 
-		inline void CustomBodyState::SetRotation( const ::Oyster::Math::Float3 &angularAxis )
+		inline void CustomBodyState::SetRotation( const ::Oyster::Math::Float4 &angularAxis )
 		{
 			this->angularAxis.xyz = angularAxis;
 			this->isSpatiallyAltered = this->isDisturbed = true;
@@ -99,7 +234,78 @@ namespace Oyster { namespace Physics
 
 		inline void CustomBodyState::SetRotation( const ::Oyster::Math::Float4x4 &rotation )
 		{
-			this->SetRotation( ::Oyster::Math3D::AngularAxis(rotation).xyz );
+			this->SetRotation( ::Oyster::Math3D::AngularAxis(rotation) );
+		}
+
+		inline void CustomBodyState::SetOrientation( const ::Oyster::Math::Float4x4 &orientation )
+		{
+			this->SetRotation( ::Oyster::Math3D::ExtractAngularAxis(orientation) );
+			this->SetCenterPosition( orientation.v[3] );
+		}
+
+		inline void CustomBodyState::SetLinearMomentum( const ::Oyster::Math::Float4 &g )
+		{
+			this->linearMomentum.xyz = g;
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::SetAngularMomentum( const ::Oyster::Math::Float4 &h )
+		{
+			this->angularMomentum.xyz = h;
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::SetLinearImpulse( const ::Oyster::Math::Float4 &j )
+		{
+			this->linearImpulse.xyz = j;
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::SetAngularImpulse( const ::Oyster::Math::Float4 &j )
+		{
+			this->angularImpulse.xyz = j;
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::AddRotation( const ::Oyster::Math::Float4 &angularAxis )
+		{
+			this->angularAxis += angularAxis;
+			this->isSpatiallyAltered = this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::AddTranslation( const ::Oyster::Math::Float4 &deltaPos )
+		{
+			this->centerPos += deltaPos;
+			this->isSpatiallyAltered = this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::ApplyLinearImpulse( const ::Oyster::Math::Float4 &j )
+		{
+			this->linearImpulse += j;
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::ApplyAngularImpulse( const ::Oyster::Math::Float4 &j )
+		{
+			this->angularImpulse += j;
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::ApplyImpulse( const ::Oyster::Math::Float4 &j, const ::Oyster::Math::Float4 &at, const ::Oyster::Math::Float4 &normal )
+		{
+			//::Oyster::Math::Float4 tangentialImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, at - this->centerPos ); // C3083 error?
+			::Oyster::Math::Float4 tangentialImpulse = ::Oyster::Math::Float4( (at - this->centerPos).xyz.Cross(j.xyz), 0.0f );
+			this->linearImpulse += j - tangentialImpulse;
+			this->angularImpulse += tangentialImpulse;
+
+			this->isDisturbed = true;
+		}
+
+		inline void CustomBodyState::ApplyForwarding( const ::Oyster::Math::Float4 &deltaPos, const ::Oyster::Math::Float4 &deltaAxis )
+		{
+			this->deltaPos += deltaPos;
+			this->deltaAxis += deltaAxis;
+			this->isDisturbed = this->isForwarded = true;
 		}
 
 		inline bool CustomBodyState::IsSpatiallyAltered() const
@@ -110,6 +316,11 @@ namespace Oyster { namespace Physics
 		inline bool CustomBodyState::IsDisturbed() const
 		{
 			return this->isDisturbed;
+		}
+
+		inline bool CustomBodyState::IsForwarded() const
+		{
+			return this->isForwarded;
 		}
 	}
 } }

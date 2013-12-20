@@ -16,24 +16,26 @@ namespace Oyster { namespace Collision3D
 	public:
 		union
 		{
-			struct{ ::Oyster::Math::Float4x4 rotation; ::Oyster::Math::Float3 center, boundingOffset; };
+			struct{ ::Oyster::Math::Float4x4 rotation; ::Oyster::Math::Float4 center, boundingOffset; };
 			struct
 			{
-				::Oyster::Math::Float3 xAxis; ::Oyster::Math::Float paddingA;
-				::Oyster::Math::Float3 yAxis; ::Oyster::Math::Float paddingB;
-				::Oyster::Math::Float3 zAxis; ::Oyster::Math::Float paddingC;
+				::Oyster::Math::Float4 xAxis;
+				::Oyster::Math::Float4 yAxis;
+				::Oyster::Math::Float4 zAxis;
 			};
-			char byte[sizeof(::Oyster::Math::Float4x4) + 2*sizeof(::Oyster::Math::Float3)];
+			char byte[sizeof(::Oyster::Math::Float4x4) + 2*sizeof(::Oyster::Math::Float4)];
 		};
 
 		Box( );
 		Box( const ::Oyster::Math::Float4x4 &rotation, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &size );
+		Box( const ::Oyster::Math::Float4x4 &rotation, const ::Oyster::Math::Float4 &worldPos, const ::Oyster::Math::Float4 &size );
 		virtual ~Box( );
 
 		Box & operator = ( const Box &box );
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable &target ) const;
+		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Contains( const ICollideable &target ) const;
 	};
 } }

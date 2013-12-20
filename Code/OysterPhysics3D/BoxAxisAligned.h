@@ -16,8 +16,8 @@ namespace Oyster { namespace Collision3D
 	public:
 		union
 		{
-			struct{ ::Oyster::Math::Float3 minVertex, maxVertex; };
-			char byte[2*sizeof(::Oyster::Math::Float3)];
+			struct{ ::Oyster::Math::Float4 minVertex, maxVertex; };
+			char byte[2*sizeof(::Oyster::Math::Float4)];
 		};
 
 		BoxAxisAligned( );
@@ -29,6 +29,7 @@ namespace Oyster { namespace Collision3D
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable &target ) const;
+		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Contains( const ICollideable &target ) const;
 	};
 } }

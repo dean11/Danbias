@@ -14,16 +14,16 @@ BoxAxisAligned::BoxAxisAligned( ) : ICollideable(Type_box_axis_aligned)
 	this->maxVertex = Float3( 0.5f, 0.5f, 0.5f );
 }
 
-BoxAxisAligned::BoxAxisAligned( const Float3 &_minVertex, const Float3 &_maxVertex ) : ICollideable(Type_box_axis_aligned)
+BoxAxisAligned::BoxAxisAligned( const Float3 &minVertex, const Float3 &maxVertex ) : ICollideable(Type_box_axis_aligned)
 {
-	this->minVertex = _minVertex;
-	this->maxVertex = _maxVertex;
+	this->minVertex = Float4( minVertex, 1.0f );
+	this->maxVertex = Float4( maxVertex, 1.0f );
 }
 
 BoxAxisAligned::BoxAxisAligned( const Float &leftClip, const Float &rightClip, const Float &topClip, const Float &bottomClip, const Float &nearClip, const Float &farClip ) : ICollideable(Type_box_axis_aligned)
 {
-	this->minVertex = Float3( leftClip, bottomClip, nearClip );
-	this->maxVertex = Float3( rightClip, topClip, farClip );
+	this->minVertex = Float4( leftClip, bottomClip, nearClip, 1.0f );
+	this->maxVertex = Float4( rightClip, topClip, farClip, 1.0f );
 }
 
 BoxAxisAligned::~BoxAxisAligned( ) {}
@@ -44,29 +44,36 @@ bool BoxAxisAligned::Intersects( const ICollideable &target ) const
 {
 	switch( target.type )
 	{
-	case Type_universe: return true;
-	case Type_point: return Utility::Intersect( *this, *(Point*)&target );
-	case Type_ray: return Utility::Intersect( *this, *(Ray*)&target, ((Ray*)&target)->collisionDistance );
-	case Type_sphere: return Utility::Intersect( *this, *(Sphere*)&target );
-	case Type_plane: return Utility::Intersect( *this, *(Plane*)&target );
-	// case Type_triangle: return false; // TODO: 
-	case Type_box_axis_aligned: return Utility::Intersect( *this, *(BoxAxisAligned*)&target );
-	// case Type_box: return false; // TODO: 
-	// case Type_frustrum: return false; // TODO: 
-	default: return false;
+	case Type_universe:			return true;
+	case Type_point:			return Utility::Intersect( *this, (const Point&)target );
+	case Type_ray:				return Utility::Intersect( *this, (const Ray&)target, ((const Ray&)target).collisionDistance );
+	case Type_sphere:			return Utility::Intersect( *this, (const Sphere&)target );
+	case Type_plane:			return Utility::Intersect( *this, (const Plane&)target );
+	// case Type_triangle:			return false; // TODO: 
+	case Type_box_axis_aligned:	return Utility::Intersect( *this, (const BoxAxisAligned&)target );
+	// case Type_box:				return false; // TODO: 
+	// case Type_frustrum:			return false; // TODO: 
+	default:					return false;
 	}
+}
+
+bool BoxAxisAligned::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
+{
+	//! @todo TODO: implement stub properly
+	return this->Intersects( target );
 }
 
 bool BoxAxisAligned::Contains( const ICollideable &target ) const
 {
-	switch( target.type )
-	{
-	// case Type_point: return false; // TODO: 
-	// case Type_sphere: return false; // TODO: 
-	// case Type_triangle: return false; // TODO: 
-	// case Type_box_axis_aligned: return false; // TODO: 
-	// case Type_box: return false; // TODO: 
-	// case Type_frustrum: return false; // TODO: 
-	default: return false;
-	}
+	//switch( target.type )
+	//{
+	////case Type_point:			return false; // TODO: 
+	////case Type_sphere:			return false; // TODO: 
+	////case Type_triangle:		return false; // TODO: 
+	////case Type_box_axis_aligned:	return false; // TODO: 
+	////case Type_box:			return false; // TODO: 
+	////case Type_frustrum:		return false; // TODO: 
+	//default:					return false;
+	//}
+	return false;
 }

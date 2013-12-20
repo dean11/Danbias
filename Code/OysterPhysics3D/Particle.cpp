@@ -34,7 +34,7 @@ Particle & Particle::operator = ( const Particle &particle )
 void Particle::Update_LeapFrog( Float deltaTime )
 { // Euler leap frog update when Runga Kutta is not needed
 	this->impulseForceSum *= (deltaTime / this->mass);  // is now deltaLinearVelocity ( dt * a = dt * F / m )
-	this->sphere.center += deltaTime * ::Utility::Value::AverageWithDelta( Formula::LinearVelocity(this->mass, this->linearMomentum), this->impulseForceSum );
+	this->sphere.center.xyz += deltaTime * ::Utility::Value::AverageWithDelta( Formula::LinearVelocity(this->mass, this->linearMomentum), this->impulseForceSum );
 	this->linearMomentum += Formula::LinearMomentum( this->mass, this->impulseForceSum );
 	this->impulseForceSum = Float3::null;
 
@@ -66,12 +66,12 @@ void Particle::ApplyLinearImpulseAcceleration( const Float3 &a )
 
 Float3 & Particle::AccessCenter()
 {
-	return this->sphere.center;
+	return this->sphere.center.xyz;
 }
 
 const Float3 & Particle::AccessCenter() const
 {
-	return this->sphere.center;
+	return this->sphere.center.xyz;
 }
 
 Float & Particle::AccessRadius()
@@ -91,7 +91,7 @@ const Float & Particle::GetMass() const
 
 const Float3 & Particle::GetCenter() const
 {
-	return this->sphere.center;
+	return this->sphere.center.xyz;
 }
 
 const Float & Particle::GetRadius() const

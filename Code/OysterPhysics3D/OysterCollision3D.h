@@ -25,18 +25,28 @@ namespace Oyster { namespace Collision3D { namespace Utility
 	void Compare( ::Oyster::Math::Float &connectOffset, const Plane &plane, const Point &point );
 
 	bool Intersect( const Point &pointA, const Point &pointB );
+	bool Intersect( const Point &pointA, const Point &pointB, ::Oyster::Math::Float4 &worldPointOfContact );
 
 	bool Intersect( const Ray &ray, const Point &point, ::Oyster::Math::Float &connectDistance );
+	bool Intersect( const Ray &ray, const Point &point, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Ray &rayA, const Ray &rayB, ::Oyster::Math::Float &connectDistanceA, ::Oyster::Math::Float &connectDistanceB );
+	bool Intersect( const Ray &rayA, const Ray &rayB, ::Oyster::Math::Float &connectDistanceA, ::Oyster::Math::Float &connectDistanceB, ::Oyster::Math::Float4 &worldPointOfContact );
 
 	bool Intersect( const Sphere &sphere, const Point &point );
+	bool Intersect( const Sphere &sphere, const Point &point, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Sphere &sphere, const Ray &ray, ::Oyster::Math::Float &connectDistance );
+	bool Intersect( const Sphere &sphere, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Sphere &sphereA, const Sphere &sphereB );
+	bool Intersect( const Sphere &sphereA, const Sphere &sphereB, ::Oyster::Math::Float4 &worldPointOfContact );
 
 	bool Intersect( const Plane &plane, const Point &point );
+	bool Intersect( const Plane &plane, const Point &point, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Plane &plane, const Ray &ray, ::Oyster::Math::Float &connectDistance );
+	bool Intersect( const Plane &plane, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Plane &plane, const Sphere &sphere );
+	bool Intersect( const Plane &plane, const Sphere &sphere, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Plane &planeA, const Plane &planeB );
+	bool Intersect( const Plane &planeA, const Plane &planeB, ::Oyster::Math::Float4 &worldPointOfContact );
 
 //	bool Intersect( const Triangle &triangle, const Point &point, ? );
 //	bool Intersect( const Triangle &triangle, const Ray &ray, ? );
@@ -45,19 +55,29 @@ namespace Oyster { namespace Collision3D { namespace Utility
 //	bool Intersect( const Triangle &triangleA, const Triangle &triangleB, ? );
 
 	bool Intersect( const BoxAxisAligned &box, const Point &point );
+	bool Intersect( const BoxAxisAligned &box, const Point &point, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const BoxAxisAligned &box, const Ray &ray, ::Oyster::Math::Float &connectDistance );
+	bool Intersect( const BoxAxisAligned &box, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere );
+	bool Intersect( const BoxAxisAligned &box, const Sphere &sphere, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const BoxAxisAligned &box, const Plane &plane );
+	bool Intersect( const BoxAxisAligned &box, const Plane &plane, ::Oyster::Math::Float4 &worldPointOfContact );
 //	bool Intersect( const BoxAxisAligned &box, const Triangle &triangle );
 	bool Intersect( const BoxAxisAligned &boxA, const BoxAxisAligned &boxB );
 
 	bool Intersect( const Box &box, const Point &point );
+	bool Intersect( const Box &box, const Point &point, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Box &box, const Ray &ray, ::Oyster::Math::Float &connectDistance );
+	bool Intersect( const Box &box, const Ray &ray, ::Oyster::Math::Float &connectDistance, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Box &box, const Sphere &sphere );
+	bool Intersect( const Box &box, const Sphere &sphere, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Box &box, const Plane &plane );
+	bool Intersect( const Box &box, const Plane &plane, ::Oyster::Math::Float4 &worldPointOfContact );
 //	bool Intersect( const Box &box, const Triangle &triangle, ? );
 	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB );
+	bool Intersect( const Box &boxA, const BoxAxisAligned &boxB, ::Oyster::Math::Float4 &worldPointOfContact );
 	bool Intersect( const Box &boxA, const Box &boxB );
+	bool Intersect( const Box &boxA, const Box &boxB, ::Oyster::Math::Float4 &worldPointOfContact );
 	
 	bool Intersect( const Frustrum &frustrum, const Point &point );
 	bool Intersect( const Frustrum &frustrum, const Ray &ray, ::Oyster::Math::Float &connectDistance );

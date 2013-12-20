@@ -267,12 +267,118 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
+	{
+		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		return targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>( 1, 0, 0, position.x,
 																   0, 1, 0, position.y,
 																   0, 0, 1, position.z,
 																   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Quaternion<ScalarType> Rotation( const ScalarType &radian, const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis )
+	{
+		ScalarType r = radian * 0.5f,
+				   s = std::sin( r ),
+				   c = std::cos( r );
+
+		return ::LinearAlgebra::Quaternion<ScalarType>( normalizedAxis * s, c );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Quaternion<ScalarType> Rotation( const ScalarType &radian, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
+	{
+		ScalarType r = radian * 0.5f,
+				   s = std::sin( r ),
+				   c = std::cos( r );
+
+		return ::LinearAlgebra::Quaternion<ScalarType>( (normalizedAxis * s).xyz, c );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Quaternion<ScalarType> Rotation( const ::LinearAlgebra::Vector3<ScalarType> &angularAxis )
+	{
+		ScalarType radius = angularAxis.Dot( angularAxis );
+		if( radius != 0 )
+		{
+			radius = (ScalarType)::std::sqrt( radius );
+			return Rotation( radius, angularAxis / radius );
+		}
+		else
+		{
+			return ::LinearAlgebra::Quaternion<ScalarType>::identity;
+		}
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Quaternion<ScalarType> Rotation( const ::LinearAlgebra::Vector4<ScalarType> &angularAxis )
+	{
+		ScalarType radius = angularAxis.Dot( angularAxis );
+		if( radius != 0 )
+		{
+			radius = (ScalarType)::std::sqrt( radius );
+			return Rotation( radius, angularAxis / radius );
+		}
+		else
+		{
+			return ::LinearAlgebra::Quaternion<ScalarType>::identity;
+		}
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
+
+		targetMem.v[0] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(1,0,0)*conjugate).imaginary, 0 );
+		targetMem.v[1] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(0,1,0)*conjugate).imaginary, 0 );
+		targetMem.v[2] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(0,0,1)*conjugate).imaginary, 0 );
+		targetMem.v[3] = ::LinearAlgebra::Vector4<ScalarType>::standard_unit_w;
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
+
+		targetMem.v[0] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(1,0,0)*conjugate).imaginary, 0 );
+		targetMem.v[1] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(0,1,0)*conjugate).imaginary, 0 );
+		targetMem.v[2] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(0,0,1)*conjugate).imaginary, 0 );
+		targetMem.v[3] = ::LinearAlgebra::Vector4<ScalarType>( translation, 1 );
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector4<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
+
+		targetMem.v[0] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(1,0,0)*conjugate).imaginary, 0 );
+		targetMem.v[1] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(0,1,0)*conjugate).imaginary, 0 );
+		targetMem.v[2] = ::LinearAlgebra::Vector4<ScalarType>( (rotationQuaternion*::LinearAlgebra::Vector3<ScalarType>(0,0,1)*conjugate).imaginary, 0 );
+		targetMem.v[3] = translation;
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		OrientationMatrix( rotationQuaternion, translation, targetMem );
+		return InverseOrientationMatrix( targetMem, targetMem );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, const ::LinearAlgebra::Vector4<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		OrientationMatrix( rotationQuaternion, translation, targetMem );
+		return InverseOrientationMatrix( targetMem, targetMem );
 	}
 
 	template<typename ScalarType>
@@ -400,18 +506,35 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &sumDeltaAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &sumTranslation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
-	{ /** @todo TODO: not tested */
-		ScalarType radian = sumDeltaAngularAxis.Dot( sumDeltaAngularAxis );
+	::LinearAlgebra::Matrix4x4<ScalarType> & OrientationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &angularAxis, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType radian = angularAxis.Dot( angularAxis );
 		if( radian > 0 )
 		{
 			radian = ::std::sqrt( radian );
-			return OrientationMatrix( sumDeltaAngularAxis / radian, radian, sumTranslation, targetMem );
+			return OrientationMatrix( angularAxis / radian, radian, translation, targetMem );
 		}
 		else
 		{
 			targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
-			targetMem.v[3].xyz = sumTranslation;
+			targetMem.v[3].xyz = translation;
+			return targetMem;
+		}
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & ViewMatrix( const ::LinearAlgebra::Vector3<ScalarType> &angularAxis, const ::LinearAlgebra::Vector3<ScalarType> &translation, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
+	{
+		ScalarType radian = angularAxis.Dot( angularAxis );
+		if( radian > 0 )
+		{
+			radian = ::std::sqrt( radian );
+			return InverseOrientationMatrix( OrientationMatrix(angularAxis / radian, radian, translation, targetMem) );
+		}
+		else
+		{
+			targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>::identity;
+			targetMem.v[3].xyz = -translation;
 			return targetMem;
 		}
 	}
@@ -535,7 +658,15 @@ namespace LinearAlgebra3D
 	{ return axis * ( vector.Dot(axis) / axis.Dot(axis) ); }
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> VectorProjection( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Vector4<ScalarType> &axis )
+	{ return axis * ( vector.Dot(axis) / axis.Dot(axis) ); }
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> NormalProjection( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Vector3<ScalarType> &normalizedAxis )
+	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> NormalProjection( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
 	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
 }
 

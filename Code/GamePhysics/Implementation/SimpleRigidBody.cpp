@@ -8,19 +8,59 @@ using namespace ::Oyster::Collision3D;
 using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::Value;
 
+namespace Private
+{
+	const Float epsilon = (const Float)1e-20;
+
+	// Float calculations can suffer roundingerrors. Which is where epsilon = 1e-20 comes into the picture
+	inline bool EqualsZero( const Float &value )
+	{ // by Dan Andersson
+		return Abs( value ) < epsilon;
+	}
+
+	inline bool Contains( const Plane &container, const Float4 &pos )
+	{ // by Dan Andersson
+		return EqualsZero( container.normal.Dot( pos ) + container.phasing );
+	}
+
+	// revision of Ray Vs Plane intersect test, there ray is more of an axis
+	bool Intersects( const Ray &axis, const Plane &plane, Float &connectDistance )
+	{ // by Dan Andersson
+		Float c = plane.normal.Dot(axis.direction);
+		if( EqualsZero(c) )
+		{ // axis is parallell with the plane. (axis direction orthogonal with the planar normal)
+			connectDistance = 0.0f;
+			return Contains( plane, axis.origin );
+		}
+
+		connectDistance = -plane.phasing;
+		connectDistance -= plane.normal.Dot( axis.origin );
+		connectDistance /= c;
+
+		return true;
+	}
+}
+
 SimpleRigidBody::SimpleRigidBody()
 {
-	this->rigid = RigidBody( Box(Float4x4::identity, Float3::null, Float3(1.0f)), 16.0f, Float4x4::identity );
+	this->rigid = RigidBody();
+	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
-	this->ignoreGravity = false;
+	this->ignoreGravity = this->isForwarded = false;
+	this->scene = nullptr;
 }
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {
-	this->rigid = RigidBody( Box( desc.rotation, desc.centerPosition, desc.size  ),
-							 desc.mass,
-							 desc.inertiaTensor );
+	this->rigid.SetRotation( desc.rotation );
+	this->rigid.centerPos = desc.centerPosition;
+	this->rigid.SetSize( desc.size );
+	this->rigid.SetMass_KeepMomentum( desc.mass );
+	this->rigid.SetMomentOfInertia_KeepMomentum( desc.inertiaTensor );
+	this->deltaPos = Float4::null;
+	this->deltaAxis = Float4::null;
+
 	this->gravityNormal = Float3::null;
 	
 	if( desc.subscription )
@@ -33,6 +73,7 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	}
 
 	this->ignoreGravity = desc.ignoreGravity;
+	this->scene = nullptr;
 }
 
 SimpleRigidBody::~SimpleRigidBody() {}
@@ -44,24 +85,60 @@ UniquePointer<ICustomBody> SimpleRigidBody::Clone() const
 
 SimpleRigidBody::State SimpleRigidBody::GetState() const
 {
-	return State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+	return State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
+				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
+				  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
+				  this->rigid.centerPos, this->rigid.axis,
+				  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
 }
 
 SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
 {
-	return targetMem = State( this->rigid.box.boundingOffset, this->rigid.box.center, AngularAxis(this->rigid.box.rotation).xyz );
+	return targetMem = State( this->rigid.GetMass(), this->rigid.restitutionCoeff,
+							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
+							  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
+							  this->rigid.centerPos, this->rigid.axis,
+							  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
-{ /** @todo TODO: temporary solution! Need to know it's occtree */
-	this->rigid.box.boundingOffset = state.GetReach();
-	this->rigid.box.center = state.GetCenterPosition();
-	this->rigid.box.rotation = state.GetRotation();
+{
+	this->rigid.centerPos			  = state.GetCenterPosition();
+	this->rigid.SetRotation( state.GetRotation() );
+	this->rigid.boundingReach		  = state.GetReach();
+	this->rigid.momentum_Linear		  = state.GetLinearMomentum();
+	this->rigid.momentum_Angular	  = state.GetAngularMomentum();
+	this->rigid.impulse_Linear		 += state.GetLinearImpulse();
+	this->rigid.impulse_Angular		 += state.GetAngularImpulse();
+	this->rigid.restitutionCoeff	  = state.GetRestitutionCoeff();
+	this->rigid.frictionCoeff_Static  = state.GetFrictionCoeff_Static();
+	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
+
+	if( state.IsForwarded() )
+	{
+		this->deltaPos += state.GetForward_DeltaPos();
+		this->deltaAxis += state.GetForward_DeltaAxis();
+		this->isForwarded;
+	}
+
+	if( this->scene )
+	{
+		if( state.IsSpatiallyAltered() )
+		{
+			unsigned int tempRef = this->scene->GetTemporaryReferenceOf( this );
+			this->scene->SetAsAltered( tempRef );
+			this->scene->EvaluatePosition( tempRef );
+		}
+		else if( state.IsDisturbed() )
+		{
+			this->scene->SetAsAltered( this->scene->GetTemporaryReferenceOf(this) );
+		}
+	}
 }
 
-void SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
 {
-	this->collisionAction( proto, deuter );
+	return this->collisionAction( proto, deuter );
 }
 
 bool SimpleRigidBody::IsAffectedByGravity() const
@@ -69,34 +146,76 @@ bool SimpleRigidBody::IsAffectedByGravity() const
 	return !this->ignoreGravity;
 }
 
-bool SimpleRigidBody::Intersects( const ICustomBody &object, Float timeStepLength, Float &deltaWhen, Float3 &worldPointOfContact ) const
-{
-	if( object.Intersects(this->rigid.box) )
-	{ //! @todo TODO: better implementation needed
-		deltaWhen = timeStepLength;
-		worldPointOfContact = Average( this->rigid.box.center, object.GetCenter() );
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
 bool SimpleRigidBody::Intersects( const ICollideable &shape ) const
 {
-	return this->rigid.box.Intersects( shape );
+	return Box( this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize() ).Intersects( shape );
+}
+
+bool SimpleRigidBody::Intersects( const ICollideable &shape, Float4 &worldPointOfContact ) const
+{
+	return Box( this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize() ).Intersects( shape, worldPointOfContact );
+}
+
+bool SimpleRigidBody::Intersects( const ICustomBody &object, Float4 &worldPointOfContact ) const
+{
+	return object.Intersects( Box(this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize()), worldPointOfContact );
 }
 
 Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
-	return targetMem = Sphere( this->rigid.box.center, this->rigid.box.boundingOffset.GetMagnitude() );
+	return targetMem = Sphere( this->rigid.centerPos, this->rigid.boundingReach.GetMagnitude() );
 }
 
-Float3 & SimpleRigidBody::GetNormalAt( const Float3 &worldPos, Float3 &targetMem ) const
+Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	//! @todo TODO: better implementation needed
-	return targetMem = (worldPos - this->rigid.box.center).GetNormalized();
+	Float4 offset = worldPos - this->rigid.centerPos;
+	Float distance = offset.Dot( offset );
+	Float3 normal = Float3::null;
+
+	if( distance != 0.0f )
+	{ // sanity check
+		Ray axis( Float4::standard_unit_w, offset / (Float)::std::sqrt(distance) );
+		Float minDistance = numeric_limits<Float>::max();
+		Float4x4 rotationMatrix = this->rigid.GetRotationMatrix();
+		
+		if( Private::Intersects(axis, Plane(rotationMatrix.v[0], -this->rigid.boundingReach.x), axis.collisionDistance) )
+		{ // check along x-axis
+			if( axis.collisionDistance < 0.0f )
+				normal = -rotationMatrix.v[0].xyz;
+			else
+				normal = rotationMatrix.v[0].xyz;
+
+			minDistance = Abs( axis.collisionDistance );
+		}
+
+		if( Private::Intersects(axis, Plane(rotationMatrix.v[1], -this->rigid.boundingReach.y), axis.collisionDistance) )
+		{ // check along y-axis
+			distance = Abs( axis.collisionDistance ); // recycling memory
+			if( minDistance > distance )
+			{
+				if( axis.collisionDistance < 0.0f )
+					normal = -rotationMatrix.v[1].xyz;
+				else
+					normal = rotationMatrix.v[1].xyz;
+
+				minDistance = distance;
+			}
+		}
+
+		if( Private::Intersects(axis, Plane(rotationMatrix.v[2], -this->rigid.boundingReach.z), axis.collisionDistance) )
+		{ // check along z-axis
+			if( minDistance > Abs( axis.collisionDistance ) )
+			{
+				if( axis.collisionDistance < 0.0f )
+					normal = -rotationMatrix.v[2].xyz;
+				else
+					normal = rotationMatrix.v[2].xyz;
+			}
+		}
+	}
+	targetMem.xyz = normal;
+	targetMem.w = 0.0f;
+	return targetMem;
 }
 
 Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
@@ -104,39 +223,57 @@ Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
 	return targetMem = this->gravityNormal;	
 }
 
-Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
-{
-	return targetMem = this->rigid.box.center;
-}
+//Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
+//{
+//	return targetMem = this->rigid.centerPos;
+//}
+//
+//Float4x4 & SimpleRigidBody::GetRotation( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.box.rotation;
+//}
+//
+//Float4x4 & SimpleRigidBody::GetOrientation( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.GetOrientation();
+//}
+//
+//Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
+//{
+//	return targetMem = this->rigid.GetView();
+//}
 
-Float4x4 & SimpleRigidBody::GetRotation( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.box.rotation;
-}
-
-Float4x4 & SimpleRigidBody::GetOrientation( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.GetOrientation();
-}
-
-Float4x4 & SimpleRigidBody::GetView( Float4x4 &targetMem ) const
-{
-	return targetMem = this->rigid.GetView();
-}
-
-Float3 SimpleRigidBody::GetRigidLinearVelocity() const
-{
-	return this->rigid.GetLinearVelocity();
-}
+//Float3 SimpleRigidBody::GetRigidLinearVelocity() const
+//{
+//	return this->rigid.GetLinearVelocity();
+//}
 
 
 UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
+	if( this->isForwarded )
+	{
+		this->rigid.Move( this->deltaPos, this->deltaAxis );
+		this->deltaPos = Float4::null;
+		this->deltaAxis = Float4::null;
+		this->isForwarded = false;
+	}
+
 	this->rigid.Update_LeapFrog( timeStepLength );
 
-	// compare previous and new state and return result
+	//! @todo TODO: compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
 	return UpdateState_altered;
+}
+
+void SimpleRigidBody::Predict( Float4 &outDeltaPos, Float4 &outDeltaAxis, const Float4 &actingLinearImpulse, const Float4 &actingAngularImpulse, Float deltaTime )
+{
+	this->rigid.Predict_LeapFrog( outDeltaPos, outDeltaAxis, actingLinearImpulse, actingAngularImpulse, deltaTime );
+}
+
+void SimpleRigidBody::SetScene( void *scene )
+{
+	this->scene = (Octree*)scene;
 }
 
 void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
@@ -162,47 +299,47 @@ void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 	this->gravityNormal = normalizedVector;
 }
 
-void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
-{
-	this->rigid.SetMomentOfInertia_KeepVelocity( localI );
-}
-
-void SimpleRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
-{
-	this->rigid.SetMomentOfInertia_KeepMomentum( localI );
-}
-
-void SimpleRigidBody::SetMass_KeepVelocity( Float m )
-{
-	this->rigid.SetMass_KeepVelocity( m );
-}
-
-void SimpleRigidBody::SetMass_KeepMomentum( Float m )
-{
-	this->rigid.SetMass_KeepMomentum( m );
-}
-
-void SimpleRigidBody::SetCenter( const Float3 &worldPos )
-{
-	this->rigid.SetCenter( worldPos );
-}
-
-void SimpleRigidBody::SetRotation( const Float4x4 &rotation )
-{
-	this->rigid.SetRotation( rotation );
-}
-
-void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
-{
-	this->rigid.SetOrientation( orientation );
-}
-
-void SimpleRigidBody::SetSize( const Float3 &size )
-{
-	this->rigid.SetSize( size );
-}
-
-void SimpleRigidBody::SetMomentum( const Float3 &worldG )
-{
-	this->rigid.SetLinearMomentum( worldG );
-}
+//void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
+//{
+//	this->rigid.SetMomentOfInertia_KeepVelocity( localI );
+//}
+//
+//void SimpleRigidBody::SetMomentOfInertiaTensor_KeepMomentum( const Float4x4 &localI )
+//{
+//	this->rigid.SetMomentOfInertia_KeepMomentum( localI );
+//}
+//
+//void SimpleRigidBody::SetMass_KeepVelocity( Float m )
+//{
+//	this->rigid.SetMass_KeepVelocity( m );
+//}
+//
+//void SimpleRigidBody::SetMass_KeepMomentum( Float m )
+//{
+//	this->rigid.SetMass_KeepMomentum( m );
+//}
+//
+//void SimpleRigidBody::SetCenter( const Float3 &worldPos )
+//{
+//	this->rigid.SetCenter( worldPos );
+//}
+//
+//void SimpleRigidBody::SetRotation( const Float4x4 &rotation )
+//{
+//	this->rigid.SetRotation( rotation );
+//}
+//
+//void SimpleRigidBody::SetOrientation( const Float4x4 &orientation )
+//{
+//	this->rigid.SetOrientation( orientation );
+//}
+//
+//void SimpleRigidBody::SetSize( const Float3 &size )
+//{
+//	this->rigid.SetSize( size );
+//}
+//
+//void SimpleRigidBody::SetMomentum( const Float3 &worldG )
+//{
+//	this->rigid.SetLinearMomentum( worldG );
+//}

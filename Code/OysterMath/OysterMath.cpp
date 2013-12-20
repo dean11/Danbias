@@ -91,9 +91,59 @@ namespace Oyster { namespace Math3D
 		return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
 	}
 
+	Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix )
+	{
+		return ::LinearAlgebra3D::ExtractAngularAxis( orientationMatrix );
+	}
+
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem )
 	{
 		return ::LinearAlgebra3D::TranslationMatrix( position, targetMem );
+	}
+
+	Quaternion Rotation( Float radian, const Float3 &normalizedAxis )
+	{
+		return ::LinearAlgebra3D::Rotation( radian, normalizedAxis );
+	}
+
+	Quaternion Rotation( Float radian, const Float4 &normalizedAxis )
+	{
+		return ::LinearAlgebra3D::Rotation( radian, normalizedAxis );
+	}
+
+	Quaternion Rotation( const Float3 &angularAxis )
+	{
+		return ::LinearAlgebra3D::Rotation( angularAxis );
+	}
+
+	Quaternion Rotation( const Float4 &angularAxis )
+	{
+		return ::LinearAlgebra3D::Rotation( angularAxis );
+	}
+
+	Float4x4 & RotationMatrix( const Quaternion &rotationQuaternion, Float4x4 &targetMem )
+	{
+		return ::LinearAlgebra3D::RotationMatrix( rotationQuaternion, targetMem );
+	}
+
+	Float4x4 & OrientationMatrix( const Quaternion &rotationQuaternion, const Float3 &translation, Float4x4 &targetMem )
+	{
+		return ::LinearAlgebra3D::OrientationMatrix( rotationQuaternion, translation, targetMem );
+	}
+
+	Float4x4 & OrientationMatrix( const Quaternion &rotationQuaternion, const Float4 &translation, Float4x4 &targetMem )
+	{
+		return ::LinearAlgebra3D::OrientationMatrix( rotationQuaternion, translation, targetMem );
+	}
+
+	Float4x4 & ViewMatrix( const Quaternion &rotationQuaternion, const Float3 &translation, Float4x4 &targetMem )
+	{
+		return ::LinearAlgebra3D::ViewMatrix( rotationQuaternion, translation, targetMem );
+	}
+
+	Float4x4 & ViewMatrix( const Quaternion &rotationQuaternion, const Float4 &translation, Float4x4 &targetMem )
+	{
+		return ::LinearAlgebra3D::ViewMatrix( rotationQuaternion, translation, targetMem );
 	}
 
 	Float4x4 & RotationMatrix_AxisX( const Float &radian, Float4x4 &targetMem )
@@ -147,9 +197,14 @@ namespace Oyster { namespace Math3D
 		return ::LinearAlgebra3D::OrientationMatrix( normalizedAxis, deltaRadian, sumTranslation, targetMem );
 	}
 
-	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, Float4x4 &targetMem )
+	Float4x4 & OrientationMatrix( const Float3 &angularAxis, const Float3 &translation, Float4x4 &targetMem )
 	{
-		return ::LinearAlgebra3D::OrientationMatrix( sumDeltaAngularAxis, sumTranslation, targetMem );
+		return ::LinearAlgebra3D::OrientationMatrix( angularAxis, translation, targetMem );
+	}
+
+	Float4x4 & ViewMatrix( const Float3 &angularAxis, const Float3 &translation, Float4x4 &targetMem )
+	{
+		return ::LinearAlgebra3D::ViewMatrix( angularAxis, translation, targetMem );
 	}
 
 	Float4x4 & OrientationMatrix( const Float3 &sumDeltaAngularAxis, const Float3 &sumTranslation, const Float3 &centerOfMass, Float4x4 &targetMem )
@@ -207,7 +262,17 @@ namespace Oyster { namespace Math3D
 		return ::LinearAlgebra3D::VectorProjection( vector, axis );
 	}
 
+	Float4 VectorProjection( const Float4 &vector, const Float4 &axis )
+	{
+		return ::LinearAlgebra3D::VectorProjection( vector, axis );
+	}
+
 	Float3 NormalProjection( const Float3 &vector, const Float3 &normalizedAxis )
+	{
+		return ::LinearAlgebra3D::NormalProjection( vector, normalizedAxis );
+	}
+
+	Float4 NormalProjection( const Float4 &vector, const Float4 &normalizedAxis )
 	{
 		return ::LinearAlgebra3D::NormalProjection( vector, normalizedAxis );
 	}

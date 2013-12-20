@@ -46,8 +46,29 @@ bool Line::Intersects( const ICollideable &target ) const
 		return true;
 	}
 
-	if( this->ray.Intersects( target ) ) if( this->ray.collisionDistance >= 0.0f ) if( this->ray.collisionDistance <= this->length )
+	if( this->ray.Intersects(target) ) if( this->ray.collisionDistance >= 0.0f ) if( this->ray.collisionDistance <= this->length )
+	{
 		return true;
+	}
+	
+	this->ray.collisionDistance = 0.0f;
+	return false;
+}
+
+bool Line::Intersects( const ICollideable &target, Float4 &worldPointOfContact ) const
+{
+	if( target.type == Type_universe )
+	{
+		this->ray.collisionDistance = 0.0f;
+		worldPointOfContact = this->ray.origin;
+		return true;
+	}
+
+	if( this->ray.Intersects(target) ) if( this->ray.collisionDistance >= 0.0f ) if( this->ray.collisionDistance <= this->length )
+	{
+		worldPointOfContact = this->ray.origin + this->ray.direction * this->ray.collisionDistance;
+		return true;
+	}
 	
 	this->ray.collisionDistance = 0.0f;
 	return false;

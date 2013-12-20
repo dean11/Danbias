@@ -7,6 +7,7 @@
 #define OYSTER_COLLISION_3D_UNIVERSE_H
 
 #include "ICollideable.h"
+#include "OysterMath.h"
 
 namespace Oyster { namespace Collision3D
 {
@@ -20,6 +21,7 @@ namespace Oyster { namespace Collision3D
 
 		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
 		bool Intersects( const ICollideable &target ) const;
+		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Contains( const ICollideable &target ) const;
 	};
 } }
