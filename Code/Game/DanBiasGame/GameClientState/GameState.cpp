@@ -165,7 +165,7 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection(privData->proj);
 	Oyster::Graphics::API::NewFrame();
-	for (int i = 0; i < privData->modelCount; i++)
+	for (int i = 0; i < privData->object.size(); i++)
 	{
 		privData->object[i]->Render();
 	}
