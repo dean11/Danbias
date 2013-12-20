@@ -13,61 +13,18 @@ namespace GameLogic
 		PLAYER_MOVEMENT_RIGHT = 4,
 		PLAYER_MOVEMENT_JUMP = 8,
 	};
-	class DANBIAS_GAMELOGIC_DLL PLAYER_STATE
+	enum PLAYER_STATE
 	{
-		public:
-			PLAYER_STATE()
-			{
-
-			}
-			PLAYER_STATE(int value)
-			{
-				this->value = value;
-			}
-
-			static const int PLAYER_STATE_JUMPING = 0;
-			static const int PLAYER_STATE_WALKING = 1;
-			static const int PLAYER_STATE_IDLE = 2;
-			int value;
-
+		PLAYER_STATE_JUMPING = 0,
+		PLAYER_STATE_WALKING = 1,
+		PLAYER_STATE_IDLE = 2,
 	};
-	/*
-	class DANBIAS_GAMELOGIC_DLL PLAYER_MOVEMENT
+
+	enum OBJECT_TYPE
 	{
-	public:
-		PLAYER_MOVEMENT()
-		{
-
-		}
-		PLAYER_MOVEMENT(int value)
-		{
-			this->value = value;
-		}
-		static const int PLAYER_MOVEMENT_FORWARD = 0;
-		static const int PLAYER_MOVEMENT_BACKWARD = 1;
-		static const int PLAYER_MOVEMENT_LEFT = 2;
-		static const int PLAYER_MOVEMENT_RIGHT = 4;
-		static const int PLAYER_MOVEMENT_JUMP = 8;
-		int value;
-	};
-	*/
-
-	class DANBIAS_GAMELOGIC_DLL OBJECT_TYPE
-	{
-		public:
-		OBJECT_TYPE()
-		{
-
-		}
-		OBJECT_TYPE(int value)
-		{
-			this->value = value;
-		}
-		static const int OBJECT_TYPE_PLAYER = 0;
-		static const int OBJECT_TYPE_BOX = 1;
-		static const int OBJECT_TYPE_UNKNOWN = 2;
-
-		public: int value;
+		OBJECT_TYPE_PLAYER = 0,
+		OBJECT_TYPE_BOX = 1,
+		OBJECT_TYPE_UNKNOWN = 2,
 	};
 
 	enum WEAPON_FIRE

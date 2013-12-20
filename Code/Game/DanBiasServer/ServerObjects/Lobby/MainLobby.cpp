@@ -1,6 +1,5 @@
 
 #include "MainLobby.h"
-#include "..\..\Helpers\ProtocolParser.h"
 #include "..\ClientObject.h"
 #include <PlayerProtocols.h>
 #include <PostBox\PostBox.h>

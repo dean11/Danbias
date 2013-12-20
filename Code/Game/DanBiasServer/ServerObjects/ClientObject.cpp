@@ -14,31 +14,34 @@ ClientObject::~ClientObject()
 }
 void ClientObject::SetProtocolCallback(Oyster::Network::ProtocolRecieverObject* object)
 {
-	this->NetClient_Object()->SetRecieverObject(object, Oyster::Network::NetworkProtocolCallbackType_Object);
+	this->GetClient()->SetRecieverObject(object, Oyster::Network::NetworkProtocolCallbackType_Object);
 }
 void ClientObject::SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box)
 {
 	this->box = box;
 }
-GameLogic::Player* ClientObject::Logic_Object()
+GameLogic::Player* ClientObject::GetPlayer()
 {
-	return this->logicPlayer;
+	return this->player.Get();
 }
-Oyster::Network::NetworkClient* ClientObject::NetClient_Object()
+Oyster::Network::NetworkClient* ClientObject::GetClient()
 {
-	return this->client;
+	return this->client.Get();
 }
 
 void ClientObject::CreatePlayer()
 {
-	if(this->logicPlayer) return;
+	if(this->player) return;
 
-	this->logicPlayer = new GameLogic::Player();
+	this->player = new GameLogic::Player();
+}
+void ClientObject::ErasePlayer()
+{
+	while(this->player.Release());
 }
 
 void ClientObject::ProtocolRecievedCallback(Oyster::Network::CustomNetProtocol& protocol)
 {
-	//this->client->Send(&protocol);
 	if(!this->box) return;
 
 	NetworkSession::NetEvent _event;

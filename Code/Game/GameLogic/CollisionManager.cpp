@@ -16,7 +16,7 @@ using namespace GameLogic;
 		Player *player = ((Player*)(rigidBodyPlayer->gameObjectRef));
 		Object *realObj = (Object*)obj->gameObjectRef;
 
-		switch (realObj->GetType().value)
+		switch (realObj->GetType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_BOX:
 			PlayerVBox(*player,(*(DynamicObject*) realObj));
@@ -43,7 +43,7 @@ using namespace GameLogic;
 		DynamicObject *box = (DynamicObject*)rigidBodyBox->gameObjectRef;
 		Object *realObj = (Object*)obj->gameObjectRef;
 
-		switch (realObj->GetType().value)
+		switch (realObj->GetType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_BOX:
 				

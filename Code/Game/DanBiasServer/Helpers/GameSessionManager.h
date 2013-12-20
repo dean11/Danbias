@@ -10,7 +10,7 @@ class GameSessionManager
 {
 public:
 	static void AddSession(DanBias::GameSession* session);
-	static void CloseSession(DanBias::GameSession* session);
+	static void CloseSession();
 };
 
 #endif // !DANBIASSERVER_GAME_SEESION_MANAGER_H

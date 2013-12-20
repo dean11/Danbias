@@ -90,8 +90,8 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			// load map
 			// wait for all players
 			LoadGame();
-			GameLogic::Protocol_Status gameStatus;
-			gameStatus.status = GameLogic::Protocol_Status::States_ready;
+			GameLogic::Protocol_General_Status gameStatus;
+			gameStatus.status = GameLogic::Protocol_General_Status::States_ready;
 			privData->nwClient->Send(gameStatus);
 			privData->state = gameStateState_playing;
 		}

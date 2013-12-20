@@ -41,14 +41,15 @@ void GameSessionManager::AddSession(DanBias::GameSession* session)
 	}
 
 }
-void GameSessionManager::CloseSession(DanBias::GameSession* session)
+void GameSessionManager::CloseSession()
 {
-	int i = gameSessionData.Existst(session);
 
-	//Moron check...
-	if(i == -1) return;
-
-	//gameSessionData.sessions[i]->Close();
+	//int i = gameSessionData.Existst(session);
+	//
+	////Moron check...
+	//if(i == -1) return;
+	//
+	////gameSessionData.sessions[i]->Close();
 }
 
 

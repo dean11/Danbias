@@ -23,6 +23,8 @@ namespace DanBias
 
 	void GameServer::ClientConnectCallback(NetworkClient* client)
 	{
+		printf("Client with ID [%i] connected.\n", client->Id());
+
 		if(!myTest)
 		{
 			myTest = new GameSession();
@@ -33,8 +35,6 @@ namespace DanBias
 
 			myTest->Run(desc);
 		}
-
-		//printf("Client connected with socket: %i\n", client->Id());
 		//
 		//Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
 		//this->mainLobby->AttachClient(c, this->mainLobby->GetPostbox());

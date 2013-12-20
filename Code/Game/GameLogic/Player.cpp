@@ -14,7 +14,7 @@ struct Player::PrivateData
 		
 		life = 100;
 		teamID = -1;
-		playerState.value = PLAYER_STATE::PLAYER_STATE_IDLE;
+		playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 
 		lookDir = Oyster::Math::Float3(1,0,0);
 	}
@@ -73,6 +73,27 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 	}
 }
 
+void Player::MoveForward()
+{
+	API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
+}
+void Player::MoveBackwards()
+{
+	API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
+}
+void Player::MoveRight()
+{
+	//Do cross product with forward vector and negative gravity vector
+	Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
+	API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
+}
+void Player::MoveLeft()
+{
+	//Do cross product with forward vector and negative gravity vector
+	Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
+	API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
+}
+
 void Player::UseWeapon(const WEAPON_FIRE &fireInput)
 {
 	myData->weapon->Use(fireInput);
@@ -93,15 +114,15 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (myData->playerState.value == PLAYER_STATE::PLAYER_STATE_WALKING);
+	return (myData->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
 }
 bool Player::IsJumping()
 {
-	return (myData->playerState.value == PLAYER_STATE::PLAYER_STATE_JUMPING);
+	return (myData->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
 }
 bool Player::IsIdle()
 {
-	return (myData->playerState.value == PLAYER_STATE::PLAYER_STATE_IDLE);
+	return (myData->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
 }
 
 Oyster::Math::Float3 Player::GetPos()

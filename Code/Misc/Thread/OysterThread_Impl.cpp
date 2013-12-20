@@ -28,13 +28,13 @@ using namespace Utility::DynamicMemory;
 	{
 		OYSTER_THREAD_STATE	state;							//<! The current thread state.
 		OYSTER_THREAD_PRIORITY prio;						//<! The thread priority
-		IThreadObject *owner;									//<! The worker.
+		IThreadObject *owner;								//<! The worker object.
 		std::atomic<int> msec;								//<! A timer in miliseconds.
 
-		//std::timed_mutex threadFunctionLock;
+		std::timed_mutex threadFunctionLock;
 		//std::mutex threadWaitFunctionLock;
 	};
-
+	
 	/** A typical Oyster thread function */
 	typedef void (*ThreadFunction)(ThreadData* w);
 
@@ -131,9 +131,15 @@ using namespace Utility::DynamicMemory;
 		}
 		static bool DoWork(ThreadData* w)
 		{
-			if(w->owner)
-				return w->owner->DoWork();
-				
+			try
+			{
+				if(w->owner)
+					return w->owner->DoWork();
+			}
+			catch( ... )
+			{
+				printf("Something went wrong on thread with id: [%i]", std::this_thread::get_id());
+			}
 			return true;
 		}
 		static void CheckStatus(ThreadData* w)
@@ -239,23 +245,7 @@ OYSTER_THREAD_ERROR OysterThread::Reset(IThreadObject* worker)
 }
 OYSTER_THREAD_ERROR OysterThread::Terminate(bool wait)
 {
-	//this->privateData->data->threadData->state = OYSTER_THREAD_STATE_DEAD;
-	//
-	//if(std::this_thread::get_id() == this->privateData->data->workerThread->get_id())
-	//	return OYSTER_THREAD_ERROR_SUCCESS;
-	//
-	//if(wait)
-	//{
-	//	if(this->privateData->data->workerThread->joinable())
-	//		this->privateData->data->workerThread->detach();
-	//
-	//	this->privateData->data->threadData->threadFunctionLock.lock();
-	//	this->privateData->data->threadData->threadFunctionLock.unlock();
-	//}
-
 	return this->privateData->Terminate(wait);
-
-	//return OYSTER_THREAD_ERROR_SUCCESS;
 }
 OYSTER_THREAD_ERROR OysterThread::Wait()
 {

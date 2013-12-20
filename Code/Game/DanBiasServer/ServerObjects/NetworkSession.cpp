@@ -57,7 +57,7 @@ namespace DanBias
 
 			for (unsigned int i = 0; i < this->clients.Size(); i++)
 			{
-				if(this->clients[0]->NetClient_Object()->Id() == client->Id())
+				if(this->clients[0]->GetClient()->Id() == client->Id())
 				{
 					val = this->clients[i];
 					this->clients[i] = 0;
@@ -76,7 +76,7 @@ namespace DanBias
 
 			for (unsigned int i = 0; i < this->clients.Size(); i++)
 			{
-				if(this->clients[0]->NetClient_Object()->Id() == client->NetClient_Object()->Id())
+				if(this->clients[0]->GetClient()->Id() == client->GetClient()->Id())
 				{
 					val = this->clients[i];
 					this->clients[i] = 0;
@@ -95,7 +95,7 @@ namespace DanBias
 
 			for (unsigned int i = 0; i < this->clients.Size(); i++)
 			{
-				if(this->clients[0]->NetClient_Object()->Id() == ID)
+				if(this->clients[0]->GetClient()->Id() == ID)
 				{
 					val = this->clients[i];
 					this->clients[i] = 0;
@@ -111,16 +111,16 @@ namespace DanBias
 	{
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			this->clients[i]->NetClient_Object()->Send(&protocol);
+			this->clients[i]->GetClient()->Send(&protocol);
 		}
 	}
 	void NetworkSession::Send(Oyster::Network::CustomNetProtocol& protocol, int ID)
 	{
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(this->clients[i]->NetClient_Object()->Id() == ID)
+			if(this->clients[i]->GetClient()->Id() == ID)
 			{
-				this->clients[i]->NetClient_Object()->Send(&protocol);
+				this->clients[i]->GetClient()->Send(&protocol);
 				break;
 			}
 		}
@@ -142,7 +142,7 @@ namespace DanBias
 			{
 				for (unsigned int i = 0; i < this->clients.Size(); i++)
 				{
-					this->clients[i]->NetClient_Object()->Disconnect();
+					this->clients[i]->GetClient()->Disconnect();
 				}
 			}
 			else
@@ -162,7 +162,7 @@ namespace DanBias
 	{
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(this->clients[i]->NetClient_Object()->Id() == ID)
+			if(this->clients[i]->GetClient()->Id() == ID)
 				return this->clients[i];
 		}
 		return Utility::DynamicMemory::SmartPointer<ClientObject>();
@@ -171,7 +171,7 @@ namespace DanBias
 	{
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(this->clients[i]->NetClient_Object()->Id() == obj.NetClient_Object()->Id())
+			if(this->clients[i]->GetClient()->Id() == obj.GetClient()->Id())
 				return this->clients[i];
 		}
 		return Utility::DynamicMemory::SmartPointer<ClientObject>();

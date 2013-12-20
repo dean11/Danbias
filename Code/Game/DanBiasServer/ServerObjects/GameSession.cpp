@@ -3,11 +3,8 @@
 #include <PostBox\PostBox.h>
 #include "GameSession.h"
 #include "ClientObject.h"
-#include "..\Helpers\ProtocolParser.h"
 #include <GameLogicStates.h>
 
-
-#define ERIK
 
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Network;
@@ -72,7 +69,7 @@ namespace DanBias
 	}
 	void GameSession::SetPostbox(IPostBox<NetworkSession::NetEvent> *box) 
 	{
-
+		NetworkSession::SetPostbox(box);
 	}
 	void GameSession::CloseSession(NetworkSession* clientDestination) 
 	{
@@ -128,47 +125,46 @@ namespace DanBias
 	}
 	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::ClientObject& c)
 	{
-		switch (p[0].value.netShort)
+		if( ProtocolIsGameplay(p[protocol_INDEX_ID].value.netShort) )
 		{
-			case protocol_Gamplay_PlayerNavigation:
+			switch (p[protocol_INDEX_ID].value.netShort)
 			{
-				if(p[1].value.netBool)	//bool bForward;
-					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
-				if(p[2].value.netBool)	//bool bBackward;
-					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
-				if(p[5].value.netBool)	//bool bStrafeRight;
-					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
-				if(p[6].value.netBool)	//bool bStrafeLeft;
-					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+				case protocol_Gameplay_PlayerNavigation:
+				{
 
-				Oyster::Math::Float4x4 p;
-				c.Logic_Object()->GetRigidBody()->GetOrientation(p);
+					if(p[1].value.netBool)	//bool bForward;
+						c.GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
+					if(p[2].value.netBool)	//bool bBackward;
+						c.GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
+					if(p[5].value.netBool)	//bool bStrafeRight;
+						c.GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+					if(p[6].value.netBool)	//bool bStrafeLeft;
+						c.GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+
+					Oyster::Math::Float4x4 p;
+					Protocol_ObjectPosition op(c.GetPlayer()->GetRigidBody()->GetOrientation(p));
+					op.object_ID = c.GetPlayer()->GetID();
+					this->Send(*op.GetProtocol());
+				}
+				break;
+				case protocol_Gameplay_PlayerMouseMovement:
+			
+				break;
+				case protocol_Gameplay_PlayerPosition:
+			
+				break;
+				case protocol_Gameplay_CreateObject:
 				
-				Protocol_ObjectPosition op(p);
-				op.object_ID = c.Logic_Object()->GetID();
-				this->Send(*op.GetProtocol());
+				break;
+				case protocol_Gameplay_ObjectPosition:
+				
+				break;
 			}
-			break;
-			case protocol_Gamplay_PlayerMouseMovement:
-			
-			break;
-			case protocol_Gamplay_PlayerPosition:
-			
-			break;
-			case protocol_Gamplay_CreateObject:
-			
-			break;
-			case protocol_Gamplay_ObjectPosition:
-			
-			break;
+		}
+		else if(ProtocolIsGeneral(p[protocol_INDEX_ID].value.netShort) )
+		{
+
 		}
 	}
-
-#ifdef ERIK
-	//VARIABLES GOES HERE
-	
-	
-#endif
-
 }//End namespace DanBias
 

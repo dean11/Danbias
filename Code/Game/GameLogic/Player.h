@@ -23,6 +23,11 @@ namespace GameLogic
 		********************************************************/
 		void Move(const PLAYER_MOVEMENT &movement);
 
+		void MoveForward();
+		void MoveBackwards();
+		void MoveRight();
+		void MoveLeft();
+
 		/********************************************************
 		* Uses the weapon based on input
 		* @param fireInput: enum value on what kind of action is to be taken

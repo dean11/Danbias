@@ -35,6 +35,17 @@ namespace GameLogic
 			this->protocol[5].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[6].type = Oyster::Network::NetAttributeType_Bool;
 		}
+		const Protocol_PlayerMovement& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			bForward		= val[1].value.netBool;
+			bBackward		= val[2].value.netBool;
+			bTurnLeft		= val[3].value.netBool;
+			bTurnRight		= val[4].value.netBool;
+			bStrafeRight	= val[5].value.netBool;
+			bStrafeRight	= val[6].value.netBool;
+
+			return *this;
+		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			this->protocol[1].value = bForward;
@@ -67,6 +78,13 @@ namespace GameLogic
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			
 		}
+		const Protocol_PlayerMouse& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			dxMouse		= val[1].value.netFloat;
+			dyMouse		= val[2].value.netFloat;
+
+			return *this;
+		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			this->protocol[1].value = dxMouse;
@@ -94,6 +112,14 @@ namespace GameLogic
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			
+		}
+		const Protocol_PlayerPosition& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			position[0]		= val[1].value.netFloat;
+			position[1]		= val[2].value.netFloat;
+			position[2]		= val[3].value.netFloat;
+
+			return *this;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{

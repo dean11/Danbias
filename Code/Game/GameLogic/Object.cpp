@@ -20,8 +20,8 @@ Object::Object()
 	rigidBody->gameObjectRef = this;
 
 	this->objectID = GID();
-	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
 
+	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
 }
 
 Object::Object(void* collisionFunc, OBJECT_TYPE type)

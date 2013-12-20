@@ -178,7 +178,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Helpers\GameSessionManager.cpp" />
-    <ClCompile Include="Helpers\ProtocolParser.cpp" />
     <ClCompile Include="Include\DanBiasServerAPI.cpp" />
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameServer.cpp" />
@@ -199,7 +198,6 @@
     <ClInclude Include="ServerObjects\Lobby\GameLobby.h" />
     <ClInclude Include="ServerObjects\Lobby\MainLobby.h" />
     <ClInclude Include="ServerObjects\NetworkSession.h" />
-    <ClInclude Include="Helpers\ProtocolParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GamePhysics\GamePhysics.vcxproj">

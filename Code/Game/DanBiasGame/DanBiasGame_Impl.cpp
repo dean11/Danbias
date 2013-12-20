@@ -31,10 +31,10 @@ namespace DanBias
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{
-		case protocol_Status:
+		case protocol_General_Status:
 			{
-				GameLogic::Protocol_Status::States state;
-				state =  (GameLogic::Protocol_Status::States)p[1].value.netShort;
+				GameLogic::Protocol_General_Status::States state;
+				state =  (GameLogic::Protocol_General_Status::States)p[1].value.netShort;
 
 			}
 			break;
@@ -184,7 +184,7 @@ namespace DanBias
 		// Main message loop
 		while(m_data->window->Frame())
 		{
-			float dt = m_data->timer->getElapsedSeconds();
+			float dt = (float)m_data->timer->getElapsedSeconds();
 			m_data->timer->reset();
 
 			if(Update(dt) != S_OK)
