@@ -3,8 +3,10 @@
 
 struct PointLight
 {
-	float4 PosRadius;
-	float4 ColorBright;
+	float3 Pos;
+	float Radius;
+	float3 Color;
+	float Bright;
 };
 
 struct DiffSpec
@@ -13,19 +15,22 @@ struct DiffSpec
 	float3 Specular;
 };
 
-cbuffer PointLights : register(b0)
-{
-	PointLight pl;
-}
-
-cbuffer LightConstants : register(b1)
+cbuffer LightConstants : register(b0)
 {
 	float4x4 InvProj;
-	int2 Pixels;
+	float2 Pixels;
+	int Lights;
+	float Pad;
+	float4x4 View;
 }
 
 Texture2D DiffuseGlow : register(t0);
 Texture2D NormalSpec : register(t1);
 Texture2D DepthTexture : register(t2);
+
+
+StructuredBuffer<PointLight> Points : register(t3);
+
+RWTexture2D<float4> Output : register(u0);
 
 #endif

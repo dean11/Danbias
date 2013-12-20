@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include "../Definitions/GraphicalDefinition.h"
 #include "..\Model\Model.h"
 #include "OysterMath.h"
 #include <Windows.h>
+//#include <vld.h>
 
 #ifdef GFX_DLL_EXPORT
 	#define GFX_DLL_USAGE __declspec(dllexport)
@@ -40,6 +42,9 @@ namespace Oyster
 
 			static Oyster::Graphics::Model::Model* CreateModel(std::wstring filename);
 			static void DeleteModel(Oyster::Graphics::Model::Model* model);
+
+			static void AddLight(Definitions::Pointlight light);
+			static void ClearLights();
 
 			static State SetOptions(Option);
 		};

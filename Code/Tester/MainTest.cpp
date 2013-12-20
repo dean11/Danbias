@@ -19,6 +19,7 @@ HINSTANCE				g_hInst					= NULL;
 HWND					g_hWnd					= NULL;
 Oyster::Graphics::Model::Model* m				= NULL;
 Oyster::Graphics::Model::Model* m2				= NULL;
+Oyster::Graphics::Model::Model* m3				= NULL;
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
 
@@ -188,9 +189,11 @@ HRESULT InitDirect3D()
 #pragma endregion
 	
 #pragma region Obj
-	m =  Oyster::Graphics::API::CreateModel(L"crate");
-	m2 = Oyster::Graphics::API::CreateModel(L"crate");
+	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy");
+	m2 = Oyster::Graphics::API::CreateModel(L"worldDummy");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
+	m3 = Oyster::Graphics::API::CreateModel(L"worldDummy");
+	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 #pragma endregion
 	
 
@@ -199,7 +202,18 @@ HRESULT InitDirect3D()
 	P.Invert();
 
 	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,5.4f));
-	V = Oyster::Math3D::InverseOrientationMatrix(V);
+	//V = Oyster::Math3D::OrientationMatrix_LookAtPos(Oyster::Math::Float3(0,0,0), Oyster::Math::Float3(0,1,0), Oyster::Math::Float3(0,0,-5.4f));
+	//V.v[3][2] *= -1;
+	V = V.GetInverse();
+	
+
+	Oyster::Graphics::Definitions::Pointlight pl;
+	pl.Color = Oyster::Math::Float3(1,1,1);
+	pl.Bright = 1;
+	pl.Pos = Oyster::Math::Float3(0,0,5.4f);
+	pl.Radius = 15;
+
+	Oyster::Graphics::API::AddLight(pl);
 
 
 	return S_OK;
@@ -207,9 +221,11 @@ HRESULT InitDirect3D()
 float angle = 0;
 HRESULT Update(float deltaTime)
 {
-	angle += Oyster::Math::pi/30000;
+
+	angle += Oyster::Math::pi/10000;
 	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,0,1)*-angle,Oyster::Math::Float3(0,4,0),Oyster::Math::Float3::null);
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-angle,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
+	m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
 }
 
@@ -220,6 +236,7 @@ HRESULT Render(float deltaTime)
 
 	Oyster::Graphics::API::RenderModel(*m);
 	Oyster::Graphics::API::RenderModel(*m2);
+	Oyster::Graphics::API::RenderModel(*m3);
 
 	Oyster::Graphics::API::EndFrame();
 

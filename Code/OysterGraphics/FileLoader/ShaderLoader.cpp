@@ -50,7 +50,7 @@ namespace Oyster
 
 			void LoadShaderP(const wchar_t filename[], Oyster::Resource::CustomData& out)
 			{
-				LoadShader(filename,out,Core::ShaderManager::Pixel);
+				LoadShader(filename,out,Core::PipelineManager::Pixel);
 				if(out.loadedData==NULL)
 				{
 					memset(&out,0,sizeof(out));
@@ -62,7 +62,7 @@ namespace Oyster
 			void LoadShaderG(const wchar_t filename[], Oyster::Resource::CustomData& out)
 			{
 				
-				LoadShader(filename,out,Core::ShaderManager::Geometry);
+				LoadShader(filename,out,Core::PipelineManager::Geometry);
 				if(out.loadedData==NULL)
 				{
 					memset(&out,0,sizeof(out));
@@ -74,7 +74,7 @@ namespace Oyster
 			void LoadShaderC(const wchar_t filename[], Oyster::Resource::CustomData& out)
 			{
 				
-				LoadShader(filename,out,Core::ShaderManager::Compute);
+				LoadShader(filename,out,Core::PipelineManager::Compute);
 				if(out.loadedData==NULL)
 				{
 					memset(&out,0,sizeof(out));
@@ -86,7 +86,7 @@ namespace Oyster
 			void LoadShaderH(const wchar_t filename[], Oyster::Resource::CustomData& out)
 			{
 				
-				LoadShader(filename,out,Core::ShaderManager::Hull);
+				LoadShader(filename,out,Core::PipelineManager::Hull);
 				if(out.loadedData==NULL)
 				{
 					memset(&out,0,sizeof(out));
@@ -98,7 +98,7 @@ namespace Oyster
 			void LoadShaderD(const wchar_t filename[], Oyster::Resource::CustomData& out)
 			{
 				
-				LoadShader(filename,out,Core::ShaderManager::Domain);
+				LoadShader(filename,out,Core::PipelineManager::Domain);
 				if(out.loadedData==NULL)
 				{
 					memset(&out,0,sizeof(out));
@@ -110,7 +110,7 @@ namespace Oyster
 			void LoadShaderV(const wchar_t filename[], Oyster::Resource::CustomData& out)
 			{
 				
-				LoadShader(filename,out,Core::ShaderManager::Vertex);
+				LoadShader(filename,out,Core::PipelineManager::Vertex);
 				if(out.loadedData==NULL)
 				{
 					memset(&out,0,sizeof(out));
@@ -121,28 +121,28 @@ namespace Oyster
 
 			void LoadShader(const wchar_t filename[], Oyster::Resource::CustomData& out, int type)
 			{
-				Core::ShaderManager::ShaderData data;
+				Core::PipelineManager::ShaderData data;
 #ifdef _DEBUG
 				ID3DBlob *Shader=NULL, *Error=NULL;
 				HRESULT hr;
-				switch (Core::ShaderManager::ShaderType(type))
+				switch (Core::PipelineManager::ShaderType(type))
 				{
-				case Oyster::Graphics::Core::ShaderManager::Vertex:
+				case Oyster::Graphics::Core::PipelineManager::Vertex:
 					hr = D3DCompileFromFile(filename,NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,"main","vs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error);
 					break;
-				case Oyster::Graphics::Core::ShaderManager::Hull:
+				case Oyster::Graphics::Core::PipelineManager::Hull:
 					hr = D3DCompileFromFile(filename,NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,"main","hs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error);
 					break;
-				case Oyster::Graphics::Core::ShaderManager::Domain:
+				case Oyster::Graphics::Core::PipelineManager::Domain:
 					hr = D3DCompileFromFile(filename,NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,"main","ds_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error);
 					break;
-				case Oyster::Graphics::Core::ShaderManager::Geometry:
+				case Oyster::Graphics::Core::PipelineManager::Geometry:
 					hr = D3DCompileFromFile(filename,NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,"main","gs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error);
 					break;
-				case Oyster::Graphics::Core::ShaderManager::Pixel:
+				case Oyster::Graphics::Core::PipelineManager::Pixel:
 					hr = D3DCompileFromFile(filename,NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,"main","ps_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error);
 					break;
-				case Oyster::Graphics::Core::ShaderManager::Compute:
+				case Oyster::Graphics::Core::PipelineManager::Compute:
 					hr = D3DCompileFromFile(filename,NULL,D3D_COMPILE_STANDARD_FILE_INCLUDE,"main","cs_5_0",D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,0,&Shader,&Error);
 					break;
 				default:
@@ -185,7 +185,7 @@ namespace Oyster
 					return;
 				}
 #endif
-				out.loadedData = Core::ShaderManager::CreateShader(data, Core::ShaderManager::ShaderType(type));
+				out.loadedData = Core::PipelineManager::CreateShader(data, Core::PipelineManager::ShaderType(type));
 			}
 		}
 	}
