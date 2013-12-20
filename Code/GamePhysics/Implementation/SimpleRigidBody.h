@@ -36,6 +36,7 @@ namespace Oyster { namespace Physics
 		//::Oyster::Math::Float4x4 &		GetView( ::Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
 
 		UpdateState Update( ::Oyster::Math::Float timeStepLength );
+		void Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime );
 
 		void SetScene( void *scene );
 		void SetSubscription( EventAction_Collision functionPointer );

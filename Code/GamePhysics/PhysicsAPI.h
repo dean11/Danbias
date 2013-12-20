@@ -337,6 +337,11 @@ namespace Oyster
 			 * Is called during API::Update
 			 ********************************************************/
 			virtual UpdateState Update( ::Oyster::Math::Float timeStepLength ) = 0;
+
+			/********************************************************
+			 * @todo TODO: add doc
+			 ********************************************************/
+			virtual void Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime ) = 0;
 			
 			/********************************************************
 			 * Sets which scene this ICustomBody is within.

@@ -266,6 +266,11 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 	return UpdateState_altered;
 }
 
+void SimpleRigidBody::Predict( Float4 &outDeltaPos, Float4 &outDeltaAxis, const Float4 &actingLinearImpulse, const Float4 &actingAngularImpulse, Float deltaTime )
+{
+	this->rigid.Predict_LeapFrog( outDeltaPos, outDeltaAxis, actingLinearImpulse, actingAngularImpulse, deltaTime );
+}
+
 void SimpleRigidBody::SetScene( void *scene )
 {
 	this->scene = (Octree*)scene;
