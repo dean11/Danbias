@@ -3,8 +3,9 @@
 //////////////////////////////////////////////////
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
-#include "Object.h"
 #include "GameLogicDef.h"
+#include "Object.h"
+
 
 namespace GameLogic
 {

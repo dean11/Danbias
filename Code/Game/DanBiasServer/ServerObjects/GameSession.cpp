@@ -95,6 +95,7 @@ namespace DanBias
 		return true;
 	}
 	
+#ifndef ERIK
 ////private:
 	bool GameSession::Init(GameSessionDescription& desc)
 	{
@@ -106,6 +107,7 @@ namespace DanBias
 			desc.clients[i]->SetPostbox(this->box);
 			this->clients.Push(desc.clients[i]);
 		}
+
 
 		return true;
 	}
@@ -156,9 +158,94 @@ namespace DanBias
 		}
 	}
 
-#ifdef ERIK
+#else
+#include "DynamicObject.h"
+//#include "CollisionManager.h"
+//#include "GameLogicStates.h"
+//#include <GameProtocols.h>
+
+	/*
+	using namespace GameLogic;
 	//VARIABLES GOES HERE
-	
+	DynamicObject* objectBox;
+
+	bool GameSession::Init(GameSessionDescription& desc)
+	{
+		if(desc.clients.Size() == 0)	return false;
+		this->box = new PostBox<NetEvent>();
+		this->owner = desc.owner;
+		for (unsigned int i = 0; i < desc.clients.Size(); i++)
+		{
+			desc.clients[i]->SetPostbox(this->box);
+			this->clients.Push(desc.clients[i]);
+		}
+
+		CollisionManager::BoxCollision(0,0);
+
+		objectBox = new DynamicObject(CollisionManager::BoxCollision, OBJECT_TYPE::OBJECT_TYPE_BOX);
+
+		Protocol_CreateObject objectCreation;
+		objectCreation.object_ID = objectBox->GetID();
+		objectCreation.path = "crate";
+		Oyster::Math::Float4x4 worldMat = objectBox->GetRigidBody()->GetOrientation();
+
+		for (int i = 0; i < 16; i++)
+		{
+			objectCreation.worldMatrix[i] = worldMat[i];
+		}
+
+		for (int i = 0; i < clients.Size(); i++)
+		{
+			clients[i]->NetClient_Object()->Send(objectCreation);
+		}
+
+		return true;
+	}
+	void GameSession::Frame()
+	{
+	}
+	void GameSession::ParseEvents()
+	{
+		if(this->box && !this->box->IsEmpty())
+		{
+			NetEvent &e = this->box->Fetch();
+
+			if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
+
+			ParseProtocol(e.protocol, *e.reciever);
+		}
+	}
+	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::ClientObject& c)
+	{
+		switch (p[0].value.netShort)
+		{
+		case protocol_Gamplay_PlayerNavigation:
+			{
+				if(p[1].value.netBool)	//bool bForward;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
+				if(p[2].value.netBool)	//bool bBackward;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
+				if(p[5].value.netBool)	//bool bStrafeRight;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+				if(p[6].value.netBool)	//bool bStrafeLeft;
+					c.Logic_Object()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+			}
+			break;
+		case protocol_Gamplay_PlayerMouseMovement:
+
+			break;
+		case protocol_Gamplay_PlayerPosition:
+
+			break;
+		case protocol_Gamplay_CreateObject:
+
+			break;
+		case protocol_Gamplay_ObjectPosition:
+
+			break;
+		}
+	}
+	*/
 	
 #endif
 
