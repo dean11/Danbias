@@ -53,10 +53,11 @@ namespace Oyster { namespace Physics
 
 	private:
 		::Oyster::Physics3D::RigidBody rigid;
+		::Oyster::Math::Float4 deltaPos, deltaAxis;
 		::Oyster::Math::Float3 gravityNormal;
 		EventAction_Collision collisionAction;
 		Octree *scene;
-		bool ignoreGravity;
+		bool ignoreGravity, isForwarded;
 	};
 } }
 

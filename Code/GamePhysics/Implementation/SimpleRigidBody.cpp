@@ -47,18 +47,19 @@ SimpleRigidBody::SimpleRigidBody()
 	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
 	this->collisionAction = Default::EventAction_Collision;
-	this->ignoreGravity = false;
+	this->ignoreGravity = this->isForwarded = false;
 	this->scene = nullptr;
 }
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {
-	this->rigid = RigidBody();
 	this->rigid.SetRotation( desc.rotation );
 	this->rigid.centerPos = desc.centerPosition;
 	this->rigid.SetSize( desc.size );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
 	this->rigid.SetMomentOfInertia_KeepMomentum( desc.inertiaTensor );
+	this->deltaPos = Float4::null;
+	this->deltaAxis = Float4::null;
 
 	this->gravityNormal = Float3::null;
 	
@@ -112,6 +113,13 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	this->rigid.restitutionCoeff	  = state.GetRestitutionCoeff();
 	this->rigid.frictionCoeff_Static  = state.GetFrictionCoeff_Static();
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
+
+	if( state.IsForwarded() )
+	{
+		this->deltaPos += state.GetForward_DeltaPos();
+		this->deltaAxis += state.GetForward_DeltaAxis();
+		this->isForwarded;
+	}
 
 	if( this->scene )
 	{
@@ -243,6 +251,11 @@ Float3 SimpleRigidBody::GetRigidLinearVelocity() const
 
 UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
+	if( this->isForwarded )
+	{
+	//	this->rigid.
+	}
+
 	this->rigid.Update_LeapFrog( timeStepLength );
 
 	// compare previous and new state and return result
