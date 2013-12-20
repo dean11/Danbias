@@ -8,6 +8,7 @@ struct  C_Player::myData
 	Oyster::Math3D::Float4x4 view;
 	Oyster::Math3D::Float4x4 proj; 
 	Oyster::Graphics::Model::Model *model;
+	int ID;
 }privData;
 
 C_Player::C_Player(void)
@@ -43,4 +44,8 @@ void C_Player::Release()
 {
 	Oyster::Graphics::API::DeleteModel(privData->model);
 	delete privData; 
+}
+int C_Player::GetId()
+{
+	return privData->ID;
 }

@@ -34,11 +34,8 @@ public:
 	void Protocol(ProtocolStruct* pos)override;
 	void Protocol(PlayerPos* pos);
 	void Protocol(ObjPos* pos);
-	void Protocol(KeyInput* pos);
 	void Protocol( NewObj* pos );
 	void Protocol(RemoveObj* obj);
-	void PlayerPosProtocol(PlayerPos* pos);
-	void ObjectPosProtocol(ObjPos* pos);
 	//void Protocol(LightPos pos);
 };
 };

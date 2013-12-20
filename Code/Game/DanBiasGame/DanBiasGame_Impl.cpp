@@ -5,9 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
-#include "PlayerProtocols.h"
-#include "ControlProtocols.h"
-#include "GameProtocols.h"
+#include <GameProtocols.h>
 #include "NetworkClient.h"
 
 #include "../WindowManager/WindowShell.h"
@@ -279,6 +277,7 @@ namespace DanBias
 		delete m_data->recieverObj->gameClientState;
 		m_data->recieverObj->nwClient->Disconnect();
 		delete m_data->recieverObj->nwClient;
+		delete m_data->timer;
 		delete m_data->recieverObj;
 		delete m_data->inputObj;
 		delete m_data;
