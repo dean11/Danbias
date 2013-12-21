@@ -25,7 +25,8 @@
 *.ilk
 *.exp
 *.dll
-
+*.pdb
+*.cso
 
 Bin/Content/Sound/
 Bin/Executable/
