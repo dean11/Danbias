@@ -29,6 +29,7 @@
 *.cso
 *.orig
 
+#Dir
 Bin/Content/Sound/
 Bin/Executable/
 Obj/
