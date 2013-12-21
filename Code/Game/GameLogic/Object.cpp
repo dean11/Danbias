@@ -2,6 +2,7 @@
 #include "OysterMath.h"
 #include "CollisionManager.h"
 #include "GID.h"
+#include "PhysicsAPI.h"
 
 
 using namespace GameLogic;
@@ -17,7 +18,7 @@ Object::Object()
 	//poi
 	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
-	rigidBody->gameObjectRef = this;
+	//rigidBody->gameObjectRef = this;
 
 	this->objectID = GID();
 
@@ -34,7 +35,7 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
 
-	rigidBody->gameObjectRef = this;
+	//rigidBody->gameObjectRef = this;
 
 	this->objectID = GID();
 

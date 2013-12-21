@@ -1,8 +1,6 @@
 #ifndef GAMELOGICSTATES_H
 #define GAMELOGICSTATES_H
 
-#include "GameLogicDef.h"
-
 namespace GameLogic
 {
 	enum PLAYER_MOVEMENT

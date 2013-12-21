@@ -143,10 +143,10 @@ namespace DanBias
 					if(p[6].value.netBool)	//bool bStrafeLeft;
 						c.GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
 
-					Oyster::Math::Float4x4 p;
-					Protocol_ObjectPosition op(c.GetPlayer()->GetRigidBody()->GetOrientation(p));
-					op.object_ID = c.GetPlayer()->GetID();
-					this->Send(*op.GetProtocol());
+					//Oyster::Math::Float4x4 p;
+					//Protocol_ObjectPosition op(c.GetPlayer()->GetRigidBody()->GetOrientation(p));
+					//op.object_ID = c.GetPlayer()->GetID();
+					//this->Send(*op.GetProtocol());
 				}
 				break;
 				case protocol_Gameplay_PlayerMouseMovement:

@@ -67,7 +67,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &fireInput)
 ********************************************************/
 void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &fireInput)
 {
-	Oyster::Physics::API::Instance().ApplyForceAt(owner->GetRigidBody(), owner->GetRigidBody()->GetCenter(), owner->GetLookDir() * 100);
+	//Oyster::Physics::API::Instance().ApplyForceAt(owner->GetRigidBody(), owner->GetRigidBody()->GetCenter(), owner->GetLookDir() * 100);
 }
 
 

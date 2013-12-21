@@ -18,8 +18,8 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	DanBias::DanBiasGameDesc gameDesc;
 	gameDesc.port = 15151;
 	//gameDesc.IP = "193.11.184.196";
-	gameDesc.IP = "193.11.184.31";
-	//gameDesc.IP = "127.0.0.1";
+	//gameDesc.IP = "193.11.184.31";
+	gameDesc.IP = "127.0.0.1";
 	gameDesc.hinst = hinst;
 	gameDesc.nCmdShow = cmdShow;
 

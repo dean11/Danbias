@@ -4,9 +4,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "GameLogicStates.h"
+#include "GameLogicDef.h"
 #include "OysterMath.h"
 #include "Object.h"
-#include "GameLogicDef.h"
+
 
 namespace GameLogic
 {

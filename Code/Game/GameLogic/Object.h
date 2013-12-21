@@ -6,11 +6,17 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "PhysicsAPI.h"
+
 #include "GameLogicStates.h"
 #include "GameLogicDef.h"
 
-
+namespace Oyster 
+{ 
+	namespace Physics 
+	{ 
+		class ICustomBody;
+	}
+}
 namespace GameLogic
 {
 	class DANBIAS_GAMELOGIC_DLL Object

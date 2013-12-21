@@ -5,7 +5,8 @@
 #include <Windows.h>
 #include <vld.h>
 
-#include "DanBiasServerAPI.h"
+
+#include <DanBiasServerAPI.h>
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {

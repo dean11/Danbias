@@ -13,18 +13,18 @@ using namespace GameLogic;
 
 	Physics::ICustomBody::SubscriptMessage CollisionManager::PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj)
 	{
-		Player *player = ((Player*)(rigidBodyPlayer->gameObjectRef));
-		Object *realObj = (Object*)obj->gameObjectRef;
+		//Player *player = ((Player*)(rigidBodyPlayer->gameObjectRef));
+		//Object *realObj = (Object*)obj->gameObjectRef;
 
-		switch (realObj->GetType())
-		{
-		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-			PlayerVBox(*player,(*(DynamicObject*) realObj));
-			break;
-		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
-
-			break;
-		}
+		//switch (realObj->GetType())
+		//{
+		//case OBJECT_TYPE::OBJECT_TYPE_BOX:
+		//	PlayerVBox(*player,(*(DynamicObject*) realObj));
+		//	break;
+		//case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+		//
+		//	break;
+		//}
 
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
@@ -40,18 +40,18 @@ using namespace GameLogic;
 		{
 			return Physics::ICustomBody::SubscriptMessage::SubscriptMessage_none;
 		}
-		DynamicObject *box = (DynamicObject*)rigidBodyBox->gameObjectRef;
-		Object *realObj = (Object*)obj->gameObjectRef;
+		//DynamicObject *box = (DynamicObject*)rigidBodyBox->gameObjectRef;
+		//Object *realObj = (Object*)obj->gameObjectRef;
 
-		switch (realObj->GetType())
-		{
-		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-				
-			break;
-		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
-			//PlayerVBox(*(Player*)realObj,*box);
-			break;
-		}
+		//switch (realObj->GetType())
+		//{
+		//case OBJECT_TYPE::OBJECT_TYPE_BOX:
+		//		
+		//	break;
+		//case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+		//	//PlayerVBox(*(Player*)realObj,*box);
+		//	break;
+		//}
 
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
