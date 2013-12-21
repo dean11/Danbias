@@ -27,6 +27,7 @@
 *.dll
 *.pdb
 *.cso
+*.orig
 
 Bin/Content/Sound/
 Bin/Executable/
