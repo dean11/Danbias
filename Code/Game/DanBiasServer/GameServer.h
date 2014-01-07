@@ -4,8 +4,8 @@
 #ifndef DANBIASSERVER_GAME_SERVER_H
 #define DANBIASSERVER_GAME_SERVER_H
 
-#include "Include\DanBiasServerAPI.h"
-#include "ServerObjects\Lobby\MainLobby.h"
+#include "DanBiasServerAPI.h"
+#include "LobbySessions\MainLobby.h"
 #include <NetworkServer.h>
 #include <NetworkCallbackHelper.h>
 
@@ -23,7 +23,7 @@ namespace DanBias
 
 	private:
 		//static void ClientConnectCallbackFunction(Oyster::Network::NetworkClient& connectedClient);
-		void ClientConnectCallback(Oyster::Network::NetworkClient* client) override;
+		void NetworkCallback(Oyster::Network::NetworkClient* client) override;
 
 		bool initiated;
 		bool running;
@@ -39,6 +39,9 @@ namespace DanBias
 			int clients;
 		};
 		bool LoadIniFile(InitData&);
+
+	private:
+		friend class AdminInterface;
 	};
 }// End namspace DanBias
 #endif // !DANBIASSERVER_DBSERVER_H

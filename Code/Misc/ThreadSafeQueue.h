@@ -68,6 +68,8 @@ namespace Oyster
 		template < typename Type >
 		ThreadSafeQueue<Type>::~ThreadSafeQueue()
 		{
+			if(!nrOfNodes) return;
+
 			stdMutex.lock();
 
 			if(this->front != NULL)

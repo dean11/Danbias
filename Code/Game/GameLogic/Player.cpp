@@ -54,17 +54,19 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 	switch(movement)
 	{
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD:
-			//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
+			MoveForward();
 			break;
 
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_BACKWARD:
-			//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
+			MoveBackwards();
 			break;
 
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_LEFT:
+			MoveLeft();
 			break;
 
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_RIGHT:
+			MoveRight();
 			break;
 
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_JUMP:
@@ -84,13 +86,13 @@ void Player::MoveBackwards()
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
+	//Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
 	//API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
+	//Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
 	//API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
 }
 

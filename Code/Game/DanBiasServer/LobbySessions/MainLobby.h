@@ -1,7 +1,10 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Dennis Andersen] [2013]
+/////////////////////////////////////////////////////////////////////
 #ifndef DANBIASSERVER_MAINLOBBY_H
 #define DANBIASSERVER_MAINLOBBY_H
 
-#include "..\NetworkSession.h"
+#include "NetworkSession.h"
 #include "GameLobby.h"
 #include <GameProtocols.h>
 #include <PostBox\IPostBox.h>
@@ -21,16 +24,19 @@ namespace DanBias
 
 	private:
 		void ParseEvents();
-		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::ClientObject& c);
+		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::LobbyClient* c);
 
-		void CreateGame(GameLogic::Protocol_LobbyCreateGame& p, DanBias::ClientObject& c);
-		//void CreateJoin(GameLogic::Protocol_LobbyJoinGame& p, DanBias::ClientObject& c);
+		void CreateGame(GameLogic::Protocol_LobbyCreateGame& p, DanBias::LobbyClient* c);
+		void JoinLobby(GameLogic::Protocol_LobbyJoinLobby& p, DanBias::LobbyClient* c);
 
-		//void ProtocolRecievedCallback(CustomNetProtocol& protocol) override;
+		void SendUpdate();
 
 	private:
 		Oyster::IPostBox<NetworkSession::NetEvent> *box;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameLobby>> gameLobby;
+
+	private:
+		friend class AdminInterface;
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H

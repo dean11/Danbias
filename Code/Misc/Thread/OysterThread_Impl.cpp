@@ -4,6 +4,8 @@
 
 #include "OysterThread.h"
 #include "..\Utilities.h"
+#include "..\OysterCallback.h"
+
 #include <thread>
 #include <assert.h>
 #include <atomic>
@@ -23,13 +25,31 @@ using namespace Utility::DynamicMemory;
 		OYSTER_THREAD_STATE_NORMAL,
 		OYSTER_THREAD_STATE_DEAD,
 	};
+	struct OwnerContainer
+	{
+		Oyster::Callback::CallbackType type;
+		union OwnerValue
+		{
+			IThreadObject*	obj;
+			ThreadFnc		fnc;
+			OwnerValue()					{ memset(this, 0, sizeof(OwnerValue)); }
+			OwnerValue(IThreadObject* v)	{ obj = v; }
+			OwnerValue(ThreadFnc v)			{ fnc = v; }
+		} value;
 
+		operator bool()
+		{
+			return (value.fnc ||value.obj);
+		}
+	};
 	struct ThreadData
 	{
-		OYSTER_THREAD_STATE	state;							//<! The current thread state.
-		OYSTER_THREAD_PRIORITY prio;						//<! The thread priority
-		IThreadObject *owner;								//<! The worker object.
-		std::atomic<int> msec;								//<! A timer in miliseconds.
+		OYSTER_THREAD_STATE	state;									//<! The current thread state.
+		OYSTER_THREAD_PRIORITY prio;								//<! The thread priority
+		//IThreadObject *owner;										//<! The worker object.
+		//Oyster::Callback::OysterCallback<bool, void> ownerObj;	//
+		OwnerContainer ownerObj;									//
+		std::atomic<int> msec;										//<! A timer in miliseconds.
 
 		std::timed_mutex threadFunctionLock;
 		//std::mutex threadWaitFunctionLock;
@@ -40,6 +60,7 @@ using namespace Utility::DynamicMemory;
 
 	struct RefData
 	{
+		//std::mutex threadWaitFunctionLock;
 		bool isCreated;
 		ThreadData *threadData;
 		std::thread workerThread;
@@ -51,8 +72,9 @@ using namespace Utility::DynamicMemory;
 		}
 		~RefData()  
 		{ 
-			Terminate(true); 
-			delete threadData;
+			//threadWaitFunctionLock.lock();
+				Terminate(true); 
+			//threadWaitFunctionLock.unlock();
 		}
 		OYSTER_THREAD_ERROR Terminate(bool wait)
 		{
@@ -64,7 +86,11 @@ using namespace Utility::DynamicMemory;
 			{
 				if(std::this_thread::get_id() != this->workerThread.get_id())
 					if(this->workerThread.joinable())
+					{
 						this->workerThread.join();
+						this->isCreated = false;
+						this->threadData = 0;
+					}
 			}
 			else
 			{
@@ -73,7 +99,49 @@ using namespace Utility::DynamicMemory;
 			}
 			return OYSTER_THREAD_ERROR_SUCCESS;
 		}
-		OYSTER_THREAD_ERROR Create(ThreadFunction fnc, IThreadObject* worker, bool start, bool detach)
+		//OYSTER_THREAD_ERROR Create(ThreadFunction fnc, IThreadObject* worker, bool start, bool detach)
+		//{
+		//	if(this->isCreated )			return OYSTER_THREAD_ERROR_ThreadAlreadyCreated;
+		//
+		//	threadData = new ThreadData();
+		//	if(start)	
+		//		this->threadData->state = OYSTER_THREAD_STATE_NORMAL;
+		//	else		
+		//		this->threadData->state = OYSTER_THREAD_STATE_IDLE;
+		//	threadData->owner = worker;
+		//	threadData->prio = OYSTER_THREAD_PRIORITY_3;
+		//
+		//	workerThread = std::thread(fnc, this->threadData);
+		//
+		//	if(detach) 
+		//		this->workerThread.detach();
+		//
+		//	isCreated = true;
+		//
+		//	return OYSTER_THREAD_ERROR_SUCCESS;
+		//}
+		//OYSTER_THREAD_ERROR Create(ThreadFunction fnc, Oyster::Callback::OysterCallback<bool, void> worker, bool start, bool detach)
+		//{
+		//	if(this->isCreated )			return OYSTER_THREAD_ERROR_ThreadAlreadyCreated;
+		//
+		//	threadData = new ThreadData();
+		//	if(start)	
+		//		this->threadData->state = OYSTER_THREAD_STATE_NORMAL;
+		//	else		
+		//		this->threadData->state = OYSTER_THREAD_STATE_IDLE;
+		//	threadData->ownerObj = worker;
+		//	threadData->prio = OYSTER_THREAD_PRIORITY_3;
+		//
+		//	workerThread = std::thread(fnc, this->threadData);
+		//
+		//	if(detach) 
+		//		this->workerThread.detach();
+		//
+		//	isCreated = true;
+		//
+		//	return OYSTER_THREAD_ERROR_SUCCESS;
+		//}
+		OYSTER_THREAD_ERROR Create(ThreadFunction fnc, OwnerContainer worker, bool start, bool detach)
 		{
 			if(this->isCreated )			return OYSTER_THREAD_ERROR_ThreadAlreadyCreated;
 
@@ -82,7 +150,7 @@ using namespace Utility::DynamicMemory;
 				this->threadData->state = OYSTER_THREAD_STATE_NORMAL;
 			else		
 				this->threadData->state = OYSTER_THREAD_STATE_IDLE;
-			threadData->owner = worker;
+			threadData->ownerObj = worker;
 			threadData->prio = OYSTER_THREAD_PRIORITY_3;
 
 			workerThread = std::thread(fnc, this->threadData);
@@ -95,11 +163,19 @@ using namespace Utility::DynamicMemory;
 			return OYSTER_THREAD_ERROR_SUCCESS;
 		}
 	};
+	
 	struct OysterThread::PrivateData
 	{
 		SmartPointer<RefData> data;
 
-		OYSTER_THREAD_ERROR Create(ThreadFunction fnc, IThreadObject* worker, bool start, bool detach)
+		PrivateData(){}
+		~PrivateData()
+		{ 
+			if(data) 
+				if(data->threadData) 
+					memset(&data->threadData->ownerObj, 0, sizeof(OwnerContainer)); 
+		}
+		OYSTER_THREAD_ERROR Create(ThreadFunction fnc, OwnerContainer worker, bool start, bool detach)
 		{ 
 			if(data) return  OYSTER_THREAD_ERROR_ThreadAlreadyCreated; 
 			data = new RefData();
@@ -107,6 +183,9 @@ using namespace Utility::DynamicMemory;
 		}
 		OYSTER_THREAD_ERROR Terminate(bool wait)
 		{
+			if(!data) 
+				return OYSTER_THREAD_ERROR_FAILED;
+
 			return data->Terminate(wait);
 		}
 	};
@@ -131,15 +210,18 @@ using namespace Utility::DynamicMemory;
 		}
 		static bool DoWork(ThreadData* w)
 		{
-			try
+			switch (w->ownerObj.type)
 			{
-				if(w->owner)
-					return w->owner->DoWork();
+				case Oyster::Callback::CallbackType_Function:
+					if(w->ownerObj.value.fnc) return w->ownerObj.value.fnc();
+				break;
+				
+				case Oyster::Callback::CallbackType_Object:
+					if(w->ownerObj.value.obj) return w->ownerObj.value.obj->DoWork();
+				break;
 			}
-			catch( ... )
-			{
-				printf("Something went wrong on thread with id: [%i]", std::this_thread::get_id());
-			}
+			
+
 			return true;
 		}
 		static void CheckStatus(ThreadData* w)
@@ -154,7 +236,7 @@ using namespace Utility::DynamicMemory;
 		{
 			CheckStatus(w);
 
-			if(w->owner)	w->owner->ThreadEntry();
+			if(w->ownerObj.value.obj)	w->ownerObj.value.obj->ThreadEntry();
 
 			while (w->state == OYSTER_THREAD_STATE_NORMAL)		
 			{
@@ -163,9 +245,10 @@ using namespace Utility::DynamicMemory;
 				CheckStatus(w);
 			}
 
-			if(w->owner)	w->owner->ThreadExit();
+			if(w->ownerObj.value.obj)	w->ownerObj.value.obj->ThreadExit();
 
 			w->state = OYSTER_THREAD_STATE_DEAD;
+			delete w;
 		}
 	};
 
@@ -195,14 +278,51 @@ OysterThread::~OysterThread()
 
 OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start, bool detach)	  
 {
+	if(!this->privateData) this->privateData = new PrivateData();
+
+	OwnerContainer c;
+	c.type = Oyster::Callback::CallbackType_Object;
+	c.value = worker;
+	return this->privateData->Create(ThreadHelp::ThreadingFunction, c, start, detach);
+}
+OYSTER_THREAD_ERROR OysterThread::Create(ThreadFnc worker, bool start, bool detach)	  
+{
+	if(!this->privateData) this->privateData = new PrivateData();
+
+	OwnerContainer c;
+	c.type = Oyster::Callback::CallbackType_Function;
+	c.value = worker;
+	return this->privateData->Create(ThreadHelp::ThreadingFunction, c, start, detach);
+}
+
+/*
+OYSTER_THREAD_ERROR OysterThread::Create(Oyster::Callback::CallbackObject<bool, void>* worker, bool start, bool detach)
+{
 	if(!this->privateData)
 		this->privateData = new PrivateData();
+
+	Oyster::Callback::OysterCallback<> temp;
+	temp.callbackType = Oyster::Callback::CallbackType_Object;
+	temp.value	= worker;
 	
-	return this->privateData->Create(ThreadHelp::ThreadingFunction, worker, start, detach);
+	return this->privateData->Create(ThreadHelp::ThreadingFunction, temp, start, detach);
 }
+OYSTER_THREAD_ERROR OysterThread::Create(Oyster::Callback::CallbackFunction<bool, void>::FNC worker, bool start, bool detach)  
+{
+	if(!this->privateData)
+		this->privateData = new PrivateData();
+
+	Oyster::Callback::OysterCallback<> temp;
+	temp.callbackType = Oyster::Callback::CallbackType_Function;
+	temp.value	= worker;
+	
+	return this->privateData->Create(ThreadHelp::ThreadingFunction, temp, start, detach);
+}
+*/
+
 OYSTER_THREAD_ERROR OysterThread::Start()
 {
-	if(!this->privateData->data->threadData->owner)
+	if(!this->privateData->data->threadData->ownerObj)
 		return OYSTER_THREAD_ERROR_ThreadHasNoWorker;
 
 	if(this->privateData->data->threadData->state == OYSTER_THREAD_STATE_DEAD)
@@ -235,9 +355,19 @@ OYSTER_THREAD_ERROR OysterThread::Resume()
 
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
-OYSTER_THREAD_ERROR OysterThread::Reset(IThreadObject* worker)
+OYSTER_THREAD_ERROR OysterThread::SetWorker(IThreadObject* worker)
 {
-	this->privateData->data->threadData->owner = worker; 
+	this->privateData->data->threadData->ownerObj.value = worker; 
+	this->privateData->data->threadData->ownerObj.type = Oyster::Callback::CallbackType_Object;
+
+	this->privateData->data->threadData->msec = 0;
+
+	return OYSTER_THREAD_ERROR_SUCCESS;;
+}
+OYSTER_THREAD_ERROR OysterThread::SetWorker(ThreadFnc worker)
+{
+	this->privateData->data->threadData->ownerObj.value = worker; 
+	this->privateData->data->threadData->ownerObj.type = Oyster::Callback::CallbackType_Function; 
 
 	this->privateData->data->threadData->msec = 0;
 

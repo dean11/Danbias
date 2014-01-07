@@ -17,6 +17,7 @@ namespace Oyster
 				virtual ~IListener() {}
 				virtual bool Init(unsigned int port) = 0;
 				virtual int Accept() = 0;
+				virtual void Shutdown() = 0;
 
 			};
 		}

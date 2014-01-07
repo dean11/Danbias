@@ -19,64 +19,22 @@ namespace GameLogic
 	
 		Protocol_General_Status()
 		{
-			this->protocol[0].value = protocol_General_Status;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[protocol_INDEX_ID].value = protocol_General_Status;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_General_Status(States state)
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_General_Status;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->status = state;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			this->protocol[1].value = status;
 
-			return &protocol;		 
-		}							 
-
-	private:
-		Oyster::Network::CustomNetProtocol protocol;
-	};
-	
-	struct Protocol_General_Ping :public Oyster::Network::CustomProtocolObject
-	{
-
-		Protocol_General_Ping()
-		{
-			this->protocol[0].value = protocol_General_Ping;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{
-			return &protocol;		 
-		}							 
-
-	private:
-		Oyster::Network::CustomNetProtocol protocol;
-	};
-
-	struct Protocol_General_Disconnect :public Oyster::Network::CustomProtocolObject
-	{
-		Protocol_General_Disconnect()
-		{
-			this->protocol[0].value = protocol_General_Disconnect;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{
-			return &protocol;		 
-		}							 
-
-	private:
-		Oyster::Network::CustomNetProtocol protocol;
-	};
-
-	struct Protocol_General_DisconnectKick :public Oyster::Network::CustomProtocolObject
-	{
-		Protocol_General_DisconnectKick()
-		{
-			this->protocol[0].value = protocol_General_DisconnectKick;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{
 			return &protocol;		 
 		}							 
 
@@ -90,8 +48,8 @@ namespace GameLogic
 
 		Protocol_General_Text()
 		{
-			this->protocol[0].value = protocol_General_Text;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[protocol_INDEX_ID].value = protocol_General_Text;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_CharArray;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override

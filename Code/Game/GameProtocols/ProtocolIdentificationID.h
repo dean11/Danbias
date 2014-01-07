@@ -9,30 +9,29 @@
 
 
 /** Index where the identifier is located(aka protocol identification index) **/
+/* Use this as id accesser since it may change in the future. */
 #define protocol_INDEX_ID							0
 
 
 /***********************************/
-/********* RESERVERD PROTOCOLS *****/
+/********* RESERVERD PROTOCOLS ***************************************************************************************************/
 /**********   [ 0 - 100 ]  *********/
-
+#define protocol_RESERVED_MIN							0
+#define protocol_RESERVED_MAX							99
 
 /***********************************/
-/********* GENERAL PROTOCOLS *******/
+/********* GENERAL PROTOCOLS ***************************************************************************************************/
 /***********[ 100 - 200 ]***********/
-#define protocol_GeneralMIN								100		/* This defines lower bounds of general protocols (okay to have same value as the first since this should not realy be sent). */
-#define protocol_General_Disconnect					100
-#define protocol_General_Ping						102
-#define protocol_General_Text						103
-#define protocol_General_Status						104
-#define protocol_General_DisconnectKick				105
+#define protocol_GeneralMIN								100		/* This defines lower bounds of general protocols (okay to have same value on first element). */
+#define protocol_General_Status						100
+#define protocol_General_Text						101
 #define protocol_GeneralMAX								199
 
 
 /***********************************/
-/********* LOBBY PROTOCOLS *********/
+/********* LOBBY PROTOCOLS ***************************************************************************************************/
 /***********[ 200 - 300 ]***********/
-#define protocol_LobbyMIN								200
+#define protocol_LobbyMIN								200	
 #define protocol_Lobby_CreateGame					200
 #define protocol_Lobby_JoinGame						201
 #define protocol_Lobby_StartGame					202
@@ -43,7 +42,7 @@
 
 
 /***********************************/
-/********* GAMEPLAY PROTOCOLS ******/
+/********* GAMEPLAY PROTOCOLS ***************************************************************************************************/
 /***********[ 300 - 400 ]***********/
 #define protocol_GameplayMIN							300
 #define protocol_Gameplay_PlayerNavigation			300
@@ -56,7 +55,7 @@
 
 
 /************************************/
-/*********** PROTOCOL MACROS ********/
+/*********** PROTOCOL MACROS ***************************************************************************************************/
 /************************************/
 inline bool ProtocolIsLobby(short ID) { return (ID >= protocol_LobbyMIN && ID <= protocol_LobbyMAX); }
 inline bool ProtocolIsGeneral(short ID) { return (ID >= protocol_GeneralMIN && ID <= protocol_GeneralMAX); }
@@ -65,11 +64,8 @@ inline bool ProtocolIsGameplay(short ID) { return (ID >= protocol_GameplayMIN &&
 
 
 /***********************************/
-/*********** TEST PROTOCOLS ********/
-/***********[ 1000 - x ]************/
-#define PROTOCOL_TEST								1000
-
-
+/*********** TEST PROTOCOLS *******************************************************************************************************/
+/***********[ x - x ]************/
 
 
 #endif // !GAMEPROTOCOL_PROTOCOL_DEFINITION_ID_H

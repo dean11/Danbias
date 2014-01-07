@@ -25,11 +25,10 @@ namespace Oyster
 				Listener(Oyster::Network::IPostBox<int>* postBox);
 				~Listener();
 
-				bool Init(unsigned int port);
+				bool Init(unsigned int port) override;
 				bool Init(unsigned int port, bool start);
 				bool Start();
 				void Stop();
-
 				void Shutdown();
 
 				void SetPostBox(IPostBox<int>* postBox);

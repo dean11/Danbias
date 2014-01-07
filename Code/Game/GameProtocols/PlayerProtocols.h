@@ -25,8 +25,8 @@ namespace GameLogic
 		
 		Protocol_PlayerMovement()
 		{
-			this->protocol[0].value = protocol_Gameplay_PlayerNavigation;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerNavigation;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
@@ -71,8 +71,8 @@ namespace GameLogic
 
 		Protocol_PlayerMouse()
 		{
-			this->protocol[0].value = protocol_Gameplay_PlayerMouseMovement;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerMouseMovement;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
@@ -105,8 +105,8 @@ namespace GameLogic
 
 		Protocol_PlayerPosition()
 		{
-			this->protocol[0].value = protocol_Gameplay_PlayerPosition;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerPosition;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;

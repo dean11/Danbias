@@ -84,8 +84,8 @@ struct NetworkClient::PrivateData : public IThreadObject
 
 	bool DoWork()
 	{
-		if(!this->data)return true;
-		if(!this->data->connection.IsConnected()) return true;
+		if(!this->data)								return false;
+		if(!this->data->connection.IsConnected())	return false;
 		
 		Send();
 		Recv();
@@ -113,6 +113,22 @@ struct NetworkClient::PrivateData : public IThreadObject
 			SmartPointer<OysterByte> temp = new OysterByte();
 			this->data->translator.Pack(temp, this->data->sendPostBox->FetchMessage());
 			errorCode = this->data->connection.Send(temp);
+			if(errorCode != 0)
+			{
+				//Failed
+				this->data->connection.Disconnect();
+				
+				this->data->recvObjMutex.lock();
+				if(this->data->callbackType == NetworkProtocolCallbackType_Function)
+				{
+					this->data->recvObj.protocolRecieverFnc();
+				}
+				else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
+				{
+					this->data->recvObj.protocolRecievedObject->Disconnected();
+				}
+				this->data->recvObjMutex.unlock();
+			}
 		}
 		this->data->postBoxMutex.unlock();
 
@@ -141,7 +157,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 				}
 				else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
 				{
-					this->data->recvObj.protocolRecievedObject->ProtocolRecievedCallback(protocol);
+					this->data->recvObj.protocolRecievedObject->NetworkCallback(protocol);
 				}
 				this->data->recvObjMutex.unlock();
 			}
@@ -178,8 +194,8 @@ NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket)
 {
 	privateData = new PrivateData(socket);
-	this->privateData->data->recvObj = recvObj;
 	this->privateData->data->callbackType = type;
+	this->privateData->data->recvObj = recvObj;
 	this->privateData->data->thread.Create(this->privateData, true);
 }
 
@@ -265,7 +281,7 @@ bool NetworkClient::operator ==(const int& ID)
 	return this->privateData->data->ID == ID;
 }
 
-int NetworkClient::Id() const
+int NetworkClient::GetID() const
 {
 	return this->privateData->data->ID;
 }

@@ -2,7 +2,7 @@
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
 #include "DanBiasServerAPI.h"
-#include "..\GameServer.h"
+#include "GameServer.h"
 
 namespace DanBias
 {

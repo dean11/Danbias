@@ -27,19 +27,53 @@ namespace Oyster
 			CallbackType_PostBox,
 			CallbackType_Function,
 			CallbackType_Object,
+			CallbackType_Unknown,
 		};
 
 		template <typename ReturnVal = void, typename ParamVal = void>
-		union OysterCallback
+		union OysterCallbackValue
 		{
 			IPostBox<ParamVal>* callbackPostBox;
 			CallbackObject<ReturnVal, ParamVal> *callbackObject;
 			typename CallbackFunction<ReturnVal, ParamVal>::FNC callbackFunction;
 
-			OysterCallback() { memset(this, 0, sizeof(OysterCallback)); }
-			OysterCallback(IPostBox<ReturnVal>* postbox) { callbackPostBox = postbox; }
-			OysterCallback(CallbackObject<ReturnVal, ParamVal>* obj) { callbackObject = obj; }
-			OysterCallback(typename CallbackFunction<ReturnVal, ParamVal>::FNC function) { callbackFunction = function; }
+			OysterCallbackValue() { memset(this, 0, sizeof(OysterCallbackValue)); }
+			OysterCallbackValue(IPostBox<ReturnVal>* postbox) { callbackPostBox = postbox; }
+			OysterCallbackValue(CallbackObject<ReturnVal, ParamVal>* obj) { callbackObject = obj; }
+			OysterCallbackValue(typename CallbackFunction<ReturnVal, ParamVal>::FNC function) { callbackFunction = function; }
+		};
+
+		template <typename ReturnVal = void, typename ParamVal = void>
+		struct OysterCallback
+		{
+			OysterCallbackValue<ReturnVal, ParamVal> value;
+			CallbackType callbackType;
+
+			OysterCallback() :callbackType(CallbackType_Unknown){}
+			bool operator()()
+			{
+				return true;
+			}
+			bool operator()(ParamVal e)
+			{
+				switch (callbackType)
+				{
+					case CallbackType_Function:
+						value.callbackFunction(e);
+						return true;
+					break;
+					case CallbackType_Object:
+						value.callbackObject->ObjectCallback(e);
+						return true;
+					break;
+					case CallbackType_PostBox:
+						value.callbackPostBox->Post(e);
+						return true;
+					break;
+				}
+				return false;
+			}
+			
 		};
 	}
 }

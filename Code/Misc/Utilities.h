@@ -10,6 +10,9 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+//warning C4150: deletion of pointer to incomplete type, no destructor called
+#pragma warning(disable : 4150)
+
 #include <string>
 #include <istream>
 #include <vector>

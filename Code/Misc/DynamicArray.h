@@ -33,10 +33,15 @@ namespace Utility
 
 			void Clear();
 
-			void Expand(int elements = 0);
+			void Resize(unsigned int size);
+
+			void Swap(unsigned int a, unsigned int b);
 
 			unsigned int Size() const;
 			unsigned int Capacity() const;
+
+		private:
+			void Expand(int elements = 0);
 
 		private:
 			T* data;
@@ -179,8 +184,44 @@ namespace Utility
 				this->capacity = 0;
 			}
 
+			template <typename T> void DynamicArray<T>::Resize(unsigned int size)
+			{
+				if (size == this->capacity) return;	//No need to resize
+				
+				T* temp = new T[size];
+
+				for (int i = 0; i < this->size; i++)
+				{
+					temp[i] = this->data[i];
+				}
+				this->capacity = size;
+				this->size = size;
+
+				delete [] this->data;
+				this->data = temp;
+			}
+
+			template <typename T> void DynamicArray<T>::Swap(unsigned int a, unsigned int b)
+			{
+				T temp = this->data[a];
+				this->data[a] = this->data[b];
+				this->data[b] = temp;
+			}
+
+			template <typename T> unsigned int DynamicArray<T>::Size() const
+			{
+				return (unsigned int)this->size;
+			}
+
+			template <typename T> unsigned int DynamicArray<T>::Capacity() const
+			{
+				return (unsigned int)this->capacity;
+			}
+
 			template <typename T> void DynamicArray<T>::Expand(int elements)
 			{
+				if(elements < 1) return;
+
 				int newSize = this->size + elements;
 
 				if(newSize >= this->capacity)
@@ -196,16 +237,6 @@ namespace Utility
 					delete [] this->data;
 					this->data = temp;
 				}
-			}
-
-			template <typename T> unsigned int DynamicArray<T>::Size() const
-			{
-				return (unsigned int)this->size;
-			}
-
-			template <typename T> unsigned int DynamicArray<T>::Capacity() const
-			{
-				return (unsigned int)this->capacity;
 			}
 
 		#pragma endregion

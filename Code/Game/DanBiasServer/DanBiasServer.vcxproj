@@ -173,27 +173,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Helpers\GameSessionManager.cpp" />
-    <ClCompile Include="Include\DanBiasServerAPI.cpp" />
+    <ClCompile Include="AdminInterface\AdminInterface.cpp" />
+    <ClCompile Include="GameSession\GameSessionManager.cpp" />
+    <ClCompile Include="DanBiasServerAPI.cpp" />
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="ServerObjects\ClientObject.cpp" />
-    <ClCompile Include="ServerObjects\Lobby\GameLobby.cpp" />
-    <ClCompile Include="ServerObjects\GameSession.cpp" />
-    <ClCompile Include="ServerObjects\Lobby\MainLobby.cpp" />
-    <ClCompile Include="ServerObjects\NetworkSession.cpp" />
+    <ClCompile Include="GameSession\GameClient.cpp" />
+    <ClCompile Include="LobbySessions\INetworkSession.cpp" />
+    <ClCompile Include="LobbySessions\LobbyClient.cpp" />
+    <ClCompile Include="LobbySessions\GameLobby.cpp" />
+    <ClCompile Include="GameSession\GameSession.cpp" />
+    <ClCompile Include="LobbySessions\MainLobby.cpp" />
+    <ClCompile Include="LobbySessions\NetworkSession.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdminInterface\AdminInterface.h" />
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="GameServer.h" />
-    <ClInclude Include="Helpers\GameSessionManager.h" />
-    <ClInclude Include="Include\DanBiasServerAPI.h" />
-    <ClInclude Include="Helpers\ServerInitReader.h" />
-    <ClInclude Include="ServerObjects\ClientObject.h" />
-    <ClInclude Include="ServerObjects\GameSession.h" />
-    <ClInclude Include="ServerObjects\Lobby\GameLobby.h" />
-    <ClInclude Include="ServerObjects\Lobby\MainLobby.h" />
-    <ClInclude Include="ServerObjects\NetworkSession.h" />
+    <ClInclude Include="GameSession\GameSessionManager.h" />
+    <ClInclude Include="DanBiasServerAPI.h" />
+    <ClInclude Include="Helpers\MapManager.h" />
+    <ClInclude Include="Helpers\ServerDataReader.h" />
+    <ClInclude Include="GameSession\GameClient.h" />
+    <ClInclude Include="GameSession\GameSession.h" />
+    <ClInclude Include="LobbySessions\INetworkSession.h" />
+    <ClInclude Include="LobbySessions\LobbyClient.h" />
+    <ClInclude Include="LobbySessions\GameLobby.h" />
+    <ClInclude Include="LobbySessions\MainLobby.h" />
+    <ClInclude Include="LobbySessions\NetworkSession.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GamePhysics\GamePhysics.vcxproj">

@@ -48,7 +48,7 @@ namespace Oyster
 				bool operator ==(const NetworkClient& obj);
 				bool operator ==(const int& ID);
 
-				int Id() const;
+				int GetID() const;
 
 			private:
 				struct PrivateData;

@@ -7,11 +7,14 @@
 #include <iostream>
 
 #include "GameServer.h"
-#include "Utilities.h"
-#include "Helpers\ServerInitReader.h"
+#include "Helpers\ServerDataReader.h"
+#include "GameSession\GameSessionManager.h"
+#include "LobbySessions\LobbyClient.h"
+#include "GameSession\GameSession.h"
+#include "AdminInterface\AdminInterface.h"
+
 #include <Thread\OysterThread.h>
-#include "ServerObjects\ClientObject.h"
-#include "ServerObjects\GameSession.h"
+#include <Utilities.h>
 
 #include <CollisionManager.h>
 
@@ -19,26 +22,45 @@ namespace DanBias
 {
 	using namespace Oyster::Network;
 
-	static GameSession *myTest;
 
-	void GameServer::ClientConnectCallback(NetworkClient* client)
+	void GameServer::NetworkCallback(NetworkClient* client)
 	{
-		printf("Client with ID [%i] connected.\n", client->Id());
+		static GameSession *myTest = 0;
+		printf("Client with ID [%i] connected.\n", client->GetID());
 
 		if(!myTest)
 		{
-			myTest = new GameSession();
-			Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
-			DanBias::GameSession::GameSessionDescription desc;
-			desc.owner = 0;
-			desc.clients.Push(c);
+			Utility::DynamicMemory::SmartPointer<LobbyClient> c = new LobbyClient(client);
 
-			myTest->Run(desc);
+			GameSessionDescription desc;
+			desc.mapName = L"test";
+			desc.clients.Push(c);
+			desc.exitDestionation = this->mainLobby;
+			int sessionId = 0;
+			if((sessionId = GameSessionManager::AddSession(desc, true)) == 0)
+				printf("Failed to create a game session");
+
+			//myTest = new GameSession();
+			//
+			//DanBias::GameSession::GameSessionDescription desc;
+			//desc.owner = 0;
+			//desc.clients.Push(c);
+			//
+			//if(!myTest->Create(desc)) return;
+			//myTest->Run();
 		}
-		//
-		//Utility::DynamicMemory::SmartPointer<ClientObject> c = new ClientObject(client);
-		//this->mainLobby->AttachClient(c, this->mainLobby->GetPostbox());
+		else
+		{
+			Utility::DynamicMemory::SmartPointer<LobbyClient> c = new LobbyClient(client);
+			myTest->Join(c);
+		}
+		
+
+		//Utility::DynamicMemory::SmartPointer<LobbyClient> c = new LobbyClient(client);
+		//this->mainLobby->Attach(c, this->mainLobby->GetPostbox());
 	}
+
+
 	GameServer::GameServer()
 		:	initiated(0)
 		,	running(0)
@@ -67,7 +89,7 @@ namespace DanBias
 
 		if(!this->server->Init(serverDesc))								return DanBiasServerReturn_Error;
 		if(!WindowShell::CreateConsoleWindow())							return DanBiasServerReturn_Error;
-		if(!WindowShell::CreateWin(WindowShell::WINDOW_INIT_DESC()))							return DanBiasServerReturn_Error;
+		//if(!WindowShell::CreateWin(WindowShell::WINDOW_INIT_DESC()))							return DanBiasServerReturn_Error;
 
 		this->initiated = true;
 		return DanBiasServerReturn_Sucess;
@@ -79,12 +101,18 @@ namespace DanBias
 		if(!this->initiated)		return DanBiasServerReturn_Error;
 
 		if(!this->server->Start())	return DanBiasServerReturn_Error;
+		//Oyster::Thread::OysterThread ioThread;
+		//ioThread.Create(this, true, 
 
 		while (true)
 		{
 			if(!WindowShell::Frame())	break;
 
+			
 			this->mainLobby->Frame();
+
+			if(GetAsyncKeyState(0x51))
+				break;
 		}
 
 		return DanBiasServerReturn_Sucess;

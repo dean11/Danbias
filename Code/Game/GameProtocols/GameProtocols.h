@@ -6,7 +6,4 @@
 #include "LobbyProtocols.h"
 #include "ControlProtocols.h"
 
-#include "TEST_PROTOCOLS.h"
-
-
 #endif // !GAMEPROTOCOLS_GAMEPROTOCOLS_H

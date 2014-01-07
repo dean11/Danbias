@@ -6,10 +6,34 @@
 #define MISC_OYSTER_THREAD_H
 
 #include "IThreadObject.h"
+
 namespace Oyster 
 { 
 	namespace Thread
 	{
+		/**
+		*	Inherit this class to get threading compatibility.
+		*/
+		class IThreadObject
+		{
+		public:
+			/**
+			*	Override this to get notified when the thread is started.
+			*/
+			virtual void ThreadEntry()	{ }
+			/**
+			*	Override this to get notified when the thread is about to exit.
+			*/
+			virtual void ThreadExit()	{ }
+			/**
+			*	This function is required to get threading working. 
+			*	Note that this function is NOT thread safe.
+			*	OBS! Do not highjack the looping.
+			*/
+			virtual bool DoWork			( ) = 0;
+		};
+		typedef bool (*ThreadFnc)(void);
+
 		enum OYSTER_THREAD_ERROR
 		{
 			OYSTER_THREAD_ERROR_SUCCESS,
@@ -43,12 +67,16 @@ namespace Oyster
 			virtual~OysterThread();
 
 			OYSTER_THREAD_ERROR Create(IThreadObject* worker, bool start, bool detach = false);
+			OYSTER_THREAD_ERROR Create(ThreadFnc worker, bool start, bool detach = false);
+			//OYSTER_THREAD_ERROR Create(Oyster::Callback::CallbackObject<bool, void>* worker, bool start, bool detach = false);
+			//OYSTER_THREAD_ERROR Create(Oyster::Callback::CallbackFunction<bool, void>::FNC worker, bool start, bool detach = false);
 			OYSTER_THREAD_ERROR Start();
 			OYSTER_THREAD_ERROR Stop(bool wait = false);
 			OYSTER_THREAD_ERROR Pause();
 			OYSTER_THREAD_ERROR Pause(int mSec);
 			OYSTER_THREAD_ERROR Resume();
-			OYSTER_THREAD_ERROR Reset(IThreadObject* worker = 0);
+			OYSTER_THREAD_ERROR SetWorker(IThreadObject* worker = 0);
+			OYSTER_THREAD_ERROR SetWorker(ThreadFnc worker = 0);
 			OYSTER_THREAD_ERROR Terminate(bool wait = true);
 			OYSTER_THREAD_ERROR Wait();
 			OYSTER_THREAD_ERROR Wait(int mSec);

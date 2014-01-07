@@ -115,18 +115,20 @@ void NetworkServer::PrivateData::Stop()
 
 	started = false;
 
-	thread.Stop();
+	thread.Stop(true);
 }
 
 void NetworkServer::PrivateData::Shutdown()
 {
 	if(listener)
 	{
+		listener->Shutdown();
 		delete listener;
 		listener = NULL;
 	}
 
 	started = false;
+	thread.Terminate();
 
 	ShutdownWinSock();
 }
@@ -153,7 +155,7 @@ void NetworkServer::PrivateData::CheckForNewClient()
 		else if(initDesc.callbackType == NetworkClientCallbackType_Object)
 		{
 			Oyster::Network::NetworkClient *client = new Oyster::Network::NetworkClient(clientSocketNum);
-			initDesc.recvObj.clientConnectObject->ClientConnectCallback(client);
+			initDesc.recvObj.clientConnectObject->NetworkCallback(client);
 		}
 	}
 }

@@ -1,13 +1,13 @@
 #include "WindowShell.h"
 #include <vector>
-
-// debug window include
 #include <stdio.h>
 #include <io.h>
 #include <fcntl.h>
 
 
 #pragma region Declarations
+
+	#define WINDOW_SHELL_CLASS_NAME		L"MainWindowShellClassName"
 
 	struct _PrivateDataContainer
 	{
@@ -81,12 +81,12 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 	
 	__windowShellData.parent			= desc.parent;
 	__windowShellData.hIns				= desc.hInstance;
-	__windowShellData.windowClassName	= L"MainWindowShellClassName";
+	__windowShellData.windowClassName	= WINDOW_SHELL_CLASS_NAME;
 
 		#pragma region Register
 	
-	WNDCLASSEX wc;
-	wc.cbSize		 = sizeof(WNDCLASSEX);
+	WNDCLASSEXW wc;
+	wc.cbSize		 = sizeof(WNDCLASSEXW);
 	wc.hIconSm		= NULL;
 	wc.style         = desc.windowClassStyle;
 	wc.lpfnWndProc   = desc.windowProcCallback; 
@@ -99,7 +99,7 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 	wc.lpszMenuName  = NULL;
 	wc.lpszClassName = __windowShellData.windowClassName;
 
-	if( !RegisterClassEx(&wc) )
+	if( !RegisterClassExW(&wc) )
 	{
 		MessageBox(0, L"Failed to register class", L"Initialization error", 0);
 		return false;
@@ -137,7 +137,7 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 
 	if(windowed)
 	{
-		__windowShellData.hWnd = CreateWindowEx(
+		__windowShellData.hWnd = CreateWindowExW(
 									0,
 									__windowShellData.windowClassName , 
 									desc.windowName,
@@ -154,7 +154,7 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 	}
 	else
 	{
-		__windowShellData.hWnd = CreateWindowEx(	
+		__windowShellData.hWnd = CreateWindowExW(	
 									0,
 									__windowShellData.windowClassName , 
 									desc.windowName,
@@ -237,10 +237,12 @@ unsigned int WindowShell::GetHeight()
 }
 bool WindowShell::Frame()
 {
+	if(!__windowShellData.hWnd) return true;
+
 	MSG msg = {0};
 	while (true)
 	{
-		if(!__windowShellData.parent)
+		if(!__windowShellData.parent)		//Parent takes care of this
 		{
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{ 

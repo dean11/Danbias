@@ -7,6 +7,7 @@
 
 #include <memory>
 
+
 namespace Oyster
 {
 	namespace Network
@@ -26,24 +27,46 @@ namespace Oyster
 
 		class NetworkClient;
 		class CustomNetProtocol;
-		typedef void (*ClientConnectCallbackMethod)(NetworkClient*);
-		typedef void(*ProtocolRecieverFunction)(CustomNetProtocol& protocol);
-		struct ClientConnectedObject
-		{
-			virtual void ClientConnectCallback(NetworkClient* client) = 0;
-		};
-		struct ProtocolRecieverObject
-		{
-			virtual void ProtocolRecievedCallback(CustomNetProtocol& protocol) = 0;
-			virtual void DisconnectedCallback(CustomNetProtocol& protocol) { };
-		};
 
+
+		template<typename Param>
+		struct NetRecieverObject
+		{
+			virtual void NetworkCallback(Param) = 0;
+		};
+		struct NetClientEvent	:public NetRecieverObject<CustomNetProtocol&>
+		{
+			virtual void NetworkCallback(CustomNetProtocol& protocol) = 0;
+			virtual void Disconnected() { };
+		};
+		typedef NetRecieverObject<NetworkClient*> ClientConnectedObject ;
+		typedef NetClientEvent ProtocolRecieverObject;
+		
+
+		template <typename Param>
+		struct NetCallbackFunction
+		{ 
+			typedef void (*FNC)(Param); 
+		};
+		typedef NetCallbackFunction<NetworkClient*>::FNC ClientConnectCallbackMethod;
+		typedef NetCallbackFunction<CustomNetProtocol&>::FNC ProtocolRecFunction;
+		struct NetClientMethods
+		{
+			typedef void(*Dissconnected)(void);
+			ProtocolRecFunction recieved;
+			Dissconnected dissconnected;
+			void operator()(CustomNetProtocol& obj) { if(recieved) recieved(obj); }
+			void operator()() { if(dissconnected) dissconnected(); }
+		};
+		typedef NetClientMethods ProtocolRecieverFunction;
+		
 		union RecieverObject
 		{
 			ClientConnectCallbackMethod		clientConnectFnc;			// !< A function pointer for sending or recieving NetworkClient
 			ProtocolRecieverFunction		protocolRecieverFnc;		// !< A function pointer for sending or recieving CustomNetProtocol
+			
 			ClientConnectedObject			*clientConnectObject;		// !< An object for sending or recieving NetworkClient
-			ProtocolRecieverObject			*protocolRecievedObject;	// !< An object for sending or recieving CustomNetProtocol
+			ProtocolRecieverObject			*protocolRecievedObject;	// !< An object with collected client events methods.
 
 			RecieverObject()								{ memset(this, 0, sizeof(RecieverObject)); }
 			RecieverObject(ClientConnectCallbackMethod	o)	{ clientConnectFnc = o; }

@@ -72,7 +72,7 @@ void Listener::Stop()
 
 void Listener::Shutdown()
 {
-	thread.Stop();
+	thread.Stop(false);
 }
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)

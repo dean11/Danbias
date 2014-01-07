@@ -108,7 +108,11 @@ int Connection::InitiateClient()
 
 int Connection::Disconnect()
 {
-	return CloseSocket(this->socket);
+	int val = CloseSocket(this->socket);
+	this->socket = -1;
+	this->closed = true;
+	this->stillSending = false;
+	return val;
 }
 
 int Connection::Send(OysterByte &bytes)
