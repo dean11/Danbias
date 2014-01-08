@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.1">
+  <zoom_level>16</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>560</x>
+      <y>80</y>
+      <w>176</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+OysterResource</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>528</x>
+      <y>112</y>
+      <w>206</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;
+implements
+</panel_attributes>
+    <additional_attributes>112;128;112;48</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Actor</type>
+    <coordinates>
+      <x>352</x>
+      <y>240</y>
+      <w>128</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>Dev</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>320</x>
+      <y>32</y>
+      <w>272</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+interacts&gt;</panel_attributes>
+    <additional_attributes>240;80;96;80;96;208</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>576</x>
+      <y>576</y>
+      <w>160</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>CustomLoader</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>576</x>
+      <y>528</y>
+      <w>160</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>
+ByteLoader</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>464</x>
+      <y>384</y>
+      <w>144</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80;48;48;48;48;160;112;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>368</x>
+      <y>384</y>
+      <w>266</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+implements partly</panel_attributes>
+    <additional_attributes>176;48;144;48;144;208;208;208</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>544</x>
+      <y>240</y>
+      <w>208</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>--
+&lt;&lt;interface&gt;&gt;
+OResourceHandler
+--
+elementstyle=wordwrap
+valign=center
+halign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>544</x>
+      <y>400</y>
+      <w>208</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>
+OResource
+elementstyle=wordwrap
+
+halign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>688</x>
+      <y>256</y>
+      <w>196</w>
+      <h>224</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;
+manages&gt;</panel_attributes>
+    <additional_attributes>64;192;112;192;112;48;64;48</additional_attributes>
+  </element>
+</diagram>
