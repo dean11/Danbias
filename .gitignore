@@ -16,7 +16,6 @@
 *.sdf
 *.opensdf
 *.suo
-*.user
 *.ipch
 *.lib
 *.exe
@@ -30,7 +29,8 @@
 *.orig
 
 #Dir
-Bin/Content/Sound/
+Bin/Content/
+Bin/DLL/
 Bin/Executable/
 Obj/
 External/
