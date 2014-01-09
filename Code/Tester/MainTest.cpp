@@ -171,7 +171,7 @@ HRESULT InitDirect3D()
 		return E_FAIL;
 	}
 	
-	m =  Oyster::Graphics::API::CreateModel(L"christmastree");
+	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy");
 	m2 = Oyster::Graphics::API::CreateModel(L"worldDummy");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	m3 = Oyster::Graphics::API::CreateModel(L"worldDummy");
