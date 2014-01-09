@@ -65,6 +65,11 @@ namespace DanBias
 		static void CloseSession(int session);
 
 		/**
+		*	Close all sessions.
+		*/
+		static void CloseSession();
+
+		/**
 		*	Get total sessions running
 		*	@return Returns the total sessions curently running.
 		*/

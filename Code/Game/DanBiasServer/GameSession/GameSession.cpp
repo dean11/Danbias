@@ -29,6 +29,7 @@ namespace DanBias
 				return;
 			}
 		}
+		clients.Push(obj);
 	}
 	void RemoveObject(DynamicArray<SmartPointer<GameClient>>& clients, DanBias::GameClient* obj)
 	{
@@ -165,10 +166,8 @@ namespace DanBias
 				if(p[6].value.netBool)	//bool bStrafeLeft;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
 
-				//Oyster::Math::Float4x4 p;
-				Protocol_ObjectPosition op;//(c.GetPlayer()->GetRigidBody(), c.GetPlayer()->GetID());
-				//op.object_ID = c.GetPlayer()->GetID();
-				Send(op.GetProtocol());
+				//Protocol_ObjectPosition op(c->GetPlayer()->GetOrientation(), c->GetPlayer()->GetID());
+				//Send(op.GetProtocol());
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
@@ -197,7 +196,7 @@ namespace DanBias
 					break;
 					
 					case GameLogic::Protocol_General_Status::States_disconected:
-						printf("Client with ID [%i] dissconnected", c->GetClient()->GetID());
+						printf("Client with ID [%i] dissconnected\n", c->GetClient()->GetID());
 						RemoveObject(this->clients, c);
 					break;
 

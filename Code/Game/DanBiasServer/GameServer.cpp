@@ -25,7 +25,8 @@ namespace DanBias
 
 	void GameServer::NetworkCallback(NetworkClient* client)
 	{
-		static GameSession *myTest = 0;
+		static bool myTest = false;
+		static int sessionId = -1;
 		printf("Client with ID [%i] connected.\n", client->GetID());
 
 		if(!myTest)
@@ -36,10 +37,9 @@ namespace DanBias
 			desc.mapName = L"test";
 			desc.clients.Push(c);
 			desc.exitDestionation = this->mainLobby;
-			int sessionId = 0;
 			if((sessionId = GameSessionManager::AddSession(desc, true)) == 0)
 				printf("Failed to create a game session");
-
+			myTest = true;
 			//myTest = new GameSession();
 			//
 			//DanBias::GameSession::GameSessionDescription desc;
@@ -52,7 +52,7 @@ namespace DanBias
 		else
 		{
 			Utility::DynamicMemory::SmartPointer<LobbyClient> c = new LobbyClient(client);
-			myTest->Join(c);
+			GameSessionManager::JoinSession(sessionId, c);
 		}
 		
 
@@ -119,6 +119,8 @@ namespace DanBias
 	}
 	DanBiasServerReturn GameServer::Release()
 	{
+		GameSessionManager::CloseSession();
+		this->mainLobby->Release();
 		delete this->mainLobby;
 		this->server->Shutdown();
 		delete this->server;

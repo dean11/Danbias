@@ -96,19 +96,29 @@ namespace DanBias
 			break;
 		case protocol_Gameplay_ObjectPosition:
 			{
-
-				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
-				protocolData->object_ID = p[1].value.netInt;
+				Client::GameClientState::ObjPos protocolData;
+				protocolData.object_ID = p[1].value.netInt;
 				for(int i = 0; i< 16; i++)
 				{
-					protocolData->worldPos[i] = p[i+2].value.netFloat;
+					protocolData.worldPos[i] = p[i+2].value.netFloat;
 				}
 
 				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
+					((Client::GameState*)gameClientState)->Protocol(&protocolData);
 			
-				delete protocolData;
-				protocolData = NULL;
+				//Why use dynamicly allocated memory when data dies after block?
+				//Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
+				//protocolData->object_ID = p[1].value.netInt;
+				//for(int i = 0; i< 16; i++)
+				//{
+				//	protocolData->worldPos[i] = p[i+2].value.netFloat;
+				//}
+				//
+				//if(dynamic_cast<Client::GameState*>(gameClientState))
+				//	((Client::GameState*)gameClientState)->Protocol(protocolData);
+				//
+				//delete protocolData;
+				//protocolData = NULL;
 			}
 			break;
 
@@ -159,7 +169,7 @@ namespace DanBias
 
 		m_data->recieverObj = new MyRecieverObject;
 		
-	//	m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
+		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
 		m_data->recieverObj->nwClient->Connect(desc.port, desc.IP);
 
 		if (!m_data->recieverObj->nwClient->IsConnected())
