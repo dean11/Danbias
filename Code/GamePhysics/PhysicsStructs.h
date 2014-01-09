@@ -122,8 +122,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float mass;
 
 			GravityWell( );
-			GravityWell( const GravityWell& gravityWell );
-			GravityWell& operator=( const GravityWell& gravityWell );
+			GravityWell( const GravityWell &gravityWell );
+			GravityWell& operator=( const GravityWell &gravityWell );
 		};
 
 		struct GravityDirected
@@ -131,8 +131,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float3 impulse;
 
 			GravityDirected( );
-			GravityDirected( const GravityDirected& gravityDirected );
-			GravityDirected& operator=( const GravityDirected& gravityDirected );
+			GravityDirected( const GravityDirected &gravityDirected );
+			GravityDirected & operator = ( const GravityDirected &gravityDirected );
 		};
 
 		struct GravityDirectedField
@@ -142,8 +142,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float magnitude;
 
 			GravityDirectedField( );
-			GravityDirectedField( const GravityDirectedField& gravityDirectedField );
-			GravityDirectedField& operator=( const GravityDirectedField& gravityDirectedField );
+			GravityDirectedField( const GravityDirectedField &gravityDirectedField );
+			GravityDirectedField & operator=( const GravityDirectedField &gravityDirectedField );
 		};
 
 		struct Gravity
@@ -175,9 +175,8 @@ namespace Oyster { namespace Physics
 			};
 
 			Gravity( );
-			Gravity( const Gravity& gravity );
-			Gravity& operator=( const Gravity& gravity );
-			
+			Gravity( const Gravity &gravity );
+			Gravity & operator = ( const Gravity &gravity );
 		};
 	}
 } }
