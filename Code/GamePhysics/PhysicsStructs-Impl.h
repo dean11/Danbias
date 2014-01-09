@@ -122,9 +122,19 @@ namespace Oyster { namespace Physics
 			return ::Oyster::Math3D::OrientationMatrix( this->angularAxis.xyz, this->centerPos.xyz );
 		}
 
+		inline ::Oyster::Math::Float4x4 CustomBodyState::GetOrientation( const ::Oyster::Math::Float4 &offset ) const
+		{
+			return ::Oyster::Math3D::OrientationMatrix( this->angularAxis.xyz, (this->centerPos + offset).xyz );
+		}
+
 		inline ::Oyster::Math::Float4x4 CustomBodyState::GetView() const
 		{
 			return ::Oyster::Math3D::ViewMatrix( this->angularAxis.xyz, this->centerPos.xyz );
+		}
+
+		inline ::Oyster::Math::Float4x4 CustomBodyState::GetView( const ::Oyster::Math::Float4 &offset ) const
+		{
+			return ::Oyster::Math3D::ViewMatrix( this->angularAxis.xyz, (this->centerPos + offset).xyz );
 		}
 
 		inline const ::Oyster::Math::Float4 & CustomBodyState::GetLinearMomentum() const
