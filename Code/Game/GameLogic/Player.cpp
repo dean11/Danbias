@@ -16,7 +16,7 @@ struct Player::PrivateData
 		teamID = -1;
 		playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 
-		lookDir = Oyster::Math::Float3(1,0,0);
+		lookDir = Oyster::Math::Float4(1,0,0);
 	}
 
 	~PrivateData()
@@ -31,7 +31,7 @@ struct Player::PrivateData
 	int teamID;
 	Weapon *weapon;
 	PLAYER_STATE playerState;
-	Oyster::Math::Float3 lookDir;
+	Oyster::Math::Float4 lookDir;
 	
 }myData;
 
@@ -49,8 +49,6 @@ Player::~Player(void)
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
-	//Oyster::Math::Float3 currentVelocity = rigidBody->GetRigidLinearVelocity();
-
 	switch(movement)
 	{
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD:
@@ -77,23 +75,23 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
+	state->ApplyLinearImpulse(myData->lookDir * 100);
 }
 void Player::MoveBackwards()
 {
-	//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
+	state->ApplyLinearImpulse(-myData->lookDir * 100);
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	//Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
-	//API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
+	Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)myData->lookDir);
+	state->ApplyLinearImpulse(r * 100);
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	//Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
-	//API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
+	Oyster::Math::Float4 r = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)myData->lookDir);
+	state->ApplyLinearImpulse(-r * 100);
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &fireInput)
@@ -106,7 +104,7 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	//API::Instance().SetCenter(rigidBody,spawnPoint);
 	myData->life = 100;
 	myData->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-	myData->lookDir = Oyster::Math::Float3(1,0,0);
+	myData->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
 void Player::Jump()

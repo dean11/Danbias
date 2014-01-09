@@ -15,6 +15,7 @@ namespace Oyster
 	namespace Physics 
 	{ 
 		class ICustomBody;
+		class State;
 	}
 }
 namespace GameLogic
@@ -36,6 +37,8 @@ namespace GameLogic
 		int objectID;
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
+		Oyster::Physics::ICustomBody::State *state;
+
 	};
 
 }
