@@ -347,7 +347,7 @@ namespace Oyster
 				this->mass		= gravityWell.mass;
 			}
 
-			GravityWell & GravityWell::operator = ( const GravityWell &gravityWell )
+			inline GravityWell & GravityWell::operator = ( const GravityWell &gravityWell )
 			{
 				this->position	= gravityWell.position;
 				this->mass		= gravityWell.mass;
@@ -386,7 +386,7 @@ namespace Oyster
 				this->magnitude				= gravityDirectedField.magnitude;
 			}
 
-			inline GravityDirectedField& GravityDirectedField::operator = ( const GravityDirectedField &gravityDirectedField )
+			inline GravityDirectedField & GravityDirectedField::operator = ( const GravityDirectedField &gravityDirectedField )
 			{
 				this->normalizedDirection	= gravityDirectedField.normalizedDirection;
 				this->mass					= gravityDirectedField.mass;
@@ -402,6 +402,8 @@ namespace Oyster
 
 			inline Gravity::Gravity( const Gravity &gravity )
 			{
+				this->gravityType = gravity.gravityType;
+
 				switch( gravity.gravityType )
 				{
 				case GravityType_Well:
@@ -413,11 +415,14 @@ namespace Oyster
 				case GravityType_DirectedField:
 					this->directedField = gravity.directedField;
 					break;
+				default: break;
 				}
 			}
 		
 			inline Gravity & Gravity::operator = ( const Gravity &gravity )
 			{
+				this->gravityType = gravity.gravityType;
+
 				switch( gravity.gravityType )
 				{
 				case GravityType_Well:
@@ -429,6 +434,7 @@ namespace Oyster
 				case GravityType_DirectedField:
 					this->directedField = gravity.directedField;
 					break;
+				default: break;
 				}
 
 				return *this;
