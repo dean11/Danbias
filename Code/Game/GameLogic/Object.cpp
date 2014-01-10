@@ -50,7 +50,6 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 Object::~Object(void)
 {
 
-
 }
 
 OBJECT_TYPE Object::GetType()

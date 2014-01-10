@@ -94,9 +94,9 @@ void Player::MoveLeft()
 	state.ApplyLinearImpulse(-r * 100);
 }
 
-void Player::UseWeapon(const WEAPON_FIRE &fireInput)
+void Player::UseWeapon(const WEAPON_FIRE &Usage)
 {
-	myData->weapon->Use(fireInput);
+	myData->weapon->Use(Usage);
 }
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
