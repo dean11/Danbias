@@ -10,7 +10,7 @@ using namespace GameLogic;
 
 struct Level::PrivateData
 {
-	PrivateData()
+	PrivateData()	
 	{
 		
 	}
