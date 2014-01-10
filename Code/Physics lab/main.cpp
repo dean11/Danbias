@@ -8,6 +8,23 @@ using namespace ::Utility;
 using namespace ::Oyster;
 using namespace ::Oyster::Math3D;
 
+struct Object
+{
+	Graphics::Model::Model *gfx;
+	Physics::ICustomBody *phys;
+
+	Object()
+	{
+		this->gfx = nullptr;
+		this->phys = nullptr;
+	}
+
+	~Object()
+	{
+		DynamicMemory::SafeDeleteInstance( this->gfx );
+	}
+};
+
 // typedef LRESULT (CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK MessagePipe( HWND, UINT, WPARAM, LPARAM );
 
@@ -42,32 +59,89 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		}
 	}
 	
+	const Float graphicsPeriodicy = 1.0f / 60.0f;
+	Float graphicsTimeAccumulation = 0.0f;
 	if( Graphics::API::Init(screen.GetHWND(), false, false, Float2(1280.0f, 720.0f)) == Graphics::API::Fail )
 	{
-		return 0;		
+		return 0;
 	}
+	Graphics::API::Option settings;
+	//settings.
+	Graphics::API::SetOptions( settings );
+	Graphics::API::SetProjection( ProjectionMatrix_Perspective(100.0f, 1280.0f/720.0f, 0.01f, 1000.0f) );
 
-	const Float updatePeriodicy = 1.0f / 120.0f;
-	Float accumulatedTime = 0.0f;
+	Graphics::Definitions::Pointlight light;
+	{
+		light.Pos = Float3(0.0f, 5.0f, 10.0f);
+		light.Radius = 100.0f;
+		light.Color = Float3( 1.0f );
+		light.Bright = 1.0f;
+	}
+	Graphics::API::AddLight( light );
+
+	const Float physicsPeriodicy = 1.0f / 120.0f;
+	Float physicsTimeAccumulation = 0.0f;
 	Physics::API::Instance().Init( 27, 1, Float3(1024.0f) );
-	Physics::API::Instance().SetFrameTimeLength( updatePeriodicy );
-	
-	//// INIT STUFF
+	Physics::API::Instance().SetFrameTimeLength( physicsPeriodicy );
 
-	//// END INITSTUFF
+	Object sphere;
+	Object crate[2];
+	{
+		sphere.gfx = Graphics::API::CreateModel( L"worldDummy" );
+		sphere.phys = Physics::API::Instance().CreateRigidBody( Physics::API::SphericalBodyDescription() ).Release();
+		Physics::API::Instance().AddObject( sphere.phys );
+
+		Physics::API::SimpleBodyDescription descCrate;
+
+		descCrate.centerPosition = Float4( -2.5, 0.0f, 0.0f, 1.0f );
+		crate[0].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
+
+		descCrate.centerPosition = Float4( 2.5, 0.0f, 0.0f, 1.0f );
+		crate[1].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
+
+		for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
+		{
+			crate[i].gfx = Graphics::API::CreateModel( L"crate" );
+			Physics::API::Instance().AddObject( crate[i].phys );
+		}
+
+		Physics::ICustomBody::State state;
+		crate[0].phys->GetState( state );
+		state.SetLinearMomentum( Float4(5.0f, 0.0f, 0.0f, 0.0f) );
+		crate[0].phys->SetState( state );
+	}
 
 	timer.reset();
 	while( true )
 	{
 		if( screen.Frame() )
 		{
-			accumulatedTime += (Float)timer.getElapsedSeconds();
+			graphicsTimeAccumulation += (Float)timer.getElapsedSeconds();
+			physicsTimeAccumulation += (Float)timer.getElapsedSeconds();
 			timer.reset();
 
-			while( accumulatedTime >= updatePeriodicy )
+			while( physicsTimeAccumulation >= physicsPeriodicy )
 			{
 				Physics::API::Instance().Update();
-				accumulatedTime -= updatePeriodicy;
+				physicsTimeAccumulation -= physicsPeriodicy;
+			}
+
+			if( graphicsTimeAccumulation >= graphicsPeriodicy )
+			{
+				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) );
+				Graphics::API::NewFrame();
+				{
+					sphere.gfx->WorldMatrix = sphere.phys->GetState().GetOrientation();
+					Graphics::API::RenderModel( *sphere.gfx );
+
+					for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
+					{
+						crate[i].gfx->WorldMatrix = crate[i].phys->GetState().GetOrientation();
+						Graphics::API::RenderModel( *crate[i].gfx );
+					}
+				}
+				Graphics::API::EndFrame();
+				graphicsTimeAccumulation = 0.0f;
 			}
 		}
 		else break;
