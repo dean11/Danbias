@@ -78,7 +78,7 @@ bool GameSessionManager::StartSession(int session)
 bool GameSessionManager::JoinSession(int session, Utility::DynamicMemory::SmartPointer<LobbyClient> client)
 {
 	int i = -1;
-	if((i = gameSessionData.Existst(session)) != -1) return false;
+	if((i = gameSessionData.Existst(session)) == -1) return false;
 
 	gameSessionData.sessions[i]->Join(client);
 
@@ -97,6 +97,13 @@ void GameSessionManager::GetSessionInfo(int session, GameSessionInfo& data)
 	//data.numberOfPlayers	= gameSessionData.sessions[i]->
 }
 
+void GameSessionManager::CloseSession()
+{
+	for (unsigned int i = 0; i < gameSessionData.sessions.Size(); i++)
+	{
+		gameSessionData.sessions[i]->CloseSession();
+	}
+}
 void GameSessionManager::CloseSession(int session)
 {
 	int i = -1;

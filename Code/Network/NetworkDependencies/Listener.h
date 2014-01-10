@@ -11,6 +11,7 @@
 #include "../../Misc/Thread/OysterThread.h"
 #include "../../Misc/Thread/OysterMutex.h"
 #include "../../Misc/Utilities.h"
+#include <atomic>
 
 namespace Oyster
 {
@@ -41,6 +42,7 @@ namespace Oyster
 
 				//Function that runs in the thread.
 				int Accept();
+				void StopListen();
 
 			private:
 				::Oyster::Network::Connection* connection;
@@ -50,7 +52,8 @@ namespace Oyster
 				std::mutex stdMutex;
 
 				IPostBox<int>* postBox;
-
+				std::atomic<bool> isListening;
+				int port;
 			};
 		}
 	}

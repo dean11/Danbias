@@ -19,11 +19,12 @@ namespace DanBias
 	}
 	MainLobby::~MainLobby()
 	{
-		delete this->box;
-		this->box = 0;
+		
 	}
 	void MainLobby::Release()
 	{
+		delete this->box;
+		this->box = 0;
 		this->CloseSession(true);
 	}
 
