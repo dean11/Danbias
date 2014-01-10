@@ -23,7 +23,8 @@ namespace DanBias
 	{
 	Oyster::Network::NetworkClient* nwClient;
 	Client::GameClientState* gameClientState;
-	
+
+
 	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
 		int pType = p[0].value.netInt;

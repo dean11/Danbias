@@ -28,6 +28,7 @@ void C_StaticObj::Init(ModelInitData modelInit)
 	privData->model = Oyster::Graphics::API::CreateModel(modelInit.modelPath);
 	privData->model->WorldMatrix = modelInit.world;
 	privData->model->Visible = modelInit.visible;
+	privData->ID = modelInit.id;
 
 }
 void C_StaticObj::setPos(Oyster::Math::Float4x4 world)

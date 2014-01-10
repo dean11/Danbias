@@ -33,7 +33,7 @@ namespace GameLogic
 		* Uses the weapon based on input
 		* @param fireInput: enum value on what kind of action is to be taken
 		********************************************************/
-		void UseWeapon(const WEAPON_FIRE &fireInput);
+		void UseWeapon(const WEAPON_FIRE &Usage);
 
 		/********************************************************
 		* Respawns the player, this resets several stats and settings on the player

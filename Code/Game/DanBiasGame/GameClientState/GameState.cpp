@@ -40,6 +40,12 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 }
 GameState::gameStateState GameState::LoadGame() 
 {
+	Oyster::Graphics::Definitions::Pointlight plight;
+	plight.Pos = Oyster::Math::Float3(0,3,0);
+	plight.Color = Oyster::Math::Float3(0,1,0);
+	plight.Radius = 5;
+	plight.Bright = 2;
+	Oyster::Graphics::API::AddLight(plight);
 	LoadModels(L"map");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
 	return gameStateState_playing;
@@ -56,18 +62,22 @@ bool GameState::LoadModels(std::wstring mapFile)
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	modelData.visible = true;
 	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.id = 0;
 	// load models
 	C_Object* obj =  new C_Player();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.id ++;
 
 	obj = new C_DynamicObj();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+
 	return true;
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
@@ -209,6 +219,7 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		world[i] = pos->worldPos[i];
 	}
+
 	for (int i = 0; i < privData->object.size(); i++)
 	{
 		if(privData->object[i]->GetId() == pos->object_ID)
