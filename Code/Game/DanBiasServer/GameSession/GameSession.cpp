@@ -156,19 +156,25 @@ namespace DanBias
 		{
 			case protocol_Gameplay_PlayerNavigation:
 			{
+				
+				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
 				if(p[1].value.netBool)	//bool bForward;
-					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
+					world.v[3].x = 2;
+					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
 				if(p[2].value.netBool)	//bool bBackward;
-					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
+						world.v[3].x = -2;
+					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
 				if(p[5].value.netBool)	//bool bStrafeRight;
-					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+						world.v[3].y = 2;
+					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 				if(p[6].value.netBool)	//bool bStrafeLeft;
-					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
-
-				//Oyster::Math::Float4x4 p;
-				Protocol_ObjectPosition op;//(c.GetPlayer()->GetRigidBody(), c.GetPlayer()->GetID());
-				//op.object_ID = c.GetPlayer()->GetID();
-				Send(op.GetProtocol());
+						world.v[3].y = -2;
+					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+				
+				Protocol_ObjectPosition res(world, 0);
+				Send(res.GetProtocol());
+				
+				
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:

@@ -23,7 +23,8 @@ namespace DanBias
 	{
 	Oyster::Network::NetworkClient* nwClient;
 	Client::GameClientState* gameClientState;
-	
+
+
 	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
 		int pType = p[0].value.netInt;
@@ -159,7 +160,7 @@ namespace DanBias
 
 		m_data->recieverObj = new MyRecieverObject;
 		
-	//	m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
+		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
 		m_data->recieverObj->nwClient->Connect(desc.port, desc.IP);
 
 		if (!m_data->recieverObj->nwClient->IsConnected())
