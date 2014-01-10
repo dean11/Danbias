@@ -23,6 +23,8 @@ Object::Object()
 	this->objectID = GID();
 
 	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
+
+	rigidBody->GetState(state);
 }
 
 Object::Object(void* collisionFunc, OBJECT_TYPE type)
@@ -40,6 +42,8 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	this->objectID = GID();
 
 	this->type = type;
+
+	rigidBody->GetState(state);
 }
 
 

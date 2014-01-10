@@ -16,7 +16,7 @@ struct Player::PrivateData
 		teamID = -1;
 		playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 
-		lookDir = Oyster::Math::Float4(1,0,0);
+		lookDir = Oyster::Math::Float4(1,0,0,0);
 	}
 
 	~PrivateData()
@@ -75,23 +75,23 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	state->ApplyLinearImpulse(myData->lookDir * 100);
+	state.ApplyLinearImpulse(myData->lookDir * 100);
 }
 void Player::MoveBackwards()
 {
-	state->ApplyLinearImpulse(-myData->lookDir * 100);
+	state.ApplyLinearImpulse(-myData->lookDir * 100);
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)myData->lookDir);
-	state->ApplyLinearImpulse(r * 100);
+	state.ApplyLinearImpulse(r * 100);
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float4 r = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)myData->lookDir);
-	state->ApplyLinearImpulse(-r * 100);
+	state.ApplyLinearImpulse(-r * 100);
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &fireInput)
@@ -101,7 +101,7 @@ void Player::UseWeapon(const WEAPON_FIRE &fireInput)
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 {
-	//API::Instance().SetCenter(rigidBody,spawnPoint);
+
 	myData->life = 100;
 	myData->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	myData->lookDir = Oyster::Math::Float4(1,0,0);
@@ -109,7 +109,7 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 
 void Player::Jump()
 {
-	//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-Oyster::Math::Float3(0,1,0) * 100);
+	
 }
 
 bool Player::IsWalking()
@@ -127,8 +127,7 @@ bool Player::IsIdle()
 
 Oyster::Math::Float3 Player::GetPos()
 {
-	//return rigidBody->GetCenter();
-	return Oyster::Math::Float3(0,0,0);
+	return (Oyster::Math::Float3)state.GetCenterPosition();
 }
 
 Oyster::Math::Float3 Player::GetLookDir()

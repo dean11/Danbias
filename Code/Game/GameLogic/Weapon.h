@@ -34,8 +34,6 @@ namespace GameLogic
 		bool IsValidSocket(int socketID);
 
 		int GetCurrentSocketID();
-		
-
 
 	private:	
 		struct PrivateData;
