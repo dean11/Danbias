@@ -39,5 +39,6 @@ cbuffer PerFrame : register(b0)
 
 cbuffer PerModel : register(b1)
 {
-	matrix World;
+	matrix WV;
+	matrix WVP;
 }
