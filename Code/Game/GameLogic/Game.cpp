@@ -57,7 +57,7 @@ void Game::GetAllPlayerPos()
 
 Game::PlayerData Game::CreatePlayer()
 {
-	
+	return PlayerData();
 }
 
 void Game::CreateTeam()

@@ -54,6 +54,8 @@ namespace DanBias
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
 
+			static float capFrame;
+
 		private:
 			static DanBiasGamePrivateData* m_data;
 

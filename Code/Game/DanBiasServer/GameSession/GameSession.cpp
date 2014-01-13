@@ -133,6 +133,14 @@ namespace DanBias
 			Send(p.GetProtocol());
 			Sleep(100);
 		}
+		if(GetAsyncKeyState(VK_DOWN))
+		{
+			Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
+			Protocol_CreateObject p(world, 2, "grdg");
+			//p.path = "../Content/crate";
+			Send(p.GetProtocol());
+			Sleep(100);
+		}
 	}
 	void GameSession::ParseEvents()
 	{
@@ -159,16 +167,16 @@ namespace DanBias
 				
 				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
 				if(p[1].value.netBool)	//bool bForward;
-					world.v[3].x = 2;
+					world.v[3].y = 2;
 					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
 				if(p[2].value.netBool)	//bool bBackward;
-						world.v[3].x = -2;
+						world.v[3].y = -2;
 					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
 				if(p[5].value.netBool)	//bool bStrafeRight;
-						world.v[3].y = 2;
+						world.v[3].x = -2;
 					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 				if(p[6].value.netBool)	//bool bStrafeLeft;
-						world.v[3].y = -2;
+						world.v[3].x = 2;
 					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
 				
 				Protocol_ObjectPosition res(world, 0);
