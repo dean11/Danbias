@@ -38,6 +38,26 @@ namespace
 					Float protoG_Magnitude = protoG.Dot( normal ),
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
+					Float deltaPos = normal.Dot(deuter->GetBoundingSphere().center - proto->GetBoundingSphere().center);
+
+					if( deltaPos < 0 )
+					{
+						if( protoG_Magnitude >= deuterG_Magnitude)
+						{
+							break;
+						}
+					}
+
+					if( deltaPos > 0 )
+					{
+						if( protoG_Magnitude <= deuterG_Magnitude)
+						{
+							break;
+						}
+					}
+
+					
+
 					// bounce
 					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
 																				   deuterState.GetMass(), deuterG_Magnitude,
@@ -51,7 +71,7 @@ namespace
 					proto->GetNormalAt( worldPointOfContact, normal );
 					protoG_Magnitude = protoG.Dot( normal ),
 					deuterG_Magnitude = deuterG.Dot( normal );
-					
+
 					// bounce
 					Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
 																				  protoState.GetMass(), protoG_Magnitude,
@@ -65,14 +85,14 @@ namespace
 					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
 					// FRICTION END
 
-					Float4 forwardedDeltaPos, forwardedDeltaAxis;
-					{ // @todo TODO: is this right?
-						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
-							   bounceLinearImpulse = bounce - bounceAngularImpulse;
-						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
-					}
+					//Float4 forwardedDeltaPos, forwardedDeltaAxis;
+					//{ // @todo TODO: is this right?
+					//	Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
+					//		   bounceLinearImpulse = bounce - bounceAngularImpulse;
+					//	proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
+					//}
 					
-					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
+					//protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}
