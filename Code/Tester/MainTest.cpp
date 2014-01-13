@@ -70,8 +70,11 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 	__int64 prevTimeStamp = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&prevTimeStamp);
 
+	std::string fps = "FPS:";
+	char count[100];
 	// Main message loop
 	MSG msg = {0};
+	float fpsCounter = 0;
 	while(WM_QUIT != msg.message)
 	{
 		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE) )
@@ -88,13 +91,20 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 			//render
 			Update(dt);
 			Render(dt);
-
+			fpsCounter += dt;
+			if(fpsCounter>0.1f)
+			{
+				sprintf_s(count, "%f",1/dt);
+				SetWindowTextA(g_hWnd, (fps + count).c_str());
+				fpsCounter = 0;
+			}
 			prevTimeStamp = currTimeStamp;
 		}
 	}
 
 	Oyster::Graphics::API::DeleteModel(m);
 	Oyster::Graphics::API::DeleteModel(m2);
+	Oyster::Graphics::API::DeleteModel(m3);
 	Oyster::Graphics::API::Clean();
 	return (int) msg.wParam;
 }
@@ -160,57 +170,25 @@ HRESULT InitDirect3D()
 	{
 		return E_FAIL;
 	}
-
-#pragma region Triangle
-	//Oyster::Graphics::Definitions::ObjVertex mesh[] =
-	//{
-	//	{Oyster::Math::Vector3(-1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
-	//	{Oyster::Math::Vector3(1,-1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
-	//	{Oyster::Math::Vector3(1,1,0),Oyster::Math::Vector2(0,0),Oyster::Math::Vector3(1,1,0)},
-	//};
-
-	//Oyster::Graphics::Buffer::BUFFER_INIT_DESC desc;
-	//desc.ElementSize= sizeof(Oyster::Graphics::Definitions::ObjVertex);
-	//desc.NumElements = 3;
-	//desc.InitData=mesh;
-	//desc.Type = Oyster::Graphics::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
-	//desc.Usage = Oyster::Graphics::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
-
-	//Oyster::Graphics::Buffer *b = new Oyster::Graphics::Buffer();;
-	//b->Init(desc);
-
-	////b.Apply(0);
-	//Oyster::Graphics::Render::ModelInfo* mi = new Oyster::Graphics::Render::ModelInfo();
-	//mi->Indexed = false;
-	//mi->VertexCount = 3;
-	//mi->Vertices = b;
 	
-	//m->info = mi;
-#pragma endregion
-	
-#pragma region Obj
 	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy");
 	m2 = Oyster::Graphics::API::CreateModel(L"worldDummy");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	m3 = Oyster::Graphics::API::CreateModel(L"worldDummy");
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
-#pragma endregion
 	
 
-	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
+	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,100);
 	Oyster::Graphics::API::SetProjection(P);
-	P.Invert();
 
-	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,5.4f));
-	//V = Oyster::Math3D::OrientationMatrix_LookAtPos(Oyster::Math::Float3(0,0,0), Oyster::Math::Float3(0,1,0), Oyster::Math::Float3(0,0,-5.4f));
-	//V.v[3][2] *= -1;
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,15.4f));
 	V = V.GetInverse();
 	
 
 	Oyster::Graphics::Definitions::Pointlight pl;
 	pl.Color = Oyster::Math::Float3(1,1,1);
 	pl.Bright = 1;
-	pl.Pos = Oyster::Math::Float3(0,0,5.4f);
+	pl.Pos = Oyster::Math::Float3(0,5,5.4f);
 	pl.Radius = 15;
 
 	Oyster::Graphics::API::AddLight(pl);
@@ -222,7 +200,7 @@ float angle = 0;
 HRESULT Update(float deltaTime)
 {
 
-	angle += Oyster::Math::pi/10000;
+	angle += Oyster::Math::pi/8 * deltaTime;
 	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-angle,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
 	m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
@@ -268,6 +246,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 		{
 			case VK_ESCAPE:
 				PostQuitMessage(0);
+				break;
+			//R
+			case 0x52:
+#ifdef _DEBUG
+				Oyster::Graphics::API::ReloadShaders();
+#endif
 				break;
 		}
 		break;

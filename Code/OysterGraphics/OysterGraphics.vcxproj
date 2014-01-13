@@ -182,7 +182,6 @@
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
     <ClCompile Include="Render\Rendering\BasicRender.cpp" />
     <ClCompile Include="Render\Resources\Deffered.cpp" />
-    <ClCompile Include="Render\Resources\Debug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Core.h" />
@@ -196,7 +195,6 @@
     <ClInclude Include="Render\Rendering\Render.h" />
     <ClInclude Include="Definitions\GraphicalDefinition.h" />
     <ClInclude Include="Render\Resources\Deffered.h" />
-    <ClInclude Include="Render\Resources\Debug.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\Misc.vcxproj">
@@ -218,6 +216,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\HLSL\Deffered Shaders\PostPass.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\HLSL\Deffered Shaders\VertexGatherData.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -268,6 +276,7 @@
     <None Include="Shader\HLSL\Deffered Shaders\GBufferHeader.hlsli" />
     <None Include="Shader\HLSL\Deffered Shaders\LightCalc.hlsli" />
     <None Include="Shader\HLSL\Deffered Shaders\PosManipulation.hlsli" />
+    <None Include="Shader\HLSL\Deffered Shaders\SSAO.hlsli" />
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
