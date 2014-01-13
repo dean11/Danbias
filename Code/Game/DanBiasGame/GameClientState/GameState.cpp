@@ -18,10 +18,16 @@ struct  GameState::myData
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
 
+	
+
 }privData;
 
 GameState::GameState(void)
 {
+	key_forward = false;
+	key_backward = false;
+	key_strafeRight = false;
+	key_strafeLeft = false;
 }
 
 
@@ -121,24 +127,53 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 
 			if(KeyInput->IsKeyPressed(DIK_W))
 			{
-				movePlayer.bForward = true;
-				send = true;
+
+				if(!key_forward)
+				{
+					movePlayer.bForward = true;
+					send = true;
+					key_forward = true;
+				}
 			}
+			else
+				key_forward = false;
+
 			if(KeyInput->IsKeyPressed(DIK_S))
 			{
-				movePlayer.bBackward = true;
-				send = true;
+				if(!key_backward)
+				{
+					movePlayer.bBackward = true;
+					send = true;
+					key_backward = true;
+				}
 			}
+			else 
+				key_backward = false;
+
 			if(KeyInput->IsKeyPressed(DIK_A))
 			{
-				movePlayer.bStrafeLeft = true;
-				send = true;
+				if(!key_strafeLeft)
+				{
+					movePlayer.bStrafeLeft = true;
+					send = true;
+					key_strafeLeft = true;
+				}
 			}
+			else 
+				key_strafeLeft = false;
+
 			if(KeyInput->IsKeyPressed(DIK_D))
 			{
-				movePlayer.bStrafeRight = true;
-				send = true;
+				if(!key_strafeRight)
+				{
+					movePlayer.bStrafeRight = true;
+					send = true;
+					key_strafeRight = true;
+				}
 			} 
+			else 
+				key_strafeRight = false;
+			
 
 			if (privData->nwClient->IsConnected() && send)
 			{

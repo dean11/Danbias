@@ -58,12 +58,7 @@ void Game::GetAllPlayerPos()
 
 Game::PlayerData Game::CreatePlayer()
 {
-	PlayerData data;
-	//Yo mammma
-	data.playerID = GID();
-	data.teamID = -1;
-
-	return data;
+	return PlayerData();
 }
 
 void Game::CreateTeam()
