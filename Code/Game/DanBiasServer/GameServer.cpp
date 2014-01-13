@@ -22,6 +22,7 @@ namespace DanBias
 {
 	using namespace Oyster::Network;
 
+	GameServer* GameServer::instance = 0;
 
 	void GameServer::NetworkCallback(NetworkClient* client)
 	{
@@ -38,7 +39,7 @@ namespace DanBias
 			desc.clients.Push(c);
 			desc.exitDestionation = this->mainLobby;
 			if((sessionId = GameSessionManager::AddSession(desc, true)) == 0)
-				printf("Failed to create a game session");
+				printf("Failed to create a game session\n");
 			myTest = true;
 			//myTest = new GameSession();
 			//
@@ -68,7 +69,7 @@ namespace DanBias
 		,	maxClients(0)
 		,	mainLobby(0)
 		,	server(0)
-	{ }
+	{ this->instance = this; }
 	GameServer::~GameServer()
 	{
 
@@ -89,7 +90,6 @@ namespace DanBias
 
 		if(!this->server->Init(serverDesc))								return DanBiasServerReturn_Error;
 		if(!WindowShell::CreateConsoleWindow())							return DanBiasServerReturn_Error;
-		//if(!WindowShell::CreateWin(WindowShell::WINDOW_INIT_DESC()))							return DanBiasServerReturn_Error;
 
 		this->initiated = true;
 		return DanBiasServerReturn_Sucess;
@@ -108,10 +108,9 @@ namespace DanBias
 		{
 			if(!WindowShell::Frame())	break;
 
-			
 			this->mainLobby->Frame();
 
-			if(GetAsyncKeyState(0x51))
+			if(GetAsyncKeyState(0x51))	//Q for exit
 				break;
 		}
 
@@ -126,6 +125,11 @@ namespace DanBias
 		delete this->server;
 		this->released = true;
 		return DanBiasServerReturn_Sucess;
+	}
+
+	NetworkSession* GameServer::MainLobbyInstance()
+	{
+		return GameServer::instance->mainLobby;
 	}
 
 	bool GameServer::LoadIniFile(InitData& ini)

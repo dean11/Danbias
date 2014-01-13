@@ -21,6 +21,8 @@ namespace DanBias
 		DanBiasServerReturn Run();
 		DanBiasServerReturn Release();
 
+		static NetworkSession* MainLobbyInstance();
+
 	private:
 		//static void ClientConnectCallbackFunction(Oyster::Network::NetworkClient& connectedClient);
 		void NetworkCallback(Oyster::Network::NetworkClient* client) override;
@@ -31,6 +33,7 @@ namespace DanBias
 		int maxClients;
 		MainLobby *mainLobby;
 		Oyster::Network::NetworkServer *server;
+		static GameServer* instance;
 
 	private:
 		struct InitData

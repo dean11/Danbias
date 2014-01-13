@@ -1,3 +1,6 @@
+/////////////////////////////////////////
+// Created by [Dennis Andersen] [2013] //
+/////////////////////////////////////////
 #ifndef DANBIASGAME_DANBIASGAME_H
 #define DANBIASGAME_DANBIASGAME_H
 

@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Player.h"
 #include "Level.h"
+#include <GID.h>
 
 using namespace GameLogic;
 
@@ -57,7 +58,12 @@ void Game::GetAllPlayerPos()
 
 Game::PlayerData Game::CreatePlayer()
 {
-	
+	PlayerData data;
+	//Yo mammma
+	data.playerID = GID();
+	data.teamID = -1;
+
+	return data;
 }
 
 void Game::CreateTeam()

@@ -72,10 +72,10 @@ using namespace Utility::DynamicMemory;
 		~RefData()  
 		{ 
 			//threadWaitFunctionLock.lock();
-				Terminate(true); 
+				Terminate(); 
 			//threadWaitFunctionLock.unlock();
 		}
-		OYSTER_THREAD_ERROR Terminate(bool wait)
+		OYSTER_THREAD_ERROR Terminate()
 		{
 			if(!threadData) return OYSTER_THREAD_ERROR_SUCCESS;
 
@@ -129,12 +129,12 @@ using namespace Utility::DynamicMemory;
 			data = new RefData();
 			return data->Create(fnc, worker, start, detach);
 		}
-		OYSTER_THREAD_ERROR Terminate(bool wait)
+		OYSTER_THREAD_ERROR Terminate()
 		{
 			if(!data) 
 				return OYSTER_THREAD_ERROR_FAILED;
 
-			return data->Terminate(wait);
+			return data->Terminate();
 		}
 	};
 
@@ -256,9 +256,9 @@ OYSTER_THREAD_ERROR OysterThread::Start()
 
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
-OYSTER_THREAD_ERROR OysterThread::Stop(bool wait)
+OYSTER_THREAD_ERROR OysterThread::Stop()
 {
-	return this->Terminate(wait);
+	return this->Terminate();
 }
 OYSTER_THREAD_ERROR OysterThread::Pause()
 {
@@ -297,9 +297,9 @@ OYSTER_THREAD_ERROR OysterThread::SetWorker(ThreadFnc worker)
 
 	return OYSTER_THREAD_ERROR_SUCCESS;;
 }
-OYSTER_THREAD_ERROR OysterThread::Terminate(bool wait)
+OYSTER_THREAD_ERROR OysterThread::Terminate()
 {
-	return this->privateData->Terminate(wait);
+	return this->privateData->Terminate();
 }
 OYSTER_THREAD_ERROR OysterThread::Wait()
 {
