@@ -126,7 +126,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 TangentialLinearMomentum( const ::Oyster::Math::Float3 &angularMomentum, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return angularMomentum.Cross( worldOffset );
+			return angularMomentum.Cross( worldOffset ) /= worldOffset.Dot( worldOffset );
 		}
 
 		/******************************************************************
@@ -135,7 +135,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 TangentialLinearMomentum( const ::Oyster::Math::Float4x4 &momentOfInertia, const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return TangentialLinearMomentum( AngularMomentum(momentOfInertia, angularVelocity), worldOffset );
+			return TangentialLinearMomentum( AngularMomentum(momentOfInertia, angularVelocity), worldOffset ) /= worldOffset.Dot( worldOffset );
 		}
 
 		/******************************************************************
@@ -144,7 +144,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 TangentialImpulseForce( const ::Oyster::Math::Float3 &impulseTorque, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return impulseTorque.Cross( worldOffset );
+			return impulseTorque.Cross( worldOffset ) /= worldOffset.Dot( worldOffset );
 		}
 
 		/******************************************************************
@@ -207,7 +207,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 TangentialLinearVelocity( const ::Oyster::Math::Float3 &angularVelocity, const ::Oyster::Math::Float3 &worldOffset )
 		{
-			return angularVelocity.Cross( worldOffset );
+			return angularVelocity.Cross( worldOffset ) /= worldOffset.Dot( worldOffset );
 		}
 
 		/******************************************************************
