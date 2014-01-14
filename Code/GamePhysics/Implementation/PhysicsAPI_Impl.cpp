@@ -38,6 +38,27 @@ namespace
 					Float protoG_Magnitude = protoG.Dot( normal ),
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
+					// if they are not relatively moving towards eachother, there is no collision
+					Float deltaPos = normal.Dot( deuterState.GetCenterPosition() - protoState.GetCenterPosition() );
+					if( deltaPos < 0.0f )
+					{
+						if( protoG_Magnitude >= deuterG_Magnitude )
+						{
+							break;
+						}
+					}
+					else if( deltaPos > 0.0f )
+					{
+						if( protoG_Magnitude <= deuterG_Magnitude )
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+
 					// bounce
 					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
 																				   deuterState.GetMass(), deuterG_Magnitude,
