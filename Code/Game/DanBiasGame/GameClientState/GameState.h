@@ -16,7 +16,12 @@ class GameState : public GameClientState
 		gameStateState_end,
 	};
 private:
-	
+
+	bool key_forward;
+	bool key_backward;
+	bool key_strafeRight;
+	bool key_strafeLeft;
+
 	struct myData;
 	myData* privData;
 public:

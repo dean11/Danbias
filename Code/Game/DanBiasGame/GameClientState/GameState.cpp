@@ -18,10 +18,16 @@ struct  GameState::myData
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
 
+	
+
 }privData;
 
 GameState::GameState(void)
 {
+	key_forward = false;
+	key_backward = false;
+	key_strafeRight = false;
+	key_strafeLeft = false;
 }
 
 
@@ -60,6 +66,8 @@ bool GameState::LoadModels(std::wstring mapFile)
 	ModelInitData modelData;
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
+	modelData.world = modelData.world * translate;
 	modelData.visible = true;
 	modelData.modelPath = L"..\\Content\\worldDummy";
 	modelData.id = 0;
@@ -68,7 +76,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"..\\Content\\worldDummy";
 	modelData.id ++;
@@ -121,24 +129,53 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 
 			if(KeyInput->IsKeyPressed(DIK_W))
 			{
-				movePlayer.bForward = true;
-				send = true;
+
+				if(!key_forward)
+				{
+					movePlayer.bForward = true;
+					send = true;
+					key_forward = true;
+				}
 			}
+			else
+				key_forward = false;
+
 			if(KeyInput->IsKeyPressed(DIK_S))
 			{
-				movePlayer.bBackward = true;
-				send = true;
+				if(!key_backward)
+				{
+					movePlayer.bBackward = true;
+					send = true;
+					key_backward = true;
+				}
 			}
+			else 
+				key_backward = false;
+
 			if(KeyInput->IsKeyPressed(DIK_A))
 			{
-				movePlayer.bStrafeLeft = true;
-				send = true;
+				if(!key_strafeLeft)
+				{
+					movePlayer.bStrafeLeft = true;
+					send = true;
+					key_strafeLeft = true;
+				}
 			}
+			else 
+				key_strafeLeft = false;
+
 			if(KeyInput->IsKeyPressed(DIK_D))
 			{
-				movePlayer.bStrafeRight = true;
-				send = true;
+				if(!key_strafeRight)
+				{
+					movePlayer.bStrafeRight = true;
+					send = true;
+					key_strafeRight = true;
+				}
 			} 
+			else 
+				key_strafeRight = false;
+			
 
 			if (privData->nwClient->IsConnected() && send)
 			{
@@ -227,21 +264,21 @@ void GameState::Protocol( ObjPos* pos )
 	}
 }
 
-void GameState::Protocol( NewObj* pos )
+void GameState::Protocol( NewObj* newObj )
 {
 
 	Oyster::Math::Float4x4 world;
 	for(int i = 0; i<16; i++)
 	{
-		world[i] = pos->worldPos[i];
+		world[i] = newObj->worldPos[i];
 	}
 	ModelInitData modelData;
 
 	modelData.world = world;
 	modelData.visible = true;
-	modelData.id = pos->object_ID;
+	modelData.id = newObj->object_ID;
 	//not sure if this is good parsing rom char* to wstring
-	const char* path = pos->path;
+	const char* path = newObj->path;
 	modelData.modelPath = std::wstring(path, path + strlen(path));  
 	// load models
 	C_Object* player = new C_Player();

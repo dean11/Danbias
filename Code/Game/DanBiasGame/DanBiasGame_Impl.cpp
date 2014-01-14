@@ -142,6 +142,7 @@ namespace DanBias
 
 
 	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
+	float DanBiasGame::capFrame = 0;
 
 	//--------------------------------------------------------------------------------------
 	// Interface API functions
@@ -186,10 +187,16 @@ namespace DanBias
 			float dt = (float)m_data->timer->getElapsedSeconds();
 			m_data->timer->reset();
 
-			if(Update(dt) != S_OK)
-				return DanBiasClientReturn_Error;
-			if(Render(dt) != S_OK)
-				return DanBiasClientReturn_Error;
+			capFrame += dt;
+			if(capFrame > 0.03)
+			{
+				if(Update(dt) != S_OK)
+					return DanBiasClientReturn_Error;
+				if(Render(dt) != S_OK)
+					return DanBiasClientReturn_Error;
+				capFrame = 0; 
+			}
+
 		}
 		return DanBiasClientReturn_Sucess;
 	}

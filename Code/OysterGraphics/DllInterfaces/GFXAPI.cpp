@@ -6,6 +6,7 @@
 #include "../FileLoader/ObjReader.h"
 #include "../../Misc/Resource/OysterResource.h"
 #include "../FileLoader/GeneralLoader.h"
+#include <vld.h>
 
 namespace Oyster
 {
@@ -26,12 +27,6 @@ namespace Oyster
 			{
 				return API::Fail;
 			}
-#ifdef _DEBUG
-			if(Render::Resources::Debug::Init() == Core::Init::Fail)
-			{
-				return API::Fail;
-			}
-#endif
 			Render::Resources::Deffered::Init();
 
 			Render::Preparations::Basic::SetViewPort();
@@ -62,12 +57,12 @@ namespace Oyster
 
 		void API::RenderScene(Model::Model models[], int count)
 		{
-			Render::Rendering::Basic::RenderScene(models,count);
+			Render::Rendering::Basic::RenderScene(models,count, View, Projection);
 		}
 
 		void API::RenderModel(Model::Model& m)
 		{
-			Render::Rendering::Basic::RenderScene(&m,1);
+			Render::Rendering::Basic::RenderScene(&m,1, View, Projection);
 		}
 
 		void API::EndFrame()
@@ -103,10 +98,6 @@ namespace Oyster
 			SAFE_DELETE(Core::viewPort);
 			Oyster::Resource::OysterResource::Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();
-
-#ifdef _DEBUG
-			Oyster::Graphics::Render::Resources::Debug::Clean();
-#endif
 			Oyster::Graphics::Render::Resources::Deffered::Clean();
 
 			SAFE_RELEASE(Core::depthStencil);
@@ -128,5 +119,13 @@ namespace Oyster
 		{
 			Lights.clear();
 		}
+
+#ifdef _DEBUG
+		API::State API::ReloadShaders()
+		{
+			Render::Resources::Deffered::InitShaders();
+			return State::Sucsess;
+		}
+#endif
 	}
 }

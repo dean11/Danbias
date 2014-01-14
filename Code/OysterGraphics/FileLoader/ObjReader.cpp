@@ -3,31 +3,16 @@
 #include "..\Core\Core.h"
 #include <fstream>
 #include <map>
+#include <vld.h>
 
 using namespace std;
 using namespace Oyster::FileLoaders;
 using namespace Oyster;
 using namespace Oyster::Math;
 
-ObjReader *ObjReader::LoadFile(std::wstring fileName, Oyster::Math::Float4x4 transform)
+void ObjReader::LoadFile(std::wstring fileName, Oyster::Math::Float4x4 transform)
 {
-	static std::map<std::wstring, ObjReader *> cache;
-
-	ObjReader *reader = NULL;
-
-	if (cache.count(fileName))
-	{
-		reader = cache[fileName];
-	}
-	else
-	{
-		reader = new ObjReader();
-		reader->ParseFile(fileName + L".obj", transform);
-
-		cache[fileName] = reader;
-	}
-
-	return reader;
+		this->ParseFile(fileName + L".obj", transform);
 }
 
 ObjReader::ObjReader(void)
@@ -37,6 +22,7 @@ ObjReader::ObjReader(void)
 
 ObjReader::~ObjReader(void)
 {
+	SAFE_DELETE_ARRAY(this->vertices);
 }
 
 void ObjReader::ParseFile(std::wstring fileName, Float4x4 transform)
@@ -50,7 +36,6 @@ void ObjReader::ParseFile(std::wstring fileName, Float4x4 transform)
 	}
 
 	wstring path;
-	//Utility::String::ExtractDirPath(path,fileName,'\\');
 
 	std::vector<Vertex> VertexList;
 	std::vector<Float3> vList;
@@ -74,6 +59,7 @@ void ObjReader::ParseFile(std::wstring fileName, Float4x4 transform)
 			if(c==L"v")
 			{
 				position = readVertex(offset,s);
+				//position *= 0.001f;
 				vList.push_back(position);
 			}
 			else if(c==L"vt")
