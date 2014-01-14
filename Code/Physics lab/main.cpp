@@ -75,7 +75,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		light.Pos = Float3(0.0f, 5.0f, 10.0f);
 		light.Radius = 100.0f;
 		light.Color = Float3( 1.0f );
-		light.Bright = 1.0f;
+		light.Bright = 5.0f;
 	}
 	Graphics::API::AddLight( light );
 
@@ -96,7 +96,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		descCrate.centerPosition = Float4( -2.5, 0.0f, 0.0f, 1.0f );
 		crate[0].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
 
-		descCrate.centerPosition = Float4( 2.5, 0.0f, 0.0f, 1.0f );
+		descCrate.centerPosition = Float4( 2.5, -0.5f, -0.5f, 1.0f );
 		crate[1].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
 
 		for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
