@@ -52,8 +52,15 @@ namespace Oyster
 					data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderV, -1, ForceReload);
 					if(data)
 					{
-						VSMap[name] = VS.size();
-						VS.push_back((ID3D11VertexShader*)data);
+						if(ForceReload && VSMap.count(name))
+						{
+							VS[VSMap[name]] = (ID3D11VertexShader*)data;
+						}
+						else
+						{
+							VSMap[name] = VS.size();
+							VS.push_back((ID3D11VertexShader*)data);
+						}
 					}
 				}
 				break;
@@ -63,8 +70,16 @@ namespace Oyster
 				{
 					if(data!=0)
 					{
-						HSMap[name] = HS.size();
-						HS.push_back((ID3D11HullShader*)data);
+						if(ForceReload && HSMap.count(name))
+						{
+							HS[HSMap[name]] = (ID3D11HullShader*)data;
+						}
+						else
+						{
+							HSMap[name] = HS.size();
+							HS.push_back((ID3D11HullShader*)data);
+						}
+						
 					}
 				}
 				break;
@@ -74,8 +89,15 @@ namespace Oyster
 				{
 					if(data!=0)
 					{
-						DSMap[name] = DS.size();
-						DS.push_back((ID3D11DomainShader*)data);
+						if(ForceReload && DSMap.count(name))
+						{
+							DS[DSMap[name]] = (ID3D11DomainShader*)data;
+						}
+						else
+						{
+							DSMap[name] = DS.size();
+							DS.push_back((ID3D11DomainShader*)data);
+						}
 					}
 				}
 				break;
@@ -85,8 +107,15 @@ namespace Oyster
 				{
 					if(data!=0)
 					{
-						GSMap[name] = GS.size();
-						GS.push_back((ID3D11GeometryShader*)data);
+						if(ForceReload && GSMap.count(name))
+						{
+							GS[GSMap[name]] = (ID3D11GeometryShader*)data;
+						}
+						else
+						{
+							GSMap[name] = GS.size();
+							GS.push_back((ID3D11GeometryShader*)data);
+						}
 					}
 				}
 				break;
@@ -96,8 +125,15 @@ namespace Oyster
 				{
 					if(data!=0)
 					{
-						PSMap[name] = PS.size();
-						PS.push_back((ID3D11PixelShader*)data);
+						if(ForceReload && PSMap.count(name))
+						{
+							PS[PSMap[name]] = (ID3D11PixelShader*)data;
+						}
+						else
+						{
+							PSMap[name] = PS.size();
+							PS.push_back((ID3D11PixelShader*)data);
+						}
 					}
 				}
 				break;
@@ -107,8 +143,16 @@ namespace Oyster
 				{
 					if(data!=0)
 					{
-						CSMap[name] = CS.size();
-						CS.push_back((ID3D11ComputeShader*)data);
+						if(ForceReload && CSMap.count(name))
+						{
+							CS[CSMap[name]] = (ID3D11ComputeShader*)data;
+						}
+						else
+						{
+							CSMap[name] = CS.size();
+							CS.push_back((ID3D11ComputeShader*)data);
+						}
+						
 					}
 				}
 				break;
@@ -375,9 +419,9 @@ namespace Oyster
 
 		void Core::PipelineManager::CleanPipeline()
 		{
-			deviceContext->VSSetShaderResources(0,16,Core::srvNULL);
-			deviceContext->GSSetShaderResources(0,16,Core::srvNULL);
-			deviceContext->PSSetShaderResources(0,16,Core::srvNULL);
+			//deviceContext->VSSetShaderResources(0,16,Core::srvNULL);
+			//deviceContext->GSSetShaderResources(0,16,Core::srvNULL);
+			//deviceContext->PSSetShaderResources(0,16,Core::srvNULL);
 			deviceContext->CSSetShaderResources(0,16,Core::srvNULL);
 			deviceContext->CSSetUnorderedAccessViews(0,8,Core::uavNULL,NULL);
 			deviceContext->OMSetRenderTargets(8,Core::rtvNULL, NULL);

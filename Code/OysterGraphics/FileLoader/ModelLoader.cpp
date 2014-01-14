@@ -39,11 +39,12 @@ void Oyster::Graphics::Loading::UnloadTexture(void* data)
 
 void Oyster::Graphics::Loading::LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out)
 {
-	FileLoaders::ObjReader* obj = FileLoaders::ObjReader::LoadFile(filename);
+	FileLoaders::ObjReader obj;
+	obj.LoadFile(filename);
 	Model::ModelInfo* info = new Model::ModelInfo();
 	Oyster::FileLoaders::ObjReader::Vertex* vdata;
 	int count;
-	obj->GetVertexData(&vdata, count);
+	obj.GetVertexData(&vdata, count);
 	info->Vertices = new Core::Buffer();
 	Core::Buffer::BUFFER_INIT_DESC desc;
 	desc.ElementSize = sizeof(FileLoaders::ObjReader::Vertex);

@@ -20,6 +20,12 @@ namespace Oyster
 				Oyster::Math::Matrix P;
 			};
 
+			struct PerModel
+			{
+				Math::Matrix WV;
+				Math::Matrix WVP;
+			};
+
 			struct FinalVertex
 			{
 				Oyster::Math::Float3 pos;
@@ -34,9 +40,10 @@ namespace Oyster
 			struct LightConstants
 			{
 				Math::Float4x4 InvProj;
+				Math::Float4x4 Proj;
 				Math::Float2 Pixels;
 				int Lights;
-				float Pad;
+				float SSAORadius;
 				Oyster::Math::Float4x4 View;
 			};
 
