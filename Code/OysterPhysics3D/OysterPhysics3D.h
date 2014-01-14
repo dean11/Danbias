@@ -63,7 +63,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float4 TangentialLinearMomentum( const ::Oyster::Math::Float4 &angularMomentum, const ::Oyster::Math::Float4 &worldOffset )
 		{
-			return ::Oyster::Math::Float4( angularMomentum.xyz.Cross(worldOffset.xyz), 0.0f );
+			return ::Oyster::Math::Float4( angularMomentum.xyz.Cross(worldOffset.xyz), 0.0f ) /= worldOffset.Dot( worldOffset );
 		}
 
 		/******************************************************************

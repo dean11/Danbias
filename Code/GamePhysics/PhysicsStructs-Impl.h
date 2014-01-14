@@ -147,7 +147,9 @@ namespace Oyster
 			inline ::Oyster::Math::Float4 CustomBodyState::GetLinearMomentum( const ::Oyster::Math::Float4 &at ) const
 			{
 				//return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, at - this->centerPos ); // C3083 error?
-				return this->linearMomentum + ::Oyster::Math::Float4( this->angularMomentum.xyz.Cross((at - this->centerPos).xyz), 0.0f );
+				
+				::Oyster::Math::Float4 offset = at - this->centerPos;
+				return this->linearMomentum + ( ::Oyster::Math::Float4(this->angularMomentum.xyz.Cross(offset.xyz), 0.0f) /= offset.Dot(offset) );
 			}
 
 			inline const ::Oyster::Math::Float4 & CustomBodyState::GetAngularMomentum() const
