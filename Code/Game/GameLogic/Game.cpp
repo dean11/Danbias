@@ -1,9 +1,11 @@
 #include "Game.h"
 #include "Player.h"
 #include "Level.h"
+#include <DynamicArray.h>
 #include <GID.h>
 
 using namespace GameLogic;
+using namespace Utility::DynamicMemory;
 
 struct Game::PrivateData
 {
@@ -16,9 +18,9 @@ struct Game::PrivateData
 	{
 		
 	}
-
-	Player **players;
-	Level *level;
+	//DynamicArray<SmartPointer<Player>> players;
+	DynamicArray<SmartPointer<PlayerData>> players;
+	SmartPointer<Level> level;
 
 }myData;
 
@@ -36,14 +38,10 @@ Game::~Game(void)
 	}
 }
 
-void Game::MovePlayer(int playerID, const PLAYER_MOVEMENT &movement)
-{
-	
-}
 
 void Game::PlayerUseWeapon(int playerID, const WEAPON_FIRE &Usage)
 {
-	
+
 }
 
 void Game::GetPlayerPos(int playerID)
@@ -58,7 +56,9 @@ void Game::GetAllPlayerPos()
 
 Game::PlayerData Game::CreatePlayer()
 {
-	return PlayerData();
+	SmartPointer<Player> newPlayer = new Player();
+
+	myData->players.Push(newPlayer);
 }
 
 void Game::CreateTeam()

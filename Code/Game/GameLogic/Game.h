@@ -10,44 +10,50 @@
 
 namespace GameLogic
 {
-	class DANBIAS_GAMELOGIC_DLL Game
+	class Player;
+	class Game
 	{
 	
 	public:
 		struct PlayerData
 		{
+		private:
+			friend class Game;
+			Player *player;
+			
+
+		public:
+
 			int playerID;
 			int teamID;
 
-			PlayerData()
-			{
-				playerID = 0;
-				teamID = 0;
-			}
 
-			PlayerData(int playerID,int teamID)
-			{
-				this->playerID = playerID;
-				this->teamID = teamID;
-				
-			}
+			PlayerData();
+
+			PlayerData(int playerID,int teamID);
+
 
 			~PlayerData()
 			{
 			
 			}
+
+			/********************************************************
+			* Moves the chosen player based on input
+			* @param playerID: ID of the player you want to recieve the message
+			* @param movement: enum value on what kind of action is to be taken
+			********************************************************/
+			void MovePlayer(const PLAYER_MOVEMENT &movement);
+
+
 		};
 
 	public:
 		Game(void);
 		~Game(void);
 
-		/********************************************************
-		* Moves the chosen player based on input
-		* @param playerID: ID of the player you want to recieve the message
-		* @param movement: enum value on what kind of action is to be taken
-		********************************************************/
-		void MovePlayer(int playerID, const PLAYER_MOVEMENT &movement);
+		
+		
 		
 		/********************************************************
 		* Uses the chosen players weapon based on input
