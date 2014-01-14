@@ -34,8 +34,9 @@ namespace GameLogic
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Int;
 									
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray; 
 			
-			for (int i = 2; i <= 17; i++)
+			for (int i = 3; i <= 18; i++)
 			{
 				this->protocol[i].type = Oyster::Network::NetAttributeType_Float;
 			}

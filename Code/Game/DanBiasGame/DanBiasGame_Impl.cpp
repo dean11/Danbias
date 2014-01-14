@@ -70,7 +70,6 @@ namespace DanBias
 
 				Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
 				protocolData->object_ID = p[1].value.netInt;
-				char k = p[2].value.netChar;
 				protocolData->path = p[2].value.netCharPtr;
 				for(int i = 0; i< 16; i++)
 				{
