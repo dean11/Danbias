@@ -2,6 +2,7 @@
 #define PHYSICS_STRUCTS_IMPL_H
 
 #include "PhysicsStructs.h"
+#include "OysterPhysics3D.h"
 
 namespace Oyster 
 { 
@@ -146,10 +147,7 @@ namespace Oyster
 
 			inline ::Oyster::Math::Float4 CustomBodyState::GetLinearMomentum( const ::Oyster::Math::Float4 &at ) const
 			{
-				//return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, at - this->centerPos ); // C3083 error?
-				
-				::Oyster::Math::Float4 offset = at - this->centerPos;
-				return this->linearMomentum + ( ::Oyster::Math::Float4(this->angularMomentum.xyz.Cross(offset.xyz), 0.0f) /= offset.Dot(offset) );
+				return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, at - this->centerPos );
 			}
 
 			inline const ::Oyster::Math::Float4 & CustomBodyState::GetAngularMomentum() const
@@ -214,11 +212,9 @@ namespace Oyster
 				if( tensor.GetDeterminant() != 0.0f )
 				{ // sanity block!
 					::Oyster::Math::Float4x4 rotation = ::Oyster::Math3D::RotationMatrix(this->angularAxis.xyz);
-					//::Oyster::Math::Float4 w = ::Oyster::Physics3D::Formula::AngularVelocity( (rotation * this->inertiaTensor).GetInverse(), this->angularMomentum ); // C3083 error?
-					::Oyster::Math::Float4 w = (rotation * this->inertiaTensor).GetInverse() * this->angularMomentum;
+					::Oyster::Math::Float4 w = ::Oyster::Physics3D::Formula::AngularVelocity( (rotation * this->inertiaTensor).GetInverse(), this->angularMomentum );
 					this->inertiaTensor = tensor;
-					//this->angularMomentum = ::Oyster::Physics3D::Formula::AngularMomentum( rotation * tensor, w ); // C3083 error?
-					this->angularMomentum = rotation * tensor * w;
+					this->angularMomentum = ::Oyster::Physics3D::Formula::AngularMomentum( rotation * tensor, w );
 				}
 			}
 		
@@ -307,10 +303,10 @@ namespace Oyster
 
 			inline void CustomBodyState::ApplyImpulse( const ::Oyster::Math::Float4 &j, const ::Oyster::Math::Float4 &at, const ::Oyster::Math::Float4 &normal )
 			{
-				//::Oyster::Math::Float4 tangentialImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, at - this->centerPos ); // C3083 error?
-				::Oyster::Math::Float4 tangentialImpulse = ::Oyster::Math::Float4( (at - this->centerPos).xyz.Cross(j.xyz), 0.0f );
-				this->linearImpulse += j - tangentialImpulse;
-				this->angularImpulse += tangentialImpulse;
+				::Oyster::Math::Float4 offset = at - this->centerPos;
+				::Oyster::Math::Float4 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
+				this->linearImpulse += j - ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
+				this->angularImpulse += deltaAngularImpulse;
 
 				this->isDisturbed = true;
 			}
