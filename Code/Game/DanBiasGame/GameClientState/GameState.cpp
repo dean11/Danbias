@@ -66,6 +66,8 @@ bool GameState::LoadModels(std::wstring mapFile)
 	ModelInitData modelData;
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
+	modelData.world = modelData.world * translate;
 	modelData.visible = true;
 	modelData.modelPath = L"..\\Content\\worldDummy";
 	modelData.id = 0;
@@ -74,7 +76,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"..\\Content\\worldDummy";
 	modelData.id ++;
@@ -262,21 +264,21 @@ void GameState::Protocol( ObjPos* pos )
 	}
 }
 
-void GameState::Protocol( NewObj* pos )
+void GameState::Protocol( NewObj* newObj )
 {
 
 	Oyster::Math::Float4x4 world;
 	for(int i = 0; i<16; i++)
 	{
-		world[i] = pos->worldPos[i];
+		world[i] = newObj->worldPos[i];
 	}
 	ModelInitData modelData;
 
 	modelData.world = world;
 	modelData.visible = true;
-	modelData.id = pos->object_ID;
+	modelData.id = newObj->object_ID;
 	//not sure if this is good parsing rom char* to wstring
-	const char* path = pos->path;
+	const char* path = newObj->path;
 	modelData.modelPath = std::wstring(path, path + strlen(path));  
 	// load models
 	C_Object* player = new C_Player();
