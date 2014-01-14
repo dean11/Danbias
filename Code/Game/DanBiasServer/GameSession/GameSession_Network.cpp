@@ -4,7 +4,7 @@
 #include "GameSession.h"
 #include "GameClient.h"
 
-#include <GameProtocols.h>
+#include <Protocols.h>
 #include <PostBox\PostBox.h>
 #include <GameLogicStates.h>
 #include <Windows.h>

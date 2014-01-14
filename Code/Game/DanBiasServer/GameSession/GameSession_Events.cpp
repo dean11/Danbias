@@ -4,7 +4,7 @@
 #include "GameSession.h"
 #include "GameClient.h"
 
-#include <GameProtocols.h>
+#include <Protocols.h>
 #include <PostBox\PostBox.h>
 #include <GameLogicStates.h>
 #include <OysterMath.h>
@@ -64,16 +64,16 @@ namespace DanBias
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
-					
+				
 			break;
 			case protocol_Gameplay_PlayerPosition:
-					
+				
 			break;
 			case protocol_Gameplay_CreateObject:
-					
+				
 			break;
 			case protocol_Gameplay_ObjectPosition:
-					
+				
 			break;
 		}
 	}

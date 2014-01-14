@@ -5,7 +5,7 @@
 #include "GameClient.h"
 #include "..\LobbySessions\NetworkSession.h"
 #include <Game.h>
-#include <GameProtocols.h>
+#include <Protocols.h>
 
 using namespace Utility::DynamicMemory;
 using namespace DanBias;

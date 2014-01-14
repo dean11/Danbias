@@ -5,7 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
-#include <GameProtocols.h>
+#include <Protocols.h>
 #include "NetworkClient.h"
 
 #include "../WindowManager/WindowShell.h"
