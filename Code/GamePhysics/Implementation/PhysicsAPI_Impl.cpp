@@ -94,9 +94,6 @@ namespace
 					}
 					
 					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
-
-					/////// Dan below / Robin Above
-
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}
