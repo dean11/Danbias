@@ -68,7 +68,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 	Graphics::API::Option settings;
 	//settings.
 	Graphics::API::SetOptions( settings );
-	Graphics::API::SetProjection( ProjectionMatrix_Perspective(100.0f, 1280.0f/720.0f, 0.01f, 1000.0f) );
+	Graphics::API::SetProjection( ProjectionMatrix_Perspective( Value::Radian(100.0f), 1280.0f/720.0f, 0.01f, 1000.0f) );
 
 	Graphics::Definitions::Pointlight light;
 	{
