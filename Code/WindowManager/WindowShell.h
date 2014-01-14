@@ -32,7 +32,7 @@ public:
 		{
 			parent				= 0;
 			hInstance			= NULL;
-			windowName			= L"おはよう";
+			windowName			= L"Window";
 			windowSize.x		= 800;
 			windowSize.y		= 600;
 			windowPosition.x	= 0;

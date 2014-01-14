@@ -17,7 +17,6 @@ GameClient::GameClient(SmartPointer<LobbyClient> client, Game::PlayerData player
 {
 	this->callbackValue = value;
 	this->client = client;
-	//this->player = new GameLogic::Player();
 	this->id = gameClientIDCount++;
 	this->player = player;
 	Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> c;
@@ -32,7 +31,6 @@ GameClient::~GameClient()
 	this->player.playerID = 0;
 	this->player.teamID = 0;
 	this->id = -1;
-	//this->player.Release();
 }
 
 void GameClient::SetCallback(Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
@@ -40,10 +38,6 @@ void GameClient::SetCallback(Oyster::Callback::OysterCallback<void, NetworkSessi
 	this->callbackValue = value;
 }
 
-//GameLogic::Player* GameClient::GetPlayer()
-//{
-//	return this->player.Get();
-//}
 GameLogic::Game::PlayerData* GameClient::GetPlayer()
 {
 	return &this->player;

@@ -145,8 +145,11 @@ namespace DanBias
 		{
 			for (int i = 0; i < this->clients.Size(); i++)
 			{
-				s->Attach(this->clients[i]->ReleaseClient());
-				RemoveClient(this->clients[i]);
+				if(this->clients[i])
+				{
+					s->Attach(this->clients[i]->ReleaseClient());
+					RemoveClient(this->clients[i]);
+				}
 			}
 		}
 	}
