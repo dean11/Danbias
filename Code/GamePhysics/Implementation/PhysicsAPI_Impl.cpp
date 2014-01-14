@@ -54,6 +54,10 @@ namespace
 							break;
 						}
 					}
+					else
+					{
+						break;
+					}
 
 					// bounce
 					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
