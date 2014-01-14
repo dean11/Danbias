@@ -278,7 +278,7 @@ namespace Oyster { namespace Physics3D
 			/** @todo TODO: add MomentOfInertia tensor formulas */
 			inline ::Oyster::Math::Float CalculateSphere( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius )
 			{
-				return (2.0f/5.0f)*mass*radius*radius;
+				return ::Utility::Value::Radian( 2.0f / 5.0f ) * mass * radius * radius;
 			}
 
 			inline ::Oyster::Math::Float4x4 Sphere( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius )
@@ -293,7 +293,7 @@ namespace Oyster { namespace Physics3D
 
 			inline ::Oyster::Math::Float CalculateHollowSphere( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius )
 			{
-				return (2.0f/3.0f)*mass*radius*radius;
+				return ::Utility::Value::Radian( 2.0f / 3.0f ) * mass * radius * radius;
 			}
 
 			inline ::Oyster::Math::Float4x4 HollowSphere( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius )
@@ -308,38 +308,38 @@ namespace Oyster { namespace Physics3D
 
 			inline ::Oyster::Math::Float CalculateCuboidX( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float depth )
 			{
-				return (1.0f/12.0f)*mass*(height*height + depth*depth);
+				return ::Utility::Value::Radian( 1.0f / 12.0f ) * mass * (height * height + depth * depth);
 			}
 
 			inline ::Oyster::Math::Float CalculateCuboidY( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth )
 			{
-				return (1.0f/12.0f)*mass*(width*width + depth*depth);
+				return ::Utility::Value::Radian( 1.0f / 12.0f ) * mass * (width * width + depth * depth );
 			}
 
 			inline ::Oyster::Math::Float CalculateCuboidZ( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float width, const ::Oyster::Math::Float height )
 			{
-				return (1.0f/12.0f)*mass*(height*height + width*width);
+				return ::Utility::Value::Radian( 1.0f / 12.0f ) * mass * (height * height + width * width );
 			}
 
 			inline ::Oyster::Math::Float4x4 Cuboid( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float width, const ::Oyster::Math::Float depth )
 			{
 				::Oyster::Math::Float4x4 inertia = ::Oyster::Math::Float4x4::identity;
-				inertia.m[0][0] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCuboidX( mass , height, depth );
-				inertia.m[1][1] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCuboidY( mass , width, depth  );
-				inertia.m[2][2] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCuboidZ( mass , height, width );
+				inertia.m[0][0] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCuboidX( mass, height, depth );
+				inertia.m[1][1] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCuboidY( mass, width, depth );
+				inertia.m[2][2] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCuboidZ( mass, height, width );
 
 				return inertia;
 			}
 
 			inline ::Oyster::Math::Float CalculateRodCenter( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length )
 			{
-				return (1.0f/12.0f)*mass*(length*length);
+				return ::Utility::Value::Radian( 1.0f / 12.0f ) * mass * length * length;
 			}
 
 			inline ::Oyster::Math::Float4x4 RodCenter( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float length )
 			{
 				::Oyster::Math::Float4x4 inertia = ::Oyster::Math::Float4x4::identity;
-				inertia.m[0][0] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateRodCenter( mass , length );
+				inertia.m[0][0] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateRodCenter( mass, length );
 				inertia.m[1][1] = inertia.m[0][0];
 				inertia.m[2][2] = inertia.m[0][0];
 
@@ -348,20 +348,20 @@ namespace Oyster { namespace Physics3D
 
 			inline ::Oyster::Math::Float CalculateCylinderXY( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius )
 			{
-				return (1.0f/12.0f)*mass*(3.0f*radius*radius + height*height);
+				return ::Utility::Value::Radian( 1.0f / 12.0f ) * mass * ( 3.0f * radius * radius + height * height );
 			}
 
 			inline ::Oyster::Math::Float CalculateCylinderZ( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius )
 			{
-				return 0.5f*mass*(radius*radius);
+				return ::Utility::Value::Radian( 0.5f ) * mass * ( radius * radius );
 			}
 			
 			inline ::Oyster::Math::Float4x4 Cylinder( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float height, const ::Oyster::Math::Float radius )
 			{
 				::Oyster::Math::Float4x4 inertia = ::Oyster::Math::Float4x4::identity;
-				inertia.m[0][0] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCylinderXY( mass , height, radius );
+				inertia.m[0][0] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCylinderXY( mass, height, radius );
 				inertia.m[1][1] = inertia.m[0][0];
-				inertia.m[2][2] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCylinderZ( mass , radius );
+				inertia.m[2][2] = ::Oyster::Physics3D::Formula::MomentOfInertia::CalculateCylinderZ( mass, radius );
 
 				return inertia;
 			}
