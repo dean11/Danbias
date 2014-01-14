@@ -12,112 +12,13 @@
 #include "L_inputClass.h"
 #include "WinTimer.h"
 #include "vld.h"
+#include "GameClientRecieverFunc.h"
 
 namespace DanBias
 {
 
 #pragma region Game Data
 
-
-	struct MyRecieverObject :public Oyster::Network::ProtocolRecieverObject
-	{
-	Oyster::Network::NetworkClient* nwClient;
-	Client::GameClientState* gameClientState;
-
-
-	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
-	{
-		int pType = p[0].value.netInt;
-		switch (pType)
-		{
-		case protocol_General_Status:
-			{
-				GameLogic::Protocol_General_Status::States state;
-				state =  (GameLogic::Protocol_General_Status::States)p[1].value.netShort;
-
-			}
-			break;
-		case protocol_Gameplay_PlayerNavigation:
-			{
-				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
-				for(int i = 0; i< 6; i++)
-				{
-					protocolData->key[i] = p[i+1].value.netBool;
-				}
-
-				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-				delete protocolData;
-				protocolData = NULL;
-			}
-			break;
-		case protocol_Gameplay_PlayerPosition:
-			{
-				Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
-				for(int i = 0; i< 3; i++)
-				{
-					protocolData->playerPos[i] = p[i].value.netFloat;
-				}
-				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-				delete protocolData;
-				protocolData = NULL;
-			}
-			break;
-
-		case protocol_Gameplay_CreateObject:
-			{
-
-				Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
-				protocolData->object_ID = p[1].value.netInt;
-				protocolData->path = p[2].value.netCharPtr;
-				for(int i = 0; i< 16; i++)
-				{
-					protocolData->worldPos[i] = p[i+3].value.netFloat;
-				}
-
-				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-
-				delete protocolData;
-				protocolData = NULL;
-			}
-			break;
-		case protocol_Gameplay_RemoveObject:
-			{
-				Client::GameClientState::RemoveObj* protocolData = new Client::GameClientState::RemoveObj;
-				protocolData->object_ID = p[1].value.netInt;
-
-				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-
-				delete protocolData;
-				protocolData = NULL;
-			}
-			break;
-		case protocol_Gameplay_ObjectPosition:
-			{
-
-				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
-				protocolData->object_ID = p[1].value.netInt;
-				for(int i = 0; i< 16; i++)
-				{
-					protocolData->worldPos[i] = p[i+2].value.netFloat;
-				}
-
-				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-			
-				delete protocolData;
-				protocolData = NULL;
-			}
-			break;
-
-		default:
-			break;
-		}	
-	}
-	};
 	class DanBiasGamePrivateData
 	{
 
@@ -135,7 +36,7 @@ namespace DanBias
 		WindowShell* window;
 		InputClass* inputObj;
 		Utility::WinTimer* timer;
-		MyRecieverObject* recieverObj;
+		GameRecieverObject* recieverObj;
 
 	} data;
 #pragma endregion
@@ -159,7 +60,7 @@ namespace DanBias
 		if( FAILED( InitInput() ) )
 			return DanBiasClientReturn_Error;
 
-		m_data->recieverObj = new MyRecieverObject;
+		m_data->recieverObj = new GameRecieverObject;
 		
 		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
 		m_data->recieverObj->nwClient->Connect(desc.port, desc.IP);
