@@ -86,14 +86,14 @@ namespace
 					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
 					// FRICTION END
 
-					Float4 forwardedDeltaPos, forwardedDeltaAxis;
-					{ // @todo TODO: is this right?
-						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
-							   bounceLinearImpulse = bounce - bounceAngularImpulse;
-						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
-					}
+//					Float4 forwardedDeltaPos, forwardedDeltaAxis;
+//					{ // @todo TODO: is this right?
+//						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
+//							   bounceLinearImpulse = bounce - bounceAngularImpulse;
+//						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
+//					}
 					
-					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
+//					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}
