@@ -4,14 +4,13 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "GameLogicStates.h"
-#include "GameLogicDef.h"
 #include "OysterMath.h"
 #include "Object.h"
 
 
 namespace GameLogic
 {
-	class DANBIAS_GAMELOGIC_DLL Player : public Object
+	class Player : public Object
 	{
 
 	public:

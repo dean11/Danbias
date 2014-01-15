@@ -1,10 +1,16 @@
+/////////////////////////////////////////////////////////////////////
+// Created by [Erik Persson] [2013]
+/////////////////////////////////////////////////////////////////////
+
 #ifndef GAME_H
 #define GAME_H
 
+#include "GameLogicDef.h"
 #include "GameLogicStates.h"
+
 namespace GameLogic
 {
-	class Game
+	class DANBIAS_GAMELOGIC_DLL Game
 	{
 	
 	public:

@@ -1,3 +1,6 @@
+/////////////////////////////////////////
+// Created by [Dennis Andersen] [2013] //
+/////////////////////////////////////////
 #ifndef DANBIASSERVER_ADMIN_INTERFACE_H
 #define DANBIASSERVER_ADMIN_INTERFACE_H
 

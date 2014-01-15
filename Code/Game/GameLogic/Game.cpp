@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Player.h"
 #include "Level.h"
+#include <GID.h>
 
 using namespace GameLogic;
 

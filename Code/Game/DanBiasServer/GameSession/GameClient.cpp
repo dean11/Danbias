@@ -4,16 +4,21 @@
 
 #include "GameClient.h"
 #include "..\LobbySessions\NetworkSession.h"
-#include <GameProtocols.h>
+#include <Game.h>
+#include <Protocols.h>
 
 using namespace Utility::DynamicMemory;
 using namespace DanBias;
+using namespace GameLogic;
 
-GameClient::GameClient(SmartPointer<LobbyClient> client, Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
+static int gameClientIDCount = 1;
+
+GameClient::GameClient(SmartPointer<LobbyClient> client, Game::PlayerData player, Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
 {
 	this->callbackValue = value;
 	this->client = client;
-	this->player = new GameLogic::Player();
+	this->id = gameClientIDCount++;
+	this->player = player;
 	Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> c;
 	c.callbackType = Oyster::Callback::CallbackType_Object;
 	c.value = this;
@@ -22,8 +27,10 @@ GameClient::GameClient(SmartPointer<LobbyClient> client, Oyster::Callback::Oyste
 }
 GameClient::~GameClient()
 {
-	this->client->Disconnect();
-	this->player.Release();
+	if(this->client) this->client->Disconnect();
+	this->player.playerID = 0;
+	this->player.teamID = 0;
+	this->id = -1;
 }
 
 void GameClient::SetCallback(Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
@@ -31,15 +38,31 @@ void GameClient::SetCallback(Oyster::Callback::OysterCallback<void, NetworkSessi
 	this->callbackValue = value;
 }
 
-GameLogic::Player* GameClient::GetPlayer()
+GameLogic::Game::PlayerData* GameClient::GetPlayer()
 {
-	return this->player.Get();
+	return &this->player;
 }
-LobbyClient* GameClient::GetClient()
+GameLogic::Game::PlayerData GameClient::ReleasePlayer()
+{
+	GameLogic::Game::PlayerData temp = this->player;
+	this->player.playerID = 0;
+	this->player.teamID = 0;
+	return temp;
+}
+LobbyClient* GameClient::GetClient() const
 {
 	return this->client;
 }
-
+Utility::DynamicMemory::SmartPointer<LobbyClient> GameClient::ReleaseClient()
+{
+	SmartPointer<LobbyClient> temp = this->client;
+	this->client = 0;
+	return temp;
+}
+int GameClient::GetID() const
+{
+	return this->id;
+}
 void GameClient::ObjectCallback(NetworkSession::NetEvent e)
 {
 	e.gameClient = this;

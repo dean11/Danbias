@@ -292,7 +292,8 @@ namespace Utility
 
 				this->_ptr = p;
 
-				if(p) this->_rc->Incref();
+				if(p)	this->_rc->Incref();
+				else	this->_rc = 0;
 			}
 			return *this;
 		}

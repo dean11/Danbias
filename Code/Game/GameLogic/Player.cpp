@@ -132,7 +132,7 @@ Oyster::Math::Float3 Player::GetPos()
 
 Oyster::Math::Float3 Player::GetLookDir()
 {
-	return myData->lookDir;
+	return myData->lookDir.xyz;
 }
 
 int Player::GetTeamID()

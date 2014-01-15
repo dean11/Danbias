@@ -1,3 +1,6 @@
+/////////////////////////////////////////
+// Created by [Dennis Andersen] [2013] //
+/////////////////////////////////////////
 #ifndef DANBIASSERVER_INETWORKSESSION_H
 #define DANBIASSERVER_INETWORKSESSION_H
 

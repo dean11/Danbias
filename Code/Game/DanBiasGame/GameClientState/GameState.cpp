@@ -2,7 +2,7 @@
 #include "DllInterfaces/GFXAPI.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
-#include <GameProtocols.h>
+#include <Protocols.h>
 #include "NetworkClient.h"
 
 
