@@ -273,6 +273,22 @@ namespace Oyster { namespace Physics3D
 			return momentOfInertia * angularImpulseAcceleration;
 		}
 
+		/******************************************************************
+		 * @todo TODO: doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float ForceField( ::Oyster::Math::Float g, ::Oyster::Math::Float massA, ::Oyster::Math::Float massB, ::Oyster::Math::Float radiusSquared )
+		{
+			return g * massA * massB / radiusSquared;
+		}
+
+		/******************************************************************
+		 * @todo TODO: doc
+		 ******************************************************************/
+		inline ::Oyster::Math::Float ForceField( ::Oyster::Math::Float g, ::Oyster::Math::Float massA, ::Oyster::Math::Float massB, const ::Oyster::Math::Float4 &deltaPos )
+		{
+			return g * massA * massB / deltaPos.Dot( deltaPos );
+		}
+
 		namespace MomentOfInertia
 		{ /// Library of Formulas to calculate moment of inerta for simple shapes
 			/** @todo TODO: add MomentOfInertia tensor formulas */
