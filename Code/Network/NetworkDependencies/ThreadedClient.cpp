@@ -4,6 +4,7 @@
 #include <iostream>
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
+using namespace Utility::Container;
 using namespace Utility::DynamicMemory;
 
 ThreadedClient::ThreadedClient()

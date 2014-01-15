@@ -211,5 +211,14 @@ int Connection::InitiateSocket()
 		return WSAGetLastError();
 	}
 
+	int flag = 1;
+	int result = setsockopt(this->socket,		/* socket affected */
+							IPPROTO_TCP,		/* set option at TCP level */
+							TCP_NODELAY,		/* name of option */
+							(char *) &flag,		/* the cast is historical cruft */
+							sizeof(int));		/* length of option value */
+	if (result < 0)
+		return -1;
+
 	return 0;
 }

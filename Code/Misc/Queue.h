@@ -1,11 +1,7 @@
-#ifndef THREAD_SAFE_QUEUE_H
-#define THREAD_SAFE_QUEUE_H
+#ifndef MISC_QUEUE_H
+#define MISC_QUEUE_H
 
 ////////////////////////////////////////////
-// Thread safe queue implemented 
-// with single linked list and template.
-// uses mutex to lock the queue
-// otherwise its a standard queue
 // Created by Sam Svensson 2013  
 /////////////////////////////////////////////
 
@@ -16,11 +12,11 @@ namespace Utility
 	namespace Container
 	{
 		template <typename Type>
-		class ThreadSafeQueue : public IQueue<Type>
+		class Queue : public IQueue<Type>
 		{
 		public:
-			ThreadSafeQueue<Type>();
-			virtual ~ThreadSafeQueue<Type>();
+			Queue<Type>();
+			virtual ~Queue<Type>();
 
 			virtual void Push( Type item );
 			virtual Type Pop();
@@ -45,7 +41,6 @@ namespace Utility
 			Node *front;
 			Node *back;
 			int nrOfNodes;
-			std::mutex stdMutex;
 		};
 
 		
@@ -56,7 +51,7 @@ namespace Utility
 		//----------------------------------------------
 
 		template < typename Type >
-		ThreadSafeQueue<Type>::ThreadSafeQueue()
+		Queue<Type>::Queue()
 		{
 			this->front = NULL;
 			this->back = NULL;
@@ -65,11 +60,9 @@ namespace Utility
 		}
 
 		template < typename Type >
-		ThreadSafeQueue<Type>::~ThreadSafeQueue()
+		Queue<Type>::~Queue()
 		{
 			if(!nrOfNodes) return;
-
-			stdMutex.lock();
 
 			if(this->front != NULL)
 			{
@@ -87,15 +80,12 @@ namespace Utility
 				this->front = NULL;
 				this->back = NULL;
 			}
-
-			stdMutex.unlock();
 		}
 
 
 		template < typename Type >
-		void ThreadSafeQueue<Type>::Push(Type item)
+		void Queue<Type>::Push(Type item)
 		{
-			stdMutex.lock();
 			Node *e = new Node(item);
 
 			if(this->front != NULL)
@@ -111,15 +101,11 @@ namespace Utility
 			}
 
 			this->nrOfNodes++;
-
-			stdMutex.unlock();
 		}
 
 		template < typename Type >
-		Type ThreadSafeQueue<Type>::Pop()
+		Type Queue<Type>::Pop()
 		{
-			stdMutex.lock();
-			
 			Type item = this->front->item;
 			Node *destroyer = this->front;
 			this->front = front->next;
@@ -133,65 +119,47 @@ namespace Utility
 				this->back = NULL;
 			}
 
-			stdMutex.unlock();
 			return item;
 		}
 
 		template < typename Type >
-		Type ThreadSafeQueue<Type>::Front()
+		Type Queue<Type>::Front()
 		{
-			stdMutex.lock();
 			Type temp = this->front->item;
-			stdMutex.unlock();
 			
 			return temp;
 			
 		}
 
 		template < typename Type >
-		Type ThreadSafeQueue<Type>::Back()
+		Type Queue<Type>::Back()
 		{
-			stdMutex.lock();
 			Type temp = this->back->item;
-			stdMutex.unlock();
-
 			return temp;
-			
 		}
 
 		template < typename Type >
-		int ThreadSafeQueue<Type>::Size()
+		int Queue<Type>::Size()
 		{
-			stdMutex.lock();
 			int size = this->nrOfNodes;
-			stdMutex.unlock();
-
 			return size;
 
 		}
 
 		template < typename Type >
-		bool ThreadSafeQueue<Type>::IsEmpty()
+		bool Queue<Type>::IsEmpty()
 		{
-			stdMutex.lock();
 			if(nrOfNodes == 0 || this->front == NULL)
 			{
-				stdMutex.unlock();
 				return true;
 			}
 			
-			else
-			{
-				stdMutex.unlock();
-			}
-
 			return false;
 		}
 
 		template < typename Type >
-		void ThreadSafeQueue<Type>::Swap(IQueue<Type> &queue )
+		void Queue<Type>::Swap(IQueue<Type> &queue )
 		{
-			stdMutex.lock();
 			int prevNrOfNodes = this->nrOfNodes;
 			int size = queue.Size();
 
@@ -204,7 +172,6 @@ namespace Utility
 			{
 				queue.Push(this->Pop());
 			}
-			stdMutex.unlock();
 		}		
 
 

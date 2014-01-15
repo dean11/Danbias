@@ -19,10 +19,6 @@ namespace DanBias
 {
 	bool GameSession::DoWork(  )
 	{
-		this->gameInstance.NewFrame();
-
-		this->ParseEvents();
-
 		if(GetAsyncKeyState(VK_UP))
 		{
 			Protocol_General_Status p(Protocol_General_Status::States_ready);
@@ -30,7 +26,29 @@ namespace DanBias
 			Sleep(100);
 		}
 
+		this->ParseEvents();
+
+		this->gameInstance.NewFrame();
+
+		this->UpdateGameObjects();
+
 		return this->isRunning;
+	}
+
+	void GameSession::UpdateGameObjects()
+	{
+		while(!this->modifiedClient.IsEmpty())
+		{
+			//There is something that needs update
+			GameSessionEvent e = this->modifiedClient.Pop();
+			
+			switch (e.value)
+			{
+				case GameSessionEvent::EventType_Player:
+					//e.data.player->GetOrientation();
+				break;
+			}
+		}
 	}
 
 }//End namespace DanBias

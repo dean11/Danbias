@@ -16,15 +16,13 @@ Object::Object()
 	//sbDesc.centerPosition = 
 
 	//poi
-	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
 	//rigidBody->gameObjectRef = this;
 
 	this->objectID = GID();
 
 	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
-
-	rigidBody->GetState(state);
 }
 
 Object::Object(void* collisionFunc, OBJECT_TYPE type)
@@ -42,8 +40,6 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	this->objectID = GID();
 
 	this->type = type;
-
-	rigidBody->GetState(state);
 }
 
 
@@ -52,11 +48,11 @@ Object::~Object(void)
 
 }
 
-OBJECT_TYPE Object::GetType()
+OBJECT_TYPE Object::GetType() const
 {
 	return this->type;
 }
-int Object::GetID()
+int Object::GetID() const
 {
 	return this->objectID;
 }

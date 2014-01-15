@@ -12,6 +12,7 @@
 #include <PostBox\IPostBox.h>
 #include <Thread\OysterThread.h>
 #include <Game.h>
+#include <Queue.h>
 
 namespace DanBias
 {
@@ -28,6 +29,19 @@ namespace DanBias
 			std::wstring mapName;
 			NetworkSession* owner;
 			Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<LobbyClient>> clients;
+		};
+		
+		struct GameSessionEvent
+		{
+			union EventData
+			{
+				GameLogic::Game::PlayerData* player;
+			} data;
+			enum EventType
+			{
+				EventType_Player,
+				EventType_DynamicObject,
+			} value;
 		};
 
 	public:
@@ -74,6 +88,8 @@ namespace DanBias
 		void SendToOwner(DanBias::GameClient* obj);
 		//Do a cleanup on all the private data
 		void Clean();
+		//Update game objects if needed
+		void UpdateGameObjects();
 
 		//Private member variables
 	private:
@@ -83,9 +99,9 @@ namespace DanBias
 		Oyster::Thread::OysterThread worker;
 		GameLogic::Game gameInstance;
 		NetworkSession* owner;
-		Utility::WinTimer timer;
 		bool isCreated;
 		bool isRunning;
+		Utility::Container::Queue<GameSessionEvent> modifiedClient;
 
 	private:
 		friend class AdminInterface;

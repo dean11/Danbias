@@ -7,76 +7,77 @@
 
 #include "GameLogicDef.h"
 #include "GameLogicStates.h"
+#include <OysterMath.h>
 
 namespace GameLogic
 {
 	class Player;
-	class Game
+	class DANBIAS_GAMELOGIC_DLL Game
 	{
 	
 	public:
-		struct PlayerData
+		struct DANBIAS_GAMELOGIC_DLL PlayerData
 		{
 		private:
 			friend class Game;
 			Player *player;
-			
-
-		public:
-
-			int playerID;
-			int teamID;
-
-
 			PlayerData();
-
 			PlayerData(int playerID,int teamID);
-
-
-			~PlayerData()
-			{
+			~PlayerData();
 			
-			}
-
+		public:
 			/********************************************************
 			* Moves the chosen player based on input
 			* @param playerID: ID of the player you want to recieve the message
 			* @param movement: enum value on what kind of action is to be taken
 			********************************************************/
-			void MovePlayer(const PLAYER_MOVEMENT &movement);
+			void Move(const PLAYER_MOVEMENT &movement);
 
+			/********************************************************
+			* Uses the chosen players weapon based on input
+			* @param playerID: ID of the player you want to recieve the message
+			* @param Usage: enum value on what kind of action is to be taken
+			********************************************************/
+			void UseWeapon(int playerID, const WEAPON_FIRE &Usage);
 
+			/********************************************************
+			* Gets players position
+			* @param playerID: ID of the player whos position you want
+			********************************************************/
+			Oyster::Math::Float3 GetPosition();
+
+			/********************************************************
+			* Gets players current orientation
+			* @param playerID: ID of the player whos position you want
+			********************************************************/
+			Oyster::Math::Float4x4 GetOrientation();
+
+			/********************************************************
+			* Check player state
+			* @return The current player state
+			********************************************************/
+			PLAYER_STATE GetState() const;
+
+			/***/
+			int GetID() const;
+
+			/***/
+			int GetTeamID() const;
 		};
 
 	public:
 		Game(void);
 		~Game(void);
 
-		
-		
-		
-		/********************************************************
-		* Uses the chosen players weapon based on input
-		* @param playerID: ID of the player you want to recieve the message
-		* @param Usage: enum value on what kind of action is to be taken
-		********************************************************/
-		void PlayerUseWeapon(int playerID, const WEAPON_FIRE &Usage);
-
-		/********************************************************
-		* Gets a specific players position
-		* @param playerID: ID of the player whos position you want
-		********************************************************/
-		void GetPlayerPos(int playerID);
-
 		/********************************************************
 		* Gets the position of all players currently in the game
 		********************************************************/
-		void GetAllPlayerPos();
+		void GetAllPlayerPositions() const;
 
 		/********************************************************
 		* Creates a player and returns PlayerData containing ID of the player
 		********************************************************/
-		PlayerData CreatePlayer();
+		PlayerData* CreatePlayer();
 
 		/********************************************************
 		* Creates a team
@@ -87,7 +88,6 @@ namespace GameLogic
 		* Runs a update of the gamelogic and physics
 		********************************************************/
 		void NewFrame();
-	
 	
 	private:
 		struct PrivateData;

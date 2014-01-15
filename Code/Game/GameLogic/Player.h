@@ -3,13 +3,18 @@
 //////////////////////////////////////////////////
 #ifndef PLAYER_H
 #define PLAYER_H
+
 #include "GameLogicStates.h"
 #include "OysterMath.h"
 #include "Object.h"
+#include "OysterMath.h"
+#include "CollisionManager.h"
+
 
 
 namespace GameLogic
 {
+	class Weapon;
 	class Player : public Object
 	{
 
@@ -45,18 +50,28 @@ namespace GameLogic
 		bool IsJumping();
 		bool IsIdle();
 
-		Oyster::Math::Float3 GetPos();
-		Oyster::Math::Float3 GetLookDir();
-		int GetTeamID();
+		Oyster::Math::Float3 GetPosition() const;
+		Oyster::Math::Float3 GetLookDir() const;
+		Oyster::Math::Float4x4 GetOrientation() const;
+		int GetTeamID() const;
+		PLAYER_STATE GetState() const;
 
 		void DamageLife(int damage);
 
-	private:
+		//Do frame calculations
+		void BeginFrame();
+		void EndFrame();
 
-		void Jump();
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+		void Jump();
+
+	private:
+		int life;
+		int teamID;
+		Weapon *weapon;
+		PLAYER_STATE playerState;
+		Oyster::Math::Float4 lookDir;
+
 	};
 }
 #endif

@@ -13,7 +13,7 @@ using namespace GameLogic;
 
 static int gameClientIDCount = 1;
 
-GameClient::GameClient(SmartPointer<LobbyClient> client, Game::PlayerData player, Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
+GameClient::GameClient(SmartPointer<LobbyClient> client, Game::PlayerData* player, Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
 {
 	this->callbackValue = value;
 	this->client = client;
@@ -28,8 +28,7 @@ GameClient::GameClient(SmartPointer<LobbyClient> client, Game::PlayerData player
 GameClient::~GameClient()
 {
 	if(this->client) this->client->Disconnect();
-	this->player.playerID = 0;
-	this->player.teamID = 0;
+	this->player = 0;
 	this->id = -1;
 }
 
@@ -40,13 +39,12 @@ void GameClient::SetCallback(Oyster::Callback::OysterCallback<void, NetworkSessi
 
 GameLogic::Game::PlayerData* GameClient::GetPlayer()
 {
-	return &this->player;
+	return this->player;
 }
-GameLogic::Game::PlayerData GameClient::ReleasePlayer()
+GameLogic::Game::PlayerData* GameClient::ReleasePlayer()
 {
-	GameLogic::Game::PlayerData temp = this->player;
-	this->player.playerID = 0;
-	this->player.teamID = 0;
+	GameLogic::Game::PlayerData *temp = this->player;
+	this->player =  0;
 	return temp;
 }
 LobbyClient* GameClient::GetClient() const

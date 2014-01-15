@@ -38,6 +38,10 @@ namespace DanBias
 
 	void GameSession::ParseGameplayEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
+		GameSessionEvent e;
+		e.data.player = c->GetPlayer();
+		e.value	= GameSessionEvent::EventType_Player;
+
 		switch (p[protocol_INDEX_ID].value.netShort)
 		{
 			case protocol_Gameplay_PlayerNavigation:
@@ -45,22 +49,17 @@ namespace DanBias
 				
 				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
 				if(p[1].value.netBool)	//bool bForward;
-					world.v[3].x = 2;
-					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
+					//world.v[3].x = 2;
+					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
 				if(p[2].value.netBool)	//bool bBackward;
-						world.v[3].x = -2;
-					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
+					//world.v[3].x = -2;
+					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
 				if(p[5].value.netBool)	//bool bStrafeRight;
-						world.v[3].y = 2;
-					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+					//world.v[3].y = 2;
+					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 				if(p[6].value.netBool)	//bool bStrafeLeft;
-						world.v[3].y = -2;
-					//c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
-				
-				Protocol_ObjectPosition res(world, 0);
-				Send(res.GetProtocol());
-				
-				
+					//world.v[3].y = -2;
+					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
@@ -76,6 +75,8 @@ namespace DanBias
 				
 			break;
 		}
+
+		this->modifiedClient.Push(e);
 	}
 
 	void GameSession::ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
