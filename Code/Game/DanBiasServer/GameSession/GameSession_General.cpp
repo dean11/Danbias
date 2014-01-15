@@ -93,7 +93,7 @@ namespace DanBias
 	{
 		if(dissconnectClients)
 		{
-			for (int i = 0; i < this->clients.Size(); i++)
+			for (unsigned int i = 0; i < this->clients.Size(); i++)
 			{
 				this->clients[i]->GetClient()->Disconnect();
 			}
@@ -143,7 +143,7 @@ namespace DanBias
 		}
 		else
 		{
-			for (int i = 0; i < this->clients.Size(); i++)
+			for (unsigned int i = 0; i < this->clients.Size(); i++)
 			{
 				if(this->clients[i])
 				{

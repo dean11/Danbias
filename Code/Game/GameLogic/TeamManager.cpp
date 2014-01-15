@@ -54,7 +54,7 @@ void TeamManager::RespawnPlayerRandom(Player *player)
 
 	Player *respawnOnThis = myData->teams[teamID]->GetPlayer(0);
 
-	player->Respawn(respawnOnThis->GetPos());
+	player->Respawn(respawnOnThis->GetPosition());
 }
 
 void TeamManager::CreateTeam(int teamSize)

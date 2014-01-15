@@ -19,8 +19,8 @@ namespace GameLogic
 		Object(void* collisionFunc, OBJECT_TYPE type);
 		~Object(void);
 
-		OBJECT_TYPE GetType();
-		int GetID();
+		OBJECT_TYPE GetType() const;
+		int GetID() const;
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 
@@ -29,7 +29,8 @@ namespace GameLogic
 		int objectID;
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
-		Oyster::Physics::ICustomBody::State state;
+		Oyster::Physics::ICustomBody::State setState;
+		Oyster::Physics::ICustomBody::State getState;
 
 	};
 

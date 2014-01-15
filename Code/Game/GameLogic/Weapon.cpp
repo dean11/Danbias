@@ -68,7 +68,7 @@ void Weapon::Use(const WEAPON_FIRE &fireInput)
 ********************************************************/
 bool Weapon::IsFireing()
 {
-	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_FIREING);
+	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_FIRING);
 }
 
 bool Weapon::IsIdle()
