@@ -5,8 +5,11 @@
 #include "Player.h"
 #include "PhysicsAPI.h"
 #include "TeamManager.h"
+#include "DynamicArray.h"
 
 using namespace GameLogic;
+using namespace Utility::DynamicMemory;
+
 
 struct Level::PrivateData
 {
@@ -18,17 +21,15 @@ struct Level::PrivateData
 	{
 	}
 
-	TeamManager *teamManager;
+	SmartPointer<TeamManager> teamManager;
 
-	StaticObject** staticObjects;
-	int nrOfStaticObjects;
+	DynamicArray<SmartPointer<StaticObject>> staticObjects;
+		
+	DynamicArray<SmartPointer<DynamicObject>> dynamicObjects;
 
-	DynamicObject** dynamicObjects;
-	int nrOfDynamicObjects;
+	SmartPointer<GameMode> gameMode;
 
-	GameMode* gameMode;
-
-	Oyster::Physics::ICustomBody *rigidBodyLevel;
+	SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
 
 }myData;
 
