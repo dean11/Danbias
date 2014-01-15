@@ -55,13 +55,15 @@ void Game::GetAllPlayerPos()
 
 Game::PlayerData Game::CreatePlayer()
 {
-<<<<<<< HEAD
-	SmartPointer<Player> newPlayer = new Player();
 
-	myData->players.Push(newPlayer);
-=======
+	//SmartPointer<Player> newPlayer = new Player();
+
+
+
+	//myData->players.Push(newPlayer);
+
 	return PlayerData();
->>>>>>> eb6ed13cceff0ce4380699391759883acf487107
+
 }
 
 void Game::CreateTeam()
