@@ -353,6 +353,26 @@ namespace Oyster
 				return *this;
 			}
 
+			inline bool GravityWell::operator == ( const GravityWell &gravity ) const
+			{
+				if( this->position == gravity.position )
+				if( this->mass == gravity.mass )
+				{
+					return true;
+				}
+				return false;
+			}
+
+			inline bool GravityWell::operator != ( const GravityWell &gravity ) const
+			{
+				if( this->position == gravity.position )
+				if( this->mass == gravity.mass )
+				{
+					return false;
+				}
+				return true;
+			}
+
 			inline GravityDirected::GravityDirected( )
 			{
 				this->impulse = ::Oyster::Math::Float3::null;
@@ -368,6 +388,16 @@ namespace Oyster
 				this->impulse = gravityDirected.impulse;
 
 				return *this;
+			}
+
+			inline bool GravityDirected::operator == ( const GravityDirected &gravity ) const
+			{
+				return this->impulse == gravity.impulse;
+			}
+
+			inline bool GravityDirected::operator != ( const GravityDirected &gravity ) const
+			{
+				return this->impulse != gravity.impulse;
 			}
 
 			inline GravityDirectedField::GravityDirectedField( )
@@ -391,6 +421,28 @@ namespace Oyster
 				this->magnitude				= gravityDirectedField.magnitude;
 
 				return *this;
+			}
+
+			inline bool GravityDirectedField::operator == ( const GravityDirectedField &gravity ) const
+			{
+				if( this->normalizedDirection == gravity.normalizedDirection )
+				if( this->mass == gravity.mass )
+				if( this->magnitude == gravity.magnitude )
+				{
+					return true;
+				}
+				return false;
+			}
+
+			inline bool GravityDirectedField::operator != ( const GravityDirectedField &gravity ) const
+			{
+				if( this->normalizedDirection == gravity.normalizedDirection )
+				if( this->mass == gravity.mass )
+				if( this->magnitude == gravity.magnitude )
+				{
+					return false;
+				}
+				return true;
 			}
 
 			inline Gravity::Gravity()
@@ -436,6 +488,36 @@ namespace Oyster
 				}
 
 				return *this;
+			}
+
+			inline bool Gravity::operator == ( const Gravity &gravity ) const
+			{
+				if( this->gravityType == gravity.gravityType )
+				{
+					switch( this->gravityType )
+					{
+					case GravityType_Well:			return this->well == gravity.well;
+					case GravityType_Directed:		return this->directed == gravity.directed;
+					case GravityType_DirectedField:	return this->directedField == gravity.directedField;
+					default: return true;
+					}
+				}
+				return false;
+			}
+
+			inline bool Gravity::operator != ( const Gravity &gravity ) const
+			{
+				if( this->gravityType == gravity.gravityType )
+				{
+					switch( this->gravityType )
+					{
+					case GravityType_Well:			return this->well != gravity.well;
+					case GravityType_Directed:		return this->directed != gravity.directed;
+					case GravityType_DirectedField:	return this->directedField != gravity.directedField;
+					default: return false;
+					}
+				}
+				return true;
 			}
 		}
 	} 
