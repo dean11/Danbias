@@ -98,6 +98,7 @@ void Game::NewFrame()
 	double dt = this->myData->timer.getElapsedSeconds();
 
 	//60 fps sec is currently staticly
+}
 
 	if(dt >= DELTA_TIME)
 	{
