@@ -60,7 +60,9 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float4 &	 GetAngularAxis() const;
 				  ::Oyster::Math::Float4x4	 GetRotation() const;
 				  ::Oyster::Math::Float4x4	 GetOrientation() const;
+				  ::Oyster::Math::Float4x4	 GetOrientation( const ::Oyster::Math::Float4 &offset ) const;
 				  ::Oyster::Math::Float4x4	 GetView() const;
+				  ::Oyster::Math::Float4x4	 GetView( const ::Oyster::Math::Float4 &offset ) const;
 			const ::Oyster::Math::Float4 &	 GetLinearMomentum() const;
 				  ::Oyster::Math::Float4	 GetLinearMomentum( const ::Oyster::Math::Float4 &at ) const;
 			const ::Oyster::Math::Float4 &	 GetAngularMomentum() const;
@@ -108,8 +110,77 @@ namespace Oyster { namespace Physics
 
 			bool isSpatiallyAltered, isDisturbed, isForwarded;
 		};
+
+		/**
+		###############################################################################
+		Can't define structs inside structs in a union therefor they are declared here.
+		###############################################################################
+		*/
+		struct GravityWell
+		{
+			::Oyster::Math::Float3 position;
+			::Oyster::Math::Float mass;
+
+			GravityWell( );
+			GravityWell( const GravityWell &gravityWell );
+			GravityWell& operator=( const GravityWell &gravityWell );
+		};
+
+		struct GravityDirected
+		{
+			::Oyster::Math::Float3 impulse;
+
+			GravityDirected( );
+			GravityDirected( const GravityDirected &gravityDirected );
+			GravityDirected & operator = ( const GravityDirected &gravityDirected );
+		};
+
+		struct GravityDirectedField
+		{
+			::Oyster::Math::Float3 normalizedDirection;
+			::Oyster::Math::Float mass;
+			::Oyster::Math::Float magnitude;
+
+			GravityDirectedField( );
+			GravityDirectedField( const GravityDirectedField &gravityDirectedField );
+			GravityDirectedField & operator=( const GravityDirectedField &gravityDirectedField );
+		};
+
+		struct Gravity
+		{
+			enum GravityType
+			{
+				GravityType_Undefined		= -1,
+				GravityType_Well			= 0,
+				GravityType_Directed		= 1,
+				GravityType_DirectedField	= 2,
+			} gravityType;
+
+			union
+			{
+				struct
+				{
+					GravityWell well;
+				};
+
+				struct
+				{
+					GravityDirected directed;
+				};
+
+				struct
+				{
+					GravityDirectedField directedField;
+				};
+			};
+
+			Gravity( );
+			Gravity( const Gravity &gravity );
+			Gravity & operator = ( const Gravity &gravity );
+		};
 	}
 } }
+
 
 #include "PhysicsStructs-Impl.h"
 
