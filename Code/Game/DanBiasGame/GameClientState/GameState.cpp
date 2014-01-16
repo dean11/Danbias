@@ -85,6 +85,15 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
+	modelData.world = modelData.world * translate;
+	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.id ++;
+
+	obj = new C_DynamicObj();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
+
 
 	return true;
 }
@@ -260,7 +269,13 @@ void GameState::Protocol( ObjPos* pos )
 	for (int i = 0; i < privData->object.size(); i++)
 	{
 		if(privData->object[i]->GetId() == pos->object_ID)
+		{
 			privData->object[i]->setPos(world);
+
+			//privData->view = world;
+			//privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
+			
+		}
 	}
 }
 

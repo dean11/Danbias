@@ -61,9 +61,8 @@ namespace DanBias
 					//world.v[3].y = -2;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
 
-				Oyster::Math::Float4x4 world = 	c->GetPlayer()->GetOrientation();
-				Protocol_ObjectPosition p(world, 1);
-				Send(p.GetProtocol());
+				
+
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
@@ -78,6 +77,8 @@ namespace DanBias
 			case protocol_Gameplay_ObjectPosition:
 				
 			break;
+
+
 		}
 
 		this->modifiedClient.Push(e);

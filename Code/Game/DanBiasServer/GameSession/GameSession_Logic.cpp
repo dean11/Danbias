@@ -34,6 +34,8 @@ namespace DanBias
 			Sleep(100);
 		}
 
+
+		
 		this->ParseEvents();
 
 		this->gameInstance.NewFrame();
@@ -56,6 +58,15 @@ namespace DanBias
 					//e.data.player->GetOrientation();
 				break;
 			}
+
+		}
+
+		if(clients.Size() == 1)
+		{
+			Oyster::Math::Float4x4 world = 	this->clients[0]->GetPlayer()->GetOrientation();
+			Protocol_ObjectPosition p(world, 1);
+			Send(p.GetProtocol());
+			Sleep(100);
 		}
 	}
 

@@ -18,6 +18,9 @@ Object::Object()
 	//poi
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
+
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
+
 	//rigidBody->gameObjectRef = this;
 
 	this->objectID = GID();
@@ -32,6 +35,8 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 
 	//poi
 	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
 	
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
 
