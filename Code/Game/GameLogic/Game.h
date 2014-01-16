@@ -38,7 +38,7 @@ namespace GameLogic
 			* @param playerID: ID of the player you want to recieve the message
 			* @param Usage: enum value on what kind of action is to be taken
 			********************************************************/
-			void UseWeapon(int playerID, const WEAPON_FIRE &Usage);
+			void UseWeapon(int playerID, const WEAPON_FIRE &usage);
 
 			/********************************************************
 			* Gets players position
@@ -65,6 +65,19 @@ namespace GameLogic
 			int GetTeamID() const;
 		};
 
+		struct DANBIAS_GAMELOGIC_DLL LevelData
+		{
+		private:
+			friend class Game;
+			Level *level;
+			LevelData();
+			~LevelData();
+			
+		public:
+
+			
+		};
+
 	public:
 		Game(void);
 		~Game(void);
@@ -75,9 +88,14 @@ namespace GameLogic
 		void GetAllPlayerPositions() const;
 
 		/********************************************************
-		* Creates a player and returns PlayerData containing ID of the player
+		* Creates a player and returns PlayerData
 		********************************************************/
 		PlayerData* CreatePlayer();
+
+		/********************************************************
+		* Creates a level and returns LevelData
+		********************************************************/
+		LevelData* CreateLevel();
 
 		/********************************************************
 		* Creates a team

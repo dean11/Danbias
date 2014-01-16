@@ -123,7 +123,10 @@ namespace Oyster { namespace Physics
 
 			GravityWell( );
 			GravityWell( const GravityWell &gravityWell );
-			GravityWell& operator=( const GravityWell &gravityWell );
+			GravityWell & operator = ( const GravityWell &gravityWell );
+
+			bool operator == ( const GravityWell &gravity ) const;
+			bool operator != ( const GravityWell &gravity ) const;
 		};
 
 		struct GravityDirected
@@ -133,6 +136,9 @@ namespace Oyster { namespace Physics
 			GravityDirected( );
 			GravityDirected( const GravityDirected &gravityDirected );
 			GravityDirected & operator = ( const GravityDirected &gravityDirected );
+
+			bool operator == ( const GravityDirected &gravity ) const;
+			bool operator != ( const GravityDirected &gravity ) const;
 		};
 
 		struct GravityDirectedField
@@ -143,7 +149,10 @@ namespace Oyster { namespace Physics
 
 			GravityDirectedField( );
 			GravityDirectedField( const GravityDirectedField &gravityDirectedField );
-			GravityDirectedField & operator=( const GravityDirectedField &gravityDirectedField );
+			GravityDirectedField & operator = ( const GravityDirectedField &gravityDirectedField );
+
+			bool operator == ( const GravityDirectedField &gravity ) const;
+			bool operator != ( const GravityDirectedField &gravity ) const;
 		};
 
 		struct Gravity
@@ -177,6 +186,9 @@ namespace Oyster { namespace Physics
 			Gravity( );
 			Gravity( const Gravity &gravity );
 			Gravity & operator = ( const Gravity &gravity );
+
+			bool operator == ( const Gravity &gravity ) const;
+			bool operator != ( const Gravity &gravity ) const;
 		};
 	}
 } }

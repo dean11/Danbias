@@ -50,11 +50,11 @@ Weapon::~Weapon(void)
 /********************************************************
 * Uses the weapon based on the input given and the current chosen attatchment
 ********************************************************/
-void Weapon::Use(const WEAPON_FIRE &fireInput)
+void Weapon::Use(const WEAPON_FIRE &usage)
 {
 	if (myData->selectedAttatchment)
 	{
-		myData->selectedAttatchment->UseAttatchment(fireInput);
+		myData->selectedAttatchment->UseAttatchment(usage);
 	}
 	
 }

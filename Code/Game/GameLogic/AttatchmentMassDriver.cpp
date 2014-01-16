@@ -39,16 +39,16 @@ AttatchmentMassDriver::~AttatchmentMassDriver(void)
 /********************************************************
 * Uses the attatchment and will from here switch case the different WEAPON_FIRE's that are to be used
 ********************************************************/
-void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &fireInput)
+void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage)
 {
 	//switch case to determin what functionallity to use in the attatchment
-	switch (fireInput)
+	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		ForcePush(fireInput);
+		ForcePush(usage);
 	break;
 	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
-		ForcePull(fireInput);
+		ForcePull(usage);
 		break;
 	}
 	
@@ -57,7 +57,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &fireInp
 /********************************************************
 * Pushes objects in a cone in front of the weapon when fired
 ********************************************************/
-void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &fireInput)
+void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage)
 {
 	//create coneRigidBody that will then collide with object and push them in the aimed direction
 }
@@ -65,7 +65,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &fireInput)
 /********************************************************
 * Pulls the player in the direction he is looking, used for fast movement(kinda like a jetpack)
 ********************************************************/
-void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &fireInput)
+void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage)
 {
 	//Oyster::Physics::API::Instance().ApplyForceAt(owner->GetRigidBody(), owner->GetRigidBody()->GetCenter(), owner->GetLookDir() * 100);
 }

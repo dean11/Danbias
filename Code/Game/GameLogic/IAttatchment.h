@@ -19,7 +19,7 @@ namespace GameLogic
 		IAttatchment(void);
 		~IAttatchment(void);
 
-		virtual void UseAttatchment(const WEAPON_FIRE &fireInput) = 0;
+		virtual void UseAttatchment(const WEAPON_FIRE &usage) = 0;
 
 	private:
 

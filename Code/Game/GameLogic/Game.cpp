@@ -55,7 +55,7 @@ struct Game::PrivateData
 	}
 
 	DynamicArray<PlayerData*> players;
-	SmartPointer<Level> level;
+	SmartPointer<LevelData> level;
 	Utility::WinTimer timer;
 
 }myData;
@@ -86,6 +86,16 @@ Game::PlayerData* Game::CreatePlayer()
 	newPdata->player = newPlayer;
 	int id = InsertObject(this->myData->players, newPdata);
 	return this->myData->players[id];
+}
+
+Game::LevelData* Game::CreateLevel()
+{
+	Level *newLevel = new Level();
+	newLevel->InitiateLevel(1000);
+	LevelData *newLdata = new LevelData();
+	newLdata->level = newLevel;
+	myData->level = newLdata;
+	return myData->level;
 }
 
 void Game::CreateTeam()
