@@ -204,7 +204,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			return true;
 		}
 
-		bool SeperatingAxisTest_AxisAlignedVsTransformedBox( const Float4 &boundingOffsetA, const Float4 &boundingOffsetB, const Float4x4 &rotationB, const Float4 &worldOffset, Float4 &worldPointOfContact )
+		bool SeperatingAxisTest_AxisAlignedVsTransformedBox( const Float4 &boundingOffsetA, const Float4 &boundingOffsetB, const Float4x4 &rotationB, const Float4 &worldOffset, Float4 &localPointOfContact )
 		{ // by Dan Andersson
 
 			/*****************************************************************
@@ -241,7 +241,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
-			worldPointOfContact = s * ( centerSeperation * eA / edgeSeperation );
+			localPointOfContact = s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4::standard_unit_y;
 			centerSeperation = t.Dot(s);
@@ -251,7 +251,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
-			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+			localPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4::standard_unit_z;
 			centerSeperation = t.Dot(s);
@@ -261,7 +261,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
-			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+			localPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = rotationB.v[0];
 			centerSeperation = t.Dot(s);
@@ -271,7 +271,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
-			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+			localPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = rotationB.v[1];
 			centerSeperation = t.Dot(s);
@@ -281,7 +281,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
-			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
+			localPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = rotationB.v[2];
 			centerSeperation = t.Dot(s);
@@ -291,7 +291,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
-			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation ); // enough point of contact data gathered for approximative result.
+			localPointOfContact += s * ( centerSeperation * eA / edgeSeperation ); // enough point of contact data gathered for approximative result.
 
 			s = Float4( Float3::standard_unit_x.Cross(rotationB.v[0].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -374,7 +374,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 				return false;
 			}
 
-			worldPointOfContact *= 0.5f;
+			localPointOfContact *= 0.5f;
 			return true;
 		}
 	}
@@ -821,10 +821,11 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		Float4 alignedOffsetBoundaries = (boxB.maxVertex - boxB.minVertex) * 0.5f,
 			   offset = boxA.center - Average( boxB.maxVertex, boxB.minVertex );
 		
-		Float4 pointOfContact;
-		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries, boxA.boundingOffset, boxA.rotation, offset, pointOfContact ) )
+		Float4 localPointOfContact;
+		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( alignedOffsetBoundaries, boxA.boundingOffset, boxA.rotation, offset, localPointOfContact ) )
 		{
-			worldPointOfContact = pointOfContact.xyz;
+			worldPointOfContact = localPointOfContact + boxA.center;
+			worldPointOfContact.w = 1.0f;
 			return true;
 		}
 		else return false;
@@ -843,10 +844,12 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		Float4x4 rotationB = TransformMatrix( InverseRotationMatrix(boxA.rotation), boxB.rotation );
 		Float4 posB = boxB.center - boxA.center;
 
-		Float4 pointOfContact;
-		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, rotationB, posB, pointOfContact ) )
+		Float4 localPointOfContact;
+		if( Private::SeperatingAxisTest_AxisAlignedVsTransformedBox( boxA.boundingOffset, boxB.boundingOffset, rotationB, posB, localPointOfContact ) )
 		{
-			worldPointOfContact = TransformVector( boxA.rotation, pointOfContact, pointOfContact ).xyz;
+			worldPointOfContact = TransformVector( boxA.rotation, localPointOfContact, localPointOfContact );
+			worldPointOfContact += boxA.center;
+			worldPointOfContact.w = 1.0f;
 			return true;
 		}
 		else return false;

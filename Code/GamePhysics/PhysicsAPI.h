@@ -22,6 +22,7 @@ namespace Oyster
 			struct SimpleBodyDescription;
 			struct SphericalBodyDescription;
 			struct CustomBodyState;
+			struct Gravity;
 		}
 
 		enum UpdateState
@@ -40,6 +41,7 @@ namespace Oyster
 		public:
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
+			typedef Struct::Gravity Gravity;
 
 			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
 
@@ -123,6 +125,16 @@ namespace Oyster
 			 * @param objRef: A pointer to the ICustomBody representing a physical object.
 			 ********************************************************/
 			virtual void DestroyObject( const ICustomBody* objRef ) = 0;
+
+			/********************************************************
+			 * TODO: @todo doc
+			 ********************************************************/
+			virtual void AddGravity( const Gravity &g ) = 0;
+
+			/********************************************************
+			 * TODO: @todo doc
+			 ********************************************************/
+			virtual void RemoveGravity( const Gravity &g ) = 0;
 
 			///********************************************************
 			// * Apply force on an object.
