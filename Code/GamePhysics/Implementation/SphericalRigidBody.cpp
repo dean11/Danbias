@@ -83,6 +83,8 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	this->rigid.restitutionCoeff	  = state.GetRestitutionCoeff();
 	this->rigid.frictionCoeff_Static  = state.GetFrictionCoeff_Static();
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
+	this->rigid.SetMass_KeepMomentum( state.GetMass() );
+	this->rigid.SetMomentOfInertia_KeepMomentum( state.GetMomentOfInertia() );
 
 	if( state.IsForwarded() )
 	{

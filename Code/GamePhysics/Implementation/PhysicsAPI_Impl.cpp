@@ -38,6 +38,27 @@ namespace
 					Float protoG_Magnitude = protoG.Dot( normal ),
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
+					// if they are not relatively moving towards eachother, there is no collision
+					Float deltaPos = normal.Dot( deuterState.GetCenterPosition() - protoState.GetCenterPosition() );
+					if( deltaPos < 0.0f )
+					{
+						if( protoG_Magnitude >= deuterG_Magnitude )
+						{
+							break;
+						}
+					}
+					else if( deltaPos > 0.0f )
+					{
+						if( protoG_Magnitude <= deuterG_Magnitude )
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
+
 					// bounce
 					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
 																				   deuterState.GetMass(), deuterG_Magnitude,
@@ -65,14 +86,14 @@ namespace
 					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
 					// FRICTION END
 
-					Float4 forwardedDeltaPos, forwardedDeltaAxis;
-					{ // @todo TODO: is this right?
-						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
-							   bounceLinearImpulse = bounce - bounceAngularImpulse;
-						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
-					}
+//					Float4 forwardedDeltaPos, forwardedDeltaAxis;
+//					{ // @todo TODO: is this right?
+//						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
+//							   bounceLinearImpulse = bounce - bounceAngularImpulse;
+//						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
+//					}
 					
-					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
+//					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}
