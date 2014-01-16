@@ -38,7 +38,7 @@ namespace GameLogic
 			* @param playerID: ID of the player you want to recieve the message
 			* @param Usage: enum value on what kind of action is to be taken
 			********************************************************/
-			void UseWeapon(int playerID, const WEAPON_FIRE &Usage);
+			void UseWeapon(const WEAPON_FIRE &Usage);
 
 			/********************************************************
 			* Gets players position

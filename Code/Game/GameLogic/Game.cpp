@@ -22,7 +22,7 @@ int InsertObject(DynamicArray<T*>& list, T* obj)
 			list[i] = obj;
 			return i;
 		}
-	}
+	}	
 	list.Push(obj);
 	return list.Size() - 1;
 }

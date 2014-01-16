@@ -20,9 +20,9 @@ void Game::PlayerData::Move(const PLAYER_MOVEMENT &movement)
 {
 	this->player->Move(movement);
 }
-void Game::PlayerData::UseWeapon(int playerID, const WEAPON_FIRE &Usage)
+void Game::PlayerData::UseWeapon(const WEAPON_FIRE &usage)
 {
-
+	this->player->UseWeapon(usage);
 }
 Oyster::Math::Float3 Game::PlayerData::GetPosition()
 {
