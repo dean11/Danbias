@@ -230,7 +230,6 @@ std::map<std::string, ID3D11ShaderResourceView *> ObjReader::GetMaterials(std::w
 	input.open(fileName.c_str());
 
 	std::map<std::string, ID3D11ShaderResourceView *> materials;
-	ID3D11ShaderResourceView *srv;
 	string texture;
 	string s;
 	string path;

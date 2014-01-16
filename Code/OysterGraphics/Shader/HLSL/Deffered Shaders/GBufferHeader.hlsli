@@ -12,7 +12,6 @@ struct VertexIn
 struct VertexOut
 {
 	float4 pos			: SV_POSITION;
-	float4 ViewPos		: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
 	//float3 tangent		: TANGENT;

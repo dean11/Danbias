@@ -6,6 +6,7 @@
 #include "../FileLoader/ObjReader.h"
 #include "../../Misc/Resource/OysterResource.h"
 #include "../FileLoader/GeneralLoader.h"
+#include "../Model/ModelInfo.h"
 #include <vld.h>
 
 namespace Oyster
@@ -47,7 +48,7 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::Rendering::Basic::NewFrame(View, Projection, &Lights[0], Lights.size());
+				Render::Rendering::Basic::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
 			}
 			else
 			{
@@ -75,6 +76,7 @@ namespace Oyster
 			return API::Sucsess;
 		}
 
+		//returns null for invalid filenames
 		Model::Model* API::CreateModel(std::wstring filename)
 		{
 			Model::Model* m = new Model::Model();
@@ -83,11 +85,19 @@ namespace Oyster
 
 			m->info = Oyster::Resource::OysterResource::LoadResource(filename.c_str(),Oyster::Graphics::Loading::LoadOBJ);
 
+			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
+			if(mi->Vertices->GetBufferPointer() == NULL)
+			{
+				return NULL;
+			}
+
 			return m;
 		}
 
 		void API::DeleteModel(Model::Model* model)
 		{
+			if(model==NULL)
+				return;
 			Model::ModelInfo* info = (Model::ModelInfo*)model->info;
 			delete model;
 			Oyster::Resource::OysterResource::ReleaseResource((Oyster::Resource::OHRESOURCE)info);

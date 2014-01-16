@@ -7,7 +7,7 @@
 #include "Dx11Includes.h"
 #include <sstream>
 #include "OysterMath.h"
-#include <vld.h>
+//#include <vld.h>
 
 namespace Oyster
 {

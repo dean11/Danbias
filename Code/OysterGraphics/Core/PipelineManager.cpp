@@ -58,7 +58,7 @@ namespace Oyster
 						}
 						else
 						{
-							VSMap[name] = VS.size();
+							VSMap[name] = (int)VS.size();
 							VS.push_back((ID3D11VertexShader*)data);
 						}
 					}
@@ -76,7 +76,7 @@ namespace Oyster
 						}
 						else
 						{
-							HSMap[name] = HS.size();
+							HSMap[name] = (int)HS.size();
 							HS.push_back((ID3D11HullShader*)data);
 						}
 						
@@ -95,7 +95,7 @@ namespace Oyster
 						}
 						else
 						{
-							DSMap[name] = DS.size();
+							DSMap[name] = (int)DS.size();
 							DS.push_back((ID3D11DomainShader*)data);
 						}
 					}
@@ -113,7 +113,7 @@ namespace Oyster
 						}
 						else
 						{
-							GSMap[name] = GS.size();
+							GSMap[name] = (int)GS.size();
 							GS.push_back((ID3D11GeometryShader*)data);
 						}
 					}
@@ -131,7 +131,7 @@ namespace Oyster
 						}
 						else
 						{
-							PSMap[name] = PS.size();
+							PSMap[name] = (int)PS.size();
 							PS.push_back((ID3D11PixelShader*)data);
 						}
 					}
@@ -149,7 +149,7 @@ namespace Oyster
 						}
 						else
 						{
-							CSMap[name] = CS.size();
+							CSMap[name] = (int)CS.size();
 							CS.push_back((ID3D11ComputeShader*)data);
 						}
 						
@@ -347,19 +347,19 @@ namespace Oyster
 			Core::deviceContext->IASetPrimitiveTopology(se.IAStage.Topology);
 			if(se.CBuffers.Vertex.size())
 			{
-				deviceContext->VSSetConstantBuffers(0,se.CBuffers.Vertex.size(),&se.CBuffers.Vertex[0]);
+				deviceContext->VSSetConstantBuffers(0,(int)se.CBuffers.Vertex.size(),&se.CBuffers.Vertex[0]);
 			}
 			if(se.CBuffers.Pixel.size())
 			{
-				deviceContext->PSSetConstantBuffers(0,se.CBuffers.Pixel.size(),&se.CBuffers.Pixel[0]);
+				deviceContext->PSSetConstantBuffers(0,(int)se.CBuffers.Pixel.size(),&se.CBuffers.Pixel[0]);
 			}
 			if(se.CBuffers.Geometry.size())
 			{
-				deviceContext->GSSetConstantBuffers(0,se.CBuffers.Geometry.size(),&se.CBuffers.Geometry[0]);
+				deviceContext->GSSetConstantBuffers(0,(int)se.CBuffers.Geometry.size(),&se.CBuffers.Geometry[0]);
 			}
 			if(se.CBuffers.Compute.size())
 			{
-				deviceContext->CSSetConstantBuffers(0,se.CBuffers.Compute.size(),&se.CBuffers.Compute[0]);
+				deviceContext->CSSetConstantBuffers(0,(int)se.CBuffers.Compute.size(),&se.CBuffers.Compute[0]);
 			}
 			Core::deviceContext->RSSetState(se.RenderStates.Rasterizer);
 			Core::deviceContext->PSSetSamplers(0,se.RenderStates.SampleCount,se.RenderStates.SampleState);
@@ -369,43 +369,43 @@ namespace Oyster
 
 			if(se.SRV.Vertex.size())
 			{
-				Core::deviceContext->VSSetShaderResources(0,se.SRV.Vertex.size(),&se.SRV.Vertex[0]);
+				Core::deviceContext->VSSetShaderResources(0,(int)se.SRV.Vertex.size(),&se.SRV.Vertex[0]);
 			}
 			if(se.SRV.Geometry.size())
 			{
-				Core::deviceContext->GSSetShaderResources(0,se.SRV.Geometry.size(),&se.SRV.Geometry[0]);
+				Core::deviceContext->GSSetShaderResources(0,(int)se.SRV.Geometry.size(),&se.SRV.Geometry[0]);
 			}
 			if(se.SRV.Pixel.size())
 			{
-				Core::deviceContext->PSSetShaderResources(0,se.SRV.Pixel.size(),&se.SRV.Pixel[0]);
+				Core::deviceContext->PSSetShaderResources(0,(int)se.SRV.Pixel.size(),&se.SRV.Pixel[0]);
 			}
 			if(se.SRV.Compute.size())
 			{
-				Core::deviceContext->CSSetShaderResources(0,se.SRV.Compute.size(),&se.SRV.Compute[0]);
+				Core::deviceContext->CSSetShaderResources(0,(int)se.SRV.Compute.size(),&se.SRV.Compute[0]);
 			}
 
 			if(se.RTV.size())
 			{
 				if(se.UAV.Pixel.size())
 				{
-					deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(se.RTV.size(),&se.RTV[0],se.depth,se.RTV.size(),se.UAV.Pixel.size(),&se.UAV.Pixel[0],0);
+					deviceContext->OMSetRenderTargetsAndUnorderedAccessViews((int)se.RTV.size(),&se.RTV[0],se.depth,(int)se.RTV.size(),(int)se.UAV.Pixel.size(),&se.UAV.Pixel[0],0);
 				}
 				else
 				{
-					deviceContext->OMSetRenderTargets(se.RTV.size(),&se.RTV[0],se.depth);
+					deviceContext->OMSetRenderTargets((int)se.RTV.size(),&se.RTV[0],se.depth);
 				}
 			}
 			else
 			{
 				if(se.UAV.Pixel.size())
 				{
-					deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(0,NULL,se.depth,0,se.UAV.Pixel.size(),&se.UAV.Pixel[0],0);
+					deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(0,NULL,se.depth,0,(int)se.UAV.Pixel.size(),&se.UAV.Pixel[0],0);
 				}
 			}
 
 			if(se.UAV.Compute.size())
 			{
-				deviceContext->CSSetUnorderedAccessViews(0,se.UAV.Compute.size(),&se.UAV.Compute[0],0);
+				deviceContext->CSSetUnorderedAccessViews(0,(int)se.UAV.Compute.size(),&se.UAV.Compute[0],0);
 			}
 		}
 

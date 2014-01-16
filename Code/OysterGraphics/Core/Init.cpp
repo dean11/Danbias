@@ -356,8 +356,8 @@ namespace Oyster
 		{
 			ID3D11Texture2D* tex;
 			D3D11_TEXTURE2D_DESC texDesc;
-			texDesc.Width = Core::resolution.x;
-			texDesc.Height = Core::resolution.y;
+			texDesc.Width = (UINT)Core::resolution.x;
+			texDesc.Height = (UINT)Core::resolution.y;
 			texDesc.MipLevels = 1;
 			texDesc.ArraySize = 1;
 			texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

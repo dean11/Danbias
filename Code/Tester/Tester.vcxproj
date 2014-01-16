@@ -136,6 +136,7 @@
       <AdditionalDependencies>OysterGraphics_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Bin\DLL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>true</PreventDllBinding>
+      <DelayLoadDLLs>OysterGraphics_$(PlatformShortName)D.dll;</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

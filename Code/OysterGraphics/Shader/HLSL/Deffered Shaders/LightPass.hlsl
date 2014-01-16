@@ -12,13 +12,13 @@
 [numthreads(16, 16, 1)]
 void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID )
 {
-	float2 UV = DTid / Pixels;
+	float2 UV = DTid.xy / Pixels;
 	UV.x =	UV.x * 2 - 1;
 	UV.y = 1 - 2 * UV.y;
 	float3 ViewPos = ToVpos(DTid.xy, UV);
 	DiffSpec Shaded;
-	Shaded.Diffuse = float4(0,0,0,0);
-	Shaded.Specular = float4(0,0,0,0);
+	Shaded.Diffuse = float3(0,0,0);
+	Shaded.Specular = float3(0,0,0);
 
 	for(int i = 0; i < Lights; ++i)
 	{

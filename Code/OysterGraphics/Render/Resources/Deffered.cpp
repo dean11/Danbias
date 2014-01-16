@@ -155,7 +155,7 @@ namespace Oyster
 					Buffer* b = &PointLightsData;
 
 					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&PointLightView,NULL);
-					srand(time(0));
+					srand((unsigned int)time(0));
 					//SSAO
 					Math::Vector3 kernel[KernelSize];
 					Math::Vector3 random[SampleSpread];
