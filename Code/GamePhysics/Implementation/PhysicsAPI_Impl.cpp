@@ -3,6 +3,7 @@
 #include "SimpleRigidBody.h"
 #include "SphericalRigidBody.h"
 
+using namespace ::Oyster;
 using namespace ::Oyster::Physics;
 using namespace ::Oyster::Math;
 using namespace ::Oyster::Collision3D;
@@ -86,14 +87,14 @@ namespace
 					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
 					// FRICTION END
 
-					Float4 forwardedDeltaPos, forwardedDeltaAxis;
-					{ // @todo TODO: is this right?
-						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
-							   bounceLinearImpulse = bounce - bounceAngularImpulse;
-						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
-					}
+//					Float4 forwardedDeltaPos, forwardedDeltaAxis;
+//					{ // @todo TODO: is this right?
+//						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
+//							   bounceLinearImpulse = bounce - bounceAngularImpulse;
+//						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
+//					}
 					
-					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
+//					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}
@@ -113,6 +114,7 @@ API_Impl::API_Impl()
 	this->gravityConstant = Constant::gravity_constant;
 	this->updateFrameLength = 1.0f / 120.0f;
 	this->destructionAction = Default::EventAction_Destruction;
+	this->gravity = ::std::vector<Gravity>();
 	this->worldScene = Octree();
 }
 
@@ -121,6 +123,8 @@ API_Impl::~API_Impl() {}
 void API_Impl::Init( unsigned int numObjects, unsigned int numGravityWells , const Float3 &worldSize )
 {
 	unsigned char numLayers = 4; //!< @todo TODO: calc numLayers from worldSize
+	this->gravity.resize( 0 );
+	this->gravity.reserve( numGravityWells );
 	this->worldScene = Octree( numObjects, numLayers, worldSize );
 }
 
@@ -153,14 +157,39 @@ float API_Impl::GetFrameTimeLength() const
 
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
-	
-
-
 	::std::vector<ICustomBody*> updateList;
+	ICustomBody::State state;
 	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
 	for( ; proto != updateList.end(); ++proto )
 	{
-		// Step 1: @todo TODO: Apply Gravity
+		// Step 1: Apply Gravity
+		(*proto)->GetState( state );
+		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
+		{
+			switch( this->gravity[i].gravityType )
+			{
+			case Gravity::GravityType_Well:
+				{
+					Float4 d = state.GetCenterPosition() - Float4( this->gravity[i].well.position, 1.0f );
+					Float rSquared = d.Dot( d );
+					if( rSquared != 0.0 )
+					{
+						Float force = Physics3D::Formula::ForceField( this->gravityConstant, state.GetMass(), this->gravity[i].well.mass, rSquared );
+						state.ApplyLinearImpulse( (this->updateFrameLength * force / ::std::sqrt(rSquared)) * d );
+					}
+					break;
+				}
+			case Gravity::GravityType_Directed:
+				state.ApplyLinearImpulse( Float4(this->gravity[i].directed.impulse, 0.0f) );
+				break;
+//			case Gravity::GravityType_DirectedField:
+//				//this->gravity[i].directedField.
+//				//! TODO: @todo rethink
+//				break;
+			default: break;
+			}
+		}
+		(*proto)->SetState( state );
 
 		// Step 2: Apply Collision Response
 		this->worldScene.Visit( *proto, OnPossibleCollision );
@@ -210,6 +239,24 @@ void API_Impl::DestroyObject( const ICustomBody* objRef )
 	if( object )
 	{
 		this->destructionAction( object );
+	}
+}
+
+void API_Impl::AddGravity( const API::Gravity &g )
+{
+	this->gravity.push_back( g );
+}
+
+void API_Impl::RemoveGravity( const API::Gravity &g )
+{
+	for( ::std::vector<Gravity>::size_type i = this->gravity.size() - 1; i >= 0; --i )
+	{
+		if( g == this->gravity[i] )
+		{
+			int end = this->gravity.size() - 1;
+			this->gravity[i] = this->gravity[end];
+			this->gravity.resize( end );
+		}
 	}
 }
 

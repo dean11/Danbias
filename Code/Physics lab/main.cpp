@@ -72,7 +72,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 
 	Graphics::Definitions::Pointlight light;
 	{
-		light.Pos = Float3(0.0f, 5.0f, 10.0f);
+		light.Pos = Float3(0.0f, 5.0f, 5.0f);
 		light.Radius = 100.0f;
 		light.Color = Float3( 1.0f );
 		light.Bright = 5.0f;
@@ -106,6 +106,11 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		}
 
 		Physics::ICustomBody::State state;
+		sphere.phys->GetState( state );
+		state.SetMass_KeepMomentum( 10.0f );
+		state.SetMomentOfInertia_KeepMomentum( Physics::Formula::MomentOfInertia::CreateSphereMatrix(10.0f, 0.5f) );
+		sphere.phys->SetState( state );
+
 		crate[0].phys->GetState( state );
 		state.SetMass_KeepMomentum(12);
 		state.SetMomentOfInertia_KeepMomentum( Physics::Formula::MomentOfInertia::CreateCuboidMatrix(12, 1, 1, 1));
