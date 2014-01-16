@@ -84,12 +84,12 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 	Physics::API::Instance().Init( 27, 1, Float3(1024.0f) );
 	Physics::API::Instance().SetFrameTimeLength( physicsPeriodicy );
 
-	Object sphere;
+	//Object sphere;
 	Object crate[2];
 	{
-		sphere.gfx = Graphics::API::CreateModel( L"worldDummy" );
-		sphere.phys = Physics::API::Instance().CreateRigidBody( Physics::API::SphericalBodyDescription() ).Release();
-//		Physics::API::Instance().AddObject( sphere.phys );
+		//sphere.gfx = Graphics::API::CreateModel( L"worldDummy" );
+		//sphere.phys = Physics::API::Instance().CreateRigidBody( Physics::API::SphericalBodyDescription() ).Release();
+		//Physics::API::Instance().AddObject( sphere.phys );
 
 		Physics::API::SimpleBodyDescription descCrate;
 
@@ -131,19 +131,26 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 			physicsTimeAccumulation += (Float)timer.getElapsedSeconds();
 			timer.reset();
 
+			
+
 			while( physicsTimeAccumulation >= physicsPeriodicy )
 			{
 				Physics::API::Instance().Update();
 				physicsTimeAccumulation -= physicsPeriodicy;
 			}
 
+			//Physics::ICustomBody::State state;
+			//crate[0].phys->GetState( state );
+			//state.SetLinearMomentum( Float4(5.0f, 0.0f, 0.0f, 0.0f) );
+			//crate[0].phys->SetState( state );
+
 			if( graphicsTimeAccumulation >= graphicsPeriodicy )
 			{
 				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) );
 				Graphics::API::NewFrame();
 				{
-//					sphere.gfx->WorldMatrix = sphere.phys->GetState().GetOrientation();
-//					Graphics::API::RenderModel( *sphere.gfx );
+					//sphere.gfx->WorldMatrix = sphere.phys->GetState().GetOrientation();
+					//Graphics::API::RenderModel( *sphere.gfx );
 
 					for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
 					{
