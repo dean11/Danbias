@@ -47,7 +47,7 @@ namespace DanBias
 			case protocol_Gameplay_PlayerNavigation:
 			{
 				
-				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
+				//Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
 				if(p[1].value.netBool)	//bool bForward;
 					//world.v[3].x = 2;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
@@ -60,6 +60,10 @@ namespace DanBias
 				if(p[6].value.netBool)	//bool bStrafeLeft;
 					//world.v[3].y = -2;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+
+				Oyster::Math::Float4x4 world = 	c->GetPlayer()->GetOrientation();
+				Protocol_ObjectPosition p(world, 1);
+				Send(p.GetProtocol());
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
