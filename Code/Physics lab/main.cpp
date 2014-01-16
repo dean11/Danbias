@@ -108,10 +108,10 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		}
 
 		Physics::ICustomBody::State state;
-		sphere.phys->GetState( state );
-		state.SetMass_KeepMomentum( 10.0f );
-		state.SetMomentOfInertia_KeepMomentum( Physics::Formula::MomentOfInertia::CreateSphereMatrix(10.0f, 0.5f) );
-		sphere.phys->SetState( state );
+//		sphere.phys->GetState( state );
+//		state.SetMass_KeepMomentum( 10.0f );
+//		state.SetMomentOfInertia_KeepMomentum( Physics::Formula::MomentOfInertia::CreateSphereMatrix(10.0f, 0.5f) );
+//		sphere.phys->SetState( state );
 
 		//crate[0].phys->GetState( state );
 		//state.SetLinearMomentum( Float4(5.0f, 0.0f, 0.0f, 0.0f) );
