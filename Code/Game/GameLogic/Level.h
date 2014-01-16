@@ -21,6 +21,7 @@ namespace GameLogic
 		* @param levelPath: Path to a file that contains all information on the level
 		********************************************************/
 		void InitiateLevel(std::string levelPath);
+		void Level::InitiateLevel(float radius);
 
 		/********************************************************
 		* Creates a team in the level

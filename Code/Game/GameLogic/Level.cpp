@@ -9,7 +9,7 @@
 
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
-
+using namespace Oyster::Physics;
 
 struct Level::PrivateData
 {
@@ -29,7 +29,7 @@ struct Level::PrivateData
 
 	SmartPointer<GameMode> gameMode;
 
-	SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
+	SmartPointer<ICustomBody> rigidBodyLevel;
 
 }myData;
 
@@ -47,6 +47,19 @@ Level::~Level(void)
 void Level::InitiateLevel(std::string levelPath)
 {
 
+}
+void Level::InitiateLevel(float radius)
+{
+	API::SphericalBodyDescription sbDesc;
+	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,0);
+	sbDesc.ignoreGravity = true;
+	sbDesc.radius = radius;
+	sbDesc.mass = 1e16; //10^20
+	sbDesc.subscription = CollisionManager::LevelCollision;
+
+	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+
+	
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)
