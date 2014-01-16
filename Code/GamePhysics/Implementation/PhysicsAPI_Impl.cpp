@@ -38,12 +38,27 @@ namespace
 					Float protoG_Magnitude = protoG.Dot( normal ),
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
+					Float4 frictionImpulse;
+
+					// FRICTION		
+					if( protoState.GetMass() != 5000 )
+						frictionImpulse = Formula::CollisionResponse::Friction( protoG.GetLength(), normal, 
+																					protoState.GetLinearMomentum(), protoState.GetFrictionCoeff_Static(), 
+																					protoState.GetFrictionCoeff_Kinetic(), protoState.GetMass(),
+																					deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff_Static(), 
+																					deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
+					
+					// FRICTION END
+
+
 					// if they are not relatively moving towards eachother, there is no collision
 					Float deltaPos = normal.Dot( deuterState.GetCenterPosition() - protoState.GetCenterPosition() );
 					if( deltaPos < 0.0f )
 					{
 						if( protoG_Magnitude >= deuterG_Magnitude )
 						{
+							//protoState.ApplyFriction( -frictionImpulse );
+							//proto->SetState( protoState );
 							break;
 						}
 					}
@@ -63,6 +78,8 @@ namespace
 					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
 																				   deuterState.GetMass(), deuterG_Magnitude,
 																				   protoState.GetMass(), protoG_Magnitude );
+
+					
 					
 					//sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
 					//											  protoState.GetLinearMomentum(),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
@@ -81,10 +98,7 @@ namespace
 					Float4 bounce = Average( bounceD, bounceP );
 					//Float4 bounce = bounceD + bounceP;
 
-					// FRICTION
-					// Apply
-					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
-					// FRICTION END
+					
 
 					Float4 forwardedDeltaPos, forwardedDeltaAxis;
 					{ // @todo TODO: is this right?
@@ -93,7 +107,7 @@ namespace
 						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
 					}
 					
-					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
+					//protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 				}

@@ -311,6 +311,13 @@ namespace Oyster
 				this->isDisturbed = true;
 			}
 
+			inline void CustomBodyState::ApplyFriction( const ::Oyster::Math::Float4 &j )
+			{
+				this->linearImpulse += j;
+
+				this->isDisturbed = true;
+			}
+
 			inline void CustomBodyState::ApplyForwarding( const ::Oyster::Math::Float4 &deltaPos, const ::Oyster::Math::Float4 &deltaAxis )
 			{
 				this->deltaPos += deltaPos;

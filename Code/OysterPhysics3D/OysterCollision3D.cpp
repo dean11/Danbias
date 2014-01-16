@@ -301,6 +301,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			//worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_x.Cross(rotationB.v[1].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -310,6 +311,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_x.Cross(rotationB.v[2].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -319,6 +321,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_y.Cross(rotationB.v[0].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -328,6 +331,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_y.Cross(rotationB.v[1].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -337,6 +341,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			//worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_y.Cross(rotationB.v[2].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -346,6 +351,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_z.Cross(rotationB.v[0].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -355,6 +361,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_z.Cross(rotationB.v[1].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -364,6 +371,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			s = Float4( Float3::standard_unit_z.Cross(rotationB.v[2].xyz), 0.0f );
 			centerSeperation = t.Dot(s);
@@ -373,6 +381,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			{ // no intersection
 				return false;
 			}
+			//worldPointOfContact += s * ( centerSeperation * eA / edgeSeperation );
 
 			worldPointOfContact *= 0.5f;
 			return true;
