@@ -89,14 +89,16 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 	{
 		sphere.gfx = Graphics::API::CreateModel( L"worldDummy" );
 		sphere.phys = Physics::API::Instance().CreateRigidBody( Physics::API::SphericalBodyDescription() ).Release();
-		Physics::API::Instance().AddObject( sphere.phys );
+//		Physics::API::Instance().AddObject( sphere.phys );
 
 		Physics::API::SimpleBodyDescription descCrate;
 
-		descCrate.centerPosition = Float4( -2.5, 0.0f, 0.0f, 1.0f );
+//		descCrate.centerPosition = Float4( -2.5f, 0.0f, 0.0f, 1.0f );
+		descCrate.centerPosition = Float4( 0.9f, 1.5f, 0.9f, 1.0f );
 		crate[0].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
 
-		descCrate.centerPosition = Float4( 2.5, -0.5f, -0.5f, 1.0f );
+//		descCrate.centerPosition = Float4( 2.5, -0.5f, -0.5f, 1.0f );
+		descCrate.centerPosition = Float4::standard_unit_w;
 		crate[1].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
 
 		for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
@@ -111,9 +113,13 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		state.SetMomentOfInertia_KeepMomentum( Physics::Formula::MomentOfInertia::CreateSphereMatrix(10.0f, 0.5f) );
 		sphere.phys->SetState( state );
 
-		crate[0].phys->GetState( state );
-		state.SetLinearMomentum( Float4(5.0f, 0.0f, 0.0f, 0.0f) );
-		crate[0].phys->SetState( state );
+		//crate[0].phys->GetState( state );
+		//state.SetLinearMomentum( Float4(5.0f, 0.0f, 0.0f, 0.0f) );
+		//crate[0].phys->SetState( state );
+
+		crate[1].phys->GetState( state );
+		state.SetLinearMomentum( Float4(0.0f, 5.0f, 0.0f, 0.0f) );
+		crate[1].phys->SetState( state );
 	}
 
 	timer.reset();
@@ -136,8 +142,8 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) );
 				Graphics::API::NewFrame();
 				{
-					sphere.gfx->WorldMatrix = sphere.phys->GetState().GetOrientation();
-					Graphics::API::RenderModel( *sphere.gfx );
+//					sphere.gfx->WorldMatrix = sphere.phys->GetState().GetOrientation();
+//					Graphics::API::RenderModel( *sphere.gfx );
 
 					for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
 					{

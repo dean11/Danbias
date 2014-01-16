@@ -57,7 +57,7 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float4 &	 GetReach() const;
 				  ::Oyster::Math::Float4	 GetSize() const;
 			const ::Oyster::Math::Float4 &	 GetCenterPosition() const;
-			const ::Oyster::Math::Float4 &	 GetAngularAxis() const;
+				  ::Oyster::Math::Float4 	 GetAngularAxis() const;
 				  ::Oyster::Math::Float4x4	 GetRotation() const;
 				  ::Oyster::Math::Float4x4	 GetOrientation() const;
 				  ::Oyster::Math::Float4x4	 GetOrientation( const ::Oyster::Math::Float4 &offset ) const;
