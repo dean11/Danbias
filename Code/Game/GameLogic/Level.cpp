@@ -51,14 +51,22 @@ void Level::InitiateLevel(std::string levelPath)
 void Level::InitiateLevel(float radius)
 {
 	API::SphericalBodyDescription sbDesc;
-	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,0);
+	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
 	sbDesc.ignoreGravity = true;
 	sbDesc.radius = radius;
-	sbDesc.mass = 1e16; //10^20
+	sbDesc.mass = 1e16; //10^16
 	sbDesc.subscription = CollisionManager::LevelCollision;
 
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	API::Instance().AddObject(rigidBody);
 
+	API::Gravity gravityWell;
+
+	gravityWell.gravityType = API::Gravity::GravityType_Well;
+	gravityWell.well.mass = (float)1e16;
+	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
+
+	API::Instance().AddGravity(gravityWell);
 	
 }
 
