@@ -75,7 +75,7 @@ namespace Oyster
 							if(info->Indexed)
 							{
 								info->Indecies->Apply();
-								Oyster::Graphics::Core::deviceContext->DrawIndexed(info->VertexCount,0,0);
+								Oyster::Graphics::Core::deviceContext->DrawIndexed(info->IndexCount,0,0);
 							}
 							else
 							{

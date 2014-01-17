@@ -3,15 +3,16 @@ struct VertexIn
 	float3 pos			: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
-	//float3 tangent		: TANGENT;
-	//float3 biTangent	: BITANGENT;
-	//float4 boneIndex	: BONEINDEX;
-	//float4 boneWeight	: BONEWEIGHT;
+	float3 tangent		: TANGENT;
+	float3 biTangent	: BITANGENT;
+	float4 boneIndex	: BONEINDEX;
+	float4 boneWeight	: BONEWEIGHT;
 };
 
 struct VertexOut
 {
 	float4 pos			: SV_POSITION;
+	//float4 ViewPos		: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
 	//float3 tangent		: TANGENT;

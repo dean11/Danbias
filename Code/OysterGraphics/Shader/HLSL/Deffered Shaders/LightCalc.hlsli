@@ -21,8 +21,8 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 		output.Specular * 0;
 	if(d > pl.Radius)
 	{
-		output.Diffuse = float3(0,0,0);
-		output.Specular = float3(0,0,0);
+		output.Diffuse = float4(0,0,0,1);
+		output.Specular = float4(0,0,0,1);
 	}
 	return output;  
 }

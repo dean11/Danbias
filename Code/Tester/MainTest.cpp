@@ -159,12 +159,10 @@ HRESULT InitDirect3D()
 		return E_FAIL;
 	}
 	
-	m =  Oyster::Graphics::API::CreateModel(L"crate2");
-	if(m==NULL)
-		m =  Oyster::Graphics::API::CreateModel(L"christmastree");
-	m2 = Oyster::Graphics::API::CreateModel(L"christmastree");
+	m =  Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
-	m3 = Oyster::Graphics::API::CreateModel(L"christmastree");
+	m3 = Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	
 

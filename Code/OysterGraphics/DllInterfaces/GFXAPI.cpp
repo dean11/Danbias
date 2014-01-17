@@ -83,7 +83,7 @@ namespace Oyster
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
 
-			m->info = Oyster::Resource::OysterResource::LoadResource(filename.c_str(),Oyster::Graphics::Loading::LoadOBJ);
+			m->info = Oyster::Resource::OysterResource::LoadResource(filename.c_str(),Oyster::Graphics::Loading::LoadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
 			if(mi->Vertices->GetBufferPointer() == NULL)
