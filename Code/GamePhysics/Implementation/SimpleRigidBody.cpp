@@ -46,7 +46,8 @@ SimpleRigidBody::SimpleRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
-	this->collisionAction = Default::EventAction_Collision;
+	this->onCollision = Default::EventAction_Collision;
+	this->onMovement = Default::EventAction_Move;
 	this->ignoreGravity = this->isForwarded = false;
 	this->scene = nullptr;
 }
@@ -63,13 +64,22 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 
 	this->gravityNormal = Float3::null;
 	
-	if( desc.subscription )
+	if( desc.subscription_onCollision )
 	{
-		this->collisionAction = desc.subscription;
+		this->onCollision = desc.subscription_onCollision;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
+	}
+
+	if( desc.subscription_onMovement )
+	{
+		this->onMovement= desc.subscription_onMovement;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
 	}
 
 	this->ignoreGravity = desc.ignoreGravity;
@@ -138,9 +148,14 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
 {
-	return this->collisionAction( proto, deuter );
+	return this->onCollision( this, deuter );
+}
+
+void SimpleRigidBody::CallSubscription_Move()
+{
+	this->onMovement( this );
 }
 
 bool SimpleRigidBody::IsAffectedByGravity() const
@@ -282,11 +297,23 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functi
 {
 	if( functionPointer )
 	{
-		this->collisionAction = functionPointer;
+		this->onCollision = functionPointer;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
+	}
+}
+
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Move functionPointer )
+{
+	if( functionPointer )
+	{
+		this->onMovement = functionPointer;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
 	}
 }
 

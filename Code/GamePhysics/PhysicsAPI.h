@@ -235,6 +235,7 @@ namespace Oyster
 			};
 
 			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
 			typedef Struct::CustomBodyState State;
@@ -250,7 +251,12 @@ namespace Oyster
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual SubscriptMessage CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
+			virtual SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter ) = 0;
+
+			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual void CallSubscription_Move() = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
@@ -370,6 +376,13 @@ namespace Oyster
 			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
 			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
+
+			/********************************************************
+			 * Sets the function that will be called by the engine
+			 * whenever an object have moved.
+			 * @param functionPointer: If NULL, an empty default function will be set.
+			 ********************************************************/
+			virtual void SetSubscription( EventAction_Move functionPointer ) = 0;
 
 			/********************************************************
 			 * @param ignore: True if Engine should not apply Gravity.

@@ -22,7 +22,9 @@ namespace Oyster { namespace Physics
 		void SetState( const State &state );
 		//::Oyster::Math::Float3 GetRigidLinearVelocity() const;
 
-		SubscriptMessage CallSubscription( const ICustomBody *proto, const ICustomBody *deuter );
+		SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter );
+		void CallSubscription_Move();
+
 		bool IsAffectedByGravity() const;
 		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape ) const;
 		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape, ::Oyster::Math::Float4 &worldPointOfContact ) const;
@@ -40,7 +42,10 @@ namespace Oyster { namespace Physics
 		void Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime );
 
 		void SetScene( void *scene );
+
 		void SetSubscription( EventAction_Collision functionPointer );
+		void SetSubscription( EventAction_Move functionPointer );
+
 		void SetGravity( bool ignore);
 		void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector );
 		//void SetMomentOfInertiaTensor_KeepVelocity( const ::Oyster::Math::Float4x4 &localI );
@@ -57,7 +62,8 @@ namespace Oyster { namespace Physics
 		::Oyster::Physics3D::RigidBody rigid;
 		::Oyster::Math::Float4 deltaPos, deltaAxis;
 		::Oyster::Math::Float3 gravityNormal;
-		EventAction_Collision collisionAction;
+		EventAction_Collision onCollision;
+		EventAction_Move onMovement;
 		bool ignoreGravity, isForwarded;
 		Octree *scene;
 		::Oyster::Collision3D::Sphere body;
