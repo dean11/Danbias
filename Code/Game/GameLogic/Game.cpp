@@ -55,7 +55,7 @@ struct Game::PrivateData
 	}
 
 	DynamicArray<PlayerData*> players;
-	SmartPointer<LevelData> level;
+	LevelData* level;
 	Utility::WinTimer timer;
 
 }myData;

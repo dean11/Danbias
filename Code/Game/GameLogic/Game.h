@@ -12,6 +12,7 @@
 namespace GameLogic
 {
 	class Player;
+	class Level;
 	class DANBIAS_GAMELOGIC_DLL Game
 	{
 	

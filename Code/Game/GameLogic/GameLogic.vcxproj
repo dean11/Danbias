@@ -193,6 +193,7 @@
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="Game_LevelData.cpp" />
     <ClCompile Include="Game_PlayerData.cpp" />
     <ClCompile Include="IAttatchment.cpp" />
     <ClCompile Include="Level.cpp" />

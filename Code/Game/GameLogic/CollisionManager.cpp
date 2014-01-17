@@ -56,7 +56,7 @@ using namespace GameLogic;
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
 
-	Oyster::Physics::ICustomBody::SubscriptMessage LevelCollision(const Oyster::Physics::ICustomBody *rigidBodyLevel, const Oyster::Physics::ICustomBody *obj)
+	Oyster::Physics::ICustomBody::SubscriptMessage CollisionManager::LevelCollision(const Oyster::Physics::ICustomBody *rigidBodyLevel, const Oyster::Physics::ICustomBody *obj)
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
