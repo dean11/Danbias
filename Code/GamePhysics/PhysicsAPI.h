@@ -129,12 +129,12 @@ namespace Oyster
 			/********************************************************
 			 * TODO: @todo doc
 			 ********************************************************/
-			virtual void AddGravity( const Gravity &g ) = 0;
+			virtual void AddGravity( const API::Gravity &g ) = 0;
 
 			/********************************************************
 			 * TODO: @todo doc
 			 ********************************************************/
-			virtual void RemoveGravity( const Gravity &g ) = 0;
+			virtual void RemoveGravity( const API::Gravity &g ) = 0;
 
 			///********************************************************
 			// * Apply force on an object.
