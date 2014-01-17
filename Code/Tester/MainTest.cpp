@@ -44,18 +44,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 {
 
 	BOOL b = SetDllDirectoryW(L"..\\DLL");
-	typedef struct tagLOADPARMS32
-	{ 
-		LPSTR lpEnvAddress;  // address of environment strings 
-		LPSTR lpCmdLine;     // address of command line 
-		LPSTR lpCmdShow;     // how to show new program 
-		DWORD dwReserved;    // must be zero 
-	} LOADPARMS32;
-	LOADPARMS32 params;
-	params.dwReserved=NULL;
-	params.lpCmdLine="";
-	params.lpCmdShow="";
-	params.lpEnvAddress="";
 
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
@@ -201,7 +189,7 @@ HRESULT Update(float deltaTime)
 {
 
 	angle += Oyster::Math::pi/8 * deltaTime;
-	//m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
+	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-angle,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
 	m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
