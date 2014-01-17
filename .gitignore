@@ -25,9 +25,10 @@
 *.ilk
 *.exp
 *.dll
+*.cso
 
 
-Bin/Content/Sound/
+Bin/Content/
 Bin/Executable/
 Obj/
 External/
