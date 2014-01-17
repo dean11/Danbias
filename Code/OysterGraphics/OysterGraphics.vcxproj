@@ -176,6 +176,7 @@
     <ClCompile Include="Core\Init.cpp" />
     <ClCompile Include="Core\PipelineManager.cpp" />
     <ClCompile Include="DllInterfaces\GFXAPI.cpp" />
+    <ClCompile Include="FileLoader\DanLoader.cpp" />
     <ClCompile Include="FileLoader\ObjReader.cpp" />
     <ClCompile Include="FileLoader\ShaderLoader.cpp" />
     <ClCompile Include="FileLoader\ModelLoader.cpp" />

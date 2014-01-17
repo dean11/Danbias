@@ -171,10 +171,10 @@ HRESULT InitDirect3D()
 		return E_FAIL;
 	}
 	
-	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy");
-	m2 = Oyster::Graphics::API::CreateModel(L"worldDummy");
+	m =  Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
-	m3 = Oyster::Graphics::API::CreateModel(L"worldDummy");
+	m3 = Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	
 
@@ -201,7 +201,7 @@ HRESULT Update(float deltaTime)
 {
 
 	angle += Oyster::Math::pi/8 * deltaTime;
-	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
+	//m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle);
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-angle,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
 	m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
