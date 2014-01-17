@@ -88,6 +88,7 @@ namespace Oyster
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
 			if(mi->Vertices->GetBufferPointer() == NULL)
 			{
+				delete m;
 				return NULL;
 			}
 
