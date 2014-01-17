@@ -163,37 +163,40 @@ void API_Impl::Update()
 	for( ; proto != updateList.end(); ++proto )
 	{
 		// Step 1: Apply Gravity
-		(*proto)->GetState( state );
-//		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
-//		{
-//			switch( this->gravity[i].gravityType )
-//			{
-//			case Gravity::GravityType_Well:
-//				{
-//					Float4 d = state.GetCenterPosition() - Float4( this->gravity[i].well.position, 1.0f );
-//					Float rSquared = d.Dot( d );
-//					if( rSquared != 0.0 )
-//					{
-//						Float force = Physics3D::Formula::ForceField( this->gravityConstant, state.GetMass(), this->gravity[i].well.mass, rSquared );
-//						state.ApplyLinearImpulse( (this->updateFrameLength * force / ::std::sqrt(rSquared)) * d );
-//					}
-//					break;
-//				}
-//			case Gravity::GravityType_Directed:
-//				state.ApplyLinearImpulse( Float4(this->gravity[i].directed.impulse, 0.0f) );
-//				break;
-////			case Gravity::GravityType_DirectedField:
-////				//this->gravity[i].directedField.
-////				//! TODO: @todo rethink
-////				break;
-//			default: break;
-//			}
-//		}
-		if( state.GetAngularAxis() != Float4::null )
+		Float4 gravityImpulse = Float4::null;
+		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
 		{
-			const char *breakPoint = "";
+			switch( this->gravity[i].gravityType )
+			{
+			case Gravity::GravityType_Well:
+				{
+					Float4 d = state.GetCenterPosition() - Float4( this->gravity[i].well.position, 1.0f );
+					Float rSquared = d.Dot( d );
+					if( rSquared != 0.0 )
+					{
+						Float force = Physics3D::Formula::ForceField( this->gravityConstant, state.GetMass(), this->gravity[i].well.mass, rSquared );
+						gravityImpulse += (this->updateFrameLength * force / ::std::sqrt(rSquared)) * d;
+					}
+					break;
+				}
+			case Gravity::GravityType_Directed:
+				gravityImpulse += Float4( this->gravity[i].directed.impulse, 0.0f );
+				break;
+//			case Gravity::GravityType_DirectedField:
+//				//this->gravity[i].directedField.
+//				//! TODO: @todo rethink
+//				break;
+			default: break;
+			}
 		}
-		(*proto)->SetState( state );
+
+		if( gravityImpulse != Float4::null )
+		{
+			(*proto)->GetState( state );
+			state.ApplyLinearImpulse( gravityImpulse );
+			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
+			(*proto)->SetState( state );
+		}
 
 		// Step 2: Apply Collision Response
 		this->worldScene.Visit( *proto, OnPossibleCollision );
