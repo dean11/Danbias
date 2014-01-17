@@ -22,7 +22,7 @@ namespace
 		Float4 worldPointOfContact;
 		if( proto->Intersects(*deuter, worldPointOfContact) )
 		{
-			switch( proto->CallSubscription(proto, deuter) )
+			switch( proto->CallSubscription_Collision(deuter) )
 			{
 			case ICustomBody::SubscriptMessage_ignore_collision_response:
 				break;
@@ -209,6 +209,7 @@ void API_Impl::Update()
 		{
 		case UpdateState_altered:
 			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(*proto) );
+			(*proto)->CallSubscription_Move();
 		case UpdateState_resting: default:
 			break;
 		}
@@ -374,5 +375,8 @@ namespace Oyster { namespace Physics
 		{ /* Do nothing except returning business as usual. */
 			return ::Oyster::Physics::ICustomBody::SubscriptMessage_none;
 		}
+
+		void EventAction_Move( const ::Oyster::Physics::ICustomBody *object )
+		{ /* Do nothing. */ }
 	}
 } }

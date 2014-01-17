@@ -60,6 +60,7 @@ namespace Oyster
 		{
 			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
 			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+			void EventAction_Move( const ::Oyster::Physics::ICustomBody *object );
 		}
 	}
 }
