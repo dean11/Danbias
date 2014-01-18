@@ -13,7 +13,8 @@ SphericalRigidBody::SphericalRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 10.0f );
 	this->gravityNormal = Float3::null;
-	this->collisionAction = Default::EventAction_Collision;
+	this->onCollision = Default::EventAction_Collision;
+	this->onMovement = Default::EventAction_Move;
 	this->ignoreGravity = this->isForwarded = false;
 	this->scene = nullptr;
 	this->body = Sphere( Float3::null, 0.5f );
@@ -32,13 +33,22 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 
 	this->gravityNormal = Float3::null;
 
-	if( desc.subscription )
+	if( desc.subscription_onCollision )
 	{
-		this->collisionAction = desc.subscription;
+		this->onCollision = desc.subscription_onCollision;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
+	}
+
+	if( desc.subscription_onMovement )
+	{
+		this->onMovement= desc.subscription_onMovement;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
 	}
 
 	this->ignoreGravity = desc.ignoreGravity;
@@ -108,9 +118,14 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
 {
-	return this->collisionAction( proto, deuter );
+	return this->onCollision( this, deuter );
+}
+
+void SphericalRigidBody::CallSubscription_Move()
+{
+	this->onMovement( this );
 }
 
 bool SphericalRigidBody::IsAffectedByGravity() const
@@ -207,11 +222,23 @@ void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision fun
 {
 	if( functionPointer )
 	{
-		this->collisionAction = functionPointer;
+		this->onCollision = functionPointer;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
+	}
+}
+
+void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Move functionPointer )
+{
+	if( functionPointer )
+	{
+		this->onMovement = functionPointer;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
 	}
 }
 

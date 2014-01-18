@@ -32,8 +32,8 @@ namespace Oyster
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> ExtractObject( const ICustomBody* objRef );
 			void DestroyObject( const ICustomBody* objRef );
 
-			void AddGravity( const Gravity &g );
-			void RemoveGravity( const Gravity &g );
+			void AddGravity( const API::Gravity &g );
+			void RemoveGravity( const API::Gravity &g );
 
 			//void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
 
@@ -52,7 +52,7 @@ namespace Oyster
 		private:
 			::Oyster::Math::Float gravityConstant, updateFrameLength;
 			EventAction_Destruction destructionAction;
-			::std::vector<Gravity> gravity;
+			::std::vector<API::Gravity> gravity;
 			Octree worldScene;
 		};
 
@@ -60,6 +60,7 @@ namespace Oyster
 		{
 			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
 			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+			void EventAction_Move( const ::Oyster::Physics::ICustomBody *object );
 		}
 	}
 }

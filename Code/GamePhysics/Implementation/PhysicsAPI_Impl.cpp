@@ -22,7 +22,7 @@ namespace
 		Float4 worldPointOfContact;
 		if( proto->Intersects(*deuter, worldPointOfContact) )
 		{
-			switch( proto->CallSubscription(proto, deuter) )
+			switch( proto->CallSubscription_Collision(deuter) )
 			{
 			case ICustomBody::SubscriptMessage_ignore_collision_response:
 				break;
@@ -163,7 +163,7 @@ void API_Impl::Update()
 	for( ; proto != updateList.end(); ++proto )
 	{
 		// Step 1: Apply Gravity
-		(*proto)->GetState( state );
+		Float4 gravityImpulse = Float4::null;
 		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
 		{
 			switch( this->gravity[i].gravityType )
@@ -175,12 +175,12 @@ void API_Impl::Update()
 					if( rSquared != 0.0 )
 					{
 						Float force = Physics3D::Formula::ForceField( this->gravityConstant, state.GetMass(), this->gravity[i].well.mass, rSquared );
-						state.ApplyLinearImpulse( (this->updateFrameLength * force / ::std::sqrt(rSquared)) * d );
+						gravityImpulse += (this->updateFrameLength * force / ::std::sqrt(rSquared)) * d;
 					}
 					break;
 				}
 			case Gravity::GravityType_Directed:
-				state.ApplyLinearImpulse( Float4(this->gravity[i].directed.impulse, 0.0f) );
+				gravityImpulse += Float4( this->gravity[i].directed.impulse, 0.0f );
 				break;
 //			case Gravity::GravityType_DirectedField:
 //				//this->gravity[i].directedField.
@@ -189,7 +189,14 @@ void API_Impl::Update()
 			default: break;
 			}
 		}
-		(*proto)->SetState( state );
+
+		if( gravityImpulse != Float4::null )
+		{
+			(*proto)->GetState( state );
+			state.ApplyLinearImpulse( gravityImpulse );
+			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
+			(*proto)->SetState( state );
+		}
 
 		// Step 2: Apply Collision Response
 		this->worldScene.Visit( *proto, OnPossibleCollision );
@@ -202,6 +209,7 @@ void API_Impl::Update()
 		{
 		case UpdateState_altered:
 			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(*proto) );
+			(*proto)->CallSubscription_Move();
 		case UpdateState_resting: default:
 			break;
 		}
@@ -367,5 +375,8 @@ namespace Oyster { namespace Physics
 		{ /* Do nothing except returning business as usual. */
 			return ::Oyster::Physics::ICustomBody::SubscriptMessage_none;
 		}
+
+		void EventAction_Move( const ::Oyster::Physics::ICustomBody *object )
+		{ /* Do nothing. */ }
 	}
 } }
