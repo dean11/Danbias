@@ -15,7 +15,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float4 size;
 			::Oyster::Math::Float mass;
 			::Oyster::Math::Float4x4 inertiaTensor;
-			::Oyster::Physics::ICustomBody::EventAction_Collision subscription;
+			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
+			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
 
 			SimpleBodyDescription();
@@ -27,7 +28,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float4 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;
-			::Oyster::Physics::ICustomBody::EventAction_Collision subscription;
+			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
+			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
 
 			SphericalBodyDescription();

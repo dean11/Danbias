@@ -235,6 +235,7 @@ namespace Oyster
 			};
 
 			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
 			typedef Struct::CustomBodyState State;
@@ -250,7 +251,12 @@ namespace Oyster
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual SubscriptMessage CallSubscription( const ICustomBody *proto, const ICustomBody *deuter ) = 0;
+			virtual SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter ) = 0;
+
+			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual void CallSubscription_Move() = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
@@ -321,6 +327,12 @@ namespace Oyster
 			 ********************************************************/
 			virtual ::Oyster::Math::Float3 & GetGravityNormal( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
 
+			/********************************************************
+			 * @return the void pointer set by SetCustomTag.
+			 * nullptr if none is set.
+			 ********************************************************/
+			virtual void * GetCustomTag() const = 0;
+
 			///********************************************************
 			// * The world position of this center of gravity.
 			// * @param targetMem: Provided memory that written into and then returned.
@@ -372,6 +384,13 @@ namespace Oyster
 			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
 
 			/********************************************************
+			 * Sets the function that will be called by the engine
+			 * whenever an object have moved.
+			 * @param functionPointer: If NULL, an empty default function will be set.
+			 ********************************************************/
+			virtual void SetSubscription( EventAction_Move functionPointer ) = 0;
+
+			/********************************************************
 			 * @param ignore: True if Engine should not apply Gravity.
 			 ********************************************************/
 			virtual void SetGravity( bool ignore) = 0;
@@ -381,6 +400,13 @@ namespace Oyster
 			 * @param normalizedVector: Should have same direction as the pullinggravity.
 			 ********************************************************/
 			virtual void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector ) = 0;
+
+			/********************************************************
+			 * Not used by the engine itself. Just a quality of life feature
+			 * for developers who want to tag something to the objects.
+			 * @param ref: Anything castable to a void pointer, the engine won't care.
+			 ********************************************************/
+			virtual void SetCustomTag( void *ref ) = 0;
 
 			///********************************************************
 			// * To not be called if is in Engine

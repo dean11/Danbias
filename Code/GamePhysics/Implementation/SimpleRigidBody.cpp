@@ -46,9 +46,11 @@ SimpleRigidBody::SimpleRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
-	this->collisionAction = Default::EventAction_Collision;
-	this->ignoreGravity = this->isForwarded = false;
+	this->onCollision = Default::EventAction_Collision;
+	this->onMovement = Default::EventAction_Move;
 	this->scene = nullptr;
+	this->customTag = nullptr;
+	this->ignoreGravity = this->isForwarded = false;
 }
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
@@ -63,17 +65,27 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 
 	this->gravityNormal = Float3::null;
 	
-	if( desc.subscription )
+	if( desc.subscription_onCollision )
 	{
-		this->collisionAction = desc.subscription;
+		this->onCollision = desc.subscription_onCollision;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
 	}
 
-	this->ignoreGravity = desc.ignoreGravity;
+	if( desc.subscription_onMovement )
+	{
+		this->onMovement= desc.subscription_onMovement;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
+	}
+
 	this->scene = nullptr;
+	this->customTag = nullptr;
+	this->ignoreGravity = desc.ignoreGravity;
 }
 
 SimpleRigidBody::~SimpleRigidBody() {}
@@ -104,7 +116,7 @@ SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targ
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 {
 	this->rigid.centerPos			  = state.GetCenterPosition();
-	this->rigid.SetRotation( state.GetRotation() );
+	//this->rigid.SetRotation( state.GetRotation() ); //! HACK: @todo Rotation temporary disabled
 	this->rigid.boundingReach		  = state.GetReach();
 	this->rigid.momentum_Linear		  = state.GetLinearMomentum();
 	this->rigid.momentum_Angular	  = state.GetAngularMomentum();
@@ -138,9 +150,14 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
 {
-	return this->collisionAction( proto, deuter );
+	return this->onCollision( this, deuter );
+}
+
+void SimpleRigidBody::CallSubscription_Move()
+{
+	this->onMovement( this );
 }
 
 bool SimpleRigidBody::IsAffectedByGravity() const
@@ -225,6 +242,11 @@ Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
 	return targetMem = this->gravityNormal;	
 }
 
+void * SimpleRigidBody::GetCustomTag() const
+{
+	return this->customTag;
+}
+
 //Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
 //{
 //	return targetMem = this->rigid.centerPos;
@@ -282,11 +304,23 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functi
 {
 	if( functionPointer )
 	{
-		this->collisionAction = functionPointer;
+		this->onCollision = functionPointer;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
+	}
+}
+
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Move functionPointer )
+{
+	if( functionPointer )
+	{
+		this->onMovement = functionPointer;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
 	}
 }
 
@@ -299,6 +333,11 @@ void SimpleRigidBody::SetGravity( bool ignore)
 void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+}
+
+void SimpleRigidBody::SetCustomTag( void *ref )
+{
+	this->customTag = ref;
 }
 
 //void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )

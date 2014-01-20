@@ -13,10 +13,11 @@ SphericalRigidBody::SphericalRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 10.0f );
 	this->gravityNormal = Float3::null;
-	this->collisionAction = Default::EventAction_Collision;
-	this->ignoreGravity = this->isForwarded = false;
+	this->onCollision = Default::EventAction_Collision;
+	this->onMovement = Default::EventAction_Move;
 	this->scene = nullptr;
-	this->body = Sphere( Float3::null, 0.5f );
+	this->customTag = nullptr;
+	this->ignoreGravity = this->isForwarded = false;
 }
 
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
@@ -32,18 +33,27 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 
 	this->gravityNormal = Float3::null;
 
-	if( desc.subscription )
+	if( desc.subscription_onCollision )
 	{
-		this->collisionAction = desc.subscription;
+		this->onCollision = desc.subscription_onCollision;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
 	}
 
-	this->ignoreGravity = desc.ignoreGravity;
+	if( desc.subscription_onMovement )
+	{
+		this->onMovement= desc.subscription_onMovement;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
+	}
+
 	this->scene = nullptr;
-	this->body = Sphere( desc.centerPosition, desc.radius );
+	this->customTag = nullptr;
+	this->ignoreGravity = desc.ignoreGravity;
 }
 
 SphericalRigidBody::~SphericalRigidBody() {}
@@ -74,7 +84,7 @@ SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::St
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 {
 	this->rigid.centerPos			  = state.GetCenterPosition();
-	this->rigid.SetRotation( state.GetRotation() );
+	//this->rigid.SetRotation( state.GetRotation() ); //! HACK: @todo Rotation temporary disabled
 	this->rigid.boundingReach		  = state.GetReach();
 	this->rigid.momentum_Linear		  = state.GetLinearMomentum();
 	this->rigid.momentum_Angular	  = state.GetAngularMomentum();
@@ -108,9 +118,14 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription( const ICustomBody *proto, const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
 {
-	return this->collisionAction( proto, deuter );
+	return this->onCollision( this, deuter );
+}
+
+void SphericalRigidBody::CallSubscription_Move()
+{
+	this->onMovement( this );
 }
 
 bool SphericalRigidBody::IsAffectedByGravity() const
@@ -135,7 +150,7 @@ bool SphericalRigidBody::Intersects( const ICustomBody &object, Float4 &worldPoi
 
 Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
-	return targetMem = this->body;
+	return targetMem = Sphere( this->rigid.centerPos, this->rigid.boundingReach.x );
 }
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
@@ -153,6 +168,11 @@ Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &target
 Float3 & SphericalRigidBody::GetGravityNormal( Float3 &targetMem ) const
 {
 	return targetMem = this->gravityNormal;	
+}
+
+void * SphericalRigidBody::GetCustomTag() const
+{
+	return this->customTag;
 }
 
 //Float3 & SphericalRigidBody::GetCenter( Float3 &targetMem ) const
@@ -191,7 +211,6 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 	}
 
 	this->rigid.Update_LeapFrog( timeStepLength );
-	this->body.center = this->rigid.centerPos;
 
 	// compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
@@ -207,11 +226,23 @@ void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision fun
 {
 	if( functionPointer )
 	{
-		this->collisionAction = functionPointer;
+		this->onCollision = functionPointer;
 	}
 	else
 	{
-		this->collisionAction = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_Collision;
+	}
+}
+
+void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Move functionPointer )
+{
+	if( functionPointer )
+	{
+		this->onMovement = functionPointer;
+	}
+	else
+	{
+		this->onMovement = Default::EventAction_Move;
 	}
 }
 
@@ -229,6 +260,11 @@ void SphericalRigidBody::SetGravity( bool ignore )
 void SphericalRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+}
+
+void SphericalRigidBody::SetCustomTag( void *ref )
+{
+	this->customTag = ref;
 }
 
 //void SphericalRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
