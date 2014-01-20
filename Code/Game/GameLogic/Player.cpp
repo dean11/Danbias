@@ -6,7 +6,7 @@ using namespace GameLogic;
 using namespace Oyster::Physics;
 
 Player::Player()
-	:Object(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
+	:DynamicObject(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
 {
 	weapon = new Weapon();
 		

@@ -6,7 +6,7 @@
 
 #include "GameLogicStates.h"
 #include "OysterMath.h"
-#include "Object.h"
+#include "DynamicObject.h"
 #include "OysterMath.h"
 #include "CollisionManager.h"
 
@@ -15,9 +15,8 @@
 namespace GameLogic
 {
 	class Weapon;
-	class Player : public Object
+	class Player : public DynamicObject
 	{
-
 	public:
 		Player(void);
 		~Player(void);

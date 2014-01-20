@@ -21,13 +21,13 @@ struct Level::PrivateData
 	{
 	}
 
-	SmartPointer<TeamManager> teamManager;
+	//SmartPointer<TeamManager> teamManager;
 
-	DynamicArray<SmartPointer<StaticObject>> staticObjects;
+	//DynamicArray<SmartPointer<StaticObject>> staticObjects;
 		
-	DynamicArray<SmartPointer<DynamicObject>> dynamicObjects;
+	//DynamicArray<SmartPointer<DynamicObject>> dynamicObjects;
 
-	SmartPointer<GameMode> gameMode;
+	//SmartPointer<GameMode> gameMode;
 
 	SmartPointer<ICustomBody> rigidBodyLevel;
 
@@ -72,17 +72,17 @@ void Level::InitiateLevel(float radius)
 
 void Level::AddPlayerToTeam(Player *player, int teamID)
 {
-	myData->teamManager->AddPlayerToTeam(player,teamID);
+	//myData->teamManager->AddPlayerToTeam(player,teamID);
 }
 
 void Level::CreateTeam(int teamSize)
 {
-	myData->teamManager->CreateTeam(teamSize);
+	//myData->teamManager->CreateTeam(teamSize);
 }
 
 void Level::RespawnPlayer(Player *player)
 {
-	myData->teamManager->RespawnPlayerRandom(player);
+	//myData->teamManager->RespawnPlayerRandom(player);
 }
 
 
