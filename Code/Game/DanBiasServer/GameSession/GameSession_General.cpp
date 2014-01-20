@@ -20,6 +20,7 @@ using namespace GameLogic;
 namespace DanBias
 {
 	GameSession::GameSession()
+		:gameInstance(GameAPI::Instance())
 	{
 		this->owner = 0;
 		this->box = 0;
@@ -36,30 +37,60 @@ namespace DanBias
 
 	bool GameSession::Create(GameDescription& desc)
 	{
+		/* Do some error checking */
 		if(desc.clients.Size() == 0)	return false;
 		if(!desc.owner)					return false;
 		if(!desc.mapName.size())		return false;
 		if(this->isCreated)				return false;
 
+		/* standard initialization of some data */
 		this->clients.Resize(desc.clients.Size());
-
 		this->box = new PostBox<NetworkSession::NetEvent>();
 		this->owner = desc.owner;
 
-		Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> c;
-		c.value.callbackPostBox = this->box;
-		c.callbackType = Oyster::Callback::CallbackType_PostBox;
-
-		for (unsigned int i = 0; i < desc.clients.Size(); i++)
+		/* Initiate the game instance */
+		if(!this->gameInstance.Initiate())
 		{
-			this->clients[i] = new GameClient(desc.clients[i], gameInstance.CreatePlayer(), c);
+			printf("Failed to initiate the game instance\n");
 		}
 
-		if(this->worker.Create(this, true, true) != OYSTER_THREAD_ERROR_SUCCESS) return false;
+		/* Create the game level */
+		if(!(this->levelData = this->gameInstance.CreateLevel()))
+		{
+			printf("Level not created!");
+			return false;
+		}
+
+		/* Create a callback object */
+		Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> c;
+			c.value.callbackPostBox = this->box;
+			c.callbackType = Oyster::Callback::CallbackType_PostBox;
+
+		/* Create the players in the game instance */
+		GameLogic::IPlayerData* p = 0;
+		for (unsigned int i = 0; i < desc.clients.Size(); i++)
+		{
+			if( (p = this->gameInstance.CreatePlayer()) )
+			{
+				this->clients[i] = new GameClient(desc.clients[i], p, c);
+			}
+			else
+			{
+				printf("Failed to create player (%i)\n", i);
+			}
+		}
+
+		/* Create the worker thread */
+		if(this->worker.Create(this, true, true) != OYSTER_THREAD_ERROR_SUCCESS) 
+			return false;
+
+		this->worker.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_3);
+
+		/* Set some gameinstance data options */
+		this->gameInstance.SetSubscription(GameLogic::GameEvent::ObjectEventFunctionType_OnMove, GameSession::ObjectMove);
 
 		this->isCreated = true;
-
-		return true;
+		return this->isCreated;
 	}
 
 	void GameSession::Run()
@@ -69,8 +100,7 @@ namespace DanBias
 
 		if(this->clients.Size() > 0)
 		{
-			
-			this->worker.SetPriority(OYSTER_THREAD_PRIORITY_2);
+			this->worker.SetPriority(OYSTER_THREAD_PRIORITY_1);
 			this->isRunning = true;
 		}
 	}
@@ -84,7 +114,7 @@ namespace DanBias
 		c.callbackType = Oyster::Callback::CallbackType_PostBox;
 
 		SmartPointer<GameClient> obj = new GameClient(client, this->gameInstance.CreatePlayer(), c);
-		AddClient(obj);
+		InsertClient(obj);
 			
 		return true;
 	}
@@ -105,7 +135,7 @@ namespace DanBias
 		this->Clean();			
 	}
 
-	void GameSession::AddClient(SmartPointer<GameClient> obj)
+	void GameSession::InsertClient(SmartPointer<GameClient> obj)
 	{
 		for (unsigned int i = 0; i < clients.Size(); i++)
 		{

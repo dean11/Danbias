@@ -5,112 +5,84 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "GameLogicDef.h"
-#include "GameLogicStates.h"
-#include <OysterMath.h>
+//Includes windows so we need to undef minmax
+#define NOMINMAX
+#include <vld.h>
+
+#include "GameAPI.h"
+#include "Player.h"
+#include "Level.h"
+
+#include <DynamicArray.h>
+#include <GID.h>
+#include <PhysicsAPI.h>
+#include <WinTimer.h>
 
 namespace GameLogic
 {
-	class Player;
-	class Level;
-	class DANBIAS_GAMELOGIC_DLL Game
+	class Game	:public GameAPI
 	{
 	
 	public:
-		struct DANBIAS_GAMELOGIC_DLL PlayerData
+		class PlayerData :public IPlayerData
 		{
-		private:
-			friend class Game;
-			Player *player;
+		public:
 			PlayerData();
 			PlayerData(int playerID,int teamID);
 			~PlayerData();
-			
-		public:
-			/********************************************************
-			* Moves the chosen player based on input
-			* @param playerID: ID of the player you want to recieve the message
-			* @param movement: enum value on what kind of action is to be taken
-			********************************************************/
-			void Move(const PLAYER_MOVEMENT &movement);
 
-			/********************************************************
-			* Uses the chosen players weapon based on input
-			* @param playerID: ID of the player you want to recieve the message
-			* @param Usage: enum value on what kind of action is to be taken
-			********************************************************/
-			void UseWeapon(int playerID, const WEAPON_FIRE &usage);
+			void Move(const PLAYER_MOVEMENT &movement)				override;
+			void UseWeapon(int playerID, const WEAPON_FIRE &usage)	override;
+			int GetTeamID() const									override;
+			PLAYER_STATE GetState() const							override;
+			Oyster::Math::Float3 GetPosition()						override;
+			Oyster::Math::Float4x4 GetOrientation()					override; 
+			int GetID() const										override;
+			OBJECT_TYPE GetObjectType()	const						override;
 
-			/********************************************************
-			* Gets players position
-			* @param playerID: ID of the player whos position you want
-			********************************************************/
-			Oyster::Math::Float3 GetPosition();
-
-			/********************************************************
-			* Gets players current orientation
-			* @param playerID: ID of the player whos position you want
-			********************************************************/
-			Oyster::Math::Float4x4 GetOrientation();
-
-			/********************************************************
-			* Check player state
-			* @return The current player state
-			********************************************************/
-			PLAYER_STATE GetState() const;
-
-			/***/
-			int GetID() const;
-
-			/***/
-			int GetTeamID() const;
+			Player *player;
 		};
 
-		struct DANBIAS_GAMELOGIC_DLL LevelData
+		class LevelData	:public ILevelData
 		{
-		private:
-			friend class Game;
-			Level *level;
+		public:
 			LevelData();
 			~LevelData();
-			
-		public:
+			Oyster::Math::Float3 GetPosition()						override;
+			Oyster::Math::Float4x4 GetOrientation()					override; 
+			int GetID() const										override;
+			OBJECT_TYPE GetObjectType()	const						override;
 
-			
+			Level *level;
 		};
 
 	public:
-		Game(void);
-		~Game(void);
+		Game();
+		~Game();
 
-		/********************************************************
-		* Gets the position of all players currently in the game
-		********************************************************/
-		void GetAllPlayerPositions() const;
+		void GetAllPlayerPositions() const																				override;
+		PlayerData* CreatePlayer()																						override;
+		LevelData* CreateLevel()																						override;
+		void CreateTeam()																								override;
+		bool NewFrame()																									override;
+		void SetFPS( int FPS )																							override;
+		void SetFrameTimeLength( float seconds )																		override;
+		void SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::ObjectEventFunction functionPointer)	override;
+		bool Initiate()																									override;
 
-		/********************************************************
-		* Creates a player and returns PlayerData
-		********************************************************/
-		PlayerData* CreatePlayer();
+		float GetFrameTime() const;
 
-		/********************************************************
-		* Creates a level and returns LevelData
-		********************************************************/
-		LevelData* CreateLevel();
-
-		/********************************************************
-		* Creates a team
-		********************************************************/
-		void CreateTeam();
-
-		/********************************************************
-		* Runs a update of the gamelogic and physics
-		********************************************************/
-		void NewFrame();
-	
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+		static void PhysicsOnMove(const Oyster::Physics::ICustomBody *object);
+		static void PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> proto);
+
+	private:
+		Utility::DynamicMemory::DynamicArray<PlayerData*> players;
+		LevelData* level;
+		float frameTime;
+		bool initiated;
+		GameEvent::ObjectEventFunction onDeadFnc;
+		GameEvent::ObjectEventFunction onMoveFnc;
 
 	};	
 }

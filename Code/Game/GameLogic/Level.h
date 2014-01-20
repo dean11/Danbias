@@ -4,7 +4,15 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 #include <string>
+
 #include "Player.h"
+#include "StaticObject.h"
+#include "DynamicObject.h"
+#include "GameMode.h"
+#include "Player.h"
+#include "PhysicsAPI.h"
+#include "TeamManager.h"
+#include "DynamicArray.h"
 
 namespace GameLogic
 {
@@ -44,10 +52,11 @@ namespace GameLogic
 		void RespawnPlayer(Player *player);
 
 	private:
-
-	private:
-		struct PrivateData;
-		PrivateData *myData;
+		TeamManager teamManager;
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
+		GameMode gameMode;
+		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
 
 	};
 

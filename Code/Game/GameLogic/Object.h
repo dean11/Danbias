@@ -6,12 +6,13 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-
 #include "GameLogicStates.h"
 #include <PhysicsAPI.h>
 
 namespace GameLogic
 {
+	class Game;
+
 	class Object
 	{
 	public:		
@@ -21,16 +22,21 @@ namespace GameLogic
 
 		OBJECT_TYPE GetType() const;
 		int GetID() const;
-
 		Oyster::Physics::ICustomBody* GetRigidBody();
+
+		void BeginFrame();
+		void EndFrame();
 
 	private:
 		OBJECT_TYPE type;
 		int objectID;
+
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
 		Oyster::Physics::ICustomBody::State setState;
 		Oyster::Physics::ICustomBody::State getState;
+
+		static const Game* gameInstance;
 
 	};
 

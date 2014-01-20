@@ -56,7 +56,6 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 
 		case protocol_Gameplay_CreateObject:
 			{
-
 				Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
 				protocolData->object_ID = p[1].value.netInt;
 				protocolData->path = p[2].value.netCharPtr;

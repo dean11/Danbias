@@ -75,7 +75,7 @@ namespace DanBias
 		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient))
 			return DanBiasClientReturn_Error;
 
-		 m_data->timer = new Utility::WinTimer();
+		 m_data->timer = new Utility::WinTimer(); //why dynamic memory?
 		 m_data->timer->reset();
 		return DanBiasClientReturn_Sucess;
 	}

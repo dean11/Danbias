@@ -1,19 +1,10 @@
 #include "Game.h"
-#include "Player.h"
-#include "Level.h"
-#include <DynamicArray.h>
-#include <GID.h>
-#include <PhysicsAPI.h>
-#include <WinTimer.h>
 
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Physics;
 
-#define DELTA_TIME	0.01666666666666666666666666666667f
-
-template<typename T>
-int InsertObject(DynamicArray<T*>& list, T* obj)
+template<typename T> int InsertObject(DynamicArray<T*>& list, T* obj)
 {
 	for (unsigned int i = 0; i < list.Size(); i++)
 	{
@@ -26,8 +17,7 @@ int InsertObject(DynamicArray<T*>& list, T* obj)
 	list.Push(obj);
 	return list.Size() - 1;
 }
-template<typename T>
-int RemoveObject(DynamicArray<T*>& list, T* obj)
+template<typename T> int RemoveObject(DynamicArray<T*>& list, T* obj)
 {
 	for (unsigned int i = 0; i < list.Size(); i++)
 	{
@@ -41,37 +31,33 @@ int RemoveObject(DynamicArray<T*>& list, T* obj)
 	return list.Size() - 1;
 }
 
-struct Game::PrivateData
+
+Game gameInstance;
+GameAPI& GameAPI::Instance()
 {
-	PrivateData()
-	{  }
-
-	~PrivateData()
-	{
-		for (unsigned int i = 0; i < players.Size(); i++)
-		{
-			this->players[i]->player = 0;
-		}
-	}
-
-	DynamicArray<PlayerData*> players;
-	LevelData* level;
-	Utility::WinTimer timer;
-
-}myData;
+	return gameInstance;
+}
 
 
 Game::Game(void)
-{
-	myData = new PrivateData();
-}
+	:	initiated(false)
+	,	onMoveFnc(0)
+	,	onDeadFnc(0)
+	,	frameTime(1.0f/120.0f)
+{}
 
 Game::~Game(void)
-{
-	if(myData)
+{ 
+	for (unsigned int i = 0; i < gameInstance.players.Size(); i++)
 	{
-		delete myData;
+		delete gameInstance.players[i];
 	}
+	gameInstance.players.Clear();
+
+	delete this->level;
+	this->level = 0;
+
+	initiated = false;
 }
 
 void Game::GetAllPlayerPositions() const
@@ -81,21 +67,23 @@ void Game::GetAllPlayerPositions() const
 
 Game::PlayerData* Game::CreatePlayer()
 {
-	Player *newPlayer = new Player();
-	PlayerData *newPdata = new PlayerData();
-	newPdata->player = newPlayer;
-	int id = InsertObject(this->myData->players, newPdata);
-	return this->myData->players[id];
+	// Find a free space in array or insert at end
+	int id = InsertObject(this->players, (PlayerData*)0);
+
+	this->players[id] = new PlayerData();
+	this->players[id]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+
+	return this->players[id];
 }
 
 Game::LevelData* Game::CreateLevel()
 {
-	Level *newLevel = new Level();
-	newLevel->InitiateLevel(1000);
-	LevelData *newLdata = new LevelData();
-	newLdata->level = newLevel;
-	myData->level = newLdata;
-	return myData->level;
+	if(this->level) return this->level;
+
+	this->level = new LevelData();
+	this->level->level->InitiateLevel(1000);
+
+	return this->level;
 }
 
 void Game::CreateTeam()
@@ -103,27 +91,72 @@ void Game::CreateTeam()
 	
 }
 
-void Game::NewFrame()
+bool Game::NewFrame()
 {
-	double dt = this->myData->timer.getElapsedSeconds();
-
-	//60 fps sec is currently staticly
-
-
-	if(dt >= DELTA_TIME)
+	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
-		for (int i = 0; i < this->myData->players.Size(); i++)
-		{
-			if(this->myData->players[i]->player)
-				this->myData->players[i]->player->BeginFrame();
-		}
-		API::Instance().Update();
-
-		for (int i = 0; i < this->myData->players.Size(); i++)
-		{
-			if(this->myData->players[i]->player)
-				this->myData->players[i]->player->EndFrame();
-		}
-		this->myData->timer.reset();
+		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
+
+	API::Instance().Update();
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->EndFrame();
+	}
+	return true;
 }
+
+void Game::SetFPS(int FPS)
+{
+	this->frameTime = 1.0f / FPS;
+}
+
+void Game::SetFrameTimeLength( float seconds )
+{
+	this->frameTime = seconds;
+}
+
+void Game::SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::ObjectEventFunction functionPointer)
+{
+	switch (type)
+	{
+		case GameLogic::GameEvent::ObjectEventFunctionType_OnMove:
+			this->onMoveFnc = functionPointer;
+		break;
+		case GameLogic::GameEvent::ObjectEventFunctionType_OnDead:
+			this->onDeadFnc = functionPointer;
+		break;
+	}
+	
+}
+
+bool Game::Initiate()
+{
+	API::Instance().Init((int)pow(2u, 9u), 1u, Oyster::Math::Float3());
+	API::Instance().SetSubscription(Game::PhysicsOnDestroy);
+	this->initiated = true;
+	return true;
+}
+
+
+float Game::GetFrameTime() const
+{
+	return this->frameTime;
+}
+
+/**********************************************/
+/*********** Private methods ******************/
+/***************************************************************************************************/
+
+void Game::PhysicsOnMove(const ICustomBody *object)
+{
+	IObjectData* temp = 0;
+	//IObjectData* temp = ((IObjectData*)object->GetDataTag());
+	if(gameInstance.onMoveFnc) gameInstance.onMoveFnc(temp);
+}
+void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
+{
+	if(gameInstance.onDeadFnc) gameInstance.onDeadFnc(0);
+}
+

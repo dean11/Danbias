@@ -101,7 +101,7 @@ using namespace Utility::DynamicMemory;
 			else		
 				this->threadData->state = OYSTER_THREAD_STATE_IDLE;
 			threadData->ownerObj = worker;
-			threadData->prio = OYSTER_THREAD_PRIORITY_3;
+			threadData->prio = OYSTER_THREAD_PRIORITY_2;
 
 			workerThread = std::thread(fnc, this->threadData);
 

@@ -25,7 +25,9 @@ namespace DanBias
 		if( !this->box->IsEmpty() )
 		{
 			NetworkSession::NetEvent &e = this->box->Fetch();
-		
+			static int ii = 0;
+			printf("%i - Message recieved! [%i]\n", ii++, e.protocol[0].value);
+
 			if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
 
 			if( ProtocolIsGameplay(e.protocol[protocol_INDEX_ID].value.netShort) )
@@ -38,10 +40,6 @@ namespace DanBias
 
 	void GameSession::ParseGameplayEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
-		GameSessionEvent e;
-		e.data.player = c->GetPlayer();
-		e.value	= GameSessionEvent::EventType_Player;
-
 		switch (p[protocol_INDEX_ID].value.netShort)
 		{
 			case protocol_Gameplay_PlayerNavigation:
@@ -60,9 +58,6 @@ namespace DanBias
 				if(p[6].value.netBool)	//bool bStrafeLeft;
 					//world.v[3].y = -2;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
-
-				
-
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
@@ -77,11 +72,7 @@ namespace DanBias
 			case protocol_Gameplay_ObjectPosition:
 				
 			break;
-
-
 		}
-
-		this->modifiedClient.Push(e);
 	}
 
 	void GameSession::ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
@@ -92,7 +83,7 @@ namespace DanBias
 				switch (p[1].value.netInt)
 				{
 					case GameLogic::Protocol_General_Status::States_bussy:
-
+						
 					break;
 					
 					case GameLogic::Protocol_General_Status::States_disconected:
@@ -114,6 +105,16 @@ namespace DanBias
 					
 			break;
 		}
+	}
+
+
+	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
+	{
+		//if (movedObject->)
+		//{
+		//
+		//}
+		//movedObject->GetOrientation();
 	}
 
 }//End namespace DanBias

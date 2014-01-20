@@ -5,15 +5,15 @@ using namespace GameLogic;
 
 Game::PlayerData::PlayerData()
 {
-
+	this->player = new Player();
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
-
+	this->player = new Player();
 }
 Game::PlayerData::~PlayerData()
 {
-
+	delete this->player;
 }
 
 void Game::PlayerData::Move(const PLAYER_MOVEMENT &movement)
@@ -43,4 +43,8 @@ int Game::PlayerData::GetID() const
 int Game::PlayerData::GetTeamID() const
 {
 	return this->player->GetTeamID();
+}
+OBJECT_TYPE Game::PlayerData::GetObjectType()	const
+{
+	return this->player->GetType();
 }

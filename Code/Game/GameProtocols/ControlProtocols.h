@@ -46,6 +46,7 @@ namespace GameLogic
 	struct Protocol_General_Text :public Oyster::Network::CustomProtocolObject
 	{
 		char* text;
+		int destination;
 
 		Protocol_General_Text()
 		{

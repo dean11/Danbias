@@ -4,7 +4,10 @@
 
 #ifndef TEAMMANAGER_H
 #define TEAMMANAGER_H
+
 #include "Player.h"
+#include "Team.h"
+#include <DynamicArray.h>
 
 namespace GameLogic
 {
@@ -56,8 +59,8 @@ namespace GameLogic
 			bool IsValidTeam(int teamID);
 
 		private:
-			struct PrivateData;
-			PrivateData *myData;
+			Utility::DynamicMemory::DynamicArray<Team*> teams;
+			int maxNrOfTeams;
 	};
 }
 #endif

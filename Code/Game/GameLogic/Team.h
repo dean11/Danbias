@@ -4,7 +4,9 @@
 
 #ifndef TEAM_H
 #define TEAM_H
+
 #include "Player.h"
+#include "DynamicArray.h"
 
 namespace GameLogic
 {
@@ -29,8 +31,8 @@ namespace GameLogic
 		bool AddPlayer(Player *player);
 
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+		Utility::DynamicMemory::DynamicArray<Player*> players;
+		int teamSize;
 	};
 }
 #endif

@@ -24,7 +24,8 @@ namespace GameLogic
 	{
 		OBJECT_TYPE_PLAYER = 0,
 		OBJECT_TYPE_BOX = 1,
-		OBJECT_TYPE_UNKNOWN = 2,
+		OBJECT_TYPE_WORLD = 2, 
+		OBJECT_TYPE_UNKNOWN = -1,
 	};
 
 	enum WEAPON_FIRE

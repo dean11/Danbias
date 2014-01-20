@@ -150,6 +150,10 @@
     <ClCompile Include="Resource\Loaders\CustomLoader.cpp" />
     <ClCompile Include="Resource\OResourceHandler.cpp" />
     <ClCompile Include="Resource\OResource.cpp" />
+    <ClCompile Include="Resource\ResourceManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Thread\OysterMutex.cpp" />
     <ClCompile Include="Thread\OysterThread_Impl.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -165,6 +169,10 @@
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Resource\OysterResource.h" />
     <ClInclude Include="Resource\OResource.h" />
+    <ClInclude Include="Resource\ResourceManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="Thread\IThreadObject.h" />
     <ClInclude Include="Thread\OysterMutex.h" />

@@ -10,6 +10,11 @@
 #include <Windows.h>
 #include <OysterMath.h>
 
+#define DELTA_TIME_24	0.04166666666666666666666666666667f
+#define DELTA_TIME_30	0.03333333333333333333333333333333f
+#define DELTA_TIME_60	0.01666666666666666666666666666667f
+#define DELTA_TIME_120	0.00833333333333333333333333333333f
+
 using namespace Utility::DynamicMemory;
 using namespace Oyster;
 using namespace Oyster::Network;
@@ -20,53 +25,48 @@ namespace DanBias
 {
 	bool GameSession::DoWork(  )
 	{
-		if(GetAsyncKeyState(VK_UP))
+		if(this->isRunning)
 		{
-			Protocol_General_Status p(Protocol_General_Status::States_ready);
-			Send(p.GetProtocol());
-			Sleep(100);
-		}
-		if(GetAsyncKeyState(VK_DOWN))
-		{
-			Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
-			Protocol_CreateObject p(world, 2, "../Content/crate");
-			Send(p.GetProtocol());
-			Sleep(100);
-		}
-
-
+			if(GetAsyncKeyState(VK_UP))
+			{
+				Protocol_General_Status p(Protocol_General_Status::States_ready);
+				Send(p.GetProtocol());
+				Sleep(100);
+			}
+			if(GetAsyncKeyState(VK_DOWN))
+			{
+				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
+				Protocol_CreateObject p(world, 2, "../Content/crate");
+				Send(p.GetProtocol());
+				Sleep(100);
+			}
 		
-		this->ParseEvents();
+			double dt = this->timer.getElapsedSeconds();
+			gameInstance.SetFrameTimeLength((float)dt);
 
-		this->gameInstance.NewFrame();
+			if(dt >= DELTA_TIME_60)
+			{
+				this->ParseEvents();
 
-		this->UpdateGameObjects();
+				this->gameInstance.NewFrame();
+
+				this->UpdateGameObjects();
+
+				this->timer.reset();
+			}
+		}
 
 		return this->isRunning;
 	}
 
 	void GameSession::UpdateGameObjects()
 	{
-		while(!this->modifiedClient.IsEmpty())
-		{
-			//There is something that needs update
-			GameSessionEvent e = this->modifiedClient.Pop();
-			
-			switch (e.value)
-			{
-				case GameSessionEvent::EventType_Player:
-					//e.data.player->GetOrientation();
-				break;
-			}
-
-		}
-
-		if(clients.Size() == 1)
+		if(clients.Size() >= 1 && clients[0])
 		{
 			Oyster::Math::Float4x4 world = 	this->clients[0]->GetPlayer()->GetOrientation();
 			Protocol_ObjectPosition p(world, 1);
 			Send(p.GetProtocol());
-			Sleep(100);
+			//Sleep(100);
 		}
 	}
 

@@ -73,6 +73,7 @@ struct ClientDataContainer
 };
 unsigned int ClientDataContainer::currID = 0;
 
+
 struct NetworkClient::PrivateData : public IThreadObject
 {
 	Utility::DynamicMemory::SmartPointer<ClientDataContainer> data;
@@ -91,6 +92,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		
 		return true;
 	}
+
 
 	void Send(CustomNetProtocol* protocol)
 	{
@@ -175,12 +177,14 @@ struct NetworkClient::PrivateData : public IThreadObject
 NetworkClient::NetworkClient()
 {
 	privateData = new PrivateData();
+	this->privateData->data->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
 }
 
 NetworkClient::NetworkClient(unsigned int socket)
 {
 	privateData = new PrivateData(socket);
 	this->privateData->data->thread.Create(this->privateData, true);
+	this->privateData->data->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
 }
 
 NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type)
@@ -196,6 +200,7 @@ NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType
 	this->privateData->data->callbackType = type;
 	this->privateData->data->recvObj = recvObj;
 	this->privateData->data->thread.Create(this->privateData, true);
+	this->privateData->data->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
 }
 
 NetworkClient::NetworkClient(const NetworkClient& obj)

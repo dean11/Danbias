@@ -4,7 +4,6 @@
 
 #include "GameClient.h"
 #include "..\LobbySessions\NetworkSession.h"
-#include <Game.h>
 #include <Protocols.h>
 
 using namespace Utility::DynamicMemory;
@@ -13,7 +12,7 @@ using namespace GameLogic;
 
 static int gameClientIDCount = 1;
 
-GameClient::GameClient(SmartPointer<LobbyClient> client, Game::PlayerData* player, Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
+GameClient::GameClient(SmartPointer<LobbyClient> client, IPlayerData* player, Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value)
 {
 	this->callbackValue = value;
 	this->client = client;
@@ -37,13 +36,13 @@ void GameClient::SetCallback(Oyster::Callback::OysterCallback<void, NetworkSessi
 	this->callbackValue = value;
 }
 
-GameLogic::Game::PlayerData* GameClient::GetPlayer()
+GameLogic::IPlayerData* GameClient::GetPlayer()
 {
 	return this->player;
 }
-GameLogic::Game::PlayerData* GameClient::ReleasePlayer()
+GameLogic::IPlayerData* GameClient::ReleasePlayer()
 {
-	GameLogic::Game::PlayerData *temp = this->player;
+	GameLogic::IPlayerData *temp = this->player;
 	this->player =  0;
 	return temp;
 }

@@ -7,9 +7,6 @@
 #include "GameLogicStates.h"
 #include "OysterMath.h"
 #include "Object.h"
-#include "OysterMath.h"
-#include "CollisionManager.h"
-
 
 
 namespace GameLogic
@@ -57,10 +54,6 @@ namespace GameLogic
 		PLAYER_STATE GetState() const;
 
 		void DamageLife(int damage);
-
-		//Do frame calculations
-		void BeginFrame();
-		void EndFrame();
 
 	private:
 		void Jump();

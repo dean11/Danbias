@@ -3,12 +3,15 @@
 #include "CollisionManager.h"
 #include "GID.h"
 #include "PhysicsAPI.h"
+#include "Game.h"
 
 
 using namespace GameLogic;
 
 using namespace Oyster::Math;
 using namespace Oyster::Physics;
+
+const Game *Object::gameInstance = (Game*)(&Game::Instance());
 
 Object::Object()
 {	
@@ -34,7 +37,7 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	//sbDesc.centerPosition = 
 
 	//poi
-	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	this->rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 
 	Oyster::Physics::API::Instance().AddObject(rigidBody);
 	
@@ -65,4 +68,15 @@ int Object::GetID() const
 Oyster::Physics::ICustomBody* Object::GetRigidBody()
 {
 	return this->rigidBody;
+}
+
+
+void Object::BeginFrame()
+{
+	this->rigidBody->SetState(this->setState);
+}
+void Object::EndFrame()
+{
+	this->rigidBody->GetState(this->getState);
+	this->setState = this->getState;
 }

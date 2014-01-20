@@ -11,7 +11,7 @@
 #include <WinTimer.h>
 #include <PostBox\IPostBox.h>
 #include <Thread\OysterThread.h>
-#include <Game.h>
+#include <GameAPI.h>
 #include <Queue.h>
 
 namespace DanBias
@@ -29,19 +29,6 @@ namespace DanBias
 			std::wstring mapName;
 			NetworkSession* owner;
 			Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<LobbyClient>> clients;
-		};
-		
-		struct GameSessionEvent
-		{
-			union EventData
-			{
-				GameLogic::Game::PlayerData* player;
-			} data;
-			enum EventType
-			{
-				EventType_Player,
-				EventType_DynamicObject,
-			} value;
 		};
 
 	public:
@@ -77,7 +64,7 @@ namespace DanBias
 		//Handles all general events
 		void ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
 		//Adds a client to the client list
-		void AddClient(Utility::DynamicMemory::SmartPointer<GameClient> obj);
+		void InsertClient(Utility::DynamicMemory::SmartPointer<GameClient> obj);
 		//Removes a client from the client list
 		void RemoveClient(DanBias::GameClient* obj);
 		//Sends a protocol ta all clients in session
@@ -97,11 +84,14 @@ namespace DanBias
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
 		Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box;
 		Oyster::Thread::OysterThread worker;
-		GameLogic::Game gameInstance;
+		GameLogic::GameAPI& gameInstance;
+		GameLogic::ILevelData *levelData;
 		NetworkSession* owner;
 		bool isCreated;
 		bool isRunning;
-		Utility::Container::Queue<GameSessionEvent> modifiedClient;
+		Utility::WinTimer timer;
+
+		static void ObjectMove(GameLogic::IObjectData* movedObject);
 
 	private:
 		friend class AdminInterface;

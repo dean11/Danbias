@@ -83,7 +83,7 @@ bool Weapon::IsReloading()
 
 bool Weapon::IsValidSocket(int socketID)
 {
-	if(socketID < myData->attatchmentSockets.Size() && socketID >= 0)
+	if(socketID < (int)myData->attatchmentSockets.Size() && socketID >= 0)
 	{
 		if (myData->attatchmentSockets[socketID]->GetAttatchment() != 0)
 		{
@@ -102,7 +102,7 @@ int Weapon::GetCurrentSocketID()
 
 void Weapon::AddNewAttatchment(IAttatchment *attatchment, Player *owner)
 {
-	if(myData->currentNrOfAttatchments < myData->attatchmentSockets.Size())
+	if(myData->currentNrOfAttatchments < (int)myData->attatchmentSockets.Size())
 	{
 		myData->attatchmentSockets[myData->currentNrOfAttatchments]->SetAttatchment(attatchment);
 		myData->currentNrOfAttatchments++;
