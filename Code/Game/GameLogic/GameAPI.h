@@ -77,10 +77,9 @@ namespace GameLogic
 
 			/********************************************************
 			* Uses the chosen players weapon based on input
-			* @param playerID: ID of the player you want to recieve the message
 			* @param Usage: enum value on what kind of action is to be taken
 			********************************************************/
-			virtual void UseWeapon(int playerID, const WEAPON_FIRE &usage) = 0;
+			virtual void UseWeapon(const WEAPON_FIRE &usage) = 0;
 
 			/***/
 			virtual int GetTeamID() const = 0;

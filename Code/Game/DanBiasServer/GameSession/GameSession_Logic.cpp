@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include <OysterMath.h>
 
+#define DELTA_TIME_20	0.05f
 #define DELTA_TIME_24	0.04166666666666666666666666666667f
 #define DELTA_TIME_30	0.03333333333333333333333333333333f
 #define DELTA_TIME_60	0.01666666666666666666666666666667f
@@ -44,7 +45,7 @@ namespace DanBias
 			double dt = this->timer.getElapsedSeconds();
 			gameInstance.SetFrameTimeLength((float)dt);
 
-			if(dt >= DELTA_TIME_60)
+			if(dt >= DELTA_TIME_20)
 			{
 				this->ParseEvents();
 

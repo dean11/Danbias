@@ -32,14 +32,13 @@ namespace GameLogic
 			~PlayerData();
 
 			void Move(const PLAYER_MOVEMENT &movement)				override;
-			void UseWeapon(int playerID, const WEAPON_FIRE &usage)	override;
+			void UseWeapon(const WEAPON_FIRE &usage)				override;
 			int GetTeamID() const									override;
 			PLAYER_STATE GetState() const							override;
 			Oyster::Math::Float3 GetPosition()						override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;
-
 			Player *player;
 		};
 
