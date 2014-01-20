@@ -57,16 +57,10 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	// Important! The member data is all world data except the Inertia tensor. Thus a new InertiaTensor needs to be created to be compatible with the rest of the world data.
 	Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
 
-	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
-<<<<<<< HEAD
-	this->axis += Radian( Formula::AngularVelocity(wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular)) );
-	this->rotation = Rotation( this->axis );
-=======
-	
+	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
 	//! HACK: @todo Rotation temporary disabled
 	//this->axis += Radian( Formula::AngularVelocity(wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular)) );
 	//this->rotation = Rotation( this->axis );
->>>>>>> refs/heads/Physics
 
 	// update momentums and clear impulse_Linear and impulse_Angular
 	this->momentum_Linear += this->impulse_Linear;
