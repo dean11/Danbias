@@ -215,3 +215,8 @@ UINT32 Core::Buffer::GetVertexSize()
 {
 	return this->mElementSize;
 }
+
+ID3D11Buffer* Core::Buffer::GetBufferPointer()
+{
+	return this->mBuffer;
+}

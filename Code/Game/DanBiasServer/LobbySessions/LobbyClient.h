@@ -1,3 +1,6 @@
+/////////////////////////////////////////
+// Created by [Dennis Andersen] [2013] //
+/////////////////////////////////////////
 #ifndef DANBIASSERVER_LOBBYCLIENT_H
 #define DANBIASSERVER_LOBBYCLIENT_H
 

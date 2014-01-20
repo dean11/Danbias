@@ -5,5 +5,6 @@
 #include "PlayerProtocols.h"
 #include "LobbyProtocols.h"
 #include "ControlProtocols.h"
+#include "GameplayProtocols.h"
 
 #endif // !GAMEPROTOCOLS_GAMEPROTOCOLS_H

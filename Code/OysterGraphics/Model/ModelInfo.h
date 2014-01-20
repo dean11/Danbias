@@ -16,7 +16,7 @@ namespace Oyster
 				std::vector<ID3D11ShaderResourceView*> Material;
 				Core::Buffer *Vertices,*Indecies;
 				bool Indexed;
-				int VertexCount;
+				int VertexCount, IndexCount;
 			};	
 		}
 	}

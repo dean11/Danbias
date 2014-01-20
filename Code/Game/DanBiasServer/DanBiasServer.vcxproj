@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll;GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;NetworkAPI_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -128,7 +128,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName)D.dll;GamePhysics_$(PlatformShortName)D.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName)D.dll;NetworkAPI_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName)D.lib;WindowManager_$(PlatformShortName)D.lib;GameLogic_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -148,7 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll;GamePhysics_$(PlatformShortName).dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;NetworkAPI_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -168,7 +168,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;%(DelayLoadDLLs);NetworkAPI_$(PlatformShortName).dll;GamePhysics_$(PlatformShortName).dll</DelayLoadDLLs>
+      <DelayLoadDLLs>GameLogic_$(PlatformShortName).dll;NetworkAPI_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>NetworkAPI_$(PlatformShortName).lib;WindowManager_$(PlatformShortName).lib;GameLogic_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -179,10 +179,13 @@
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameSession\GameClient.cpp" />
+    <ClCompile Include="GameSession\GameSession_Events.cpp" />
+    <ClCompile Include="GameSession\GameSession_General.cpp" />
+    <ClCompile Include="GameSession\GameSession_Network.cpp" />
     <ClCompile Include="LobbySessions\INetworkSession.cpp" />
     <ClCompile Include="LobbySessions\LobbyClient.cpp" />
     <ClCompile Include="LobbySessions\GameLobby.cpp" />
-    <ClCompile Include="GameSession\GameSession.cpp" />
+    <ClCompile Include="GameSession\GameSession_Logic.cpp" />
     <ClCompile Include="LobbySessions\MainLobby.cpp" />
     <ClCompile Include="LobbySessions\NetworkSession.cpp" />
   </ItemGroup>
@@ -203,9 +206,6 @@
     <ClInclude Include="LobbySessions\NetworkSession.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\GamePhysics\GamePhysics.vcxproj">
-      <Project>{104fa3e9-94d9-4e1d-a941-28a03bc8a095}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\Misc\Misc.vcxproj">
       <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
     </ProjectReference>

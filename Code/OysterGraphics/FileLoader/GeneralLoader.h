@@ -29,6 +29,9 @@ namespace Oyster
 
 			void UnloadOBJ(void* loadedData);
 			void LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out);
+
+			void UnloadDAN(void* loadedData);
+			void LoadDAN(const wchar_t filename[], Oyster::Resource::CustomData& out);
 		}
 	}
 }

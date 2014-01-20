@@ -204,6 +204,7 @@
     <ClCompile Include="GameClientState\C_Object.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameClientRecieverFunc.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
     <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />

@@ -115,7 +115,7 @@ void NetworkServer::PrivateData::Stop()
 
 	started = false;
 
-	thread.Stop(true);
+	thread.Stop();
 }
 
 void NetworkServer::PrivateData::Shutdown()

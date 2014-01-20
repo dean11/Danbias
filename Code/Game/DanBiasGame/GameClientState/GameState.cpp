@@ -2,7 +2,7 @@
 #include "DllInterfaces/GFXAPI.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
-#include <GameProtocols.h>
+#include <Protocols.h>
 #include "NetworkClient.h"
 
 
@@ -18,10 +18,16 @@ struct  GameState::myData
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
 
+	
+
 }privData;
 
 GameState::GameState(void)
 {
+	key_forward = false;
+	key_backward = false;
+	key_strafeRight = false;
+	key_strafeLeft = false;
 }
 
 
@@ -40,6 +46,12 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 }
 GameState::gameStateState GameState::LoadGame() 
 {
+	Oyster::Graphics::Definitions::Pointlight plight;
+	plight.Pos = Oyster::Math::Float3(0,3,0);
+	plight.Color = Oyster::Math::Float3(0,1,0);
+	plight.Radius = 5;
+	plight.Bright = 2;
+	Oyster::Graphics::API::AddLight(plight);
 	LoadModels(L"map");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
 	return gameStateState_playing;
@@ -54,20 +66,35 @@ bool GameState::LoadModels(std::wstring mapFile)
 	ModelInitData modelData;
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
+	modelData.world = modelData.world * translate;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.id = 0;
 	// load models
 	C_Object* obj =  new C_Player();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
 	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.id ++;
 
 	obj = new C_DynamicObj();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
+	modelData.world = modelData.world * translate;
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.id ++;
+
+	obj = new C_DynamicObj();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+
 	return true;
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
@@ -111,24 +138,53 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 
 			if(KeyInput->IsKeyPressed(DIK_W))
 			{
-				movePlayer.bForward = true;
-				send = true;
+
+				if(!key_forward)
+				{
+					movePlayer.bForward = true;
+					send = true;
+					key_forward = true;
+				}
 			}
+			else
+				key_forward = false;
+
 			if(KeyInput->IsKeyPressed(DIK_S))
 			{
-				movePlayer.bBackward = true;
-				send = true;
+				if(!key_backward)
+				{
+					movePlayer.bBackward = true;
+					send = true;
+					key_backward = true;
+				}
 			}
+			else 
+				key_backward = false;
+
 			if(KeyInput->IsKeyPressed(DIK_A))
 			{
-				movePlayer.bStrafeLeft = true;
-				send = true;
+				if(!key_strafeLeft)
+				{
+					movePlayer.bStrafeLeft = true;
+					send = true;
+					key_strafeLeft = true;
+				}
 			}
+			else 
+				key_strafeLeft = false;
+
 			if(KeyInput->IsKeyPressed(DIK_D))
 			{
-				movePlayer.bStrafeRight = true;
-				send = true;
+				if(!key_strafeRight)
+				{
+					movePlayer.bStrafeRight = true;
+					send = true;
+					key_strafeRight = true;
+				}
 			} 
+			else 
+				key_strafeRight = false;
+			
 
 			if (privData->nwClient->IsConnected() && send)
 			{
@@ -209,28 +265,35 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		world[i] = pos->worldPos[i];
 	}
+
 	for (int i = 0; i < privData->object.size(); i++)
 	{
 		if(privData->object[i]->GetId() == pos->object_ID)
+		{
 			privData->object[i]->setPos(world);
+
+			//privData->view = world;
+			//privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
+			
+		}
 	}
 }
 
-void GameState::Protocol( NewObj* pos )
+void GameState::Protocol( NewObj* newObj )
 {
 
 	Oyster::Math::Float4x4 world;
 	for(int i = 0; i<16; i++)
 	{
-		world[i] = pos->worldPos[i];
+		world[i] = newObj->worldPos[i];
 	}
 	ModelInitData modelData;
 
 	modelData.world = world;
 	modelData.visible = true;
-	modelData.id = pos->object_ID;
+	modelData.id = newObj->object_ID;
 	//not sure if this is good parsing rom char* to wstring
-	const char* path = pos->path;
+	const char* path = newObj->path;
 	modelData.modelPath = std::wstring(path, path + strlen(path));  
 	// load models
 	C_Object* player = new C_Player();

@@ -44,18 +44,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 {
 
 	BOOL b = SetDllDirectoryW(L"..\\DLL");
-	typedef struct tagLOADPARMS32
-	{ 
-		LPSTR lpEnvAddress;  // address of environment strings 
-		LPSTR lpCmdLine;     // address of command line 
-		LPSTR lpCmdShow;     // how to show new program 
-		DWORD dwReserved;    // must be zero 
-	} LOADPARMS32;
-	LOADPARMS32 params;
-	params.dwReserved=NULL;
-	params.lpCmdLine="";
-	params.lpCmdShow="";
-	params.lpEnvAddress="";
 
 	if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
 		return 0;
@@ -171,10 +159,10 @@ HRESULT InitDirect3D()
 		return E_FAIL;
 	}
 	
-	m =  Oyster::Graphics::API::CreateModel(L"orca_dummy");
-	m2 = Oyster::Graphics::API::CreateModel(L"worldDummy");
+	m =  Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
-	m3 = Oyster::Graphics::API::CreateModel(L"worldDummy");
+	m3 = Oyster::Graphics::API::CreateModel(L"cube_tri.dan");
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	
 

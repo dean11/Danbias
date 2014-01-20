@@ -1,56 +1,32 @@
+
 #include "Player.h"
-#include "OysterMath.h"
-#include "CollisionManager.h"
 #include "Weapon.h"
+#include "CollisionManager.h"
+#include "Game.h"
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
 
-struct Player::PrivateData
-{
-	PrivateData()
-	{
-		weapon = new Weapon();
-		
-		life = 100;
-		teamID = -1;
-		playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-
-		lookDir = Oyster::Math::Float3(1,0,0);
-	}
-
-	~PrivateData()
-	{
-		if (weapon)
-		{
-			delete weapon;
-		}
-	}
-	
-	int life;
-	int teamID;
-	Weapon *weapon;
-	PLAYER_STATE playerState;
-	Oyster::Math::Float3 lookDir;
-	
-}myData;
-
 Player::Player()
-	:Object(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
+	:DynamicObject(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
 {
-	myData = new PrivateData();
+	weapon = new Weapon();
+		
+	life = 100;
+	teamID = -1;
+	playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
+	lookDir = Oyster::Math::Float4(0,0,-1,0);
 }
 
 Player::~Player(void)
 {
-	delete myData;
+	delete weapon;
+	weapon = NULL;
 }
 
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
-	//Oyster::Math::Float3 currentVelocity = rigidBody->GetRigidLinearVelocity();
-
 	switch(movement)
 	{
 	case PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD:
@@ -77,73 +53,82 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),myData->lookDir * 100);
+	setState.ApplyLinearImpulse(this->lookDir * (100 * this->gameInstance->GetFrameTime()));
 }
 void Player::MoveBackwards()
 {
-	//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-myData->lookDir * 100);
+	setState.ApplyLinearImpulse(-this->lookDir * 100 * this->gameInstance->GetFrameTime());
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	//Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
-	//API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
+	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
+	//Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
+	setState.ApplyLinearImpulse(r * 100 * this->gameInstance->GetFrameTime());
+	
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	//Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross(myData->lookDir);
-	//API::Instance().ApplyForceAt(rigidBody, rigidBody->GetCenter(), r * 100);
+	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
+	//Oyster::Math::Float4 r1 = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
+	setState.ApplyLinearImpulse(-r * 100 * this->gameInstance->GetFrameTime());
 }
 
-void Player::UseWeapon(const WEAPON_FIRE &fireInput)
+void Player::UseWeapon(const WEAPON_FIRE &usage)
 {
-	myData->weapon->Use(fireInput);
+	this->weapon->Use(usage);
 }
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 {
-	//API::Instance().SetCenter(rigidBody,spawnPoint);
-	myData->life = 100;
-	myData->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-	myData->lookDir = Oyster::Math::Float3(1,0,0);
+
+	this->life = 100;
+	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
+	this->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
 void Player::Jump()
 {
-	//API::Instance().ApplyForceAt(rigidBody,rigidBody->GetCenter(),-Oyster::Math::Float3(0,1,0) * 100);
+	
 }
 
 bool Player::IsWalking()
 {
-	return (myData->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
+	return (this->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
 }
 bool Player::IsJumping()
 {
-	return (myData->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
+	return (this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
 }
 bool Player::IsIdle()
 {
-	return (myData->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
+	return (this->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
 }
 
-Oyster::Math::Float3 Player::GetPos()
+Oyster::Math::Float3 Player::GetPosition() const
 {
-	//return rigidBody->GetCenter();
-	return Oyster::Math::Float3(0,0,0);
+	return (Oyster::Math::Float3)getState.GetCenterPosition();
 }
-
-Oyster::Math::Float3 Player::GetLookDir()
+Oyster::Math::Float4x4 Player::GetOrientation() const 
 {
-	return myData->lookDir;
+	return this->getState.GetOrientation();
 }
-
-int Player::GetTeamID()
+Oyster::Math::Float3 Player::GetLookDir() const
 {
-	return myData->teamID;
+	return this->lookDir.xyz;
+}
+int Player::GetTeamID() const
+{
+	return this->teamID;
+}
+PLAYER_STATE Player::GetState() const
+{
+	return this->playerState;
 }
 
 void Player::DamageLife(int damage)
 {
-	myData->life -= damage;
+	this->life -= damage;
 }
+

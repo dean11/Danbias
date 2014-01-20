@@ -22,7 +22,7 @@
 /***********************************/
 /********* GENERAL PROTOCOLS ***************************************************************************************************/
 /***********[ 100 - 200 ]***********/
-#define protocol_GeneralMIN								100		/* This defines lower bounds of general protocols (okay to have same value on first element). */
+#define protocol_GeneralMIN								100
 #define protocol_General_Status						100
 #define protocol_General_Text						101
 #define protocol_GeneralMAX								199
@@ -51,6 +51,7 @@
 #define protocol_Gameplay_CreateObject				303
 #define protocol_Gameplay_RemoveObject				304
 #define protocol_Gameplay_ObjectPosition			305
+#define protocol_Gameplay_Initiate					306
 #define protocol_GameplayMAX							399
 
 
@@ -60,12 +61,5 @@
 inline bool ProtocolIsLobby(short ID) { return (ID >= protocol_LobbyMIN && ID <= protocol_LobbyMAX); }
 inline bool ProtocolIsGeneral(short ID) { return (ID >= protocol_GeneralMIN && ID <= protocol_GeneralMAX); }
 inline bool ProtocolIsGameplay(short ID) { return (ID >= protocol_GameplayMIN && ID <= protocol_GameplayMAX); }
-
-
-
-/***********************************/
-/*********** TEST PROTOCOLS *******************************************************************************************************/
-/***********[ x - x ]************/
-
 
 #endif // !GAMEPROTOCOL_PROTOCOL_DEFINITION_ID_H

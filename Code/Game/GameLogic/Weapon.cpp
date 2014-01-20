@@ -1,8 +1,10 @@
 #include "Weapon.h"
 #include "AttatchmentSocket.h"
 #include "AttatchmentMassDriver.h"
+#include "DynamicArray.h"
 
 using namespace GameLogic;
+using namespace Utility::DynamicMemory;
 
 struct Weapon::PrivateData
 {
@@ -12,7 +14,6 @@ struct Weapon::PrivateData
 		selectedAttatchment = 0;
 		currentNrOfAttatchments = 0;
 		selectedSocketID = 0;
-		maxNrOfSockets = 0;
 		attatchmentSockets = 0;
 	}
 
@@ -22,11 +23,9 @@ struct Weapon::PrivateData
 
 	WEAPON_STATE weaponState;
 
-	AttatchmentSocket **attatchmentSockets;
-	int maxNrOfSockets;
+	DynamicArray<SmartPointer<AttatchmentSocket>> attatchmentSockets;
 	int currentNrOfAttatchments;
-
-	IAttatchment *selectedAttatchment;
+	SmartPointer<IAttatchment> selectedAttatchment;
 	int selectedSocketID;
 
 }myData;
@@ -39,34 +38,23 @@ Weapon::Weapon()
 Weapon::Weapon(int MaxNrOfSockets)
 {
 	myData = new PrivateData();
-	myData->maxNrOfSockets = MaxNrOfSockets;
-	myData->attatchmentSockets = new AttatchmentSocket*[MaxNrOfSockets];
-	for (int i = 0; i < MaxNrOfSockets; i++)
-	{
-		myData->attatchmentSockets[i] = new AttatchmentSocket();
-	}
+	myData->attatchmentSockets.Resize(MaxNrOfSockets);
 }
 
 
 Weapon::~Weapon(void)
 {
-	for (int i = 0; i < myData->currentNrOfAttatchments; i++)
-	{
-		delete myData->attatchmentSockets[i];
-	}
-	delete[] myData->attatchmentSockets;
-
 	delete myData;
 }
 
 /********************************************************
 * Uses the weapon based on the input given and the current chosen attatchment
 ********************************************************/
-void Weapon::Use(const WEAPON_FIRE &fireInput)
+void Weapon::Use(const WEAPON_FIRE &usage)
 {
 	if (myData->selectedAttatchment)
 	{
-		myData->selectedAttatchment->UseAttatchment(fireInput);
+		myData->selectedAttatchment->UseAttatchment(usage);
 	}
 	
 }
@@ -80,7 +68,7 @@ void Weapon::Use(const WEAPON_FIRE &fireInput)
 ********************************************************/
 bool Weapon::IsFireing()
 {
-	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_FIREING);
+	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_FIRING);
 }
 
 bool Weapon::IsIdle()
@@ -95,7 +83,7 @@ bool Weapon::IsReloading()
 
 bool Weapon::IsValidSocket(int socketID)
 {
-	if(socketID < myData->maxNrOfSockets && socketID >= 0)
+	if(socketID < (int)myData->attatchmentSockets.Size() && socketID >= 0)
 	{
 		if (myData->attatchmentSockets[socketID]->GetAttatchment() != 0)
 		{
@@ -114,7 +102,7 @@ int Weapon::GetCurrentSocketID()
 
 void Weapon::AddNewAttatchment(IAttatchment *attatchment, Player *owner)
 {
-	if(myData->currentNrOfAttatchments < myData->maxNrOfSockets)
+	if(myData->currentNrOfAttatchments < (int)myData->attatchmentSockets.Size())
 	{
 		myData->attatchmentSockets[myData->currentNrOfAttatchments]->SetAttatchment(attatchment);
 		myData->currentNrOfAttatchments++;

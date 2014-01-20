@@ -42,7 +42,7 @@ namespace GameLogic
 			bTurnLeft		= val[3].value.netBool;
 			bTurnRight		= val[4].value.netBool;
 			bStrafeRight	= val[5].value.netBool;
-			bStrafeRight	= val[6].value.netBool;
+			bStrafeLeft		= val[6].value.netBool;
 
 			return *this;
 		}
@@ -53,7 +53,7 @@ namespace GameLogic
 			this->protocol[3].value = bTurnLeft;
 			this->protocol[4].value = bTurnRight;
 			this->protocol[5].value = bStrafeRight;
-			this->protocol[6].value = bStrafeRight;
+			this->protocol[6].value = bStrafeLeft;
 
 			return &protocol;
 		}

@@ -13,6 +13,7 @@ namespace GameLogic
 			States_ready,
 			States_idle,
 			States_bussy,
+			State_waiting,
 			States_disconected,
 		};
 		States status;
@@ -45,6 +46,7 @@ namespace GameLogic
 	struct Protocol_General_Text :public Oyster::Network::CustomProtocolObject
 	{
 		char* text;
+		int destination;
 
 		Protocol_General_Text()
 		{

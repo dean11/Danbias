@@ -9,9 +9,7 @@
 
 namespace GameLogic
 {
-
-
-	class DANBIAS_GAMELOGIC_DLL DynamicObject : public Object
+	class DynamicObject : public Object
 	{
 
 	public:

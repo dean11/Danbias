@@ -173,11 +173,6 @@
   <ItemGroup>
     <ClCompile Include="Launcher.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DanBiasGame\DanBiasGame.vcxproj">
-      <Project>{2a1bc987-af42-4500-802d-89cd32fc1309}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

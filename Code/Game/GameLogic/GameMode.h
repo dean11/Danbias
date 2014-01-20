@@ -13,9 +13,9 @@ namespace GameLogic
 		public:
 			GameMode(void);
 			~GameMode(void);
+
 		private:
-			struct PrivateData;
-			PrivateData *myData;
+
 	};
 
 }

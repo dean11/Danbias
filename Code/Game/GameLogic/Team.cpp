@@ -1,60 +1,54 @@
 #include "Team.h"
-#include "Player.h"
 
 using namespace GameLogic;
 
-struct Team::PrivateData
-{
-	PrivateData()
-	{
-		players = 0;
-		nrOfPlayers = 0;
-		teamSize = 0;
-	}
-	~PrivateData()
-	{
-
-	}
-	
-	Player **players;
-	int nrOfPlayers;
-
-	int teamSize;
-
-}myData;
 
 Team::Team(void)
-{
-	myData = new PrivateData();
-}
+	:	players(5)
+	,	teamSize(5)
+{}
 
 Team::Team(int teamSize)
-{
-	myData = new PrivateData();
-	myData->teamSize = teamSize;
-}
+	:	players((unsigned int)teamSize)
+	,	teamSize(teamSize)
+{}
 
 
 Team::~Team(void)
 {
-	delete myData;
+	this->players.Clear();
 }
 
 Player* Team::GetPlayer(int playerID)
 {
-	return myData->players[playerID];
+	if(playerID >= 0 && playerID < this->teamSize)
+		return this->players[playerID];
+
+	return NULL;
 }
 
 bool Team::AddPlayer(Player *player)
 {
-	if (myData->nrOfPlayers >= myData->teamSize)
+	if ((int)this->players.Size() >= this->teamSize)
 	{
 		return false;
 	}
 	else
 	{
-		myData->players[myData->nrOfPlayers] = player;
-		myData->nrOfPlayers++;
+		int k = -1;
+		for (int i = 0; k == -1 && i < this->teamSize; i++)
+		{
+			if(!this->players[i])
+				k = i;
+		}
+		if(k == -1)
+		{
+			this->players.Push(player);
+		}
+		else
+		{
+			this->players[k] = player;
+		}
 	}
 
 	return true;

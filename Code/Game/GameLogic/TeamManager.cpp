@@ -1,69 +1,56 @@
 #include "TeamManager.h"
-#include "Team.h"
-
 
 using namespace GameLogic;
 
-struct TeamManager::PrivateData
-{
-	PrivateData()
-	{
-		teams = 0;
-		nrOfTeams = 0;
-	}
-	~PrivateData()
-	{
-	}
-
-	Team **teams;
-	int nrOfTeams;
-	int maxNrOfTeams;
-
-}myData;
 
 TeamManager::TeamManager(void)
+	:	teams(10)
+	,	maxNrOfTeams(10)
 {
-	myData = new PrivateData();
-	myData->maxNrOfTeams = 10;
-	myData->teams = new Team*[myData->maxNrOfTeams];
+	for (int i = 0; i < 10; i++)
+	{
+		teams[i] = 0;
+	}
 }
 
 TeamManager::TeamManager(int maxNrOfTeams)
+	:	teams(maxNrOfTeams)
+	,	maxNrOfTeams(maxNrOfTeams)
 {
-	myData = new PrivateData();
-	myData->maxNrOfTeams = maxNrOfTeams;
-
-	myData->teams = new Team*[myData->maxNrOfTeams];
-	for (int i = 0; i < myData->maxNrOfTeams; i++)
+	for (int i = 0; i < this->maxNrOfTeams; i++)
 	{
-		myData->teams[i] = 0;
+		teams[i] = 0;
 	}
-
 }
 
 
 TeamManager::~TeamManager(void)
 {
-	delete myData;
+	for (int i = 0; i < this->maxNrOfTeams; i++)
+	{
+		delete this->teams[i];
+		this->teams[i] = 0;
+	}
 }
 
 void TeamManager::RespawnPlayerRandom(Player *player)
 {
-
-	int teamID = player->GetTeamID();
-
-	Player *respawnOnThis = myData->teams[teamID]->GetPlayer(0);
-
-	player->Respawn(respawnOnThis->GetPos());
+																// Whats going on here?
+	int teamID = player->GetTeamID();							// ?
+																// ?
+	Player *respawnOnThis = this->teams[teamID]->GetPlayer(0);	// ?
+																// ?
+	player->Respawn(respawnOnThis->GetPosition());				// ?
+																// player->Respawn(player->GetPosition()); ?
 }
 
 void TeamManager::CreateTeam(int teamSize)
 {
-	if (myData->nrOfTeams < myData->maxNrOfTeams)
-	{
-		myData->teams[myData->nrOfTeams] = new Team(teamSize);
-		myData->nrOfTeams++;
-	}
+	//if (this->nrOfTeams < this->maxNrOfTeams)
+	//{
+	//	this->teams[this->nrOfTeams] = new Team(teamSize);
+	//	this->nrOfTeams++;
+	//}
 }
 
 void TeamManager::RemoveTeam(int teamID)
@@ -73,10 +60,10 @@ void TeamManager::RemoveTeam(int teamID)
 
 bool TeamManager::AddPlayerToTeam(Player *player,int teamID)
 {
-	if (IsValidTeam(teamID))
-	{
-		return myData->teams[teamID]->AddPlayer(player);
-	}
+	//if (IsValidTeam(teamID))
+	//{
+	//	return this->teams[teamID]->AddPlayer(player);
+	//}
 	return false;
 }
 
@@ -87,10 +74,10 @@ bool TeamManager::AddPlayerToTeam(Player *player)
 
 bool TeamManager::IsValidTeam(int teamID)
 {
-	if (teamID < myData->nrOfTeams && teamID > 0 && myData->teams[teamID] != NULL)
-	{
-		return true;
-	}
+	//if (teamID < this->nrOfTeams && teamID > 0 && this->teams[teamID] != NULL)
+	//{
+	//	return true;
+	//}
 
 	return false;
 }

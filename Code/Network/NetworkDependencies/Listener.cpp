@@ -6,11 +6,14 @@ using namespace Oyster::Thread;
 
 Listener::Listener()
 {
+	this->port = -1;
+	this->isListening = false;
 	connection = NULL;
 }
 
 Listener::Listener(Oyster::Network::IPostBox<int>* postBox)
 {
+	this->isListening = false;
 	connection = NULL;
 	this->postBox = postBox;
 }
@@ -19,9 +22,11 @@ Listener::~Listener()
 {
 	if(connection)
 	{
-		this->thread.Terminate(false);
+		this->isListening = false;
+		this->thread.Terminate();
 		delete connection;
 		connection = 0;
+		this->port = -1;
 	}
 }
 
@@ -36,6 +41,8 @@ bool Listener::Init(unsigned int port)
 		return false;
 	}
 
+	this->port = port;
+	this->isListening = true;
 	return true;
 }
 
@@ -52,6 +59,11 @@ bool Listener::Init(unsigned int port, bool start)
 		return false;
 	}
 
+	if(start)
+	{
+		this->isListening = true;
+	}
+	this->port = port;
 	return true;
 }
 
@@ -62,17 +74,18 @@ bool Listener::Start()
 		return false;
 	}
 
+	this->isListening = true;
 	return true;
 }
 
 void Listener::Stop()
 {
-	thread.Stop();
+	StopListen();
 }
 
 void Listener::Shutdown()
 {
-	thread.Stop(false);
+	StopListen();
 }
 
 void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
@@ -87,6 +100,10 @@ int Listener::Accept()
 	int clientSocket = -1;
 	clientSocket = connection->Listen();
 
+	if(!this->isListening.load())
+	{
+		return -1;
+	}
 	if(clientSocket != -1)
 	{
 		stdMutex.lock();
@@ -96,13 +113,26 @@ int Listener::Accept()
 
 	return clientSocket;
 }
-
+void Listener::StopListen()
+{
+	if(this->connection && this->connection->IsConnected())
+	{
+		this->isListening = false;
+		Connection c;
+		c.InitiateClient();
+		c.Connect(this->port, "127.0.0.1");
+	}
+}
 bool Listener::DoWork()
 {
 	if(!this->connection) return false;
 	int result = Accept();
 
-	if(result == -1)
+	if(!this->isListening.load())
+	{
+		return false;
+	}
+	else if(result == -1)
 	{
 		//Do something?
 	}

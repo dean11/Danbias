@@ -423,14 +423,14 @@ INetworkSession</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>170</x>
-      <y>400</y>
-      <w>130</w>
-      <h>90</h>
+      <x>150</x>
+      <y>420</y>
+      <w>160</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>MapManager
 --
-Manages and makes sure maps are avalible to all clinents.
+Manages all map stuff.
 
 elementstyle=wordwrap
 </panel_attributes>

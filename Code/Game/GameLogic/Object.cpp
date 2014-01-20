@@ -3,6 +3,7 @@
 #include "CollisionManager.h"
 #include "GID.h"
 #include "PhysicsAPI.h"
+#include "Game.h"
 
 
 using namespace GameLogic;
@@ -10,13 +11,18 @@ using namespace GameLogic;
 using namespace Oyster::Math;
 using namespace Oyster::Physics;
 
+const Game *Object::gameInstance = (Game*)(&Game::Instance());
+
 Object::Object()
 {	
 	API::SimpleBodyDescription sbDesc;
 	//sbDesc.centerPosition = 
 
 	//poi
-	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+
+
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
 
 	//rigidBody->gameObjectRef = this;
 
@@ -31,7 +37,9 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	//sbDesc.centerPosition = 
 
 	//poi
-	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	this->rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
 	
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
 
@@ -46,14 +54,13 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 Object::~Object(void)
 {
 
-
 }
 
-OBJECT_TYPE Object::GetType()
+OBJECT_TYPE Object::GetType() const
 {
 	return this->type;
 }
-int Object::GetID()
+int Object::GetID() const
 {
 	return this->objectID;
 }
@@ -61,4 +68,15 @@ int Object::GetID()
 Oyster::Physics::ICustomBody* Object::GetRigidBody()
 {
 	return this->rigidBody;
+}
+
+
+void Object::BeginFrame()
+{
+	this->rigidBody->SetState(this->setState);
+}
+void Object::EndFrame()
+{
+	this->rigidBody->GetState(this->getState);
+	this->setState = this->getState;
 }
