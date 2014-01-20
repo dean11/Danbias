@@ -69,7 +69,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
 	modelData.world = modelData.world * translate;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
 	modelData.id = 0;
 	// load models
 	C_Object* obj =  new C_Player();
@@ -78,7 +78,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
 	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
 	modelData.id ++;
 
 	obj = new C_DynamicObj();
@@ -87,7 +87,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
 	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"..\\Content\\worldDummy";
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
 	modelData.id ++;
 
 	obj = new C_DynamicObj();

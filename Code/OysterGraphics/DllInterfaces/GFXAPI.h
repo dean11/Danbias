@@ -4,7 +4,7 @@
 #include "..\Model\Model.h"
 #include "OysterMath.h"
 #include <Windows.h>
-#include <vld.h>
+//#include <vld.h>
 
 #ifdef GFX_DLL_EXPORT
 	#define GFX_DLL_USAGE __declspec(dllexport)

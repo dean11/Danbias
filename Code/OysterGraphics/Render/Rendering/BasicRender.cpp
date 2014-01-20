@@ -50,6 +50,8 @@ namespace Oyster
 				{
 					for(int i = 0; i < count; ++i)
 					{
+						if(&models[i] == NULL)
+							continue;
 						if(models[i].Visible)
 						{
 							Definitions::PerModel pm;
@@ -65,7 +67,7 @@ namespace Oyster
 
 							if(info->Material.size())
 							{
-								Core::deviceContext->PSSetShaderResources(0,info->Material.size(),&(info->Material[0]));
+								Core::deviceContext->PSSetShaderResources(0,(UINT)info->Material.size(),&(info->Material[0]));
 							}
 
 
@@ -73,7 +75,7 @@ namespace Oyster
 							if(info->Indexed)
 							{
 								info->Indecies->Apply();
-								Oyster::Graphics::Core::deviceContext->DrawIndexed(info->VertexCount,0,0);
+								Oyster::Graphics::Core::deviceContext->DrawIndexed(info->IndexCount,0,0);
 							}
 							else
 							{
@@ -86,11 +88,11 @@ namespace Oyster
 				{
 					Core::PipelineManager::SetRenderPass(Resources::Deffered::LightPass);
 
-					Core::deviceContext->Dispatch((Core::resolution.x + 15U) / 16U,(Core::resolution.y + 15U) / 16U,1);
+					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 					Core::PipelineManager::SetRenderPass(Resources::Deffered::PostPass);
 
-					Core::deviceContext->Dispatch((Core::resolution.x + 15U) / 16U,(Core::resolution.y + 15U) / 16U,1);
+					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 					Core::swapChain->Present(0,0);
 				}
