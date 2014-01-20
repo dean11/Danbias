@@ -48,8 +48,9 @@ SimpleRigidBody::SimpleRigidBody()
 	this->gravityNormal = Float3::null;
 	this->onCollision = Default::EventAction_Collision;
 	this->onMovement = Default::EventAction_Move;
-	this->ignoreGravity = this->isForwarded = false;
 	this->scene = nullptr;
+	this->customTag = nullptr;
+	this->ignoreGravity = this->isForwarded = false;
 }
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
@@ -82,8 +83,9 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 		this->onMovement = Default::EventAction_Move;
 	}
 
-	this->ignoreGravity = desc.ignoreGravity;
 	this->scene = nullptr;
+	this->customTag = nullptr;
+	this->ignoreGravity = desc.ignoreGravity;
 }
 
 SimpleRigidBody::~SimpleRigidBody() {}
@@ -240,6 +242,11 @@ Float3 & SimpleRigidBody::GetGravityNormal( Float3 &targetMem ) const
 	return targetMem = this->gravityNormal;	
 }
 
+void * SimpleRigidBody::GetCustomTag() const
+{
+	return this->customTag;
+}
+
 //Float3 & SimpleRigidBody::GetCenter( Float3 &targetMem ) const
 //{
 //	return targetMem = this->rigid.centerPos;
@@ -326,6 +333,11 @@ void SimpleRigidBody::SetGravity( bool ignore)
 void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+}
+
+void SimpleRigidBody::SetCustomTag( void *ref )
+{
+	this->customTag = ref;
 }
 
 //void SimpleRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )

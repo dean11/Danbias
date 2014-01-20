@@ -327,6 +327,12 @@ namespace Oyster
 			 ********************************************************/
 			virtual ::Oyster::Math::Float3 & GetGravityNormal( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const = 0;
 
+			/********************************************************
+			 * @return the void pointer set by SetCustomTag.
+			 * nullptr if none is set.
+			 ********************************************************/
+			virtual void * GetCustomTag() const = 0;
+
 			///********************************************************
 			// * The world position of this center of gravity.
 			// * @param targetMem: Provided memory that written into and then returned.
@@ -394,6 +400,13 @@ namespace Oyster
 			 * @param normalizedVector: Should have same direction as the pullinggravity.
 			 ********************************************************/
 			virtual void SetGravityNormal( const ::Oyster::Math::Float3 &normalizedVector ) = 0;
+
+			/********************************************************
+			 * Not used by the engine itself. Just a quality of life feature
+			 * for developers who want to tag something to the objects.
+			 * @param ref: Anything castable to a void pointer, the engine won't care.
+			 ********************************************************/
+			virtual void SetCustomTag( void *ref ) = 0;
 
 			///********************************************************
 			// * To not be called if is in Engine
