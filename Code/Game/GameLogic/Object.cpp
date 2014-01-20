@@ -16,7 +16,10 @@ Object::Object()
 	//sbDesc.centerPosition = 
 
 	//poi
-	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+
+
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
 
 	//rigidBody->gameObjectRef = this;
 
@@ -32,6 +35,8 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 
 	//poi
 	ICustomBody* temp = rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
 	
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
 
@@ -46,14 +51,13 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 Object::~Object(void)
 {
 
-
 }
 
-OBJECT_TYPE Object::GetType()
+OBJECT_TYPE Object::GetType() const
 {
 	return this->type;
 }
-int Object::GetID()
+int Object::GetID() const
 {
 	return this->objectID;
 }

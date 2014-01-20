@@ -8,26 +8,19 @@
 
 
 #include "GameLogicStates.h"
-#include "GameLogicDef.h"
+#include <PhysicsAPI.h>
 
-namespace Oyster 
-{ 
-	namespace Physics 
-	{ 
-		class ICustomBody;
-	}
-}
 namespace GameLogic
 {
-	class DANBIAS_GAMELOGIC_DLL Object
+	class Object
 	{
 	public:		
 		Object();
 		Object(void* collisionFunc, OBJECT_TYPE type);
 		~Object(void);
 
-		OBJECT_TYPE GetType();
-		int GetID();
+		OBJECT_TYPE GetType() const;
+		int GetID() const;
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 
@@ -36,6 +29,9 @@ namespace GameLogic
 		int objectID;
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
+		Oyster::Physics::ICustomBody::State setState;
+		Oyster::Physics::ICustomBody::State getState;
+
 	};
 
 }

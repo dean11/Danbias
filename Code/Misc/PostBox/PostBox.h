@@ -24,7 +24,8 @@ namespace Oyster
 		virtual bool IsEmpty();
 
 	private:
-		Oyster::Queue::ThreadSafeQueue<T> messages;
+		Utility::Container::ThreadSafeQueue<T> messages;
+		//Utility::Container::ThreadSafeQueue<T> messages;
 
 	};
 

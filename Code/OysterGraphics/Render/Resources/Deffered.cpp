@@ -11,6 +11,9 @@ typedef Oyster::Graphics::Core::Buffer Buffer;
 const std::wstring PathToHLSL = L"..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\Deffered Shaders\\";
 const std::wstring PathToCSO = L"..\\Content\\Shaders\\";
 
+const int KernelSize = 10;
+const int SampleSpread = 8;
+
 namespace Oyster
 {
 	namespace Graphics
@@ -20,12 +23,15 @@ namespace Oyster
 			namespace Resources
 			{
 
-				ID3D11RenderTargetView* Deffered::GBufferRTV[2] = {0};
-				ID3D11ShaderResourceView* Deffered::GBufferSRV[2] = {0};
+				ID3D11RenderTargetView* Deffered::GBufferRTV[Deffered::GBufferSize] = {0};
+				ID3D11ShaderResourceView* Deffered::GBufferSRV[Deffered::GBufferSize] = {0};
 
+				ID3D11UnorderedAccessView* Deffered::LBufferUAV[Deffered::LBufferSize] = {0};
+				ID3D11ShaderResourceView* Deffered::LBufferSRV[Deffered::LBufferSize] = {0};
 
 				Shader::RenderPass Deffered::GeometryPass;
 				Shader::RenderPass Deffered::LightPass;
+				Shader::RenderPass Deffered::PostPass;
 
 				Buffer Deffered::ModelData = Buffer();
 				Buffer Deffered::VPData = Buffer();
@@ -34,9 +40,12 @@ namespace Oyster
 				Buffer Deffered::PointLightsData = Buffer();
 				ID3D11ShaderResourceView* Deffered::PointLightView = NULL;
 
-				Core::Init::State Deffered::Init()
+				ID3D11ShaderResourceView* Deffered::SSAOKernel = NULL;
+				ID3D11ShaderResourceView* Deffered::SSAORandom = NULL;
+
+				Core::Init::State Deffered::InitShaders()
 				{
-#ifdef _DEBUG
+					#ifdef _DEBUG
 					std::wstring path = PathToHLSL;
 					std::wstring end = L".hlsl";
 #else
@@ -47,10 +56,17 @@ namespace Oyster
 					Core::PipelineManager::Init(path + L"PixelGatherData" + end, ShaderType::Pixel, L"Geometry");
 					Core::PipelineManager::Init(path + L"VertexGatherData" + end, ShaderType::Vertex, L"Geometry");
 					Core::PipelineManager::Init(path + L"LightPass" + end, ShaderType::Compute, L"LightPass"); 
+					Core::PipelineManager::Init(path + L"PostPass" + end, ShaderType::Compute, L"PostPass"); 
+					return Core::Init::State::Success;
+				}
+
+				Core::Init::State Deffered::Init()
+				{
+					InitShaders();
 
 					//Create Buffers
 					Buffer::BUFFER_INIT_DESC desc;
-					desc.ElementSize = sizeof(Oyster::Math::Matrix);
+					desc.ElementSize = sizeof(Definitions::PerModel);
 					desc.NumElements = 1;
 					desc.InitData = NULL;
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_VS;
@@ -72,7 +88,7 @@ namespace Oyster
 					desc.Type = Buffer::STRUCTURED_BUFFER;
 					PointLightsData.Init(desc);
 
-					//Create States
+					////Create States
 					D3D11_RASTERIZER_DESC rdesc;
 					rdesc.CullMode = D3D11_CULL_BACK;
 					rdesc.FillMode = D3D11_FILL_SOLID;
@@ -131,11 +147,82 @@ namespace Oyster
 						Core::Init::CreateLinkedShaderResourceFromTexture(&GBufferRTV[i],&GBufferSRV[i],NULL);
 					}
 
+					for(int i = 0; i < Resources::Deffered::LBufferSize; ++i)
+					{
+						Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&LBufferSRV[i],&LBufferUAV[i]);
+					}
+
 					Buffer* b = &PointLightsData;
 
 					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&PointLightView,NULL);
+					srand(time(0));
+					//SSAO
+					Math::Vector3 kernel[KernelSize];
+					Math::Vector3 random[SampleSpread];
+					for(int i = 0;i < KernelSize; ++i)
+					{
+						kernel[i] = Oyster::Math::Vector3::null;
+						while( kernel[i] == Oyster::Math::Vector3::null )
+						{
+							kernel[i] = Oyster::Math::Vector3(
+								(float)rand() / (RAND_MAX + 1) * (1 - -1) + -1,
+								(float)rand() / (RAND_MAX + 1) * (1 - -1) + -1,
+								(float)rand() / (RAND_MAX + 1) * (1 - 0) + 0);
+						}
+						kernel[i].Normalize();
 
-					//Create ShaderEffects
+						float scale = float(i) / float(KernelSize);
+
+						scale = (0.1f*(1 - scale * scale) + 1.0f *( scale * scale));
+						kernel[i] *= scale;
+
+						
+					}
+
+					for( int i = 0; i < SampleSpread; ++i)
+					{
+						random[i] = Oyster::Math::Vector3::null;
+						while( random[i] == Oyster::Math::Vector3::null )
+						{
+							random[i] = Oyster::Math::Vector3(
+								(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
+								(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
+								0.0f);
+						}
+						random[i].Normalize();
+					}
+					//kernel[0] = Math::Vector3(0,1,1);
+					//kernel[0].Normalize();
+
+					D3D11_TEXTURE1D_DESC T1desc;
+					T1desc.Width = KernelSize;
+					T1desc.MipLevels = T1desc.ArraySize = 1;
+					T1desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+					T1desc.Usage = D3D11_USAGE_DEFAULT;
+					T1desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+					T1desc.CPUAccessFlags = 0;
+					T1desc.MiscFlags = 0;
+
+					D3D11_SUBRESOURCE_DATA sphere;
+					sphere.pSysMem = kernel;
+
+					D3D11_SUBRESOURCE_DATA rnd;
+					rnd.pSysMem = random;
+
+					ID3D11Texture1D *pTexture1[2];
+
+					 Core::device->CreateTexture1D( &T1desc, &sphere, &pTexture1[0] );
+					 Core::device->CreateShaderResourceView( pTexture1[0], 0, &SSAOKernel );
+					pTexture1[0]->Release();
+
+					T1desc.Width = SampleSpread;
+					Core::device->CreateTexture1D( &T1desc, &rnd, &pTexture1[1] );
+					Core::device->CreateShaderResourceView( (pTexture1[1]), 0, &SSAORandom );
+					pTexture1[1]->Release();
+
+					////Create ShaderEffects
+
+					////---------------- Geometry Pass Setup ----------------------------
 					GeometryPass.Shaders.Pixel = GetShader::Pixel(L"Geometry");
 					GeometryPass.Shaders.Vertex = GetShader::Vertex(L"Geometry");
 
@@ -161,8 +248,12 @@ namespace Oyster
 					}
 					GeometryPass.depth = Core::depthStencil;
 
+					////---------------- Light Pass Setup ----------------------------
 					LightPass.Shaders.Compute = GetShader::Compute(L"LightPass");
-					LightPass.UAV.Compute.push_back(Core::backBufferUAV);
+					for(int i = 0; i<Deffered::LBufferSize;++i)
+					{
+						LightPass.UAV.Compute.push_back(LBufferUAV[i]);
+					}
 					for(int i = 0; i<Deffered::GBufferSize;++i)
 					{
 						LightPass.SRV.Compute.push_back(GBufferSRV[i]);
@@ -170,7 +261,16 @@ namespace Oyster
 					LightPass.SRV.Compute.push_back(Core::depthStencilUAV);
 					LightPass.CBuffers.Compute.push_back(LightConstantsData);
 					LightPass.SRV.Compute.push_back(PointLightView);
+					LightPass.SRV.Compute.push_back(SSAOKernel);
+					LightPass.SRV.Compute.push_back(SSAORandom);
 
+					////---------------- Post Pass Setup ----------------------------
+					PostPass.Shaders.Compute = GetShader::Compute(L"PostPass");
+					for(int i = 0; i<Deffered::LBufferSize;++i)
+					{
+						PostPass.SRV.Compute.push_back(LBufferSRV[i]);
+					}
+					PostPass.UAV.Compute.push_back(Core::backBufferUAV);
 
 					return Core::Init::State::Success;
 				}
@@ -181,6 +281,9 @@ namespace Oyster
 					Resources::Deffered::VPData.~Buffer();
 					Resources::Deffered::LightConstantsData.~Buffer();
 					Resources::Deffered::PointLightsData.~Buffer();
+					SAFE_RELEASE(Resources::Deffered::PointLightView);
+					SAFE_RELEASE(Deffered::SSAOKernel);
+					SAFE_RELEASE(Deffered::SSAORandom);
 
 					for(int i = 0; i< GBufferSize; ++i)
 					{
@@ -188,22 +291,10 @@ namespace Oyster
 						SAFE_RELEASE(GBufferSRV[i]);
 					}
 
-
-					for(int i = 0; i < (int)GeometryPass.CBuffers.Vertex.size(); ++i)
+					for(int i = 0; i< LBufferSize; ++i)
 					{
-						SAFE_RELEASE(GeometryPass.CBuffers.Vertex[i]);
-					}
-					for(int i = 0; i < (int)GeometryPass.CBuffers.Pixel.size(); ++i)
-					{
-						SAFE_RELEASE(GeometryPass.CBuffers.Pixel[i]);
-					}
-					for(int i = 0; i < (int)GeometryPass.CBuffers.Geometry.size(); ++i)
-					{
-						SAFE_RELEASE(GeometryPass.CBuffers.Geometry[i]);
-					}
-					for(int i = 0; i < (int)GeometryPass.CBuffers.Compute.size(); ++i)
-					{
-						SAFE_RELEASE(GeometryPass.CBuffers.Compute[i]);
+						SAFE_RELEASE(LBufferUAV[i]);
+						SAFE_RELEASE(LBufferSRV[i]);
 					}
 
 					SAFE_RELEASE(GeometryPass.IAStage.Layout);

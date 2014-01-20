@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////
-// Launcher to launch Danbias server or client	//
+// Launcher to launch Danbias server			//
 // Created by [Dennis Andersen] [2013]			//
 //////////////////////////////////////////////////
 #define NOMINMAX	//Blame it on windows

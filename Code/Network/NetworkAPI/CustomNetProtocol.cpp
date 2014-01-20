@@ -22,10 +22,10 @@ struct CustomNetProtocol::PrivateData
 				size_t size = strlen(i->second.value.netCharPtr);
 				if(size == 0) continue;
 
-				attributes[i->first];
 				attributes[i->first].value.netCharPtr = new char[size + 1];
 				//strcpy_s(attributes[i->first].value.netCharPtr, size + 1, i->second.value.netCharPtr);
 				memcpy(&attributes[i->first].value.netCharPtr[0], &i->second.value.netCharPtr[0], size + 1);
+				attributes[i->first].type = NetAttributeType_CharArray;
 			}
 			else
 			{

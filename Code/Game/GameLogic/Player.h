@@ -3,17 +3,20 @@
 //////////////////////////////////////////////////
 #ifndef PLAYER_H
 #define PLAYER_H
+
 #include "GameLogicStates.h"
-#include "GameLogicDef.h"
 #include "OysterMath.h"
-#include "Object.h"
+#include "DynamicObject.h"
+#include "OysterMath.h"
+#include "CollisionManager.h"
+
 
 
 namespace GameLogic
 {
-	class DANBIAS_GAMELOGIC_DLL Player : public Object
+	class Weapon;
+	class Player : public DynamicObject
 	{
-
 	public:
 		Player(void);
 		~Player(void);
@@ -33,7 +36,7 @@ namespace GameLogic
 		* Uses the weapon based on input
 		* @param fireInput: enum value on what kind of action is to be taken
 		********************************************************/
-		void UseWeapon(const WEAPON_FIRE &fireInput);
+		void UseWeapon(const WEAPON_FIRE &usage);
 
 		/********************************************************
 		* Respawns the player, this resets several stats and settings on the player
@@ -46,18 +49,28 @@ namespace GameLogic
 		bool IsJumping();
 		bool IsIdle();
 
-		Oyster::Math::Float3 GetPos();
-		Oyster::Math::Float3 GetLookDir();
-		int GetTeamID();
+		Oyster::Math::Float3 GetPosition() const;
+		Oyster::Math::Float3 GetLookDir() const;
+		Oyster::Math::Float4x4 GetOrientation() const;
+		int GetTeamID() const;
+		PLAYER_STATE GetState() const;
 
 		void DamageLife(int damage);
 
-	private:
+		//Do frame calculations
+		void BeginFrame();
+		void EndFrame();
 
-		void Jump();
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+		void Jump();
+
+	private:
+		int life;
+		int teamID;
+		Weapon *weapon;
+		PLAYER_STATE playerState;
+		Oyster::Math::Float4 lookDir;
+
 	};
 }
 #endif

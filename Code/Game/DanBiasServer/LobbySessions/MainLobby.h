@@ -6,7 +6,7 @@
 
 #include "NetworkSession.h"
 #include "GameLobby.h"
-#include <GameProtocols.h>
+#include <Protocols.h>
 #include <PostBox\IPostBox.h>
 
 namespace DanBias

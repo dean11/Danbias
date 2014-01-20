@@ -173,6 +173,7 @@
     <ClInclude Include="AttatchmentSocket.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DynamicObject.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GameLogicDef.h" />
     <ClInclude Include="GameLogicStates.h" />
     <ClInclude Include="GameMode.h" />
@@ -190,7 +191,10 @@
     <ClCompile Include="AttatchmentSocket.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="Game_LevelData.cpp" />
+    <ClCompile Include="Game_PlayerData.cpp" />
     <ClCompile Include="IAttatchment.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />

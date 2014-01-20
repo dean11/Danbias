@@ -1,3 +1,6 @@
+/////////////////////////////////////////
+// Created by [Dennis Andersen] [2013] //
+/////////////////////////////////////////
 #ifndef DANBIASSERVER_LEVELMANAGER_H
 #define DANBIASSERVER_LEVELMANAGER_H
 

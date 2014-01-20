@@ -108,6 +108,7 @@ int Connection::InitiateClient()
 
 int Connection::Disconnect()
 {
+	if(this->closed) return -1;
 	int val = CloseSocket(this->socket);
 	this->socket = -1;
 	this->closed = true;
@@ -117,6 +118,8 @@ int Connection::Disconnect()
 
 int Connection::Send(OysterByte &bytes)
 {
+	if(this->closed) return -1;
+
 	int nBytes;
 
 	nBytes = send(this->socket, bytes, bytes.GetSize(), 0);
@@ -130,6 +133,7 @@ int Connection::Send(OysterByte &bytes)
 
 int Connection::Recieve(OysterByte &bytes)
 {
+	if(this->closed) return -1;
 	int nBytes;
 
 	bytes.Resize(1000);
@@ -150,6 +154,8 @@ int Connection::Recieve(OysterByte &bytes)
 //Listen will only return the correct socket or -1 for failure.
 int Connection::Listen()
 {
+	if(this->closed) return -1;
+
 	int clientSocket;
 	if((clientSocket = (int)accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
 	{
@@ -204,6 +210,15 @@ int Connection::InitiateSocket()
 	{
 		return WSAGetLastError();
 	}
+
+	int flag = 1;
+	int result = setsockopt(this->socket,		/* socket affected */
+							IPPROTO_TCP,		/* set option at TCP level */
+							TCP_NODELAY,		/* name of option */
+							(char *) &flag,		/* the cast is historical cruft */
+							sizeof(int));		/* length of option value */
+	if (result < 0)
+		return -1;
 
 	return 0;
 }

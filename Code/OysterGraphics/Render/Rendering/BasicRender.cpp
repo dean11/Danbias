@@ -34,6 +34,8 @@ namespace Oyster
 					lc.Pixels = Core::resolution;
 					lc.Lights = numLights;
 					lc.View = View;
+					lc.Proj = Projection;
+					lc.SSAORadius = 3;
 
 					data = Resources::Deffered::LightConstantsData.Map();
 					memcpy(data, &lc, sizeof(Definitions::LightConstants));
@@ -44,14 +46,18 @@ namespace Oyster
 					Resources::Deffered::PointLightsData.Unmap();
 				}
 
-				void Basic::RenderScene(Model::Model* models, int count)
+				void Basic::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
 				{
 					for(int i = 0; i < count; ++i)
 					{
 						if(models[i].Visible)
 						{
+							Definitions::PerModel pm;
+							pm.WV = View * models[i].WorldMatrix;
+							pm.WVP = Projection * pm.WV;
+
 							void* data  = Resources::Deffered::ModelData.Map();
-							memcpy(data,&(models[i].WorldMatrix),sizeof(Math::Float4x4));
+							memcpy(data,&(pm),sizeof(pm));
 							Resources::Deffered::ModelData.Unmap();
 
 							
@@ -79,6 +85,10 @@ namespace Oyster
 				void Basic::EndFrame()
 				{
 					Core::PipelineManager::SetRenderPass(Resources::Deffered::LightPass);
+
+					Core::deviceContext->Dispatch((Core::resolution.x + 15U) / 16U,(Core::resolution.y + 15U) / 16U,1);
+
+					Core::PipelineManager::SetRenderPass(Resources::Deffered::PostPass);
 
 					Core::deviceContext->Dispatch((Core::resolution.x + 15U) / 16U,(Core::resolution.y + 15U) / 16U,1);
 

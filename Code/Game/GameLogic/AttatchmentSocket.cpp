@@ -1,6 +1,9 @@
 #include "AttatchmentSocket.h"
 #include "IAttatchment.h"
+#include "DynamicArray.h"
+
 using namespace GameLogic;
+using namespace Utility::DynamicMemory;
 
 struct AttatchmentSocket::PrivateData
 {
@@ -14,7 +17,7 @@ struct AttatchmentSocket::PrivateData
 
 	}
 
-	IAttatchment *attatchment;
+	SmartPointer<IAttatchment> attatchment;
 
 
 }myData;
@@ -26,10 +29,7 @@ AttatchmentSocket::AttatchmentSocket(void)
 
 AttatchmentSocket::~AttatchmentSocket(void)
 {
-	if (myData->attatchment)
-	{
-		delete myData->attatchment;
-	}
+	
 }
 
 IAttatchment* AttatchmentSocket::GetAttatchment()
@@ -39,18 +39,12 @@ IAttatchment* AttatchmentSocket::GetAttatchment()
 
 void AttatchmentSocket::SetAttatchment(IAttatchment *attatchment)
 {
-	if (myData->attatchment)
-	{
-		delete myData->attatchment;
-	}
-
 	myData->attatchment = attatchment;
 }
 
 void AttatchmentSocket::RemoveAttatchment()
 {
-	if (myData->attatchment)
-	{
-		delete myData->attatchment;
-	}
+	
+	myData->attatchment = 0;
+
 }

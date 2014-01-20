@@ -1,3 +1,6 @@
+/////////////////////////////////////////
+// Created by [Dennis Andersen] [2013] //
+/////////////////////////////////////////
 #ifndef DANBIASGAME_DANBIASGAME_H
 #define DANBIASGAME_DANBIASGAME_H
 
@@ -53,6 +56,8 @@ namespace DanBias
 			static HRESULT Update(float deltaTime);
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
+
+			static float capFrame;
 
 		private:
 			static DanBiasGamePrivateData* m_data;

@@ -16,7 +16,7 @@ namespace Oyster
 				Oyster::Math::Float3 Normal;
 			};
 
-			static ObjReader *LoadFile(std::wstring fileName, Oyster::Math::Float4x4 transform = Oyster::Math::Float4x4::identity);
+			void LoadFile(std::wstring fileName, Oyster::Math::Float4x4 transform = Oyster::Math::Float4x4::identity);
 
 			ObjReader(void);
 			~ObjReader(void);

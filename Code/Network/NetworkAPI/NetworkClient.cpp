@@ -63,9 +63,8 @@ struct ClientDataContainer
 	}
 	~ClientDataContainer()
 	{
-		thread.Stop();
-		thread.Wait();
 		connection.Disconnect();
+		thread.Stop();
 		callbackType = NetworkProtocolCallbackType_Unknown;
 
 		ShutdownWinSock();
@@ -244,6 +243,7 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 void NetworkClient::Disconnect()
 {
 	privateData->data->connection.Disconnect();
+	privateData->data->thread.Terminate();
 }
 
 bool NetworkClient::IsConnected()

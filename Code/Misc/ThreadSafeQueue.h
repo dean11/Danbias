@@ -10,11 +10,10 @@
 /////////////////////////////////////////////
 
 #include "IQueue.h" 
-#include "Thread/OysterMutex.h"
 
-namespace Oyster
+namespace Utility
 {
-	namespace Queue
+	namespace Container
 	{
 		template <typename Type>
 		class ThreadSafeQueue : public IQueue<Type>

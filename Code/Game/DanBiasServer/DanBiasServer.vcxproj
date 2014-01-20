@@ -179,10 +179,13 @@
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameSession\GameClient.cpp" />
+    <ClCompile Include="GameSession\GameSession_Events.cpp" />
+    <ClCompile Include="GameSession\GameSession_General.cpp" />
+    <ClCompile Include="GameSession\GameSession_Network.cpp" />
     <ClCompile Include="LobbySessions\INetworkSession.cpp" />
     <ClCompile Include="LobbySessions\LobbyClient.cpp" />
     <ClCompile Include="LobbySessions\GameLobby.cpp" />
-    <ClCompile Include="GameSession\GameSession.cpp" />
+    <ClCompile Include="GameSession\GameSession_Logic.cpp" />
     <ClCompile Include="LobbySessions\MainLobby.cpp" />
     <ClCompile Include="LobbySessions\NetworkSession.cpp" />
   </ItemGroup>

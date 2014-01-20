@@ -13,6 +13,7 @@ namespace GameLogic
 			States_ready,
 			States_idle,
 			States_bussy,
+			State_waiting,
 			States_disconected,
 		};
 		States status;

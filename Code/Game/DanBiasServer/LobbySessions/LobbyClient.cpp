@@ -1,5 +1,5 @@
 #include "LobbyClient.h"
-#include <GameProtocols.h>
+#include <Protocols.h>
 
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Network;
