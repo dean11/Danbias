@@ -15,9 +15,9 @@ SphericalRigidBody::SphericalRigidBody()
 	this->gravityNormal = Float3::null;
 	this->onCollision = Default::EventAction_Collision;
 	this->onMovement = Default::EventAction_Move;
-	this->ignoreGravity = this->isForwarded = false;
 	this->scene = nullptr;
-	this->body = Sphere( Float3::null, 0.5f );
+	this->customTag = nullptr;
+	this->ignoreGravity = this->isForwarded = false;
 }
 
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
@@ -51,9 +51,9 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 		this->onMovement = Default::EventAction_Move;
 	}
 
-	this->ignoreGravity = desc.ignoreGravity;
 	this->scene = nullptr;
-	this->body = Sphere( desc.centerPosition, desc.radius );
+	this->customTag = nullptr;
+	this->ignoreGravity = desc.ignoreGravity;
 }
 
 SphericalRigidBody::~SphericalRigidBody() {}
@@ -150,7 +150,7 @@ bool SphericalRigidBody::Intersects( const ICustomBody &object, Float4 &worldPoi
 
 Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
-	return targetMem = this->body;
+	return targetMem = Sphere( this->rigid.centerPos, this->rigid.boundingReach.x );
 }
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
@@ -168,6 +168,11 @@ Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &target
 Float3 & SphericalRigidBody::GetGravityNormal( Float3 &targetMem ) const
 {
 	return targetMem = this->gravityNormal;	
+}
+
+void * SphericalRigidBody::GetCustomTag() const
+{
+	return this->customTag;
 }
 
 //Float3 & SphericalRigidBody::GetCenter( Float3 &targetMem ) const
@@ -206,7 +211,6 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 	}
 
 	this->rigid.Update_LeapFrog( timeStepLength );
-	this->body.center = this->rigid.centerPos;
 
 	// compare previous and new state and return result
 	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
@@ -256,6 +260,11 @@ void SphericalRigidBody::SetGravity( bool ignore )
 void SphericalRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+}
+
+void SphericalRigidBody::SetCustomTag( void *ref )
+{
+	this->customTag = ref;
 }
 
 //void SphericalRigidBody::SetMomentOfInertiaTensor_KeepVelocity( const Float4x4 &localI )
