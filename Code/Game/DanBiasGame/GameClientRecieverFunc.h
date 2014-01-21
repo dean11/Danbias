@@ -26,7 +26,7 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 				}
 			}
 			break;
-		case protocol_Gameplay_PlayerNavigation:
+		case protocol_Gameplay_PlayerMovement:
 			{
 				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
 				for(int i = 0; i< 6; i++)
@@ -40,21 +40,21 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 				protocolData = NULL;
 			}
 			break;
-		case protocol_Gameplay_PlayerPosition:
-			{
-				Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
-				for(int i = 0; i< 3; i++)
-				{
-					protocolData->playerPos[i] = p[i].value.netFloat;
-				}
-				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-				delete protocolData;
-				protocolData = NULL;
-			}
-			break;
+		//case protocol_Gameplay_PlayerPosition:
+		//	{
+		//		Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
+		//		for(int i = 0; i< 3; i++)
+		//		{
+		//			protocolData->playerPos[i] = p[i].value.netFloat;
+		//		}
+		//		if(dynamic_cast<Client::GameState*>(gameClientState))
+		//			((Client::GameState*)gameClientState)->Protocol(protocolData);
+		//		delete protocolData;
+		//		protocolData = NULL;
+		//	}
+		//	break;
 
-		case protocol_Gameplay_CreateObject:
+		case protocol_Gameplay_ObjectCreate:
 			{
 				Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
 				protocolData->object_ID = p[1].value.netInt;
@@ -72,7 +72,7 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 				protocolData = NULL;
 			}
 			break;
-		case protocol_Gameplay_RemoveObject:
+		case protocol_Gameplay_ObjectDisabled:
 			{
 				Client::GameClientState::RemoveObj* protocolData = new Client::GameClientState::RemoveObj;
 				protocolData->object_ID = p[1].value.netInt;

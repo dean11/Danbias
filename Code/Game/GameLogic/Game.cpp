@@ -151,9 +151,9 @@ float Game::GetFrameTime() const
 
 void Game::PhysicsOnMove(const ICustomBody *object)
 {
-	IObjectData* temp = 0;
-	//IObjectData* temp = ((IObjectData*)object->GetDataTag());
-	if(gameInstance.onMoveFnc) gameInstance.onMoveFnc(temp);
+	IObjectData* temp = (IObjectData*)object->GetCustomTag();
+		
+	if(gameInstance.onMoveFnc && temp) gameInstance.onMoveFnc(temp);
 }
 void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
 {

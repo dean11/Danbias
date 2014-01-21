@@ -10,7 +10,6 @@
 #include "ProtocolIdentificationID.h"
 
 
-
 namespace GameLogic
 {
 	struct Protocol_PlayerMovement :public Oyster::Network::CustomProtocolObject
@@ -18,31 +17,25 @@ namespace GameLogic
 
 		bool bForward;
 		bool bBackward;
-		bool bTurnLeft;
-		bool bTurnRight;
-		bool bStrafeRight;
-		bool bStrafeLeft;
+		bool bLeft;
+		bool bRight;
 		
 		Protocol_PlayerMovement()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerNavigation;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerMovement;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[4].type = Oyster::Network::NetAttributeType_Bool;
-			this->protocol[5].type = Oyster::Network::NetAttributeType_Bool;
-			this->protocol[6].type = Oyster::Network::NetAttributeType_Bool;
 		}
 		const Protocol_PlayerMovement& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
 			bForward		= val[1].value.netBool;
 			bBackward		= val[2].value.netBool;
-			bTurnLeft		= val[3].value.netBool;
-			bTurnRight		= val[4].value.netBool;
-			bStrafeRight	= val[5].value.netBool;
-			bStrafeLeft		= val[6].value.netBool;
+			bLeft			= val[3].value.netBool;
+			bRight			= val[4].value.netBool;
 
 			return *this;
 		}
@@ -50,10 +43,8 @@ namespace GameLogic
 		{
 			this->protocol[1].value = bForward;
 			this->protocol[2].value = bBackward;
-			this->protocol[3].value = bTurnLeft;
-			this->protocol[4].value = bTurnRight;
-			this->protocol[5].value = bStrafeRight;
-			this->protocol[6].value = bStrafeLeft;
+			this->protocol[3].value = bLeft;
+			this->protocol[4].value = bRight;
 
 			return &protocol;
 		}
@@ -97,15 +88,14 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_PlayerPosition :public Oyster::Network::CustomProtocolObject
+	struct Protocol_PlayerChangeWeapon :public Oyster::Network::CustomProtocolObject
 	{
 		
-		float position[3];
-		// look at dir 
+		int ID;
 
-		Protocol_PlayerPosition()
+		Protocol_PlayerChangeWeapon()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerPosition;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerChangeWeapon;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
@@ -113,19 +103,69 @@ namespace GameLogic
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			
 		}
-		const Protocol_PlayerPosition& operator=(Oyster::Network::CustomNetProtocol& val)
+		const Protocol_PlayerChangeWeapon& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
-			position[0]		= val[1].value.netFloat;
-			position[1]		= val[2].value.netFloat;
-			position[2]		= val[3].value.netFloat;
+			return *this;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			return &protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	struct Protocol_PlayerDamage :public Oyster::Network::CustomProtocolObject
+	{
+		
+		int hp;
+		// look at dir 
+
+		Protocol_PlayerDamage()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerDamage;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			
+		}
+		const Protocol_PlayerDamage& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			hp		= val[1].value.netInt;
+			return *this;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value =hp;
+			return &protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	struct Protocol_PlayerPickup :public Oyster::Network::CustomProtocolObject
+	{
+		int pickupID;
+
+		Protocol_PlayerPickup()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerPickup;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			
+		}
+		const Protocol_PlayerPickup& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			pickupID		= val[3].value.netInt;
 
 			return *this;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-			this->protocol[1].value = position[0];
-			this->protocol[2].value = position[1];
-			this->protocol[3].value = position[2];
+			this->protocol[3].value = pickupID;
 			return &protocol;
 		}
 
