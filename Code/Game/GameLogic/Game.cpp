@@ -104,6 +104,30 @@ bool Game::NewFrame()
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+	}
+
+	API::Instance().Update();
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->EndFrame();
+	}
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+	}
+
+	API::Instance().Update();
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->EndFrame();
+	}
 	return true;
 }
 

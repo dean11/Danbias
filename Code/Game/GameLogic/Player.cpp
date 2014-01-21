@@ -16,6 +16,10 @@ Player::Player()
 	teamID = -1;
 	playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	lookDir = Oyster::Math::Float4(0,0,-1,0);
+	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
+	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
+	
+
 }
 
 Player::~Player(void)
@@ -53,18 +57,18 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	setState.ApplyLinearImpulse(this->lookDir * (100 * this->gameInstance->GetFrameTime()));
+	setState.ApplyLinearImpulse(this->lookDir * (20 * this->gameInstance->GetFrameTime()));
 }
 void Player::MoveBackwards()
 {
-	setState.ApplyLinearImpulse(-this->lookDir * 100 * this->gameInstance->GetFrameTime());
+	setState.ApplyLinearImpulse(-this->lookDir * 20 * this->gameInstance->GetFrameTime());
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
 	//Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
-	setState.ApplyLinearImpulse(r * 100 * this->gameInstance->GetFrameTime());
+	setState.ApplyLinearImpulse(r * 20 * this->gameInstance->GetFrameTime());
 	
 }
 void Player::MoveLeft()
@@ -72,7 +76,7 @@ void Player::MoveLeft()
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
 	//Oyster::Math::Float4 r1 = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
-	setState.ApplyLinearImpulse(-r * 100 * this->gameInstance->GetFrameTime());
+	setState.ApplyLinearImpulse(-r * 20 * this->gameInstance->GetFrameTime());
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)

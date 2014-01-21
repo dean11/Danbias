@@ -34,7 +34,6 @@ Object::Object()
 Object::Object(void* collisionFunc, OBJECT_TYPE type)
 {
 	API::SimpleBodyDescription sbDesc;
-	//sbDesc.centerPosition = 
 
 	//poi
 	this->rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();

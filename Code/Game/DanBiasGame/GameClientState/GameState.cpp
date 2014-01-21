@@ -47,13 +47,23 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 GameState::gameStateState GameState::LoadGame() 
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(0,3,0);
+	plight.Pos = Oyster::Math::Float3(0,15,5);
 	plight.Color = Oyster::Math::Float3(0,1,0);
-	plight.Radius = 5;
+	plight.Radius = 50;
+	plight.Bright = 2;
+	Oyster::Graphics::API::AddLight(plight);
+	plight.Pos = Oyster::Math::Float3(10,15,5);
+	plight.Color = Oyster::Math::Float3(1,0,0);
+	plight.Radius = 50;
+	plight.Bright = 2;
+	Oyster::Graphics::API::AddLight(plight);
+	plight.Pos = Oyster::Math::Float3(10,-15,5);
+	plight.Color = Oyster::Math::Float3(0,0,1);
+	plight.Radius = 50;
 	plight.Bright = 2;
 	Oyster::Graphics::API::AddLight(plight);
 	LoadModels(L"map");
-	InitCamera(Oyster::Math::Float3(0,0,5.4f));
+	InitCamera(Oyster::Math::Float3(0,0,20.0f));
 	return gameStateState_playing;
 }
 bool GameState::LoadModels(std::wstring mapFile)
@@ -88,6 +98,15 @@ bool GameState::LoadModels(std::wstring mapFile)
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.id ++;
+	
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
+	scale.v[0].x = 8;
+	scale.v[1].y = 8;
+	scale.v[2].z = 8;
+	modelData.world = scale; //modelData.world * translate 
+	modelData.modelPath = L"ball.dan";
 	modelData.id ++;
 
 	obj = new C_DynamicObj();

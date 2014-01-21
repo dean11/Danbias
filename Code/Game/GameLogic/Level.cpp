@@ -19,24 +19,28 @@ void Level::InitiateLevel(std::string levelPath)
 }
 void Level::InitiateLevel(float radius)
 {
-	//API::SphericalBodyDescription sbDesc;
-	//sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
-	//sbDesc.ignoreGravity = true;
-	//sbDesc.radius = radius;
-	//sbDesc.mass = 1e16f; //10^16
+	API::SphericalBodyDescription sbDesc;
+	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
+	sbDesc.ignoreGravity = true;
+	sbDesc.radius = 8; //radius;
+	sbDesc.mass = 10e12f;
 	//sbDesc.mass = 0; //10^16
-	//sbDesc.subscription_onCollision = CollisionManager::LevelCollision;
-	//
-	//ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
-	//API::Instance().AddObject(rigidBody);
-	
-	//API::Gravity gravityWell;
-	//
-	//gravityWell.gravityType = API::Gravity::GravityType_Well;
-	//gravityWell.well.mass = 1e16f;
-	//gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
-	//
-	//API::Instance().AddGravity(gravityWell);
+	sbDesc.subscription_onCollision = CollisionManager::LevelCollision;
+
+	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
+	API::Instance().AddObject(rigidBody);
+	ICustomBody::State state;
+	rigidBody->GetState(state);
+	state.SetRestitutionCoeff(0.1);
+	rigidBody->SetState(state);
+
+	API::Gravity gravityWell;
+
+	gravityWell.gravityType = API::Gravity::GravityType_Well;
+	gravityWell.well.mass = 10e12f;
+	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
+
+	API::Instance().AddGravity(gravityWell);
 	
 }
 

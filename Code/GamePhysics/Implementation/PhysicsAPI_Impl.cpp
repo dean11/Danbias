@@ -36,7 +36,7 @@ namespace
 
 					// calc from perspective of deuter
 					Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
-					Float protoG_Magnitude = protoG.Dot( normal ),
+ 					Float protoG_Magnitude = protoG.Dot( normal ),
 						  deuterG_Magnitude = deuterG.Dot( normal );
 
 					// if they are not relatively moving towards eachother, there is no collision
