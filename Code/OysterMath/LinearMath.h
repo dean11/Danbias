@@ -159,71 +159,50 @@ namespace LinearAlgebra
 
 	/********************************************************************
 	 * Normalized Linear Interpolation
-	 * @return nullvector if impossible to solve.
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
 	 ********************************************************************/
 	template<typename ScalarType>
 	inline Vector2<ScalarType> Nlerp( const Vector2<ScalarType> &start, const Vector2<ScalarType> &end,  const ScalarType &t )
 	{
 		Vector2<ScalarType> output = Lerp( start, end, t );
 		ScalarType magnitudeSquared = output.Dot( output );
-		if( magnitudeSquared == 0 )
+		if( magnitudeSquared != 0 )
 		{
-			ScalarType half = t * 0.5f;
-			output = Lerp( start, end, half );
-			magnitudeSquared = output.Dot( output );
-
-			if( magnitudeSquared == 0 )
-				return output; // error: returning nullvector
-
-			return Nlerp( output /= magnitudeSquared, end, half / (1.0f - half) );
-		}
-		return output /= magnitudeSquared;
+			return output /= (ScalarType)::std::sqrt( magnitudeSquared );
+		}		
+		return output; // error: returning nullvector
 	}
 
 	/********************************************************************
 	 * Normalized Linear Interpolation
-	 * @return nullvector if impossible to solve.
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
 	 ********************************************************************/
 	template<typename ScalarType>
 	inline Vector3<ScalarType> Nlerp( const Vector3<ScalarType> &start, const Vector3<ScalarType> &end,  const ScalarType &t )
 	{
 		Vector3<ScalarType> output = Lerp( start, end, t );
 		ScalarType magnitudeSquared = output.Dot( output );
-		if( magnitudeSquared == 0 )
+		if( magnitudeSquared != 0 )
 		{
-			ScalarType half = t * 0.5f;
-			output = Lerp( start, end, half );
-			magnitudeSquared = output.Dot( output );
-
-			if( magnitudeSquared == 0 )
-				return output; // error: returning nullvector
-
-			return Nlerp( output /= magnitudeSquared, end, half / (1.0f - half) );
-		}
-		return output /= magnitudeSquared;
+			return output /= (ScalarType)::std::sqrt( magnitudeSquared );
+		}		
+		return output; // error: returning nullvector
 	}
 
 	/********************************************************************
 	 * Normalized Linear Interpolation
-	 * @return nullvector if impossible to solve.
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
 	 ********************************************************************/
 	template<typename ScalarType>
 	inline Vector4<ScalarType> Nlerp( const Vector4<ScalarType> &start, const Vector4<ScalarType> &end,  const ScalarType &t )
 	{
 		Vector4<ScalarType> output = Lerp( start, end, t );
 		ScalarType magnitudeSquared = output.Dot( output );
-		if( magnitudeSquared == 0 )
+		if( magnitudeSquared != 0 )
 		{
-			ScalarType half = t * 0.5f;
-			output = Lerp( start, end, half );
-			magnitudeSquared = output.Dot( output );
-
-			if( magnitudeSquared == 0 )
-				return output; // error: returning nullvector
-
-			return Nlerp( output /= magnitudeSquared, end, half / (1.0f - half) );
-		}
-		return output /= magnitudeSquared;
+			return output /= (ScalarType)::std::sqrt( magnitudeSquared );
+		}		
+		return output; // error: returning nullvector
 	}
 }
 
