@@ -42,8 +42,13 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		void Rotate(float x, float y);
 =======
+=======
+		void rotate(float x, float y);
+
+>>>>>>> blah
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
 		* Will be called when the physics detect a collision
