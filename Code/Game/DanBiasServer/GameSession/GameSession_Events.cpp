@@ -42,35 +42,29 @@ namespace DanBias
 	{
 		switch (p[protocol_INDEX_ID].value.netShort)
 		{
-			case protocol_Gameplay_PlayerNavigation:
+			case protocol_Gameplay_PlayerMovement:
 			{
-				
-				//Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
 				if(p[1].value.netBool)	//bool bForward;
-					//world.v[3].x = 2;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
 				if(p[2].value.netBool)	//bool bBackward;
-					//world.v[3].x = -2;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
-				if(p[5].value.netBool)	//bool bStrafeRight;
-					//world.v[3].y = 2;
-					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
-				if(p[6].value.netBool)	//bool bStrafeLeft;
-					//world.v[3].y = -2;
+				if(p[3].value.netBool)	//bool bStrafeLeft;
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+				if(p[4].value.netBool)	//bool bStrafeRight;
+					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 			}
 			break;
 			case protocol_Gameplay_PlayerMouseMovement:
+			{
+				Protocol_PlayerMouse m; m = p;
+				c->GetPlayer()->Rotate(m.dxMouse, m.dyMouse);
+			}
+			break;
+			case protocol_Gameplay_PlayerChangeWeapon:
 				
 			break;
-			case protocol_Gameplay_PlayerPosition:
-				
-			break;
-			case protocol_Gameplay_CreateObject:
-				
-			break;
-			case protocol_Gameplay_ObjectPosition:
-				
+			case protocol_Gameplay_PlayerDamage:
+
 			break;
 		}
 	}
@@ -110,11 +104,9 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		//if (movedObject->)
-		//{
-		//
-		//}
-		//movedObject->GetOrientation();
+		movedObject->GetID();
+		movedObject->GetOrientation();
+
 	}
 
 }//End namespace DanBias

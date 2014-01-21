@@ -41,6 +41,7 @@ namespace GameLogic
 		********************************************************/
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
+		void Rotate(float x, float y);
 		
 		bool IsWalking();
 		bool IsJumping();

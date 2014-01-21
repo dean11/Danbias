@@ -35,6 +35,8 @@ namespace Utility
 
 			void Resize(unsigned int size);
 
+			void Reserve(unsigned int size);
+
 			void Swap(unsigned int a, unsigned int b);
 
 			unsigned int Size() const;
@@ -199,6 +201,11 @@ namespace Utility
 
 				delete [] this->data;
 				this->data = temp;
+			}
+
+			template <typename T> void DynamicArray<T>::Reserve(unsigned int size)
+			{
+				Expand(size);
 			}
 
 			template <typename T> void DynamicArray<T>::Swap(unsigned int a, unsigned int b)

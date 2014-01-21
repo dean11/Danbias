@@ -45,13 +45,16 @@
 /********* GAMEPLAY PROTOCOLS ***************************************************************************************************/
 /***********[ 300 - 400 ]***********/
 #define protocol_GameplayMIN							300
-#define protocol_Gameplay_PlayerNavigation			300
+#define protocol_Gameplay_PlayerMovement			300
 #define protocol_Gameplay_PlayerMouseMovement		301
-#define protocol_Gameplay_PlayerPosition			302
-#define protocol_Gameplay_CreateObject				303
-#define protocol_Gameplay_RemoveObject				304
+#define protocol_Gameplay_PlayerChangeWeapon		302
+#define protocol_Gameplay_PlayerDamage				303
+#define protocol_Gameplay_PlayerPickup				304
 #define protocol_Gameplay_ObjectPosition			305
-#define protocol_Gameplay_Initiate					306
+#define protocol_Gameplay_ObjectEnabled				306
+#define protocol_Gameplay_ObjectDisabled			307
+#define protocol_Gameplay_ObjectCreate				308
+#define protocol_Gameplay_Initiate					309
 #define protocol_GameplayMAX							399
 
 

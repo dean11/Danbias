@@ -6,6 +6,7 @@ using namespace GameLogic;
 Game::PlayerData::PlayerData()
 {
 	this->player = new Player();
+	this->player->GetRigidBody()->SetCustomTag(this);
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
@@ -47,4 +48,8 @@ int Game::PlayerData::GetTeamID() const
 OBJECT_TYPE Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetType();
+}
+void Game::PlayerData::Rotate(const float x, const float y)
+{
+	this->player->Rotate(x, y);
 }

@@ -131,10 +131,8 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			GameLogic::Protocol_PlayerMovement movePlayer;
 			movePlayer.bForward = false;
 			movePlayer.bBackward = false;
-			movePlayer.bStrafeLeft = false;
-			movePlayer.bStrafeRight = false;
-			movePlayer.bTurnLeft = false;
-			movePlayer.bTurnRight = false;
+			movePlayer.bLeft = false;
+			movePlayer.bRight = false;
 
 			if(KeyInput->IsKeyPressed(DIK_W))
 			{
@@ -165,7 +163,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			{
 				if(!key_strafeLeft)
 				{
-					movePlayer.bStrafeLeft = true;
+					movePlayer.bLeft = true;
 					send = true;
 					key_strafeLeft = true;
 				}
@@ -177,7 +175,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 			{
 				if(!key_strafeRight)
 				{
-					movePlayer.bStrafeRight = true;
+					movePlayer.bRight = true;
 					send = true;
 					key_strafeRight = true;
 				}
@@ -221,7 +219,7 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection(privData->proj);
 	Oyster::Graphics::API::NewFrame();
-	for (int i = 0; i < privData->object.size(); i++)
+	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
 		privData->object[i]->Render();
 	}
@@ -230,7 +228,7 @@ bool GameState::Render()
 }
 bool GameState::Release()
 {
-	for (int i = 0; i < privData->object.size(); i++)
+	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
 		privData->object[i]->Release();
 		delete privData->object[i];
@@ -305,7 +303,7 @@ void GameState::Protocol( NewObj* newObj )
 
 void DanBias::Client::GameState::Protocol( RemoveObj* obj )
 {
-	for (int i = 0; i < privData->object.size(); i++)
+	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
 		if(privData->object[i]->GetId() == obj->object_ID)
 		{
