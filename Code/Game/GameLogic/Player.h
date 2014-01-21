@@ -41,14 +41,9 @@ namespace GameLogic
 		********************************************************/
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-		void Rotate(float x, float y);
-=======
-=======
-		void rotate(float x, float y);
 
->>>>>>> blah
+		void Rotate(float x, float y);
+
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
 		* Will be called when the physics detect a collision
@@ -57,7 +52,6 @@ namespace GameLogic
 		********************************************************/
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj);
 
->>>>>>> Major updates to Collision handling with the class CollitionManager. changes started on the massdriver
 		
 		bool IsWalking();
 		bool IsJumping();
