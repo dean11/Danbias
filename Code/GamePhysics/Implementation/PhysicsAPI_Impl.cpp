@@ -158,8 +158,8 @@ float API_Impl::GetFrameTimeLength() const
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
 	::std::vector<ICustomBody*> updateList;
-	ICustomBody::State state;
 	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
+	ICustomBody::State state; (*proto)->GetState( state );
 	for( ; proto != updateList.end(); ++proto )
 	{
 		// Step 1: Apply Gravity
@@ -192,7 +192,6 @@ void API_Impl::Update()
 
 		if( gravityImpulse != Float4::null )
 		{
-			(*proto)->GetState( state );
 			state.ApplyLinearImpulse( gravityImpulse );
 			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 			(*proto)->SetState( state );
