@@ -328,6 +328,10 @@ namespace Utility
 		{ return valueA < valueB ? valueA : valueB; }
 
 		template<typename ValueType>
+		inline ValueType Clamp( const ValueType &value, const ValueType &min, const ValueType &max )
+		{ return value < min ? Max( value, max ) : min; }
+
+		template<typename ValueType>
 		inline ValueType Average( const ValueType &valueA, const ValueType &valueB )
 		{ return (valueA + valueB) * 0.5f; }
 

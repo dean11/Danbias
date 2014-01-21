@@ -101,7 +101,8 @@ SimpleRigidBody::State SimpleRigidBody::GetState() const
 				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 				  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
 				  this->rigid.centerPos, this->rigid.axis,
-				  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
+				  this->rigid.momentum_Linear, this->rigid.momentum_Angular, 
+				  this->rigid.gravityNormal );
 }
 
 SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
@@ -110,7 +111,8 @@ SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targ
 							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 							  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
 							  this->rigid.centerPos, this->rigid.axis,
-							  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
+							  this->rigid.momentum_Linear, this->rigid.momentum_Angular,
+							  this->rigid.gravityNormal );
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
@@ -127,6 +129,7 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
 	this->rigid.SetMass_KeepMomentum( state.GetMass() );
 	this->rigid.SetMomentOfInertia_KeepMomentum( state.GetMomentOfInertia() );
+	this->rigid.gravityNormal		  = state.GetGravityNormal();
 
 	if( state.IsForwarded() )
 	{
@@ -333,6 +336,7 @@ void SimpleRigidBody::SetGravity( bool ignore)
 void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+	this->rigid.gravityNormal = Float4( this->gravityNormal, 0 );
 }
 
 void SimpleRigidBody::SetCustomTag( void *ref )
