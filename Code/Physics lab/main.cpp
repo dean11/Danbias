@@ -30,6 +30,21 @@ LRESULT CALLBACK MessagePipe( HWND, UINT, WPARAM, LPARAM );
 
 int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {
+	// NON-GRAPHICAL TESTS /////////////////////////////////////////////
+
+	Float4x4 rotA, rotB;
+	Float4 normal = Float4( 0.0f, 1.0f, 0.0f, 0.0f ).Normalize();
+	RotationMatrix_AxisX( Value::Radian(45.0f), rotA );
+
+	for( Float t = 0.0f; t <= 1.0f; t += 0.1f )
+	{
+		rotB = rotA;
+		InterpolateAxisYToNormal_UsingNlerp( rotB, normal, t );
+		const char* breakpoint = "";
+	}
+
+	// END NON-GRAPHICAL TESTS /////////////////////////////////////////
+
 	if( SetDllDirectoryW(L"..\\DLL") == FALSE )
 	{
 		return 0;
