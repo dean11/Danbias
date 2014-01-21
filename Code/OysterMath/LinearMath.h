@@ -733,7 +733,7 @@ namespace LinearAlgebra3D
 		ScalarType projectedMagnitude = rotation.v[0].Dot( normalizedAxis );
 		if( projectedMagnitude == 1 )
 		{ // infinite possible solutions -> roadtrip!
-			::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, t );
+			::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, (ScalarType)0.5f );
 			
 			// interpolated.Dot( interpolated ) == 0 should be impossible at this point
 			projectedMagnitude = rotation.v[0].Dot( interpolated );
@@ -744,7 +744,8 @@ namespace LinearAlgebra3D
 		rotation.v[0] -= projectedMagnitude * normalizedAxis;
 		rotation.v[0].Normalize();
 		rotation.v[1] = normalizedAxis;
-		rotation.v[2] = rotation.v[0].Cross( rotation.v[1] );
+		rotation.v[2].xyz = rotation.v[0].xyz.Cross( rotation.v[1].xyz );
+		return rotation;
 	}
 
 	template<typename ScalarType>
@@ -753,7 +754,7 @@ namespace LinearAlgebra3D
 		::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, t );
 		if( interpolated.Dot(interpolated) == 0 )
 			return rotation; // return no change
-		return SnapAxisYToAxis_Nlerp( rotation, interpolated );
+		return SnapAxisYToNormal_UsingNlerp( rotation, interpolated );
 	}
 }
 
