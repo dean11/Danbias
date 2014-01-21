@@ -51,6 +51,14 @@ namespace GameLogic
 		********************************************************/
 		void RespawnPlayer(Player *player);
 
+		/********************************************************
+		* Collision function for level, this is to be sent to physics through the subscribe function with the rigidbody
+		* Will be called when the physics detect a collision
+		* @param rigidBodyLevel: physics object of the level
+		* @param obj: physics object for the object that collided with the level
+		********************************************************/
+		static Oyster::Physics::ICustomBody::SubscriptMessage LevelCollision(const Oyster::Physics::ICustomBody *rigidBodyLevel, const Oyster::Physics::ICustomBody *obj);
+
 	private:
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
