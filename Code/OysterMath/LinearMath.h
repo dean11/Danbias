@@ -753,7 +753,7 @@ namespace LinearAlgebra3D
 		::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, t );
 		if( interpolated.Dot(interpolated) == 0 )
 			return rotation; // return no change
-		return SnapAxisYToAxis_Nlerp( rotation, interpolated );
+		return SnapAxisYToNormal_UsingNlerp( rotation, interpolated );
 	}
 }
 

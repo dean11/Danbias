@@ -46,7 +46,16 @@ namespace Oyster { namespace Math //! Oyster's native math library
  //! Returns false if there is no explicit solution.
 	bool SuperpositionMatrix( const Float4x4 &in, const Float4x4 &out, Float4x4 &targetMem );
 
+	/********************************************************************
+	 * Linear Interpolation
+	 * @return start * (1-t) + end * t
+	 ********************************************************************/
 	using ::LinearAlgebra::Lerp;
+
+	/********************************************************************
+	 * Normalized Linear Interpolation
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
+	 ********************************************************************/
 	using ::LinearAlgebra::Nlerp;
 } }
 
