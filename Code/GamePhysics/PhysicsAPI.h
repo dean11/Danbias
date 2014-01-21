@@ -16,6 +16,7 @@ namespace Oyster
 	{
 		class API;
 		class ICustomBody;
+		class Octree;
 
 		namespace Struct
 		{
@@ -135,6 +136,8 @@ namespace Oyster
 			 * TODO: @todo doc
 			 ********************************************************/
 			virtual void RemoveGravity( const API::Gravity &g ) = 0;
+
+			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(Octree&, unsigned int) ) = 0;
 
 			///********************************************************
 			// * Apply force on an object.

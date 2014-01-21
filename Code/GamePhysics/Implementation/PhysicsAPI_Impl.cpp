@@ -268,6 +268,11 @@ void API_Impl::RemoveGravity( const API::Gravity &g )
 	}
 }
 
+void API_Impl::ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(Octree&, unsigned int) )
+{
+	this->worldScene.Visit(collideable, hitAction);
+}
+
 //void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
 //{
 //	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );

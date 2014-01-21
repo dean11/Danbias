@@ -17,7 +17,8 @@ namespace Oyster
 		public:
 			static const unsigned int invalid_ref;
 
-			typedef void(*VistorAction)(Octree&, unsigned int, unsigned int);
+			typedef void(*VisitorAction)(Octree&, unsigned int, unsigned int);
+			typedef void(*VisitorActionCollideable)(Octree&, unsigned int);
 
 			struct Data
 			{
@@ -51,8 +52,8 @@ namespace Oyster
 
 			std::vector<ICustomBody*>& Sample(ICustomBody* customBodyRef, std::vector<ICustomBody*>& updateList);
 			std::vector<ICustomBody*>& Sample(const Oyster::Collision3D::ICollideable& collideable, std::vector<ICustomBody*>& updateList);
-			void Visit(ICustomBody* customBodyRef, VistorAction hitAction );
-			void Visit(const Oyster::Collision3D::ICollideable& collideable, VistorAction hitAction );
+			void Visit(ICustomBody* customBodyRef, VisitorAction hitAction );
+			void Visit(const Oyster::Collision3D::ICollideable& collideable, VisitorActionCollideable hitAction );
 
 			ICustomBody* GetCustomBody(const unsigned int tempRef);
 
