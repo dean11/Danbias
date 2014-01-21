@@ -36,7 +36,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 	Float4 normal = Float4( 0.0f, 1.0f, 0.0f, 0.0f ).Normalize();
 	RotationMatrix_AxisX( Value::Radian(45.0f), rotA );
 
-	for( Float t = 0.0f; t <= 1.0f; t += 0.1f )
+	for( Float t = 0.0f; t < 1.05f; t += 0.1f )
 	{
 		rotB = rotA;
 		InterpolateAxisYToNormal_UsingNlerp( rotB, normal, t );
@@ -118,7 +118,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 
 		for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
 		{
-			crate[i].gfx = Graphics::API::CreateModel( L"crate" );
+			crate[i].gfx = Graphics::API::CreateModel( L"box.dan" );
 			Physics::API::Instance().AddObject( crate[i].phys );
 		}
 
@@ -137,16 +137,33 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		crate[1].phys->SetState( state );
 	}
 
+
+	Graphics::Definitions::Pointlight interpolationLight;
+	Graphics::Model::Model* interpolationBox;
+	Float4x4 interpolationStart;
+	Float4 interpolationNormal = Float4( 1.0f, 0.0f, 1.0f, 0.0f ).Normalize();
+	Float interpolationStep = 0.0f;
+	{ // interpolation stuff
+		interpolationBox = Graphics::API::CreateModel( L"box.dan" );
+	
+		OrientationMatrix( Rotation(Value::Radian(0.0f), Float4(1.0f, 0.0f, 0.0f, 0.0f).Normalize().xyz), Float3(200.0f, 0.0f, 0.0f), interpolationStart );
+
+		interpolationLight.Pos = Float3( 200.0f, 0.0f, 2.0f );
+		interpolationLight.Radius = 100.0f;
+		interpolationLight.Color = Float3( 1.0f );
+		interpolationLight.Bright = 5.0f;
+		Graphics::API::AddLight( interpolationLight );
+	}
+
 	timer.reset();
 	while( true )
 	{
 		if( screen.Frame() )
 		{
-			graphicsTimeAccumulation += (Float)timer.getElapsedSeconds();
-			physicsTimeAccumulation += (Float)timer.getElapsedSeconds();
+			Float deltaTime = (Float)timer.getElapsedSeconds();
+			graphicsTimeAccumulation += deltaTime;
+			physicsTimeAccumulation += deltaTime;
 			timer.reset();
-
-			
 
 			while( physicsTimeAccumulation >= physicsPeriodicy )
 			{
@@ -159,11 +176,23 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 			//state.SetLinearMomentum( Float4(5.0f, 0.0f, 0.0f, 0.0f) );
 			//crate[0].phys->SetState( state );
 
+			// update interpolation test
+			if( interpolationStep < 1.00001f )
+			{
+				interpolationStep += 0.1f * deltaTime;
+				interpolationBox->WorldMatrix = interpolationStart;
+				InterpolateAxisYToNormal_UsingNlerp( interpolationBox->WorldMatrix, interpolationNormal, interpolationStep );				
+			}
+			// end update interpolation test
+
 			if( graphicsTimeAccumulation >= graphicsPeriodicy )
 			{
-				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) );
+				//Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) ); // for collision response test
+				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3(interpolationLight.Pos.x, 0.0f, 0.0f), Float3::standard_unit_y, interpolationLight.Pos) ); // for interpolation test
 				Graphics::API::NewFrame();
 				{
+					// render collision response test
+
 					//sphere.gfx->WorldMatrix = sphere.phys->GetState().GetOrientation();
 					//Graphics::API::RenderModel( *sphere.gfx );
 
@@ -172,6 +201,12 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 						crate[i].gfx->WorldMatrix = crate[i].phys->GetState().GetOrientation();
 						Graphics::API::RenderModel( *crate[i].gfx );
 					}
+
+					// end render collision response test
+
+					// render interpolation test
+					Graphics::API::RenderModel( *interpolationBox );
+					// end render interpolation test
 				}
 				Graphics::API::EndFrame();
 				graphicsTimeAccumulation = 0.0f;
