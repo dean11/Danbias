@@ -16,6 +16,9 @@ namespace Oyster
 				this->centerPosition = ::Oyster::Math::Float4::standard_unit_w;
 				this->size = ::Oyster::Math::Float4( 1.0f );
 				this->mass = 12.0f;
+				this->restitutionCoeff = 1.0f;
+				this->frictionCoeff_Dynamic = 0.5f;
+				this->frictionCoeff_Static = 0.5f;
 				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
 				this->subscription_onCollision = NULL;
 				this->subscription_onMovement = NULL;
@@ -28,6 +31,9 @@ namespace Oyster
 				this->centerPosition = ::Oyster::Math::Float4::standard_unit_w;
 				this->radius = 0.5f;
 				this->mass = 10.0f;
+				this->restitutionCoeff = 1.0f;
+				this->frictionCoeff_Dynamic = 0.5f;
+				this->frictionCoeff_Static = 0.5f;
 				this->subscription_onCollision = NULL;
 				this->subscription_onMovement = NULL;
 				this->ignoreGravity = false;

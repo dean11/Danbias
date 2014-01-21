@@ -14,6 +14,9 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float4 centerPosition;
 			::Oyster::Math::Float4 size;
 			::Oyster::Math::Float mass;
+			::Oyster::Math::Float restitutionCoeff;
+			::Oyster::Math::Float frictionCoeff_Static;
+			::Oyster::Math::Float frictionCoeff_Dynamic;
 			::Oyster::Math::Float4x4 inertiaTensor;
 			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
@@ -28,6 +31,9 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float4 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;
+			::Oyster::Math::Float restitutionCoeff;
+			::Oyster::Math::Float frictionCoeff_Static;
+			::Oyster::Math::Float frictionCoeff_Dynamic;
 			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
