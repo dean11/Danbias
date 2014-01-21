@@ -171,7 +171,7 @@ void API_Impl::Update()
 			{
 			case Gravity::GravityType_Well:
 				{
-					Float4 d = state.GetCenterPosition() - Float4( this->gravity[i].well.position, 1.0f );
+					Float4 d = Float4( this->gravity[i].well.position, 1.0f ) - state.GetCenterPosition();
 					Float rSquared = d.Dot( d );
 					if( rSquared != 0.0 )
 					{
