@@ -104,7 +104,7 @@ namespace DanBias
 	void MainLobby::SendUpdate()
 	{
 		//Send Lobbys
-		GameLogic::Protocol_LobbyUpdate();
+		GameLogic::Protocol_LobbyRefresh();
 	}
 
 }//End namespace DanBias

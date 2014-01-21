@@ -61,6 +61,7 @@ GameState::gameStateState GameState::LoadGame()
 	plight.Color = Oyster::Math::Float3(0,0,1);
 	plight.Radius = 50;
 	plight.Bright = 2;
+
 	Oyster::Graphics::API::AddLight(plight);
 	LoadModels(L"map");
 	InitCamera(Oyster::Math::Float3(0,0,20.0f));
@@ -283,7 +284,7 @@ void GameState::Protocol( ObjPos* pos )
 		world[i] = pos->worldPos[i];
 	}
 
-	for (int i = 0; i < privData->object.size(); i++)
+	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
 		if(privData->object[i]->GetId() == pos->object_ID)
 		{

@@ -4,14 +4,99 @@
 #include <CustomNetProtocol.h>
 #include "ProtocolIdentificationID.h"
 
+//protocol_Gameplay_PlayerMovement			300
+//protocol_Gameplay_PlayerMouseMovement		301
+//protocol_Gameplay_PlayerChangeWeapon		302
+
+//#define protocol_Gameplay_ObjectPickup			303
+//#define protocol_Gameplay_ObjectDamage			304
+//#define protocol_Gameplay_ObjectPosition			305
+//#define protocol_Gameplay_ObjectEnabled			306
+//#define protocol_Gameplay_ObjectDisabled			307
+//#define protocol_Gameplay_ObjectCreate			308
 
 namespace GameLogic
 {
+	struct Protocol_ObjectPickup :public Oyster::Network::CustomProtocolObject
+	{
+		int object_ID;
+		short pickup_ID;
+
+		Protocol_ObjectPickup()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectPickup;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+									
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Short;
+			
+			object_ID = -1;
+			pickup_ID = -1;
+		}
+		Protocol_ObjectPickup(int objectID, short pickupID)
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectPosition;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+									
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Short;
+			
+			object_ID = objectID;
+			pickup_ID = pickupID;
+
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = object_ID;
+			this->protocol[2].value = pickup_ID;
+			return &protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	struct Protocol_ObjectDamage :public Oyster::Network::CustomProtocolObject
+	{
+		int object_ID;
+		float health; //Precentage%
+
+		Protocol_ObjectDamage()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectDamage;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+									
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			
+			object_ID = -1;
+			health = 0.0f;
+		}
+		Protocol_ObjectDamage(int id, float hp)
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectDamage;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+									
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			
+			object_ID = id;
+			health = hp;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = object_ID;
+			this->protocol[2].value = health;
+			return &protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
 	struct Protocol_ObjectPosition :public Oyster::Network::CustomProtocolObject
 	{
 		int object_ID;
 		float worldMatrix[16];
-		// look at dir 
 
 		Protocol_ObjectPosition()
 		{
@@ -60,7 +145,6 @@ namespace GameLogic
 	{
 		int object_ID;
 		float worldMatrix[16];
-		// look at dir 
 
 		Protocol_ObjectEnable()
 		{
@@ -116,6 +200,17 @@ namespace GameLogic
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 		}
+		Protocol_ObjectDisable(int id, float time)
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectDisabled;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+
+			object_ID = id;
+			timer = time;
+		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
@@ -127,14 +222,13 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_CreateObject :public Oyster::Network::CustomProtocolObject
+	struct Protocol_ObjectCreate :public Oyster::Network::CustomProtocolObject
 	{
 		int object_ID;
-		char *path;
+		char *name;
 		float worldMatrix[16];
 
-
-		Protocol_CreateObject()
+		Protocol_ObjectCreate()
 		{
 			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectCreate;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
@@ -147,7 +241,7 @@ namespace GameLogic
 				this->protocol[i].type = Oyster::Network::NetAttributeType_Float;
 			}
 		}
-		Protocol_CreateObject(float m[16], int id, char *path)
+		Protocol_ObjectCreate(float m[16], int id, char *path)
 		{
 			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectCreate;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Int;
@@ -161,14 +255,14 @@ namespace GameLogic
 			}
 
 			object_ID = id;
-			this->path = path;
+			this->name = path;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 
 			this->protocol[1].value = object_ID;
-			this->protocol[2].value = path;
+			this->protocol[2].value = name;
 			this->protocol[3].value = worldMatrix[0];
 			this->protocol[4].value = worldMatrix[1]; 
 			this->protocol[5].value	= worldMatrix[2];
