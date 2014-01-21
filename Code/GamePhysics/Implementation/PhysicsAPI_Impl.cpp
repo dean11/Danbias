@@ -158,19 +158,20 @@ float API_Impl::GetFrameTimeLength() const
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
 	::std::vector<ICustomBody*> updateList;
-	ICustomBody::State state;
 	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
+	ICustomBody::State state;
 	for( ; proto != updateList.end(); ++proto )
 	{
 		// Step 1: Apply Gravity
 		Float4 gravityImpulse = Float4::null;
+		(*proto)->GetState( state );
 		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
 		{
 			switch( this->gravity[i].gravityType )
 			{
 			case Gravity::GravityType_Well:
 				{
-					Float4 d = state.GetCenterPosition() - Float4( this->gravity[i].well.position, 1.0f );
+					Float4 d = Float4( this->gravity[i].well.position, 1.0f ) - state.GetCenterPosition();
 					Float rSquared = d.Dot( d );
 					if( rSquared != 0.0 )
 					{
@@ -192,7 +193,6 @@ void API_Impl::Update()
 
 		if( gravityImpulse != Float4::null )
 		{
-			(*proto)->GetState( state );
 			state.ApplyLinearImpulse( gravityImpulse );
 			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 			(*proto)->SetState( state );
