@@ -159,11 +159,12 @@ void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
 	::std::vector<ICustomBody*> updateList;
 	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
-	ICustomBody::State state; (*proto)->GetState( state );
+	ICustomBody::State state;
 	for( ; proto != updateList.end(); ++proto )
 	{
 		// Step 1: Apply Gravity
 		Float4 gravityImpulse = Float4::null;
+		(*proto)->GetState( state );
 		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
 		{
 			switch( this->gravity[i].gravityType )
