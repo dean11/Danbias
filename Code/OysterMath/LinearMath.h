@@ -745,6 +745,7 @@ namespace LinearAlgebra3D
 		rotation.v[0].Normalize();
 		rotation.v[1] = normalizedAxis;
 		rotation.v[2].xyz = rotation.v[0].xyz.Cross( rotation.v[1].xyz );
+		return rotation;
 	}
 
 	template<typename ScalarType>
