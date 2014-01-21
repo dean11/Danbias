@@ -146,6 +146,64 @@ namespace LinearAlgebra
 		targetMem = out * (in.GetAdjoint() /= d);
 		return true;
 	}
+
+	/********************************************************************
+	 * Linear Interpolation
+	 * @return start * (1-t) + end * t
+	 ********************************************************************/
+	template<typename PointType, typename ScalarType>
+	inline PointType Lerp( const PointType &start, const PointType &end,  const ScalarType &t )
+	{
+		return end * t + start * ( 1 - t );
+	}
+
+	/********************************************************************
+	 * Normalized Linear Interpolation
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
+	 ********************************************************************/
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Nlerp( const Vector2<ScalarType> &start, const Vector2<ScalarType> &end,  const ScalarType &t )
+	{
+		Vector2<ScalarType> output = Lerp( start, end, t );
+		ScalarType magnitudeSquared = output.Dot( output );
+		if( magnitudeSquared != 0 )
+		{
+			return output /= (ScalarType)::std::sqrt( magnitudeSquared );
+		}		
+		return output; // error: returning nullvector
+	}
+
+	/********************************************************************
+	 * Normalized Linear Interpolation
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
+	 ********************************************************************/
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Nlerp( const Vector3<ScalarType> &start, const Vector3<ScalarType> &end,  const ScalarType &t )
+	{
+		Vector3<ScalarType> output = Lerp( start, end, t );
+		ScalarType magnitudeSquared = output.Dot( output );
+		if( magnitudeSquared != 0 )
+		{
+			return output /= (ScalarType)::std::sqrt( magnitudeSquared );
+		}		
+		return output; // error: returning nullvector
+	}
+
+	/********************************************************************
+	 * Normalized Linear Interpolation
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
+	 ********************************************************************/
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Nlerp( const Vector4<ScalarType> &start, const Vector4<ScalarType> &end,  const ScalarType &t )
+	{
+		Vector4<ScalarType> output = Lerp( start, end, t );
+		ScalarType magnitudeSquared = output.Dot( output );
+		if( magnitudeSquared != 0 )
+		{
+			return output /= (ScalarType)::std::sqrt( magnitudeSquared );
+		}		
+		return output; // error: returning nullvector
+	}
 }
 
 namespace LinearAlgebra2D
@@ -668,6 +726,35 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector4<ScalarType> NormalProjection( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
 	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & SnapAxisYToNormal_UsingNlerp( ::LinearAlgebra::Matrix4x4<ScalarType> &rotation, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
+	{
+		ScalarType projectedMagnitude = rotation.v[0].Dot( normalizedAxis );
+		if( projectedMagnitude == 1 )
+		{ // infinite possible solutions -> roadtrip!
+			::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, t );
+			
+			// interpolated.Dot( interpolated ) == 0 should be impossible at this point
+			projectedMagnitude = rotation.v[0].Dot( interpolated );
+			rotation.v[0] -= projectedMagnitude * interpolated;
+			rotation.v[0].Normalize();
+			projectedMagnitude = rotation.v[0].Dot( normalizedAxis );
+		}
+		rotation.v[0] -= projectedMagnitude * normalizedAxis;
+		rotation.v[0].Normalize();
+		rotation.v[1] = normalizedAxis;
+		rotation.v[2] = rotation.v[0].Cross( rotation.v[1] );
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateAxisYToNormal_UsingNlerp( ::LinearAlgebra::Matrix4x4<ScalarType> &rotation, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis, ScalarType t )
+	{
+		::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, t );
+		if( interpolated.Dot(interpolated) == 0 )
+			return rotation; // return no change
+		return SnapAxisYToAxis_Nlerp( rotation, interpolated );
+	}
 }
 
 #include "Utilities.h"
