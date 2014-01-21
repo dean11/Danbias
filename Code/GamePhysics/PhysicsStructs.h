@@ -53,7 +53,8 @@ namespace Oyster { namespace Physics
 							 const ::Oyster::Math::Float4 &centerPos		= ::Oyster::Math::Float4::standard_unit_w,
 							 const ::Oyster::Math::Float4 &rotation			= ::Oyster::Math::Float4::null,
 							 const ::Oyster::Math::Float4 &linearMomentum	= ::Oyster::Math::Float4::null,
-							 const ::Oyster::Math::Float4 &angularMomentum	= ::Oyster::Math::Float4::null );
+							 const ::Oyster::Math::Float4 &angularMomentum	= ::Oyster::Math::Float4::null, 
+							 const ::Oyster::Math::Float4 &gravityNormal	= ::Oyster::Math::Float4::null);
 
 			CustomBodyState & operator = ( const CustomBodyState &state );
 
@@ -78,6 +79,7 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float4 &	 GetAngularImpulse() const;
 			const ::Oyster::Math::Float4 &	 GetForward_DeltaPos() const;
 			const ::Oyster::Math::Float4 &	 GetForward_DeltaAxis() const;
+			const ::Oyster::Math::Float4 &	 GetGravityNormal() const;
 			
 			void SetMass_KeepMomentum( ::Oyster::Math::Float m );
 			void SetMass_KeepVelocity( ::Oyster::Math::Float m );
@@ -95,6 +97,7 @@ namespace Oyster { namespace Physics
 			void SetAngularMomentum( const ::Oyster::Math::Float4 &h );
 			void SetLinearImpulse( const ::Oyster::Math::Float4 &j );
 			void SetAngularImpulse( const ::Oyster::Math::Float4 &j );
+			void SetGravityNormal( const ::Oyster::Math::Float4 &gravityNormal );
 
 			void AddRotation( const ::Oyster::Math::Float4 &angularAxis );
 			void AddTranslation( const ::Oyster::Math::Float4 &deltaPos );
@@ -115,6 +118,7 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float4 linearMomentum, angularMomentum;
 			::Oyster::Math::Float4 linearImpulse, angularImpulse;
 			::Oyster::Math::Float4 deltaPos, deltaAxis; // Forwarding data sum
+			::Oyster::Math::Float4 gravityNormal;
 
 			bool isSpatiallyAltered, isDisturbed, isForwarded;
 		};
