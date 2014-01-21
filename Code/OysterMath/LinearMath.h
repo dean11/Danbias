@@ -726,6 +726,21 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector4<ScalarType> NormalProjection( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
 	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & SnapAxisYToAxis_Nlerp( ::LinearAlgebra::Matrix4x4<ScalarType> &rotation, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
+	{
+
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateAxisYToAxis_Nlerp( ::LinearAlgebra::Matrix4x4<ScalarType> &rotation, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis, ScalarType t )
+	{
+		::LinearAlgebra::Vector4<ScalarType> interpolated = ::LinearAlgebra::Nlerp( rotation.v[1], normalizedAxis, t );
+		if( interpolated.Dot(interpolated) == 0 )
+			return rotation; // return no change
+		return SnapAxisYToAxis_Nlerp( rotation, interpolated );
+	}
 }
 
 #include "Utilities.h"
