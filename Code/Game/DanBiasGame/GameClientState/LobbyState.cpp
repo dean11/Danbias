@@ -43,7 +43,7 @@ bool LobbyState::LoadModels(std::wstring file)
 	plight.Pos = Oyster::Math::Float3(-2,3,0);
 	plight.Color = Oyster::Math::Float3(0,1,0);
 	plight.Radius = 10;
-	plight.Bright = 3;
+	plight.Bright = 1;
 	Oyster::Graphics::API::AddLight(plight);
 	// open file
 	// read file 

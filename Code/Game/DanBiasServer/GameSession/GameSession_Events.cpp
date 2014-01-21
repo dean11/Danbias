@@ -63,7 +63,7 @@ namespace DanBias
 			case protocol_Gameplay_PlayerChangeWeapon:
 				
 			break;
-			case protocol_Gameplay_PlayerDamage:
+			case protocol_Gameplay_ObjectDamage:
 
 			break;
 		}

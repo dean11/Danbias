@@ -15,46 +15,47 @@
 
 /***********************************/
 /********* RESERVERD PROTOCOLS ***************************************************************************************************/
-/**********   [ 0 - 100 ]  *********/
+/**********   [ 0 - 99 ]  *********/
 #define protocol_RESERVED_MIN							0
 #define protocol_RESERVED_MAX							99
 
 /***********************************/
 /********* GENERAL PROTOCOLS ***************************************************************************************************/
-/***********[ 100 - 200 ]***********/
+/***********[ 100 - 199 ]***********/
 #define protocol_GeneralMIN								100
 #define protocol_General_Status						100
 #define protocol_General_Text						101
+#define protocol_General_Disconnect					102
+#define protocol_General_Login						110
 #define protocol_GeneralMAX								199
 
 
 /***********************************/
 /********* LOBBY PROTOCOLS ***************************************************************************************************/
-/***********[ 200 - 300 ]***********/
+/***********[ 200 - 299 ]***********/
 #define protocol_LobbyMIN								200	
 #define protocol_Lobby_CreateGame					200
-#define protocol_Lobby_JoinGame						201
-#define protocol_Lobby_StartGame					202
+#define protocol_Lobby_StartGame					201
+#define protocol_Lobby_JoinGame						202
 #define protocol_Lobby_JoinLobby					203
 #define protocol_Lobby_LeaveLobby					204
-#define protocol_Lobby_CreateGameLobby				205
+#define protocol_Lobby_Refresh						205
 #define protocol_LobbyMAX								299
 
 
 /***********************************/
 /********* GAMEPLAY PROTOCOLS ***************************************************************************************************/
-/***********[ 300 - 400 ]***********/
+/***********[ 300 - 399 ]***********/
 #define protocol_GameplayMIN							300
 #define protocol_Gameplay_PlayerMovement			300
 #define protocol_Gameplay_PlayerMouseMovement		301
 #define protocol_Gameplay_PlayerChangeWeapon		302
-#define protocol_Gameplay_PlayerDamage				303
-#define protocol_Gameplay_PlayerPickup				304
+#define protocol_Gameplay_ObjectPickup				303
+#define protocol_Gameplay_ObjectDamage				304
 #define protocol_Gameplay_ObjectPosition			305
 #define protocol_Gameplay_ObjectEnabled				306
 #define protocol_Gameplay_ObjectDisabled			307
 #define protocol_Gameplay_ObjectCreate				308
-#define protocol_Gameplay_Initiate					309
 #define protocol_GameplayMAX							399
 
 

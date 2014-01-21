@@ -37,7 +37,7 @@ namespace DanBias
 			if(GetAsyncKeyState(VK_DOWN))
 			{
 				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
-				Protocol_CreateObject p(world, 2, "../Content/crate");
+				Protocol_ObjectCreate p(world, 2, "../Content/crate");
 				Send(p.GetProtocol());
 				Sleep(100);
 			}

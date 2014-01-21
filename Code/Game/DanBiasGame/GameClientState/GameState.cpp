@@ -47,10 +47,10 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 GameState::gameStateState GameState::LoadGame() 
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(0,3,0);
-	plight.Color = Oyster::Math::Float3(0,1,0);
-	plight.Radius = 5;
-	plight.Bright = 2;
+	plight.Pos = Oyster::Math::Float3(0,8,8);
+	plight.Color = Oyster::Math::Float3(1,1,1);
+	plight.Radius = 20;
+	plight.Bright = 0.5;
 	Oyster::Graphics::API::AddLight(plight);
 	LoadModels(L"map");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
@@ -264,7 +264,7 @@ void GameState::Protocol( ObjPos* pos )
 		world[i] = pos->worldPos[i];
 	}
 
-	for (int i = 0; i < privData->object.size(); i++)
+	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
 		if(privData->object[i]->GetId() == pos->object_ID)
 		{

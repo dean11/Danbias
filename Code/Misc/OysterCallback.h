@@ -59,11 +59,11 @@ namespace Oyster
 				switch (callbackType)
 				{
 					case CallbackType_Function:
-						value.callbackFunction(e);
+						if(value.callbackFunction) value.callbackFunction(e);
 						return true;
 					break;
 					case CallbackType_Object:
-						value.callbackObject->ObjectCallback(e);
+						if(value.callbackObject) value.callbackObject->ObjectCallback(e);
 						return true;
 					break;
 					case CallbackType_PostBox:

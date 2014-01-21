@@ -124,7 +124,7 @@ namespace GameLogic
 
 		Protocol_PlayerDamage()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerDamage;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectDamage;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
@@ -151,7 +151,7 @@ namespace GameLogic
 
 		Protocol_PlayerPickup()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerPickup;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_ObjectPickup;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;

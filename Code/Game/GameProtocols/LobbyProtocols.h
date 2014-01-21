@@ -9,6 +9,13 @@
 #include <CustomNetProtocol.h>
 #include "ProtocolIdentificationID.h"
 
+//#define protocol_Lobby_CreateGame					200
+//#define protocol_Lobby_StartGame					201
+//#define protocol_Lobby_JoinGame					202
+//#define protocol_Lobby_JoinLobby					203
+//#define protocol_Lobby_LeaveLobby					204
+//#define protocol_Lobby_Refresh					205
+
 namespace GameLogic
 {
 	struct Protocol_LobbyCreateGame :public Oyster::Network::CustomProtocolObject
@@ -40,13 +47,13 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_LobbyJoinGame :public Oyster::Network::CustomProtocolObject
+	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
 		char gameId;
 
-		Protocol_LobbyJoinGame()
+		Protocol_LobbyStartGame()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_JoinGame;
+			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_StartGame;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
@@ -61,13 +68,13 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
+	struct Protocol_LobbyJoinGame :public Oyster::Network::CustomProtocolObject
 	{
 		char gameId;
 
-		Protocol_LobbyStartGame()
+		Protocol_LobbyJoinGame()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_StartGame;
+			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_JoinGame;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
@@ -125,7 +132,7 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_LobbyUpdate :public Oyster::Network::CustomProtocolObject
+	struct Protocol_LobbyRefresh :public Oyster::Network::CustomProtocolObject
 	{
 		struct LobbyUpdateData
 		{
@@ -134,14 +141,14 @@ namespace GameLogic
 		};
 		int count;
 		LobbyUpdateData* data;
-		Protocol_LobbyUpdate()
+		Protocol_LobbyRefresh()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_LeaveLobby;
+			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Refresh;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 		}
-		Protocol_LobbyUpdate( Oyster::Network::CustomNetProtocol* p )
+		Protocol_LobbyRefresh( Oyster::Network::CustomNetProtocol* p )
 		{
 			count = (*p)[1].value.netInt;
 			data = new LobbyUpdateData[count];
@@ -150,7 +157,7 @@ namespace GameLogic
 				//data[i].mapName = (*p)[i].value.
 			}
 		}
-		~Protocol_LobbyUpdate()
+		~Protocol_LobbyRefresh()
 		{
 			delete [] data;
 			data = 0;
