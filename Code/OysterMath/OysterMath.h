@@ -45,6 +45,18 @@ namespace Oyster { namespace Math //! Oyster's native math library
  //! Creates a solution matrix for 'out´= 'targetMem' * 'in'.
  //! Returns false if there is no explicit solution.
 	bool SuperpositionMatrix( const Float4x4 &in, const Float4x4 &out, Float4x4 &targetMem );
+
+	/********************************************************************
+	 * Linear Interpolation
+	 * @return start * (1-t) + end * t
+	 ********************************************************************/
+	using ::LinearAlgebra::Lerp;
+
+	/********************************************************************
+	 * Normalized Linear Interpolation
+	 * @return nullvector if Lerp( start, end, t ) is nullvector.
+	 ********************************************************************/
+	using ::LinearAlgebra::Nlerp;
 } }
 
 inline ::Oyster::Math::Float2 & operator *= ( ::Oyster::Math::Float2 &left, const ::Oyster::Math::Float2 &right )
@@ -328,6 +340,9 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 	//! Helper inline function that sets and then returns targetMem = transformer * transformee
 	inline Float4 & TransformVector( const Float4x4 &transformer, const Float4 &transformee, Float4 &targetMem = Float4() )
 	{ return targetMem = transformer * transformee; }
+
+	using ::LinearAlgebra3D::SnapAxisYToNormal_UsingNlerp;
+	using ::LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp;
 } }
 
 #endif

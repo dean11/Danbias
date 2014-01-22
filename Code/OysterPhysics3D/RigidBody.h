@@ -20,7 +20,8 @@ namespace Oyster { namespace Physics3D
 									momentum_Linear,		//!< The linear momentum G (kg*m/s).
 									momentum_Angular,		//!< The angular momentum H (Nm*s) around an parallell axis.
 									impulse_Linear,			//!< The linear impulse sum Jl (kg*m/s) that will be consumed each update.
-									impulse_Angular;		//!< The angular impulse sum Ja (kg*m^2/s) that will be consumed each update.		
+									impulse_Angular,		//!< The angular impulse sum Ja (kg*m^2/s) that will be consumed each update.		
+									gravityNormal;
 		::Oyster::Math::Float		restitutionCoeff,		//!< 
 									frictionCoeff_Static,	//!< 
 									frictionCoeff_Kinetic;	//!< 

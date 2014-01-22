@@ -16,6 +16,7 @@ namespace Oyster
 	{
 		class API;
 		class ICustomBody;
+		class Octree;
 
 		namespace Struct
 		{
@@ -136,6 +137,8 @@ namespace Oyster
 			 ********************************************************/
 			virtual void RemoveGravity( const API::Gravity &g ) = 0;
 
+			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(Octree&, unsigned int) ) = 0;
+
 			///********************************************************
 			// * Apply force on an object.
 			// * @param objRef: A pointer to the ICustomBody representing a physical object.
@@ -235,6 +238,7 @@ namespace Oyster
 			};
 
 			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef void (*EventAction_CollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
 			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
