@@ -46,11 +46,22 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float dt)
 {
 	Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (500 * dt);
-
+	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
+	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1,1,20); 
+	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
 	
+	//Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,ForcePushAction);
 	//create frustum that will then collide with object and push them in the aimed direction
 
 	//sample with frustum using visitor pattern(needs a function ptr sent with it that idicates what happens when a collision has been made)
+}
+
+void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj)
+{
+	Oyster::Physics::ICustomBody::State state = obj->GetState();
+	Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (500);
+	state.ApplyLinearImpulse(pushForce);
+	obj->SetState(state);
 }
 
 /********************************************************
