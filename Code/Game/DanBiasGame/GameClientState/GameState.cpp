@@ -107,7 +107,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	scale.v[1].y = 8;
 	scale.v[2].z = 8;
 	modelData.world = scale; //modelData.world * translate 
-	modelData.modelPath = L"ball.dan";
+	modelData.modelPath = L"..\\Content\\Models\\ball.dan";
 	modelData.id ++;
 
 	obj = new C_DynamicObj();
@@ -162,6 +162,10 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 					movePlayer.bForward = true;
 					send = true;
 					key_forward = true;
+
+					GameLogic::Protocol_General_Text tp;
+					tp.text = "What!?";
+					this->privData->nwClient->Send(tp);
 				}
 			}
 			else

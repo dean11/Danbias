@@ -25,8 +25,6 @@
 #define protocol_GeneralMIN								100
 #define protocol_General_Status						100
 #define protocol_General_Text						101
-#define protocol_General_Disconnect					102
-#define protocol_General_Login						110
 #define protocol_GeneralMAX								199
 
 
@@ -34,12 +32,13 @@
 /********* LOBBY PROTOCOLS ***************************************************************************************************/
 /***********[ 200 - 299 ]***********/
 #define protocol_LobbyMIN								200	
-#define protocol_Lobby_CreateGame					200
-#define protocol_Lobby_StartGame					201
-#define protocol_Lobby_JoinGame						202
-#define protocol_Lobby_JoinLobby					203
-#define protocol_Lobby_LeaveLobby					204
-#define protocol_Lobby_Refresh						205
+#define protocol_Lobby_Create						200
+#define protocol_Lobby_Start						201
+#define protocol_Lobby_Join							202
+#define protocol_Lobby_Login						203
+#define protocol_Lobby_Refresh						204
+#define protocol_Lobby_MainData						205
+#define protocol_Lobby_GameData						206
 #define protocol_LobbyMAX								299
 
 

@@ -8,6 +8,7 @@
 #include "GameLobby.h"
 #include <Protocols.h>
 #include <PostBox\IPostBox.h>
+#include <WinTimer.h>
 
 namespace DanBias
 {
@@ -20,20 +21,26 @@ namespace DanBias
 
 		void Frame();
 
+		void SetPostbox(Oyster::IPostBox<NetworkSession::NetEvent>* box);
 		Oyster::IPostBox<NetworkSession::NetEvent>* GetPostbox();
+
+		void SetRefreshFrequency(float delta);
+		float GetRefreshFrequency() const;
 
 	private:
 		void ParseEvents();
-		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::LobbyClient* c);
+		void ParseGeneralProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::LobbyClient* c);
+		void ParseLobbyProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::LobbyClient* c);
 
+		void GeneralStatus(GameLogic::Protocol_General_Status& p, DanBias::LobbyClient* c);
 		void CreateGame(GameLogic::Protocol_LobbyCreateGame& p, DanBias::LobbyClient* c);
-		void JoinLobby(GameLogic::Protocol_LobbyJoinLobby& p, DanBias::LobbyClient* c);
-
-		void SendUpdate();
+		void JoinLobby(GameLogic::Protocol_LobbyJoin& p, DanBias::LobbyClient* c);
 
 	private:
 		Oyster::IPostBox<NetworkSession::NetEvent> *box;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameLobby>> gameLobby;
+		Utility::WinTimer timer;
+		float refreshFrequency;
 
 	private:
 		friend class AdminInterface;

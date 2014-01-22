@@ -4,17 +4,6 @@
 #include <CustomNetProtocol.h>
 #include "ProtocolIdentificationID.h"
 
-//protocol_Gameplay_PlayerMovement			300
-//protocol_Gameplay_PlayerMouseMovement		301
-//protocol_Gameplay_PlayerChangeWeapon		302
-
-//#define protocol_Gameplay_ObjectPickup			303
-//#define protocol_Gameplay_ObjectDamage			304
-//#define protocol_Gameplay_ObjectPosition			305
-//#define protocol_Gameplay_ObjectEnabled			306
-//#define protocol_Gameplay_ObjectDisabled			307
-//#define protocol_Gameplay_ObjectCreate			308
-
 namespace GameLogic
 {
 	struct Protocol_ObjectPickup :public Oyster::Network::CustomProtocolObject

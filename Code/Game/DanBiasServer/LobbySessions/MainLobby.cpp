@@ -36,7 +36,15 @@ namespace DanBias
 	{
 		return this->box;
 	}
+	void MainLobby::SetRefreshFrequency(float delta)
+	{
+		this->refreshFrequency = delta;
+	}
 
+	float MainLobby::GetRefreshFrequency() const
+	{
+		return this->refreshFrequency;
+	}
 //////// Private
 	void MainLobby::ParseEvents()
 	{
@@ -44,67 +52,11 @@ namespace DanBias
 		{
 			NetEvent &e = this->box->Fetch();
 
-			ParseProtocol(e.protocol, e.sender);
-			
-		}
-	}
-	void MainLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::LobbyClient* c)
-	{
-		bool update = false;
-		switch (p[0].value.netShort)
-		{
-			case protocol_Lobby_CreateGame:
-			{
-				GameLogic::Protocol_LobbyCreateGame val(p);
-				CreateGame(val, c);
-				update = true;
-			}
-			break;
-			case protocol_Lobby_JoinLobby:
-			{
-				GameLogic::Protocol_LobbyJoinLobby val(p);
-				JoinLobby(val, c);
-			}
-			break;
-			case protocol_Lobby_LeaveLobby:
-			{
-				Detach(c)->Disconnect();
-			}
-			break;
-		}
+			short type = e.protocol[0].value.netShort;
 
-		if(update)	SendUpdate();
-	}
-
-	void MainLobby::CreateGame(GameLogic::Protocol_LobbyCreateGame& p, DanBias::LobbyClient* c)
-	{
-		for (unsigned int i = 0; i < this->gameLobby.Size(); i++)
-		{
-			if(!gameLobby[i])
-			{
-				gameLobby[i] = new GameLobby(NetworkSession::Detach(c));
-				return;
-			}
+				 if(ProtocolIsLobby(type))		ParseLobbyProtocol(e.protocol, e.sender);
+			else if(ProtocolIsGeneral(type))	ParseGeneralProtocol(e.protocol, e.sender);
 		}
-
-		this->gameLobby.Push(new GameLobby(NetworkSession::Detach(c)));
-	}
-	void MainLobby::JoinLobby(GameLogic::Protocol_LobbyJoinLobby& p, DanBias::LobbyClient* c)
-	{
-		for (unsigned int i = 0; i < this->gameLobby.Size(); i++)
-		{
-			if (this->gameLobby[i]->GetID() == p.LobbyID)
-			{
-				this->gameLobby[i]->Attach(Detach(c));
-				return;
-			}
-		}
-	}
-
-	void MainLobby::SendUpdate()
-	{
-		//Send Lobbys
-		GameLogic::Protocol_LobbyRefresh();
 	}
 
 }//End namespace DanBias
