@@ -95,12 +95,15 @@ namespace
 //					}
 					
 					
+					Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum().xyz/protoState.GetMass() );
 
 //					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
 
-					proto->CallSubscription_CollisionResponse( deuter,  protoState.GetLinearMomentum().GetMagnitude()/(protoState.GetMass() + protoState.GetLinearMomentum().GetMagnitude()));
+					Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum().xyz + protoState.GetLinearImpulse().xyz)/protoState.GetMass() );
+
+					proto->CallSubscription_CollisionResponse( deuter,  kineticEnergyPBefore - kineticEnergyPAFter );
 					
 				}
 				break;
