@@ -31,10 +31,10 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID )
 	Specular[DTid.xy] = float4(Shaded.Specular, 1);
 
 	
-	if((DTid.x + DTid.y) %4 == 0 )
+	if(DTid.x & 1 && DTid.y & 1 )
 	{
-		float AmbValue = GetSSAO(ViewPos, UV, DTid.xy, GTid.xy);
-		Ambient[DTid.xy/4] = AmbValue;
+		float AmbValue = GetSSAO(ViewPos, UV, DTid.xy, GTid.xy/2);
+		Ambient[DTid.xy/2] = AmbValue;
 	}
 
 }

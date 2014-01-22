@@ -102,18 +102,25 @@ struct MaterialHeader
 ///
 struct SkeletonHeader
 {
-	// do this...
+	unsigned int numBones;
+	
+	///
+	SkeletonHeader(char* data)
+	{
+		memcpy(&numBones, data, sizeof(unsigned int));
+	}
 };
 
 ///
 struct AnimationHeader
 {
-	// do this...
-};
+	unsigned int numAnims;
 
-struct Frame
-{
-	// do this...
+
+	AnimationHeader(char* data)
+	{
+		memcpy(&numAnims, data, sizeof(unsigned int));
+	}
 };
 
 ///
@@ -134,12 +141,20 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 
 static wchar_t* charToWChar(const char* text)
 {
-    // Convert to a wchar_t*
-    size_t origsize = strlen(text) + 1;
-    size_t convertedChars = 0;
+	// Convert to a wchar_t*
+	size_t origsize = strlen(text) + 1;
+	size_t convertedChars = 0;
 	wchar_t* wcstring = new wchar_t[origsize];
-    mbstowcs_s(&convertedChars, wcstring, origsize, text, _TRUNCATE);
+	mbstowcs_s(&convertedChars, wcstring, origsize, text, _TRUNCATE);
    return wcstring;
+}
+
+static void ReadData(void* Destination, std::ifstream& file,  int size)
+{
+	char* buffer = new char[size];
+	file.read(buffer,size);
+	memcpy(Destination,buffer,size);
+	delete[] buffer;
 }
 
 ///
@@ -172,10 +187,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 	{
 		// read header type
 		unsigned int headerType;
-		buffer = new char[4];
-		danFile.read(buffer, 4);
-		memcpy(&headerType, buffer, 4);
-		//delete[] buffer; // ( note: may crash here.)
+		ReadData(&headerType,danFile,4);
 
 		// handle header type
 		switch ((HeaderType)headerType)
@@ -190,18 +202,15 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 				delete[] buffer; // ( note: may crash here.)
 
 				// Fetch all vertices
-				Vertex* vertices = new Vertex[vertexHeader.numVertices];
 				unsigned int bufferSize = VERTEXSIZE * vertexHeader.numVertices;
 				buffer = new char[bufferSize];
 				danFile.read(buffer, bufferSize);
-				memcpy(vertices, buffer, bufferSize);
-				delete[] buffer; // ( note: may crash here.)
 
 				// Do the deed
 				Oyster::Graphics::Core::Buffer*						vertexBuffer = new Oyster::Graphics::Core::Buffer();
 				Oyster::Graphics::Core::Buffer::BUFFER_INIT_DESC	bufferInitDesc;
 				bufferInitDesc.ElementSize	= sizeof(Vertex);
-				bufferInitDesc.InitData		= vertices;
+				bufferInitDesc.InitData		= buffer;
 				bufferInitDesc.NumElements	= vertexHeader.numVertices;
 				bufferInitDesc.Type			= Oyster::Graphics::Core::Buffer::BUFFER_TYPE::VERTEX_BUFFER;
 				bufferInitDesc.Usage		= Oyster::Graphics::Core::Buffer::BUFFER_USAGE::BUFFER_DEFAULT;
@@ -209,7 +218,8 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 				modelInfo->VertexCount = vertexHeader.numVertices;
 				modelInfo->Vertices = vertexBuffer;
 
-				delete[] vertices; // ( note: may crash here.)
+				
+				delete[] buffer; // ( note: may crash here.)
 
 				break;
 			}
@@ -224,10 +234,9 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 				// Fetch all indices
 				unsigned int* indices = new unsigned int[indexHeader.numIndices];
 				unsigned int bufferSize = sizeof(unsigned int) * indexHeader.numIndices;
-				buffer = new char[bufferSize];
-				danFile.read(buffer, bufferSize);
-				memcpy(indices, buffer, bufferSize);
-				delete[] buffer; // ( note: may crash here.)
+
+				
+				ReadData(indices,danFile,bufferSize);
 
 				// Do the deed
 				Oyster::Graphics::Core::Buffer*						indexBuffer = new Oyster::Graphics::Core::Buffer();
@@ -251,48 +260,153 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 			{
 				// Fetch material header, 2 texture path strings
 				MaterialHeader materialHeader;
-				buffer = new char[4];
-				danFile.read(buffer, 4);
-				memcpy(&materialHeader.diffuseMapPathLength, buffer, 4);
-				delete[] buffer; // ( note: may crash here.)
 
-				buffer = new char[materialHeader.diffuseMapPathLength];
-				danFile.read(buffer, materialHeader.diffuseMapPathLength);
-				materialHeader.diffuseMapPath = new char[materialHeader.diffuseMapPathLength+1];
-				memcpy(materialHeader.diffuseMapPath, buffer, materialHeader.diffuseMapPathLength);
-				materialHeader.diffuseMapPath[materialHeader.diffuseMapPathLength] = 0;
-				delete[] buffer; // ( note: may crash here.)
+				//read difuse map name length
+				ReadData(&materialHeader.diffuseMapPathLength,danFile,4);
 				
-				buffer = new char[4];
-				danFile.read(buffer, 4);
-				memcpy(&materialHeader.normalMapPathLength, buffer, 4);
-				delete[] buffer; // ( note: may crash here.)
+				//read diffuse map name
+				materialHeader.diffuseMapPath = new char[materialHeader.diffuseMapPathLength+1];
+				ReadData(materialHeader.diffuseMapPath,danFile,materialHeader.diffuseMapPathLength);
+				//null terminate
+				materialHeader.diffuseMapPath[materialHeader.diffuseMapPathLength] = 0;
+				
+				//read normal map name length
+				ReadData(&materialHeader.normalMapPathLength,danFile,4);
 
-				buffer = new char[materialHeader.normalMapPathLength];
-				danFile.read(buffer, materialHeader.normalMapPathLength);
+				//read difuse map name
 				materialHeader.normalMapPath = new char[materialHeader.normalMapPathLength + 1];
-				memcpy(materialHeader.normalMapPath, buffer, materialHeader.normalMapPathLength);
+				ReadData(materialHeader.normalMapPath,danFile,materialHeader.normalMapPathLength);
 				materialHeader.normalMapPath[materialHeader.normalMapPathLength] = 0;
-				delete[] buffer; // ( note: may crash here.)
 
-				// 
-				ID3D11ShaderResourceView* diffuseMap = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(charToWChar(materialHeader.diffuseMapPath), Oyster::Graphics::Loading::LoadTexture);
-				ID3D11ShaderResourceView* normalMap  = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(charToWChar(materialHeader.normalMapPath),  Oyster::Graphics::Loading::LoadTexture);
+				//load diffuse map 
+				wchar_t* path = charToWChar(materialHeader.diffuseMapPath);
+				ID3D11ShaderResourceView* diffuseMap = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(path, Oyster::Graphics::Loading::LoadTexture);
+				delete[] path;
+
+				//load normal map
+				path = charToWChar(materialHeader.normalMapPath);
+				ID3D11ShaderResourceView* normalMap  = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(path,  Oyster::Graphics::Loading::LoadTexture);
+				delete[] path;
+
+				//add to model
 				modelInfo->Material.push_back(diffuseMap);
 				modelInfo->Material.push_back(normalMap);
 
+				//clean up
+				delete[] materialHeader.diffuseMapPath;
+				delete[] materialHeader.normalMapPath;
+
 				break;
 			}
+
 			// skeleton header
 			case HeaderType::SKELETONHEADER:
 			{
-				// not implemented...
+				// Fetch Skeleton header, number of Bones
+				buffer = new char[4];
+				danFile.read(buffer, 4);
+				SkeletonHeader skeletonHeader(buffer);
+				delete[] buffer; // ( note: may crash here.)
+
+				//array for bone data
+				Oyster::Math::Matrix* bones = new Oyster::Math::Matrix[skeletonHeader.numBones*2];
+				
+				//read bones
+				ReadData(bones,danFile,skeletonHeader.numBones * 2 * sizeof(Oyster::Math::Matrix));
+
+				//init Graphics data
+				Oyster::Graphics::Core::Buffer* skeleton = new Oyster::Graphics::Core::Buffer();
+				Oyster::Graphics::Core::Buffer::BUFFER_INIT_DESC initDesc;
+				initDesc.ElementSize = sizeof(Oyster::Math::Matrix);
+				initDesc.InitData = bones;
+				initDesc.NumElements = skeletonHeader.numBones * 2;
+				initDesc.Type = Oyster::Graphics::Core::Buffer::BUFFER_TYPE::CONSTANT_BUFFER_VS;
+				initDesc.Usage = Oyster::Graphics::Core::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
+
+				skeleton->Init(initDesc);
+
+				modelInfo->Skeleton = skeleton;
+
+				//read skeleton Hiarchy
+				
+				int* parents = new int[skeletonHeader.numBones];
+				ReadData(parents,danFile,skeletonHeader.numBones * sizeof(int));
+				
+				//store hiarchy
+				Oyster::Graphics::Model::Bone* Bones = new Oyster::Graphics::Model::Bone[skeletonHeader.numBones];
+				for(int i = 0; i < skeletonHeader.numBones; ++i)
+				{
+					Bones[i].Parent = parents[i];
+					Bones[i].Transform = bones[i];
+				}
+
+				modelInfo->BoneCount = skeletonHeader.numBones;
+				modelInfo->bones = Bones;
+
 				break;
 			}
 			// animation header
 			case HeaderType::ANIMATIONHEADER:
 			{
-				// not implemented...
+				//get num anims
+				buffer = new char[4];
+				danFile.read(buffer, 4);
+				AnimationHeader animationHeader(buffer);
+				delete[] buffer;
+
+				Oyster::Graphics::Model::Animation* anims = new Oyster::Graphics::Model::Animation[animationHeader.numAnims];
+				for(int a = 0; a < animationHeader.numAnims; ++a)
+				{
+					//read name of animation
+					int nameLength;
+
+					
+					ReadData(&nameLength,danFile,4);
+
+					char* name = new char[nameLength + 1];
+					ReadData(name,danFile,nameLength);
+					name[nameLength] = 0;
+
+					wchar_t* wName = charToWChar(name);
+					anims[a].name = std::wstring(wName);
+					delete[] wName;
+
+					Oyster::Graphics::Model::Animation A = anims[a];
+
+					//read nr of bones in animation
+					ReadData(&A.Bones,danFile,4);
+
+					//create Frame array and Bone part of KeyFrameArray;
+					A.Frames = new int[A.Bones];
+					A.Keyframes = new Oyster::Graphics::Model::Frame*[A.Bones];
+					
+					//loop per bone and gather data
+					for(int b = 0; b < A.Bones; ++b)
+					{
+						//read nr of frames per bone
+						ReadData(&A.Frames[b],danFile,4);
+
+						//create frame matrix
+						A.Keyframes[b] = new Oyster::Graphics::Model::Frame[A.Frames[b]];
+
+						//read bone index
+						int boneIndex;
+						ReadData(&boneIndex,danFile,4);
+
+						for(int f = 0; f < A.Frames[b]; ++f)
+						{
+							//write index of bone
+							A.Keyframes[b][f].bone.Parent = boneIndex;
+
+							//read bone transform
+							ReadData(&A.Keyframes[b][f].bone.Transform,danFile,sizeof(Oyster::Math::Matrix));
+
+							
+							ReadData(&A.Keyframes[b][f].time,danFile,sizeof(double));
+						}
+					}
+				}
+
 				break;
 			}
 		}

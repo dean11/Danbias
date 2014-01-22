@@ -12,7 +12,7 @@ const std::wstring PathToHLSL = L"..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\De
 const std::wstring PathToCSO = L"..\\Content\\Shaders\\";
 
 const int KernelSize = 10;
-const int SampleSpread = 8;
+const int SampleSpread = 16;
 
 namespace Oyster
 {
@@ -156,6 +156,7 @@ namespace Oyster
 
 					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&PointLightView,NULL);
 					srand((unsigned int)time(0));
+
 					//SSAO
 					Math::Vector3 kernel[KernelSize];
 					Math::Vector3 random[SampleSpread];
@@ -186,13 +187,12 @@ namespace Oyster
 						{
 							random[i] = Oyster::Math::Vector3(
 								(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
-								(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
+								/*(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,*/
+								1.0f,
 								0.0f);
 						}
 						random[i].Normalize();
 					}
-					//kernel[0] = Math::Vector3(0,1,1);
-					//kernel[0].Normalize();
 
 					D3D11_TEXTURE1D_DESC T1desc;
 					T1desc.Width = KernelSize;
@@ -208,17 +208,32 @@ namespace Oyster
 
 					D3D11_SUBRESOURCE_DATA rnd;
 					rnd.pSysMem = random;
+					rnd.SysMemPitch = sqrt(SampleSpread) * sizeof(Oyster::Math::Vector3);
 
-					ID3D11Texture1D *pTexture1[2];
+					ID3D11Texture1D *pTexture1;
 
-					 Core::device->CreateTexture1D( &T1desc, &sphere, &pTexture1[0] );
-					 Core::device->CreateShaderResourceView( pTexture1[0], 0, &SSAOKernel );
-					pTexture1[0]->Release();
+					 Core::device->CreateTexture1D( &T1desc, &sphere, &pTexture1 );
+					 Core::device->CreateShaderResourceView( pTexture1, 0, &SSAOKernel );
+					pTexture1->Release();
 
-					T1desc.Width = SampleSpread;
-					Core::device->CreateTexture1D( &T1desc, &rnd, &pTexture1[1] );
-					Core::device->CreateShaderResourceView( (pTexture1[1]), 0, &SSAORandom );
-					pTexture1[1]->Release();
+					D3D11_TEXTURE2D_DESC T2desc;
+					T2desc.Width = KernelSize;
+					T2desc.MipLevels = T2desc.ArraySize = 1;
+					T2desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+					T2desc.Usage = D3D11_USAGE_DEFAULT;
+					T2desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+					T2desc.CPUAccessFlags = 0;
+					T2desc.MiscFlags = 0;
+					T2desc.Height = sqrt(SampleSpread);
+					T2desc.Width = SampleSpread/sqrt(SampleSpread);
+					T2desc.SampleDesc.Quality = 0;
+					T2desc.SampleDesc.Count = 1;
+
+					ID3D11Texture2D *pTexture2;
+
+					Core::device->CreateTexture2D( &T2desc, &rnd, &pTexture2 );
+					Core::device->CreateShaderResourceView( (pTexture2), 0, &SSAORandom );
+					pTexture2->Release();
 
 					////Create ShaderEffects
 
