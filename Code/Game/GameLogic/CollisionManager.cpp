@@ -9,11 +9,11 @@ using namespace Oyster;
 
 using namespace GameLogic;
 
-	void PlayerVBox(Player &player, DynamicObject &box);
-	void PlayerVObject(Player &player, Object &obj);
+	void PlayerVBox(Player &player, DynamicObject &box, Oyster::Math::Float kineticEnergyLoss);
+	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
 
-
-	Physics::ICustomBody::SubscriptMessage Player::PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj)
+	//Physics::ICustomBody::SubscriptMessage
+	void Player::PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
 		Object *realObj = (Object*)obj->GetCustomTag();
@@ -21,31 +21,30 @@ using namespace GameLogic;
 		switch (realObj->GetType())
 		{
 		case OBJECT_H::OBJECT_TYPE_GENERIC:
-			PlayerVObject(*player,*realObj);
-			Physics::ICustomBody::SubscriptMessage_none;
+			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		
 		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-			PlayerVBox(*player,(*(DynamicObject*) realObj));
-			Physics::ICustomBody::SubscriptMessage_none;
+			PlayerVBox(*player,(*(DynamicObject*) realObj), kineticEnergyLoss);
+			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
-			Physics::ICustomBody::SubscriptMessage_none;
+			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
-
 		}
 
-		return Physics::ICustomBody::SubscriptMessage_none;
+		//return Physics::ICustomBody::SubscriptMessage_none;
 	}
 		
-	void PlayerVBox(Player &player, DynamicObject &box)
+	void PlayerVBox(Player &player, DynamicObject &box, Oyster::Math::Float kineticEnergyLoss)
 	{
 		//use kinetic energyloss of the collision in order too determin how much damage to take
 		//use as part of the damage algorithm
 		player.DamageLife(20);
 	}
 
-	void PlayerVObject(Player &player, Object &obj)
+	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		//Collision between a player and a general static or dynamic object
 		//use kinetic energyloss of the collision in order too determin how much damage to take
@@ -53,10 +52,10 @@ using namespace GameLogic;
 		player.DamageLife(20);
 	}
 		
-
-	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollision(const Oyster::Physics::ICustomBody *rigidBodyLevel, const Oyster::Physics::ICustomBody *obj)
+	//Oyster::Physics::ICustomBody::SubscriptMessage
+	void Level::LevelCollision(const Oyster::Physics::ICustomBody *rigidBodyLevel, const Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
-		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
+		//return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj)

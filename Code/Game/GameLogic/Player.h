@@ -50,7 +50,7 @@ namespace GameLogic
 		* @param rigidBodyPlayer: physics object of the player
 		* @param obj: physics object for the object that collided with the player
 		********************************************************/
-		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj);
+		static void PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
 		
 		bool IsWalking();
