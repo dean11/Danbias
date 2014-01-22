@@ -238,6 +238,7 @@ namespace Oyster
 			enum SubscriptMessage
 			{
 				SubscriptMessage_none,
+				SubscriptMessage_kineticLoss,
 				SubscriptMessage_ignore_collision_response
 			};
 
@@ -260,6 +261,11 @@ namespace Oyster
 			 * @todo TODO: need doc
 			 ********************************************************/
 			virtual SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter ) = 0;
+
+			/********************************************************
+			 * @todo TODO: need doc
+			 ********************************************************/
+			virtual void CallSubscription_CollisionResponse( const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss ) = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
@@ -390,6 +396,13 @@ namespace Oyster
 			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
 			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
+
+			/********************************************************
+			 * Sets the function that will be called by the engine
+			 * whenever a collision has finished.
+			 * @param functionPointer: If NULL, an empty default function will be set.
+			 ********************************************************/
+			virtual void SetSubscription( EventAction_CollisionResponse functionPointer ) = 0;
 
 			/********************************************************
 			 * Sets the function that will be called by the engine

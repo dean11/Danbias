@@ -94,9 +94,14 @@ namespace
 //						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
 //					}
 					
+					
+
 //					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
+
+					proto->CallSubscription_CollisionResponse( deuter,  protoState.GetLinearMomentum().GetMagnitude()/(protoState.GetMass() + protoState.GetLinearMomentum().GetMagnitude()));
+					
 				}
 				break;
 			}
@@ -379,6 +384,11 @@ namespace Oyster { namespace Physics
 		::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter )
 		{ /* Do nothing except returning business as usual. */
 			return ::Oyster::Physics::ICustomBody::SubscriptMessage_none;
+		}
+
+		void EventAction_CollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss )
+		{ /* Do nothing except returning business as usual. */
+			
 		}
 
 		void EventAction_Move( const ::Oyster::Physics::ICustomBody *object )
