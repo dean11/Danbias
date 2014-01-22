@@ -22,6 +22,7 @@ namespace Oyster { namespace Physics
 		//::Oyster::Math::Float3 GetRigidLinearVelocity() const;
 
 		SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter );
+		void CallSubscription_CollisionResponse( const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
 		void CallSubscription_Move();
 
 		bool IsAffectedByGravity() const;
@@ -44,6 +45,7 @@ namespace Oyster { namespace Physics
 		void SetScene( void *scene );
 
 		void SetSubscription( EventAction_Collision functionPointer );
+		void SetSubscription( EventAction_CollisionResponse functionPointer );
 		void SetSubscription( EventAction_Move functionPointer );
 
 		void SetGravity( bool ignore);
@@ -64,6 +66,7 @@ namespace Oyster { namespace Physics
 		::Oyster::Math::Float4 deltaPos, deltaAxis;
 		::Oyster::Math::Float3 gravityNormal;
 		EventAction_Collision onCollision;
+		EventAction_CollisionResponse onCollisionResponse;
 		EventAction_Move onMovement;
 		Octree *scene;
 		void *customTag;

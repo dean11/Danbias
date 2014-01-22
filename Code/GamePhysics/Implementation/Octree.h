@@ -18,7 +18,7 @@ namespace Oyster
 			static const unsigned int invalid_ref;
 
 			typedef void(*VisitorAction)(Octree&, unsigned int, unsigned int);
-			typedef void(*VisitorActionCollideable)(Octree&, unsigned int);
+			typedef void(*VisitorActionCollideable)(ICustomBody*);
 
 			struct Data
 			{

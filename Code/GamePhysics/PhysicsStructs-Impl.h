@@ -21,6 +21,7 @@ namespace Oyster
 				this->frictionCoeff_Static = 0.5f;
 				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
 				this->subscription_onCollision = NULL;
+				this->subscription_onCollisionResponse = NULL;
 				this->subscription_onMovement = NULL;
 				this->ignoreGravity = false;
 			}
@@ -35,6 +36,7 @@ namespace Oyster
 				this->frictionCoeff_Dynamic = 0.5f;
 				this->frictionCoeff_Static = 0.5f;
 				this->subscription_onCollision = NULL;
+				this->subscription_onCollisionResponse = NULL;
 				this->subscription_onMovement = NULL;
 				this->ignoreGravity = false;
 			}
