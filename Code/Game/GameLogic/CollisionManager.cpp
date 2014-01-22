@@ -3,6 +3,7 @@
 #include "DynamicObject.h"
 #include "Player.h"
 #include "Level.h"
+#include "AttatchmentMassDriver.h"
 
 using namespace Oyster;
 
@@ -57,3 +58,9 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
+
+	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj)
+{
+	Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (500);
+	((Object*)obj->GetCustomTag())->ApplyLinearImpulse(pushForce);
+}
