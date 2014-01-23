@@ -267,12 +267,14 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	//send delta mouse movement 
 	if (KeyInput->IsMousePressed())
 	{
-		GameLogic::Protocol_PlayerMouse deltaMouseMove;
-		deltaMouseMove.dxMouse = KeyInput->GetYaw();
-		deltaMouseMove.dyMouse = KeyInput->GetPitch();
-		//privData->nwClient->Send(deltaMouseMove);
+
+		
 		camera->Yaw(KeyInput->GetYaw());
 		camera->Pitch(KeyInput->GetPitch());
+		camera->UpdateViewMatrix();
+		GameLogic::Protocol_PlayerLook playerLookDir;
+		//deltaMouseMove.camera->GetLook();
+		//privData->nwClient->Send(playerLookDir);
 	}
 	
 

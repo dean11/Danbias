@@ -92,7 +92,7 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
-void Player::Rotate(float dx, float dy)
+void Player::Rotate(const Oyster::Math3D::Float3 lookDir)
 {
 
 	//this->lookDir = lookDir;

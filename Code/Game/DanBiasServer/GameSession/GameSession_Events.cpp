@@ -54,10 +54,14 @@ namespace DanBias
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 			}
 			break;
-			case protocol_Gameplay_PlayerMouseMovement:
+			case protocol_Gameplay_PlayerLookDir:
 			{
-				Protocol_PlayerMouse m; m = p;
-				c->GetPlayer()->Rotate(m.dxMouse, m.dyMouse);
+				Protocol_PlayerLook m; m = p;
+				Oyster::Math3D::Float3 lookDir; 
+				lookDir.x = p.Get(1).value.netFloat;
+				lookDir.y = p.Get(2).value.netFloat;
+				lookDir.z = p.Get(3).value.netFloat;
+				c->GetPlayer()->Rotate(lookDir);
 			}
 			break;
 			case protocol_Gameplay_PlayerChangeWeapon:
