@@ -72,10 +72,25 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 
 void Object::BeginFrame()
 {
+
 	this->rigidBody->SetState(this->setState);
+
 }
+// update physic 
 void Object::EndFrame()
 {
-	this->rigidBody->GetState(this->getState);
+
+	//Oyster::Math::Float rot = (setState.GetGravityNormal().xyz).Dot(getState.GetGravityNormal().xyz);	
+	//Oyster::Math::Float3 axis = (setState.GetGravityNormal().xyz).Cross(getState.GetGravityNormal().xyz);
+	Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
+	Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
+	setState.SetOrientation(rotMatrix);
+
+
+	this->getState = this->rigidBody->GetState();
+
+
+	
 	this->setState = this->getState;
+	
 }

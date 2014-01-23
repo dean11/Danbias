@@ -194,8 +194,10 @@ void API_Impl::Update()
 		if( gravityImpulse != Float4::null )
 		{
 			state.ApplyLinearImpulse( gravityImpulse );
-			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
+			//state.SetGravityNormal( gravityImpulse.GetNormalized());
+			//(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 			(*proto)->SetState( state );
+			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 		}
 
 		// Step 2: Apply Collision Response

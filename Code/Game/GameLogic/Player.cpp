@@ -92,9 +92,13 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
-void Player::Rotate(float x, float y)
+void Player::Rotate(float dx, float dy)
 {
-	this->setState.AddRotation(Oyster::Math::Float4(x, y));
+
+	//this->lookDir = lookDir;
+
+	//this->setState.AddRotation(Oyster::Math::Float4(x, y));
+	//this->setState.SetRotation();
 }
 
 void Player::Jump()

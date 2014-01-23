@@ -4,7 +4,7 @@
 #include "C_obj/C_DynamicObj.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-
+#include "Camera.h"
 
 using namespace DanBias::Client;
 
@@ -17,7 +17,6 @@ struct  GameState::myData
 	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
-
 	
 
 }privData;
@@ -38,10 +37,12 @@ GameState::~GameState(void)
 bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	// load models
+	camera = new Camera;
 	privData = new myData();
 	privData->state = gameStateState_loading;
 	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
+	
 	return true;
 }
 GameState::gameStateState GameState::LoadGame() 
@@ -119,10 +120,19 @@ bool GameState::LoadModels(std::wstring mapFile)
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
 {
+	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,-1);
+	Oyster::Math::Float3 up =Oyster::Math::Float3(0,1,0);
+	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 20);
+
+	camera->LookAt(pos, dir, up);
+	camera->SetLens(3.14f/2, 1024/768, 1, 1000);
+
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
 	Oyster::Graphics::API::SetProjection(privData->proj);
-
+	camera->UpdateViewMatrix();
+	privData->view = camera->View();
+	privData->view = Oyster::Math3D::ViewMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
 	privData->view = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
 	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
@@ -147,81 +157,9 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 		// read server data
 		// update objects
 		{
-			bool send = false;
-			GameLogic::Protocol_PlayerMovement movePlayer;
-			movePlayer.bForward = false;
-			movePlayer.bBackward = false;
-			movePlayer.bLeft = false;
-			movePlayer.bRight = false;
+			readKeyInput(KeyInput);
+			camera->UpdateViewMatrix();
 
-			if(KeyInput->IsKeyPressed(DIK_W))
-			{
-
-				if(!key_forward)
-				{
-					movePlayer.bForward = true;
-					send = true;
-					key_forward = true;
-				}
-			}
-			else
-				key_forward = false;
-
-			if(KeyInput->IsKeyPressed(DIK_S))
-			{
-				if(!key_backward)
-				{
-					movePlayer.bBackward = true;
-					send = true;
-					key_backward = true;
-				}
-			}
-			else 
-				key_backward = false;
-
-			if(KeyInput->IsKeyPressed(DIK_A))
-			{
-				if(!key_strafeLeft)
-				{
-					movePlayer.bLeft = true;
-					send = true;
-					key_strafeLeft = true;
-				}
-			}
-			else 
-				key_strafeLeft = false;
-
-			if(KeyInput->IsKeyPressed(DIK_D))
-			{
-				if(!key_strafeRight)
-				{
-					movePlayer.bRight = true;
-					send = true;
-					key_strafeRight = true;
-				}
-			} 
-			else 
-				key_strafeRight = false;
-			
-
-			if (privData->nwClient->IsConnected() && send)
-			{
-				privData->nwClient->Send(movePlayer);
-			}
-
-			//send delta mouse movement 
-			if (KeyInput->IsMousePressed())
-			{
-				GameLogic::Protocol_PlayerMouse deltaMouseMove;
-				deltaMouseMove.dxMouse = KeyInput->GetYaw();
-				deltaMouseMove.dyMouse = KeyInput->GetPitch();
-				//privData->nwClient->Send(deltaMouseMove);
-			}
-			
-			// send event data
-			//  
-			if(KeyInput->IsKeyPressed(DIK_L))
-				privData->state = GameState::gameStateState_end;
 		}
 		break;
 	case gameStateState_end:
@@ -236,7 +174,9 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 }
 bool GameState::Render()
 {
-	Oyster::Graphics::API::SetView(privData->view);
+	Oyster::Graphics::API::SetView(camera->View());
+	//Oyster::Graphics::API::SetProjection(camera->Proj());
+	//Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection(privData->proj);
 	Oyster::Graphics::API::NewFrame();
 	for (unsigned int i = 0; i < privData->object.size(); i++)
@@ -258,6 +198,88 @@ bool GameState::Release()
 	delete privData;  
 	privData = NULL;
 	return true;
+}
+void GameState::readKeyInput(InputClass* KeyInput)
+{
+
+	bool send = false;
+	GameLogic::Protocol_PlayerMovement movePlayer;
+	movePlayer.bForward = false;
+	movePlayer.bBackward = false;
+	movePlayer.bLeft = false;
+	movePlayer.bRight = false;
+
+	if(KeyInput->IsKeyPressed(DIK_W))
+	{
+
+		if(!key_forward)
+		{
+			movePlayer.bForward = true;
+			send = true;
+			key_forward = true;
+		}
+	}
+	else
+		key_forward = false;
+
+	if(KeyInput->IsKeyPressed(DIK_S))
+	{
+		if(!key_backward)
+		{
+			movePlayer.bBackward = true;
+			send = true;
+			key_backward = true;
+		}
+	}
+	else 
+		key_backward = false;
+
+	if(KeyInput->IsKeyPressed(DIK_A))
+	{
+		if(!key_strafeLeft)
+		{
+			movePlayer.bLeft = true;
+			send = true;
+			key_strafeLeft = true;
+		}
+	}
+	else 
+		key_strafeLeft = false;
+
+	if(KeyInput->IsKeyPressed(DIK_D))
+	{
+		if(!key_strafeRight)
+		{
+			movePlayer.bRight = true;
+			send = true;
+			key_strafeRight = true;
+		}
+	} 
+	else 
+		key_strafeRight = false;
+
+
+	if (privData->nwClient->IsConnected() && send)
+	{
+		privData->nwClient->Send(movePlayer);
+	}
+
+	//send delta mouse movement 
+	if (KeyInput->IsMousePressed())
+	{
+		GameLogic::Protocol_PlayerMouse deltaMouseMove;
+		deltaMouseMove.dxMouse = KeyInput->GetYaw();
+		deltaMouseMove.dyMouse = KeyInput->GetPitch();
+		//privData->nwClient->Send(deltaMouseMove);
+		camera->Yaw(KeyInput->GetYaw());
+		camera->Pitch(KeyInput->GetPitch());
+	}
+	
+
+	// send event data
+	//  
+	if(KeyInput->IsKeyPressed(DIK_L))
+		privData->state = GameState::gameStateState_end;
 }
 
 void GameState::Protocol(ProtocolStruct* pos)
@@ -290,6 +312,9 @@ void GameState::Protocol( ObjPos* pos )
 		{
 			privData->object[i]->setPos(world);
 
+
+			camera->SetPosition(Oyster::Math::Float3(world[12], world[13], world[14]));
+			camera->UpdateViewMatrix();
 			//privData->view = world;
 			//privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 			

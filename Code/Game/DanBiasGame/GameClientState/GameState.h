@@ -3,6 +3,7 @@
 #include "GameClientState.h"
 #include "OysterMath.h"
 #include <string>
+#include "Camera.h"
 namespace DanBias
 {
 namespace Client
@@ -21,6 +22,7 @@ private:
 	bool key_backward;
 	bool key_strafeRight;
 	bool key_strafeLeft;
+	Camera* camera;
 
 	struct myData;
 	myData* privData;
@@ -33,6 +35,7 @@ public:
 	bool InitCamera(Oyster::Math::Float3 startPos) ;
 	gameStateState LoadGame();
 
+	void readKeyInput(InputClass* KeyInput);
 	bool Render()override;
 	bool Release()override;
 
