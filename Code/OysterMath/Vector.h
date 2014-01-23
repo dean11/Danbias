@@ -58,7 +58,10 @@ namespace LinearAlgebra
 		ScalarType Dot( const Vector2<ScalarType> &vector ) const;
 
 		//! @return (a.x * b.x, a.y * b.y)
-		Vector2<ScalarType> PiecewiseMultiplication( const Vector2<ScalarType> &vector ) const;
+		Vector2<ScalarType>   PiecewiseMultiplication( const Vector2<ScalarType> &vector ) const;
+
+		//! @return a = (a.x * b.x, a.y * b.y)
+		Vector2<ScalarType> & PiecewiseMultiplicationAdd( const Vector2<ScalarType> &vector );
 
 		Vector2<ScalarType> & Normalize( );
 		Vector2<ScalarType> GetNormalized( ) const;
@@ -118,6 +121,9 @@ namespace LinearAlgebra
 		//! @return (a.x * b.x, a.y * b.y, a.z * b.z)
 		Vector3<ScalarType> PiecewiseMultiplication( const Vector3<ScalarType> &vector ) const;
 
+		//! @return a = (a.x * b.x, a.y * b.y, a.z * b.z)
+		Vector3<ScalarType> & PiecewiseMultiplicationAdd( const Vector3<ScalarType> &vector );
+
 		Vector3<ScalarType> & Normalize( );
 		Vector3<ScalarType> GetNormalized( ) const;
 	};
@@ -175,17 +181,27 @@ namespace LinearAlgebra
 		ScalarType GetMagnitude( ) const;
 		ScalarType Dot( const Vector4<ScalarType> &vector ) const;
 
-		//! @return (a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w )
+		//! @return (a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w)
 		Vector4<ScalarType> PiecewiseMultiplication( const Vector4<ScalarType> &vector ) const;
+
+		//! @return a = (a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w)
+		Vector4<ScalarType> & PiecewiseMultiplicationAdd( const Vector4<ScalarType> &vector );
 
 		Vector4<ScalarType> & Normalize( );
 		Vector4<ScalarType> GetNormalized( ) const;
 	};
+}
+
+template<typename ScalarType> ::LinearAlgebra::Vector2<ScalarType> operator * ( const ScalarType &left, const ::LinearAlgebra::Vector2<ScalarType> &right );
+template<typename ScalarType> ::LinearAlgebra::Vector3<ScalarType> operator * ( const ScalarType &left, const ::LinearAlgebra::Vector3<ScalarType> &right );
+template<typename ScalarType> ::LinearAlgebra::Vector4<ScalarType> operator * ( const ScalarType &left, const ::LinearAlgebra::Vector4<ScalarType> &right );
 
 ///////////////////////////////////////////////////////////////////////////////////
 //	Body
 ///////////////////////////////////////////////////////////////////////////////////
 
+namespace LinearAlgebra
+{
 // Vector2<ScalarType> ///////////////////////////////////////
 
 	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::null = Vector2<ScalarType>( 0, 0 );
@@ -340,6 +356,14 @@ namespace LinearAlgebra
 	inline Vector2<ScalarType> Vector2<ScalarType>::PiecewiseMultiplication( const Vector2<ScalarType> &vector ) const
 	{
 		return Vector2<ScalarType>( this->x * vector.x, this->y * vector.y );
+	}
+
+	template<typename ScalarType>
+	inline Vector2<ScalarType> & Vector2<ScalarType>::PiecewiseMultiplicationAdd( const Vector2<ScalarType> &vector )
+	{
+		this->x *= vector.x;
+		this->y *= vector.y;
+		return *this;
 	}
 
 	template<typename ScalarType>
@@ -518,6 +542,15 @@ namespace LinearAlgebra
 	inline Vector3<ScalarType> Vector3<ScalarType>::PiecewiseMultiplication( const Vector3<ScalarType> &vector ) const
 	{
 		return Vector3<ScalarType>( this->x * vector.x, this->y * vector.y, this->z * vector.z );
+	}
+
+	template<typename ScalarType>
+	inline Vector3<ScalarType> & Vector3<ScalarType>::PiecewiseMultiplicationAdd( const Vector3<ScalarType> &vector )
+	{
+		this->x *= vector.x;
+		this->y *= vector.y;
+		this->z *= vector.z;
+		return *this;
 	}
 
 	template<typename ScalarType>
@@ -705,12 +738,40 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
+	inline Vector4<ScalarType> & Vector4<ScalarType>::PiecewiseMultiplicationAdd( const Vector4<ScalarType> &vector )
+	{
+		this->x *= vector.x;
+		this->y *= vector.y;
+		this->z *= vector.z;
+		this->w *= vector.w;
+		return *this;
+	}
+
+	template<typename ScalarType>
 	inline Vector4<ScalarType> & Vector4<ScalarType>::Normalize( )
 	{ return (*this) /= this->GetLength(); }
 
 	template<typename ScalarType>
 	inline Vector4<ScalarType> Vector4<ScalarType>::GetNormalized( ) const
 	{ return Vector4<ScalarType>(*this).Normalize(); }
+}
+
+template<typename ScalarType>
+inline ::LinearAlgebra::Vector2<ScalarType> operator * ( const ScalarType &left, const ::LinearAlgebra::Vector2<ScalarType> &right )
+{
+	return right * left;
+}
+
+template<typename ScalarType>
+inline ::LinearAlgebra::Vector3<ScalarType> operator * ( const ScalarType &left, const ::LinearAlgebra::Vector3<ScalarType> &right )
+{
+	return right * left;
+}
+
+template<typename ScalarType>
+inline ::LinearAlgebra::Vector4<ScalarType> operator * ( const ScalarType &left, const ::LinearAlgebra::Vector4<ScalarType> &right )
+{
+	return right * left;
 }
 
 #endif
