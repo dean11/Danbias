@@ -186,6 +186,8 @@
     <ClCompile Include="LobbySessions\LobbyClient.cpp" />
     <ClCompile Include="LobbySessions\GameLobby.cpp" />
     <ClCompile Include="GameSession\GameSession_Logic.cpp" />
+    <ClCompile Include="LobbySessions\LobbyGeneralProtocolParser.cpp" />
+    <ClCompile Include="LobbySessions\LobbyProtocolParser.cpp" />
     <ClCompile Include="LobbySessions\MainLobby.cpp" />
     <ClCompile Include="LobbySessions\NetworkSession.cpp" />
   </ItemGroup>

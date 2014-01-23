@@ -76,10 +76,6 @@ namespace DanBias
 			case protocol_General_Status:
 				switch (p[1].value.netInt)
 				{
-					case GameLogic::Protocol_General_Status::States_bussy:
-						
-					break;
-					
 					case GameLogic::Protocol_General_Status::States_disconected:
 						printf("Client with ID [%i] dissconnected\n", c->GetClient()->GetID());
 						this->RemoveClient(c);
@@ -92,12 +88,19 @@ namespace DanBias
 					case GameLogic::Protocol_General_Status::States_ready:
 
 					break;
+
+					case GameLogic::Protocol_General_Status::States_leave:
+
+					break;
 				}
 			break;
-
 			case protocol_General_Text:
-					
+			{
+				GameLogic::Protocol_General_Text temp(p);
+				printf("Message recieved from (%i):\t %s\n", c->GetID(), temp.text.c_str());
+			}
 			break;
+
 		}
 	}
 

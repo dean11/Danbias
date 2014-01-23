@@ -87,6 +87,9 @@ namespace Oyster
 				const CustomNetProtocol& operator=(const CustomNetProtocol& o);
 
 				NetAttributeContainer& operator[](int ID);
+				void Set(int id, Oyster::Network::NetAttributeValue val, Oyster::Network::NetAttributeType type);
+				void Set(int ID, std::string s);
+				const NetAttributeContainer& Get(int id);
 
 			private:
 				struct PrivateData;
