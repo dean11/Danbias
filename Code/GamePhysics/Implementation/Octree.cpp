@@ -108,7 +108,7 @@ std::vector<ICustomBody*>& Octree::Sample(const Oyster::Collision3D::ICollideabl
 	return updateList;
 }
 
-void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
+void Octree::Visit(ICustomBody* customBodyRef, VisitorAction hitAction )
 {
 	auto object = this->mapReferences.find(customBodyRef);
 
@@ -128,13 +128,13 @@ void Octree::Visit(ICustomBody* customBodyRef, VistorAction hitAction )
 	}
 }
 
-void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, VistorAction hitAction)
+void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, VisitorActionCollideable hitAction)
 {
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(this->leafData[i].container.Intersects(collideable))
+		if(collideable.Intersects(this->leafData[i].container))
 		{
-			//hitAction(*this, tempRef, i); // @todo TODO: Add typedef to handle function calls with ICollideable
+			hitAction( this->GetCustomBody(i) );
 		}
 	}
 }

@@ -94,9 +94,17 @@ namespace
 //						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
 //					}
 					
+					
+					Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum().xyz/protoState.GetMass() );
+
 //					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
 					protoState.ApplyImpulse( bounce, worldPointOfContact, normal );
 					proto->SetState( protoState );
+
+					Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum().xyz + protoState.GetLinearImpulse().xyz)/protoState.GetMass() );
+
+					proto->CallSubscription_CollisionResponse( deuter,  kineticEnergyPBefore - kineticEnergyPAFter );
+					
 				}
 				break;
 			}
@@ -268,6 +276,11 @@ void API_Impl::RemoveGravity( const API::Gravity &g )
 	}
 }
 
+void API_Impl::ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) )
+{
+	this->worldScene.Visit(collideable, hitAction);
+}
+
 //void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
 //{
 //	unsigned int tempRef = this->worldScene.GetTemporaryReferenceOf( objRef );
@@ -374,6 +387,11 @@ namespace Oyster { namespace Physics
 		::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter )
 		{ /* Do nothing except returning business as usual. */
 			return ::Oyster::Physics::ICustomBody::SubscriptMessage_none;
+		}
+
+		void EventAction_CollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss )
+		{ /* Do nothing except returning business as usual. */
+			
 		}
 
 		void EventAction_Move( const ::Oyster::Physics::ICustomBody *object )

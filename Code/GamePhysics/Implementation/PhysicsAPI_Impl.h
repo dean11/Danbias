@@ -35,6 +35,8 @@ namespace Oyster
 			void AddGravity( const API::Gravity &g );
 			void RemoveGravity( const API::Gravity &g );
 
+			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) );
+
 			//void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
 
 			//void SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );
@@ -60,6 +62,7 @@ namespace Oyster
 		{
 			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
 			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+			void EventAction_CollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
 			void EventAction_Move( const ::Oyster::Physics::ICustomBody *object );
 		}
 	}

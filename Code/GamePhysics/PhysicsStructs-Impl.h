@@ -19,8 +19,9 @@ namespace Oyster
 				this->restitutionCoeff = 1.0f;
 				this->frictionCoeff_Dynamic = 0.5f;
 				this->frictionCoeff_Static = 0.5f;
-				this->inertiaTensor = ::Oyster::Math::Float4x4::identity;
+				this->inertiaTensor = ::Oyster::Physics3D::MomentOfInertia();
 				this->subscription_onCollision = NULL;
+				this->subscription_onCollisionResponse = NULL;
 				this->subscription_onMovement = NULL;
 				this->ignoreGravity = false;
 			}
@@ -35,11 +36,12 @@ namespace Oyster
 				this->frictionCoeff_Dynamic = 0.5f;
 				this->frictionCoeff_Static = 0.5f;
 				this->subscription_onCollision = NULL;
+				this->subscription_onCollisionResponse = NULL;
 				this->subscription_onMovement = NULL;
 				this->ignoreGravity = false;
 			}
 
-			inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float staticFrictionCoeff, ::Oyster::Math::Float kineticFrictionCoeff, const ::Oyster::Math::Float4x4 &inertiaTensor, const ::Oyster::Math::Float4 &reach, const ::Oyster::Math::Float4 &centerPos, const ::Oyster::Math::Float4 &rotation, const ::Oyster::Math::Float4 &linearMomentum, const ::Oyster::Math::Float4 &angularMomentum )
+			inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float staticFrictionCoeff, ::Oyster::Math::Float kineticFrictionCoeff, const ::Oyster::Physics3D::MomentOfInertia &inertiaTensor, const ::Oyster::Math::Float4 &reach, const ::Oyster::Math::Float4 &centerPos, const ::Oyster::Math::Float4 &rotation, const ::Oyster::Math::Float4 &linearMomentum, const ::Oyster::Math::Float4 &angularMomentum, const ::Oyster::Math::Float4 &gravityNormal )
 			{
 				this->mass = mass;
 				this->restitutionCoeff = restitutionCoeff;
@@ -54,6 +56,7 @@ namespace Oyster
 				this->linearImpulse = this->angularImpulse = ::Oyster::Math::Float4::null;
 				this->deltaPos = this->deltaAxis = ::Oyster::Math::Float4::null;
 				this->isSpatiallyAltered = this->isDisturbed = this->isForwarded = false;
+				this->gravityNormal = gravityNormal;
 			}
 
 			inline CustomBodyState & CustomBodyState::operator = ( const CustomBodyState &state )
@@ -75,6 +78,7 @@ namespace Oyster
 				this->isSpatiallyAltered = state.isSpatiallyAltered;
 				this->isDisturbed = state.isDisturbed;
 				this->isForwarded = state.isForwarded;
+				this->gravityNormal = state.gravityNormal;
 				return *this;
 			}
 
@@ -98,7 +102,7 @@ namespace Oyster
 				return this->kineticFrictionCoeff;
 			}
 
-			inline const ::Oyster::Math::Float4x4 & CustomBodyState::GetMomentOfInertia() const
+			inline const ::Oyster::Physics3D::MomentOfInertia & CustomBodyState::GetMomentOfInertia() const
 			{
 				return this->inertiaTensor;
 			}
@@ -183,6 +187,11 @@ namespace Oyster
 				return this->deltaAxis;
 			}
 
+			inline const ::Oyster::Math::Float4 & CustomBodyState::GetGravityNormal() const
+			{
+				return this->gravityNormal;
+			}
+
 			inline void CustomBodyState::SetMass_KeepMomentum( ::Oyster::Math::Float m )
 			{
 				this->mass = m;
@@ -210,20 +219,17 @@ namespace Oyster
 				this->kineticFrictionCoeff = kineticU;
 			}
 
-			inline void CustomBodyState::SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &tensor )
+			inline void CustomBodyState::SetMomentOfInertia_KeepMomentum( const ::Oyster::Physics3D::MomentOfInertia &tensor )
 			{
 				this->inertiaTensor = tensor;
 			}
 
-			inline void CustomBodyState::SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &tensor )
+			inline void CustomBodyState::SetMomentOfInertia_KeepVelocity( const ::Oyster::Physics3D::MomentOfInertia &tensor )
 			{
-				if( tensor.GetDeterminant() != 0.0f )
-				{ // sanity block!
-					::Oyster::Math::Float4x4 rotation = ::Oyster::Math3D::RotationMatrix(this->angularAxis.xyz);
-					::Oyster::Math::Float4 w = ::Oyster::Physics3D::Formula::AngularVelocity( (rotation * this->inertiaTensor).GetInverse(), this->angularMomentum );
-					this->inertiaTensor = tensor;
-					this->angularMomentum = ::Oyster::Physics3D::Formula::AngularMomentum( rotation * tensor, w );
-				}
+				::Oyster::Math::Quaternion rotation = ::Oyster::Math3D::Rotation(this->angularAxis);
+				::Oyster::Math::Float4 w = this->inertiaTensor.CalculateAngularVelocity( rotation, this->angularMomentum );
+				this->inertiaTensor = tensor;
+				this->angularMomentum = this->inertiaTensor.CalculateAngularMomentum( rotation, w );
 			}
 		
 			inline void CustomBodyState::SetSize( const ::Oyster::Math::Float4 &size )
@@ -283,6 +289,11 @@ namespace Oyster
 			{
 				this->angularImpulse.xyz = j;
 				this->isDisturbed = true;
+			}
+
+			inline void CustomBodyState::SetGravityNormal( const ::Oyster::Math::Float4 &gravityNormal )
+			{
+				this->gravityNormal = gravityNormal;
 			}
 
 			inline void CustomBodyState::AddRotation( const ::Oyster::Math::Float4 &angularAxis )

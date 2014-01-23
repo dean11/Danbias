@@ -47,6 +47,7 @@ SimpleRigidBody::SimpleRigidBody()
 	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
 	this->onCollision = Default::EventAction_Collision;
+	this->onCollisionResponse = Default::EventAction_CollisionResponse;
 	this->onMovement = Default::EventAction_Move;
 	this->scene = nullptr;
 	this->customTag = nullptr;
@@ -72,6 +73,15 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	else
 	{
 		this->onCollision = Default::EventAction_Collision;
+	}
+
+	if( desc.subscription_onCollisionResponse )
+	{
+		this->onCollisionResponse = desc.subscription_onCollisionResponse;
+	}
+	else
+	{
+		this->onCollisionResponse = Default::EventAction_CollisionResponse;
 	}
 
 	if( desc.subscription_onMovement )
@@ -101,7 +111,8 @@ SimpleRigidBody::State SimpleRigidBody::GetState() const
 				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 				  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
 				  this->rigid.centerPos, this->rigid.axis,
-				  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
+				  this->rigid.momentum_Linear, this->rigid.momentum_Angular, 
+				  this->rigid.gravityNormal );
 }
 
 SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
@@ -110,7 +121,8 @@ SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targ
 							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 							  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
 							  this->rigid.centerPos, this->rigid.axis,
-							  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
+							  this->rigid.momentum_Linear, this->rigid.momentum_Angular,
+							  this->rigid.gravityNormal );
 }
 
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
@@ -127,6 +139,7 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
 	this->rigid.SetMass_KeepMomentum( state.GetMass() );
 	this->rigid.SetMomentOfInertia_KeepMomentum( state.GetMomentOfInertia() );
+	this->rigid.gravityNormal		  = state.GetGravityNormal();
 
 	if( state.IsForwarded() )
 	{
@@ -153,6 +166,11 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
 {
 	return this->onCollision( this, deuter );
+}
+
+void SimpleRigidBody::CallSubscription_CollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
+{
+	return this->onCollisionResponse( this, deuter, kineticEnergyLoss );
 }
 
 void SimpleRigidBody::CallSubscription_Move()
@@ -312,6 +330,18 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functi
 	}
 }
 
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_CollisionResponse functionPointer )
+{
+	if( functionPointer )
+	{
+		this->onCollisionResponse = functionPointer;
+	}
+	else
+	{
+		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+	}
+}
+
 void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Move functionPointer )
 {
 	if( functionPointer )
@@ -333,6 +363,7 @@ void SimpleRigidBody::SetGravity( bool ignore)
 void SimpleRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+	this->rigid.gravityNormal = Float4( this->gravityNormal, 0 );
 }
 
 void SimpleRigidBody::SetCustomTag( void *ref )
