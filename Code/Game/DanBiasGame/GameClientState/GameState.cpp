@@ -273,8 +273,11 @@ void GameState::readKeyInput(InputClass* KeyInput)
 		camera->Pitch(KeyInput->GetPitch());
 		camera->UpdateViewMatrix();
 		GameLogic::Protocol_PlayerLook playerLookDir;
-		//deltaMouseMove.camera->GetLook();
-		//privData->nwClient->Send(playerLookDir);
+		Oyster::Math::Float3 look = camera->GetLook();
+		playerLookDir.lookDirX = look.x;
+		playerLookDir.lookDirY = look.y;
+		playerLookDir.lookDirZ = look.z;
+		privData->nwClient->Send(playerLookDir);
 	}
 	
 
@@ -313,12 +316,11 @@ void GameState::Protocol( ObjPos* pos )
 		if(privData->object[i]->GetId() == pos->object_ID)
 		{
 			privData->object[i]->setPos(world);
-
-
+			//camera->setRight((Oyster::Math::Float3(world[0], world[1], world[2])));
+			//camera->setUp((Oyster::Math::Float3(world[4], world[5], world[6])));
+			//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
 			camera->SetPosition(Oyster::Math::Float3(world[12], world[13], world[14]));
 			camera->UpdateViewMatrix();
-			//privData->view = world;
-			//privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 			
 		}
 	}

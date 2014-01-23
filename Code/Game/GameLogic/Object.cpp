@@ -54,7 +54,7 @@ Object::Object(ICustomBody *rigidBody ,void* collisionFunc, OBJECT_TYPE type)
 	Oyster::Physics::API::Instance().AddObject(rigidBody);
 
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
-
+	rigidBody->SetCustomTag(this);
 	this->objectID = GID();
 
 	this->type = type;
@@ -98,9 +98,11 @@ void Object::EndFrame()
 
 	//Oyster::Math::Float rot = (setState.GetGravityNormal().xyz).Dot(getState.GetGravityNormal().xyz);	
 	//Oyster::Math::Float3 axis = (setState.GetGravityNormal().xyz).Cross(getState.GetGravityNormal().xyz);
-	Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
-	Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
-	setState.SetOrientation(rotMatrix);
+
+	// align with gravity normal
+	//Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
+	//Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
+	//setState.SetOrientation(rotMatrix);
 
 
 	this->getState = this->rigidBody->GetState();

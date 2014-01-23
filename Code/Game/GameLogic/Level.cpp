@@ -29,7 +29,7 @@ void Level::InitiateLevel(float radius)
 	
 
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
-	rigidBody->SetCustomTag(levelObj);
+	//rigidBody->SetCustomTag(levelObj);
 	
 	ICustomBody::State state;
 	rigidBody->GetState(state);
@@ -38,14 +38,14 @@ void Level::InitiateLevel(float radius)
 
 	levelObj = new StaticObject(rigidBody, LevelCollision, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 
-	API::Gravity gravityWell;
+	/*API::Gravity gravityWell;
 
 	gravityWell.gravityType = API::Gravity::GravityType_Well;
 	gravityWell.well.mass = 10e12f;
 	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
 
 	API::Instance().AddGravity(gravityWell);
-	
+	*/
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)
