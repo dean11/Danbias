@@ -28,7 +28,7 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	this->rigid.centerPos = desc.centerPosition;
 	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
-	this->rigid.SetMomentOfInertia_KeepMomentum( Formula::MomentOfInertia::CreateSphereMatrix( desc.mass, desc.radius ) );
+	this->rigid.SetMomentOfInertia_KeepMomentum( MomentOfInertia::Sphere(desc.mass, desc.radius) );
 	this->deltaPos = Float4::null;
 	this->deltaAxis = Float4::null;
 
