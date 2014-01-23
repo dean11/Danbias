@@ -67,7 +67,7 @@ inline ::Oyster::Math::Float2 & operator *= ( ::Oyster::Math::Float2 &left, cons
 }
 
 inline ::Oyster::Math::Float2 operator * ( const ::Oyster::Math::Float2 &left, const ::Oyster::Math::Float2 &right )
-{ return ::Oyster::Math::Float2(left) *= right; }
+{ return left.PiecewiseMultiplication( right; }
 
 inline ::Oyster::Math::Float2 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float2 &right )
 { return ::Oyster::Math::Float2(right) *= left; }
@@ -81,7 +81,7 @@ inline ::Oyster::Math::Float3 & operator *= ( ::Oyster::Math::Float3 &left, cons
 }
 
 inline ::Oyster::Math::Float3 operator * ( const ::Oyster::Math::Float3 &left, const ::Oyster::Math::Float3 &right )
-{ return ::Oyster::Math::Float3(left) *= right; }
+{ return left.PiecewiseMultiplication( right ); }
 
 inline ::Oyster::Math::Float3 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float3 &right )
 { return ::Oyster::Math::Float3(right) *= left; }
@@ -96,7 +96,7 @@ inline ::Oyster::Math::Float4 & operator *= ( ::Oyster::Math::Float4 &left, cons
 }
 
 inline ::Oyster::Math::Float4 operator * ( const ::Oyster::Math::Float4 &left, const ::Oyster::Math::Float4 &right )
-{ return ::Oyster::Math::Float4(left) *= right; }
+{ return left.PiecewiseMultiplication( right ); }
 
 inline ::Oyster::Math::Float4 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float4 &right )
 { return ::Oyster::Math::Float4(right) *= left; }

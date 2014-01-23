@@ -57,6 +57,9 @@ namespace LinearAlgebra
 		ScalarType GetMagnitude( ) const;
 		ScalarType Dot( const Vector2<ScalarType> &vector ) const;
 
+		//! @return (a.x * b.x, a.y * b.y)
+		Vector2<ScalarType> PiecewiseMultiplication( const Vector2<ScalarType> &vector ) const;
+
 		Vector2<ScalarType> & Normalize( );
 		Vector2<ScalarType> GetNormalized( ) const;
 	};
@@ -111,6 +114,9 @@ namespace LinearAlgebra
 		ScalarType GetMagnitude( ) const;
 		ScalarType Dot( const Vector3<ScalarType> &vector ) const;
 		Vector3<ScalarType> Cross( const Vector3<ScalarType> &vector ) const;
+
+		//! @return (a.x * b.x, a.y * b.y, a.z * b.z)
+		Vector3<ScalarType> PiecewiseMultiplication( const Vector3<ScalarType> &vector ) const;
 
 		Vector3<ScalarType> & Normalize( );
 		Vector3<ScalarType> GetNormalized( ) const;
@@ -169,6 +175,9 @@ namespace LinearAlgebra
 		ScalarType GetMagnitude( ) const;
 		ScalarType Dot( const Vector4<ScalarType> &vector ) const;
 
+		//! @return (a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w )
+		Vector4<ScalarType> PiecewiseMultiplication( const Vector4<ScalarType> &vector ) const;
+
 		Vector4<ScalarType> & Normalize( );
 		Vector4<ScalarType> GetNormalized( ) const;
 	};
@@ -184,22 +193,22 @@ namespace LinearAlgebra
 	template<typename ScalarType> const Vector2<ScalarType> Vector2<ScalarType>::standard_unit_y = Vector2<ScalarType>( 0, 1 );
 
 	template<typename ScalarType>
-	Vector2<ScalarType>::Vector2( ) : x(), y() {}
+	inline Vector2<ScalarType>::Vector2( ) : x(), y() {}
 
 	template<typename ScalarType>
-	Vector2<ScalarType>::Vector2( const Vector2<ScalarType> &vector )
+	inline Vector2<ScalarType>::Vector2( const Vector2<ScalarType> &vector )
 	{ this->x = vector.x; this->y = vector.y; }
 
 	template<typename ScalarType>
-	Vector2<ScalarType>::Vector2( const ScalarType &_element )
+	inline Vector2<ScalarType>::Vector2( const ScalarType &_element )
 	{ this->x = this->y = _element; }
 
 	template<typename ScalarType>
-	Vector2<ScalarType>::Vector2( const ScalarType _element[2] )
+	inline Vector2<ScalarType>::Vector2( const ScalarType _element[2] )
 	{ this->x = _element[0]; this->y = _element[1]; }
 
 	template<typename ScalarType>
-	Vector2<ScalarType>::Vector2( const ScalarType &_x, const ScalarType &_y )
+	inline Vector2<ScalarType>::Vector2( const ScalarType &_x, const ScalarType &_y )
 	{ this->x = _x; this->y = _y; }
 
 	template<typename ScalarType>
@@ -227,7 +236,7 @@ namespace LinearAlgebra
 	{ return this->element[i]; }
 
 	template<typename ScalarType>
-	Vector2<ScalarType> & Vector2<ScalarType>::operator = ( const Vector2<ScalarType> &vector )
+	inline Vector2<ScalarType> & Vector2<ScalarType>::operator = ( const Vector2<ScalarType> &vector )
 	{
 		this->element[0] = vector.element[0];
 		this->element[1] = vector.element[1];
@@ -235,7 +244,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector2<ScalarType> & Vector2<ScalarType>::operator = ( const ScalarType _element[2] )
+	inline Vector2<ScalarType> & Vector2<ScalarType>::operator = ( const ScalarType _element[2] )
 	{
 		this->element[0] = _element[0];
 		this->element[1] = _element[1];
@@ -243,7 +252,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector2<ScalarType> & Vector2<ScalarType>::operator *= ( const ScalarType &scalar )
+	inline Vector2<ScalarType> & Vector2<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
 		this->element[0] *= scalar;
 		this->element[1] *= scalar;
@@ -251,7 +260,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector2<ScalarType> & Vector2<ScalarType>::operator /= ( const ScalarType &scalar )
+	inline Vector2<ScalarType> & Vector2<ScalarType>::operator /= ( const ScalarType &scalar )
 	{
 		this->element[0] /= scalar;
 		this->element[1] /= scalar;
@@ -259,7 +268,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector2<ScalarType> & Vector2<ScalarType>::operator += ( const Vector2<ScalarType> &vector )
+	inline Vector2<ScalarType> & Vector2<ScalarType>::operator += ( const Vector2<ScalarType> &vector )
 	{
 		this->element[0] += vector.element[0];
 		this->element[1] += vector.element[1];
@@ -267,7 +276,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector2<ScalarType> & Vector2<ScalarType>::operator -= ( const Vector2<ScalarType> &vector )
+	inline Vector2<ScalarType> & Vector2<ScalarType>::operator -= ( const Vector2<ScalarType> &vector )
 	{
 		this->element[0] -= vector.element[0];
 		this->element[1] -= vector.element[1];
@@ -295,7 +304,7 @@ namespace LinearAlgebra
 	{ return Vector2<ScalarType>(-this->x, -this->y); }
 
 	template<typename ScalarType>
-	bool Vector2<ScalarType>::operator == ( const Vector2<ScalarType> &vector ) const
+	inline bool Vector2<ScalarType>::operator == ( const Vector2<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return false;
 		if( this->y != vector.y ) return false;
@@ -303,7 +312,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	bool Vector2<ScalarType>::operator != ( const Vector2<ScalarType> &vector ) const
+	inline bool Vector2<ScalarType>::operator != ( const Vector2<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return true;
 		if( this->y != vector.y ) return true;
@@ -319,12 +328,18 @@ namespace LinearAlgebra
 	{ return (ScalarType) ::sqrt( this->Dot(*this) ); }	
 
 	template<typename ScalarType>
-	ScalarType Vector2<ScalarType>::Dot( const Vector2<ScalarType> &vector ) const
+	inline ScalarType Vector2<ScalarType>::Dot( const Vector2<ScalarType> &vector ) const
 	{
 		ScalarType value = 0;
 		value += this->element[0] * vector.element[0];
 		value += this->element[1] * vector.element[1];
 		return value;
+	}
+
+	template<typename ScalarType>
+	inline Vector2<ScalarType> Vector2<ScalarType>::PiecewiseMultiplication( const Vector2<ScalarType> &vector ) const
+	{
+		return Vector2<ScalarType>( this->x * vector.x, this->y * vector.y );
 	}
 
 	template<typename ScalarType>
@@ -343,26 +358,26 @@ namespace LinearAlgebra
 	template<typename ScalarType> const Vector3<ScalarType> Vector3<ScalarType>::standard_unit_z = Vector3<ScalarType>( 0, 0, 1 );
 
 	template<typename ScalarType>
-	Vector3<ScalarType>::Vector3( ) : x(), y(), z() {}
+	inline Vector3<ScalarType>::Vector3( ) : x(), y(), z() {}
 
 	template<typename ScalarType>
-	Vector3<ScalarType>::Vector3( const Vector3<ScalarType> &vector )
+	inline Vector3<ScalarType>::Vector3( const Vector3<ScalarType> &vector )
 	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; }
 
 	template<typename ScalarType>
-	Vector3<ScalarType>::Vector3( const Vector2<ScalarType> &vector, const ScalarType &_z )
+	inline Vector3<ScalarType>::Vector3( const Vector2<ScalarType> &vector, const ScalarType &_z )
 	{ this->x = vector.x; this->y = vector.y; this->z = _z; }
 
 	template<typename ScalarType>
-	Vector3<ScalarType>::Vector3( const ScalarType &_element )
+	inline Vector3<ScalarType>::Vector3( const ScalarType &_element )
 	{ this->x = this->y = this->z = _element; }
 
 	template<typename ScalarType>
-	Vector3<ScalarType>::Vector3( const ScalarType _element[3] )
+	inline Vector3<ScalarType>::Vector3( const ScalarType _element[3] )
 	{ this->x = _element[0]; this->y = _element[1]; this->z = _element[2]; }
 
 	template<typename ScalarType>
-	Vector3<ScalarType>::Vector3( const ScalarType &_x, const ScalarType &_y, const ScalarType &_z )
+	inline Vector3<ScalarType>::Vector3( const ScalarType &_x, const ScalarType &_y, const ScalarType &_z )
 	{ this->x = _x; this->y = _y; this->z = _z; }
 
 	template<typename ScalarType>
@@ -382,7 +397,7 @@ namespace LinearAlgebra
 	{ return this->element[i]; }
 
 	template<typename ScalarType>
-	Vector3<ScalarType> & Vector3<ScalarType>::operator = ( const Vector3<ScalarType> &vector )
+	inline Vector3<ScalarType> & Vector3<ScalarType>::operator = ( const Vector3<ScalarType> &vector )
 	{
 		this->element[0] = vector.element[0];
 		this->element[1] = vector.element[1];
@@ -391,7 +406,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector3<ScalarType> & Vector3<ScalarType>::operator = ( const ScalarType element[3] )
+	inline Vector3<ScalarType> & Vector3<ScalarType>::operator = ( const ScalarType element[3] )
 	{
 		this->element[0] = element[0];
 		this->element[1] = element[1];
@@ -400,7 +415,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector3<ScalarType> & Vector3<ScalarType>::operator *= ( const ScalarType &scalar )
+	inline Vector3<ScalarType> & Vector3<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
 		this->element[0] *= scalar;
 		this->element[1] *= scalar;
@@ -409,7 +424,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector3<ScalarType> & Vector3<ScalarType>::operator /= ( const ScalarType &scalar )
+	inline Vector3<ScalarType> & Vector3<ScalarType>::operator /= ( const ScalarType &scalar )
 	{
 		this->element[0] /= scalar;
 		this->element[1] /= scalar;
@@ -418,7 +433,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector3<ScalarType> & Vector3<ScalarType>::operator += ( const Vector3<ScalarType> &vector )
+	inline Vector3<ScalarType> & Vector3<ScalarType>::operator += ( const Vector3<ScalarType> &vector )
 	{
 		this->element[0] += vector.element[0];
 		this->element[1] += vector.element[1];
@@ -427,7 +442,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector3<ScalarType> & Vector3<ScalarType>::operator -= ( const Vector3<ScalarType> &vector )
+	inline Vector3<ScalarType> & Vector3<ScalarType>::operator -= ( const Vector3<ScalarType> &vector )
 	{
 		this->element[0] -= vector.element[0];
 		this->element[1] -= vector.element[1];
@@ -456,7 +471,7 @@ namespace LinearAlgebra
 	{ return Vector3<ScalarType>(-this->x, -this->y, -this->z); }
 
 	template<typename ScalarType>
-	bool Vector3<ScalarType>::operator == ( const Vector3<ScalarType> &vector ) const
+	inline bool Vector3<ScalarType>::operator == ( const Vector3<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return false;
 		if( this->y != vector.y ) return false;
@@ -465,7 +480,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	bool Vector3<ScalarType>::operator != ( const Vector3<ScalarType> &vector ) const
+	inline bool Vector3<ScalarType>::operator != ( const Vector3<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return true;
 		if( this->y != vector.y ) return true;
@@ -482,7 +497,7 @@ namespace LinearAlgebra
 	{ return (ScalarType) ::sqrt( this->Dot(*this) ); }
 
 	template<typename ScalarType>
-	ScalarType Vector3<ScalarType>::Dot( const Vector3<ScalarType> &vector ) const
+	inline ScalarType Vector3<ScalarType>::Dot( const Vector3<ScalarType> &vector ) const
 	{
 		ScalarType value = 0;
 		value += this->element[0] * vector.element[0];
@@ -492,11 +507,17 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector3<ScalarType> Vector3<ScalarType>::Cross( const Vector3<ScalarType> &vector ) const
+	inline Vector3<ScalarType> Vector3<ScalarType>::Cross( const Vector3<ScalarType> &vector ) const
 	{
 		return Vector3<ScalarType>( (this->y*vector.z) - (this->z*vector.y),
 									 (this->z*vector.x) - (this->x*vector.z),
 									 (this->x*vector.y) - (this->y*vector.x) );
+	}
+
+	template<typename ScalarType>
+	inline Vector3<ScalarType> Vector3<ScalarType>::PiecewiseMultiplication( const Vector3<ScalarType> &vector ) const
+	{
+		return Vector3<ScalarType>( this->x * vector.x, this->y * vector.y, this->z * vector.z );
 	}
 
 	template<typename ScalarType>
@@ -516,30 +537,30 @@ namespace LinearAlgebra
 	template<typename ScalarType> const Vector4<ScalarType> Vector4<ScalarType>::standard_unit_w = Vector4<ScalarType>( 0, 0, 0, 1 );
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( ) : x(), y(), z(), w() {}
+	inline Vector4<ScalarType>::Vector4( ) : x(), y(), z(), w() {}
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( const Vector4<ScalarType> &vector )
+	inline Vector4<ScalarType>::Vector4( const Vector4<ScalarType> &vector )
 	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; this->w = vector.w; }
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( const Vector3<ScalarType> &vector, const ScalarType &_w )
+	inline Vector4<ScalarType>::Vector4( const Vector3<ScalarType> &vector, const ScalarType &_w )
 	{ this->x = vector.x; this->y = vector.y; this->z = vector.z; this->w = _w; }
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( const Vector2<ScalarType> &vector, const ScalarType &_z, const ScalarType &_w )
+	inline Vector4<ScalarType>::Vector4( const Vector2<ScalarType> &vector, const ScalarType &_z, const ScalarType &_w )
 	{ this->x = vector.x; this->y = vector.y; this->z = _z; this->w = _w; }
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( const ScalarType &_element )
+	inline Vector4<ScalarType>::Vector4( const ScalarType &_element )
 	{ this->x = this->y = this->z = this->w = _element; }
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( const ScalarType _element[4] )
+	inline Vector4<ScalarType>::Vector4( const ScalarType _element[4] )
 	{ this->x = _element[0]; this->y = _element[1]; this->z = _element[2]; this->w = _element[3]; }
 
 	template<typename ScalarType>
-	Vector4<ScalarType>::Vector4( const ScalarType &_x, const ScalarType &_y, const ScalarType &_z, const ScalarType &_w )
+	inline Vector4<ScalarType>::Vector4( const ScalarType &_x, const ScalarType &_y, const ScalarType &_z, const ScalarType &_w )
 	{ this->x = _x; this->y = _y; this->z = _z; this->w = _w; }
 
 	template<typename ScalarType>
@@ -559,7 +580,7 @@ namespace LinearAlgebra
 	{ return this->element[i]; }
 
 	template<typename ScalarType>
-	Vector4<ScalarType> & Vector4<ScalarType>::operator = ( const Vector4<ScalarType> &vector )
+	inline Vector4<ScalarType> & Vector4<ScalarType>::operator = ( const Vector4<ScalarType> &vector )
 	{
 		this->element[0] = vector.element[0];
 		this->element[1] = vector.element[1];
@@ -569,7 +590,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector4<ScalarType> & Vector4<ScalarType>::operator = ( const ScalarType element[4] )
+	inline Vector4<ScalarType> & Vector4<ScalarType>::operator = ( const ScalarType element[4] )
 	{
 		this->element[0] = element[0];
 		this->element[1] = element[1];
@@ -579,7 +600,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector4<ScalarType> & Vector4<ScalarType>::operator *= ( const ScalarType &scalar )
+	inline Vector4<ScalarType> & Vector4<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
 		this->element[0] *= scalar;
 		this->element[1] *= scalar;
@@ -589,7 +610,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector4<ScalarType> & Vector4<ScalarType>::operator /= ( const ScalarType &scalar )
+	inline Vector4<ScalarType> & Vector4<ScalarType>::operator /= ( const ScalarType &scalar )
 	{
 		this->element[0] /= scalar;
 		this->element[1] /= scalar;
@@ -599,7 +620,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector4<ScalarType> & Vector4<ScalarType>::operator += ( const Vector4<ScalarType> &vector )
+	inline Vector4<ScalarType> & Vector4<ScalarType>::operator += ( const Vector4<ScalarType> &vector )
 	{
 		this->element[0] += vector.element[0];
 		this->element[1] += vector.element[1];
@@ -609,7 +630,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	Vector4<ScalarType> & Vector4<ScalarType>::operator -= ( const Vector4<ScalarType> &vector )
+	inline Vector4<ScalarType> & Vector4<ScalarType>::operator -= ( const Vector4<ScalarType> &vector )
 	{
 		this->element[0] -= vector.element[0];
 		this->element[1] -= vector.element[1];
@@ -639,7 +660,7 @@ namespace LinearAlgebra
 	{ return Vector4<ScalarType>(-this->x, -this->y, -this->z, -this->w); }
 
 	template<typename ScalarType>
-	bool Vector4<ScalarType>::operator == ( const Vector4<ScalarType> &vector ) const
+	inline bool Vector4<ScalarType>::operator == ( const Vector4<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return false;
 		if( this->y != vector.y ) return false;
@@ -649,7 +670,7 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
-	bool Vector4<ScalarType>::operator != ( const Vector4<ScalarType> &vector ) const
+	inline bool Vector4<ScalarType>::operator != ( const Vector4<ScalarType> &vector ) const
 	{
 		if( this->x != vector.x ) return true;
 		if( this->y != vector.y ) return true;
@@ -667,7 +688,7 @@ namespace LinearAlgebra
 	{ return (ScalarType) ::sqrt( this->Dot(*this) ); }	
 
 	template<typename ScalarType>
-	ScalarType Vector4<ScalarType>::Dot( const Vector4<ScalarType> &vector ) const
+	inline ScalarType Vector4<ScalarType>::Dot( const Vector4<ScalarType> &vector ) const
 	{
 		ScalarType value = 0;
 		value += this->element[0] * vector.element[0];
@@ -675,6 +696,12 @@ namespace LinearAlgebra
 		value += this->element[2] * vector.element[2];
 		value += this->element[3] * vector.element[3];
 		return value;
+	}
+
+	template<typename ScalarType>
+	inline Vector4<ScalarType> Vector4<ScalarType>::PiecewiseMultiplication( const Vector4<ScalarType> &vector ) const
+	{
+		return Vector4<ScalarType>( this->x * vector.x, this->y * vector.y, this->z * vector.z, this->w * vector.w );
 	}
 
 	template<typename ScalarType>
