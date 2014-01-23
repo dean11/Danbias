@@ -32,6 +32,9 @@ using namespace GameLogic;
 		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
+		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+			int test = 5;
+			break;
 		}
 
 		//return Physics::ICustomBody::SubscriptMessage_none;

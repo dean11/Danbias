@@ -15,6 +15,11 @@ StaticObject::StaticObject(void* collisionFunc, OBJECT_TYPE type)
 {
 
 }
+StaticObject::StaticObject(OBJECT_TYPE type)
+	:Object(NULL,type)
+{
+	
+}
 
 
 StaticObject::~StaticObject(void)

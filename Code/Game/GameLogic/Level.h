@@ -65,6 +65,7 @@ namespace GameLogic
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
 		GameMode gameMode;
 		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
+		StaticObject *levelObj;
 
 	};
 
