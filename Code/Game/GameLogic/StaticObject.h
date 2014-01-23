@@ -17,6 +17,7 @@ namespace GameLogic
 	public:
 		StaticObject();
 		StaticObject(void* collisionFunc, OBJECT_TYPE type);
+		StaticObject(Oyster::Physics::ICustomBody *rigidBody,void* collisionFunc, OBJECT_TYPE type);
 		StaticObject(OBJECT_TYPE type);
 		~StaticObject(void);
 

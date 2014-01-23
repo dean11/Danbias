@@ -20,6 +20,11 @@ StaticObject::StaticObject(OBJECT_TYPE type)
 {
 	
 }
+StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody,void* collisionFunc, OBJECT_TYPE type)
+	:Object(rigidBody,collisionFunc,type)
+{
+	
+}
 
 
 StaticObject::~StaticObject(void)

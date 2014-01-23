@@ -18,8 +18,6 @@ Player::Player()
 	lookDir = Oyster::Math::Float4(0,0,-1,0);
 	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
 	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
-	
-
 }
 
 Player::~Player(void)

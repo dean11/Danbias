@@ -49,6 +49,17 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	this->type = type;
 }
 
+Object::Object(ICustomBody *rigidBody ,void* collisionFunc, OBJECT_TYPE type)
+{
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
+
+	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
+
+	this->objectID = GID();
+
+	this->type = type;
+}
+
 void Object::ApplyLinearImpulse(Oyster::Math::Float4 force)
 {
 	setState.ApplyLinearImpulse(force);
