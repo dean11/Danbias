@@ -49,6 +49,11 @@ Object::Object(void* collisionFunc, OBJECT_TYPE type)
 	this->type = type;
 }
 
+void Object::ApplyLinearImpulse(Oyster::Math::Float4 force)
+{
+	setState.ApplyLinearImpulse(force);
+}
+
 
 Object::~Object(void)
 {

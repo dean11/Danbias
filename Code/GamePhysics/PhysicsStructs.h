@@ -19,6 +19,7 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float frictionCoeff_Dynamic;
 			::Oyster::Math::Float4x4 inertiaTensor;
 			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
+			::Oyster::Physics::ICustomBody::EventAction_CollisionResponse subscription_onCollisionResponse;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
 
@@ -35,6 +36,7 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float frictionCoeff_Static;
 			::Oyster::Math::Float frictionCoeff_Dynamic;
 			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
+			::Oyster::Physics::ICustomBody::EventAction_CollisionResponse subscription_onCollisionResponse;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
 

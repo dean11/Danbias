@@ -23,6 +23,7 @@ namespace GameLogic
 		OBJECT_TYPE GetType() const;
 		int GetID() const;
 		Oyster::Physics::ICustomBody* GetRigidBody();
+		void ApplyLinearImpulse(Oyster::Math::Float4 force);
 
 		void BeginFrame();
 		void EndFrame();

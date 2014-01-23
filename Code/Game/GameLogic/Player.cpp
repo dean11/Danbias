@@ -8,7 +8,7 @@ using namespace GameLogic;
 using namespace Oyster::Physics;
 
 Player::Player()
-	:DynamicObject(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
+	:DynamicObject(Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
 {
 	weapon = new Weapon();
 		
@@ -81,7 +81,7 @@ void Player::MoveLeft()
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
 {
-	this->weapon->Use(usage);
+	this->weapon->Use(usage,gameInstance->GetFrameTime());
 }
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)

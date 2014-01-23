@@ -134,7 +134,7 @@ void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, Visitor
 	{
 		if(collideable.Intersects(this->leafData[i].container))
 		{
-			hitAction(*this, i);
+			hitAction( this->GetCustomBody(i) );
 		}
 	}
 }

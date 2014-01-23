@@ -25,7 +25,7 @@ void Level::InitiateLevel(float radius)
 	sbDesc.radius = 8; //radius;
 	sbDesc.mass = 10e12f;
 	//sbDesc.mass = 0; //10^16
-	sbDesc.subscription_onCollision = CollisionManager::LevelCollision;
+	sbDesc.subscription_onCollisionResponse = Level::LevelCollision;
 
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 	API::Instance().AddObject(rigidBody);
