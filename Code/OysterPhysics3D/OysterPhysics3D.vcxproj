@@ -155,6 +155,7 @@
     <ClInclude Include="FluidDrag.h" />
     <ClInclude Include="Frustrum.h" />
     <ClInclude Include="ICollideable.h" />
+    <ClInclude Include="Inertia.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="OysterCollision3D.h" />
     <ClInclude Include="OysterPhysics3D.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="FluidDrag.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="ICollideable.cpp" />
+    <ClCompile Include="Inertia.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="OysterCollision3D.cpp" />
     <ClCompile Include="Particle.cpp" />
