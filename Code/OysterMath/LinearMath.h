@@ -756,6 +756,16 @@ namespace LinearAlgebra3D
 			return rotation; // return no change
 		return SnapAxisYToNormal_UsingNlerp( rotation, interpolated );
 	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingNonRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		targetMem.v[0] = ::LinearAlgebra::Nlerp( start.v[0], end.v[0], t );
+		targetMem.v[1] = ::LinearAlgebra::Nlerp( start.v[1], end.v[1], t );
+		targetMem.v[2] = ::LinearAlgebra::Nlerp( start.v[2], end.v[2], t );
+		targetMem.v[3] = ::LinearAlgebra::Lerp( start.v[3], end.v[3], t );
+		return targetMem;
+	}
 }
 
 #include "Utilities.h"
