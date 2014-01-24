@@ -5,13 +5,14 @@ namespace GameLogic
 {
 	enum ObjectType
 	{
+		ObjectType_Level,
 		ObjectType_Static,
 		ObjectType_Dynamic,
 
 
 		ObjectType_NUM_OF_TYPES,
 
-		ObjectType_Unknow = -1,
+		ObjectType_Unknown = -1,
 	};
 
 	struct ObjectTypeHeader
