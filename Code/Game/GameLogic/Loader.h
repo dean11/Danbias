@@ -10,7 +10,7 @@
 
 namespace GameLogic
 {
-	namespace LevelLoader
+	namespace LevelFileLoader
 	{
 		class Loader
 		{

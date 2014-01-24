@@ -4,14 +4,15 @@
 
 #include "LevelLoader.h"
 using namespace GameLogic;
-using namespace GameLogic::LevelLoader;
+using namespace GameLogic::LevelFileLoader;
+
 
 std::vector<ObjectTypeHeader> LevelLoader::LoadLevel(std::string fileName)
 {
-	Parser->parse(fileName);
+	return parser->Parse(fileName);
 }
 
-std::vector<ObjectTypeHeader> LevelLoader::LoadLevelHeader(std::string fileName)
+ObjectTypeHeader LevelLoader::LoadLevelHeader(std::string fileName)
 {
-	parser->parseHeader(fileName);
+	return parser->ParseHeader(fileName);
 }
