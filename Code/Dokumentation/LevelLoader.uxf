@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="12.0">
+<diagram program="umlet" version="12.1">
   <zoom_level>8</zoom_level>
   <element>
     <type>com.umlet.element.Package</type>
     <coordinates>
       <x>552</x>
-      <y>320</y>
+      <y>360</y>
       <w>584</w>
       <h>368</h>
     </coordinates>
@@ -16,7 +16,7 @@
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>440</x>
-      <y>88</y>
+      <y>128</y>
       <w>128</w>
       <h>40</h>
     </coordinates>
@@ -28,7 +28,7 @@
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>768</x>
-      <y>472</y>
+      <y>512</y>
       <w>136</w>
       <h>104</h>
     </coordinates>
@@ -39,12 +39,12 @@
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>560</x>
-      <y>544</y>
+      <y>584</y>
       <w>232</w>
       <h>136</h>
     </coordinates>
     <panel_attributes>&lt;&lt;Interface&gt;&gt;
-Parser
+LevelParser
 --
 Functions:
 vector&lt;struct&gt; Parse();
@@ -60,7 +60,7 @@ const int FileVersion;
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>624</x>
-      <y>208</y>
+      <y>248</y>
       <w>80</w>
       <h>24</h>
     </coordinates>
@@ -72,7 +72,7 @@ const int FileVersion;
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>640</x>
-      <y>208</y>
+      <y>248</y>
       <w>40</w>
       <h>168</h>
     </coordinates>
@@ -83,7 +83,7 @@ const int FileVersion;
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>384</x>
-      <y>176</y>
+      <y>216</y>
       <w>256</w>
       <h>56</h>
     </coordinates>
@@ -97,7 +97,7 @@ m2=1..1
     <type>com.umlet.element.Package</type>
     <coordinates>
       <x>248</x>
-      <y>320</y>
+      <y>360</y>
       <w>248</w>
       <h>160</h>
     </coordinates>
@@ -108,7 +108,7 @@ m2=1..1
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>800</x>
-      <y>360</y>
+      <y>400</y>
       <w>208</w>
       <h>136</h>
     </coordinates>
@@ -127,7 +127,7 @@ Privates:</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>328</x>
-      <y>208</y>
+      <y>248</y>
       <w>80</w>
       <h>24</h>
     </coordinates>
@@ -138,11 +138,11 @@ Privates:</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>256</x>
-      <y>360</y>
+      <y>400</y>
       <w>232</w>
       <h>104</h>
     </coordinates>
-    <panel_attributes>Defines.h
+    <panel_attributes>ObjectDefines.h
 &lt;&lt;Header file&gt;&gt;
 --
 Enum ObjectType(static, dynamic, specials);
@@ -156,7 +156,7 @@ Struct specials</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>680</x>
-      <y>176</y>
+      <y>216</y>
       <w>152</w>
       <h>56</h>
     </coordinates>
@@ -170,7 +170,7 @@ Uses&gt;</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>816</x>
-      <y>192</y>
+      <y>232</y>
       <w>128</w>
       <h>40</h>
     </coordinates>
@@ -182,7 +182,7 @@ Uses&gt;</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>928</x>
-      <y>560</y>
+      <y>600</y>
       <w>200</w>
       <h>120</h>
     </coordinates>
@@ -196,7 +196,7 @@ functions for creating the right structs</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>768</x>
-      <y>576</y>
+      <y>616</y>
       <w>176</w>
       <h>56</h>
     </coordinates>
@@ -210,7 +210,7 @@ Uses&gt;</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>560</x>
-      <y>360</y>
+      <y>400</y>
       <w>232</w>
       <h>136</h>
     </coordinates>
@@ -230,7 +230,7 @@ Privates:
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>344</x>
-      <y>208</y>
+      <y>248</y>
       <w>40</w>
       <h>168</h>
     </coordinates>
@@ -241,7 +241,7 @@ Privates:
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>840</x>
-      <y>208</y>
+      <y>248</y>
       <w>88</w>
       <h>168</h>
     </coordinates>
@@ -253,7 +253,7 @@ Privates:
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>656</x>
-      <y>472</y>
+      <y>512</y>
       <w>40</w>
       <h>88</h>
     </coordinates>
@@ -264,7 +264,7 @@ Privates:
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>544</x>
-      <y>64</y>
+      <y>104</y>
       <w>136</w>
       <h>160</h>
     </coordinates>

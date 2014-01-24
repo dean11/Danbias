@@ -185,6 +185,8 @@
     <ClInclude Include="IAttatchment.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectDefines.h" />
+    <ClInclude Include="LevelParser.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="Team.h" />
@@ -202,6 +204,7 @@
     <ClCompile Include="Game_PlayerData.cpp" />
     <ClCompile Include="IAttatchment.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelParser.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="StaticObject.cpp" />
