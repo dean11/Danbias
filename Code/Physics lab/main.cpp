@@ -187,8 +187,8 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 
 			if( graphicsTimeAccumulation >= graphicsPeriodicy )
 			{
-				//Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) ); // for collision response test
-				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3(interpolationLight.Pos.x, 0.0f, 0.0f), Float3::standard_unit_y, interpolationLight.Pos) ); // for interpolation test
+				Graphics::API::SetView( ViewMatrix_LookAtPos(Float3::null, Float3::standard_unit_y, light.Pos) ); // for collision response test
+				//Graphics::API::SetView( ViewMatrix_LookAtPos(Float3(interpolationLight.Pos.x, 0.0f, 0.0f), Float3::standard_unit_y, interpolationLight.Pos) ); // for interpolation test
 				Graphics::API::NewFrame();
 				{
 					// render collision response test

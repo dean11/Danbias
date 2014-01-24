@@ -60,6 +60,12 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
 	//! HACK: @todo Rotation temporary disabled
 	//this->axis += Radian( Formula::AngularVelocity(wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular)) );
+	
+	if( this->impulse_Angular != Float4::null )
+	{
+		const char *probe = "breakpoint";
+	}
+	
 	this->axis += this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
 	this->rotation = Rotation( this->axis );
 
@@ -67,7 +73,7 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	this->momentum_Linear += this->impulse_Linear;
 	this->impulse_Linear = Float4::null;
 
-	//this->momentum_Angular += this->impulse_Angular; //! HACK: @todo Rotation temporary disabled
+	this->momentum_Angular += this->impulse_Angular; //! HACK: @todo Rotation temporary disabled
 	this->impulse_Angular = Float4::null;
 }
 
