@@ -204,6 +204,19 @@ namespace LinearAlgebra
 		}		
 		return output; // error: returning nullvector
 	}
+
+	/********************************************************************
+	 * Spherical Linear Interpolation on Quaternions
+	 ********************************************************************/
+	template<typename ScalarType>
+	inline Quaternion<ScalarType> Slerp( const Quaternion<ScalarType> &start, const Quaternion<ScalarType> &end,  const ScalarType &t )
+	{
+		ScalarType angle = (ScalarType)::std::acos( Vector4(start.imaginary, start.real).Dot(Vector4(end.imaginary, end.real)) );
+		Quaternion<ScalarType> result = start * (ScalarType)::std::sin( angle * (1 - t) );
+		result += end * (ScalarType)::std::sin( angle * t );
+		result *= (ScalarType)1.0f / (ScalarType)::std::sin( angle );
+		return result;
+	}
 }
 
 namespace LinearAlgebra2D
@@ -766,6 +779,18 @@ namespace LinearAlgebra3D
 		targetMem.v[3] = ::LinearAlgebra::Lerp( start.v[3], end.v[3], t );
 		return targetMem;
 	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingNonRigidNlerp( const ::LinearAlgebra::Quaternion<ScalarType> &startR, const ::LinearAlgebra::Vector3<ScalarType> &startT, const ::LinearAlgebra::Quaternion<ScalarType> &endR, const ::LinearAlgebra::Vector3<ScalarType> &endT, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		return InterpolateOrientation_UsingNonRigidNlerp( OrientationMatrix(startR, startT), OrientationMatrix(endR, endT), t, targetMem );
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingSlerp( const ::LinearAlgebra::Quaternion<ScalarType> &startR, const ::LinearAlgebra::Vector3<ScalarType> &startT, const ::LinearAlgebra::Quaternion<ScalarType> &endR, const ::LinearAlgebra::Vector3<ScalarType> &endT, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		return OrientationMatrix( ::LinearAlgebra::Slerp(startR, endR, t), ::LinearAlgebra::Lerp(::LinearAlgebra::Vector4<ScalarType>(startT, (ScalarType)1.0f), ::LinearAlgebra::Vector4<ScalarType>(endT, (ScalarType)1.0f), t).xyz, targetMem );
+	}	
 }
 
 #include "Utilities.h"
