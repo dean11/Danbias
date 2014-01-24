@@ -211,7 +211,7 @@ namespace LinearAlgebra
 	template<typename ScalarType>
 	inline Quaternion<ScalarType> Slerp( const Quaternion<ScalarType> &start, const Quaternion<ScalarType> &end,  const ScalarType &t )
 	{
-		ScalarType angle = (ScalarType)::std::acos( Vector4(start.imaginary, start.real).Dot(Vector4(end.imaginary, end.real)) );
+		ScalarType angle = (ScalarType)::std::acos( Vector4<ScalarType>(start.imaginary, start.real).Dot(Vector4<ScalarType>(end.imaginary, end.real)) );
 		Quaternion<ScalarType> result = start * (ScalarType)::std::sin( angle * (1 - t) );
 		result += end * (ScalarType)::std::sin( angle * t );
 		result *= (ScalarType)1.0f / (ScalarType)::std::sin( angle );
