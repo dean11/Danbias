@@ -31,8 +31,8 @@ namespace Oyster
 			struct ModelInfo
 			{
 				std::vector<ID3D11ShaderResourceView*> Material;
-				Core::Buffer *Vertices,*Indecies,*Skeleton;
-				bool Indexed;
+				Core::Buffer *Vertices,*Indecies;
+				bool Indexed, Animated;
 				int VertexCount, IndexCount, BoneCount, AnimationCount;
 				Bone* bones;
 				Animation* Animations;

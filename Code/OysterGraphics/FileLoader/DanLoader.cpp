@@ -163,6 +163,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 	// 
 	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
 	modelInfo->Indexed = false;
+	modelInfo->Animated = false;
 	// Open file in binary mode
 	std::ifstream danFile;
 	danFile.open(filename, std::ios::binary);
@@ -309,39 +310,16 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 				delete[] buffer; // ( note: may crash here.)
 
 				//array for bone data
-				Oyster::Math::Matrix* bones = new Oyster::Math::Matrix[skeletonHeader.numBones*2];
+				Oyster::Graphics::Model::Bone* bones = new Oyster::Graphics::Model::Bone[skeletonHeader.numBones];
 				
 				//read bones
-				ReadData(bones,danFile,skeletonHeader.numBones * 2 * sizeof(Oyster::Math::Matrix));
+				ReadData(bones,danFile,skeletonHeader.numBones * sizeof(Oyster::Graphics::Model::Bone));
 
-				//init Graphics data
-				Oyster::Graphics::Core::Buffer* skeleton = new Oyster::Graphics::Core::Buffer();
-				Oyster::Graphics::Core::Buffer::BUFFER_INIT_DESC initDesc;
-				initDesc.ElementSize = sizeof(Oyster::Math::Matrix);
-				initDesc.InitData = bones;
-				initDesc.NumElements = skeletonHeader.numBones * 2;
-				initDesc.Type = Oyster::Graphics::Core::Buffer::BUFFER_TYPE::CONSTANT_BUFFER_VS;
-				initDesc.Usage = Oyster::Graphics::Core::Buffer::BUFFER_USAGE::BUFFER_USAGE_IMMUTABLE;
-
-				skeleton->Init(initDesc);
-
-				modelInfo->Skeleton = skeleton;
 
 				//read skeleton Hiarchy
-				
-				int* parents = new int[skeletonHeader.numBones];
-				ReadData(parents,danFile,skeletonHeader.numBones * sizeof(int));
-				
-				//store hiarchy
-				Oyster::Graphics::Model::Bone* Bones = new Oyster::Graphics::Model::Bone[skeletonHeader.numBones];
-				for(int i = 0; i < skeletonHeader.numBones; ++i)
-				{
-					Bones[i].Parent = parents[i];
-					Bones[i].Transform = bones[i];
-				}
 
 				modelInfo->BoneCount = skeletonHeader.numBones;
-				modelInfo->bones = Bones;
+				modelInfo->bones = bones;
 
 				break;
 			}
@@ -371,41 +349,44 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 					anims[a].name = std::wstring(wName);
 					delete[] wName;
 
-					Oyster::Graphics::Model::Animation A = anims[a];
-
 					//read nr of bones in animation
-					ReadData(&A.Bones,danFile,4);
+					ReadData(&anims[a].Bones,danFile,4);
 
 					//create Frame array and Bone part of KeyFrameArray;
-					A.Frames = new int[A.Bones];
-					A.Keyframes = new Oyster::Graphics::Model::Frame*[A.Bones];
+					anims[a].Frames = new int[anims[a].Bones];
+					anims[a].Keyframes = new Oyster::Graphics::Model::Frame*[anims[a].Bones];
 					
 					//loop per bone and gather data
-					for(int b = 0; b < A.Bones; ++b)
+					for(int b = 0; b < anims[a].Bones; ++b)
 					{
-						//read nr of frames per bone
-						ReadData(&A.Frames[b],danFile,4);
-
-						//create frame matrix
-						A.Keyframes[b] = new Oyster::Graphics::Model::Frame[A.Frames[b]];
-
+						
 						//read bone index
 						int boneIndex;
 						ReadData(&boneIndex,danFile,4);
 
-						for(int f = 0; f < A.Frames[b]; ++f)
+						//read nr of frames per bone
+						ReadData(&anims[a].Frames[b],danFile,4);
+
+						//create frame matrix
+						anims[a].Keyframes[b] = new Oyster::Graphics::Model::Frame[anims[a].Frames[b]];
+
+
+						for(int f = 0; f < anims[a].Frames[b]; ++f)
 						{
 							//write index of bone
-							A.Keyframes[b][f].bone.Parent = boneIndex;
+							anims[a].Keyframes[b][f].bone.Parent = boneIndex;
 
 							//read bone transform
-							ReadData(&A.Keyframes[b][f].bone.Transform,danFile,sizeof(Oyster::Math::Matrix));
+							ReadData(&anims[a].Keyframes[b][f].bone.Transform,danFile,sizeof(Oyster::Math::Matrix));
 
 							
-							ReadData(&A.Keyframes[b][f].time,danFile,sizeof(double));
+							ReadData(&anims[a].Keyframes[b][f].time,danFile,sizeof(double));
 						}
 					}
 				}
+				modelInfo->AnimationCount = animationHeader.numAnims;
+				modelInfo->Animations = anims;
+				modelInfo->Animated = true;
 
 				break;
 			}

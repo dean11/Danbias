@@ -34,7 +34,7 @@ namespace Oyster
 				Shader::RenderPass Deffered::PostPass;
 
 				Buffer Deffered::ModelData = Buffer();
-				Buffer Deffered::VPData = Buffer();
+				Buffer Deffered::AnimationData = Buffer();
 				Buffer Deffered::LightConstantsData = Buffer();
 
 				Buffer Deffered::PointLightsData = Buffer();
@@ -74,8 +74,9 @@ namespace Oyster
 
 					ModelData.Init(desc);
 
-					desc.NumElements = 2;
-					VPData.Init(desc);
+					desc.NumElements = 1;
+					desc.ElementSize = sizeof(Definitions::AnimationData);
+					AnimationData.Init(desc);
 
 					desc.ElementSize = sizeof(Definitions::LightConstants);
 					desc.NumElements = 1;
@@ -254,7 +255,7 @@ namespace Oyster
 
 					Shader::CreateInputLayout(indesc,7,GetShader::Vertex(L"Geometry"),GeometryPass.IAStage.Layout);
 					GeometryPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-					GeometryPass.CBuffers.Vertex.push_back(VPData);
+					GeometryPass.CBuffers.Vertex.push_back(AnimationData);
 					GeometryPass.CBuffers.Vertex.push_back(ModelData);
 					GeometryPass.RenderStates.Rasterizer = rs;
 					GeometryPass.RenderStates.SampleCount = 1;
@@ -296,7 +297,7 @@ namespace Oyster
 				void Deffered::Clean()
 				{
 					Resources::Deffered::ModelData.~Buffer();
-					Resources::Deffered::VPData.~Buffer();
+					Resources::Deffered::AnimationData.~Buffer();
 					Resources::Deffered::LightConstantsData.~Buffer();
 					Resources::Deffered::PointLightsData.~Buffer();
 					SAFE_RELEASE(Resources::Deffered::PointLightView);

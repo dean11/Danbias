@@ -14,12 +14,6 @@ namespace Oyster
 				Oyster::Math::Float3 normal;
 			};
 
-			struct VP
-			{
-				Oyster::Math::Matrix V;
-				Oyster::Math::Matrix P;
-			};
-
 			struct PerModel
 			{
 				Math::Matrix WV;
@@ -53,6 +47,13 @@ namespace Oyster
 				float Radius;
 				Math::Float3 Color;
 				float Bright;
+			};
+
+			struct AnimationData
+			{
+				int Animated;
+				Math::Float3 Pad;
+				Math::Matrix animatedData[10];
 			};
 
 		}

@@ -36,7 +36,7 @@ namespace Oyster
 
 
 					static Core::Buffer ModelData;
-					static Core::Buffer VPData;
+					static Core::Buffer AnimationData;
 
 					static Core::Buffer LightConstantsData;
 
