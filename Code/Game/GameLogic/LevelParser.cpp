@@ -31,7 +31,8 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 	{
 		//Get typeID
 		ObjectTypeHeader typeID;
-		typeID = parseObjectTypeHeader(buffer);
+		typeID = ParseObjectTypeHeader(&buffer[counter]);
+		//counter += 4;
 		//Unpack ID
 
 		switch((int)typeID.typeID)
@@ -43,7 +44,8 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 
 		case TypeID_Object:
 			//Call function
-			counter += ObjectHeaderSize;
+			objects.push_back(ParseObjectHeader(&buffer[counter]));
+			counter += sizeof(ObjectHeader);
 			break;
 		default:
 			//Couldn't find typeID. FAIL!!!!!!
@@ -73,7 +75,7 @@ ObjectTypeHeader LevelParser::ParseHeader(std::string filename)
 	while(counter < stringSize)
 	{
 		ObjectTypeHeader typeID;
-		typeID = parseObjectTypeHeader(buffer);
+		typeID = ParseObjectTypeHeader(buffer);
 		switch(typeID.typeID)
 		{
 		case TypeID_LevelHeader:
