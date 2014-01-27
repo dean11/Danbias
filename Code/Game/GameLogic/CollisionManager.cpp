@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "AttatchmentMassDriver.h"
+#include "Game.h"
 
 using namespace Oyster;
 
@@ -15,8 +16,9 @@ using namespace GameLogic;
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
-		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
-		Object *realObj = (Object*)obj->GetCustomTag();
+		
+		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
+		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
 		switch (realObj->GetType())
 		{
@@ -63,13 +65,13 @@ using namespace GameLogic;
 		
 	}	
 	//Oyster::Physics::ICustomBody::SubscriptMessage
-	void Level::LevelCollision(const Oyster::Physics::ICustomBody *rigidBodyLevel, const Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	void Level::LevelCollision(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		//return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj)
 	{
-		Oyster::Math::Float4 pushForce = Oyster::Math::Float4(owner->GetLookDir()) * (500);
+		Oyster::Math::Float4 pushForce = Oyster::Math::Float4(1,0,0,0) * (500);
 		((Object*)obj->GetCustomTag())->ApplyLinearImpulse(pushForce);
 	}

@@ -62,6 +62,12 @@ Object::Object(ICustomBody *rigidBody ,void* collisionFunc, OBJECT_TYPE type)
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
 {
+	Oyster::Physics::API::Instance().AddObject(rigidBody);
+	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
+
+	this->rigidBody = rigidBody;
+	this->type = type;
+	this->objectID = GID();
 	
 }
 
