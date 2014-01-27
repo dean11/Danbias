@@ -19,6 +19,7 @@ namespace GameLogic
 		Object();
 		Object(void* collisionFunc, OBJECT_TYPE type);
 		Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFunc, OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Object(void);
 
 		OBJECT_TYPE GetType() const;

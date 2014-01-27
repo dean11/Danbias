@@ -50,7 +50,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1,1,20); 
 	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
 	
-	//Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,ForcePushAction);
+	Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,ForcePushAction);
 
 }
 

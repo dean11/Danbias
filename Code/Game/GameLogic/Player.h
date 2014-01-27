@@ -16,6 +16,7 @@ namespace GameLogic
 	{
 	public:
 		Player(void);
+		Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Player(void);
 		
 		/********************************************************
@@ -42,7 +43,7 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float3 lookDir);
+		void Rotate(float x, float y);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -50,7 +51,7 @@ namespace GameLogic
 		* @param rigidBodyPlayer: physics object of the player
 		* @param obj: physics object for the object that collided with the player
 		********************************************************/
-		static void PlayerCollision(const Oyster::Physics::ICustomBody *rigidBodyPlayer, const Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+		static void PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
 		
 		bool IsWalking();

@@ -18,7 +18,12 @@ Player::Player()
 	lookDir = Oyster::Math::Float4(0,0,-1,0);
 	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
 	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
-	//setState.SetRotation(Oyster::Math::Float4(0,0,0,0).Normalize());
+}
+
+Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFunc, type)
+{
+	
 }
 
 Player::~Player(void)
@@ -65,7 +70,6 @@ void Player::MoveBackwards()
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	// temp up vector
 	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
 	//Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
 	setState.ApplyLinearImpulse(r * 20 * this->gameInstance->GetFrameTime());
@@ -74,7 +78,6 @@ void Player::MoveRight()
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	// temp up vector
 	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
 	//Oyster::Math::Float4 r1 = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
 	setState.ApplyLinearImpulse(-r * 20 * this->gameInstance->GetFrameTime());
@@ -93,18 +96,11 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float3 lookDir)
+void Player::Rotate(float dx, float dy)
 {
-	
-	this->lookDir = lookDir;
-	
-	Oyster::Math::Float4 up(0,1,0,0);//-setState.GetGravityNormal(); 
-	Oyster::Math::Float4 pos = setState.GetCenterPosition();
-	Oyster::Math::Float4x4 world = Oyster::Math3D::OrientationMatrix_LookAtDirection(lookDir, up.xyz, pos.xyz);
-	// cant set rotation
-	//setState.SetOrientation(world);
-	//this->lookDir = lookDir - up.xyz;
-	
+
+	//this->lookDir = lookDir;
+
 	//this->setState.AddRotation(Oyster::Math::Float4(x, y));
 	//this->setState.SetRotation();
 }

@@ -54,10 +54,15 @@ Object::Object(ICustomBody *rigidBody ,void* collisionFunc, OBJECT_TYPE type)
 	Oyster::Physics::API::Instance().AddObject(rigidBody);
 
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
-	rigidBody->SetCustomTag(this);
+
 	this->objectID = GID();
 
 	this->type = type;
+}
+
+Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
+{
+	
 }
 
 void Object::ApplyLinearImpulse(Oyster::Math::Float4 force)
@@ -98,11 +103,9 @@ void Object::EndFrame()
 
 	//Oyster::Math::Float rot = (setState.GetGravityNormal().xyz).Dot(getState.GetGravityNormal().xyz);	
 	//Oyster::Math::Float3 axis = (setState.GetGravityNormal().xyz).Cross(getState.GetGravityNormal().xyz);
-
-	// align with gravity normal
-	//Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
-	//Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
-	//setState.SetOrientation(rotMatrix);
+	Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
+	Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
+	setState.SetOrientation(rotMatrix);
 
 
 	this->getState = this->rigidBody->GetState();

@@ -5,7 +5,16 @@ using namespace GameLogic;
 
 Game::PlayerData::PlayerData()
 {
-	this->player = new Player();
+	Oyster::Physics::API::SimpleBodyDescription sbDesc;
+
+	//create rigidbody
+	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
+
+
+	//create player with this rigidbody
+
+
+	this->player = new Player(rigidBody,Player::PlayerCollision,OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
