@@ -325,6 +325,14 @@ namespace Oyster
 				::Oyster::Math::Float4 offset = at - this->centerPos;
 				::Oyster::Math::Float4 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
 				this->linearImpulse += j - ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
+				
+				::Oyster::Math::Float r = offset.Dot( offset );
+				if( r > 1.0f )
+				{
+					deltaAngularImpulse /= r;
+					//deltaAngularImpulse /= (::Oyster::Math::Float)::std::sqrt( r );
+				}
+
 				this->angularImpulse += deltaAngularImpulse;
 
 				this->isDisturbed = true;
