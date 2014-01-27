@@ -1,5 +1,7 @@
 #include "LevelParser.h"
 
+#include "Loader.h"
+
 using namespace GameLogic;
 using namespace ::LevelFileLoader;
 
@@ -15,6 +17,8 @@ LevelParser::~LevelParser()
 std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 {
 	//Read entire level file.
+	Loader loader;
+	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str());
 
 	std::vector<ObjectTypeHeader> objects;
 
@@ -25,6 +29,7 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 		//Get typeID
 		int typeID = 0;
 		
+		//Unpack ID
 
 		switch(typeID)
 		{
@@ -50,6 +55,8 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 ObjectTypeHeader LevelParser::ParseHeader(std::string filename)
 {
 	//Read entire level file.
+	Loader loader;
+	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str());
 
 	//Find the header in the returned string.
 	unsigned int counter = 0;
@@ -65,7 +72,8 @@ ObjectTypeHeader LevelParser::ParseHeader(std::string filename)
 		{
 		case TypeID_LevelHeader:
 			//Call function
-			
+
+			counter += LevelHeaderSize;
 			break;
 		case TypeID_Object:
 			//Call function
