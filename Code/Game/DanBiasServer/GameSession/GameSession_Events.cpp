@@ -113,8 +113,10 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		movedObject->GetID();
-		movedObject->GetOrientation();
+		/*int id= movedObject->GetID();
+		Oyster::Math::Float4x4 world = movedObject->GetOrientation();
+		Protocol_ObjectPosition p(world, 2);
+		Send(p.GetProtocol());*/
 
 	}
 
