@@ -22,6 +22,7 @@ private:
 	bool key_backward;
 	bool key_strafeRight;
 	bool key_strafeLeft;
+	bool key_Shoot;
 	Camera* camera;
 
 	struct myData;

@@ -67,6 +67,8 @@ namespace DanBias
 			case protocol_Gameplay_PlayerChangeWeapon:
 				
 			break;
+			case protocol_Gameplay_PlayerShot:
+				c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
 			case protocol_Gameplay_ObjectDamage:
 
 			break;

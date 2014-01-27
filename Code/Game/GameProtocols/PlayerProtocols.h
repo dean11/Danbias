@@ -122,6 +122,32 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
+	struct Protocol_PlayerShot :public Oyster::Network::CustomProtocolObject
+	{
+		bool hasShot;
+
+		Protocol_PlayerShot()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerShot;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		const Protocol_PlayerShot& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			hasShot		= val[1].value.netBool;
+			return *this;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = hasShot;
+			return &protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H
