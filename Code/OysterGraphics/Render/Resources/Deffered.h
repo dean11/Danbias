@@ -18,12 +18,15 @@ namespace Oyster
 					static const int LBufferSize = 3;
 					static const int MaxLightSize = 100;
 					//! GBuffers
-					//! 0 = Diffuse + SpecKoeff
-					//! 1 = Normal + Glow
+					//! 0 = Diffuse + Glow
+					//! 1 = Normal + Spec
 					static ID3D11RenderTargetView* GBufferRTV[GBufferSize];
 					static ID3D11ShaderResourceView* GBufferSRV[GBufferSize];
 
-					
+					//! LBuffer
+					//! 0 = Diffuse
+					//! 1 = Specular
+					//! 2 = SSAO
 					static ID3D11UnorderedAccessView* LBufferUAV[LBufferSize];
 					static ID3D11ShaderResourceView* LBufferSRV[LBufferSize];
 
@@ -33,7 +36,7 @@ namespace Oyster
 
 
 					static Core::Buffer ModelData;
-					static Core::Buffer VPData;
+					static Core::Buffer AnimationData;
 
 					static Core::Buffer LightConstantsData;
 

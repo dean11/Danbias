@@ -9,14 +9,14 @@ namespace Oyster
 	{
 		namespace Model
 		{
-			//struct ModelInfo;
+			struct ModelInfo;
 			struct Model
 			{
-				//! do not Edit, linked to render data
-				//ModelInfo* info;
-				void* info;
+				ModelInfo* info;
 				Oyster::Math::Float4x4 WorldMatrix;
-				bool Visible;
+				bool Visible, LoopAnimation;
+				int AnimationPlaying;
+				float AnimationTime;
 			};
 		}
 		

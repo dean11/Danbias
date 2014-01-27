@@ -30,11 +30,11 @@ Texture2D Normal		: register(t1);
 
 SamplerState S1 : register(s0);
 
-cbuffer PerFrame : register(b0)
+cbuffer Animation : register(b0)
 {
-	matrix View;
-	float4x4 Projection;
-	matrix VP;
+	int Animated;
+	float3 Pad;
+	float4x4 BoneAnimation[10];
 }
 
 cbuffer PerModel : register(b1)
