@@ -23,13 +23,25 @@ Player::Player()
 Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
 	:DynamicObject(rigidBody, collisionFunc, type)
 {
-	
+	weapon = new Weapon(2,this);
+
+	this->life = 100;
+	this->teamID = -1;
+	this->playerState = PLAYER_STATE_IDLE;
+	lookDir = Oyster::Math::Float4(0,0,-1,0);
+
+	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
+	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
 }
 
 Player::~Player(void)
 {
-	delete weapon;
-	weapon = NULL;
+	if(weapon)
+	{
+		delete weapon;
+		weapon = NULL;
+	}
+	
 }
 
 

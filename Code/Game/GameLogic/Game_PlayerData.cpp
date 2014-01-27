@@ -6,6 +6,7 @@ using namespace GameLogic;
 Game::PlayerData::PlayerData()
 {
 	Oyster::Physics::API::SimpleBodyDescription sbDesc;
+	//set some stats that are appropriate to a player
 
 	//create rigidbody
 	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
@@ -60,5 +61,5 @@ OBJECT_TYPE Game::PlayerData::GetObjectType()	const
 }
 void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir)
 {
-	this->player->Rotate(lookDir);
+	//this->player->Rotate(lookDir);
 }

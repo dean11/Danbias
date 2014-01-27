@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "AttatchmentMassDriver.h"
+#include "Player.h"
 
 
 using namespace GameLogic;
@@ -15,9 +16,21 @@ Weapon::Weapon()
 	attatchmentSockets = 0;
 }
 
-Weapon::Weapon(int MaxNrOfSockets)
+Weapon::Weapon(int MaxNrOfSockets,Player *owner)
 {
 	attatchmentSockets.Resize(MaxNrOfSockets);
+	attatchmentSockets[0] = new AttatchmentSocket();
+
+	weaponState = WEAPON_STATE_IDLE;
+	currentNrOfAttatchments = 0;
+	selectedAttatchment = 0;
+
+	//give the weapon a massdriver on socket 0
+		IAttatchment *mD = new AttatchmentMassDriver(*owner);
+		attatchmentSockets[0]->SetAttatchment(mD);
+		this->currentNrOfAttatchments = 1;
+		SelectAttatchment(0);
+	//give the weapon a massdriver on socket 0
 }
 
 

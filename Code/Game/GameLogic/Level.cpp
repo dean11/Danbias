@@ -38,6 +38,20 @@ void Level::InitiateLevel(float radius)
 
 	levelObj = new StaticObject(rigidBody, LevelCollision, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 
+
+	API::SphericalBodyDescription sbDesc_TestBox;
+	sbDesc.centerPosition = Oyster::Math::Float4(3,15,0,0);
+	sbDesc.ignoreGravity = true;
+	sbDesc.radius = 8; //radius;
+	sbDesc.mass = 10e12f;
+	//sbDesc.mass = 0; //10^16
+	
+	
+
+	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
+
+	DynamicObject *testBox = new DynamicObject(rigidBody_TestBox,LevelCollision,OBJECT_TYPE::OBJECT_TYPE_BOX);
+
 	/*API::Gravity gravityWell;
 
 	gravityWell.gravityType = API::Gravity::GravityType_Well;

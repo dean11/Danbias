@@ -16,7 +16,7 @@ namespace GameLogic
 	{
 	public:
 		Weapon(void);
-		Weapon(int nrOfAttatchmentSockets);
+		Weapon(int nrOfAttatchmentSockets, Player *owner);
 		~Weapon(void);
 
 		void Use(const WEAPON_FIRE &usage, float dt);

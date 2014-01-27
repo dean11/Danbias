@@ -19,8 +19,7 @@ namespace GameLogic
 		void RemoveAttatchment();
 
 	private:
-		struct PrivateData;
-		PrivateData *myData;
+		IAttatchment *attatchment;
 	};
 }
 #endif
