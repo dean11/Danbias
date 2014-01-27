@@ -214,7 +214,14 @@ int OysterResource::GetResourceId(const wchar_t c[])
 
 	return -1;
 }
+int	OysterResource::GetResourceSize(const OHRESOURCE& resource)
+{
+	OResource* t = resourcePrivate.FindResource(resource);
 
+	if(t)	return t->GetResourceSize();
+
+	return -1;
+}
 
 OResource* ResourcePrivate::FindResource(const OHRESOURCE& h) const
 {

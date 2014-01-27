@@ -150,6 +150,11 @@ namespace Oyster
 			*	@return Returns the accociated ID
 			*/
 			static int						GetResourceId(const wchar_t filename[]);
+
+
+			static int						GetResourceSize(const OHRESOURCE& resource);
+
+
 		
 		};	
 	}
