@@ -1,8 +1,9 @@
 #include "MessageHeader.h"
-#include "../Packing.h"
+#include "../../../Misc/Packing/Packing.h"
 #include <iostream>
 using namespace std;
 
+using namespace Oyster::Packing;
 using namespace Oyster::Network;
 using namespace Oyster::Network::Messages;
 using namespace Oyster::Network::Protocols;

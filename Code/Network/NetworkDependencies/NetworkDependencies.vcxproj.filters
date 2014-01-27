@@ -7,7 +7,6 @@
     <ClCompile Include="Messages\MessagePlayerPos.cpp" />
     <ClCompile Include="Messages\MessageTest.cpp" />
     <ClCompile Include="OysterByte.cpp" />
-    <ClCompile Include="Packing.cpp" />
     <ClCompile Include="ThreadedClient.cpp" />
     <ClCompile Include="WinsockFunctions.cpp" />
   </ItemGroup>
@@ -22,7 +21,6 @@
     <ClInclude Include="Messages\MessagesInclude.h" />
     <ClInclude Include="Messages\MessageTest.h" />
     <ClInclude Include="OysterByte.h" />
-    <ClInclude Include="Packing.h" />
     <ClInclude Include="ITranslate.h" />
     <ClInclude Include="PostBox.h" />
     <ClInclude Include="Protocols.h" />

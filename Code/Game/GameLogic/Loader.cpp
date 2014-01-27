@@ -8,11 +8,12 @@ using namespace GameLogic::LevelFileLoader;
 using namespace Oyster::Resource;
 using namespace std;
 
-char* Loader::LoadFile(std::string fileName)
+unsigned char* Loader::LoadFile(std::string fileName, int &size)
 {
 	//convert from string to wstring
 	std::wstring temp(fileName.begin(), fileName.end());
 
+	size = temp.size();
 	//convert from wstring to wchar then loads the file
-	return (char*)OysterResource::LoadResource(temp.c_str(), Oyster::Resource::ResourceType::ResourceType_Byte_Raw, -1 , false); 
+	return (unsigned char*)OysterResource::LoadResource(temp.c_str(), Oyster::Resource::ResourceType::ResourceType_Byte_Raw, -1 , false); 
 }

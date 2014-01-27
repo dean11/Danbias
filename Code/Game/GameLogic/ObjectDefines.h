@@ -24,9 +24,9 @@ namespace GameLogic
 	struct ObjectHeader : public ObjectTypeHeader
 	{
 		//Model,
-		
+		int ModelID;
 		//Texture
-
+		int TextureID;
 		//Position
 		float position[3];
 		//Rotation

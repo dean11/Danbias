@@ -15,9 +15,9 @@ namespace GameLogic
 		class Loader
 		{
 		public:
-			Loader(){};
+			Loader (){};
 			~Loader(){};
-			char* LoadFile(std::string fileName); 
+			unsigned char* LoadFile(std::string fileName, int &size); 
 
 			//TODO:
 			//Add functionality to load physicsObjects (hitboxes)
