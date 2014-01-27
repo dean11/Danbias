@@ -100,7 +100,6 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
-
 		};
 
 	class DANBIAS_GAMELOGIC_DLL GameAPI
