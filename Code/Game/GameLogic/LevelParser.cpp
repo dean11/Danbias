@@ -1,9 +1,11 @@
 #include "LevelParser.h"
 
 #include "Loader.h"
+#include "ParseFunctions.h"
 
 using namespace GameLogic;
 using namespace ::LevelFileLoader;
+
 
 LevelParser::LevelParser()
 {
@@ -16,22 +18,23 @@ LevelParser::~LevelParser()
 //
 std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 {
+	int stringSize = 0;
 	//Read entire level file.
 	Loader loader;
-	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str());
+	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str(), stringSize);
 
 	std::vector<ObjectTypeHeader> objects;
 
 	unsigned int counter = 0;
-	unsigned int stringSize = 0;
+	
 	while(counter < stringSize)
 	{
 		//Get typeID
-		int typeID = 0;
-		
+		ObjectTypeHeader typeID;
+		typeID = parseObjectTypeHeader(buffer);
 		//Unpack ID
 
-		switch(typeID)
+		switch((int)typeID.typeID)
 		{
 		case TypeID_LevelHeader:
 			//Call function
@@ -51,24 +54,27 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 	return objects;
 }
 
-//
+//för meta information om leveln. Måste göra så den returnerar rätt strukt så fort vi
+//vi definierat en!
 ObjectTypeHeader LevelParser::ParseHeader(std::string filename)
 {
+	int stringSize = 0;
 	//Read entire level file.
 	Loader loader;
-	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str());
+	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str(), stringSize);
 
 	//Find the header in the returned string.
 	unsigned int counter = 0;
-	unsigned int stringSize = 0;
+	
 
 	ObjectTypeHeader header;
 	header.typeID = ObjectType_Level;
 
 	while(counter < stringSize)
 	{
-		int typeID = 0;
-		switch(typeID)
+		ObjectTypeHeader typeID;
+		typeID = parseObjectTypeHeader(buffer);
+		switch(typeID.typeID)
 		{
 		case TypeID_LevelHeader:
 			//Call function
