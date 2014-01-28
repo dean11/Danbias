@@ -12,7 +12,7 @@ std::vector<ObjectTypeHeader> LevelLoader::LoadLevel(std::string fileName)
 	return parser->Parse(fileName);
 }
 
-ObjectTypeHeader LevelLoader::LoadLevelHeader(std::string fileName)
+LevelMetaData LevelLoader::LoadLevelHeader(std::string fileName)
 {
 	return parser->ParseHeader(fileName);
 }
