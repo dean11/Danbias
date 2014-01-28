@@ -107,7 +107,8 @@ namespace Oyster
 									float interpoation =(models[i].AnimationTime - Prev.time) / (Next.time - Prev.time);
 
 									//interpolate
-									Math::Matrix Interpolated = Prev.bone.Transform;
+									Math::Matrix Interpolated;
+									Math3D::InterpolateOrientation_UsingNonRigidNlerp(Prev.bone.Transform,Next.bone.Transform,interpoation, Interpolated);
 
 									//write magic to animated data
 									am2.animatedData[Prev.bone.Parent] =  Interpolated * am2.animatedData[info->bones[Prev.bone.Parent].Parent];

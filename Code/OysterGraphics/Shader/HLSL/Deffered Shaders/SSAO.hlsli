@@ -27,7 +27,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 		float4 ProjOffset = float4(sampled,1);
 		ProjOffset = mul(Proj, ProjOffset);
 		float4 offset = ProjOffset;
-		float2 UV = offset;
+		float2 UV = offset.xy;
 		offset /= offset.w;
 		offset.xyz = offset.xyz * 0.5f + 0.5f;
 		//extra invert y axis, DX11

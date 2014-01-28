@@ -349,6 +349,8 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 					anims[a].name = std::wstring(wName);
 					delete[] wName;
 
+					//read duration
+
 					//read nr of bones in animation
 					ReadData(&anims[a].Bones,danFile,4);
 
