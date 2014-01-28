@@ -8,6 +8,7 @@
 #include "OysterMath.h"
 #include "OysterCollision3D.h"
 #include "OysterPhysics3D.h"
+#include "Inertia.h"
 
 namespace Oyster { namespace Physics3D
 {
@@ -42,23 +43,23 @@ namespace Oyster { namespace Physics3D
 
 		// GET METHODS ////////////////////////////////
 
-		const ::Oyster::Math::Float4x4 &   GetMomentOfInertia() const;
-			  ::Oyster::Math::Float		   GetMass() const;
-		const ::Oyster::Math::Quaternion & GetRotation() const;
-			  ::Oyster::Math::Float4x4	   GetRotationMatrix() const;
-			  ::Oyster::Math::Float4x4	   GetOrientation() const;
-			  ::Oyster::Math::Float4x4	   GetView() const;
- 			  ::Oyster::Math::Float4x4	   GetToWorldMatrix() const;
-			  ::Oyster::Math::Float4x4	   GetToLocalMatrix() const;
-			  ::Oyster::Math::Float4	   GetSize() const;
-			  ::Oyster::Math::Float4	   GetVelocity_Linear() const;
-			  ::Oyster::Math::Float4	   GetVelocity_Angular() const;
-			  ::Oyster::Math::Float4	   GetLinearMomentum( const ::Oyster::Math::Float4 &atWorldPos ) const;
+		const ::Oyster::Physics3D::MomentOfInertia & GetMomentOfInertia() const;
+			  ::Oyster::Math::Float					 GetMass() const;
+		const ::Oyster::Math::Quaternion &			 GetRotation() const;
+			  ::Oyster::Math::Float4x4				 GetRotationMatrix() const;
+			  ::Oyster::Math::Float4x4				 GetOrientation() const;
+			  ::Oyster::Math::Float4x4				 GetView() const;
+ 			  ::Oyster::Math::Float4x4				 GetToWorldMatrix() const;
+			  ::Oyster::Math::Float4x4				 GetToLocalMatrix() const;
+			  ::Oyster::Math::Float4				 GetSize() const;
+			  ::Oyster::Math::Float4				 GetVelocity_Linear() const;
+			  ::Oyster::Math::Float4				 GetVelocity_Angular() const;
+			  ::Oyster::Math::Float4				 GetLinearMomentum( const ::Oyster::Math::Float4 &atWorldPos ) const;
 
 		// SET METHODS ////////////////////////////////
 
-		void SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &localTensorI );
-		void SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &localTensorI );
+		void SetMomentOfInertia_KeepVelocity( const ::Oyster::Physics3D::MomentOfInertia &localTensorI );
+		void SetMomentOfInertia_KeepMomentum( const ::Oyster::Physics3D::MomentOfInertia &localTensorI );
 		void SetMass_KeepVelocity( const ::Oyster::Math::Float &m );
 		void SetMass_KeepMomentum( const ::Oyster::Math::Float &m );
 
@@ -78,7 +79,8 @@ namespace Oyster { namespace Physics3D
 
 	private:
 		::Oyster::Math::Float mass;						//!< m (kg)
-		::Oyster::Math::Float4x4 momentOfInertiaTensor;	//!< I (Nm*s) Tensor matrix ( only need to be 3x3 matrix, but is 4x4 for future hardware acceleration )	(localValue)
+		//::Oyster::Math::Float4x4 momentOfInertiaTensor;	//!< I (Nm*s) Tensor matrix ( only need to be 3x3 matrix, but is 4x4 for future hardware acceleration )	(localValue)
+		::Oyster::Physics3D::MomentOfInertia momentOfInertiaTensor;
 		::Oyster::Math::Quaternion rotation;			//!< RotationAxis of the body.
 	};
 } }

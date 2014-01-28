@@ -163,12 +163,18 @@ namespace LinearAlgebra
 		Vector4<ScalarType>		 GetRowVector( unsigned int rowID ) const;
 		const Vector4<ScalarType> & GetColumnVector( unsigned int colID ) const;
 	};
+}
 
+template<typename ScalarType> LinearAlgebra::Matrix2x2<ScalarType> operator * ( const ScalarType &left, const LinearAlgebra::Matrix2x2<ScalarType> &right );
+template<typename ScalarType> LinearAlgebra::Matrix3x3<ScalarType> operator * ( const ScalarType &left, const LinearAlgebra::Matrix3x3<ScalarType> &right );
+template<typename ScalarType> LinearAlgebra::Matrix4x4<ScalarType> operator * ( const ScalarType &left, const LinearAlgebra::Matrix4x4<ScalarType> &right );
 
 ///////////////////////////////////////////////////////////////////////////////////
 //	Body
 ///////////////////////////////////////////////////////////////////////////////////
 
+namespace LinearAlgebra
+{
 // Matrix2x2<ScalarType> ///////////////////////////////////////
 
 	template<typename ScalarType>
@@ -751,6 +757,24 @@ namespace LinearAlgebra
 	template<typename ScalarType>
 	inline const Vector4<ScalarType> & Matrix4x4<ScalarType>::GetColumnVector( unsigned int colID ) const
 	{ return this->v[colID]; }
+}
+
+template<typename ScalarType>
+inline LinearAlgebra::Matrix2x2<ScalarType> operator * ( const ScalarType &left, const LinearAlgebra::Matrix2x2<ScalarType> &right )
+{
+	return right * left;
+}
+
+template<typename ScalarType>
+inline LinearAlgebra::Matrix3x3<ScalarType> operator * ( const ScalarType &left, const LinearAlgebra::Matrix3x3<ScalarType> &right )
+{
+	return right * left;
+}
+
+template<typename ScalarType>
+inline LinearAlgebra::Matrix4x4<ScalarType> operator * ( const ScalarType &left, const LinearAlgebra::Matrix4x4<ScalarType> &right )
+{
+	return right * left;
 }
 
 #endif
