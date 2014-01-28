@@ -204,6 +204,19 @@ namespace LinearAlgebra
 		}		
 		return output; // error: returning nullvector
 	}
+
+	/********************************************************************
+	 * Spherical Linear Interpolation on Quaternions
+	 ********************************************************************/
+	template<typename ScalarType>
+	inline Quaternion<ScalarType> Slerp( const Quaternion<ScalarType> &start, const Quaternion<ScalarType> &end,  const ScalarType &t )
+	{
+		ScalarType angle = (ScalarType)::std::acos( Vector4<ScalarType>(start.imaginary, start.real).Dot(Vector4<ScalarType>(end.imaginary, end.real)) );
+		Quaternion<ScalarType> result = start * (ScalarType)::std::sin( angle * (1 - t) );
+		result += end * (ScalarType)::std::sin( angle * t );
+		result *= (ScalarType)1.0f / (ScalarType)::std::sin( angle );
+		return result;
+	}
 }
 
 namespace LinearAlgebra2D
@@ -312,23 +325,24 @@ namespace LinearAlgebra2D
 
 namespace LinearAlgebra3D
 {
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
-	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
-	}
+	// All Matrix to AngularAxis conversions here is incorrect
+	//template<typename ScalarType>
+	//inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
+	//{
+	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
+	//}
 
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotationMatrix )
-	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
-	}
+	//template<typename ScalarType>
+	//inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotationMatrix )
+	//{
+	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
+	//}
 
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
-	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
-	}
+	//template<typename ScalarType>
+	//inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
+	//{
+	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
+	//}
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
@@ -756,6 +770,28 @@ namespace LinearAlgebra3D
 			return rotation; // return no change
 		return SnapAxisYToNormal_UsingNlerp( rotation, interpolated );
 	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingNonRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		targetMem.v[0] = ::LinearAlgebra::Nlerp( start.v[0], end.v[0], t );
+		targetMem.v[1] = ::LinearAlgebra::Nlerp( start.v[1], end.v[1], t );
+		targetMem.v[2] = ::LinearAlgebra::Nlerp( start.v[2], end.v[2], t );
+		targetMem.v[3] = ::LinearAlgebra::Lerp( start.v[3], end.v[3], t );
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingNonRigidNlerp( const ::LinearAlgebra::Quaternion<ScalarType> &startR, const ::LinearAlgebra::Vector3<ScalarType> &startT, const ::LinearAlgebra::Quaternion<ScalarType> &endR, const ::LinearAlgebra::Vector3<ScalarType> &endT, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		return InterpolateOrientation_UsingNonRigidNlerp( OrientationMatrix(startR, startT), OrientationMatrix(endR, endT), t, targetMem );
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingSlerp( const ::LinearAlgebra::Quaternion<ScalarType> &startR, const ::LinearAlgebra::Vector3<ScalarType> &startT, const ::LinearAlgebra::Quaternion<ScalarType> &endR, const ::LinearAlgebra::Vector3<ScalarType> &endT, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		return OrientationMatrix( ::LinearAlgebra::Slerp(startR, endR, t), ::LinearAlgebra::Lerp(::LinearAlgebra::Vector4<ScalarType>(startT, (ScalarType)1.0f), ::LinearAlgebra::Vector4<ScalarType>(endT, (ScalarType)1.0f), t).xyz, targetMem );
+	}	
 }
 
 #include "Utilities.h"

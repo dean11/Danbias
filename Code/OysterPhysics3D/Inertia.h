@@ -19,11 +19,11 @@ namespace Oyster { namespace Physics3D
 
 		MomentOfInertia & operator = ( const MomentOfInertia &i );
 
-		::Oyster::Math::Float4   CalculateAngularVelocity( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float4 &angularMomentum ) const;
-		::Oyster::Math::Float4 & CalculateAngularVelocity( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float4 &angularMomentum, ::Oyster::Math::Float4 &targetMem ) const;
+		::Oyster::Math::Float3   CalculateAngularVelocity( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float3 &angularMomentum ) const;
+		::Oyster::Math::Float3 & CalculateAngularVelocity( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float3 &angularMomentum, ::Oyster::Math::Float3 &targetMem ) const;
 
-		::Oyster::Math::Float4   CalculateAngularMomentum( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float4 &angularVelocity ) const;
-		::Oyster::Math::Float4 & CalculateAngularMomentum( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float4 &angularVelocity, ::Oyster::Math::Float4 &targetMem ) const;
+		::Oyster::Math::Float3   CalculateAngularMomentum( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float3 &angularVelocity ) const;
+		::Oyster::Math::Float3 & CalculateAngularMomentum( const ::Oyster::Math::Quaternion &externR, const ::Oyster::Math::Float3 &angularVelocity, ::Oyster::Math::Float3 &targetMem ) const;
 
 		static ::Oyster::Math::Float CalculateSphere( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius );
 		static ::Oyster::Math::Float CalculateHollowSphere( const ::Oyster::Math::Float mass, const ::Oyster::Math::Float radius );

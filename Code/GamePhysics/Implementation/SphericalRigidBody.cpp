@@ -24,7 +24,7 @@ SphericalRigidBody::SphericalRigidBody()
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
 {
 	this->rigid = RigidBody();
-	this->rigid.SetRotation( desc.rotation );
+	//this->rigid.SetRotation( desc.rotation );
 	this->rigid.centerPos = desc.centerPosition;
 	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
@@ -108,8 +108,8 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 
 	if( state.IsForwarded() )
 	{
-		this->deltaPos += state.GetForward_DeltaPos();
-		this->deltaAxis += state.GetForward_DeltaAxis();
+		this->deltaPos += Float4(state.GetForward_DeltaPos(), 0);
+		this->deltaAxis += Float4(state.GetForward_DeltaAxis());
 		this->isForwarded = false;
 	}
 
@@ -171,7 +171,7 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	targetMem = worldPos - this->rigid.centerPos;
+	targetMem = worldPos.xyz - this->rigid.centerPos;
 	Float magnitude = targetMem.GetMagnitude();
 	if( magnitude != 0.0f )
 	{ // sanity check
@@ -220,7 +220,7 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 {
 	if( this->isForwarded )
 	{
-		this->rigid.Move( this->deltaPos, this->deltaAxis );
+		this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
 		this->deltaPos = Float4::null;
 		this->deltaAxis = Float4::null;
 		this->isForwarded = false;
@@ -235,7 +235,7 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 
 void SphericalRigidBody::Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime )
 {
-	this->rigid.Predict_LeapFrog( outDeltaPos, outDeltaAxis, actingLinearImpulse, actingAngularImpulse, deltaTime );
+	this->rigid.Predict_LeapFrog( outDeltaPos.xyz, outDeltaAxis.xyz, actingLinearImpulse.xyz, actingAngularImpulse.xyz, deltaTime );
 }
 
 void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )

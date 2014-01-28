@@ -139,9 +139,11 @@ namespace Oyster
 			/********************************************************
 			 * Applies an effect to objects that collide with the set volume.
 			 * @param collideable: An ICollideable that defines the volume of the effect.
-			 * @param hitAction: A function that contains the effect.
+			 * @param args: The arguments needed for the hitAction function.
+			 * @param hitAction: A function that contains the effect. Parameterlist contains the custom body 
+								 the collideable hits, and the arguments sent to the function.
 			 ********************************************************/
-			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) ) = 0;
+			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) ) = 0;
 
 			///********************************************************
 			// * Apply force on an object.

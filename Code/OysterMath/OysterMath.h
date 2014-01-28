@@ -57,6 +57,11 @@ namespace Oyster { namespace Math //! Oyster's native math library
 	 * @return nullvector if Lerp( start, end, t ) is nullvector.
 	 ********************************************************************/
 	using ::LinearAlgebra::Nlerp;
+
+	/********************************************************************
+	 * Spherical Linear Interpolation on Quaternions
+	 ********************************************************************/
+	using ::LinearAlgebra::Slerp;
 } }
 
 inline ::Oyster::Math::Float2 & operator *= ( ::Oyster::Math::Float2 &left, const ::Oyster::Math::Float2 &right )
@@ -136,13 +141,13 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 	using namespace ::Oyster::Math; // deliberate inheritance from ::Oyster::Math namespace
 
 	//! Extracts the angularAxis from rotationMatrix
-	Float4 AngularAxis( const Float3x3 &rotationMatrix );
+	//Float4 AngularAxis( const Float3x3 &rotationMatrix );
 
-	//! Extracts the angularAxis from rotationMatrix
-	Float4 AngularAxis( const Float4x4 &rotationMatrix );
+	////! Extracts the angularAxis from rotationMatrix
+	//Float4 AngularAxis( const Float4x4 &rotationMatrix );
 
-	//! Extracts the angularAxis from orientationMatrix
-	Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
+	////! Extracts the angularAxis from orientationMatrix
+	//Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
 
 	//! Sets and returns targetMem to a translationMatrix with position as translation. 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
@@ -317,6 +322,8 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 
 	using ::LinearAlgebra3D::SnapAxisYToNormal_UsingNlerp;
 	using ::LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp;
+	using ::LinearAlgebra3D::InterpolateOrientation_UsingNonRigidNlerp;
+	using ::LinearAlgebra3D::InterpolateOrientation_UsingSlerp;
 } }
 
 #endif

@@ -35,7 +35,7 @@ namespace Oyster
 			void AddGravity( const API::Gravity &g );
 			void RemoveGravity( const API::Gravity &g );
 
-			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) );
+			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) );
 
 			//void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
 
