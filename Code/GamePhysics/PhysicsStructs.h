@@ -12,8 +12,8 @@ namespace Oyster { namespace Physics
 		struct SimpleBodyDescription
 		{
 			::Oyster::Math::Float4x4 rotation;
-			::Oyster::Math::Float4 centerPosition;
-			::Oyster::Math::Float4 size;
+			::Oyster::Math::Float3 centerPosition;
+			::Oyster::Math::Float3 size;
 			::Oyster::Math::Float mass;
 			::Oyster::Math::Float restitutionCoeff;
 			::Oyster::Math::Float frictionCoeff_Static;
@@ -30,7 +30,7 @@ namespace Oyster { namespace Physics
 		struct SphericalBodyDescription
 		{
 			::Oyster::Math::Float4x4 rotation;
-			::Oyster::Math::Float4 centerPosition;
+			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;
 			::Oyster::Math::Float restitutionCoeff;
@@ -52,12 +52,12 @@ namespace Oyster { namespace Physics
 							 ::Oyster::Math::Float staticFrictionCoeff		= 1.0f,
 							 ::Oyster::Math::Float kineticFrictionCoeff		= 1.0f,
 							 const ::Oyster::Physics3D::MomentOfInertia &inertiaTensor = ::Oyster::Physics3D::MomentOfInertia(),
-							 const ::Oyster::Math::Float4 &reach			= ::Oyster::Math::Float4::null,
-							 const ::Oyster::Math::Float4 &centerPos		= ::Oyster::Math::Float4::standard_unit_w,
-							 const ::Oyster::Math::Float4 &rotation			= ::Oyster::Math::Float4::null,
-							 const ::Oyster::Math::Float4 &linearMomentum	= ::Oyster::Math::Float4::null,
-							 const ::Oyster::Math::Float4 &angularMomentum	= ::Oyster::Math::Float4::null, 
-							 const ::Oyster::Math::Float4 &gravityNormal	= ::Oyster::Math::Float4::null);
+							 const ::Oyster::Math::Float3 &reach			= ::Oyster::Math::Float3::null,
+							 const ::Oyster::Math::Float3 &centerPos		= ::Oyster::Math::Float3::null,
+							 const ::Oyster::Math::Float3 &rotation			= ::Oyster::Math::Float3::null,
+							 const ::Oyster::Math::Float3 &linearMomentum	= ::Oyster::Math::Float3::null,
+							 const ::Oyster::Math::Float3 &angularMomentum	= ::Oyster::Math::Float3::null, 
+							 const ::Oyster::Math::Float3 &gravityNormal	= ::Oyster::Math::Float3::null);
 
 			CustomBodyState & operator = ( const CustomBodyState &state );
 
@@ -66,23 +66,23 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float		 GetFrictionCoeff_Static() const;
 			const ::Oyster::Math::Float		 GetFrictionCoeff_Kinetic() const;
 			const ::Oyster::Physics3D::MomentOfInertia & GetMomentOfInertia() const;
-			const ::Oyster::Math::Float4 &	 GetReach() const;
-				  ::Oyster::Math::Float4	 GetSize() const;
-			const ::Oyster::Math::Float4 &	 GetCenterPosition() const;
-			const ::Oyster::Math::Float4 &	 GetAngularAxis() const;
+			const ::Oyster::Math::Float3 &	 GetReach() const;
+				  ::Oyster::Math::Float3	 GetSize() const;
+			const ::Oyster::Math::Float3 &	 GetCenterPosition() const;
+			const ::Oyster::Math::Float3 &	 GetAngularAxis() const;
 				  ::Oyster::Math::Float4x4	 GetRotation() const;
 				  ::Oyster::Math::Float4x4	 GetOrientation() const;
-				  ::Oyster::Math::Float4x4	 GetOrientation( const ::Oyster::Math::Float4 &offset ) const;
+				  ::Oyster::Math::Float4x4	 GetOrientation( const ::Oyster::Math::Float3 &offset ) const;
 				  ::Oyster::Math::Float4x4	 GetView() const;
-				  ::Oyster::Math::Float4x4	 GetView( const ::Oyster::Math::Float4 &offset ) const;
-			const ::Oyster::Math::Float4 &	 GetLinearMomentum() const;
-				  ::Oyster::Math::Float4	 GetLinearMomentum( const ::Oyster::Math::Float4 &at ) const;
-			const ::Oyster::Math::Float4 &	 GetAngularMomentum() const;
-			const ::Oyster::Math::Float4 &	 GetLinearImpulse() const;
-			const ::Oyster::Math::Float4 &	 GetAngularImpulse() const;
-			const ::Oyster::Math::Float4 &	 GetForward_DeltaPos() const;
-			const ::Oyster::Math::Float4 &	 GetForward_DeltaAxis() const;
-			const ::Oyster::Math::Float4 &	 GetGravityNormal() const;
+				  ::Oyster::Math::Float4x4	 GetView( const ::Oyster::Math::Float3 &offset ) const;
+			const ::Oyster::Math::Float3 &	 GetLinearMomentum() const;
+				  ::Oyster::Math::Float3	 GetLinearMomentum( const ::Oyster::Math::Float3 &at ) const;
+			const ::Oyster::Math::Float3 &	 GetAngularMomentum() const;
+			const ::Oyster::Math::Float3 &	 GetLinearImpulse() const;
+			const ::Oyster::Math::Float3 &	 GetAngularImpulse() const;
+			const ::Oyster::Math::Float3 &	 GetForward_DeltaPos() const;
+			const ::Oyster::Math::Float3 &	 GetForward_DeltaAxis() const;
+			const ::Oyster::Math::Float3 &	 GetGravityNormal() const;
 			
 			void SetMass_KeepMomentum( ::Oyster::Math::Float m );
 			void SetMass_KeepVelocity( ::Oyster::Math::Float m );
@@ -90,26 +90,26 @@ namespace Oyster { namespace Physics
 			void SetFrictionCoeff( ::Oyster::Math::Float staticU, ::Oyster::Math::Float kineticU );
 			void SetMomentOfInertia_KeepMomentum( const ::Oyster::Physics3D::MomentOfInertia &tensor );
 			void SetMomentOfInertia_KeepVelocity( const ::Oyster::Physics3D::MomentOfInertia &tensor );
-			void SetSize( const ::Oyster::Math::Float4 &size );
-			void SetReach( const ::Oyster::Math::Float4 &halfSize );
-			void SetCenterPosition( const ::Oyster::Math::Float4 &centerPos );
-			void SetRotation( const ::Oyster::Math::Float4 &angularAxis );
+			void SetSize( const ::Oyster::Math::Float3 &size );
+			void SetReach( const ::Oyster::Math::Float3 &halfSize );
+			void SetCenterPosition( const ::Oyster::Math::Float3 &centerPos );
+			void SetRotation( const ::Oyster::Math::Float3 &angularAxis );
 			//void SetRotation( const ::Oyster::Math::Float4x4 &rotation );
 			//void SetOrientation( const ::Oyster::Math::Float4x4 &orientation );
 			void SetOrientation( const ::Oyster::Math::Float3 &angularAxis, const ::Oyster::Math::Float3 &translation );
-			void SetLinearMomentum( const ::Oyster::Math::Float4 &g );
-			void SetAngularMomentum( const ::Oyster::Math::Float4 &h );
-			void SetLinearImpulse( const ::Oyster::Math::Float4 &j );
-			void SetAngularImpulse( const ::Oyster::Math::Float4 &j );
-			void SetGravityNormal( const ::Oyster::Math::Float4 &gravityNormal );
+			void SetLinearMomentum( const ::Oyster::Math::Float3 &g );
+			void SetAngularMomentum( const ::Oyster::Math::Float3 &h );
+			void SetLinearImpulse( const ::Oyster::Math::Float3 &j );
+			void SetAngularImpulse( const ::Oyster::Math::Float3 &j );
+			void SetGravityNormal( const ::Oyster::Math::Float3 &gravityNormal );
 
-			void AddRotation( const ::Oyster::Math::Float4 &angularAxis );
-			void AddTranslation( const ::Oyster::Math::Float4 &deltaPos );
+			void AddRotation( const ::Oyster::Math::Float3 &angularAxis );
+			void AddTranslation( const ::Oyster::Math::Float3 &deltaPos );
 
-			void ApplyLinearImpulse( const ::Oyster::Math::Float4 &j );
-			void ApplyAngularImpulse( const ::Oyster::Math::Float4 &j );
-			void ApplyImpulse( const ::Oyster::Math::Float4 &j, const ::Oyster::Math::Float4 &at, const ::Oyster::Math::Float4 &normal );
-			void ApplyForwarding( const ::Oyster::Math::Float4 &deltaPos, const ::Oyster::Math::Float4 &deltaAxis );
+			void ApplyLinearImpulse( const ::Oyster::Math::Float3 &j );
+			void ApplyAngularImpulse( const ::Oyster::Math::Float3 &j );
+			void ApplyImpulse( const ::Oyster::Math::Float3 &j, const ::Oyster::Math::Float3 &at, const ::Oyster::Math::Float3 &normal );
+			void ApplyForwarding( const ::Oyster::Math::Float3 &deltaPos, const ::Oyster::Math::Float3 &deltaAxis );
 
 			bool IsSpatiallyAltered() const;
 			bool IsDisturbed() const;
@@ -118,11 +118,11 @@ namespace Oyster { namespace Physics
 		private:
 			::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, kineticFrictionCoeff;
 			::Oyster::Physics3D::MomentOfInertia inertiaTensor;
-			::Oyster::Math::Float4 reach, centerPos, angularAxis;
-			::Oyster::Math::Float4 linearMomentum, angularMomentum;
-			::Oyster::Math::Float4 linearImpulse, angularImpulse;
-			::Oyster::Math::Float4 deltaPos, deltaAxis; // Forwarding data sum
-			::Oyster::Math::Float4 gravityNormal;
+			::Oyster::Math::Float3 reach, centerPos, angularAxis;
+			::Oyster::Math::Float3 linearMomentum, angularMomentum;
+			::Oyster::Math::Float3 linearImpulse, angularImpulse;
+			::Oyster::Math::Float3 deltaPos, deltaAxis; // Forwarding data sum
+			::Oyster::Math::Float3 gravityNormal;
 
 			bool isSpatiallyAltered, isDisturbed, isForwarded;
 		};

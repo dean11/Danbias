@@ -56,7 +56,7 @@ SimpleRigidBody::SimpleRigidBody()
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {
-	this->rigid.SetRotation( desc.rotation );
+	//this->rigid.SetRotation( desc.rotation );
 	this->rigid.centerPos = desc.centerPosition;
 	this->rigid.SetSize( desc.size );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
@@ -143,8 +143,8 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 
 	if( state.IsForwarded() )
 	{
-		this->deltaPos += state.GetForward_DeltaPos();
-		this->deltaAxis += state.GetForward_DeltaAxis();
+		this->deltaPos += Float4(state.GetForward_DeltaPos(), 0);
+		this->deltaAxis += Float4(state.GetForward_DeltaAxis(), 0);
 		this->isForwarded;
 	}
 
@@ -205,7 +205,7 @@ Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	Float4 offset = worldPos - this->rigid.centerPos;
+	Float4 offset = worldPos.xyz - this->rigid.centerPos;
 	Float distance = offset.Dot( offset );
 	Float3 normal = Float3::null;
 
@@ -295,7 +295,7 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
 	if( this->isForwarded )
 	{
-		this->rigid.Move( this->deltaPos, this->deltaAxis );
+		this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
 		this->deltaPos = Float4::null;
 		this->deltaAxis = Float4::null;
 		this->isForwarded = false;
@@ -310,7 +310,7 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 
 void SimpleRigidBody::Predict( Float4 &outDeltaPos, Float4 &outDeltaAxis, const Float4 &actingLinearImpulse, const Float4 &actingAngularImpulse, Float deltaTime )
 {
-	this->rigid.Predict_LeapFrog( outDeltaPos, outDeltaAxis, actingLinearImpulse, actingAngularImpulse, deltaTime );
+	this->rigid.Predict_LeapFrog( outDeltaPos.xyz, outDeltaAxis.xyz, actingLinearImpulse.xyz, actingAngularImpulse.xyz, deltaTime );
 }
 
 void SimpleRigidBody::SetScene( void *scene )
