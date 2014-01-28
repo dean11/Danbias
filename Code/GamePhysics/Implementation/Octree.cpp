@@ -128,13 +128,13 @@ void Octree::Visit(ICustomBody* customBodyRef, VisitorAction hitAction )
 	}
 }
 
-void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, VisitorActionCollideable hitAction)
+void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, void* args, VisitorActionCollideable hitAction)
 {
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
 		if(collideable.Intersects(this->leafData[i].container))
 		{
-			hitAction( this->GetCustomBody(i) );
+			hitAction( this->GetCustomBody(i), args );
 		}
 	}
 }

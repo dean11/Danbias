@@ -23,7 +23,7 @@ RigidBody::RigidBody( )
 	this->frictionCoeff_Static = 0.5f;
 	this->frictionCoeff_Kinetic = 1.0f;
 	this->mass = 10;
-	this->momentOfInertiaTensor = Float4x4::identity;
+	this->momentOfInertiaTensor = MomentOfInertia();
 	this->rotation = Quaternion::identity;
 }
 
@@ -51,17 +51,18 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	// updating the linear
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
 	this->centerPos += ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
-
+	
 	// updating the angular
-	Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
+	//Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
 	// Important! The member data is all world data except the Inertia tensor. Thus a new InertiaTensor needs to be created to be compatible with the rest of the world data.
-	Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
+	//Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
 
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
 	
 	//! HACK: @todo Rotation temporary disabled
 	//this->axis += Radian( Formula::AngularVelocity(wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular)) );
-	//this->rotation = Rotation( this->axis );
+	this->axis += this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
+	this->rotation = Rotation( this->axis );
 
 	// update momentums and clear impulse_Linear and impulse_Angular
 	this->momentum_Linear += this->impulse_Linear;
@@ -71,31 +72,32 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	this->impulse_Angular = Float4::null;
 }
 
-void RigidBody::Predict_LeapFrog( Float4 &outDeltaPos, Float4 &outDeltaAxis, const Float4 &actingLinearImpulse, const Float4 &actingAngularImpulse, Float deltaTime )
+void RigidBody::Predict_LeapFrog( Float3 &outDeltaPos, Float3 &outDeltaAxis, const Float3 &actingLinearImpulse, const Float3 &actingAngularImpulse, Float deltaTime )
 {
 	// updating the linear
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
 	outDeltaPos = ( deltaTime / this->mass ) * AverageWithDelta( this->momentum_Linear, actingLinearImpulse );
 
 	// updating the angular
-	Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
-	Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
+	//Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
+	//Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
 
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
-	outDeltaAxis = Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, actingAngularImpulse) );
+	//outDeltaAxis = Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, actingAngularImpulse) );
+	outDeltaAxis = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
 }
 
-void RigidBody::Move( const Float4 &deltaPos, const Float4 &deltaAxis )
+void RigidBody::Move( const Float3 &deltaPos, const Float3 &deltaAxis )
 {
 	this->centerPos += deltaPos;
 	this->axis += deltaAxis;
 	this->rotation = Rotation( this->axis );
 }
 
-void RigidBody::ApplyImpulse( const Float4 &worldJ, const Float4 &atWorldPos )
+void RigidBody::ApplyImpulse( const Float3 &worldJ, const Float3 &atWorldPos )
 { // by Dan Andersson
-	Float4 worldOffset = atWorldPos - this->centerPos;
-	if( worldOffset != Float4::null )
+	Float3 worldOffset = atWorldPos - this->centerPos;
+	if( worldOffset != Float3::null )
 	{
 		this->impulse_Linear += VectorProjection( worldJ, atWorldPos );
 		this->impulse_Angular += Formula::ImpulseTorque( worldJ, atWorldPos );
@@ -106,7 +108,7 @@ void RigidBody::ApplyImpulse( const Float4 &worldJ, const Float4 &atWorldPos )
 	}
 }
 
-const Float4x4 & RigidBody::GetMomentOfInertia() const
+const MomentOfInertia & RigidBody::GetMomentOfInertia() const
 { // by Dan Andersson
 	return this->momentOfInertiaTensor;
 }
@@ -116,7 +118,7 @@ Float RigidBody::GetMass() const
 	return this->mass;
 }
 
-const Quaternion & RigidBody::GetRotation() const
+const Quaternion & RigidBody::GetRotationQuaternion() const
 { // by Dan Andersson
 	return this->rotation;
 }
@@ -136,46 +138,38 @@ Float4x4 RigidBody::GetView() const
 	return ViewMatrix( this->rotation, this->centerPos );
 }
 
-Float4 RigidBody::GetVelocity_Linear() const
+Float3 RigidBody::GetVelocity_Linear() const
 { // by Dan Andersson
 	return Formula::LinearVelocity( this->mass, this->momentum_Linear );
 }
 
-Float4 RigidBody::GetVelocity_Angular() const
+Float3 RigidBody::GetVelocity_Angular() const
 { // by Dan Andersson
-	return Formula::AngularVelocity( this->momentOfInertiaTensor.GetInverse(), this->momentum_Angular );
+	return this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
 }
 
-Float4 RigidBody::GetLinearMomentum( const Float4 &atWorldPos ) const
+Float3 RigidBody::GetLinearMomentum( const Float3 &atWorldPos ) const
 { // by Dan Andersson
 	return this->momentum_Linear + Formula::TangentialLinearMomentum( this->momentum_Angular, atWorldPos - this->centerPos );
 }
 
-void RigidBody::SetMomentOfInertia_KeepVelocity( const Float4x4 &localTensorI )
+void RigidBody::SetMomentOfInertia_KeepVelocity( const MomentOfInertia &localTensorI )
 { // by Dan Andersson
-	if( localTensorI.GetDeterminant() != 0.0f )
-	{ // insanity check! MomentOfInertiaTensor must be invertable
-		Float4x4 rotationMatrix; RotationMatrix( this->rotation, rotationMatrix );
-
-		Float4 w = Formula::AngularVelocity( (rotationMatrix * this->momentOfInertiaTensor).GetInverse(), this->momentum_Angular );
-		this->momentOfInertiaTensor = localTensorI;
-		this->momentum_Angular = Formula::AngularMomentum( rotationMatrix * localTensorI, w );
-	}
+	Float3 w = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
+	this->momentOfInertiaTensor = localTensorI;
+	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, w );
 }
 
-void RigidBody::SetMomentOfInertia_KeepMomentum( const Float4x4 &localTensorI )
+void RigidBody::SetMomentOfInertia_KeepMomentum( const MomentOfInertia &localTensorI )
 { // by Dan Andersson
-	if( localTensorI.GetDeterminant() != 0.0f )
-	{ // insanity check! MomentOfInertiaTensor must be invertable
-		this->momentOfInertiaTensor = localTensorI;
-	}
+	this->momentOfInertiaTensor = localTensorI;
 }
 
 void RigidBody::SetMass_KeepVelocity( const Float &m )
 { // by Dan Andersson
 	if( m != 0.0f )
 	{ // insanity check! Mass must be invertable
-		Float4 v = Formula::LinearVelocity( this->mass, this->momentum_Linear );
+		Float3 v = Formula::LinearVelocity( this->mass, this->momentum_Linear );
 		this->mass = m;
 		this->momentum_Linear = Formula::LinearMomentum( this->mass, v );
 	}
@@ -189,46 +183,46 @@ void RigidBody::SetMass_KeepMomentum( const Float &m )
 	}
 }
 
-void RigidBody::SetOrientation( const Float4x4 &o )
-{ // by Dan Andersson
-	this->axis = ExtractAngularAxis( o );
-	this->rotation = Rotation( this->axis );
-	this->centerPos = o.v[3].xyz;
-}
+//void RigidBody::SetOrientation( const Float4x4 &o )
+//{ // by Dan Andersson
+//	this->axis = ExtractAngularAxis( o );
+//	this->rotation = Rotation( this->axis );
+//	this->centerPos = o.v[3].xyz;
+//}
+//
+//void RigidBody::SetRotation( const Float4x4 &r )
+//{ // by Dan Andersson
+//	this->axis = ExtractAngularAxis( r );
+//	this->rotation = Rotation( this->axis );
+//}
 
-void RigidBody::SetRotation( const Float4x4 &r )
+void RigidBody::SetMomentum_Linear( const Float3 &worldG, const Float3 &atWorldPos )
 { // by Dan Andersson
-	this->axis = ExtractAngularAxis( r );
-	this->rotation = Rotation( this->axis );
-}
-
-void RigidBody::SetMomentum_Linear( const Float4 &worldG, const Float4 &atWorldPos )
-{ // by Dan Andersson
-	Float4 worldOffset = atWorldPos - this->centerPos;
+	Float3 worldOffset = atWorldPos - this->centerPos;
 	this->momentum_Linear = VectorProjection( worldG, worldOffset );
 	this->momentum_Angular = Formula::AngularMomentum( worldG, worldOffset );
 }
 
-void RigidBody::SetVelocity_Linear( const Float4 &worldV )
+void RigidBody::SetVelocity_Linear( const Float3 &worldV )
 { // by Dan Andersson
 	this->momentum_Linear = Formula::LinearMomentum( this->mass, worldV );
 }
 
-void RigidBody::SetVelocity_Linear( const Float4 &worldV, const Float4 &atWorldPos )
+void RigidBody::SetVelocity_Linear( const Float3 &worldV, const Float3 &atWorldPos )
 { // by Dan Andersson
-	Float4 worldOffset = atWorldPos - this->centerPos;
-	this->momentum_Linear = Formula::LinearMomentum( this->mass, VectorProjection(worldV, worldOffset) );
-	this->momentum_Angular = Formula::AngularMomentum( RotationMatrix(this->rotation) * this->momentOfInertiaTensor, Formula::AngularVelocity(worldV, worldOffset) );
+	Float3 worldOffset = atWorldPos - this->centerPos;
+	this->momentum_Linear  = Formula::LinearMomentum( this->mass, VectorProjection(worldV, worldOffset) );
+	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularMomentum( this->rotation, Formula::AngularVelocity(worldV, worldOffset) );
 }
 
-void RigidBody::SetVelocity_Angular( const Float4 &worldW )
+void RigidBody::SetVelocity_Angular( const Float3 &worldW )
 { // by Dan Andersson
-	this->momentum_Angular = Formula::AngularMomentum( this->momentOfInertiaTensor, worldW );
+	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularMomentum( this->rotation, worldW );
 }
 
-void RigidBody::SetImpulse_Linear( const Float4 &worldJ, const Float4 &atWorldPos )
+void RigidBody::SetImpulse_Linear( const Float3 &worldJ, const Float3 &atWorldPos )
 { // by Dan Andersson
-	Float4 worldOffset = atWorldPos - this->centerPos;
+	Float3 worldOffset = atWorldPos - this->centerPos;
 	this->impulse_Linear = VectorProjection( worldJ, worldOffset );
 	this->impulse_Angular = Formula::ImpulseTorque( worldJ, worldOffset );
 }

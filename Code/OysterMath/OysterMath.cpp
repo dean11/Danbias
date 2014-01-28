@@ -81,20 +81,20 @@ namespace Oyster { namespace Math2D
 
 namespace Oyster { namespace Math3D
 {
-	Float4 AngularAxis( const Float3x3 &rotationMatrix )
-	{
-		return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
-	}
+	//Float4 AngularAxis( const Float3x3 &rotationMatrix )
+	//{
+	//	return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
+	//}
 
-	Float4 AngularAxis( const Float4x4 &rotationMatrix )
-	{
-		return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
-	}
+	//Float4 AngularAxis( const Float4x4 &rotationMatrix )
+	//{
+	//	return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
+	//}
 
-	Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix )
-	{
-		return ::LinearAlgebra3D::ExtractAngularAxis( orientationMatrix );
-	}
+	//Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix )
+	//{
+	//	return ::LinearAlgebra3D::ExtractAngularAxis( orientationMatrix );
+	//}
 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem )
 	{

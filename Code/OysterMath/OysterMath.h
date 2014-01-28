@@ -57,58 +57,37 @@ namespace Oyster { namespace Math //! Oyster's native math library
 	 * @return nullvector if Lerp( start, end, t ) is nullvector.
 	 ********************************************************************/
 	using ::LinearAlgebra::Nlerp;
+
+	/********************************************************************
+	 * Spherical Linear Interpolation on Quaternions
+	 ********************************************************************/
+	using ::LinearAlgebra::Slerp;
 } }
 
 inline ::Oyster::Math::Float2 & operator *= ( ::Oyster::Math::Float2 &left, const ::Oyster::Math::Float2 &right )
 {
-	left.x *= right.x;
-	left.y *= right.y;
-	return left;
+	return left.PiecewiseMultiplicationAdd( right );
 }
 
 inline ::Oyster::Math::Float2 operator * ( const ::Oyster::Math::Float2 &left, const ::Oyster::Math::Float2 &right )
-{ return ::Oyster::Math::Float2(left) *= right; }
-
-inline ::Oyster::Math::Float2 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float2 &right )
-{ return ::Oyster::Math::Float2(right) *= left; }
+{
+	return left.PiecewiseMultiplication( right );
+}
 
 inline ::Oyster::Math::Float3 & operator *= ( ::Oyster::Math::Float3 &left, const ::Oyster::Math::Float3 &right )
 {
-	left.x *= right.x;
-	left.y *= right.y;
-	left.z *= right.z;
-	return left;
+	return left.PiecewiseMultiplicationAdd( right );
 }
 
 inline ::Oyster::Math::Float3 operator * ( const ::Oyster::Math::Float3 &left, const ::Oyster::Math::Float3 &right )
-{ return ::Oyster::Math::Float3(left) *= right; }
-
-inline ::Oyster::Math::Float3 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float3 &right )
-{ return ::Oyster::Math::Float3(right) *= left; }
+{
+	return left.PiecewiseMultiplication( right );
+}
 
 inline ::Oyster::Math::Float4 & operator *= ( ::Oyster::Math::Float4 &left, const ::Oyster::Math::Float4 &right )
 {
-	left.x *= right.x;
-	left.y *= right.y;
-	left.z *= right.z;
-	left.w *= right.w;
-	return left;
+	return left.PiecewiseMultiplicationAdd( right );
 }
-
-inline ::Oyster::Math::Float4 operator * ( const ::Oyster::Math::Float4 &left, const ::Oyster::Math::Float4 &right )
-{ return ::Oyster::Math::Float4(left) *= right; }
-
-inline ::Oyster::Math::Float4 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float4 &right )
-{ return ::Oyster::Math::Float4(right) *= left; }
-
-inline ::Oyster::Math::Float2x2 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float2x2 &right )
-{ return ::Oyster::Math::Float2x2(right) *= left; }
-
-inline ::Oyster::Math::Float3x3 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float3x3 &right )
-{ return ::Oyster::Math::Float3x3(right) *= left; }
-
-inline ::Oyster::Math::Float4x4 operator * ( const ::Oyster::Math::Float &left, const ::Oyster::Math::Float4x4 &right )
-{ return ::Oyster::Math::Float4x4(right) *= left; }
 
 namespace Oyster { namespace Math2D //! Oyster's native math library specialized for 2D
 {
@@ -162,13 +141,13 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 	using namespace ::Oyster::Math; // deliberate inheritance from ::Oyster::Math namespace
 
 	//! Extracts the angularAxis from rotationMatrix
-	Float4 AngularAxis( const Float3x3 &rotationMatrix );
+	//Float4 AngularAxis( const Float3x3 &rotationMatrix );
 
-	//! Extracts the angularAxis from rotationMatrix
-	Float4 AngularAxis( const Float4x4 &rotationMatrix );
+	////! Extracts the angularAxis from rotationMatrix
+	//Float4 AngularAxis( const Float4x4 &rotationMatrix );
 
-	//! Extracts the angularAxis from orientationMatrix
-	Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
+	////! Extracts the angularAxis from orientationMatrix
+	//Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
 
 	//! Sets and returns targetMem to a translationMatrix with position as translation. 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
@@ -343,6 +322,8 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 
 	using ::LinearAlgebra3D::SnapAxisYToNormal_UsingNlerp;
 	using ::LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp;
+	using ::LinearAlgebra3D::InterpolateOrientation_UsingNonRigidNlerp;
+	using ::LinearAlgebra3D::InterpolateOrientation_UsingSlerp;
 } }
 
 #endif
