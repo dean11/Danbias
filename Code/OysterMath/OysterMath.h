@@ -167,13 +167,13 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 	using namespace ::Oyster::Math; // deliberate inheritance from ::Oyster::Math namespace
 
 	//! Extracts the angularAxis from rotationMatrix
-	Float4 AngularAxis( const Float3x3 &rotationMatrix );
+	//Float4 AngularAxis( const Float3x3 &rotationMatrix );
 
-	//! Extracts the angularAxis from rotationMatrix
-	Float4 AngularAxis( const Float4x4 &rotationMatrix );
+	////! Extracts the angularAxis from rotationMatrix
+	//Float4 AngularAxis( const Float4x4 &rotationMatrix );
 
-	//! Extracts the angularAxis from orientationMatrix
-	Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
+	////! Extracts the angularAxis from orientationMatrix
+	//Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
 
 	//! Sets and returns targetMem to a translationMatrix with position as translation. 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
