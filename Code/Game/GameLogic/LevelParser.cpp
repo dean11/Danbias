@@ -6,9 +6,10 @@
 using namespace GameLogic;
 using namespace ::LevelFileLoader;
 
-
 LevelParser::LevelParser()
 {
+	formatVersion.formatVersionMajor = 1;
+	formatVersion.formatVersionMinor = 0;
 }
 
 LevelParser::~LevelParser()
@@ -18,35 +19,43 @@ LevelParser::~LevelParser()
 //
 std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 {
-	int stringSize = 0;
-	//Read entire level file.
-	Loader loader;
-	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str(), stringSize);
+	int bufferSize = 0;
+	unsigned int counter = 0;
 
 	std::vector<ObjectTypeHeader> objects;
 
-	unsigned int counter = 0;
-	
-	while(counter < stringSize)
+	//Read entire level file.
+	Loader loader;
+	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str(), bufferSize);
+
+	//Read format version
+	FormatVersion levelFormatVersion;
+	ParseObject(&buffer[counter], formatVersion, sizeof(formatVersion));
+	if(this->formatVersion != levelFormatVersion)
+	{
+		//Do something if it's not the same version
+	}
+
+	while(counter < bufferSize)
 	{
 		//Get typeID
 		ObjectTypeHeader typeID;
-		typeID = ParseObjectTypeHeader(&buffer[counter]);
-		//counter += 4;
-		//Unpack ID
+		ParseObject(&buffer[counter], typeID, sizeof(typeID));
 
 		switch((int)typeID.typeID)
 		{
-		case TypeID_LevelHeader:
-			//Call function
-			counter += LevelHeaderSize;
+		case ObjectType_LevelMetaData:
+			LevelMetaData header;
+			//ParseObject(&buffer[counter], header, sizeof(header));
+			objects.push_back(header);
+			counter += sizeof(header);
 			break;
 
-		case TypeID_Object:
-			//Call function
-			objects.push_back(ParseObjectHeader(&buffer[counter]));
-			counter += sizeof(ObjectHeader);
-			break;
+		case ObjectType_Dynamic:
+			ObjectHeader header;
+			ParseObject(&buffer[counter], header, sizeof(header));
+			objects.push_back(header);
+			counter += sizeof(header);
 		default:
 			//Couldn't find typeID. FAIL!!!!!!
 			break;
@@ -56,36 +65,44 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 	return objects;
 }
 
-//för meta information om leveln. Måste göra så den returnerar rätt strukt så fort vi
-//vi definierat en!
-ObjectTypeHeader LevelParser::ParseHeader(std::string filename)
+//för meta information om leveln.
+LevelMetaData LevelParser::ParseHeader(std::string filename)
 {
-	int stringSize = 0;
+	int bufferSize = 0;
+	unsigned int counter = 0;
+
+	LevelMetaData levelHeader;
+	levelHeader.typeID = ObjectType::ObjectType_Unknown;
+
 	//Read entire level file.
 	Loader loader;
-	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str(), stringSize);
+	unsigned char* buffer = (unsigned char*)loader.LoadFile(filename.c_str(), bufferSize);
+
+	//Read format version
+	FormatVersion levelFormatVersion;
+	ParseObject(&buffer[counter], formatVersion, sizeof(formatVersion));
+	if(this->formatVersion != levelFormatVersion)
+	{
+		//Do something if it's not the same version
+	}
 
 	//Find the header in the returned string.
-	unsigned int counter = 0;
-	
-
-	ObjectTypeHeader header;
-	header.typeID = ObjectType_Level;
-
-	while(counter < stringSize)
+	while(counter < bufferSize)
 	{
 		ObjectTypeHeader typeID;
-		typeID = ParseObjectTypeHeader(buffer);
+		ParseObject(&buffer[counter], typeID, sizeof(typeID));
+
 		switch(typeID.typeID)
 		{
-		case TypeID_LevelHeader:
-			//Call function
-
-			counter += LevelHeaderSize;
+		case ObjectType_LevelMetaData:
+			//ParseObject(&buffer[counter], levelHeader, sizeof(levelHeader));
+			return levelHeader;
+			counter += sizeof(LevelMetaData);
 			break;
-		case TypeID_Object:
-			//Call function
-			counter += ObjectHeaderSize;
+		case ObjectType_Dynamic:
+			//Do not call parse this object, since we are only interested in the LevelMetaData
+			//Only increase the counter size
+			counter += sizeof(ObjectHeader);
 			break;
 
 		default:
@@ -94,5 +111,5 @@ ObjectTypeHeader LevelParser::ParseHeader(std::string filename)
 		}
 	}
 
-	return header;
+	return levelHeader;
 }

@@ -19,8 +19,20 @@ namespace GameLogic
 		public:
 			LevelLoader(){this->parser = new GameLogic::LevelFileLoader::LevelParser(); }
 			~LevelLoader(){}
-			std::vector<ObjectTypeHeader> LoadLevel(std::string fileName); //loads the level and objects from file
-			ObjectTypeHeader LoadLevelHeader(std::string fileName); //just for fast access for the meta information about the level.
+
+			/********************************************************
+			 * Loads the level and objects from file.
+			 * @param fileName: Path to the level-file that you want to load.
+			 * @return: Returns all structs with objects and information about the level.
+			 ********************************************************/
+			std::vector<ObjectTypeHeader> LoadLevel(std::string fileName);
+
+			/********************************************************
+			 * Just for fast access for the meta information about the level.
+			 * @param fileName: Path to the level-file that you want to load.
+			 * @return: Returns the meta information about the level.
+			 ********************************************************/
+			LevelMetaData LoadLevelHeader(std::string fileName); //.
 
 		private:
 			GameLogic::LevelFileLoader::LevelParser *parser;
