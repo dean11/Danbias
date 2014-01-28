@@ -122,11 +122,7 @@ namespace Oyster
 				return this->centerPos;
 			}
 
-<<<<<<< HEAD
-			inline ::Oyster::Math::Float4 CustomBodyState::GetAngularAxis() const
-=======
 			inline const ::Oyster::Math::Float3 & CustomBodyState::GetAngularAxis() const
->>>>>>> origin/Physics
 			{
 				return ::Utility::Value::Radian(this->angularAxis);
 			}

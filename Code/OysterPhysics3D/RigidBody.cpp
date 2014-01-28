@@ -61,7 +61,7 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	//! HACK: @todo Rotation temporary disabled
 	//this->axis += Radian( Formula::AngularVelocity(wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular)) );
 	
-	if( this->impulse_Angular != Float4::null )
+	if( this->impulse_Angular != Float3::null )
 	{
 		const char *probe = "breakpoint";
 	}

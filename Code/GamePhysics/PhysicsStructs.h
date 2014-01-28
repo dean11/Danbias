@@ -66,17 +66,10 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float		 GetFrictionCoeff_Static() const;
 			const ::Oyster::Math::Float		 GetFrictionCoeff_Kinetic() const;
 			const ::Oyster::Physics3D::MomentOfInertia & GetMomentOfInertia() const;
-<<<<<<< HEAD
-			const ::Oyster::Math::Float4 &	 GetReach() const;
-				  ::Oyster::Math::Float4	 GetSize() const;
-			const ::Oyster::Math::Float4 &	 GetCenterPosition() const;
-				  ::Oyster::Math::Float4 	 GetAngularAxis() const;
-=======
 			const ::Oyster::Math::Float3 &	 GetReach() const;
 				  ::Oyster::Math::Float3	 GetSize() const;
 			const ::Oyster::Math::Float3 &	 GetCenterPosition() const;
 			const ::Oyster::Math::Float3 &	 GetAngularAxis() const;
->>>>>>> origin/Physics
 				  ::Oyster::Math::Float4x4	 GetRotation() const;
 				  ::Oyster::Math::Float4x4	 GetOrientation() const;
 				  ::Oyster::Math::Float4x4	 GetOrientation( const ::Oyster::Math::Float3 &offset ) const;

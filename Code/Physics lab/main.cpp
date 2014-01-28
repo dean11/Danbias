@@ -133,7 +133,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 		//crate[0].phys->SetState( state );
 
 		crate[1].phys->GetState( state );
-		state.SetLinearMomentum( Float4(0.0f, 5.0f, 0.0f, 0.0f) );
+		state.SetLinearMomentum( Float3(0.0f, 5.0f, 0.0f) );
 		crate[1].phys->SetState( state );
 	}
 
