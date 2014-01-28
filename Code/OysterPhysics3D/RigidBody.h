@@ -15,7 +15,7 @@ namespace Oyster { namespace Physics3D
 	struct RigidBody
 	{ //! A struct of a simple rigid body.
 	public:
-		::Oyster::Math::Float4		centerPos,				//!< Location of the body's center in the world.
+		::Oyster::Math::Float3		centerPos,				//!< Location of the body's center in the world.
 									axis,					//!< Euler rotationAxis of the body.
 									boundingReach,			//!< 
 									momentum_Linear,		//!< The linear momentum G (kg*m/s).
@@ -32,29 +32,29 @@ namespace Oyster { namespace Physics3D
 		RigidBody & operator = ( const RigidBody &body );
 
 		void Update_LeapFrog( ::Oyster::Math::Float updateFrameLength );
-		void Predict_LeapFrog( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster::Math::Float4 &outDeltaAxis, const ::Oyster::Math::Float4 &actingLinearImpulse, const ::Oyster::Math::Float4 &actingAngularImpulse, ::Oyster::Math::Float deltaTime );
+		void Predict_LeapFrog( ::Oyster::Math::Float3 &outDeltaPos, ::Oyster::Math::Float3 &outDeltaAxis, const ::Oyster::Math::Float3 &actingLinearImpulse, const ::Oyster::Math::Float3 &actingAngularImpulse, ::Oyster::Math::Float deltaTime );
 
-		void Move( const ::Oyster::Math::Float4 &deltaPos, const ::Oyster::Math::Float4 &deltaAxis );
-		void ApplyImpulse( const ::Oyster::Math::Float4 &worldJ, const ::Oyster::Math::Float4 &atWorldPos );
-		void ApplyImpulse_Linear( const ::Oyster::Math::Float4 &worldJ );
-		void ApplyImpulse_Angular( const ::Oyster::Math::Float4 &worldJ );
-		void ApplyForce( const ::Oyster::Math::Float4 &worldF, ::Oyster::Math::Float updateFrameLength );
-		void ApplyForce( const ::Oyster::Math::Float4 &worldF, ::Oyster::Math::Float updateFrameLength, const ::Oyster::Math::Float4 &atWorldPos );
+		void Move( const ::Oyster::Math::Float3 &deltaPos, const ::Oyster::Math::Float3 &deltaAxis );
+		void ApplyImpulse( const ::Oyster::Math::Float3 &worldJ, const ::Oyster::Math::Float3 &atWorldPos );
+		void ApplyImpulse_Linear( const ::Oyster::Math::Float3 &worldJ );
+		void ApplyImpulse_Angular( const ::Oyster::Math::Float3 &worldJ );
+		void ApplyForce( const ::Oyster::Math::Float3 &worldF, ::Oyster::Math::Float updateFrameLength );
+		void ApplyForce( const ::Oyster::Math::Float3 &worldF, ::Oyster::Math::Float updateFrameLength, const ::Oyster::Math::Float3 &atWorldPos );
 
 		// GET METHODS ////////////////////////////////
 
 		const ::Oyster::Physics3D::MomentOfInertia & GetMomentOfInertia() const;
 			  ::Oyster::Math::Float					 GetMass() const;
-		const ::Oyster::Math::Quaternion &			 GetRotation() const;
+		const ::Oyster::Math::Quaternion &			 GetRotationQuaternion() const;
 			  ::Oyster::Math::Float4x4				 GetRotationMatrix() const;
 			  ::Oyster::Math::Float4x4				 GetOrientation() const;
 			  ::Oyster::Math::Float4x4				 GetView() const;
  			  ::Oyster::Math::Float4x4				 GetToWorldMatrix() const;
 			  ::Oyster::Math::Float4x4				 GetToLocalMatrix() const;
-			  ::Oyster::Math::Float4				 GetSize() const;
-			  ::Oyster::Math::Float4				 GetVelocity_Linear() const;
-			  ::Oyster::Math::Float4				 GetVelocity_Angular() const;
-			  ::Oyster::Math::Float4				 GetLinearMomentum( const ::Oyster::Math::Float4 &atWorldPos ) const;
+			  ::Oyster::Math::Float3				 GetSize() const;
+			  ::Oyster::Math::Float3				 GetVelocity_Linear() const;
+			  ::Oyster::Math::Float3				 GetVelocity_Angular() const;
+			  ::Oyster::Math::Float3				 GetLinearMomentum( const ::Oyster::Math::Float3 &atWorldPos ) const;
 
 		// SET METHODS ////////////////////////////////
 
@@ -63,19 +63,19 @@ namespace Oyster { namespace Physics3D
 		void SetMass_KeepVelocity( const ::Oyster::Math::Float &m );
 		void SetMass_KeepMomentum( const ::Oyster::Math::Float &m );
 
-		void SetOrientation( const ::Oyster::Math::Float4x4 &o );
-		void SetRotation( const ::Oyster::Math::Float4x4 &r );
-		void SetSize( const ::Oyster::Math::Float4 &widthHeight );
+		//void SetOrientation( const ::Oyster::Math::Float4x4 &o );
+		//void SetRotation( const ::Oyster::Math::Float4x4 &r );
+		void SetSize( const ::Oyster::Math::Float3 &widthHeight );
 
-		void SetMomentum_Linear( const ::Oyster::Math::Float4 &worldG, const ::Oyster::Math::Float4 &atWorldPos );
+		void SetMomentum_Linear( const ::Oyster::Math::Float3 &worldG, const ::Oyster::Math::Float3 &atWorldPos );
 
-		void SetVelocity_Linear( const ::Oyster::Math::Float4 &worldV );
-		void SetVelocity_Linear( const ::Oyster::Math::Float4 &worldV, const ::Oyster::Math::Float4 &atWorldPos );
-		void SetVelocity_Angular( const ::Oyster::Math::Float4 &worldW );
+		void SetVelocity_Linear( const ::Oyster::Math::Float3 &worldV );
+		void SetVelocity_Linear( const ::Oyster::Math::Float3 &worldV, const ::Oyster::Math::Float3 &atWorldPos );
+		void SetVelocity_Angular( const ::Oyster::Math::Float3 &worldW );
 		
-		void SetImpulse_Linear( const ::Oyster::Math::Float4 &worldJ, const ::Oyster::Math::Float4 &atWorldPos );
-		void SetForce( const ::Oyster::Math::Float4 &worldF, ::Oyster::Math::Float updateFrameLength );
-		void SetForce( const ::Oyster::Math::Float4 &worldF, ::Oyster::Math::Float updateFrameLength, const ::Oyster::Math::Float4 &atWorldPos );
+		void SetImpulse_Linear( const ::Oyster::Math::Float3 &worldJ, const ::Oyster::Math::Float3 &atWorldPos );
+		//void SetForce( const ::Oyster::Math::Float3 &worldF, ::Oyster::Math::Float updateFrameLength );
+		//void SetForce( const ::Oyster::Math::Float3 &worldF, ::Oyster::Math::Float updateFrameLength, const ::Oyster::Math::Float3 &atWorldPos );
 
 	private:
 		::Oyster::Math::Float mass;						//!< m (kg)
