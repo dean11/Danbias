@@ -3,6 +3,7 @@
 
 #include "OysterMath.h"
 #include "PhysicsAPI.h"
+#include "Inertia.h"
 
 namespace Oyster { namespace Physics
 {
@@ -17,7 +18,7 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float restitutionCoeff;
 			::Oyster::Math::Float frictionCoeff_Static;
 			::Oyster::Math::Float frictionCoeff_Dynamic;
-			::Oyster::Math::Float4x4 inertiaTensor;
+			::Oyster::Physics3D::MomentOfInertia inertiaTensor;
 			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
 			::Oyster::Physics::ICustomBody::EventAction_CollisionResponse subscription_onCollisionResponse;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
@@ -50,7 +51,7 @@ namespace Oyster { namespace Physics
 							 ::Oyster::Math::Float restitutionCoeff			= 1.0f,
 							 ::Oyster::Math::Float staticFrictionCoeff		= 1.0f,
 							 ::Oyster::Math::Float kineticFrictionCoeff		= 1.0f,
-							 const ::Oyster::Math::Float4x4 &inertiaTensor	= ::Oyster::Math::Float4x4::identity,
+							 const ::Oyster::Physics3D::MomentOfInertia &inertiaTensor = ::Oyster::Physics3D::MomentOfInertia(),
 							 const ::Oyster::Math::Float4 &reach			= ::Oyster::Math::Float4::null,
 							 const ::Oyster::Math::Float4 &centerPos		= ::Oyster::Math::Float4::standard_unit_w,
 							 const ::Oyster::Math::Float4 &rotation			= ::Oyster::Math::Float4::null,
@@ -64,7 +65,7 @@ namespace Oyster { namespace Physics
 			const ::Oyster::Math::Float		 GetRestitutionCoeff() const;
 			const ::Oyster::Math::Float		 GetFrictionCoeff_Static() const;
 			const ::Oyster::Math::Float		 GetFrictionCoeff_Kinetic() const;
-			const ::Oyster::Math::Float4x4 & GetMomentOfInertia() const;
+			const ::Oyster::Physics3D::MomentOfInertia & GetMomentOfInertia() const;
 			const ::Oyster::Math::Float4 &	 GetReach() const;
 				  ::Oyster::Math::Float4	 GetSize() const;
 			const ::Oyster::Math::Float4 &	 GetCenterPosition() const;
@@ -87,8 +88,8 @@ namespace Oyster { namespace Physics
 			void SetMass_KeepVelocity( ::Oyster::Math::Float m );
 			void SetRestitutionCoeff( ::Oyster::Math::Float e );
 			void SetFrictionCoeff( ::Oyster::Math::Float staticU, ::Oyster::Math::Float kineticU );
-			void SetMomentOfInertia_KeepMomentum( const ::Oyster::Math::Float4x4 &tensor );
-			void SetMomentOfInertia_KeepVelocity( const ::Oyster::Math::Float4x4 &tensor );
+			void SetMomentOfInertia_KeepMomentum( const ::Oyster::Physics3D::MomentOfInertia &tensor );
+			void SetMomentOfInertia_KeepVelocity( const ::Oyster::Physics3D::MomentOfInertia &tensor );
 			void SetSize( const ::Oyster::Math::Float4 &size );
 			void SetReach( const ::Oyster::Math::Float4 &halfSize );
 			void SetCenterPosition( const ::Oyster::Math::Float4 &centerPos );
@@ -115,7 +116,7 @@ namespace Oyster { namespace Physics
 
 		private:
 			::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, kineticFrictionCoeff;
-			::Oyster::Math::Float4x4 inertiaTensor;
+			::Oyster::Physics3D::MomentOfInertia inertiaTensor;
 			::Oyster::Math::Float4 reach, centerPos, angularAxis;
 			::Oyster::Math::Float4 linearMomentum, angularMomentum;
 			::Oyster::Math::Float4 linearImpulse, angularImpulse;

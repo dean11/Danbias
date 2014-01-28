@@ -35,7 +35,7 @@ namespace std
 // x2
 
 template<typename ScalarType>
-::LinearAlgebra::Matrix2x2<ScalarType> operator * ( const ::LinearAlgebra::Matrix2x2<ScalarType> &left, const ::LinearAlgebra::Matrix2x2<ScalarType> &right )
+inline ::LinearAlgebra::Matrix2x2<ScalarType> operator * ( const ::LinearAlgebra::Matrix2x2<ScalarType> &left, const ::LinearAlgebra::Matrix2x2<ScalarType> &right )
 {
 	return ::LinearAlgebra::Matrix2x2<ScalarType>( (left.m11 * right.m11) + (left.m12 * right.m21),
 												   (left.m11 * right.m12) + (left.m12 * right.m22),
@@ -44,14 +44,14 @@ template<typename ScalarType>
 }
 
 template<typename ScalarType>
-::LinearAlgebra::Vector2<ScalarType> operator * ( const ::LinearAlgebra::Matrix2x2<ScalarType> &matrix, const ::LinearAlgebra::Vector2<ScalarType> &vector )
+inline ::LinearAlgebra::Vector2<ScalarType> operator * ( const ::LinearAlgebra::Matrix2x2<ScalarType> &matrix, const ::LinearAlgebra::Vector2<ScalarType> &vector )
 {
 	return ::LinearAlgebra::Vector2<ScalarType>( (matrix.m11 * vector.x) + (matrix.m12 * vector.y),
 												 (matrix.m21 * vector.x) + (matrix.m22 * vector.y) );
 }
 
 template<typename ScalarType>
-::LinearAlgebra::Vector2<ScalarType> operator * ( const ::LinearAlgebra::Vector2<ScalarType> &vector, const ::LinearAlgebra::Matrix2x2<ScalarType> &left )
+inline ::LinearAlgebra::Vector2<ScalarType> operator * ( const ::LinearAlgebra::Vector2<ScalarType> &vector, const ::LinearAlgebra::Matrix2x2<ScalarType> &left )
 {
 	return ::LinearAlgebra::Vector2<ScalarType>( (vector.x * matrix.m11) + (vector.y * matrix.m21),
 												 (vector.x * matrix.m12) + (vector.y * matrix.m22) );
@@ -60,7 +60,7 @@ template<typename ScalarType>
 // x3
 
 template<typename ScalarType>
-::LinearAlgebra::Matrix3x3<ScalarType> operator * ( const ::LinearAlgebra::Matrix3x3<ScalarType> &left, const ::LinearAlgebra::Matrix3x3<ScalarType> &right )
+inline ::LinearAlgebra::Matrix3x3<ScalarType> operator * ( const ::LinearAlgebra::Matrix3x3<ScalarType> &left, const ::LinearAlgebra::Matrix3x3<ScalarType> &right )
 {
 	return ::LinearAlgebra::Matrix3x3<ScalarType>( (left.m11 * right.m11) + (left.m12 * right.m21) + (left.m13 * right.m31), (left.m11 * right.m12) + (left.m12 * right.m22) + (left.m13 * right.m32), (left.m11 * right.m13) + (left.m12 * right.m23) + (left.m13 * right.m33),
 												   (left.m21 * right.m11) + (left.m22 * right.m21) + (left.m23 * right.m31), (left.m21 * right.m12) + (left.m22 * right.m22) + (left.m23 * right.m32), (left.m21 * right.m13) + (left.m22 * right.m23) + (left.m23 * right.m33),
@@ -68,7 +68,7 @@ template<typename ScalarType>
 }
 
 template<typename ScalarType>
-::LinearAlgebra::Vector3<ScalarType> operator * ( const ::LinearAlgebra::Matrix3x3<ScalarType> &matrix, const ::LinearAlgebra::Vector3<ScalarType> &vector )
+inline ::LinearAlgebra::Vector3<ScalarType> operator * ( const ::LinearAlgebra::Matrix3x3<ScalarType> &matrix, const ::LinearAlgebra::Vector3<ScalarType> &vector )
 {
 	return ::LinearAlgebra::Vector3<ScalarType>( (matrix.m11 * vector.x) + (matrix.m12 * vector.y) + (matrix.m13 * vector.z),
 												 (matrix.m21 * vector.x) + (matrix.m22 * vector.y) + (matrix.m23 * vector.z),
@@ -76,7 +76,7 @@ template<typename ScalarType>
 }
 
 template<typename ScalarType>
-::LinearAlgebra::Vector3<ScalarType> operator * ( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Matrix3x3<ScalarType> &left )
+inline ::LinearAlgebra::Vector3<ScalarType> operator * ( const ::LinearAlgebra::Vector3<ScalarType> &vector, const ::LinearAlgebra::Matrix3x3<ScalarType> &left )
 {
 	return ::LinearAlgebra::Vector3<ScalarType>( (vector.x * matrix.m11) + (vector.y * matrix.m21) + (vector.z * matrix.m31),
 												 (vector.x * matrix.m12) + (vector.y * matrix.m22) + (vector.z * matrix.m32),
@@ -86,7 +86,7 @@ template<typename ScalarType>
 // x4
 
 template<typename ScalarType>
-::LinearAlgebra::Matrix4x4<ScalarType> operator * ( const ::LinearAlgebra::Matrix4x4<ScalarType> &left, const ::LinearAlgebra::Matrix4x4<ScalarType> &right )
+inline ::LinearAlgebra::Matrix4x4<ScalarType> operator * ( const ::LinearAlgebra::Matrix4x4<ScalarType> &left, const ::LinearAlgebra::Matrix4x4<ScalarType> &right )
 {
 	return ::LinearAlgebra::Matrix4x4<ScalarType>( (left.m11 * right.m11) + (left.m12 * right.m21) + (left.m13 * right.m31) + (left.m14 * right.m41), (left.m11 * right.m12) + (left.m12 * right.m22) + (left.m13 * right.m32) + (left.m14 * right.m42), (left.m11 * right.m13) + (left.m12 * right.m23) + (left.m13 * right.m33) + (left.m14 * right.m43), (left.m11 * right.m14) + (left.m12 * right.m24) + (left.m13 * right.m34) + (left.m14 * right.m44),
 												   (left.m21 * right.m11) + (left.m22 * right.m21) + (left.m23 * right.m31) + (left.m24 * right.m41), (left.m21 * right.m12) + (left.m22 * right.m22) + (left.m23 * right.m32) + (left.m24 * right.m42), (left.m21 * right.m13) + (left.m22 * right.m23) + (left.m23 * right.m33) + (left.m24 * right.m43), (left.m21 * right.m14) + (left.m22 * right.m24) + (left.m23 * right.m34) + (left.m24 * right.m44),
@@ -95,7 +95,7 @@ template<typename ScalarType>
 }
 
 template<typename ScalarType>
-::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix, const ::LinearAlgebra::Vector4<ScalarType> &vector )
+inline ::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix, const ::LinearAlgebra::Vector4<ScalarType> &vector )
 {
 	return ::LinearAlgebra::Vector4<ScalarType>( (matrix.m11 * vector.x) + (matrix.m12 * vector.y) + (matrix.m13 * vector.z) + (matrix.m14 * vector.w),
 												 (matrix.m21 * vector.x) + (matrix.m22 * vector.y) + (matrix.m23 * vector.z) + (matrix.m24 * vector.w),
@@ -104,7 +104,7 @@ template<typename ScalarType>
 }
 
 template<typename ScalarType>
-::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix )
+inline ::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Matrix4x4<ScalarType> &matrix )
 {
 	return ::LinearAlgebra::Vector4<ScalarType>( (vector.x * matrix.m11) + (vector.y * matrix.m21) + (vector.z * matrix.m31) + (vector.w * matrix.m41),
 												 (vector.x * matrix.m12) + (vector.y * matrix.m22) + (vector.z * matrix.m32) + (vector.w * matrix.m42),
