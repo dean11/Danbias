@@ -40,7 +40,18 @@ Connection::~Connection()
 	CloseSocket( this->socket );
 }
 
-int Connection::Connect(unsigned short port , const char serverName[])
+int Connection::Connect(int socket, bool blocking)
+{
+	this->socket = socket;
+	this->stillSending = true;
+	this->closed = false;
+
+	SetBlockingMode(blocking);
+	//connection succesfull!
+	return 0;
+}
+
+int Connection::Connect(unsigned short port , const char serverName[], bool blocking)
 {
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
@@ -60,6 +71,8 @@ int Connection::Connect(unsigned short port , const char serverName[])
 	
 	closed = false;
 	stillSending = true;
+
+	SetBlockingMode(blocking);
 
 	//connection succesfull!
 	return 0;

@@ -177,9 +177,6 @@
     <ProjectReference Include="..\DanBiasGame\DanBiasGame.vcxproj">
       <Project>{2a1bc987-af42-4500-802d-89cd32fc1309}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\DanBiasServer\DanBiasServer.vcxproj">
-      <Project>{52380daa-0f4a-4d97-8e57-98df39319caf}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

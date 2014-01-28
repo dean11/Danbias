@@ -7,7 +7,7 @@
 #include <vld.h>
 
 
-#include <DanBiasServerAPI.h>
+#include <GameServerAPI.h>
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {
@@ -15,10 +15,14 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	{
 		return cmdShow;
 	}
-	if( DanBias::DanBiasServerAPI::Initiate() == DanBias::DanBiasServerReturn_Sucess)
+
+	DanBias::GameServerAPI::GameInitDesc desc;
+	desc.connectionPort = 15151;
+	desc.maxNumberOfClients = 0;
+	desc.threaded = false;
+	if( !DanBias::GameServerAPI::Create(desc) == DanBias::DanBiasServerReturn_Sucess)
 	{
-		DanBias::DanBiasServerAPI::Run();
-		DanBias::DanBiasServerAPI::Release();
+
 	}
 	return cmdShow;
 }

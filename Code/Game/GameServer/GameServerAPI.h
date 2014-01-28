@@ -24,12 +24,18 @@ namespace DanBias
 
 	extern "C"
 	{
-		class DANBIAS_SERVER_DLL DanBiasServerAPI
+		class DANBIAS_SERVER_DLL GameServerAPI
 		{
 		public:
-			static DanBiasServerReturn Initiate();
-			static DanBiasServerReturn Run();
-			static DanBiasServerReturn Release();
+			struct GameInitDesc
+			{
+				//stuff
+				int connectionPort;
+				int maxNumberOfClients;
+				bool threaded;
+			};
+		public:
+			static DanBiasServerReturn Create(const GameInitDesc& desc);
 		};//End class DanBiasServer
 	}//End Extern "C"
 } //End namspace DanBias

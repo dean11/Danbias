@@ -4,19 +4,19 @@
 #ifndef DANBIASSERVER_GAME_SEESION_MANAGER_H
 #define DANBIASSERVER_GAME_SEESION_MANAGER_H
 
+#include <NetworkSession.h>
 #include <string>
 #include <Utilities.h>
 #include <DynamicArray.h>
 
+using namespace Oyster::Network;
+
 namespace DanBias
 {
-	class LobbyClient;
-	class NetworkSession;
-
 	struct GameSessionDescription
 	{
 		std::wstring mapName;
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<LobbyClient>> clients;
+		Utility::DynamicMemory::DynamicArray<NetworkClient> clients;
 		NetworkSession* exitDestionation;	//The new owner when session dies
 	};
 	struct GameSessionInfo
@@ -49,7 +49,7 @@ namespace DanBias
 		*	@param client The client that is to join a game session
 		*	@return Returns false on failure.
 		*/
-		static bool JoinSession(int session, Utility::DynamicMemory::SmartPointer<LobbyClient> client);
+		static bool JoinSession(int session, Utility::DynamicMemory::SmartPointer<NetworkSession> client);
 		
 		/**
 		*	Gets information about a given session
@@ -67,7 +67,7 @@ namespace DanBias
 		/**
 		*	Close all sessions.
 		*/
-		static void CloseSession();
+		static void CloseSessions();
 
 		/**
 		*	Get total sessions running

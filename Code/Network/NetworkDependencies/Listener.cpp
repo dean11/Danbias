@@ -120,7 +120,7 @@ void Listener::StopListen()
 		this->isListening = false;
 		Connection c;
 		c.InitiateClient();
-		c.Connect(this->port, "127.0.0.1");
+		c.Connect(this->port, "127.0.0.1", false);
 	}
 }
 bool Listener::DoWork()

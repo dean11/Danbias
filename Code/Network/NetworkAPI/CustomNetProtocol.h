@@ -6,12 +6,7 @@
 
 #include <string>
 //#include <vld.h>
-
-#ifdef CUSTOM_NET_PROTOCOL_EXPORT
-	#define NET_PROTOCOL_EXPORT __declspec(dllexport)
-#else
-	#define NET_PROTOCOL_EXPORT __declspec(dllimport)
-#endif
+#include "NetworkAPI_Preprocessor.h"
 
 namespace Oyster
 {
@@ -78,7 +73,7 @@ namespace Oyster
 				virtual CustomNetProtocol* GetProtocol() = 0;
 			};
 
-			class NET_PROTOCOL_EXPORT CustomNetProtocol
+			class NET_API_EXPORT CustomNetProtocol
 			{
 			public:
 				CustomNetProtocol();

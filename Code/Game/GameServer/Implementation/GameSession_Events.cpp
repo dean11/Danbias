@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "GameSession.h"
-#include "GameClient.h"
+#include "..\GameSession.h"
+#include "..\GameClient.h"
 
+#include <NetworkServerEventStruct.h>
 #include <Protocols.h>
 #include <PostBox\PostBox.h>
 #include <GameLogicStates.h>

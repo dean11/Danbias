@@ -27,7 +27,8 @@ namespace Oyster
 			virtual int Recieve( OysterByte &bytes );
 
 			virtual int Disconnect();
-			virtual int Connect( unsigned short port , const char serverName[] );
+			virtual int Connect(int socket, bool blocking = false);
+			virtual int Connect(unsigned short port , const char serverName[], bool blocking = false);
 			
 			virtual int  Listen();
 

@@ -229,6 +229,7 @@ OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start, bool
 {
 	if(!this->privateData) this->privateData = new PrivateData();
 
+	if(this->privateData->data->isCreated) return OYSTER_THREAD_ERROR_ThreadAlreadyCreated;
 	OwnerContainer c;
 	c.type = Oyster::Callback::CallbackType_Object;
 	c.value = worker;
@@ -258,14 +259,10 @@ OYSTER_THREAD_ERROR OysterThread::Start()
 }
 OYSTER_THREAD_ERROR OysterThread::Stop()
 {
-	return this->Terminate();
-}
-OYSTER_THREAD_ERROR OysterThread::Pause()
-{
 	this->privateData->data->threadData->state = OYSTER_THREAD_STATE_IDLE;
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
-OYSTER_THREAD_ERROR OysterThread::Pause(int msec)
+OYSTER_THREAD_ERROR OysterThread::Stop(int msec)
 {
 	this->privateData->data->threadData->msec = msec;
 	return OYSTER_THREAD_ERROR_SUCCESS;

@@ -7,18 +7,18 @@
 //warning C4150: deletion of pointer to incomplete type, no destructor called, because of forward decleration and the use of smartpointer.
 #pragma warning(disable: 4150)
 
-#include "..\LobbySessions\NetworkSession.h"
+
+#include "GameClient.h"
 #include <WinTimer.h>
 #include <PostBox\IPostBox.h>
 #include <Thread\OysterThread.h>
 #include <GameAPI.h>
 #include <Queue.h>
+#include <NetworkSession.h>
 
 namespace DanBias
 {
-	class LobbyClient;
-	class GameClient;
-	class GameSession : public Oyster::Thread::IThreadObject, public INetworkSession
+	class GameSession : public Oyster::Thread::IThreadObject
 	{
 	public:
 		/**
@@ -28,7 +28,7 @@ namespace DanBias
 		{
 			std::wstring mapName;
 			NetworkSession* owner;
-			Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<LobbyClient>> clients;
+			Utility::DynamicMemory::DynamicArray<NetworkClient> clients;
 		};
 
 	public:
@@ -44,7 +44,7 @@ namespace DanBias
 		/** Join an existing/running game session 
 		*	@param client The client to attach to the session
 		*/
-		bool Join(Utility::DynamicMemory::SmartPointer<LobbyClient> client);
+		bool Join(Utility::DynamicMemory::SmartPointer<NetworkSession> client);
 		
 		/**
 		*	Closes the game session
@@ -82,7 +82,7 @@ namespace DanBias
 	private:
 		
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
-		Oyster::IPostBox<DanBias::NetworkSession::NetEvent> *box;
+		//Oyster::PostBox<DanBias::NetworkSession::NetEvent> *box;
 		Oyster::Thread::OysterThread worker;
 		GameLogic::GameAPI& gameInstance;
 		GameLogic::ILevelData *levelData;
@@ -93,8 +93,6 @@ namespace DanBias
 
 		static void ObjectMove(GameLogic::IObjectData* movedObject);
 
-	private:
-		friend class AdminInterface;
 
 	};//End GameSession
 }//End namespace DanBias

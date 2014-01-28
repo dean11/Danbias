@@ -290,7 +290,7 @@ void GameState::Protocol( ObjPos* pos )
 
 	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
-		if(privData->object[i]->GetId() == pos->object_ID)
+		if(privData->object[i] && privData->object[i]->GetId() == pos->object_ID)
 		{
 			privData->object[i]->setPos(world);
 

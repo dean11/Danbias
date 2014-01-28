@@ -7,6 +7,7 @@
 
 #include "Translator.h"
 #include "CustomNetProtocol.h"
+#include "NetworkSession.h"
 
 #include "../NetworkDependencies/Connection.h"
 #include "../NetworkDependencies/PostBox.h"
@@ -19,73 +20,53 @@
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace Utility::DynamicMemory;
+using namespace Utility::Container;
 
 /*************************************
 			PrivateData
 *************************************/
-struct ClientDataContainer
-{
+typedef NetworkClient::ClientEventArgs CEA;
+struct NetDataContainer : public IThreadObject
+{ //This struct is contained within a smart pointer. To avoide dependencies in link its implemented here..
+	NetworkSession *owner;
+	NetworkClient *parent;
 	Connection connection;
-
-	SmartPointer<IPostBox<CustomNetProtocol>> sendPostBox;
-	
-	RecieverObject recvObj;
-	NetworkProtocolCallbackType callbackType;
-
-	Oyster::Thread::OysterThread thread;
-	std::mutex recvObjMutex;
-	std::mutex postBoxMutex;
-
 	Translator translator;
+	OysterThread thread;
 
+
+	//Message queue for sending and recieving
+	ThreadSafeQueue<CustomNetProtocol> sendQueue;
+	ThreadSafeQueue<NetEvent<NetworkClient*, NetworkClient::ClientEventArgs>> recieveQueue;
+	
 	//ID
 	static unsigned int currID;
 	const unsigned int ID;
 
-	ClientDataContainer(IThreadObject* o)
-		: ID(currID++)
-	{
-		InitWinSock();
-		callbackType = NetworkProtocolCallbackType_Unknown;
-		sendPostBox = new PostBox<CustomNetProtocol>();
-		connection.InitiateClient();
-		connection.SetBlockingMode(false);
+	NetDataContainer() 
+		:	ID(currID++)
+		,	parent(0)
+		,	owner(0)
+	{ 
 		
-	}
-	ClientDataContainer(IThreadObject* o, unsigned int socket )
-		:connection(socket), ID(currID++)
-	{
 		InitWinSock();
-		callbackType = NetworkProtocolCallbackType_Unknown;
-		sendPostBox = new PostBox<CustomNetProtocol>();
-		connection.InitiateClient();
-		connection.SetBlockingMode(false);
+		this->thread.Create(this, true);
+		this->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
 	}
-	~ClientDataContainer()
-	{
-		connection.Disconnect();
-		thread.Stop();
-		callbackType = NetworkProtocolCallbackType_Unknown;
-
+	NetDataContainer(const NetDataContainer& obj)
+		:ID(obj.ID) {  }
+	~NetDataContainer()
+	{ 
 		ShutdownWinSock();
+		this->connection.Disconnect();
+		this->thread.Terminate();
+		this->owner = 0;
+		this->parent = 0;
 	}
-	
-};
-unsigned int ClientDataContainer::currID = 0;
 
-
-struct NetworkClient::PrivateData : public IThreadObject
-{
-	Utility::DynamicMemory::SmartPointer<ClientDataContainer> data;
-
-	PrivateData() { this->data = new ClientDataContainer(this); }
-	PrivateData(unsigned int socket) { this->data = new ClientDataContainer(this, socket); }
-	~PrivateData() { }
-
-	bool DoWork()
+	bool DoWork() override
 	{
-		if(!this->data)								return false;
-		if(!this->data->connection.IsConnected())	return false;
+		if(!this->connection.IsConnected())	return false;
 		
 		Send();
 		Recv();
@@ -93,45 +74,25 @@ struct NetworkClient::PrivateData : public IThreadObject
 		return true;
 	}
 
-
-	void Send(CustomNetProtocol* protocol)
-	{
-		if(!data) return;
-
-		this->data->postBoxMutex.lock();
-		this->data->sendPostBox->PostMessage(*protocol);
-		this->data->postBoxMutex.unlock();
-	}
-
 	int Send()
 	{
 		int errorCode = 0;
-		if(!data) return -1;
 
-		this->data->postBoxMutex.lock();
-		if(this->data->sendPostBox->IsFull())
+		if(!this->sendQueue.IsEmpty())
 		{
 			SmartPointer<OysterByte> temp = new OysterByte();
-			this->data->translator.Pack(temp, this->data->sendPostBox->FetchMessage());
-			errorCode = this->data->connection.Send(temp);
+			CustomNetProtocol p = this->sendQueue.Pop();
+			this->translator.Pack(temp, p);
+			errorCode = this->connection.Send(temp);
 			if(errorCode != 0)
 			{
-				//Failed
-				this->data->connection.Disconnect();
-				
-				this->data->recvObjMutex.lock();
-				if(this->data->callbackType == NetworkProtocolCallbackType_Function)
-				{
-					this->data->recvObj.protocolRecieverFnc();
-				}
-				else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
-				{
-					this->data->recvObj.protocolRecievedObject->Disconnected();
-				}
-				this->data->recvObjMutex.unlock();
+				CEA parg;
+				parg.type = CEA::EventType_ProtocolFailedToSend;
+				parg.data.protocol = p;
+				NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
+				this->recieveQueue.Push(e);
 			}
 		}
-		this->data->postBoxMutex.unlock();
 
 		return errorCode;
 	}
@@ -141,105 +102,129 @@ struct NetworkClient::PrivateData : public IThreadObject
 		int errorCode = -1;
 
 		OysterByte temp = OysterByte();
-		errorCode = this->data->connection.Recieve(temp);
+		errorCode = this->connection.Recieve(temp);
 		
 		if(errorCode == 0 && temp.GetSize())
 		{
 			CustomNetProtocol protocol;
-			bool ok = this->data->translator.Unpack(protocol, temp);
+			bool ok = this->translator.Unpack(protocol, temp);
 		
 			//Check if the protocol was unpacked correctly
 			if(ok)
 			{
-				this->data->recvObjMutex.lock();
-				if(this->data->callbackType == NetworkProtocolCallbackType_Function)
-				{
-					this->data->recvObj.protocolRecieverFnc(protocol);
-				}
-				else if(this->data->callbackType == NetworkProtocolCallbackType_Object)
-				{
-					this->data->recvObj.protocolRecievedObject->NetworkCallback(protocol);
-				}
-				this->data->recvObjMutex.unlock();
+				CEA parg;
+				parg.type = CEA::EventType_ProtocolRecieved;
+				parg.data.protocol = protocol;
+				NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
+				this->recieveQueue.Push(e);
 			}
+		}
+		else
+		{
+			CEA parg;
+			parg.type = CEA::EventType_ProtocolFailedToRecieve;
+			parg.data.nothing = 0;
+			NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
+			this->recieveQueue.Push(e);
 		}
 	
 		return errorCode;
 	}
-
 };
 
+
+struct NetworkClient::PrivateData
+{
+	SmartPointer<NetDataContainer> dat;
+
+public:
+	PrivateData() 
+	{ this->dat = new NetDataContainer(); }
+	PrivateData(const PrivateData& obj)
+	{ this->dat = obj.dat; }
+	~PrivateData()
+	{ this->dat = 0; }
+};
+unsigned int NetDataContainer::currID = 0;
 
 /*************************************
 			NetworkClient
 *************************************/
 
 NetworkClient::NetworkClient()
-{
-	privateData = new PrivateData();
-	this->privateData->data->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
-}
-
-NetworkClient::NetworkClient(unsigned int socket)
-{
-	privateData = new PrivateData(socket);
-	this->privateData->data->thread.Create(this->privateData, true);
-	this->privateData->data->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
-}
-
-NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type)
-{
-	privateData = new PrivateData();
-	this->privateData->data->callbackType = type;
-	this->privateData->data->recvObj = recvObj;
-}
-
-NetworkClient::NetworkClient(RecieverObject recvObj, NetworkProtocolCallbackType type, unsigned int socket)
-{
-	privateData = new PrivateData(socket);
-	this->privateData->data->callbackType = type;
-	this->privateData->data->recvObj = recvObj;
-	this->privateData->data->thread.Create(this->privateData, true);
-	this->privateData->data->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
-}
+	:	privateData(0)
+{  }
 
 NetworkClient::NetworkClient(const NetworkClient& obj)
 {
-	this->privateData = new PrivateData(*obj.privateData);
+	if(obj.privateData) this->privateData = new PrivateData(*obj.privateData);
+	else				this->privateData = 0;
 }
 
 NetworkClient& NetworkClient::operator =(const NetworkClient& obj)
 {
 	delete privateData;
-	this->privateData = new PrivateData(*obj.privateData);
+	this->privateData = 0;
+	if(obj.privateData) this->privateData = new PrivateData(*obj.privateData);
+
 	return *this;
 }
 
 NetworkClient::~NetworkClient()
 {
-	if(privateData)
+	if(this->privateData)
 	{
-		delete privateData;
-		privateData = NULL;
+		delete this->privateData;
+		this->privateData = NULL;
 	}
+}
+
+bool NetworkClient::operator ==(const NetworkClient& obj)
+{
+	return (this->privateData->dat->ID == obj.privateData->dat->ID);
+}
+
+bool NetworkClient::operator ==(const int& ID)
+{
+	return this->privateData->dat->ID == ID;
+}
+
+void NetworkClient::ProcessMessages()
+{
+	while (!this->privateData->dat->recieveQueue.IsEmpty())
+	{
+		if(this->privateData->dat->owner)
+		{
+			this->privateData->dat->owner->ClientEventCallback(this->privateData->dat->recieveQueue.Pop());
+		}
+	}
+}
+
+bool NetworkClient::Connect(int socket)
+{
+	if(this->IsConnected()) return true;
+	if(this->privateData)	return false;
+	if(!this->privateData)	this->privateData = new PrivateData();
+
+	int result = this->privateData->dat->connection.Connect(socket, true);
+	
+	//Connect has succeeded
+	if(result == 0)		return true;
+
+	//Connect has failed
+	return false;
 }
 
 bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 {
-	privateData->data->connection.SetBlockingMode(true);
-	int result = this->privateData->data->connection.Connect(port, serverIP);
+	if(this->IsConnected())	return false;
+	if(this->privateData)	return false;
+	if(!this->privateData)	this->privateData = new PrivateData();
+	
+	int result = this->privateData->dat->connection.Connect(port, serverIP, false);
 	
 	//Connect has succeeded
-	if(result == 0)
-	{
-		if(this->privateData->data->thread.IsCreated()) return false;
-
-		this->privateData->data->thread.Create(this->privateData, true);
-		privateData->data->connection.SetBlockingMode(false);
-		return true;
-	}
-
-	
+	if(result == 0)		return true;
 
 	//Connect has failed
 	return false;
@@ -247,46 +232,35 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 
 void NetworkClient::Disconnect()
 {
-	privateData->data->connection.Disconnect();
-	privateData->data->thread.Terminate();
-}
-
-bool NetworkClient::IsConnected()
-{
-	return privateData->data->connection.IsConnected();
+	privateData->dat->connection.Disconnect();
+	privateData->dat->thread.Terminate();
 }
 
 void NetworkClient::Send(CustomProtocolObject& protocol)
 {
-	this->privateData->Send(protocol.GetProtocol());
+	this->privateData->dat->sendQueue.Push(*protocol.GetProtocol());
 }
 
 void NetworkClient::Send(CustomNetProtocol* protocol)
 {
-	this->privateData->Send(protocol);
+	this->privateData->dat->sendQueue.Push(*protocol);
 }
 
-void NetworkClient::SetRecieverObject(RecieverObject recvObj, NetworkProtocolCallbackType type)
+void NetworkClient::SetOwner(NetworkSession* owner)
 {
-	if (type == NetworkProtocolCallbackType_Unknown) return;	//It should probably still be set even if it is unknown.
-
-	privateData->data->recvObjMutex.lock();
-		privateData->data->recvObj = recvObj;
-		privateData->data->callbackType = type;
-	privateData->data->recvObjMutex.unlock();
+	this->privateData->dat->owner = owner;
 }
 
-bool NetworkClient::operator ==(const NetworkClient& obj)
+bool NetworkClient::IsConnected()
 {
-	return (this->privateData->data->ID == obj.privateData->data->ID);
-}
-
-bool NetworkClient::operator ==(const int& ID)
-{
-	return this->privateData->data->ID == ID;
+	if(!this->privateData) return false;
+	return privateData->dat->connection.IsConnected();
 }
 
 int NetworkClient::GetID() const
 {
-	return this->privateData->data->ID;
+	return this->privateData->dat->ID;
 }
+
+
+

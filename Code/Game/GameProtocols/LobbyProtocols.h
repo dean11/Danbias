@@ -45,14 +45,18 @@ namespace GameLogic
 
 	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
-		char gameId;
+		short gameId;
 
 		Protocol_LobbyStartGame()
 		{
 			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Start;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyStartGame(Oyster::Network::CustomNetProtocol& o)
+		{
+			gameId = o[1].value.netInt;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
@@ -73,6 +77,10 @@ namespace GameLogic
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyLogin(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
@@ -116,6 +124,10 @@ namespace GameLogic
 		{
 			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Login;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyRefresh(Oyster::Network::CustomNetProtocol& o)
+		{
+			
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{ return &protocol; }

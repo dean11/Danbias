@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "GameSession.h"
-#include "GameClient.h"
+#include "..\GameSession.h"
+#include "..\GameClient.h"
 #include "..\GameServer.h"
 #include <Protocols.h>
 #include <PostBox\PostBox.h>
@@ -105,7 +105,7 @@ namespace DanBias
 		}
 	}
 
-	bool GameSession::Join(Utility::DynamicMemory::SmartPointer<LobbyClient> client)
+	bool GameSession::Join(Utility::DynamicMemory::SmartPointer<NetworkSession> client)
 	{
 		if(!this->isCreated)	return false;
 

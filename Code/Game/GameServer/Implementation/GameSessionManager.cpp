@@ -1,10 +1,8 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "GameSessionManager.h"
-
-#include "..\LobbySessions\LobbyClient.h"
-#include "GameSession.h"
+#include "..\GameSessionManager.h"
+#include "..\GameSession.h"
 #include <DynamicArray.h>
 
 using namespace DanBias;
@@ -75,7 +73,7 @@ bool GameSessionManager::StartSession(int session)
 	return true;
 }
 
-bool GameSessionManager::JoinSession(int session, Utility::DynamicMemory::SmartPointer<LobbyClient> client)
+bool GameSessionManager::JoinSession(int session, Utility::DynamicMemory::SmartPointer<NetworkSession> client)
 {
 	int i = -1;
 	if((i = gameSessionData.Existst(session)) == -1) return false;
@@ -97,7 +95,7 @@ void GameSessionManager::GetSessionInfo(int session, GameSessionInfo& data)
 	//data.numberOfPlayers	= gameSessionData.sessions[i]->
 }
 
-void GameSessionManager::CloseSession()
+void GameSessionManager::CloseSessions()
 {
 	for (unsigned int i = 0; i < gameSessionData.sessions.Size(); i++)
 	{
