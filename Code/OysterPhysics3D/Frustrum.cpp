@@ -242,3 +242,8 @@ bool Frustrum::Contains( const ICollideable &target ) const
 	default:					return false;
 	}
 }
+
+::Oyster::Math::Float3 Frustrum::ExtractForwad()
+{
+	return this->bottomPlane.normal.xyz;
+}
