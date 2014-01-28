@@ -256,6 +256,13 @@ namespace Oyster
 				this->isSpatiallyAltered = this->isDisturbed = true;
 			}
 
+			inline void CustomBodyState::SetOrientation( const ::Oyster::Math::Float3 &angularAxis, const ::Oyster::Math::Float3 &translation )
+			{
+				this->angularAxis.xyz = angularAxis ;
+				this->centerPos.xyz = translation;
+				this->isSpatiallyAltered = this->isDisturbed = true;
+			}
+
 			/*inline void CustomBodyState::SetRotation( const ::Oyster::Math::Float4x4 &rotation )
 			{
 				this->SetRotation( ::Oyster::Math3D::AngularAxis(rotation) );
@@ -266,6 +273,8 @@ namespace Oyster
 				this->SetRotation( ::Oyster::Math3D::ExtractAngularAxis(orientation) );
 				this->SetCenterPosition( orientation.v[3] );
 			}*/
+
+			
 
 			inline void CustomBodyState::SetLinearMomentum( const ::Oyster::Math::Float4 &g )
 			{

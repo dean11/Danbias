@@ -94,8 +94,9 @@ namespace Oyster { namespace Physics
 			void SetReach( const ::Oyster::Math::Float4 &halfSize );
 			void SetCenterPosition( const ::Oyster::Math::Float4 &centerPos );
 			void SetRotation( const ::Oyster::Math::Float4 &angularAxis );
-			void SetRotation( const ::Oyster::Math::Float4x4 &rotation );
-			void SetOrientation( const ::Oyster::Math::Float4x4 &orientation );
+			//void SetRotation( const ::Oyster::Math::Float4x4 &rotation );
+			//void SetOrientation( const ::Oyster::Math::Float4x4 &orientation );
+			void SetOrientation( const ::Oyster::Math::Float3 &angularAxis, const ::Oyster::Math::Float3 &translation );
 			void SetLinearMomentum( const ::Oyster::Math::Float4 &g );
 			void SetAngularMomentum( const ::Oyster::Math::Float4 &h );
 			void SetLinearImpulse( const ::Oyster::Math::Float4 &j );
