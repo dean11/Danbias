@@ -74,7 +74,7 @@ namespace GameLogic
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
-		Oyster::Math::Float4 lookDir;
+		Oyster::Math::Float3 lookDir;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;

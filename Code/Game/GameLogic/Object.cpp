@@ -71,7 +71,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oy
 	
 }
 
-void Object::ApplyLinearImpulse(Oyster::Math::Float4 force)
+void Object::ApplyLinearImpulse(Oyster::Math::Float3 force)
 {
 	setState.ApplyLinearImpulse(force);
 }
@@ -110,8 +110,8 @@ void Object::EndFrame()
 	//Oyster::Math::Float rot = (setState.GetGravityNormal().xyz).Dot(getState.GetGravityNormal().xyz);	
 	//Oyster::Math::Float3 axis = (setState.GetGravityNormal().xyz).Cross(getState.GetGravityNormal().xyz);
 	Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
-	Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
-	setState.SetOrientation(rotMatrix);
+	//Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
+	//setState.SetOrientation(rotMatrix);
 
 
 	this->getState = this->rigidBody->GetState();

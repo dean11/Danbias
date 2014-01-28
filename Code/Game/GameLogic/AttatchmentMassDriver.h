@@ -36,7 +36,7 @@ namespace GameLogic
 		********************************************************/
 		void ForceSuck(const WEAPON_FIRE &usage, float dt);
 
-		static void ForcePushAction(Oyster::Physics::ICustomBody *obj);
+		static void ForcePushAction(Oyster::Physics::ICustomBody *obj, void* args);
 
 	private:
 

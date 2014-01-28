@@ -31,7 +31,7 @@ namespace GameLogic
 
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
-		void ApplyLinearImpulse(Oyster::Math::Float4 force);
+		void ApplyLinearImpulse(Oyster::Math::Float3 force);
 
 		void BeginFrame();
 		void EndFrame();

@@ -16,8 +16,8 @@ Player::Player()
 	teamID = -1;
 	playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	lookDir = Oyster::Math::Float4(0,0,-1,0);
-	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
-	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
+	setState.SetCenterPosition(Oyster::Math::Float3(0,15,0));
+	setState.SetReach(Oyster::Math::Float3(2,3.5,2));
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
@@ -30,8 +30,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oy
 	this->playerState = PLAYER_STATE_IDLE;
 	lookDir = Oyster::Math::Float4(0,0,-1,0);
 
-	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
-	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
+	setState.SetCenterPosition(Oyster::Math::Float3(0,15,0));
+	setState.SetReach(Oyster::Math::Float3(2,3.5,2));
 }
 
 Player::~Player(void)
@@ -82,7 +82,7 @@ void Player::MoveBackwards()
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
+	Oyster::Math::Float3 r = Oyster::Math::Float4(1, 0, 0);
 	//Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
 	setState.ApplyLinearImpulse(r * 20 * this->gameInstance->GetFrameTime());
 	
@@ -90,7 +90,7 @@ void Player::MoveRight()
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
+	Oyster::Math::Float3 r = Oyster::Math::Float4(1, 0, 0 );
 	//Oyster::Math::Float4 r1 = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
 	setState.ApplyLinearImpulse(-r * 20 * this->gameInstance->GetFrameTime());
 }
@@ -152,7 +152,7 @@ Oyster::Math::Float4x4 Player::GetOrientation() const
 }
 Oyster::Math::Float3 Player::GetLookDir() const
 {
-	return this->lookDir.xyz;
+	return this->lookDir;
 }
 int Player::GetTeamID() const
 {

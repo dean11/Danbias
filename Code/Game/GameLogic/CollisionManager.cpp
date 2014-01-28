@@ -70,9 +70,9 @@ using namespace GameLogic;
 		//return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
 
-	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj)
+	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void* args)
 	{
-		Oyster::Math::Float4 pushForce = Oyster::Math::Float4(1,0,0,0) * (20);
+		Oyster::Math::Float3 pushForce = Oyster::Math::Float4(1,0,0) * (20);
 		Oyster::Physics::ICustomBody::State state;
 		state = obj->GetState();
 		state.ApplyLinearImpulse(pushForce);
