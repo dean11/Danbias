@@ -276,9 +276,9 @@ void API_Impl::RemoveGravity( const API::Gravity &g )
 	}
 }
 
-void API_Impl::ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) )
+void API_Impl::ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) )
 {
-	this->worldScene.Visit(collideable, hitAction);
+	this->worldScene.Visit(collideable, args, hitAction);
 }
 
 //void API_Impl::ApplyForceAt( const ICustomBody* objRef, const Float3 &worldPos, const Float3 &worldF )
