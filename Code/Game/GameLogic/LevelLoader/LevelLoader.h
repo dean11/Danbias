@@ -17,7 +17,7 @@ namespace GameLogic
 		{
 
 		public:
-			LevelLoader(){this->parser = new GameLogic::LevelFileLoader::LevelParser(); }
+			LevelLoader(){this->parser =  GameLogic::LevelFileLoader::LevelParser(); }
 			~LevelLoader(){}
 
 			/********************************************************
@@ -35,7 +35,7 @@ namespace GameLogic
 			LevelMetaData LoadLevelHeader(std::string fileName); //.
 
 		private:
-			GameLogic::LevelFileLoader::LevelParser *parser;
+			GameLogic::LevelFileLoader::LevelParser parser;
 		};
 }
 

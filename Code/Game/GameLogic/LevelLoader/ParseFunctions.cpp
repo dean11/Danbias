@@ -15,41 +15,66 @@ namespace GameLogic
 {
 	namespace LevelFileLoader
 	{
-		void ParseObject(unsigned char* buffer, void* header, int size)
+		void ParseObject(char* buffer, void *header, int size)
 		{
 			memcpy(header, buffer, size);
 		}
 
-		void ParseLevelMetaData(unsigned char* buffer, struct LevelMetaData &header)
+		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size)
 		{
 			int start = 0;
 			int tempSize;
+			char tempName[100];
+
 			memcpy(&header.typeID, &buffer[start], 4);
 			start += 4;
+
 			memcpy(&tempSize , &buffer[start], 4);
 			start += 4;
-			memcpy(&header.levelName, &buffer[start], tempSize);
+
+			memcpy(&tempName, &buffer[start], tempSize);
+			header.levelName.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
-			memcpy(&header.levelVersion, &buffer[start], 8)
+
+			memcpy(&header.levelVersion, &buffer[start], 8);
 			start += 8;
+
 			memcpy(&tempSize, &buffer[start], 4);
 			start +=4;
-			memcpy(&header.description, &buffer[start], tempSize);
+
+			memcpy(&tempName, &buffer[start], tempSize);
+			header.levelDescription.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
+
 			memcpy(&tempSize, &buffer[start], 4);
 			start += 4;
-			memcpy(&header.author, &buffer[start], tempSize);
+
+			memcpy(&tempName, &buffer[start], tempSize);
+			header.levelAuthor.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
-			memcpy(&header.nrOfPlayers, &buffer[start], 4);
+
+			memcpy(&header.maxNumberOfPlayer, &buffer[start], 4);
 			start += 4;
+
 			memcpy(&header.worldSize, &buffer[start], 4);
 			start += 4;
-			memcpy(&header.map, &buffer[start], 4);
+
+			memcpy(&header.overviewPictureID, &buffer[start], 4);
 			start += 4;
+
 			memcpy(&tempSize, &buffer[start], 4);
 			start += 4;
-			memcpy(&header.gameModes, &buffer[start], 4 * tempSize);
-			start += tempSize;
+
+			int temp;
+
+			for(int i = 0; i < tempSize; i++)
+			{
+				memcpy(&temp, &buffer[start], 4);
+				start += 4;
+				header.gameModesSupported.push_back((GameMode)temp);
+			}
+
+			size += start;
 		}
 	}
 }

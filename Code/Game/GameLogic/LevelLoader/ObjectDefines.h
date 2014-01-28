@@ -91,7 +91,7 @@ namespace GameLogic
 		std::vector<GameMode> gameModesSupported;
 	};
 
-	struct ObjectHeader : public PhysicsObject, public ObjectTypeHeader
+	struct ObjectHeader : public ObjectTypeHeader
 	{
 		//Model,
 		int ModelID;

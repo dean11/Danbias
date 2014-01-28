@@ -10,8 +10,8 @@ namespace GameLogic
 {
 	namespace LevelFileLoader
 	{
-			void ParseObject(unsigned char* buffer, void* header, int size);
-			void ParseLevelMetaData(unsigned char* buffer, struct ObjectTypeHeader &header); 
+		void ParseObject(char* buffer, void *header, int size);
+		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size); 
 	}
 }
 

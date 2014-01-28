@@ -9,10 +9,10 @@ using namespace GameLogic::LevelFileLoader;
 
 std::vector<ObjectTypeHeader> LevelLoader::LoadLevel(std::string fileName)
 {
-	return parser->Parse(fileName);
+	return parser.Parse(fileName);
 }
 
 LevelMetaData LevelLoader::LoadLevelHeader(std::string fileName)
 {
-	return parser->ParseHeader(fileName);
+	return parser.ParseHeader(fileName);
 }
