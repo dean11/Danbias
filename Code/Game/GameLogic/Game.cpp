@@ -128,6 +128,7 @@ bool Game::NewFrame()
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
+	//gameInstance.onMoveFnc(this->level);
 	return true;
 }
 

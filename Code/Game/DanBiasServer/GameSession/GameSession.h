@@ -30,7 +30,7 @@ namespace DanBias
 			NetworkSession* owner;
 			Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<LobbyClient>> clients;
 		};
-		
+		static GameSession* gameSession; 
 	public:
 		GameSession();
 		virtual~GameSession();

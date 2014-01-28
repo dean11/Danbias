@@ -46,6 +46,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DanBiasServerLauncher", "Ga
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics lab", "Physics lab\Physics lab.vcxproj", "{5128BD77-6472-4C4A-BE6F-724AD0E589C2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aDanBiasGameLauncher", "Game\aDanBiasGameLauncher\aDanBiasGameLauncher.vcxproj", "{666FEA52-975F-41CD-B224-B19AF3C0ABBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -284,6 +286,18 @@ Global
 		{5128BD77-6472-4C4A-BE6F-724AD0E589C2}.Release|Win32.Build.0 = Release|Win32
 		{5128BD77-6472-4C4A-BE6F-724AD0E589C2}.Release|x64.ActiveCfg = Release|x64
 		{5128BD77-6472-4C4A-BE6F-724AD0E589C2}.Release|x64.Build.0 = Release|x64
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Debug|Win32.Build.0 = Debug|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Debug|x64.ActiveCfg = Debug|x64
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Debug|x64.Build.0 = Debug|x64
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Release|Win32.ActiveCfg = Release|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Release|Win32.Build.0 = Release|Win32
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Release|x64.ActiveCfg = Release|x64
+		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

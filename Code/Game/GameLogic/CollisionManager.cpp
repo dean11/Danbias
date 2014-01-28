@@ -72,7 +72,7 @@ using namespace GameLogic;
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj)
 	{
-		Oyster::Math::Float4 pushForce = Oyster::Math::Float4(1,0,0,0) * (500);
+		Oyster::Math::Float4 pushForce = Oyster::Math::Float4(1,0,0,0) * (20);
 		Oyster::Physics::ICustomBody::State state;
 		state = obj->GetState();
 		state.ApplyLinearImpulse(pushForce);

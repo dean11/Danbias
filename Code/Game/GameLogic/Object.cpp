@@ -64,7 +64,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oy
 {
 	Oyster::Physics::API::Instance().AddObject(rigidBody);
 	rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Collision)(collisionFunc));
-
+	
 	this->rigidBody = rigidBody;
 	this->type = type;
 	this->objectID = GID();
@@ -120,4 +120,16 @@ void Object::EndFrame()
 	
 	this->setState = this->getState;
 	
+}
+Oyster::Math::Float3 Object::GetPosition() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return state.GetCenterPosition();
+}
+Oyster::Math::Float4x4 Object::GetOrientation() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return state.GetOrientation();
 }

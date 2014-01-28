@@ -19,6 +19,7 @@ using namespace GameLogic;
 
 namespace DanBias
 {
+	GameSession* GameSession::gameSession = nullptr;
 	GameSession::GameSession()
 		:gameInstance(GameAPI::Instance())
 	{
@@ -26,6 +27,7 @@ namespace DanBias
 		this->box = 0;
 		this->isCreated = false;
 		this->isRunning = false;
+		this->gameSession = this;
 	}
 
 	GameSession::~GameSession()

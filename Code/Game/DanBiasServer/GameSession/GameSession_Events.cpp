@@ -11,7 +11,6 @@
 
 #include <Windows.h>
 
-
 using namespace Utility::DynamicMemory;
 using namespace Oyster;
 using namespace Oyster::Network;
@@ -113,11 +112,20 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		/*int id= movedObject->GetID();
-		Oyster::Math::Float4x4 world = movedObject->GetOrientation();
-		Protocol_ObjectPosition p(world, 2);
-		Send(p.GetProtocol());*/
-
+		GameLogic::IObjectData* obj = NULL;
+		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
+			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
+		if(obj)
+		{
+			if(obj->GetType() == OBJECT_TYPE_BOX)
+			{
+				obj->GetID();
+				Oyster::Math::Float4x4 world =obj->GetOrientation();
+				Protocol_ObjectPosition p(world, 1);
+				GameSession::gameSession->Send(p.GetProtocol());
+			}
+		}
+		
 	}
 
 }//End namespace DanBias
