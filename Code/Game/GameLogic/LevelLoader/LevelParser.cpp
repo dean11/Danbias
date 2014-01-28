@@ -15,7 +15,6 @@ LevelParser::~LevelParser()
 {
 }
 
-//
 std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 {
 	int stringSize = 0;
