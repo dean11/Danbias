@@ -59,20 +59,11 @@ namespace Oyster { namespace Physics3D
 
 		/******************************************************************
 		 * Returns the world tangential momentum at worldPos, of a mass in rotation.
-		 * G = ( H x r ) / ( |H| * |r|^2 ) <-> H = r x G
 		 * @todo TODO: improve doc
 		 ******************************************************************/
 		inline ::Oyster::Math::Float4 TangentialLinearMomentum( const ::Oyster::Math::Float4 &angularMomentum, const ::Oyster::Math::Float4 &worldOffset )
 		{
-			::Oyster::Math::Float magnitudeH_squared = angularMomentum.Dot( angularMomentum );
-			if( magnitudeH_squared > 0 )
-			{
-				return ::Oyster::Math::Float4( angularMomentum.xyz.Cross(worldOffset.xyz), 0.0f ) /= ( (::Oyster::Math::Float)::std::sqrt(magnitudeH_squared) * worldOffset.Dot( worldOffset ) );
-			}
-			else
-			{
-				return ::Oyster::Math::Float4::null;
-			}
+			return ::Oyster::Math::Float4( angularMomentum.xyz.Cross(worldOffset.xyz), 0.0f ) /= worldOffset.Dot( worldOffset );
 		}
 
 		/******************************************************************
