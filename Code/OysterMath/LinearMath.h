@@ -325,23 +325,24 @@ namespace LinearAlgebra2D
 
 namespace LinearAlgebra3D
 {
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
-	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
-	}
+	// All Matrix to AngularAxis conversions here is incorrect
+	//template<typename ScalarType>
+	//inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
+	//{
+	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
+	//}
 
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotationMatrix )
-	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
-	}
+	//template<typename ScalarType>
+	//inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &rotationMatrix )
+	//{
+	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(rotationMatrix.v[1].z, rotationMatrix.v[2].x, rotationMatrix.v[0].y, 1) );
+	//}
 
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
-	{
-		return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
-	}
+	//template<typename ScalarType>
+	//inline ::LinearAlgebra::Vector4<ScalarType> ExtractAngularAxis( const ::LinearAlgebra::Matrix4x4<ScalarType> &orientationMatrix )
+	//{
+	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
+	//}
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
