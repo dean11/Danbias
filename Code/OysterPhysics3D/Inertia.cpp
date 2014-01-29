@@ -32,10 +32,17 @@ Float3 MomentOfInertia::CalculateAngularVelocity( const Quaternion &externR, con
 }
 
 Float3 & MomentOfInertia::CalculateAngularVelocity( const Quaternion &externR, const Float3 &h, Float3 &targetMem ) const
-{ // w = (R * I_R) * I_M^-1 * (R * I_R)^-1 * h
-	Float4x4 rotation = RotationMatrix( externR ) * RotationMatrix( this->rotation );
-	Float4 w = rotation.GetInverse() * Float4( h, 0.0f );
-	return targetMem = rotation * w.PiecewiseMultiplicationAdd( Float4(1.0f / this->magnitude.x, 1.0f / this->magnitude.y, 1.0f / this->magnitude.z, 0.0f) );
+{ // w = h * | (2/3) * I_M^-1 (R I_R)^-1 h | / |h|
+	Float hMagnitudeSquared = h.Dot( h );
+	if( hMagnitudeSquared > 0.0f )
+	{
+		Float4x4 rotationInverse = (RotationMatrix( externR ) * RotationMatrix( this->rotation )).Transpose();
+		Float4 v = rotationInverse * Float4( h, 0.0f );
+		v.PiecewiseMultiplicationAdd( Float4((2.0f/3.0f) / this->magnitude.x, (2.0f/3.0f) / this->magnitude.y, (2.0f/3.0f) / this->magnitude.z, 0.0f) );
+		return targetMem = (Float4( h, 0.0f ) * ( v.GetMagnitude() / ( (Float)::std::sqrt(hMagnitudeSquared)) ) ).xyz;
+	}
+	else
+		return targetMem = Float3::null;
 }
 
 Float3 MomentOfInertia::CalculateAngularMomentum( const Quaternion &externR, const Float3 &w ) const
@@ -44,8 +51,15 @@ Float3 MomentOfInertia::CalculateAngularMomentum( const Quaternion &externR, con
 }
 
 Float3 & MomentOfInertia::CalculateAngularMomentum( const Quaternion &externR, const Float3 &w, Float3 &targetMem ) const
-{ // h = (R * I_R) * I_M * (R * I_R)^-1 * w
-	Float4x4 rotation = RotationMatrix( externR ) * RotationMatrix( this->rotation );
-	Float4 h = rotation.GetInverse() * Float4( w, 0.0f );
-	return targetMem = rotation * h.PiecewiseMultiplicationAdd( Float4(this->magnitude.x, this->magnitude.y, this->magnitude.z, 0.0f) );
+{ // h = w * | (3/2) * I_M (R I_R)^-1 w | / |w|
+	Float wMagnitudeSquared = w.Dot( w );
+	if( wMagnitudeSquared > 0.0f )
+	{
+		Float4x4 rotationInverse = (RotationMatrix( externR ) * RotationMatrix( this->rotation )).Transpose();
+		Float4 v = rotationInverse * Float4( w, 0.0f );
+		v.PiecewiseMultiplicationAdd( Float4((3.0f/2.0f) * this->magnitude.x, (3.0f/2.0f) * this->magnitude.y, (3.0f/2.0f) * this->magnitude.z, 0.0f) );
+		return targetMem = (Float4( w, 0.0f ) * ( v.GetMagnitude() / (Float)::std::sqrt(wMagnitudeSquared) ) ).xyz;
+	}
+	else
+		return targetMem = Float3::null;
 }
