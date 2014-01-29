@@ -53,22 +53,15 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	this->centerPos += ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
 	
 	// updating the angular
-	//Float4x4 rotationMatrix; ::Oyster::Math3D::RotationMatrix( this->rotation, rotationMatrix );
-	// Important! The member data is all world data except the Inertia tensor. Thus a new InertiaTensor needs to be created to be compatible with the rest of the world data.
-	//Float4x4 wMomentOfInertiaTensor = TransformMatrix( rotationMatrix, this->momentOfInertiaTensor ); // RI
-
-	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
-	
-	//! HACK: @todo Rotation temporary disabled
-	//this->axis += Radian( Formula::AngularVelocity(wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, this->impulse_Angular)) );
-	this->axis += this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
+	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
+	this->axis += updateFrameLength * this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
 	this->rotation = Rotation( this->axis );
 
 	// update momentums and clear impulse_Linear and impulse_Angular
 	this->momentum_Linear += this->impulse_Linear;
 	this->impulse_Linear = Float4::null;
 
-	//this->momentum_Angular += this->impulse_Angular; //! HACK: @todo Rotation temporary disabled
+	this->momentum_Angular += this->impulse_Angular; //! HACK: @todo Rotation temporary disabled
 	this->impulse_Angular = Float4::null;
 }
 
@@ -182,19 +175,6 @@ void RigidBody::SetMass_KeepMomentum( const Float &m )
 		this->mass = m;
 	}
 }
-
-//void RigidBody::SetOrientation( const Float4x4 &o )
-//{ // by Dan Andersson
-//	this->axis = ExtractAngularAxis( o );
-//	this->rotation = Rotation( this->axis );
-//	this->centerPos = o.v[3].xyz;
-//}
-//
-//void RigidBody::SetRotation( const Float4x4 &r )
-//{ // by Dan Andersson
-//	this->axis = ExtractAngularAxis( r );
-//	this->rotation = Rotation( this->axis );
-//}
 
 void RigidBody::SetMomentum_Linear( const Float3 &worldG, const Float3 &atWorldPos )
 { // by Dan Andersson

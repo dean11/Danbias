@@ -15,7 +15,7 @@ namespace Oyster
 				this->rotation = ::Oyster::Math::Float4x4::identity;
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->size = ::Oyster::Math::Float3( 1.0f );
-				this->mass = 12.0f;
+				this->mass = 6.0f;
 				this->restitutionCoeff = 1.0f;
 				this->frictionCoeff_Dynamic = 0.5f;
 				this->frictionCoeff_Static = 0.5f;
@@ -124,7 +124,7 @@ namespace Oyster
 
 			inline const ::Oyster::Math::Float3 & CustomBodyState::GetAngularAxis() const
 			{
-				return this->angularAxis;
+				return ::Utility::Value::Radian(this->angularAxis);
 			}
 
 			inline ::Oyster::Math::Float4x4 CustomBodyState::GetRotation() const
@@ -201,8 +201,6 @@ namespace Oyster
 			{
 				if( m != 0.0f )
 				{ // sanity block!
-					// Formula::LinearMomentum( m, Formula::LinearVelocity(this->mass, this->linearMomentum) )
-					// is the same as (this->linearMomentum / this->mass) * m = (m / this->mass) * this->linearMomentum
 					this->linearMomentum *= (m / this->mass);
 					this->mass = m;
 				}
@@ -263,19 +261,6 @@ namespace Oyster
 				this->isSpatiallyAltered = this->isDisturbed = true;
 			}
 
-			/*inline void CustomBodyState::SetRotation( const ::Oyster::Math::Float4x4 &rotation )
-			{
-				this->SetRotation( ::Oyster::Math3D::AngularAxis(rotation) );
-			}
-
-			inline void CustomBodyState::SetOrientation( const ::Oyster::Math::Float4x4 &orientation )
-			{
-				this->SetRotation( ::Oyster::Math3D::ExtractAngularAxis(orientation) );
-				this->SetCenterPosition( orientation.v[3] );
-			}*/
-
-			
-
 			inline void CustomBodyState::SetLinearMomentum( const ::Oyster::Math::Float3 &g )
 			{
 				this->linearMomentum = g;
@@ -334,8 +319,8 @@ namespace Oyster
 				::Oyster::Math::Float3 offset = at - this->centerPos;
 				::Oyster::Math::Float3 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
 				this->linearImpulse += j - ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
-				this->angularImpulse += deltaAngularImpulse;
 
+				this->angularImpulse += deltaAngularImpulse;
 				this->isDisturbed = true;
 			}
 
