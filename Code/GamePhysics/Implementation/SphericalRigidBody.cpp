@@ -171,7 +171,7 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	targetMem = worldPos.xyz - this->rigid.centerPos;
+	targetMem = Float4( worldPos.xyz - this->rigid.centerPos, 0);
 	Float magnitude = targetMem.GetMagnitude();
 	if( magnitude != 0.0f )
 	{ // sanity check
