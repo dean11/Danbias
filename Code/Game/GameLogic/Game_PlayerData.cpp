@@ -49,7 +49,7 @@ OBJECT_TYPE Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetType();
 }
-void Game::PlayerData::Rotate(const float x, const float y)
+void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir)
 {
-	this->player->Rotate(x, y);
+	
 }

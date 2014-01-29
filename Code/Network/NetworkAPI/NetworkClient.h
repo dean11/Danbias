@@ -15,6 +15,7 @@ namespace Oyster
 	namespace Network
 	{
 		class NetworkSession;
+		struct ConnectionInfo;
 
 		extern "C"
 		{
@@ -54,7 +55,7 @@ namespace Oyster
 				/**
 				*	
 				*/
-				bool Connect(int socket);
+				bool Connect(ConnectionInfo& data);
 
 				/**
 				*	
@@ -101,6 +102,8 @@ namespace Oyster
 				*	@see DataRecieved
 				*/
 				virtual void NetworkCallback(Oyster::Network::CustomNetProtocol& p);
+
+				virtual std::string GetIpAddress();
 
 			private:
 				NetworkClient(const NetworkClient& obj);

@@ -20,7 +20,7 @@ namespace Oyster
 		{
 		public:
 			Listener();
-			Listener(Oyster::Network::IPostBox<int>* postBox);
+			Listener(Oyster::Network::IPostBox<ConnectionInfo>* postBox);
 			~Listener();
 
 			bool Init(unsigned int port);
@@ -29,7 +29,7 @@ namespace Oyster
 			void Stop();
 			void Shutdown();
 
-			void SetPostBox(IPostBox<int>* postBox);
+			void SetPostBox(IPostBox<ConnectionInfo>* postBox);
 
 		private:
 			//Thread functions
@@ -48,7 +48,7 @@ namespace Oyster
 			OysterMutex mutex;
 			std::mutex stdMutex;
 
-			IPostBox<int>* postBox;
+			IPostBox<ConnectionInfo>* postBox;
 			std::atomic<bool> isListening;
 			int port;
 		};

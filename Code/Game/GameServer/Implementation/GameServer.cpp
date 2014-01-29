@@ -41,7 +41,7 @@ DanBiasServerReturn GameServerAPI::Create(const GameInitDesc& desc)
 		return DanBiasServerReturn_Error;
 	}
 
-	std::printf("Server created!\t-\t%s: [%i]\n", server.GetLanAddress().c_str(), desc.listenPort);
+	std::printf("Server created!\t-\t%s: [%i]\n\n", server.GetLanAddress().c_str(), desc.listenPort);
 		
 	return DanBiasServerReturn_Sucess;
 }
@@ -53,8 +53,7 @@ void GameServerAPI::Start()
 
 	while (true)
 	{
-		int c = server.ProcessConnectedClients();
-		if(c > 0)	printf(" - [%i] client(s) connected!\n", c);
+		server.ProcessConnectedClients();
 		lobby.Update();
 
 		if(GetAsyncKeyState(0x51))	//Q for exit

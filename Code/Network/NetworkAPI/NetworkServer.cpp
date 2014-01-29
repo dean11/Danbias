@@ -77,7 +77,7 @@ public:
 
 public:
 	Listener* listener;
-	PostBox<int> postBox;	//Postbox for new clients
+	PostBox<ConnectionInfo> postBox;	//Postbox for new clients
 	OysterThread thread;	//Server thread
 	NetworkSession *mainSession;
 	Utility::Container::ThreadSafeQueue<SmartPointer<NetworkClient>> clientQueue;
@@ -95,9 +95,9 @@ bool NetworkServer::PrivateData::DoWork()
 	/** Check for new clients **/
 	if(postBox.IsFull())
 	{
-		int clientSocketNum = postBox.FetchMessage();
-
-		if(clientSocketNum == -1)
+		ConnectionInfo clientSocketNum = postBox.FetchMessage();
+		
+		if(clientSocketNum.socket == -1)
 		{
 			//Something went wrong somewhere... do we care?
 		}

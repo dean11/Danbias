@@ -79,7 +79,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const float x, const float y) = 0;
+			virtual void Rotate(const Oyster::Math3D::Float3 lookDir) = 0;
 
 			/********************************************************
 			* Uses the chosen players weapon based on input

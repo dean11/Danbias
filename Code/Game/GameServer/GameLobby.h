@@ -29,11 +29,11 @@ namespace DanBias
 		void GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network::NetworkClient* c);			//id = protocol_General_Text:
 		void LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c);	//id = protocol_Lobby_Create:
 		void LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_Start:
-		void LobbyJoin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Join:
-		void LobbyLogin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_Login:
+		void LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Join:				
+		void LobbyLogin(GameLogic::Protocol_LobbyLogin& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Login:
 		void LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_Refresh:
-		void LobbyMainData(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_MainData:
-		void LobbyGameData(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_GameData:
+		void LobbyMainData(GameLogic::Protocol_LobbyMainData& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_MainData:
+		void LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_GameData:
 
 	private:
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;

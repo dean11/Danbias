@@ -9,30 +9,23 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 {
 	switch (p[0].value.netShort)
 	{
-		//LobbyStartGame(GameLogic::Protocol_LobbyStartGame(p), c);
-		//LobbyRefresh(GameLogic::Protocol_LobbyRefresh(p), c);
-		//LobbyLogin(GameLogic::Protocol_LobbyLogin(p), c);
-		//LobbyJoin(GameLogic::Protocol_LobbyJoin(p), c);
-		//GeneralStatus(GameLogic::Protocol_General_Status(p), c);
-		//GeneralText(GameLogic::Protocol_General_Text(p), c);
-
-		case protocol_General_Status:
+		case protocol_General_Status:	this->GeneralStatus		(Protocol_General_Status	(p), c);
 		break;
-		case protocol_General_Text:
+		case protocol_General_Text:		this->GeneralText		(Protocol_General_Text		(p), c);
 		break;
-		case protocol_Lobby_Create:
+		case protocol_Lobby_Create:		this->LobbyCreateGame	(Protocol_LobbyCreateGame	(p), c);
 		break;
-		case protocol_Lobby_Start:
+		case protocol_Lobby_Start:		this->LobbyStartGame	(Protocol_LobbyStartGame	(p), c);
 		break;
-		case protocol_Lobby_Join:
+		case protocol_Lobby_Join:		this->LobbyJoin			(Protocol_LobbyJoin			(p), c);
 		break;
-		case protocol_Lobby_Login:
+		case protocol_Lobby_Login:		this->LobbyLogin		(Protocol_LobbyLogin		(p), c);
 		break;
-		case protocol_Lobby_Refresh:
+		case protocol_Lobby_Refresh:	this->LobbyRefresh		(Protocol_LobbyRefresh		(p), c);
 		break;
-		case protocol_Lobby_MainData:
+		case protocol_Lobby_MainData:	this->LobbyMainData		(Protocol_LobbyMainData		(p), c);
 		break;
-		case protocol_Lobby_GameData:
+		case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
 		break;
 	}
 }
@@ -69,7 +62,7 @@ void GameLobby::LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Ne
 {
 
 }
-void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c)
+void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c)
 {
 	//for (unsigned int i = 0; i < this->gameLobby.Size(); i++)
 	//{
@@ -80,7 +73,7 @@ void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::
 	//	}
 	//}
 }
-void GameLobby::LobbyLogin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c)
+void GameLobby::LobbyLogin(GameLogic::Protocol_LobbyLogin& p, Oyster::Network::NetworkClient* c)
 {
 
 }
@@ -88,11 +81,11 @@ void GameLobby::LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Networ
 {
 	//Dont need to handle this on the server...
 }
-void GameLobby::LobbyMainData(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c)
+void GameLobby::LobbyMainData(GameLogic::Protocol_LobbyMainData& p, Oyster::Network::NetworkClient* c)
 {
 
 }
-void GameLobby::LobbyGameData(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c)
+void GameLobby::LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c)
 {
 
 }

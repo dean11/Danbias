@@ -156,6 +156,13 @@ namespace GameLogic
 
 			list.Reserve(10);
 		}
+		Protocol_LobbyGameData(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_GameData;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			list.Reserve(10);
+		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
 			int a = 1;
@@ -186,6 +193,10 @@ namespace GameLogic
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyMainData(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{

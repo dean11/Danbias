@@ -11,7 +11,7 @@ Listener::Listener()
 	connection = NULL;
 }
 
-Listener::Listener(Oyster::Network::IPostBox<int>* postBox)
+Listener::Listener(Oyster::Network::IPostBox<ConnectionInfo>* postBox)
 {
 	this->isListening = false;
 	connection = NULL;
@@ -88,7 +88,7 @@ void Listener::Shutdown()
 	StopListen();
 }
 
-void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
+void Listener::SetPostBox(Oyster::Network::IPostBox<ConnectionInfo>* postBox)
 {
 	stdMutex.lock();
 	this->postBox = postBox;
@@ -97,21 +97,21 @@ void Listener::SetPostBox(Oyster::Network::IPostBox<int>* postBox)
 
 int Listener::Accept()
 {
-	int clientSocket = -1;
+	ConnectionInfo clientSocket = {0};
 	clientSocket = connection->Listen();
 
 	if(!this->isListening.load())
 	{
 		return -1;
 	}
-	if(clientSocket != -1)
+	if(clientSocket.socket != -1)
 	{
 		stdMutex.lock();
 		postBox->PostMessage(clientSocket);
 		stdMutex.unlock();
 	}
 
-	return clientSocket;
+	return clientSocket.socket;
 }
 void Listener::StopListen()
 {

@@ -11,6 +11,12 @@ namespace Oyster
 {
 	namespace Network
 	{
+		struct ConnectionInfo
+		{
+			int socket;
+			std::string addr;
+		};
+
 		class OysterByte;
 		class IConnection
 		{
@@ -27,7 +33,7 @@ namespace Oyster
 			virtual int InitiateClient() { return false; };
 
 			//Listen function to let client connect, only used by the server
-			virtual int  Listen() { return -1; };
+			virtual ConnectionInfo  Listen() { return ConnectionInfo(); };
 
 			//enables the client to connect with a server with use of name and port
 			//(servers uses Listen instead of connect)

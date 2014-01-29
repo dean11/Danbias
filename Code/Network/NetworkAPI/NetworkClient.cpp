@@ -171,7 +171,7 @@ void NetworkClient::Update()
 	}
 }
 
-bool NetworkClient::Connect(int socket)
+bool NetworkClient::Connect(ConnectionInfo& socket)
 {
 	if(this->IsConnected()) return true;
 	if(this->privateData)	return false;
@@ -250,4 +250,7 @@ void NetworkClient::DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e)
 void NetworkClient::NetworkCallback(Oyster::Network::CustomNetProtocol& p)
 {}
 
-
+std::string NetworkClient::GetIpAddress()
+{
+	return this->privateData->connection.GetIpAddress();
+}

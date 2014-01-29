@@ -16,6 +16,7 @@
 #include <Queue.h>
 #include <NetworkSession.h>
 #include <DynamicArray.h>
+#include <Protocols.h>
 
 
 namespace DanBias
@@ -55,17 +56,31 @@ namespace DanBias
 
 		//Private member functions
 	private:
-		//Handles all events recieved
-		//void ParseEvents();
-		
+		// TODO: find out what this method does..
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
-		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
+
 		
 		//Sends a client to the owner, if obj is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);
 		
 		//Frame function, derived from IThreadObject
 		bool DoWork	( ) override;
+
+	private:
+		void ParseProtocol					(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
+
+		void Gameplay_PlayerMovement		( GameLogic::Protocol_PlayerMovement& p, DanBias::GameClient* c );
+		void Gameplay_PlayerLookDir			( GameLogic::Protocol_PlayerLook& p, DanBias::GameClient* c );
+		void Gameplay_PlayerChangeWeapon	( GameLogic::Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c );
+		void Gameplay_PlayerShot			( GameLogic::Protocol_PlayerShot& p, DanBias::GameClient* c );
+		void Gameplay_ObjectPickup			( GameLogic::Protocol_ObjectPickup& p, DanBias::GameClient* c );
+		void Gameplay_ObjectDamage			( GameLogic::Protocol_ObjectDamage& p, DanBias::GameClient* c );
+		void Gameplay_ObjectPosition		( GameLogic::Protocol_ObjectPosition& p, DanBias::GameClient* c );
+		void Gameplay_ObjectEnabled			( GameLogic::Protocol_ObjectEnable& p, DanBias::GameClient* c );
+		void Gameplay_ObjectDisabled		( GameLogic::Protocol_ObjectDisable& p, DanBias::GameClient* c );
+		void Gameplay_ObjectCreate			( GameLogic::Protocol_ObjectCreate& p, DanBias::GameClient* c );
+		void General_Status					( GameLogic::Protocol_General_Status& p, DanBias::GameClient* c );
+		void General_Text					( GameLogic::Protocol_General_Text& p, DanBias::GameClient* c );
 		
 		//Private member variables
 	private:
@@ -78,6 +93,7 @@ namespace DanBias
 		bool isRunning;
 		Utility::WinTimer timer;
 
+		//Callback method recieving from gamelogic
 		static void ObjectMove(GameLogic::IObjectData* movedObject);
 
 
