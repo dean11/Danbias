@@ -48,7 +48,7 @@
 #define protocol_GameplayMIN							300
 #define protocol_Gameplay_PlayerMovement			300
 #define protocol_Gameplay_PlayerLookDir				301
-#define protocol_Gameplay_PlayerChangeWeapon		302
+#define protocol_Gameplay_PlayerChangeWeapon			302
 #define protocol_Gameplay_PlayerShot				303
 #define protocol_Gameplay_ObjectPickup				304
 #define protocol_Gameplay_ObjectDamage				305

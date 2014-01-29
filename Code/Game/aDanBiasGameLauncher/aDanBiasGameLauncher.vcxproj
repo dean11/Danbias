@@ -111,7 +111,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;GameServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;GameServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -127,7 +127,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;GameServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;GameServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>DanBiasGame_$(PlatformShortName).dll;GameServer_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DanBiasGame_$(PlatformShortName).lib;GameServer_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,7 +167,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <DelayLoadDLLs>DanBiasGame_$(PlatformShortName).dll;GameServer_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DanBiasGame_$(PlatformShortName).lib;GameServer_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

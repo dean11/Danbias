@@ -13,6 +13,13 @@ struct GameRecieverObject	:public Oyster::Network::NetworkClient
 	// parsing protocols and sending it to the gameState
 	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
+
+		//if( IsGameplayProtocol(p[protocol_INDEX_ID].value.netShort) )
+			//ParseGameplayEvent(e.protocol, e.gameClient);
+
+		//if( IsGeneralProtocol(p[protocol_INDEX_ID].value.netShort) )
+			//ParseGeneralEvent(e.protocol, e.gameClient);
+
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{
@@ -88,24 +95,23 @@ struct GameRecieverObject	:public Oyster::Network::NetworkClient
 		case protocol_Gameplay_ObjectPosition:
 			{
 
-				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
-				protocolData->object_ID = p[1].value.netInt;
+				Client::GameClientState::ObjPos protocolData;
+				protocolData.object_ID = p[1].value.netInt;
 				for(int i = 0; i< 16; i++)
 				{
-					protocolData->worldPos[i] = p[i+2].value.netFloat;
+					protocolData.worldPos[i] = p[i+2].value.netFloat;
 				}
 
 				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-
-				delete protocolData;
-				protocolData = NULL;
+					((Client::GameState*)gameClientState)->Protocol(&protocolData);
 			}
 			break;
 
 		default:
 			break;
 		}	
+
+
 
 	}
 };

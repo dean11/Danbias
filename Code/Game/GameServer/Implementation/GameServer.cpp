@@ -16,7 +16,7 @@
 #include <WindowShell.h>
 #include <Utilities.h>
 #include <WinTimer.h>
-#include <Thread\OysterThread.h>
+#include <thread>
 
 using namespace DanBias;
 using namespace Oyster::Network;
@@ -28,37 +28,37 @@ namespace
 	GameLobby				lobby;
 	NetworkServer			server;
 	WinTimer				timer;
-	GameServerAPI			instance;
-	//typedef void(*WorkerThreadFnc)(GameServerAPI*);
 }
 
 
-DanBiasServerReturn GameServerAPI::Create(const GameInitDesc& desc)
+
+DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 {
-		
 	if(server.Init(desc.listenPort, &lobby) == NetworkServer::ServerReturnCode_Error)
 	{
 		return DanBiasServerReturn_Error;
 	}
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	d.gameName.assign(desc.serverName);
+	lobby.SetGameDesc(d);
 
 	std::printf("Server created!\t-\t%s: [%i]\n\n", server.GetLanAddress().c_str(), desc.listenPort);
 		
 	return DanBiasServerReturn_Sucess;
 }
-void GameServerAPI::Start()
+void GameServerAPI::ServerStart()
 {
+	timer.reset();
 	server.Start();
 
-	timer.reset();
-
-	while (true)
-	{
-		server.ProcessConnectedClients();
-		lobby.Update();
-
-		if(GetAsyncKeyState(0x51))	//Q for exit
-			break;
-	}
+	
+}
+void GameServerAPI::ServerStop()
+{
+	lobby.Release();
+	server.Shutdown();
+	
 
 	double total = timer.getElapsedSeconds();
 	int time = (int)total;
@@ -72,23 +72,87 @@ void GameServerAPI::Start()
 
 	printf( "Server has been running for: %i:%i:%i - [hh:mm:ss] \n\n", hour, min, sec );
 	printf( "Terminating in : ");
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		printf( "%i ", 3-i );
 		Sleep(1000);
 	}
-	
+	printf( "\nServer terminated!" );
 }
-void GameServerAPI::Stop()
+void GameServerAPI::ServerUpdate()
 {
-	server.Stop();
-	lobby.ProcessClients();
-}
-void GameServerAPI::Terminate()
-{
-	lobby.Release();
-	server.Shutdown();
-
-	printf( "Server terminated!" );
+	server.Update();
+	lobby.Update();
 
 }
+
+GameServerAPI::GameServerInfo GameServerAPI::ServerGetInfo()
+{
+	GameServerAPI::GameServerInfo i;
+	i.serverIp = server.GetLanAddress().c_str();
+	i.listenPort = server.GetPort();
+	return i;
+}
+void		GameServerAPI::GameSetMapId(const int& val)
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	d.mapNumber = val;
+	lobby.SetGameDesc(d);
+}
+void		GameServerAPI::GameSetMaxClients(const int& val)
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	d.maxClients = val;
+	lobby.SetGameDesc(d);
+}
+void		GameServerAPI::GameSetGameMode(const int& val)
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	d.gameMode = val;
+	lobby.SetGameDesc(d);
+}
+void		GameServerAPI::GameSetGameTime(const int& val)
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	d.gameTime = val;
+	lobby.SetGameDesc(d);
+}
+int			GameServerAPI::GameGetMapId()
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	return d.mapNumber;
+}
+int			GameServerAPI::GameGetMaxClients()
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	return d.maxClients;
+}
+int			GameServerAPI::GameGetGameMode()
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	return d.gameMode;
+}
+int			GameServerAPI::GameGetGameTime()
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	return d.gameTime;
+}
+const char*	GameServerAPI::GameGetGameName()
+{
+	GameSession::GameDescription d;
+	lobby.GetGameDesc(d);
+	return d.gameName.c_str();
+}
+bool		GameServerAPI::GameStart()
+{
+	return lobby.StartGameSession();
+}
+

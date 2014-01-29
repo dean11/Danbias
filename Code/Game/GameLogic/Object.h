@@ -7,26 +7,37 @@
 #define OBJECT_H
 
 #include "GameLogicStates.h"
+#include "GameAPI.h"
 #include <PhysicsAPI.h>
 
 namespace GameLogic
 {
 	class Game;
 
-	class Object
+	class Object	:public IObjectData
 	{
 	public:		
 		Object();
-		Object(void* collisionFunc, OBJECT_TYPE type);
+		Object(OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type);
+		Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Object(void);
 
+		// API overrides
 		OBJECT_TYPE GetType() const;
 		int GetID() const;
+		Oyster::Math::Float3 GetPosition();
+		Oyster::Math::Float4x4 GetOrientation();
+
+
 		Oyster::Physics::ICustomBody* GetRigidBody();
+		void ApplyLinearImpulse(Oyster::Math::Float3 force);
 
 		void BeginFrame();
 		void EndFrame();
-
+		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 	private:
 		OBJECT_TYPE type;
 		int objectID;

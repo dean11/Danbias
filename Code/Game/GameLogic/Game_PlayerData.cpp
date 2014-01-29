@@ -4,9 +4,19 @@
 using namespace GameLogic;
 
 Game::PlayerData::PlayerData()
-{
-	this->player = new Player();
+{	
+	//set some stats that are appropriate to a player
+	Oyster::Physics::API::SimpleBodyDescription sbDesc;
+	sbDesc.centerPosition = Oyster::Math::Float3(0,15,0);
+	sbDesc.size = Oyster::Math::Float3(4,7,4);
+	
+	//create rigid body
+	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
+	
+	//create player with this rigid body
+	this->player = new Player(rigidBody,Object::DefaultCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
+
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
@@ -45,11 +55,12 @@ int Game::PlayerData::GetTeamID() const
 {
 	return this->player->GetTeamID();
 }
-OBJECT_TYPE Game::PlayerData::GetObjectType()	const
+
+OBJECT_TYPE Game::PlayerData::GetType()	const
 {
 	return this->player->GetType();
 }
 void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir)
 {
-	
+	this->player->Rotate(lookDir);
 }

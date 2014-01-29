@@ -6,21 +6,20 @@
 #include "GameLogicStates.h"
 #include "IAttatchment.h"
 #include "Player.h"
+#include "AttatchmentSocket.h"
+#include "DynamicArray.h"
 
 namespace GameLogic
 {
 
 	class Weapon
 	{
-
 	public:
-		
-
 		Weapon(void);
-		Weapon(int nrOfAttatchmentSockets);
+		Weapon(int nrOfAttatchmentSockets, Player *owner);
 		~Weapon(void);
 
-		void Use(const WEAPON_FIRE &fireInput);
+		void Use(const WEAPON_FIRE &usage, float dt);
 
 		void AddNewAttatchment(IAttatchment *attatchment, Player *owner);
 		void SwitchAttatchment(IAttatchment *attatchment, int socketID, Player *owner);
@@ -35,9 +34,12 @@ namespace GameLogic
 
 		int GetCurrentSocketID();
 
-	private:	
-		struct PrivateData;
-		PrivateData *myData;
+	private:
+		WEAPON_STATE weaponState;
+		Utility::DynamicMemory::DynamicArray<AttatchmentSocket*> attatchmentSockets;
+		int currentNrOfAttatchments;
+		IAttatchment *selectedAttatchment;
+		int selectedSocketID;
 	};
 
 }

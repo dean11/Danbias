@@ -8,26 +8,55 @@ using namespace GameLogic;
 using namespace Oyster::Physics;
 
 Player::Player()
-	:DynamicObject(CollisionManager::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
+	:DynamicObject()
 {
-	weapon = new Weapon();
-		
-	life = 100;
-	teamID = -1;
-	playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-	lookDir = Oyster::Math::Float4(0,0,-1,0);
-	setState.SetCenterPosition(Oyster::Math::Float4(0,15,0,1));
-	setState.SetReach(Oyster::Math::Float4(2,3.5,2,0));
-	
 
+}
+Player::Player(OBJECT_TYPE type)
+	:DynamicObject(type)
+{
+	InitPlayer();
+}
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
+	:DynamicObject(rigidBody,type)
+{
+	InitPlayer();
+}
+
+Player::Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
+	:DynamicObject(collisionFuncBefore,collisionFuncAfter,type)
+{
+	InitPlayer();
+}
+Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
+{
+	InitPlayer();
+}
+Player::Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
+{
+	InitPlayer();
+}
+
+void Player::InitPlayer()
+{
+	weapon = new Weapon(2,this);
+
+	this->life = 100;
+	this->teamID = -1;
+	this->playerState = PLAYER_STATE_IDLE;
+	lookDir = Oyster::Math::Float4(0,0,-1,0);
 }
 
 Player::~Player(void)
 {
-	delete weapon;
-	weapon = NULL;
+	if(weapon)
+	{
+		delete weapon;
+		weapon = NULL;
+	}	
 }
-
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
@@ -66,7 +95,7 @@ void Player::MoveBackwards()
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
+	Oyster::Math::Float3 r = Oyster::Math::Float4(1, 0, 0);
 	//Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
 	setState.ApplyLinearImpulse(r * 20 * this->gameInstance->GetFrameTime());
 	
@@ -74,14 +103,14 @@ void Player::MoveRight()
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float4 r = Oyster::Math::Float4(1, 0, 0, 0 );
+	Oyster::Math::Float3 r = Oyster::Math::Float4(1, 0, 0 );
 	//Oyster::Math::Float4 r1 = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
 	setState.ApplyLinearImpulse(-r * 20 * this->gameInstance->GetFrameTime());
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
 {
-	this->weapon->Use(usage);
+	this->weapon->Use(usage,gameInstance->GetFrameTime());
 }
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
@@ -92,9 +121,20 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
-void Player::Rotate(float x, float y)
+void Player::Rotate(const Oyster::Math3D::Float3 lookDir)
 {
-	this->setState.AddRotation(Oyster::Math::Float4(x, y));
+	this->lookDir = lookDir;
+		
+	Oyster::Math::Float4 up(0,1,0,0);//-setState.GetGravityNormal(); 
+	Oyster::Math::Float4 pos = setState.GetCenterPosition();
+	Oyster::Math::Float4x4 world = Oyster::Math3D::OrientationMatrix_LookAtDirection(lookDir, up.xyz, pos.xyz);
+	// cant set rotation
+	//setState.SetOrientation(world);
+	//this->lookDir = lookDir - up.xyz;
+	//this->lookDir = lookDir;
+
+	//this->setState.AddRotation(Oyster::Math::Float4(x, y));
+	//this->setState.SetRotation();
 }
 
 void Player::Jump()
@@ -125,7 +165,7 @@ Oyster::Math::Float4x4 Player::GetOrientation() const
 }
 Oyster::Math::Float3 Player::GetLookDir() const
 {
-	return this->lookDir.xyz;
+	return this->lookDir;
 }
 int Player::GetTeamID() const
 {

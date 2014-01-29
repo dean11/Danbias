@@ -16,7 +16,13 @@ namespace GameLogic
 	{
 	public:
 		Player(void);
+		Player(OBJECT_TYPE type);
+		Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type);
+		Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
+		Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
+		Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Player(void);
+		void InitPlayer();
 		
 		/********************************************************
 		* Moves the player based on input
@@ -41,7 +47,17 @@ namespace GameLogic
 		********************************************************/
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
-		void Rotate(float x, float y);
+
+		void Rotate(const Oyster::Math3D::Float3 lookDir);
+
+		/********************************************************
+		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
+		* Will be called when the physics detect a collision
+		* @param rigidBodyPlayer: physics object of the player
+		* @param obj: physics object for the object that collided with the player
+		********************************************************/
+		static void PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+
 		
 		bool IsWalking();
 		bool IsJumping();
@@ -63,7 +79,10 @@ namespace GameLogic
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
-		Oyster::Math::Float4 lookDir;
+		Oyster::Math::Float3 lookDir;
+
+		bool hasTakenDamage;
+		float invincibleCooldown;
 
 	};
 }

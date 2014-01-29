@@ -14,6 +14,7 @@
 
 namespace GameLogic
 {
+	/*
 	struct Protocol_LobbyCreateGame :public Oyster::Network::CustomProtocolObject
 	{
 		char* mapName;
@@ -42,7 +43,7 @@ namespace GameLogic
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
 	};
-
+	*/
 	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
 		short gameId;

@@ -19,12 +19,17 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 
 	WindowShell::CreateConsoleWindow();
 
-	DanBias::GameServerAPI::GameInitDesc desc;
+	DanBias::GameServerAPI::ServerInitDesc desc;
 	desc.listenPort = 15151;
-	if(DanBias::GameServerAPI::Create(desc) == DanBias::DanBiasServerReturn_Sucess)
+	if(DanBias::GameServerAPI::ServerInitiate(desc) == DanBias::DanBiasServerReturn_Sucess)
 	{
-		DanBias::GameServerAPI::Start();
-		DanBias::GameServerAPI::Terminate();
+		DanBias::GameServerAPI::ServerStart();
+		while (!(GetAsyncKeyState(0x51)))	//Q for exit
+		{
+			DanBias::GameServerAPI::ServerUpdate();
+			Sleep(1);
+		}
+		DanBias::GameServerAPI::ServerStop();
 	}
 	return cmdShow;
 }

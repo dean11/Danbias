@@ -13,7 +13,6 @@
 #include "GameLogicStates.h"
 #include <OysterMath.h>
 
-
 namespace GameLogic
 {
 	class IObjectData;
@@ -62,7 +61,7 @@ namespace GameLogic
 			/** Get the type of the object
 			*	@return The OBJECT_TYPE of the object is returned
 			*/
-			virtual OBJECT_TYPE GetObjectType() const = 0;
+			virtual OBJECT_TYPE GetType() const = 0;
 		};
 
 		class IPlayerData :public IObjectData
@@ -100,6 +99,7 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
+			virtual IObjectData* GetObjectAt( int ID) const = 0;
 
 		};
 
