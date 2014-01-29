@@ -19,8 +19,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float frictionCoeff_Static;
 			::Oyster::Math::Float frictionCoeff_Dynamic;
 			::Oyster::Physics3D::MomentOfInertia inertiaTensor;
-			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
-			::Oyster::Physics::ICustomBody::EventAction_CollisionResponse subscription_onCollisionResponse;
+			::Oyster::Physics::ICustomBody::EventAction_BeforeCollisionResponse subscription_onCollision;
+			::Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse subscription_onCollisionResponse;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
 
@@ -36,8 +36,8 @@ namespace Oyster { namespace Physics
 			::Oyster::Math::Float restitutionCoeff;
 			::Oyster::Math::Float frictionCoeff_Static;
 			::Oyster::Math::Float frictionCoeff_Dynamic;
-			::Oyster::Physics::ICustomBody::EventAction_Collision subscription_onCollision;
-			::Oyster::Physics::ICustomBody::EventAction_CollisionResponse subscription_onCollisionResponse;
+			::Oyster::Physics::ICustomBody::EventAction_BeforeCollisionResponse subscription_onCollision;
+			::Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse subscription_onCollisionResponse;
 			::Oyster::Physics::ICustomBody::EventAction_Move subscription_onMovement;
 			bool ignoreGravity;
 

@@ -13,8 +13,8 @@ SphericalRigidBody::SphericalRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 10.0f );
 	this->gravityNormal = Float3::null;
-	this->onCollision = Default::EventAction_Collision;
-	this->onCollisionResponse = Default::EventAction_CollisionResponse;
+	this->onCollision = Default::EventAction_BeforeCollisionResponse;
+	this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	this->onMovement = Default::EventAction_Move;
 	this->scene = nullptr;
 	this->customTag = nullptr;
@@ -40,7 +40,7 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	}
 	else
 	{
-		this->onCollision = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	}
 
 	if( desc.subscription_onCollisionResponse )
@@ -49,7 +49,7 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	}
 	else
 	{
-		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+		this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	}
 
 	if( desc.subscription_onMovement )
@@ -128,12 +128,12 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SphericalRigidBody::CallSubscription_BeforeCollisionResponse( const ICustomBody *deuter )
 {
 	return this->onCollision( this, deuter );
 }
 
-void SphericalRigidBody::CallSubscription_CollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
+void SphericalRigidBody::CallSubscription_AfterCollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
 {
 	this->onCollisionResponse( this, deuter, kineticEnergyLoss);
 }
@@ -171,7 +171,7 @@ Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SphericalRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	targetMem = worldPos.xyz - this->rigid.centerPos;
+	targetMem = Float4( worldPos.xyz - this->rigid.centerPos, 0);
 	Float magnitude = targetMem.GetMagnitude();
 	if( magnitude != 0.0f )
 	{ // sanity check
@@ -238,7 +238,7 @@ void SphericalRigidBody::Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster:
 	this->rigid.Predict_LeapFrog( outDeltaPos.xyz, outDeltaAxis.xyz, actingLinearImpulse.xyz, actingAngularImpulse.xyz, deltaTime );
 }
 
-void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
+void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_BeforeCollisionResponse functionPointer )
 {
 	if( functionPointer )
 	{
@@ -246,11 +246,11 @@ void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Collision fun
 	}
 	else
 	{
-		this->onCollision = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	}
 }
 
-void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_CollisionResponse functionPointer )
+void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_AfterCollisionResponse functionPointer )
 {
 	if( functionPointer )
 	{
@@ -258,7 +258,7 @@ void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_CollisionResp
 	}
 	else
 	{
-		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+		this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	}
 }
 
