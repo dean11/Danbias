@@ -15,20 +15,24 @@
 #include <GameAPI.h>
 #include <Queue.h>
 #include <NetworkSession.h>
+#include <DynamicArray.h>
+
 
 namespace DanBias
 {
-	class GameSession : public Oyster::Thread::IThreadObject
+	class GameSession	: public Oyster::Network::NetworkSession
+						, public Oyster::Thread::IThreadObject
 	{
 	public:
+		
 		/**
 		*	A container to use when initiating a new session
 		*/
 		struct GameDescription
 		{
 			std::wstring mapName;
-			NetworkSession* owner;
-			Utility::DynamicMemory::DynamicArray<NetworkClient> clients;
+			Oyster::Network::NetworkSession* owner;
+			Utility::DynamicMemory::DynamicArray<Oyster::Network::NetClient> clients;
 		};
 
 	public:
@@ -44,45 +48,28 @@ namespace DanBias
 		/** Join an existing/running game session 
 		*	@param client The client to attach to the session
 		*/
-		bool Join(Utility::DynamicMemory::SmartPointer<NetworkSession> client);
+		bool Attach(Oyster::Network::NetClient client) override;
 		
-		/**
-		*	Closes the game session
-		*	@param disconnectClients If set to true clients is dissconnected from the server, if false the clients is sent to the given owner of the session.
-		*/
-		void CloseSession(bool disconnectClients = false); 
-
 		inline bool IsCreated() const	{ return this->isCreated; }
 		inline bool IsRunning() const	{ return this->isRunning; }
 
 		//Private member functions
 	private:
 		//Handles all events recieved
-		void ParseEvents();
-		//Handles all gameplay events
-		void ParseGameplayEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
-		//Handles all general events
-		void ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
-		//Adds a client to the client list
-		void InsertClient(Utility::DynamicMemory::SmartPointer<GameClient> obj);
-		//Removes a client from the client list
-		void RemoveClient(DanBias::GameClient* obj);
-		//Sends a protocol ta all clients in session
-		void Send(Oyster::Network::CustomNetProtocol* p);
-		//Frame function, derived from IThreadObject
-		bool DoWork	( ) override;
+		//void ParseEvents();
+		
+		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
+		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
+		
 		//Sends a client to the owner, if obj is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);
-		//Do a cleanup on all the private data
-		void Clean();
-		//Update game objects if needed
-		void UpdateGameObjects();
-
+		
+		//Frame function, derived from IThreadObject
+		bool DoWork	( ) override;
+		
 		//Private member variables
 	private:
-		
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
-		//Oyster::PostBox<DanBias::NetworkSession::NetEvent> *box;
 		Oyster::Thread::OysterThread worker;
 		GameLogic::GameAPI& gameInstance;
 		GameLogic::ILevelData *levelData;

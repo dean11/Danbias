@@ -57,7 +57,7 @@ namespace Oyster
 
 				/**	Parses asynchronous connected clients.
 				*/
-				void ProcessConnectedClients();
+				int ProcessConnectedClients();
 
 				/**	Set the main session connected clients will enter when connected to server.
 				*	@param mainSession The session to connect as main server session.
@@ -72,13 +72,17 @@ namespace Oyster
 				/**	Sets the main session to NULL and returns it
 				*	@return Returns the main session
 				*/
-				NetworkSession const* ReleaseMainSessionSession();
+				NetworkSession const* ReleaseMainSession();
 
 				/**	
 				*	
 				*/
 				bool IsStarted() const;
 
+				/**
+				*	
+				*/
+				std::string GetLanAddress();
 
 			private:
 				struct PrivateData;

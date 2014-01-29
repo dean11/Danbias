@@ -1,11 +1,12 @@
 #ifndef DANBIAS_CLIENTRECIEVEROBJECT_H
 #define DANBIAS_CLIENTRECIEVEROBJECT_H
 
+//WTF!? No headers included???
+
 namespace DanBias
 {
-struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
+struct GameRecieverObject	:public Oyster::Network::NetworkClient
 {
-	Oyster::Network::NetworkClient* nwClient;
 	Client::GameClientState* gameClientState;
 
 	// receiver function for server messages 

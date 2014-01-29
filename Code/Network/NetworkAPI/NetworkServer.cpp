@@ -9,17 +9,55 @@
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
 
-#include "../../Misc/Utilities.h"
-#include "../../Misc/Thread/OysterThread.h"
+#include "Utilities.h"
+#include "Thread/OysterThread.h"
+
+#ifndef _DEBUG
+#include <winsock2.h>
+#endif
 
 using namespace Oyster::Network;
-using namespace ::Server;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Thread;
 
 /*************************************
 			PrivateData
 *************************************/
+
+void Broadcast()
+{
+	char pkt[4];
+	size_t pkt_length = 4;
+	sockaddr_in dest;
+	sockaddr_in local;
+	WSAData data;
+	WSAStartup( MAKEWORD( 2, 2 ), &data );
+
+	local.sin_family = AF_INET;
+	local.sin_addr.s_addr = inet_addr( "127.0.0.1" );
+	local.sin_port = 15151; // choose any
+
+	dest.sin_family = AF_INET;
+	dest.sin_port = htons( 15151 );
+
+	// create the socket
+	SOCKET s = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
+	// bind to the local address
+	bind( s, (sockaddr *)&local, sizeof(local) );
+
+	std::string addr;
+	for (int i = 0; i < 256; i++)
+	{
+		addr = "192.168.0.";
+		char buff[5];
+		_itoa_s<5>(i, buff, 10);
+
+		addr.append(buff);
+		dest.sin_addr.s_addr = inet_addr( addr.c_str() );
+		// send the pkt
+		int ret = sendto( s, pkt, pkt_length, 0, (sockaddr *)&dest, sizeof(dest) );
+	}
+}
 
 struct NetworkServer::PrivateData : public IThreadObject
 {
@@ -30,6 +68,7 @@ public:
 		,	isInitiated(0)
 		,	isReleased(0)
 		,	isRunning(0)
+		,	port(-1)
 	{  }
 	~PrivateData()
 	{  }
@@ -37,11 +76,11 @@ public:
 	bool DoWork();
 
 public:
-	IListener* listener;
+	Listener* listener;
 	PostBox<int> postBox;	//Postbox for new clients
 	OysterThread thread;	//Server thread
 	NetworkSession *mainSession;
-	Utility::Container::ThreadSafeQueue<NetworkClient> clientQueue;
+	Utility::Container::ThreadSafeQueue<SmartPointer<NetworkClient>> clientQueue;
 
 	bool isInitiated;
 	bool isReleased;
@@ -51,6 +90,8 @@ public:
 
 bool NetworkServer::PrivateData::DoWork()
 {
+	//Broadcast();
+	
 	/** Check for new clients **/
 	if(postBox.IsFull())
 	{
@@ -60,12 +101,11 @@ bool NetworkServer::PrivateData::DoWork()
 		{
 			//Something went wrong somewhere... do we care?
 		}
-
 		
-		Oyster::Network::NetworkClient client;
-		client.Connect(clientSocketNum);
-		if(this->mainSession)
-			this->clientQueue.Push(client);
+		SmartPointer<NetworkClient> client(new NetworkClient());
+		client->Connect(clientSocketNum);
+		
+		this->clientQueue.Push(client);
 	}
 
 	return true;
@@ -101,6 +141,7 @@ NetworkServer::~NetworkServer()
 
 NetworkServer::ServerReturnCode NetworkServer::Init(const int& port, NetworkSession const* mainSession)
 {
+	this->privateData->mainSession = const_cast<NetworkSession*>(mainSession);
 	//Check if it's a valid port
 	if(port == 0 || port == -1)
 	{
@@ -117,7 +158,7 @@ NetworkServer::ServerReturnCode NetworkServer::Init(const int& port, NetworkSess
 
 	//Initiate listener
 	this->privateData->listener = new Listener(&this->privateData->postBox);
-	if(!((Listener*)this->privateData->listener)->Init(port, false))
+	if(!this->privateData->listener->Init(port, false))
 	{
 		return NetworkServer::ServerReturnCode_Error;
 	}
@@ -129,14 +170,13 @@ NetworkServer::ServerReturnCode NetworkServer::Init(const int& port, NetworkSess
 
 	this->privateData->isInitiated = true;
 	this->privateData->isReleased = false;
-	this->privateData->mainSession = 0;
 	return NetworkServer::ServerReturnCode_Sucess;
 }
 
 NetworkServer::ServerReturnCode NetworkServer::Start()
 {
 	//Start listener
-	if(!((Listener*)this->privateData->listener)->Start())
+	if(!this->privateData->listener->Start())
 	{
 		return NetworkServer::ServerReturnCode_Error;
 	}
@@ -154,7 +194,7 @@ void NetworkServer::Stop()
 {
 	if(this->privateData->listener)
 	{
-		((Listener*)this->privateData->listener)->Stop();
+		this->privateData->listener->Stop();
 	}
 
 	this->privateData->thread.Stop();
@@ -164,6 +204,10 @@ void NetworkServer::Stop()
 
 void NetworkServer::Shutdown()
 {
+	if(this->privateData->mainSession)
+	{
+		this->privateData->mainSession->CloseSession(true);
+	}
 	if(this->privateData->listener)
 	{
 		this->privateData->listener->Shutdown();
@@ -180,12 +224,23 @@ void NetworkServer::Shutdown()
 	this->privateData->isReleased = true;
 }
 
-void NetworkServer::ProcessConnectedClients()
+int NetworkServer::ProcessConnectedClients()
 {
+	int c = 0;
 	while(!this->privateData->clientQueue.IsEmpty())
 	{
-		if(this->privateData->mainSession)	this->privateData->mainSession->Attach(this->privateData->clientQueue.Pop());
+		if(this->privateData->mainSession)
+		{
+			this->privateData->mainSession->ClientConnectedEvent(this->privateData->clientQueue.Pop());
+			c++;
+		}
+		else
+		{
+			//Clients have nowhere to go?
+			this->privateData->clientQueue.Pop()->Disconnect();
+		}
 	}
+	return c;
 }
 
 void NetworkServer::SetSession(NetworkSession const* mainSession)
@@ -198,7 +253,7 @@ NetworkSession const* NetworkServer::GetMainSession()
 	return this->privateData->mainSession;
 }
 
-NetworkSession const* NetworkServer::ReleaseMainSessionSession()
+NetworkSession const* NetworkServer::ReleaseMainSession()
 {
 	NetworkSession const *  temp;
 	temp = this->privateData->mainSession;
@@ -211,7 +266,22 @@ bool NetworkServer::IsStarted() const
 	return this->privateData->isRunning;
 }
 
+std::string NetworkServer::GetLanAddress()
+{
+	std::string szLocalIP;
+	char szHostName[255];
+	struct hostent *host_entry;
 
+	gethostname(szHostName, 255);
+	
+	host_entry = gethostbyname(szHostName);
+	char* temp = inet_ntoa (*(struct in_addr *)*host_entry->h_addr_list);
+
+	char buff[255];
+	strcpy_s(buff, temp);
+	szLocalIP = buff;
+	return szLocalIP;
+}
 
 
 

@@ -20,6 +20,7 @@ namespace DanBias
 	{
 		DanBiasServerReturn_Error,
 		DanBiasServerReturn_Sucess,
+		DanBiasServerReturn_GameNotCreated,
 	};
 
 	extern "C"
@@ -29,13 +30,16 @@ namespace DanBias
 		public:
 			struct GameInitDesc
 			{
-				//stuff
-				int connectionPort;
-				int maxNumberOfClients;
+				int listenPort;
 				bool threaded;
 			};
+
 		public:
 			static DanBiasServerReturn Create(const GameInitDesc& desc);
+			static void Start();
+			static void Stop();
+			static void Terminate();
+
 		};//End class DanBiasServer
 	}//End Extern "C"
 } //End namspace DanBias

@@ -10,11 +10,13 @@
 #include "NetworkAPI_Preprocessor.h"
 #include "NetworkServerEventStruct.h"
 #include "NetworkClient.h"
+#include "Utilities.h"
 
 namespace Oyster
 {
 	namespace Network
 	{
+		typedef Utility::DynamicMemory::SmartPointer<NetworkClient> NetClient;
 		class NET_API_EXPORT NetworkSession
 		{
 		public:
@@ -30,48 +32,59 @@ namespace Oyster
 			/**
 			*	
 			*/
-			bool Attach(NetworkClient client);
+			virtual bool Attach(NetClient client);
 		
+			/**
+			*	Detaches all clients and sends them to owner.
+			*	If no owner is set the clients is disconnected.
+			*/
+			virtual void Detach();
+
 			/**
 			*	
 			*/
-			NetworkClient Detach(const NetworkClient& client);
+			virtual NetClient Detach(const NetworkClient* client);
 	
 			/**
 			*	
 			*/
-			NetworkClient Detach(short ID);
+			virtual NetClient Detach(short ID);
 
 			/**	Send a message to all clients in this session
 			*	@param message The message
 			*/
-			bool Send(Oyster::Network::CustomNetProtocol& message);
+			virtual bool Send(Oyster::Network::CustomNetProtocol& message);
 
 			/**	Send a message to a specific client in this session
 			*	@param message The message
 			*/
-			bool Send(Oyster::Network::CustomNetProtocol& protocol, int ID);
+			virtual bool Send(Oyster::Network::CustomNetProtocol& protocol, int ID);
 
 			/**
 			*	
 			*/
-			void CloseSession( bool dissconnectClients = false ); 
+			virtual void CloseSession( bool dissconnectClients = false ); 
 
 			/** 
 			*	Set the owner that clients will be returned to.
 			*	@param owner If owner is NULL, clients will be disconnected when session is over.
 			*/
-			void SetOwner(NetworkSession* owner);
+			virtual void SetOwner(NetworkSession* owner);
+
+			/**	Get the number of clients active in this session
+			*	@return The client count
+			*/
+			int GetClientCount() const;
+
+			/**
+			*	
+			*/
+			virtual void ClientConnectedEvent(NetClient client);
 
 			/**
 			*	
 			*/
 			virtual void ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e) = 0;
-
-			/**
-			*	
-			*/
-			virtual void ClientConnectedEvent(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e) = 0;
 
 		private:
 			struct PrivateSessionData;

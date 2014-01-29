@@ -53,6 +53,8 @@ int Connection::Connect(int socket, bool blocking)
 
 int Connection::Connect(unsigned short port , const char serverName[], bool blocking)
 {
+	if(this->socket == -1 || this->socket == 0) InitiateSocket();
+
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{

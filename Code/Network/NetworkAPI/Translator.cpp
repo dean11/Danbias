@@ -18,6 +18,7 @@ using namespace std;
 struct MyCastingStruct
 {
 	std::map<int, NetAttributeContainer> attributes;
+	Utility::DynamicMemory::ReferenceCount *c;
 };
 
 // TODO: Check if the package has been packed correctly.

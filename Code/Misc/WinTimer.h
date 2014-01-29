@@ -7,6 +7,7 @@
 #ifndef WINTIMER_H
 #define WINTIMER_H
 
+#define NOMINMAX
 #include <Windows.h>
 
 namespace Utility

@@ -4,14 +4,18 @@
 #include "..\GameSession.h"
 #include "..\GameClient.h"
 
-#include <NetworkServerEventStruct.h>
 #include <Protocols.h>
 #include <PostBox\PostBox.h>
 #include <GameLogicStates.h>
 #include <OysterMath.h>
-
+#define NOMINMAX
 #include <Windows.h>
 
+#define DELTA_TIME_20	0.05f
+#define DELTA_TIME_24	0.04166666666666666666666666666667f
+#define DELTA_TIME_30	0.03333333333333333333333333333333f
+#define DELTA_TIME_60	0.01666666666666666666666666666667f
+#define DELTA_TIME_120	0.00833333333333333333333333333333f
 
 using namespace Utility::DynamicMemory;
 using namespace Oyster;
@@ -21,25 +25,45 @@ using namespace GameLogic;
 
 namespace DanBias
 {
-	void GameSession::ParseEvents()
+	bool GameSession::DoWork(  )
 	{
-		if( !this->box->IsEmpty() )
+		if(this->isRunning)
 		{
-			NetworkSession::NetEvent &e = this->box->Fetch();
-			static int ii = 0;
-			printf("%i - Message recieved! [%i]\n", ii++, e.protocol[0].value);
+			double dt = this->timer.getElapsedSeconds();
+			gameInstance.SetFrameTimeLength((float)dt);
 
-			if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
+			if(dt >= DELTA_TIME_20)
+			{
+				this->ProcessClients();
 
-			if( ProtocolIsGameplay(e.protocol[protocol_INDEX_ID].value.netShort) )
-				ParseGameplayEvent(e.protocol, e.gameClient);
+				this->gameInstance.NewFrame();
 
-			if( ProtocolIsGeneral(e.protocol[protocol_INDEX_ID].value.netShort) )
-				ParseGeneralEvent(e.protocol, e.gameClient);
+				this->timer.reset();
+			}
 		}
+
+		return this->isRunning;
 	}
 
-	void GameSession::ParseGameplayEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
+	//void GameSession::ParseEvents()
+	//{
+	//	if( !this->box->IsEmpty() )
+	//	{
+	//		NetworkSession::NetEvent &e = this->box->Fetch();
+	//		static int ii = 0;
+	//		printf("%i - Message recieved! [%i]\n", ii++, e.protocol[0].value);
+	//	
+	//		if(e.protocol[0].type != Oyster::Network::NetAttributeType_Short) return;
+	//	
+	//		if( ProtocolIsGameplay(e.protocol[protocol_INDEX_ID].value.netShort) )
+	//			ParseGameplayEvent(e.protocol, e.gameClient);
+	//	
+	//		if( ProtocolIsGeneral(e.protocol[protocol_INDEX_ID].value.netShort) )
+	//			ParseGeneralEvent(e.protocol, e.gameClient);
+	//	}
+	//}
+
+	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
 		switch (p[protocol_INDEX_ID].value.netShort)
 		{
@@ -55,10 +79,10 @@ namespace DanBias
 					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
 			}
 			break;
-			case protocol_Gameplay_PlayerMouseMovement:
+			case protocol_Gameplay_PlayerLookDir:
 			{
-				Protocol_PlayerMouse m; m = p;
-				c->GetPlayer()->Rotate(m.dxMouse, m.dyMouse);
+				Protocol_PlayerLook m; m = p;
+				//c->GetPlayer()->Rotate(m.dxMouse, m.dyMouse);
 			}
 			break;
 			case protocol_Gameplay_PlayerChangeWeapon:
@@ -67,19 +91,12 @@ namespace DanBias
 			case protocol_Gameplay_ObjectDamage:
 
 			break;
-		}
-	}
-
-	void GameSession::ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
-	{
-		switch (p[protocol_INDEX_ID].value.netShort)
-		{
 			case protocol_General_Status:
 				switch (p[1].value.netInt)
 				{
 					case GameLogic::Protocol_General_Status::States_disconected:
 						printf("Client with ID [%i] dissconnected\n", c->GetClient()->GetID());
-						this->RemoveClient(c);
+						this->Detach(c->GetClient()->GetID());
 					break;
 
 					case GameLogic::Protocol_General_Status::States_idle:
@@ -101,17 +118,18 @@ namespace DanBias
 				printf("Message recieved from (%i):\t %s\n", c->GetID(), temp.text.c_str());
 			}
 			break;
-
 		}
 	}
-
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
 		movedObject->GetID();
 		movedObject->GetOrientation();
-
 	}
 
+	void GameSession::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
+	{
+
+	}
 }//End namespace DanBias
 

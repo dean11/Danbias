@@ -26,8 +26,9 @@ using namespace Utility::Container;
 			PrivateData
 *************************************/
 typedef NetworkClient::ClientEventArgs CEA;
-struct NetDataContainer : public IThreadObject
-{ //This struct is contained within a smart pointer. To avoide dependencies in link its implemented here..
+
+struct NetworkClient::PrivateData : public IThreadObject
+{
 	NetworkSession *owner;
 	NetworkClient *parent;
 	Connection connection;
@@ -43,19 +44,17 @@ struct NetDataContainer : public IThreadObject
 	static unsigned int currID;
 	const unsigned int ID;
 
-	NetDataContainer() 
+	PrivateData() 
 		:	ID(currID++)
 		,	parent(0)
 		,	owner(0)
 	{ 
 		
 		InitWinSock();
-		this->thread.Create(this, true);
+		this->thread.Create(this, false);
 		this->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
 	}
-	NetDataContainer(const NetDataContainer& obj)
-		:ID(obj.ID) {  }
-	~NetDataContainer()
+	~PrivateData()
 	{ 
 		ShutdownWinSock();
 		this->connection.Disconnect();
@@ -73,7 +72,6 @@ struct NetDataContainer : public IThreadObject
 		
 		return true;
 	}
-
 	int Send()
 	{
 		int errorCode = 0;
@@ -96,7 +94,6 @@ struct NetDataContainer : public IThreadObject
 
 		return errorCode;
 	}
-
 	int Recv()
 	{
 		int errorCode = -1;
@@ -119,33 +116,19 @@ struct NetDataContainer : public IThreadObject
 				this->recieveQueue.Push(e);
 			}
 		}
-		else
-		{
-			CEA parg;
-			parg.type = CEA::EventType_ProtocolFailedToRecieve;
-			parg.data.nothing = 0;
-			NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
-			this->recieveQueue.Push(e);
-		}
+		//else
+		//{
+		//	CEA parg;
+		//	parg.type = CEA::EventType_ProtocolFailedToRecieve;
+		//	parg.data.nothing = 0;
+		//	NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
+		//	this->recieveQueue.Push(e);
+		//}
 	
 		return errorCode;
 	}
 };
-
-
-struct NetworkClient::PrivateData
-{
-	SmartPointer<NetDataContainer> dat;
-
-public:
-	PrivateData() 
-	{ this->dat = new NetDataContainer(); }
-	PrivateData(const PrivateData& obj)
-	{ this->dat = obj.dat; }
-	~PrivateData()
-	{ this->dat = 0; }
-};
-unsigned int NetDataContainer::currID = 0;
+unsigned int NetworkClient::PrivateData::currID = 0;
 
 /*************************************
 			NetworkClient
@@ -154,21 +137,6 @@ unsigned int NetDataContainer::currID = 0;
 NetworkClient::NetworkClient()
 	:	privateData(0)
 {  }
-
-NetworkClient::NetworkClient(const NetworkClient& obj)
-{
-	if(obj.privateData) this->privateData = new PrivateData(*obj.privateData);
-	else				this->privateData = 0;
-}
-
-NetworkClient& NetworkClient::operator =(const NetworkClient& obj)
-{
-	delete privateData;
-	this->privateData = 0;
-	if(obj.privateData) this->privateData = new PrivateData(*obj.privateData);
-
-	return *this;
-}
 
 NetworkClient::~NetworkClient()
 {
@@ -181,22 +149,25 @@ NetworkClient::~NetworkClient()
 
 bool NetworkClient::operator ==(const NetworkClient& obj)
 {
-	return (this->privateData->dat->ID == obj.privateData->dat->ID);
+	return (this->privateData->ID == obj.privateData->ID);
 }
 
 bool NetworkClient::operator ==(const int& ID)
 {
-	return this->privateData->dat->ID == ID;
+	return this->privateData->ID == ID;
 }
 
-void NetworkClient::ProcessMessages()
+void NetworkClient::Update()
 {
-	while (!this->privateData->dat->recieveQueue.IsEmpty())
+	while (!this->privateData->recieveQueue.IsEmpty())
 	{
-		if(this->privateData->dat->owner)
-		{
-			this->privateData->dat->owner->ClientEventCallback(this->privateData->dat->recieveQueue.Pop());
-		}
+		NetEvent<NetworkClient*, ClientEventArgs> temp = this->privateData->recieveQueue.Pop();
+
+		this->DataRecieved(temp);
+
+	//--------- Deprecate --------- 
+		this->NetworkCallback(temp.args.data.protocol);
+	//------------------------------
 	}
 }
 
@@ -206,13 +177,16 @@ bool NetworkClient::Connect(int socket)
 	if(this->privateData)	return false;
 	if(!this->privateData)	this->privateData = new PrivateData();
 
-	int result = this->privateData->dat->connection.Connect(socket, true);
+	int result = this->privateData->connection.Connect(socket, false);
 	
 	//Connect has succeeded
-	if(result == 0)		return true;
+	if(result != 0)		return false;
+
+	this->privateData->parent = this;
+	this->privateData->thread.Start();
 
 	//Connect has failed
-	return false;
+	return true;
 }
 
 bool NetworkClient::Connect(unsigned short port, const char serverIP[])
@@ -221,46 +195,59 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 	if(this->privateData)	return false;
 	if(!this->privateData)	this->privateData = new PrivateData();
 	
-	int result = this->privateData->dat->connection.Connect(port, serverIP, false);
+	int result = this->privateData->connection.Connect(port, serverIP, false);
 	
 	//Connect has succeeded
-	if(result == 0)		return true;
+	if(result != 0)		return false;
+
+	this->privateData->parent = this;
+	this->privateData->thread.Start();
 
 	//Connect has failed
-	return false;
+	return true;
 }
 
 void NetworkClient::Disconnect()
 {
-	privateData->dat->connection.Disconnect();
-	privateData->dat->thread.Terminate();
+	privateData->connection.Disconnect();
+	privateData->thread.Terminate();
 }
 
 void NetworkClient::Send(CustomProtocolObject& protocol)
 {
-	this->privateData->dat->sendQueue.Push(*protocol.GetProtocol());
+	this->privateData->sendQueue.Push(*protocol.GetProtocol());
 }
 
 void NetworkClient::Send(CustomNetProtocol* protocol)
 {
-	this->privateData->dat->sendQueue.Push(*protocol);
+	this->privateData->sendQueue.Push(*protocol);
 }
 
 void NetworkClient::SetOwner(NetworkSession* owner)
 {
-	this->privateData->dat->owner = owner;
+	this->privateData->owner = owner;
 }
 
 bool NetworkClient::IsConnected()
 {
 	if(!this->privateData) return false;
-	return privateData->dat->connection.IsConnected();
+	return privateData->connection.IsConnected();
 }
 
 int NetworkClient::GetID() const
 {
-	return this->privateData->dat->ID;
+	return this->privateData->ID;
 }
 
+void NetworkClient::DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e)
+{
+	if(this->privateData->owner)
+	{
+		this->privateData->owner->ClientEventCallback(e);
+	}
+}
+
+void NetworkClient::NetworkCallback(Oyster::Network::CustomNetProtocol& p)
+{}
 
 

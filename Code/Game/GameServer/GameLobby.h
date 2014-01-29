@@ -8,6 +8,7 @@
 #include <Protocols.h>
 #include <PostBox\IPostBox.h>
 #include <WinTimer.h>
+#include "GameSession.h"
 
 namespace DanBias
 {
@@ -16,33 +17,32 @@ namespace DanBias
 	public:
 		GameLobby();
 		virtual~GameLobby();
-
 		void Release();
+		void Update();
 
-		void Frame();
-
-		//void ClientEventCallback(NetEvent<Client*, Client::ClientEventArgs> e) override;
+		operator bool();
 
 	private:
-		void ParseEvents();
-		void ParseGeneralProtocol(Oyster::Network::CustomNetProtocol& p, Oyster::Network::NetworkClient* c);
-		void ParseLobbyProtocol(Oyster::Network::CustomNetProtocol& p, Oyster::Network::NetworkClient* c);
+		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, Oyster::Network::NetworkClient* c);
 
-	//Lobby events
-		void LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c);
-		void LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);
-
-	//General events
-		void GeneralStatus(GameLogic::Protocol_General_Status& p, Oyster::Network::NetworkClient* c);
-		void GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network::NetworkClient* c);
+		void GeneralStatus(GameLogic::Protocol_General_Status& p, Oyster::Network::NetworkClient* c);		//id = protocol_General_Status:
+		void GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network::NetworkClient* c);			//id = protocol_General_Text:
+		void LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c);	//id = protocol_Lobby_Create:
+		void LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_Start:
+		void LobbyJoin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Join:
+		void LobbyLogin(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_Login:
+		void LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_Refresh:
+		void LobbyMainData(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_MainData:
+		void LobbyGameData(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_GameData:
 
 	private:
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
-		void ClientConnectedEvent(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
+		void ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client) override;
 
 	private:
 		Utility::WinTimer timer;
 		float refreshFrequency;
+		GameSession* gameSession;
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H

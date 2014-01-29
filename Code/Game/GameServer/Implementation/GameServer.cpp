@@ -3,137 +3,93 @@
 /////////////////////////////////////////////////////////////////////
 #define NOMINMAX
 #include <Windows.h>
-#include <WindowShell.h>
 #include <iostream>
+#include <vld.h>
 
-
-#include "..\GameServer.h"
-#include "..\GameSessionManager.h"
+#include "..\GameServerAPI.h"
+#include "..\GameLobby.h"
 #include "..\GameSession.h"
 
-#include <Thread\OysterThread.h>
-#include <Utilities.h>
+#include <NetworkServer.h>
 #include <NetworkClient.h>
-#include <thread>
-#include <CollisionManager.h>
 
-namespace DanBias
+#include <WindowShell.h>
+#include <Utilities.h>
+#include <WinTimer.h>
+#include <Thread\OysterThread.h>
+
+using namespace DanBias;
+using namespace Oyster::Network;
+using namespace Oyster::Thread;
+using namespace Utility;
+
+namespace
 {
-	using namespace Oyster::Network;
+	GameLobby				lobby;
+	NetworkServer			server;
+	WinTimer				timer;
+	GameServerAPI			instance;
+	//typedef void(*WorkerThreadFnc)(GameServerAPI*);
+}
 
-	GameServer* instance = 0;
-	std::thread workerThread;
-	typedef void(*WorkerThreadFnc)(GameServer*);
 
-	DanBiasServerReturn GameServerAPI::Create(const GameInitDesc& desc)
+DanBiasServerReturn GameServerAPI::Create(const GameInitDesc& desc)
+{
+		
+	if(server.Init(desc.listenPort, &lobby) == NetworkServer::ServerReturnCode_Error)
 	{
-		if(!instance)
-			instance = new GameServer();
-
-		return instance->Create(desc);
+		return DanBiasServerReturn_Error;
 	}
 
+	std::printf("Server created!\t-\t%s: [%i]\n", server.GetLanAddress().c_str(), desc.listenPort);
+		
+	return DanBiasServerReturn_Sucess;
+}
+void GameServerAPI::Start()
+{
+	server.Start();
+
+	timer.reset();
+
+	while (true)
+	{
+		int c = server.ProcessConnectedClients();
+		if(c > 0)	printf(" - [%i] client(s) connected!\n", c);
+		lobby.Update();
+
+		if(GetAsyncKeyState(0x51))	//Q for exit
+			break;
+	}
+
+	double total = timer.getElapsedSeconds();
+	int time = (int)total;
+	int hour, min, sec; 
+
+	hour=time / 3600; 
+	time=time % 3600; 
+	min=time / 60; 
+	time=time % 60;
+	sec = time; 
+
+	printf( "Server has been running for: %i:%i:%i - [hh:mm:ss] \n\n", hour, min, sec );
+	printf( "Terminating in : ");
+	for (int i = 0; i < 4; i++)
+	{
+		printf( "%i ", 3-i );
+		Sleep(1000);
+	}
 	
+}
+void GameServerAPI::Stop()
+{
+	server.Stop();
+	lobby.ProcessClients();
+}
+void GameServerAPI::Terminate()
+{
+	lobby.Release();
+	server.Shutdown();
 
-	GameServer::GameServer()
-		:	maxClients(0)
-	{  }
-	GameServer::~GameServer()
-	{  }
-	DanBiasServerReturn GameServer::Create(const GameServerAPI::GameInitDesc& desc)
-	{
-		this->maxClients = desc.maxNumberOfClients;
-		this->server = new NetworkServer();
-		this->lobby = new GameLobby();
+	printf( "Server terminated!" );
 
-		if(desc.threaded)
-		{
-			if(!this->server->Init(desc.connectionPort, this->lobby))
-				return DanBiasServerReturn_Error;
-
-			if(!this->server->Start())	
-				return DanBiasServerReturn_Error;
-
-			WorkerThreadFnc temp = GameServer::Run;
-			workerThread = std::thread(temp, this);
-		}
-		else
-		{
-			if(!this->server->Init(desc.connectionPort, this->lobby))
-				return DanBiasServerReturn_Error;
-
-			if(!this->server->Start())	
-				return DanBiasServerReturn_Error;
-
-			Run();
-		}
-
-		return DanBiasServerReturn_Sucess;
-	}
-	void GameServer::Run(GameServer* owner)
-	{
-		while (true)
-		{
-			owner->server->ProcessConnectedClients();
-			owner->lobby->ProcessClients();
-
-			if(GetAsyncKeyState(0x51))	//Q for exit
-				break;
-		}
-	}
-	void GameServer::Run()
-	{
-		while (true)
-		{
-			this->server->ProcessConnectedClients();
-			this->lobby->Frame();
-
-			if(GetAsyncKeyState(0x51))	//Q for exit
-				break;
-		}
-	}
-	void GameServer::Release()
-	{
-		GameSessionManager::CloseSessions();
-	}
-
-
-
-
-	//void GameServer::ClientConnected(NetworkClient* client)
-	//{
-	//	static bool myTest = false;
-	//	static int sessionId = -1;
-	//	printf("Client with ID [%i] connected.\n", client->GetID());
-	//
-	//	if(!myTest)
-	//	{
-	//		Utility::DynamicMemory::SmartPointer<NetworkSession> c = new Client(client);
-	//
-	//		GameSessionDescription desc;
-	//		desc.mapName = L"test";
-	//		desc.clients.Push(c);
-	//		desc.exitDestionation = this->lobby;
-	//		if((sessionId = GameSessionManager::AddSession(desc, true)) == 0)
-	//			printf("Failed to create a game session\n");
-	//		myTest = true;
-	//		//myTest = new GameSession();
-	//		//
-	//		//DanBias::GameSession::GameSessionDescription desc;
-	//		//desc.owner = 0;
-	//		//desc.clients.Push(c);
-	//		//
-	//		//if(!myTest->Create(desc)) return;
-	//		//myTest->Run();
-	//	}
-	//	else
-	//	{
-	//		Utility::DynamicMemory::SmartPointer<NetworkSession> c = new NetworkSession(client);
-	//		GameSessionManager::JoinSession(sessionId, c);
-	//	}
-	//	
-	//
-	//	//Utility::DynamicMemory::SmartPointer<NetworkSession> c = new NetworkSession(client);
-	//	//this->mainLobby->Attach(c, this->mainLobby->GetPostbox());
-	//}
-}//End namespace DanBias
+}

@@ -132,13 +132,14 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 	delete info;
 }
 
-static wchar_t* charToWChar(const char* text)
+static std::wstring charToWChar(const char* text)
 {
     // Convert to a wchar_t*
     size_t origsize = strlen(text) + 1;
     size_t convertedChars = 0;
-	wchar_t* wcstring = new wchar_t[origsize];
-    mbstowcs_s(&convertedChars, wcstring, origsize, text, _TRUNCATE);
+	//wchar_t* wcstring = new wchar_t[origsize];
+	std::wstring wcstring; wcstring.resize(origsize);
+    mbstowcs_s(&convertedChars, &wcstring[0], origsize, text, _TRUNCATE);
    return wcstring;
 }
 
@@ -175,7 +176,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 		buffer = new char[4];
 		danFile.read(buffer, 4);
 		memcpy(&headerType, buffer, 4);
-		//delete[] buffer; // ( note: may crash here.)
+		delete[] buffer; // ( note: may crash here.)
 
 		// handle header type
 		switch ((HeaderType)headerType)
@@ -276,10 +277,13 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 				delete[] buffer; // ( note: may crash here.)
 
 				// 
-				ID3D11ShaderResourceView* diffuseMap = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(charToWChar(materialHeader.diffuseMapPath), Oyster::Graphics::Loading::LoadTexture);
-				ID3D11ShaderResourceView* normalMap  = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(charToWChar(materialHeader.normalMapPath),  Oyster::Graphics::Loading::LoadTexture);
+				ID3D11ShaderResourceView* diffuseMap = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(charToWChar(materialHeader.diffuseMapPath).c_str(), Oyster::Graphics::Loading::LoadTexture);
+				ID3D11ShaderResourceView* normalMap  = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(charToWChar(materialHeader.normalMapPath).c_str(),  Oyster::Graphics::Loading::LoadTexture);
 				modelInfo->Material.push_back(diffuseMap);
 				modelInfo->Material.push_back(normalMap);
+
+				delete materialHeader.normalMapPath;
+				delete materialHeader.diffuseMapPath;
 
 				break;
 			}
@@ -297,6 +301,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 			}
 		}
 	}
+
 
 	// close file
 	danFile.close();

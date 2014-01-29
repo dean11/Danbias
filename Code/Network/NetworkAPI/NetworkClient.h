@@ -41,8 +41,6 @@ namespace Oyster
 
 			public:
 				NetworkClient();
-				NetworkClient(const NetworkClient& obj);
-				NetworkClient& operator =(const NetworkClient& obj);
 				virtual ~NetworkClient();
 
 				bool operator ==(const NetworkClient& obj);
@@ -51,7 +49,7 @@ namespace Oyster
 				/**
 				*	
 				*/
-				void ProcessMessages();
+				void Update();
 
 				/**
 				*	
@@ -93,7 +91,21 @@ namespace Oyster
 				*/
 				int GetID() const;
 
+				/**
+				*	
+				*/
+				virtual void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
+
+				/**	! Deprecate ! 
+				*	Do not use this furthermore, instead use void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
+				*	@see DataRecieved
+				*/
+				virtual void NetworkCallback(Oyster::Network::CustomNetProtocol& p);
+
 			private:
+				NetworkClient(const NetworkClient& obj);
+				NetworkClient& operator =(const NetworkClient& obj);
+
 				struct PrivateData;
 				PrivateData* privateData;
 			};

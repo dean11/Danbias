@@ -7,26 +7,28 @@
 #include <NetworkClient.h>
 #include <PostBox\PostBox.h>
 #include <GameAPI.h>
+#include <Utilities.h>
 
 namespace DanBias
 {
+	/**
+	*	Container to keep logic player and network client together as a unit.
+	*/
 	class GameClient
 	{
 	public:
-		GameClient(Oyster::Network::NetworkClient client, GameLogic::IPlayerData* player);
+		GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client, GameLogic::IPlayerData* player);
 		virtual~GameClient();
-
-		//void SetCallback(Oyster::Callback::OysterCallback<void, NetworkSession::NetEvent> value);
 
 		GameLogic::IPlayerData* GetPlayer();
 		GameLogic::IPlayerData* ReleasePlayer();
-		Oyster::Network::NetworkClient* GetClient();
-		Oyster::Network::NetworkClient ReleaseClient();
+		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> GetClient();
+		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> ReleaseClient();
 		int GetID() const;
 
 	private:
 		GameLogic::IPlayerData* player;
-		Oyster::Network::NetworkClient client;
+		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client;
 		int id;
 	};
 

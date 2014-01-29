@@ -1,8 +1,8 @@
 #include "Listener.h"
 
-using namespace Oyster::Network::Server;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Thread;
+using namespace Oyster::Network;
 
 Listener::Listener()
 {

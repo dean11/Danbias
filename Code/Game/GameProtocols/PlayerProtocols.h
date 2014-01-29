@@ -56,33 +56,36 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_PlayerMouse :public Oyster::Network::CustomProtocolObject
+	struct Protocol_PlayerLook :public Oyster::Network::CustomProtocolObject
 	{
 
-		float dxMouse;
-		float dyMouse;
-		
+		float lookDirX;
+		float lookDirY;
+		float lookDirZ;
 
-		Protocol_PlayerMouse()
+		Protocol_PlayerLook()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerMouseMovement;
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerLookDir;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			
 		}
-		const Protocol_PlayerMouse& operator=(Oyster::Network::CustomNetProtocol& val)
+		const Protocol_PlayerLook& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
-			dxMouse		= val[1].value.netFloat;
-			dyMouse		= val[2].value.netFloat;
+			lookDirX		= val[1].value.netFloat;
+			lookDirY		= val[2].value.netFloat;
+			lookDirZ		= val[3].value.netFloat;
 
 			return *this;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-			this->protocol[1].value = dxMouse;
-			this->protocol[2].value = dyMouse;
+			this->protocol[1].value = lookDirX;
+			this->protocol[2].value = lookDirY;
+			this->protocol[3].value = lookDirZ;
 
 			return &protocol;
 		}
@@ -112,6 +115,32 @@ namespace GameLogic
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
+			return &protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	struct Protocol_PlayerShot :public Oyster::Network::CustomProtocolObject
+	{
+		bool hasShot;
+
+		Protocol_PlayerShot()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerShot;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		const Protocol_PlayerShot& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			hasShot		= val[1].value.netBool;
+			return *this;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = hasShot;
 			return &protocol;
 		}
 

@@ -18,34 +18,37 @@ namespace DanBias
 	{  }
 
 	void GameLobby::Release()
-	{  }
+	{  
+		NetworkSession::CloseSession(true);
+	}
 
-	void GameLobby::Frame()
+	void GameLobby::Update()
 	{
-		ParseEvents();
+		this->ProcessClients();
+	}
+	GameLobby::operator bool()
+	{
+		return true;
 	}
 
 	void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
 	{
-
+		switch (e.args.type)
+		{
+			case NetworkClient::ClientEventArgs::EventType_Disconnect:
+			break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
+			break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
+			break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
+				this->ParseProtocol(e.args.data.protocol, e.sender);
+			break;
+		}
 	}
-	void GameLobby::ClientConnectedEvent(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
+	void GameLobby::ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
 	{
-
-	}
-
-//////// Private
-	void GameLobby::ParseEvents()
-	{
-		//if(this->box && !this->box->IsEmpty())
-		//{
-		//	NetEvent &e = this->box->Fetch();
-		//
-		//	short type = e.protocol[0].value.netShort;
-		//
-		//		 if(ProtocolIsLobby(type))		ParseLobbyProtocol(e.protocol, e.sender);
-		//	else if(ProtocolIsGeneral(type))	ParseGeneralProtocol(e.protocol, e.sender);
-		//}
+		//Attach(client);
 	}
 
 }//End namespace DanBias

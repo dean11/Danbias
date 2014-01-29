@@ -8,6 +8,7 @@ struct  C_Player::myData
 	Oyster::Math3D::Float4x4 view;
 	Oyster::Math3D::Float4x4 proj; 
 	Oyster::Graphics::Model::Model *model;
+	Oyster::Math3D::Float4 lookDir;
 	int ID;
 }privData;
 
@@ -29,7 +30,7 @@ void C_Player::Init(ModelInitData modelInit)
 	privData->model->WorldMatrix = modelInit.world;
 	privData->model->Visible = modelInit.visible;
 	privData->ID = modelInit.id;
-
+	privData->lookDir = Oyster::Math3D::Float4 (0,0,1,0);
 }
 void C_Player::setPos(Oyster::Math::Float4x4 world)
 {

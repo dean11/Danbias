@@ -178,31 +178,20 @@
     <ClCompile Include="Implementation\GameClient.cpp" />
     <ClCompile Include="Implementation\GameLobby.cpp" />
     <ClCompile Include="Implementation\GameServer.cpp" />
-    <ClCompile Include="Implementation\GameSessionManager.cpp" />
-    <ClCompile Include="Implementation\GameSession_Events.cpp" />
     <ClCompile Include="Implementation\GameSession_General.cpp" />
-    <ClCompile Include="Implementation\GameSession_Logic.cpp" />
-    <ClCompile Include="Implementation\GameSession_Network.cpp" />
-    <ClCompile Include="Implementation\LobbyGeneralProtocolParser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Implementation\LobbyProtocolParser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    <ClCompile Include="Implementation\GameSession_Gameplay.cpp" />
+    <ClCompile Include="Implementation\GameLobby_ProtocolParser.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameClient.h" />
     <ClInclude Include="GameLobby.h" />
-    <ClInclude Include="GameServer.h" />
     <ClInclude Include="GameServerAPI.h" />
     <ClInclude Include="GameSession.h" />
-    <ClInclude Include="GameSessionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Misc\Misc.vcxproj">

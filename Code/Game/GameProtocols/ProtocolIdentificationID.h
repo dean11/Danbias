@@ -47,14 +47,15 @@
 /***********[ 300 - 399 ]***********/
 #define protocol_GameplayMIN							300
 #define protocol_Gameplay_PlayerMovement			300
-#define protocol_Gameplay_PlayerMouseMovement		301
+#define protocol_Gameplay_PlayerLookDir				301
 #define protocol_Gameplay_PlayerChangeWeapon		302
-#define protocol_Gameplay_ObjectPickup				303
-#define protocol_Gameplay_ObjectDamage				304
-#define protocol_Gameplay_ObjectPosition			305
-#define protocol_Gameplay_ObjectEnabled				306
-#define protocol_Gameplay_ObjectDisabled			307
-#define protocol_Gameplay_ObjectCreate				308
+#define protocol_Gameplay_PlayerShot				303
+#define protocol_Gameplay_ObjectPickup				304
+#define protocol_Gameplay_ObjectDamage				305
+#define protocol_Gameplay_ObjectPosition			306
+#define protocol_Gameplay_ObjectEnabled				307
+#define protocol_Gameplay_ObjectDisabled			308
+#define protocol_Gameplay_ObjectCreate				309
 #define protocol_GameplayMAX							399
 
 

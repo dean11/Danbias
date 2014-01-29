@@ -7,12 +7,13 @@
 #include <Protocols.h>
 
 using namespace Utility::DynamicMemory;
+using namespace Oyster::Network;
 using namespace DanBias;
 using namespace GameLogic;
 
 static int gameClientIDCount = 1;
 
-GameClient::GameClient(Oyster::Network::NetworkClient client, GameLogic::IPlayerData* player)
+GameClient::GameClient(SmartPointer<NetworkClient> client, GameLogic::IPlayerData* player)
 {
 	this->client = client;
 	this->id = gameClientIDCount++;
@@ -20,7 +21,7 @@ GameClient::GameClient(Oyster::Network::NetworkClient client, GameLogic::IPlayer
 }
 GameClient::~GameClient()
 {
-	this->client.Disconnect();
+	this->client->Disconnect();
 	this->player = 0;
 	this->id = -1;
 }
@@ -35,13 +36,14 @@ GameLogic::IPlayerData* GameClient::ReleasePlayer()
 	this->player =  0;
 	return temp;
 }
-Oyster::Network::NetworkClient* GameClient::GetClient()
+SmartPointer<Oyster::Network::NetworkClient> GameClient::GetClient()
 {
-	return &this->client;
+	return this->client;
 }
-Oyster::Network::NetworkClient GameClient::ReleaseClient()
+SmartPointer<Oyster::Network::NetworkClient> GameClient::ReleaseClient()
 {
-	Oyster::Network::NetworkClient temp = this->client;
+	SmartPointer<Oyster::Network::NetworkClient> temp = this->client;
+	this->client = 0;
 	return temp;
 }
 int GameClient::GetID() const
