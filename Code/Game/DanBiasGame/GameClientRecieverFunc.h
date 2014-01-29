@@ -14,29 +14,11 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 
 	// receiver function for server messages 
 	// parsing protocols and sending it to the gameState
-	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
+	void ParseGamePlayEvent(Oyster::Network::CustomNetProtocol& p)
 	{
-
-		//if( IsGameplayProtocol(p[protocol_INDEX_ID].value.netShort) )
-			//ParseGameplayEvent(e.protocol, e.gameClient);
-
-		//if( IsGeneralProtocol(p[protocol_INDEX_ID].value.netShort) )
-			//ParseGeneralEvent(e.protocol, e.gameClient);
-
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{
-		case protocol_General_Status:
-			{
-				GameLogic::Protocol_General_Status::States state;
-				state =  (GameLogic::Protocol_General_Status::States)p[1].value.netShort;
-				if( state == GameLogic::Protocol_General_Status::States_disconected)
-				{
-					// server disconnected 
-					DanBiasGame::Release();
-				}
-			}
-			break;
 		case protocol_Gameplay_PlayerMovement:
 			{
 				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
@@ -51,19 +33,6 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 				protocolData = NULL;
 			}
 			break;
-		//case protocol_Gameplay_PlayerPosition:
-		//	{
-		//		Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
-		//		for(int i = 0; i< 3; i++)
-		//		{
-		//			protocolData->playerPos[i] = p[i].value.netFloat;
-		//		}
-		//		if(dynamic_cast<Client::GameState*>(gameClientState))
-		//			((Client::GameState*)gameClientState)->Protocol(protocolData);
-		//		delete protocolData;
-		//		protocolData = NULL;
-		//	}
-		//	break;
 
 		case protocol_Gameplay_ObjectCreate:
 			{
@@ -115,10 +84,35 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 
 		default:
 			break;
-		}	
+		}
+	}
+	void ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p)
+	{
+		int pType = p[0].value.netInt;
+		switch (pType)
+		{
+		
+		case protocol_General_Status:
+			{
+				GameLogic::Protocol_General_Status::States state;
+				state =  (GameLogic::Protocol_General_Status::States)p[1].value.netShort;
+				if( state == GameLogic::Protocol_General_Status::States_disconected)
+				{
+					// server disconnected 
+					DanBiasGame::Release();
+				}
+			}
+			break;
+		}
+	}
+	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
+	{
 
+		if( IsGameplayProtocol(p[protocol_INDEX_ID].value.netShort) )
+			ParseGamePlayEvent(p);
 
-
+		if( IsGeneralProtocol(p[protocol_INDEX_ID].value.netShort) )
+			ParseGeneralEvent(p);
 	}
 };
 } 
