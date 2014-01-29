@@ -99,6 +99,7 @@ API & API::Instance()
 API_Impl::API_Impl()
 {
 	this->gravityConstant = Constant::gravity_constant;
+	this->epsilon = Constant::epsilon;
 	this->updateFrameLength = 1.0f / 120.0f;
 	this->destructionAction = Default::EventAction_Destruction;
 	this->gravity = ::std::vector<Gravity>();
@@ -123,6 +124,11 @@ void API_Impl::SetFrameTimeLength( float deltaTime )
 void API_Impl::SetGravityConstant( float g )
 {
 	this->gravityConstant = g;
+}
+
+void API_Impl::SetEpsilon( float e )
+{
+	this->epsilon = e;
 }
 
 void API_Impl::SetSubscription( API::EventAction_Destruction functionPointer )
@@ -192,12 +198,31 @@ void API_Impl::Update()
 	proto = updateList.begin();
 	for( ; proto != updateList.end(); ++proto )
 	{
+		Float3 lM = state.GetLinearMomentum() + state.GetLinearImpulse();
+
+		if( lM.x < this->epsilon )
+		{
+			state.SetLinearMomentum( Float3(0, lM.y, lM.z) );
+			state.SetLinearImpulse( Float3(0, lM.y, lM.z) );
+		}
+		if( lM.y < this->epsilon )
+		{
+			state.SetLinearMomentum( Float3(lM.x, 0, lM.z) );
+			state.SetLinearImpulse( Float3(lM.x, 0, lM.z) );
+		}
+		if( lM.z < this->epsilon )
+		{
+			state.SetLinearMomentum( Float3(lM.x, lM.y, 0) );
+			state.SetLinearImpulse( Float3(lM.x, lM.y, 0) );
+		}
+
 		switch( (*proto)->Update(this->updateFrameLength) )
 		{
 		case UpdateState_altered:
 			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(*proto) );
 			(*proto)->CallSubscription_Move();
-		case UpdateState_resting: default:
+		case UpdateState_resting: 
+		default:
 			break;
 		}
 	}

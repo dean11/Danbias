@@ -34,6 +34,7 @@ namespace Oyster
 		namespace Constant
 		{
 			const float gravity_constant = (const float)6.67284e-11; //!< The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
+			const float epsilon = (const float)1.0e-7;
 		}
 
 		class PHYSICS_DLL_USAGE API

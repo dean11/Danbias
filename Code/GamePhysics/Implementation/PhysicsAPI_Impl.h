@@ -18,6 +18,7 @@ namespace Oyster
 
 			void SetFrameTimeLength( float deltaTime );
 			void SetGravityConstant( float g );
+			void SetEpsilon( float e );
 			void SetSubscription( EventAction_Destruction functionPointer );
 
 			float GetFrameTimeLength() const;
@@ -52,7 +53,7 @@ namespace Oyster
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const;
 
 		private:
-			::Oyster::Math::Float gravityConstant, updateFrameLength;
+			::Oyster::Math::Float gravityConstant, updateFrameLength, epsilon;
 			EventAction_Destruction destructionAction;
 			::std::vector<API::Gravity> gravity;
 			Octree worldScene;
