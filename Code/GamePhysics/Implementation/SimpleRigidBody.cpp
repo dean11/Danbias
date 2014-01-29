@@ -46,8 +46,8 @@ SimpleRigidBody::SimpleRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
-	this->onCollision = Default::EventAction_Collision;
-	this->onCollisionResponse = Default::EventAction_CollisionResponse;
+	this->onCollision = Default::EventAction_BeforeCollisionResponse;
+	this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	this->onMovement = Default::EventAction_Move;
 	this->scene = nullptr;
 	this->customTag = nullptr;
@@ -72,7 +72,7 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	}
 	else
 	{
-		this->onCollision = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	}
 
 	if( desc.subscription_onCollisionResponse )
@@ -81,7 +81,7 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	}
 	else
 	{
-		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+		this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	}
 
 	if( desc.subscription_onMovement )
@@ -163,12 +163,12 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_BeforeCollisionResponse( const ICustomBody *deuter )
 {
 	return this->onCollision( this, deuter );
 }
 
-void SimpleRigidBody::CallSubscription_CollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
+void SimpleRigidBody::CallSubscription_AfterCollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
 {
 	return this->onCollisionResponse( this, deuter, kineticEnergyLoss );
 }
@@ -318,7 +318,7 @@ void SimpleRigidBody::SetScene( void *scene )
 	this->scene = (Octree*)scene;
 }
 
-void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_BeforeCollisionResponse functionPointer )
 {
 	if( functionPointer )
 	{
@@ -326,11 +326,11 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functi
 	}
 	else
 	{
-		this->onCollision = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	}
 }
 
-void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_CollisionResponse functionPointer )
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_AfterCollisionResponse functionPointer )
 {
 	if( functionPointer )
 	{
@@ -338,7 +338,7 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_CollisionRespons
 	}
 	else
 	{
-		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+		this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	}
 }
 

@@ -22,92 +22,71 @@ namespace
 		Float4 worldPointOfContact;
 		if( proto->Intersects(*deuter, worldPointOfContact) )
 		{
-			switch( proto->CallSubscription_Collision(deuter) )
-			{
-			case ICustomBody::SubscriptMessage_ignore_collision_response:
-				break;
-			default:
-				{ // Apply CollisionResponse in pure gather pattern
-					ICustomBody::State protoState; proto->GetState( protoState );
-					ICustomBody::State deuterState; deuter->GetState( deuterState );
+			// Apply CollisionResponse in pure gather pattern
+			ICustomBody::State protoState; proto->GetState( protoState );
+			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-					Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
-						   deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
+			Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
+					deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
 
-					// calc from perspective of deuter
-					Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
-					Float protoG_Magnitude = protoG.Dot( normal ),
-						  deuterG_Magnitude = deuterG.Dot( normal );
-
-					// if they are not relatively moving towards eachother, there is no collision
-					Float deltaPos = normal.Dot( Float4(deuterState.GetCenterPosition(), 1) - Float4(protoState.GetCenterPosition(), 1) );
-					if( deltaPos < 0.0f )
-					{
-						if( protoG_Magnitude >= deuterG_Magnitude )
-						{
-							break;
-						}
-					}
-					else if( deltaPos > 0.0f )
-					{
-						if( protoG_Magnitude <= deuterG_Magnitude )
-						{
-							break;
-						}
-					}
-					else
-					{
-						break;
-					}
-
-					// bounce
-					Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
-																				   deuterState.GetMass(), deuterG_Magnitude,
-																				   protoState.GetMass(), protoG_Magnitude );
-					
-					//sumJ -= Formula::CollisionResponse::Friction( impulse, normal,
-					//											  protoState.GetLinearMomentum(),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
-					//											  deuterState.GetLinearMomentum(), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
-
-					// calc from perspective of proto
-					proto->GetNormalAt( worldPointOfContact, normal );
-					protoG_Magnitude = protoG.Dot( normal ),
+			// calc from perspective of deuter
+			Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
+			Float protoG_Magnitude = protoG.Dot( normal ),
 					deuterG_Magnitude = deuterG.Dot( normal );
-					
-					// bounce
-					Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
-																				  protoState.GetMass(), protoG_Magnitude,
-																				  deuterState.GetMass(), deuterG_Magnitude );
 
-					Float4 bounce = Average( bounceD, bounceP );
-					//Float4 bounce = bounceD + bounceP;
-
-					// FRICTION
-					// Apply
-					//sumJ += ( 1 / deuterState.GetMass() )*frictionImpulse;
-					// FRICTION END
-
-//					Float4 forwardedDeltaPos, forwardedDeltaAxis;
-//					{ // @todo TODO: is this right?
-//						Float4 bounceAngularImpulse = ::Oyster::Math::Float4( (worldPointOfContact - protoState.GetCenterPosition()).xyz.Cross(bounce.xyz), 0.0f ),
-//							   bounceLinearImpulse = bounce - bounceAngularImpulse;
-//						proto->Predict( forwardedDeltaPos, forwardedDeltaAxis, bounceLinearImpulse, bounceAngularImpulse, API_instance.GetFrameTimeLength() );
-//					}
-					
-					
-					Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
-
-//					protoState.ApplyForwarding( forwardedDeltaPos, forwardedDeltaAxis );
-					protoState.ApplyImpulse( bounce.xyz, worldPointOfContact.xyz, normal.xyz );
-					proto->SetState( protoState );
-
-					Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
-
-					proto->CallSubscription_CollisionResponse( deuter,  kineticEnergyPBefore - kineticEnergyPAFter );
-					
+			// if they are not relatively moving towards eachother, there is no collision
+			Float deltaPos = normal.Dot( Float4(deuterState.GetCenterPosition(), 1) - Float4(protoState.GetCenterPosition(), 1) );
+			if( deltaPos < 0.0f )
+			{
+				if( protoG_Magnitude >= deuterG_Magnitude )
+				{
+					return;
 				}
-				break;
 			}
+			else if( deltaPos > 0.0f )
+			{
+				if( protoG_Magnitude <= deuterG_Magnitude )
+				{
+					return;
+				}
+			}
+			else
+			{
+				return;
+			}
+
+			if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_ignore_collision_response )
+			{
+				return;
+			}
+
+
+			// bounce
+			Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
+																			deuterState.GetMass(), deuterG_Magnitude,
+																			protoState.GetMass(), protoG_Magnitude );
+					
+
+			// calc from perspective of proto
+			proto->GetNormalAt( worldPointOfContact, normal );
+			protoG_Magnitude = protoG.Dot( normal ),
+			deuterG_Magnitude = deuterG.Dot( normal );
+					
+			// bounce
+			Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
+																			protoState.GetMass(), protoG_Magnitude,
+																			deuterState.GetMass(), deuterG_Magnitude );
+
+			Float4 bounce = Average( bounceD, bounceP );
+			
+			Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
+
+			protoState.ApplyImpulse( bounce.xyz, worldPointOfContact.xyz, normal.xyz );
+			proto->SetState( protoState );
+
+			Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
+
+			proto->CallSubscription_AfterCollisionResponse( deuter,  kineticEnergyPBefore - kineticEnergyPAFter );
 		}
 	}
 }
@@ -384,12 +363,12 @@ namespace Oyster { namespace Physics
 		void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto )
 		{ /* Do nothing except allowing the proto uniquePointer destroy itself. */ }
 
-		::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter )
+		::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_BeforeCollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter )
 		{ /* Do nothing except returning business as usual. */
 			return ::Oyster::Physics::ICustomBody::SubscriptMessage_none;
 		}
 
-		void EventAction_CollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss )
+		void EventAction_AfterCollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss )
 		{ /* Do nothing except returning business as usual. */
 			
 		}

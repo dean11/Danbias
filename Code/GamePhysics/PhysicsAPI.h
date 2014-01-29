@@ -244,8 +244,8 @@ namespace Oyster
 				SubscriptMessage_ignore_collision_response
 			};
 
-			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
-			typedef void (*EventAction_CollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
+			typedef SubscriptMessage (*EventAction_BeforeCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef void (*EventAction_AfterCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
 			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
@@ -262,12 +262,12 @@ namespace Oyster
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter ) = 0;
+			virtual SubscriptMessage CallSubscription_BeforeCollisionResponse( const ICustomBody *deuter ) = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual void CallSubscription_CollisionResponse( const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss ) = 0;
+			virtual void CallSubscription_AfterCollisionResponse( const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss ) = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
@@ -397,14 +397,14 @@ namespace Oyster
 			 * whenever a collision occurs.
 			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
-			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
+			virtual void SetSubscription( EventAction_BeforeCollisionResponse functionPointer ) = 0;
 
 			/********************************************************
 			 * Sets the function that will be called by the engine
 			 * whenever a collision has finished.
 			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
-			virtual void SetSubscription( EventAction_CollisionResponse functionPointer ) = 0;
+			virtual void SetSubscription( EventAction_AfterCollisionResponse functionPointer ) = 0;
 
 			/********************************************************
 			 * Sets the function that will be called by the engine
