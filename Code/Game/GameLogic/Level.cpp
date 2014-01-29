@@ -20,51 +20,45 @@ void Level::InitiateLevel(std::string levelPath)
 }
 void Level::InitiateLevel(float radius)
 {
+	// add level sphere
 	API::SphericalBodyDescription sbDesc;
 	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
 	sbDesc.ignoreGravity = true;
-	sbDesc.radius = 8; //radius;
+	sbDesc.radius = 8; 
 	sbDesc.mass = 10e12f;
-	//sbDesc.mass = 0; //10^16
 	
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 	
-	
 	ICustomBody::State state;
 	rigidBody->GetState(state);
-	state.SetRestitutionCoeff(0.1);
+	state.SetRestitutionCoeff(0.01);
 	rigidBody->SetState(state);
 
 	levelObj = new StaticObject(rigidBody, LevelCollision, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 	rigidBody->SetCustomTag(levelObj);
 	
 	
-	/*
+	// add box 
 	API::SimpleBodyDescription sbDesc_TestBox;
-	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(5,15,0,0);
+	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-5,15,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
 	sbDesc_TestBox.mass = 10;
-	sbDesc_TestBox.size = Oyster::Math::Float4(2,2,2,0);
-	//sbDesc.mass = 0; //10^16
-
+	sbDesc_TestBox.size = Oyster::Math::Float4(0.5f,0.5f,0.5f,0);
 	
 	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
-	
 	rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 	testBox = new DynamicObject(rigidBody_TestBox,LevelCollision,OBJECT_TYPE::OBJECT_TYPE_BOX);
 	rigidBody_TestBox->SetCustomTag(testBox);
 	rigidBody_TestBox->GetState(state);
 	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,4));
 	rigidBody_TestBox->SetState(state);
-	API::Instance().AddObject(rigidBody_TestBox);
-	*/
 	
+	
+	// add gravitation 
 	API::Gravity gravityWell;
-
 	gravityWell.gravityType = API::Gravity::GravityType_Well;
 	gravityWell.well.mass = 10e12f;
 	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
-
 	API::Instance().AddGravity(gravityWell);
 }
 
@@ -85,7 +79,10 @@ void Level::RespawnPlayer(Player *player)
 
 Object* Level::GetObj( int ID) const
 {
-	return (Object*)testBox;
+	if( ID == 0 )
+		return (Object*)levelObj;
+	else 
+		return (Object*)testBox;
 }
 void Level::PhysicsOnMoveLevel(const ICustomBody *object)
 {

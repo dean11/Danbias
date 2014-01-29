@@ -80,7 +80,7 @@ namespace DanBias
 		if(clients.Size() >= 1 && clients[0])
 		{
 			Oyster::Math::Float4x4 world = 	this->clients[0]->GetPlayer()->GetOrientation();
-			Protocol_ObjectPosition p(world, 0);
+			Protocol_ObjectPosition p(world, 2);
 			Send(p.GetProtocol());
 		}
 	}

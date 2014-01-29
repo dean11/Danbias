@@ -3,6 +3,10 @@
 
 namespace DanBias
 {
+inline bool IsLobbyProtocol(short ID) { return (ID >= protocol_LobbyMIN && ID <= protocol_LobbyMAX); }
+inline bool IsGeneralProtocol(short ID) { return (ID >= protocol_GeneralMIN && ID <= protocol_GeneralMAX); }
+inline bool IsGameplayProtocol(short ID) { return (ID >= protocol_GameplayMIN && ID <= protocol_GameplayMAX); }
+
 struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 {
 	Oyster::Network::NetworkClient* nwClient;
@@ -12,6 +16,13 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 	// parsing protocols and sending it to the gameState
 	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
+
+		//if( IsGameplayProtocol(p[protocol_INDEX_ID].value.netShort) )
+			//ParseGameplayEvent(e.protocol, e.gameClient);
+
+		//if( IsGeneralProtocol(p[protocol_INDEX_ID].value.netShort) )
+			//ParseGeneralEvent(e.protocol, e.gameClient);
+
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{
@@ -105,6 +116,8 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 		default:
 			break;
 		}	
+
+
 
 	}
 };

@@ -8,13 +8,10 @@ Game::PlayerData::PlayerData()
 	Oyster::Physics::API::SimpleBodyDescription sbDesc;
 	//set some stats that are appropriate to a player
 
-	//create rigidbody
+	//create rigid body
 	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
 
-
-	//create player with this rigidbody
-
-
+	//create player with this rigid body
 	this->player = new Player(rigidBody,Player::PlayerCollision,OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
 }

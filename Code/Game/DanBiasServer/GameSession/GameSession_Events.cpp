@@ -114,15 +114,34 @@ namespace DanBias
 	{
 		GameLogic::IObjectData* obj = NULL;
 		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
-			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
-		if(obj)
 		{
-			if(obj->GetType() == OBJECT_TYPE_BOX)
+			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
+			if(obj)
 			{
-				obj->GetID();
-				Oyster::Math::Float4x4 world =obj->GetOrientation();
-				Protocol_ObjectPosition p(world, 1);
-				GameSession::gameSession->Send(p.GetProtocol());
+				if(obj->GetType() == OBJECT_TYPE_WORLD)
+				{
+					obj->GetID();
+					Oyster::Math::Float4x4 world =obj->GetOrientation();
+					Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
+					scale.v[0].x = 8;
+					scale.v[1].y = 8;
+					scale.v[2].z = 8;
+					world = world * scale;
+					Protocol_ObjectPosition p(world, 0);
+					GameSession::gameSession->Send(p.GetProtocol());
+				}
+			}
+			obj = NULL;
+			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
+			if(obj)
+			{
+				if(obj->GetType() == OBJECT_TYPE_BOX)
+				{
+					obj->GetID();
+					Oyster::Math::Float4x4 world = obj->GetOrientation();
+					Protocol_ObjectPosition p(world, 1);
+					GameSession::gameSession->Send(p.GetProtocol());
+				}
 			}
 		}
 		

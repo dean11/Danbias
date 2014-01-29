@@ -75,33 +75,10 @@ bool GameState::LoadModels(std::wstring mapFile)
 	// init models
 	privData->modelCount = 2;
 
+	// add world model
 	ModelInitData modelData;
-
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
-	modelData.world = modelData.world * translate;
-	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
-	modelData.id = 0;
-	// load models
-	C_Object* obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,2,2));
-	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
-	modelData.id ++;
-
-	obj = new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	/*translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
-	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
-	modelData.id ++;*/
-	
+	Oyster::Math3D::Float4x4 translate;
+	C_Object* obj;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
 	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
 	scale.v[0].x = 8;
@@ -109,11 +86,39 @@ bool GameState::LoadModels(std::wstring mapFile)
 	scale.v[2].z = 8;
 	modelData.world = scale; //modelData.world * translate 
 	modelData.modelPath = L"ball.dan";
-	modelData.id ++;
+	modelData.id = 0;
 
 	obj = new C_Player();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+	// add box model
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-5,15,0));
+	modelData.world = modelData.world * translate;
+	modelData.modelPath = L"box.dan";
+	modelData.id = 1;
+
+	obj = new C_Player();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+
+	// add player model
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 15, 0));
+	modelData.world = modelData.world * translate;
+	modelData.visible = true;
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.id = 2;
+	// load models
+	obj =  new C_Player();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+	
+
+
 
 
 	return true;
@@ -328,10 +333,10 @@ void GameState::Protocol( ObjPos* pos )
 			//camera->setRight((Oyster::Math::Float3(world[0], world[1], world[2])));
 			//camera->setUp((Oyster::Math::Float3(world[4], world[5], world[6])));
 			//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
-			if(i == 0)
+			if(i == 2) // playerobj
 			{
-				camera->SetPosition(Oyster::Math::Float3(world[12], world[13], world[14]));
-				camera->UpdateViewMatrix();
+				//camera->SetPosition(Oyster::Math::Float3(world[12], world[13], world[14]));
+				//camera->UpdateViewMatrix();
 			}
 		}
 	}
