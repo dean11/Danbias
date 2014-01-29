@@ -8,20 +8,38 @@ using namespace GameLogic;
 using namespace Oyster::Physics;
 
 Player::Player()
-	:DynamicObject(Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER)
+	:DynamicObject()
 {
-	weapon = new Weapon();
-		
-	life = 100;
-	teamID = -1;
-	playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-	lookDir = Oyster::Math::Float4(0,0,-1,0);
-	setState.SetCenterPosition(Oyster::Math::Float3(0,15,0));
-	setState.SetReach(Oyster::Math::Float3(2,3.5,2));
+
+}
+Player::Player(OBJECT_TYPE type)
+	:DynamicObject(type)
+{
+	InitPlayer();
+}
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
+	:DynamicObject(rigidBody,type)
+{
+	InitPlayer();
 }
 
-Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
-	:DynamicObject(rigidBody, collisionFunc, type)
+Player::Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
+	:DynamicObject(collisionFuncBefore,collisionFuncAfter,type)
+{
+	InitPlayer();
+}
+Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
+{
+	InitPlayer();
+}
+Player::Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
+{
+	InitPlayer();
+}
+
+void Player::InitPlayer()
 {
 	weapon = new Weapon(2,this);
 
@@ -29,9 +47,6 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oy
 	this->teamID = -1;
 	this->playerState = PLAYER_STATE_IDLE;
 	lookDir = Oyster::Math::Float4(0,0,-1,0);
-
-	setState.SetCenterPosition(Oyster::Math::Float3(0,15,0));
-	setState.SetReach(Oyster::Math::Float3(2,3.5,2));
 }
 
 Player::~Player(void)
@@ -40,10 +55,8 @@ Player::~Player(void)
 	{
 		delete weapon;
 		weapon = NULL;
-	}
-	
+	}	
 }
-
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {

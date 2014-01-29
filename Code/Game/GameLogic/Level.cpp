@@ -20,6 +20,7 @@ void Level::InitiateLevel(std::string levelPath)
 }
 void Level::InitiateLevel(float radius)
 {
+
 	// add level sphere
 	API::SphericalBodyDescription sbDesc;
 	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
@@ -33,8 +34,8 @@ void Level::InitiateLevel(float radius)
 	rigidBody->GetState(state);
 	state.SetRestitutionCoeff(0.01);
 	rigidBody->SetState(state);
-
-	levelObj = new StaticObject(rigidBody, LevelCollision, OBJECT_TYPE::OBJECT_TYPE_WORLD);
+	
+	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 	rigidBody->SetCustomTag(levelObj);
 	
 	
@@ -47,7 +48,8 @@ void Level::InitiateLevel(float radius)
 	
 	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 	rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
-	testBox = new DynamicObject(rigidBody_TestBox,LevelCollision,OBJECT_TYPE::OBJECT_TYPE_BOX);
+
+	testBox = new DynamicObject(rigidBody_TestBox, OBJECT_TYPE::OBJECT_TYPE_BOX);
 	rigidBody_TestBox->SetCustomTag(testBox);
 	rigidBody_TestBox->GetState(state);
 	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,4));

@@ -18,9 +18,11 @@ namespace GameLogic
 	{
 	public:		
 		Object();
-		Object(void* collisionFunc, OBJECT_TYPE type);
-		Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFunc, OBJECT_TYPE type);
-		Object(Oyster::Physics::ICustomBody *rigidBody ,void (*collisionFunc)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
+		Object(OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type);
+		Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
+		Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Object(void);
 
 		// API overrides
@@ -35,7 +37,7 @@ namespace GameLogic
 
 		void BeginFrame();
 		void EndFrame();
-
+		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 	private:
 		OBJECT_TYPE type;
 		int objectID;

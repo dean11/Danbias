@@ -64,10 +64,18 @@ using namespace GameLogic;
 		}
 		
 	}	
-	//Oyster::Physics::ICustomBody::SubscriptMessage
-	void Level::LevelCollision(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
 	{
-		//return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
+	//Oyster::Physics::ICustomBody::SubscriptMessage
+	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void* args)

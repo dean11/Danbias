@@ -57,8 +57,9 @@ namespace GameLogic
 		* @param rigidBodyLevel: physics object of the level
 		* @param obj: physics object for the object that collided with the level
 		********************************************************/
-		static void LevelCollision(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
-		
+		static Oyster::Physics::ICustomBody::SubscriptMessage LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
+		static Oyster::Physics::ICustomBody::SubscriptMessage LevelCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+
 		Object* GetObj( int ID ) const;
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
