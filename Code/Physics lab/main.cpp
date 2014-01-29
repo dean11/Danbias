@@ -95,7 +95,7 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 
 	Graphics::Definitions::Pointlight light;
 	{
-		light.Pos = Float3(0.0f, 5.0f, 5.0f);
+		light.Pos = Float3(0.0f, 5.0f, 10.0f);
 		light.Radius = 100.0f;
 		light.Color = Float3( 1.0f );
 		light.Bright = 5.0f;
@@ -110,14 +110,19 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 	//Object sphere;
 	Object crate[2];
 	{
+		Float s = 5.0f;
+
 		//sphere.gfx = Graphics::API::CreateModel( L"worldDummy" );
 		//sphere.phys = Physics::API::Instance().CreateRigidBody( Physics::API::SphericalBodyDescription() ).Release();
 		//Physics::API::Instance().AddObject( sphere.phys );
 
 		Physics::API::SimpleBodyDescription descCrate;
+		descCrate.mass = 10.0f;
+		descCrate.inertiaTensor = Physics3D::MomentOfInertia::Cuboid( 10.0f, s, s, s );
+		descCrate.size = Float3( s );
 
 //		descCrate.centerPosition = Float4( -2.5f, 0.0f, 0.0f, 1.0f );
-		descCrate.centerPosition = Float4( 0.9f, 1.5f, 0.9f, 1.0f );
+		descCrate.centerPosition = Float4( s * 0.9f, s * 1.5f, s * 0.9f, 1.0f );
 		crate[0].phys = Physics::API::Instance().CreateRigidBody( descCrate ).Release();
 
 //		descCrate.centerPosition = Float4( 2.5, -0.5f, -0.5f, 1.0f );
@@ -207,7 +212,9 @@ int WINAPI WinMain( HINSTANCE thisInstance, HINSTANCE prevInst, PSTR cmdLine, in
 
 					for( unsigned int i = 0; i < StaticArray::NumElementsOf(crate); ++i )
 					{
-						crate[i].gfx->WorldMatrix = crate[i].phys->GetState().GetOrientation();
+						Float4x4 scaling = crate[i].phys->GetState().GetSize().x * Float4x4::identity;
+						scaling.v[3].w = 1.0f;
+						crate[i].gfx->WorldMatrix = crate[i].phys->GetState().GetOrientation() * scaling;
 						Graphics::API::RenderModel( *crate[i].gfx );
 					}
 
