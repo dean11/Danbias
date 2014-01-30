@@ -9,6 +9,7 @@
 #include "GameClientState\LanMenuState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
+#include <GameServerAPI.h>
 
 #include "../WindowManager/WindowShell.h"
 #include "L_inputClass.h"
@@ -39,6 +40,7 @@ namespace DanBias
 		InputClass* inputObj;
 		Utility::WinTimer* timer;
 		GameRecieverObject* recieverObj;
+		bool serverOwner;
 
 	} data;
 #pragma endregion
@@ -63,13 +65,8 @@ namespace DanBias
 			return DanBiasClientReturn_Error;
 
 		m_data->recieverObj = new GameRecieverObject;
-		/*m_data->recieverObj->Connect(desc.port, desc.IP);
+		m_data->serverOwner = false;
 
-		if (!m_data->recieverObj->IsConnected())
-		{
-			// failed to connect
-			return DanBiasClientReturn_Error;
-		}*/
 		// Start in lobby state
 		m_data->recieverObj->gameClientState = new  Client::LoginState();
 		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj))
@@ -134,8 +131,13 @@ namespace DanBias
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
 		
+		m_data->recieverObj->Update();
 		m_data->inputObj->Update();
 
+		if(m_data->serverOwner)
+		{
+			DanBias::GameServerAPI::ServerUpdate();
+		}
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
 		state = m_data->recieverObj->gameClientState->Update(deltaTime, m_data->inputObj);
@@ -148,6 +150,8 @@ namespace DanBias
 
 			switch (state)
 			{
+			case Client::GameClientState::ClientState_LobbyCreated:
+				m_data->serverOwner = true;
 			case Client::GameClientState::ClientState_Lobby:
 				m_data->recieverObj->gameClientState = new Client::LobbyState();
 				break;
