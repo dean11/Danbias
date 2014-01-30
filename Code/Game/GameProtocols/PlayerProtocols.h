@@ -148,6 +148,31 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
+	struct Protocol_PlayerJump :public Oyster::Network::CustomProtocolObject
+	{
+		bool hasJumped;
+
+		Protocol_PlayerJump()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerJump;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		const Protocol_PlayerJump& operator=(Oyster::Network::CustomNetProtocol& val)
+		{
+			hasJumped		= val[1].value.netBool;
+			return *this;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = hasJumped;
+			return &protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

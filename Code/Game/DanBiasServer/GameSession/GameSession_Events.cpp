@@ -67,7 +67,13 @@ namespace DanBias
 				
 			break;
 			case protocol_Gameplay_PlayerShot:
-				c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+				if (p[1].value.netBool)
+					c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+				break;
+			case protocol_Gameplay_PlayerJump:
+				if (p[1].value.netBool)
+					c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_JUMP);
+				break;
 			case protocol_Gameplay_ObjectDamage:
 
 			break;

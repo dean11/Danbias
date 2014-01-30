@@ -282,6 +282,8 @@ void GameState::readKeyInput(InputClass* KeyInput)
 		playerLookDir.lookDirZ = look.z;
 		privData->nwClient->Send(playerLookDir);
 	}
+
+	// shoot
 	if(KeyInput->IsKeyPressed(DIK_Z))
 	{
 		if(!key_Shoot)
@@ -294,6 +296,20 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	} 
 	else 
 		key_Shoot = false;
+
+	// jump
+	if(KeyInput->IsKeyPressed(DIK_X))
+	{
+		if(!key_Jump)
+		{
+			GameLogic::Protocol_PlayerJump playerJump;
+			playerJump.hasJumped = true;
+			privData->nwClient->Send(playerJump);
+			key_Jump = true;
+		}
+	}
+	else 
+		key_Jump = false;
 
 	// send event data
 	//  

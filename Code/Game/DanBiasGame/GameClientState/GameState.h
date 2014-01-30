@@ -23,6 +23,7 @@ private:
 	bool key_strafeRight;
 	bool key_strafeLeft;
 	bool key_Shoot;
+	bool key_Jump;
 	Camera* camera;
 
 	struct myData;
