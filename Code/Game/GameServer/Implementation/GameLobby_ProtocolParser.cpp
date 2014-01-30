@@ -13,8 +13,8 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 		break;
 		case protocol_General_Text:		this->GeneralText		(Protocol_General_Text		(p), c);
 		break;
-		case protocol_Lobby_Create:		this->LobbyCreateGame	(Protocol_LobbyCreateGame	(p), c);
-		break;
+		//case protocol_Lobby_Create:		this->LobbyCreateGame	(Protocol_LobbyCreateGame	(p), c);
+		//break;
 		case protocol_Lobby_Start:		this->LobbyStartGame	(Protocol_LobbyStartGame	(p), c);
 		break;
 		case protocol_Lobby_Join:		this->LobbyJoin			(Protocol_LobbyJoin			(p), c);
@@ -54,10 +54,10 @@ void GameLobby::GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network
 {
 	printf(p.text.c_str());
 }
-void GameLobby::LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c)
-{
-	
-}
+//void GameLobby::LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c)
+//{
+//	
+//}
 void GameLobby::LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c)
 {
 

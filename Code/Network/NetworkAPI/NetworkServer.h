@@ -46,6 +46,10 @@ namespace Oyster
 				*/
 				ServerReturnCode Start();
 
+				/**	Parses asynchronous connected clients.
+				*/
+				int Update();
+
 				/**	
 				*	
 				*/
@@ -54,10 +58,6 @@ namespace Oyster
 				/**	Shutdown the server and return all resources.
 				*/
 				void Shutdown();
-
-				/**	Parses asynchronous connected clients.
-				*/
-				int ProcessConnectedClients();
 
 				/**	Set the main session connected clients will enter when connected to server.
 				*	@param mainSession The session to connect as main server session.
@@ -83,6 +83,11 @@ namespace Oyster
 				*	
 				*/
 				std::string GetLanAddress();
+
+				/**
+				*	
+				*/
+				int NetworkServer::GetPort();
 
 			private:
 				struct PrivateData;

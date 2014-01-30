@@ -31,7 +31,11 @@ namespace DanBias
 		*/
 		struct GameDescription
 		{
-			std::wstring mapName;
+			int mapNumber;
+			int maxClients;
+			int gameMode;
+			int gameTime;
+			std::string gameName;
 			Oyster::Network::NetworkSession* owner;
 			Utility::DynamicMemory::DynamicArray<Oyster::Network::NetClient> clients;
 		};
@@ -83,6 +87,9 @@ namespace DanBias
 		void General_Status					( GameLogic::Protocol_General_Status& p, DanBias::GameClient* c );
 		void General_Text					( GameLogic::Protocol_General_Text& p, DanBias::GameClient* c );
 		
+		//Callback method recieving from gamelogic
+		static void ObjectMove(GameLogic::IObjectData* movedObject);
+
 		//Private member variables
 	private:
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
@@ -93,10 +100,10 @@ namespace DanBias
 		bool isCreated;
 		bool isRunning;
 		Utility::WinTimer timer;
+		GameDescription description;
 
-		//Callback method recieving from gamelogic
-		static void ObjectMove(GameLogic::IObjectData* movedObject);
-
+		//TODO: Remove this uggly hax
+		static GameSession* gameSession;
 
 	};//End GameSession
 }//End namespace DanBias

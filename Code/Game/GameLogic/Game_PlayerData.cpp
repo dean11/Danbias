@@ -27,7 +27,8 @@ Game::PlayerData::~PlayerData()
 	delete this->player;
 }
 
-void Game::PlayerData::Move(const PLAYER_MOVEMENT &movement){
+void Game::PlayerData::Move(const PLAYER_MOVEMENT &movement)
+{
 	this->player->Move(movement);
 }
 void Game::PlayerData::UseWeapon(const WEAPON_FIRE &usage)

@@ -19,12 +19,17 @@ using namespace GameLogic;
 
 namespace DanBias
 {
+	GameSession* GameSession::gameSession = nullptr;
+
 	GameSession::GameSession()
 		:gameInstance(GameAPI::Instance())
 	{
 		this->owner = 0;
 		this->isCreated = false;
 		this->isRunning = false;
+		this->gameSession = this;
+
+		memset(&this->description, 0, sizeof(GameDescription));
 	}
 
 	GameSession::~GameSession()
@@ -39,10 +44,10 @@ namespace DanBias
 
 	bool GameSession::Create(GameDescription& desc)
 	{
+		this->description = desc;
 		/* Do some error checking */
 		if(desc.clients.Size() == 0)	return false;
 		if(!desc.owner)					return false;
-		if(!desc.mapName.size())		return false;
 		if(this->isCreated)				return false;
 
 		/* standard initialization of some data */

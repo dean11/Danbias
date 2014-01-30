@@ -25,14 +25,27 @@ namespace DanBias
 
 	void GameLobby::Update()
 	{
-		if(GetAsyncKeyState(VK_DOWN))
+		if(GetAsyncKeyState(VK_DOWN))	//TODO: Dont forget to remove this...
 			this->Send(*GameLogic::Protocol_General_Status().GetProtocol());
 
 		this->ProcessClients();
 	}
-	GameLobby::operator bool()
+	void GameLobby::SetGameDesc(const GameSession::GameDescription& desc)
 	{
-		return true;
+		this->description = desc;
+	}
+	void GameLobby::GetGameDesc(GameSession::GameDescription& desc)
+	{
+		desc = this->description;
+	}
+	bool GameLobby::StartGameSession()
+	{
+		if(this->gameSession.Create(this->description))
+		{
+			this->gameSession.Run();
+			return true;
+		}
+		return false;
 	}
 
 	void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)

@@ -20,14 +20,16 @@ namespace DanBias
 		void Release();
 		void Update();
 
-		operator bool();
+		void SetGameDesc(const GameSession::GameDescription& desc);
+		void GetGameDesc(GameSession::GameDescription& desc);
+		bool StartGameSession();
 
 	private:
 		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, Oyster::Network::NetworkClient* c);
 
 		void GeneralStatus(GameLogic::Protocol_General_Status& p, Oyster::Network::NetworkClient* c);		//id = protocol_General_Status:
 		void GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network::NetworkClient* c);			//id = protocol_General_Text:
-		void LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c);	//id = protocol_Lobby_Create:
+		//void LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c);	//id = protocol_Lobby_Create:
 		void LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_Start:
 		void LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Join:				
 		void LobbyLogin(GameLogic::Protocol_LobbyLogin& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Login:
@@ -42,7 +44,8 @@ namespace DanBias
 	private:
 		Utility::WinTimer timer;
 		float refreshFrequency;
-		GameSession* gameSession;
+		GameSession gameSession;
+		GameSession::GameDescription description;
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H

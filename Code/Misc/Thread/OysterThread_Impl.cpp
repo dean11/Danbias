@@ -296,7 +296,9 @@ OYSTER_THREAD_ERROR OysterThread::SetWorker(ThreadFnc worker)
 }
 OYSTER_THREAD_ERROR OysterThread::Terminate()
 {
-	return this->privateData->Terminate();
+	if(this->privateData)
+		return this->privateData->Terminate();
+	return OYSTER_THREAD_ERROR_SUCCESS;
 }
 OYSTER_THREAD_ERROR OysterThread::Wait()
 {

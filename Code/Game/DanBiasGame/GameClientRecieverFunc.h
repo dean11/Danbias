@@ -88,18 +88,15 @@ struct GameRecieverObject	:public Oyster::Network::NetworkClient
 		case protocol_Gameplay_ObjectPosition:
 			{
 
-				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
-				protocolData->object_ID = p[1].value.netInt;
+				Client::GameClientState::ObjPos protocolData;
+				protocolData.object_ID = p[1].value.netInt;
 				for(int i = 0; i< 16; i++)
 				{
-					protocolData->worldPos[i] = p[i+2].value.netFloat;
+					protocolData.worldPos[i] = p[i+2].value.netFloat;
 				}
 
 				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-
-				delete protocolData;
-				protocolData = NULL;
+					((Client::GameState*)gameClientState)->Protocol(&protocolData);
 			}
 			break;
 

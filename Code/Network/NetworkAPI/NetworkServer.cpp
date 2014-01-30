@@ -224,7 +224,7 @@ void NetworkServer::Shutdown()
 	this->privateData->isReleased = true;
 }
 
-int NetworkServer::ProcessConnectedClients()
+int NetworkServer::Update()
 {
 	int c = 0;
 	while(!this->privateData->clientQueue.IsEmpty())
@@ -281,6 +281,10 @@ std::string NetworkServer::GetLanAddress()
 	strcpy_s(buff, temp);
 	szLocalIP = buff;
 	return szLocalIP;
+}
+int NetworkServer::GetPort()
+{
+	return this->privateData->port;
 }
 
 
