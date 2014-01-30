@@ -5,6 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
+#include "GameClientState\LoginState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
 
@@ -61,15 +62,15 @@ namespace DanBias
 			return DanBiasClientReturn_Error;
 
 		m_data->recieverObj = new GameRecieverObject;
-		m_data->recieverObj->Connect(desc.port, desc.IP);
+		/*m_data->recieverObj->Connect(desc.port, desc.IP);
 
 		if (!m_data->recieverObj->IsConnected())
 		{
 			// failed to connect
 			return DanBiasClientReturn_Error;
-		}
+		}*/
 		// Start in lobby state
-		m_data->recieverObj->gameClientState = new  Client::LobbyState();
+		m_data->recieverObj->gameClientState = new  Client::LoginState();
 		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj))
 			return DanBiasClientReturn_Error;
 
@@ -133,6 +134,7 @@ namespace DanBias
 	{
 		
 		m_data->inputObj->Update();
+
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
 		state = m_data->recieverObj->gameClientState->Update(deltaTime, m_data->inputObj);

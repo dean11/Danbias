@@ -3,6 +3,7 @@
 
 #include "GameClientState.h"
 #include "OysterMath.h"
+#include "NetworkClient.h"
 #include <string>
 namespace DanBias
 {
@@ -12,6 +13,7 @@ namespace DanBias
 class LobbyState : public GameClientState
 {
 private:
+	Oyster::Network::NetworkClient* nwClient;
 	struct myData;
 	myData* privData;
 public:

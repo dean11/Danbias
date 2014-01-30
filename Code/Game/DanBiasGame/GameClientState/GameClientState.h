@@ -51,6 +51,7 @@ public:
 	};
 	enum ClientState
 	{
+		ClientState_Login,
 		ClientState_Lobby,
 		ClientState_Game,
 		ClientState_Same,

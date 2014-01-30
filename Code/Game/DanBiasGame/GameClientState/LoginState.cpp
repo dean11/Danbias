@@ -1,13 +1,14 @@
-#include "LobbyState.h"
+#include "LoginState.h"
 #include "DllInterfaces/GFXAPI.h"
 #include "OysterMath.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_StaticObj.h"
 #include "C_obj/C_DynamicObj.h"
+#include <GameServerAPI.h>
 
 using namespace DanBias::Client;
 
-struct  LobbyState::myData
+struct  LoginState::myData
 {
 	myData(){}
 	Oyster::Math3D::Float4x4 view;
@@ -18,26 +19,26 @@ struct  LobbyState::myData
 	// game client* 
 }privData;
 
-LobbyState::LobbyState(void)
+LoginState::LoginState(void)
 {
-		
+
 }
 
-LobbyState::~LobbyState(void)
+LoginState::~LoginState(void)
 {
-	
+
 }
 
-bool LobbyState::Init(Oyster::Network::NetworkClient* nwClient)
+bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
-	this->nwClient = nwClient;
+	this->nwClient = nwClient;	
 	// load models
 	LoadModels(L"UImodels.txt");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
 	return true;
 }
-bool LobbyState::LoadModels(std::wstring file)
+bool LoginState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
 	plight.Pos = Oyster::Math::Float3(-2,3,0);
@@ -59,7 +60,7 @@ bool LobbyState::LoadModels(std::wstring file)
 	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
 	modelData.world = modelData.world * translate;
 
 	privData->object[1] = new C_DynamicObj();
@@ -67,7 +68,7 @@ bool LobbyState::LoadModels(std::wstring file)
 	return true;
 }
 
-bool LobbyState::InitCamera(Oyster::Math::Float3 startPos)
+bool LoginState::InitCamera(Oyster::Math::Float3 startPos)
 {
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
@@ -77,7 +78,7 @@ bool LobbyState::InitCamera(Oyster::Math::Float3 startPos)
 	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
 }
-GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* KeyInput)
 {
 	// picking 
 	// mouse events
@@ -87,11 +88,39 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	// send data to server
 	// check data from server
 
-	if( KeyInput->IsKeyPressed(DIK_G)) 
-	  return ClientState_Game;
+	// create game
+	if( KeyInput->IsKeyPressed(DIK_C)) 
+	{
+		DanBias::GameServerAPI::ServerInitDesc desc; 
+
+		DanBias::GameServerAPI::ServerInitiate(desc);
+		DanBias::GameServerAPI::ServerStart();
+		// my ip
+		nwClient->Connect(15151, "127.0.0.1");
+
+		if (!nwClient->IsConnected())
+		{
+			// failed to connect
+			return ClientState_Same;
+		}
+		return ClientState_Lobby;
+	}
+	// join game
+	if( KeyInput->IsKeyPressed(DIK_J)) 
+	{
+		// game ip
+		nwClient->Connect(15151, "194.47.150.56");
+
+		if (!nwClient->IsConnected())
+		{
+			// failed to connect
+			return ClientState_Same;
+		}
+		return ClientState_Lobby;
+	}
 	return ClientState_Same;
 }
-bool LobbyState::Render()
+bool LoginState::Render()
 {
 
 	Oyster::Graphics::API::SetView(privData->view);
@@ -112,7 +141,7 @@ bool LobbyState::Render()
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
-bool LobbyState::Release()
+bool LoginState::Release()
 {
 	for (int i = 0; i < privData->modelCount; i++)
 	{
@@ -125,13 +154,13 @@ bool LobbyState::Release()
 	privData = NULL;
 	return true;
 }
-void LobbyState::Protocol(ProtocolStruct* protocol)
+void LoginState::Protocol(ProtocolStruct* protocol)
 {
 	if((PlayerName*)protocol)
 		PlayerJoinProtocol((PlayerName*)protocol);
-	
+
 }
-void LobbyState::PlayerJoinProtocol(PlayerName* name)
+void LoginState::PlayerJoinProtocol(PlayerName* name)
 {
 
 }
