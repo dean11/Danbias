@@ -144,7 +144,6 @@ bool GameState::InitCamera(Oyster::Math::Float3 startPos)
 
 GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
 {
-	DanBias::GameServerAPI::ServerUpdate();
 	switch (privData->state)
 	{
 	case gameStateState_loading:

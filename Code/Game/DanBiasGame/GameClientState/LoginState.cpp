@@ -103,7 +103,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
-		return ClientState_Lobby;
+		return ClientState_LobbyCreated;
 	}
 	// join game
 	if( KeyInput->IsKeyPressed(DIK_J)) 
