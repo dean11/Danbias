@@ -20,6 +20,7 @@ using namespace GameLogic;
 		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
+		return;
 		switch (realObj->GetObjectType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
@@ -78,9 +79,9 @@ using namespace GameLogic;
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
 
-	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void* args)
+	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void *args)
 	{
-		Oyster::Math::Float3 pushForce = Oyster::Math::Float4(1,0,0) * (20);
+		Oyster::Math::Float3 pushForce = Oyster::Math::Float4(1,0,0) * (1);
 		Oyster::Physics::ICustomBody::State state;
 		state = obj->GetState();
 		state.ApplyLinearImpulse(pushForce);
