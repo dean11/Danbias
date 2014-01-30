@@ -6,6 +6,9 @@
 
 //warning C4150: deletion of pointer to incomplete type, no destructor called
 #pragma warning(disable : 4150)
+//needs to have dll-interface to be used by clients of class 'Oyster::Network::NetworkSession'
+#pragma warning(disable : 4251)
+
 
 #include "NetworkAPI_Preprocessor.h"
 #include "NetworkServerEventStruct.h"
@@ -18,6 +21,7 @@ namespace Oyster
 	namespace Network
 	{
 		typedef Utility::DynamicMemory::SmartPointer<NetworkClient> NetClient;
+		typedef Utility::DynamicMemory::DynamicArray<NetClient>	NetClientList;
 		class NET_API_EXPORT NetworkSession
 		{
 		public:
@@ -91,6 +95,9 @@ namespace Oyster
 			*	
 			*/
 			virtual void ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e) = 0;
+
+		protected:
+			NetClientList clients;
 
 		private:
 			int clientCount;

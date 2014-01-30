@@ -23,7 +23,9 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 		break;
 		case protocol_Lobby_Refresh:	this->LobbyRefresh		(Protocol_LobbyRefresh		(p), c);
 		break;
-		case protocol_Lobby_MainData:	this->LobbyMainData		(Protocol_LobbyClientData	(p), c);
+		case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
+		break;
+		case protocol_Lobby_ClientData:	this->LobbyMainData		(Protocol_LobbyClientData	(p), c);
 		break;
 		//case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
 		//break;
@@ -60,7 +62,7 @@ void GameLobby::GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network
 //}
 void GameLobby::LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c)
 {
-
+	//TODO: Prio 1
 }
 //void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c)
 //{
@@ -81,13 +83,13 @@ void GameLobby::LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Networ
 {
 	//Dont need to handle this on the server...
 }
+void GameLobby::LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c)
+{
+	
+}
 void GameLobby::LobbyMainData(GameLogic::Protocol_LobbyClientData& p, Oyster::Network::NetworkClient* c)
 {
 
 }
-//void GameLobby::LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c)
-//{
-//
-//}
 
 

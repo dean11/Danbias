@@ -52,12 +52,8 @@ namespace DanBias
 		desc.gameTime = this->description.gameTime;
 		desc.mapNumber = this->description.mapNumber;
 		desc.owner = this;
-		while (this->GetClientCount())
-		{
-			NetClient c;
-			if((c = this->Detach()))
-				desc.clients.Push(c);
-		}
+		desc.clients = this->clients;
+		
 		if(this->gameSession.Create(desc))
 		{
 			this->gameSession.Run();
@@ -89,9 +85,27 @@ namespace DanBias
 		printf("New client(%i) connected - %s \n", client->GetID(), client->GetIpAddress().c_str());
 		Attach(client);
 
-		Protocol_LobbyClientData p;
+		Protocol_LobbyClientData p1;
+		Protocol_LobbyGameData p2;
 		
-		client->Send(p.GetProtocol());
+		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		{
+			if(this->clients[i])
+			{
+				Protocol_LobbyClientData::PlayerData t;
+				t.id = this->clients[i]->GetID();
+				t.ip = this->clients[i]->GetIpAddress();
+				t.team = 0;
+				t.name = "DennisÄrKung";
+				p1.list.Push(t);
+			}
+		}
+		p2.majorVersion = 1;
+		p2.minorVersion = 0;
+		p2.mapName = "BetsMap";
+
+		client->Send(p1.GetProtocol());
+		client->Send(p2.GetProtocol());
 	}
 
 }//End namespace DanBias

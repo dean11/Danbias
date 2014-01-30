@@ -22,8 +22,8 @@ namespace GameLogic
 
 		Protocol_LobbyCreateGame()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Create;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Create;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_CharArray;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Char;
@@ -50,8 +50,8 @@ namespace GameLogic
 
 		Protocol_LobbyStartGame()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Start;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Start;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
@@ -74,8 +74,8 @@ namespace GameLogic
 		// Login stuff
 		Protocol_LobbyLogin()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Join;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Join;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
@@ -98,14 +98,14 @@ namespace GameLogic
 	//
 	//	Protocol_LobbyJoin()
 	//	{
-	//		this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Join;
-	//		this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+	//		this->protocol[0].value = protocol_Lobby_Join;
+	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 	//	}
 	//	Protocol_LobbyJoin(Oyster::Network::CustomNetProtocol& p)
 	//	{
-	//		this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Join;
-	//		this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+	//		this->protocol[0].value = protocol_Lobby_Join;
+	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 	//		value = p[1].value.netShort;
 	//	}
@@ -123,8 +123,8 @@ namespace GameLogic
 	{
 		Protocol_LobbyRefresh()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Login;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Login;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 		}
 		Protocol_LobbyRefresh(Oyster::Network::CustomNetProtocol& o)
 		{
@@ -147,35 +147,90 @@ namespace GameLogic
 		struct PlayerData
 		{
 			std::string name;
+			std::string ip;
 			int id;
+			int team;
 		};
 		Utility::DynamicMemory::DynamicArray<PlayerData> list;
-
+		
 		Protocol_LobbyClientData()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_GameData;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_ClientData;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_UnsignedInt;	//DataType
 
 			list.Reserve(10);
 		}
 		Protocol_LobbyClientData(Oyster::Network::CustomNetProtocol& p)
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_GameData;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
-
-			list.Reserve(10);
+			unsigned int size = this->protocol[1].value.netUInt;
+			list.Reserve(size);
+			int a = 2;
+			for (unsigned int i = 0; i < list.Size(); i++)
+			{
+				PlayerData d;
+				d.id = this->protocol[a++].value.netInt;
+				d.team = this->protocol[a++].value.netInt;
+				d.name = this->protocol.Get(a++).value.netCharPtr;
+				d.ip = this->protocol.Get(a++).value.netCharPtr;
+				list.Push(d);
+			}
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-			int a = 1;
+			this->protocol[1].value = list.Size();
+
+			int a = 2;
 			for (unsigned int i = 0; i < list.Size(); i++)
 			{
-				this->protocol[a].type = Oyster::Network::NetAttributeType_Int;
-				this->protocol[a].type = Oyster::Network::NetAttributeType_CharArray;
+				this->protocol[a].type = Oyster::Network::NetAttributeType_Int;			// client-id
+					this->protocol[a++].value = list[i].id;
 
-				this->protocol[a].value = list[i].id;
-				this->protocol.Set(a, list[i].name);
+				this->protocol[a].type = Oyster::Network::NetAttributeType_Int;			// team-id
+					this->protocol[a++].value = list[i].team;
+
+				this->protocol[a].type = Oyster::Network::NetAttributeType_CharArray;	// clientName
+					this->protocol.Set(a++, list[i].name);
+
+				this->protocol[a].type = Oyster::Network::NetAttributeType_CharArray;	// clientIP
+					this->protocol.Set(a++, list[i].ip);
 			}
+			
+			return &protocol;
+		}
+		
+		private:
+			Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	struct Protocol_LobbyGameData :public Oyster::Network::CustomProtocolObject
+	{
+		std::string mapName;
+		int majorVersion;
+		int minorVersion;
+	
+		Protocol_LobbyGameData()
+		{
+			this->protocol[0].value = protocol_Lobby_GameData;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_CharArray;
+		}
+		Protocol_LobbyGameData(Oyster::Network::CustomNetProtocol& p)
+		{
+			majorVersion = (int)p.Get(1).value.netInt;
+			minorVersion = (int)p.Get(2).value.netInt;
+			mapName = p.Get(3).value.netCharPtr;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = majorVersion;
+			this->protocol[2].value = minorVersion;
+			this->protocol[3].value.netCharPtr = const_cast<char*>(mapName.c_str());
+
 			return &protocol;
 		}
 		
@@ -192,8 +247,8 @@ namespace GameLogic
 	//
 	//	Protocol_LobbyMainData()
 	//	{
-	//		this->protocol[protocol_INDEX_ID].value = protocol_Lobby_MainData;
-	//		this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+	//		this->protocol[0].value = protocol_Lobby_MainData;
+	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 	//
 	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 	//	}
