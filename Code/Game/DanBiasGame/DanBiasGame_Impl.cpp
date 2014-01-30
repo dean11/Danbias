@@ -6,6 +6,7 @@
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
 #include "GameClientState\LoginState.h"
+#include "GameClientState\LanMenuState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
 
