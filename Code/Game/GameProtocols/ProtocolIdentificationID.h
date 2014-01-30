@@ -8,11 +8,6 @@
 /* THERE CAN ABSOLUTLEY NOT BE TWO DEFINITIONS WITH THE SAME ID!! */
 
 
-/** Index where the identifier is located(aka protocol identification index) **/
-/* Use this as id accesser since it may change in the future. */
-#define protocol_INDEX_ID							0
-
-
 /***********************************/
 /********* RESERVERD PROTOCOLS ***************************************************************************************************/
 /**********   [ 0 - 99 ]  *********/
@@ -37,7 +32,7 @@
 #define protocol_Lobby_Join							202
 #define protocol_Lobby_Login						203
 #define protocol_Lobby_Refresh						204
-#define protocol_Lobby_MainData						205
+#define protocol_Lobby_ClientData					205
 #define protocol_Lobby_GameData						206
 #define protocol_LobbyMAX								299
 

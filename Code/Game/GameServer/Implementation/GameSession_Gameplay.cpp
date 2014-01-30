@@ -74,7 +74,7 @@ namespace DanBias
 
 	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
-		switch (p[protocol_INDEX_ID].value.netShort)
+		switch (p[0].value.netShort)
 		{
 			case protocol_Gameplay_PlayerMovement:		this->Gameplay_PlayerMovement		( Protocol_PlayerMovement		(p), c );
 			break;
