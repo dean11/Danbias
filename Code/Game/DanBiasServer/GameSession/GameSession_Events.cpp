@@ -132,7 +132,7 @@ namespace DanBias
 					scale.v[0].x = 8;
 					scale.v[1].y = 8;
 					scale.v[2].z = 8;
-					world = world * scale;
+					//world = world * scale;
 					Protocol_ObjectPosition p(world, 0);
 					GameSession::gameSession->Send(p.GetProtocol());
 				}

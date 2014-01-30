@@ -24,39 +24,11 @@ using namespace GameLogic;
 
 namespace DanBias
 {
-	//TEST SHIT
-	GameAPI *game = &GameAPI::Instance();
-	DynamicArray<IPlayerData*> players;
-
-	//TEST SHIT
 
 	bool GameSession::DoWork(  )
 	{
 		if(this->isRunning)
 		{
-			//TEST SHIT
-			//player creation and testing
-			//players.Resize(10);
-
-			//for(int i = 0; i < 10; i++)
-			//{
-			//	players[i] = game->CreatePlayer();WWW
-			//	players[i]->Move(GameLogic::PLAYER_MOVEMENT::PLAYER_MOVEMENT_BACKWARD);
-			//	players[i]->Move(GameLogic::PLAYER_MOVEMENT::PLAYER_MOVEMENT_FORWARD);
-			//	players[i]->Move(GameLogic::PLAYER_MOVEMENT::PLAYER_MOVEMENT_JUMP);
-			//	players[i]->Move(GameLogic::PLAYER_MOVEMENT::PLAYER_MOVEMENT_LEFT);
-			//	players[i]->Move(GameLogic::PLAYER_MOVEMENT::PLAYER_MOVEMENT_RIGHT);
-
-			//	//using weapon testing
-			//	players[i]->UseWeapon(GameLogic::WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS);
-			//	players[i]->UseWeapon(GameLogic::WEAPON_FIRE::WEAPON_USE_PRIMARY_RELEASE);
-			//	players[i]->UseWeapon(GameLogic::WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS);
-			//	players[i]->UseWeapon(GameLogic::WEAPON_FIRE::WEAPON_USE_SECONDARY_RELEASE);
-			//	players[i]->UseWeapon(GameLogic::WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS);
-			//}
-			
-
-			//TEST SHIT
 			double dt = this->timer.getElapsedSeconds();
 			gameInstance.SetFrameTimeLength((float)dt);
 

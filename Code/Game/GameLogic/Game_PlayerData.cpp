@@ -7,7 +7,7 @@ Game::PlayerData::PlayerData()
 {	
 	//set some stats that are appropriate to a player
 	Oyster::Physics::API::SimpleBodyDescription sbDesc;
-	sbDesc.centerPosition = Oyster::Math::Float3(0,15,0);
+	sbDesc.centerPosition = Oyster::Math::Float3(0,165,0);
 	sbDesc.size = Oyster::Math::Float3(4,7,4);
 	
 	//create rigid body

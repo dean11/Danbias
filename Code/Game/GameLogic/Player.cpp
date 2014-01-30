@@ -95,16 +95,14 @@ void Player::MoveBackwards()
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 r = Oyster::Math::Float4(1, 0, 0);
-	//Oyster::Math::Float4 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
+	Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
 	setState.ApplyLinearImpulse(r * 20 * this->gameInstance->GetFrameTime());
 	
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 r = Oyster::Math::Float4(1, 0, 0 );
-	//Oyster::Math::Float4 r1 = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
+	Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
 	setState.ApplyLinearImpulse(-r * 20 * this->gameInstance->GetFrameTime());
 }
 

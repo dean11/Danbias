@@ -25,7 +25,7 @@ void Level::InitiateLevel(float radius)
 	API::SphericalBodyDescription sbDesc;
 	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
 	sbDesc.ignoreGravity = true;
-	sbDesc.radius = 8; 
+	sbDesc.radius = 150; 
 	sbDesc.mass = 10e12f;
 	
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
@@ -59,7 +59,7 @@ void Level::InitiateLevel(float radius)
 	// add gravitation 
 	API::Gravity gravityWell;
 	gravityWell.gravityType = API::Gravity::GravityType_Well;
-	gravityWell.well.mass = 10e12f;
+	gravityWell.well.mass = 10e16f;
 	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
 	API::Instance().AddGravity(gravityWell);
 }
