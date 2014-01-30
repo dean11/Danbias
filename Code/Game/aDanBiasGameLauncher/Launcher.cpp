@@ -57,7 +57,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		return cmdShow;
 	}
 
-	serverThread = std::thread(ServerFnc);
+	//serverThread = std::thread(ServerFnc);
 
 	Sleep(200);
 
