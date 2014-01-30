@@ -14,7 +14,6 @@
   <ItemGroup>
     <ClInclude Include="Connection.h" />
     <ClInclude Include="IConnection.h" />
-    <ClInclude Include="IListener.h" />
     <ClInclude Include="IPostBox.h" />
     <ClInclude Include="Listener.h" />
     <ClInclude Include="Messages\MessageHeader.h" />

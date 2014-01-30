@@ -55,9 +55,9 @@ int Game::PlayerData::GetTeamID() const
 	return this->player->GetTeamID();
 }
 
-OBJECT_TYPE Game::PlayerData::GetType()	const
+OBJECT_TYPE Game::PlayerData::GetObjectType()	const
 {
-	return this->player->GetType();
+	return this->player->GetObjectType();
 }
 void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir)
 {

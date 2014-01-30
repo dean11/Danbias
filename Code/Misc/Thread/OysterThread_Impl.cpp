@@ -118,15 +118,17 @@ using namespace Utility::DynamicMemory;
 	{
 		SmartPointer<RefData> data;
 
-		PrivateData(){}
+		PrivateData()
+		{
+			data = new RefData();
+		}
 		~PrivateData()
 		{ 
-			data.Release();
+			data = 0;
 		}
 		OYSTER_THREAD_ERROR Create(ThreadFunction fnc, OwnerContainer worker, bool start, bool detach)
 		{ 
-			if(data) return  OYSTER_THREAD_ERROR_ThreadAlreadyCreated; 
-			data = new RefData();
+			if(!data)	data = new RefData();
 			return data->Create(fnc, worker, start, detach);
 		}
 		OYSTER_THREAD_ERROR Terminate()
@@ -205,9 +207,8 @@ using namespace Utility::DynamicMemory;
 
 
 OysterThread::OysterThread()
-{
-	this->privateData = new PrivateData();
-}
+	:privateData(0)
+{ }
 OysterThread::OysterThread(const OysterThread& original)
 {
 	this->privateData = new PrivateData(*original.privateData);
@@ -227,7 +228,7 @@ OysterThread::~OysterThread()
 
 OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start, bool detach)	  
 {
-	if(!this->privateData) this->privateData = new PrivateData();
+	if(!this->privateData)					this->privateData = new PrivateData();
 
 	OwnerContainer c;
 	c.type = Oyster::Callback::CallbackType_Object;
@@ -236,7 +237,7 @@ OYSTER_THREAD_ERROR OysterThread::Create(IThreadObject* worker, bool start, bool
 }
 OYSTER_THREAD_ERROR OysterThread::Create(ThreadFnc worker, bool start, bool detach)	  
 {
-	if(!this->privateData) this->privateData = new PrivateData();
+	if(!this->privateData)					this->privateData = new PrivateData();
 
 	OwnerContainer c;
 	c.type = Oyster::Callback::CallbackType_Function;
@@ -258,14 +259,10 @@ OYSTER_THREAD_ERROR OysterThread::Start()
 }
 OYSTER_THREAD_ERROR OysterThread::Stop()
 {
-	return this->Terminate();
-}
-OYSTER_THREAD_ERROR OysterThread::Pause()
-{
 	this->privateData->data->threadData->state = OYSTER_THREAD_STATE_IDLE;
 	return OYSTER_THREAD_ERROR_SUCCESS;
 }
-OYSTER_THREAD_ERROR OysterThread::Pause(int msec)
+OYSTER_THREAD_ERROR OysterThread::Stop(int msec)
 {
 	this->privateData->data->threadData->msec = msec;
 	return OYSTER_THREAD_ERROR_SUCCESS;

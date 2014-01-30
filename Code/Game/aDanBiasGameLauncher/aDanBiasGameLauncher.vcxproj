@@ -71,7 +71,7 @@
     <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Users\Dennis\Desktop\Skola\DV1477 - Stort spelutvecklingsprojekt\DanBias\Code\Game\DanBiasServer;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)Game\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -79,7 +79,7 @@
     <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Users\Dennis\Desktop\Skola\DV1477 - Stort spelutvecklingsprojekt\DanBias\Code\Game\DanBiasServer;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)Game\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,7 +87,7 @@
     <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Users\Dennis\Desktop\Skola\DV1477 - Stort spelutvecklingsprojekt\DanBias\Code\Game\DanBiasServer;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)Game\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -95,7 +95,7 @@
     <OutDir>$(SolutionDir)..\Bin\Executable\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;C:\Users\Dennis\Desktop\Skola\DV1477 - Stort spelutvecklingsprojekt\DanBias\Code\Game\DanBiasServer;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\External\Include\;C:\Program Files %28x86%29\Visual Leak Detector\include;$(SolutionDir)Game\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir)..\DLL\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,7 +110,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;GameServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;DanBiasServer_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -126,7 +126,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;DanBiasServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName)D.dll;GameServer_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>DanBiasGame_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,7 +146,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName).dll;DanBiasServer_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName).dll;GameServer_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -166,7 +166,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName).dll;DanBiasServer_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DanBiasGame_$(PlatformShortName).dll;GameServer_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>DanBiasGame_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -177,8 +177,8 @@
     <ProjectReference Include="..\DanBiasGame\DanBiasGame.vcxproj">
       <Project>{2a1bc987-af42-4500-802d-89cd32fc1309}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\DanBiasServer\DanBiasServer.vcxproj">
-      <Project>{52380daa-0f4a-4d97-8e57-98df39319caf}</Project>
+    <ProjectReference Include="..\GameServer\GameServer.vcxproj">
+      <Project>{143bd516-20a1-4890-a3e4-f8bfd02220e7}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

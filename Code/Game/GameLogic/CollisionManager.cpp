@@ -20,7 +20,7 @@ using namespace GameLogic;
 		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
-		switch (realObj->GetType())
+		switch (realObj->GetObjectType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);

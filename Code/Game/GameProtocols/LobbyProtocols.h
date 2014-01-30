@@ -45,14 +45,18 @@ namespace GameLogic
 
 	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
-		char gameId;
+		short gameId;
 
 		Protocol_LobbyStartGame()
 		{
 			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Start;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyStartGame(Oyster::Network::CustomNetProtocol& o)
+		{
+			gameId = o[1].value.netInt;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
@@ -73,6 +77,10 @@ namespace GameLogic
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyLogin(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
@@ -117,6 +125,10 @@ namespace GameLogic
 			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_Login;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 		}
+		Protocol_LobbyRefresh(Oyster::Network::CustomNetProtocol& o)
+		{
+			
+		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{ return &protocol; }
 		
@@ -138,6 +150,13 @@ namespace GameLogic
 		Utility::DynamicMemory::DynamicArray<PlayerData> list;
 
 		Protocol_LobbyGameData()
+		{
+			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_GameData;
+			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+
+			list.Reserve(10);
+		}
+		Protocol_LobbyGameData(Oyster::Network::CustomNetProtocol& p)
 		{
 			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_GameData;
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
@@ -174,6 +193,10 @@ namespace GameLogic
 			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyMainData(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{

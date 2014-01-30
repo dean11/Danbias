@@ -4,18 +4,19 @@
 #include <vld.h>
 
 #include "DanBiasGame.h"
-#include <DanBiasServerAPI.h>
+#include <GameServerAPI.h>
 
 #include <thread>
 
 
 void ServerFnc()
 {
-	
-	if( DanBias::DanBiasServerAPI::Initiate() == DanBias::DanBiasServerReturn_Sucess)
+	DanBias::GameServerAPI::GameInitDesc desc;
+	desc.listenPort = 15151;
+	if( DanBias::GameServerAPI::Create(desc) == DanBias::DanBiasServerReturn_Sucess)
 	{
-		DanBias::DanBiasServerAPI::Run();
-		DanBias::DanBiasServerAPI::Release();
+		DanBias::GameServerAPI::Start();
+		DanBias::GameServerAPI::Terminate();
 	}
 	Sleep(100);
 }
@@ -29,6 +30,7 @@ void ClientFnc()
 	//gameDesc.IP = "193.11.184.31";
 	//gameDesc.IP = "194.47.150.56";
 	gameDesc.IP = "127.0.0.1";
+	//gameDesc.IP = "194.47.150.184";
 
 	if( DanBias::DanBiasGame::Initiate(gameDesc) == DanBias::DanBiasClientReturn_Sucess)
 	{

@@ -101,7 +101,7 @@ Object::~Object(void)
 
 }
 
-OBJECT_TYPE Object::GetType() const
+OBJECT_TYPE Object::GetObjectType() const
 {
 	return this->type;
 }

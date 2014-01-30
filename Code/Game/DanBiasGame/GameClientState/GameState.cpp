@@ -104,9 +104,11 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 
+
 	// add player model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 15, 0));
+
 	modelData.world = modelData.world * translate;
 	modelData.visible = true;
 	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
@@ -115,9 +117,6 @@ bool GameState::LoadModels(std::wstring mapFile)
 	obj =  new C_Player();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	
-
 
 
 
@@ -199,6 +198,8 @@ bool GameState::Release()
 		delete privData->object[i];
 		privData->object[i] = NULL;
 	}
+
+	delete this->camera;
 
 	delete privData;  
 	privData = NULL;

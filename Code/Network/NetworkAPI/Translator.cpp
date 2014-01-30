@@ -5,6 +5,7 @@
 
 #include "CustomNetProtocol.h"
 
+#include "../../Misc/Utilities.h"
 #include "../NetworkDependencies/Messages/MessageHeader.h"
 #include "../NetworkDependencies/OysterByte.h"
 
@@ -17,6 +18,7 @@ using namespace std;
 struct MyCastingStruct
 {
 	std::map<int, NetAttributeContainer> attributes;
+	Utility::DynamicMemory::ReferenceCount *c;
 };
 
 // TODO: Check if the package has been packed correctly.

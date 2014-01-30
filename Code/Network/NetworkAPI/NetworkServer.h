@@ -1,18 +1,15 @@
 #ifndef NETWORK_API_NETWORK_SERVER_H
 #define NETWORK_API_NETWORK_SERVER_H
 
-/////////////////////////////////////
-// Created by Pontus Fransson 2013 //
-/////////////////////////////////////
+//////////////////////////////////////
+// Created by Pontus Fransson 2013  //
+// Modified by Dennis Andersen 2014 //
+//////////////////////////////////////
 
-#ifdef CUSTOM_NET_PROTOCOL_EXPORT
-	#define NET_PROTOCOL_EXPORT __declspec(dllexport)
-#else
-	#define NET_PROTOCOL_EXPORT __declspec(dllimport)
-#endif
 
+#include "NetworkAPI_Preprocessor.h"
 #include "NetworkClient.h"
-#include "NetworkCallbackHelper.h"
+#include "NetworkSession.h"
 #include <vld.h>
 
 namespace Oyster
@@ -21,26 +18,71 @@ namespace Oyster
 	{
 		extern "C"
 		{
-			class NET_PROTOCOL_EXPORT NetworkServer
+			class NET_API_EXPORT NetworkServer
 			{
 			public:
-				struct INIT_DESC
+				enum ServerReturnCode
 				{
-					unsigned short port;		//Port the server should be accepting clients on.
-					
-					NetworkClientCallbackType callbackType; //The recieverObject type. Function or object.
-					RecieverObject recvObj;		//The functions that is called when a new client has connected.
+					ServerReturnCode_Error,
+					ServerReturnCode_Sucess
 				};
 
+			public:
 				NetworkServer();
+				NetworkServer(const NetworkServer&);
+				const NetworkServer& operator=(const NetworkServer&);
 				virtual ~NetworkServer();
 
-				bool Init(INIT_DESC& initDesc);
-				bool Start();
+
+				/**	Creates a server that clients can connect to
+				*	@param port	The port the server will be listening for clients.
+				*	@param mainSession The main session the server will send connected clients to.
+				*	@return The server returncode
+				*/
+				ServerReturnCode Init(const int& port, NetworkSession const* mainSession);
+
+				/**	Starts the server allowing clients to connect
+				*	@return The server returncode
+				*/
+				ServerReturnCode Start();
+
+				/**	
+				*	
+				*/
 				void Stop();
+
+				/**	Shutdown the server and return all resources.
+				*/
 				void Shutdown();
 
+				/**	Parses asynchronous connected clients.
+				*/
+				int ProcessConnectedClients();
+
+				/**	Set the main session connected clients will enter when connected to server.
+				*	@param mainSession The session to connect as main server session.
+				*/
+				void SetSession(NetworkSession const* mainSession);
+
+				/**	Get the main session connected with the server
+				*	@return Returns the main session
+				*/
+				NetworkSession const* GetMainSession();
+
+				/**	Sets the main session to NULL and returns it
+				*	@return Returns the main session
+				*/
+				NetworkSession const* ReleaseMainSession();
+
+				/**	
+				*	
+				*/
 				bool IsStarted() const;
+
+				/**
+				*	
+				*/
+				std::string GetLanAddress();
 
 			private:
 				struct PrivateData;

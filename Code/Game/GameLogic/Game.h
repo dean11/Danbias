@@ -32,14 +32,15 @@ namespace GameLogic
 			~PlayerData();
 
 			void Move(const PLAYER_MOVEMENT &movement)				override;
-			void Rotate(const Oyster::Math3D::Float3 lookDir)		override;
 			void UseWeapon(const WEAPON_FIRE &usage)				override;
 			int GetTeamID() const									override;
 			PLAYER_STATE GetState() const							override;
 			Oyster::Math::Float3 GetPosition()						override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
-			OBJECT_TYPE GetType() const								override;
+			OBJECT_TYPE GetObjectType()	const						override;
+			void Rotate(const Oyster::Math3D::Float3 lookDir)		override;
+
 			Player *player;
 		};
 
@@ -51,9 +52,8 @@ namespace GameLogic
 			Oyster::Math::Float3 GetPosition()						override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
-			OBJECT_TYPE GetType() const								override;
-			IObjectData* GetObjectAt( int ID ) const						override;
-			
+			OBJECT_TYPE GetObjectType()	const						override;
+			IObjectData* GetObjectAt(int ID) const					override;
 			Level *level;
 		};
 

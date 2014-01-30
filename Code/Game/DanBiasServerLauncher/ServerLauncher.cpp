@@ -5,9 +5,10 @@
 #define NOMINMAX	//Blame it on windows
 #include <Windows.h>
 #include <vld.h>
+#include <iostream>
+#include <WindowShell.h>
 
-
-#include <DanBiasServerAPI.h>
+#include <GameServerAPI.h>
 
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {
@@ -15,10 +16,15 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	{
 		return cmdShow;
 	}
-	if( DanBias::DanBiasServerAPI::Initiate() == DanBias::DanBiasServerReturn_Sucess)
+
+	WindowShell::CreateConsoleWindow();
+
+	DanBias::GameServerAPI::GameInitDesc desc;
+	desc.listenPort = 15151;
+	if(DanBias::GameServerAPI::Create(desc) == DanBias::DanBiasServerReturn_Sucess)
 	{
-		DanBias::DanBiasServerAPI::Run();
-		DanBias::DanBiasServerAPI::Release();
+		DanBias::GameServerAPI::Start();
+		DanBias::GameServerAPI::Terminate();
 	}
 	return cmdShow;
 }

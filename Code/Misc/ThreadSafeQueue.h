@@ -10,6 +10,7 @@
 /////////////////////////////////////////////
 
 #include "IQueue.h" 
+#include <mutex>
 
 namespace Utility
 {
@@ -20,6 +21,7 @@ namespace Utility
 		{
 		public:
 			ThreadSafeQueue<Type>();
+			ThreadSafeQueue<Type>(const ThreadSafeQueue<Type>& obj);
 			virtual ~ThreadSafeQueue<Type>();
 
 			virtual void Push( Type item );
@@ -61,6 +63,12 @@ namespace Utility
 			this->front = NULL;
 			this->back = NULL;
 			this->nrOfNodes = 0;
+			
+		}
+
+		template < typename Type >
+		ThreadSafeQueue<Type>::ThreadSafeQueue(const ThreadSafeQueue<Type>& obj)
+		{
 			
 		}
 
