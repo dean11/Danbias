@@ -81,10 +81,11 @@ bool GameState::LoadModels(std::wstring mapFile)
 	C_Object* obj;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
 	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
-	scale.v[0].x = 8;
-	scale.v[1].y = 8;
-	scale.v[2].z = 8;
-	modelData.world = translate; //modelData.world * translate 
+	scale.v[0].x = 0.2;
+	scale.v[1].y = 0.2;
+	scale.v[2].z = 0.2;
+	scale.v[3].w = 1;
+	modelData.world = translate  ;//modelData.world * translate 
 	modelData.modelPath = L"world_earth.dan";
 	modelData.id = 0;
 
@@ -94,7 +95,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	// add box model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-5,175,0));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-5,15,0));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"box.dan";
 	modelData.id = 1;
@@ -132,7 +133,7 @@ bool GameState::InitCamera(Oyster::Math::Float3 startPos)
 	camera->LookAt(pos, dir, up);
 	camera->SetLens(3.14f/2, 1024/768, 1, 1000);
 
-	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
+	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
 	Oyster::Graphics::API::SetProjection(privData->proj);
 	camera->UpdateViewMatrix();
