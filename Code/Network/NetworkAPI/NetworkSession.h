@@ -11,6 +11,7 @@
 #include "NetworkServerEventStruct.h"
 #include "NetworkClient.h"
 #include "Utilities.h"
+#include "DynamicArray.h"
 
 namespace Oyster
 {
@@ -38,7 +39,7 @@ namespace Oyster
 			*	Detaches all clients and sends them to owner.
 			*	If no owner is set the clients is disconnected.
 			*/
-			virtual void Detach();
+			virtual void DetachAll();
 
 			/**
 			*	
@@ -49,6 +50,11 @@ namespace Oyster
 			*	
 			*/
 			virtual NetClient Detach(short ID);
+
+			/**
+			*	
+			*/
+			virtual NetClient Detach();
 
 			/**	Send a message to all clients in this session
 			*	@param message The message
@@ -74,7 +80,7 @@ namespace Oyster
 			/**	Get the number of clients active in this session
 			*	@return The client count
 			*/
-			int GetClientCount() const;
+			inline int GetClientCount() const { return this->clientCount; }
 
 			/**
 			*	
@@ -87,6 +93,7 @@ namespace Oyster
 			virtual void ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e) = 0;
 
 		private:
+			int clientCount;
 			struct PrivateSessionData;
 			PrivateSessionData* data;
 		};

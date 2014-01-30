@@ -17,16 +17,16 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 		//break;
 		case protocol_Lobby_Start:		this->LobbyStartGame	(Protocol_LobbyStartGame	(p), c);
 		break;
-		case protocol_Lobby_Join:		this->LobbyJoin			(Protocol_LobbyJoin			(p), c);
-		break;
+		//case protocol_Lobby_Join:		this->LobbyJoin			(Protocol_LobbyJoin			(p), c);
+		//break;
 		case protocol_Lobby_Login:		this->LobbyLogin		(Protocol_LobbyLogin		(p), c);
 		break;
 		case protocol_Lobby_Refresh:	this->LobbyRefresh		(Protocol_LobbyRefresh		(p), c);
 		break;
-		case protocol_Lobby_MainData:	this->LobbyMainData		(Protocol_LobbyMainData		(p), c);
+		case protocol_Lobby_MainData:	this->LobbyMainData		(Protocol_LobbyClientData	(p), c);
 		break;
-		case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
-		break;
+		//case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
+		//break;
 	}
 }
 
@@ -62,17 +62,17 @@ void GameLobby::LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Ne
 {
 
 }
-void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c)
-{
-	//for (unsigned int i = 0; i < this->gameLobby.Size(); i++)
-	//{
-	//	if (this->gameLobby[i]->GetID() == p.value)
-	//	{
-	//		this->gameLobby[i]->Attach(Detach(c));
-	//		return;
-	//	}
-	//}
-}
+//void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c)
+//{
+//	//for (unsigned int i = 0; i < this->gameLobby.Size(); i++)
+//	//{
+//	//	if (this->gameLobby[i]->GetID() == p.value)
+//	//	{
+//	//		this->gameLobby[i]->Attach(Detach(c));
+//	//		return;
+//	//	}
+//	//}
+//}
 void GameLobby::LobbyLogin(GameLogic::Protocol_LobbyLogin& p, Oyster::Network::NetworkClient* c)
 {
 
@@ -81,13 +81,13 @@ void GameLobby::LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Networ
 {
 	//Dont need to handle this on the server...
 }
-void GameLobby::LobbyMainData(GameLogic::Protocol_LobbyMainData& p, Oyster::Network::NetworkClient* c)
+void GameLobby::LobbyMainData(GameLogic::Protocol_LobbyClientData& p, Oyster::Network::NetworkClient* c)
 {
 
 }
-void GameLobby::LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c)
-{
-
-}
+//void GameLobby::LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c)
+//{
+//
+//}
 
 
