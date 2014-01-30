@@ -184,7 +184,12 @@
     <ClInclude Include="GameMode.h" />
     <ClInclude Include="IAttatchment.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelLoader\LevelLoader.h" />
+    <ClInclude Include="LevelLoader\Loader.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="LevelLoader\ObjectDefines.h" />
+    <ClInclude Include="LevelLoader\LevelParser.h" />
+    <ClInclude Include="LevelLoader\ParseFunctions.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="Team.h" />
@@ -202,7 +207,11 @@
     <ClCompile Include="Game_PlayerData.cpp" />
     <ClCompile Include="IAttatchment.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelLoader\LevelLoader.cpp" />
+    <ClCompile Include="LevelLoader\Loader.cpp" />
+    <ClCompile Include="LevelLoader\LevelParser.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="LevelLoader\ParseFunctions.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Team.cpp" />
