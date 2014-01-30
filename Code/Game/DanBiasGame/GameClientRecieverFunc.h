@@ -13,13 +13,6 @@ struct GameRecieverObject	:public Oyster::Network::NetworkClient
 	// parsing protocols and sending it to the gameState
 	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
-
-		//if( IsGameplayProtocol(p[protocol_INDEX_ID].value.netShort) )
-			//ParseGameplayEvent(e.protocol, e.gameClient);
-
-		//if( IsGeneralProtocol(p[protocol_INDEX_ID].value.netShort) )
-			//ParseGeneralEvent(e.protocol, e.gameClient);
-
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{

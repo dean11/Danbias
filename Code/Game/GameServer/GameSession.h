@@ -32,10 +32,8 @@ namespace DanBias
 		struct GameDescription
 		{
 			int mapNumber;
-			int maxClients;
 			int gameMode;
 			int gameTime;
-			std::string gameName;
 			Oyster::Network::NetworkSession* owner;
 			Utility::DynamicMemory::DynamicArray<Oyster::Network::NetClient> clients;
 		};

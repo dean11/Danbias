@@ -9,6 +9,7 @@
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Network;
 using namespace Oyster;
+using namespace GameLogic;
 
 namespace DanBias
 {
@@ -30,17 +31,34 @@ namespace DanBias
 
 		this->ProcessClients();
 	}
-	void GameLobby::SetGameDesc(const GameSession::GameDescription& desc)
+	void GameLobby::SetGameDesc(const LobbyLevelData& desc)
 	{
-		this->description = desc;
+		this->description.gameMode = desc.gameMode;
+		this->description.gameTime = desc.gameTime;
+		this->description.mapNumber = desc.mapNumber;
+		this->description.maxClients = desc.maxClients;
 	}
-	void GameLobby::GetGameDesc(GameSession::GameDescription& desc)
+	void GameLobby::GetGameDesc(LobbyLevelData& desc)
 	{
-		desc = this->description;
+		desc.gameMode = this->description.gameMode;
+		desc.gameTime = this->description.gameTime;		
+		desc.mapNumber = this->description.mapNumber;		
+		desc.maxClients = this->description.maxClients;	
 	}
 	bool GameLobby::StartGameSession()
 	{
-		if(this->gameSession.Create(this->description))
+		GameSession::GameDescription desc;
+		desc.gameMode = this->description.gameMode;
+		desc.gameTime = this->description.gameTime;
+		desc.mapNumber = this->description.mapNumber;
+		desc.owner = this;
+		while (this->GetClientCount())
+		{
+			NetClient c;
+			if((c = this->Detach()))
+				desc.clients.Push(c);
+		}
+		if(this->gameSession.Create(desc))
 		{
 			this->gameSession.Run();
 			return true;
@@ -70,6 +88,10 @@ namespace DanBias
 	{
 		printf("New client(%i) connected - %s \n", client->GetID(), client->GetIpAddress().c_str());
 		Attach(client);
+
+		Protocol_LobbyClientData p;
+		
+		client->Send(p.GetProtocol());
 	}
 
 }//End namespace DanBias

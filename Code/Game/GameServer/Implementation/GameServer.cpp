@@ -39,9 +39,6 @@ DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 		return DanBiasServerReturn_Error;
 	}
 	GameSession::GameDescription d;
-	lobby.GetGameDesc(d);
-	d.gameName.assign(desc.serverName);
-	lobby.SetGameDesc(d);
 
 	std::printf("Server created!\t-\t%s: [%i]\n\n", server.GetLanAddress().c_str(), desc.listenPort);
 		
@@ -95,59 +92,59 @@ GameServerAPI::GameServerInfo GameServerAPI::ServerGetInfo()
 }
 void		GameServerAPI::GameSetMapId(const int& val)
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	d.mapNumber = val;
 	lobby.SetGameDesc(d);
 }
 void		GameServerAPI::GameSetMaxClients(const int& val)
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	d.maxClients = val;
 	lobby.SetGameDesc(d);
 }
 void		GameServerAPI::GameSetGameMode(const int& val)
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	d.gameMode = val;
 	lobby.SetGameDesc(d);
 }
 void		GameServerAPI::GameSetGameTime(const int& val)
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	d.gameTime = val;
 	lobby.SetGameDesc(d);
 }
 int			GameServerAPI::GameGetMapId()
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.mapNumber;
 }
 int			GameServerAPI::GameGetMaxClients()
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.maxClients;
 }
 int			GameServerAPI::GameGetGameMode()
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.gameMode;
 }
 int			GameServerAPI::GameGetGameTime()
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.gameTime;
 }
 const char*	GameServerAPI::GameGetGameName()
 {
-	GameSession::GameDescription d;
+	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.gameName.c_str();
 }

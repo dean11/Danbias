@@ -20,11 +20,9 @@ struct NetworkSession::PrivateSessionData
 	NetworkClient::ClientEventFunction messageCallback;
 	std::mutex clientListLock;
 	NetworkSession* owner; //Where clients end up when session is closed.
-	int clientCount;
 	int id;
 	NetworkSession::PrivateSessionData()
-		:	clientCount(0)
-		,	owner(0)
+		:	owner(0)
 		,	id(GID())
 	{}
 };
@@ -38,7 +36,7 @@ NetworkSession::NetworkSession(const NetworkSession& orig)
 {
 	this->data->clients = orig.data->clients;
 	this->data->owner = orig.data->owner;
-	this->data->clientCount = orig.data->clientCount;
+	this->clientCount = orig.clientCount;
 	this->data->id = orig.data->id;
 	this->data->messageCallback = orig.data->messageCallback;
 }
@@ -47,7 +45,7 @@ const NetworkSession& NetworkSession::operator=(const NetworkSession& orig)
 {
 	this->data->clients = orig.data->clients;
 	this->data->owner = orig.data->owner;
-	this->data->clientCount = orig.data->clientCount;
+	this->clientCount = orig.clientCount;
 	this->data->id = orig.data->id;
 	this->data->messageCallback = orig.data->messageCallback;
 		
@@ -57,7 +55,7 @@ const NetworkSession& NetworkSession::operator=(const NetworkSession& orig)
 NetworkSession::~NetworkSession()
 {
 	this->data->clients.Clear();
-	this->data->clientCount = 0;
+	this->clientCount = 0;
 	this->data->messageCallback = 0;
 	delete this->data;
 	this->data = 0;
@@ -91,7 +89,7 @@ bool NetworkSession::Attach(NetClient client)
 			this->data->clients[k] = client;
 		}
 
-		this->data->clientCount++;
+		this->clientCount++;
 
 	client->SetOwner(this);
 	this->data->clientListLock.unlock();
@@ -99,7 +97,7 @@ bool NetworkSession::Attach(NetClient client)
 	return true;
 }
 
-void NetworkSession::Detach()
+void NetworkSession::DetachAll()
 {
 	if(this->data->owner)
 	{
@@ -117,6 +115,7 @@ void NetworkSession::Detach()
 			this->data->clients[i] = 0;
 		}
 	}
+	this->clientCount = 0;
 }
 
 NetClient NetworkSession::Detach(const NetworkClient* client)
@@ -131,7 +130,7 @@ NetClient NetworkSession::Detach(const NetworkClient* client)
 			{
 				val = this->data->clients[i];
 				this->data->clients[i] = 0;
-				this->data->clientCount--;
+				this->clientCount--;
 			}
 		}
 		
@@ -152,7 +151,29 @@ NetClient NetworkSession::Detach(short ID)
 			{
 				val = this->data->clients[i];
 				this->data->clients[i] = 0;
-				this->data->clientCount--;
+				this->clientCount--;
+			}
+		}
+
+	this->data->clientListLock.unlock();
+
+	return val;
+}
+
+NetClient NetworkSession::Detach()
+{
+	NetClient val;
+
+	this->data->clientListLock.lock();
+
+		for (unsigned int i = 0; i < this->data->clients.Size(); i++)
+		{
+			if(this->data->clients[i])
+			{
+				val = this->data->clients[i];
+				this->data->clients[i] = 0;
+				this->clientCount--;
+				break;
 			}
 		}
 
@@ -204,7 +225,7 @@ void NetworkSession::CloseSession(bool dissconnectClients)
 		}
 
 		this->data->clients.Clear();
-		this->data->clientCount = 0;
+		this->clientCount = 0;
 
 	this->data->clientListLock.unlock();
 }
@@ -212,16 +233,6 @@ void NetworkSession::CloseSession(bool dissconnectClients)
 void NetworkSession::SetOwner(NetworkSession* owner)
 {
 	this->data->owner = owner;
-}
-
-int NetworkSession::GetClientCount() const
-{
-	int c = 0;
-	for (unsigned int i = 0; i < this->data->clients.Size(); i++)
-	{
-		if(this->data->clients[i])	c++;
-	}
-	return c;
 }
 
 void NetworkSession::ClientConnectedEvent(NetClient client)
