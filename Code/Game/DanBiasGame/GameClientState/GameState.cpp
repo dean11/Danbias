@@ -5,6 +5,7 @@
 #include <Protocols.h>
 #include "NetworkClient.h"
 #include "Camera.h"
+#include <GameServerAPI.h>
 
 using namespace DanBias::Client;
 
@@ -143,6 +144,7 @@ bool GameState::InitCamera(Oyster::Math::Float3 startPos)
 
 GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
 {
+	DanBias::GameServerAPI::ServerUpdate();
 	switch (privData->state)
 	{
 	case gameStateState_loading:
