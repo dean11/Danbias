@@ -129,6 +129,7 @@ bool Game::NewFrame()
 	}
 
 	gameInstance.onMoveFnc(this->level);
+
 	return true;
 }
 

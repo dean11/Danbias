@@ -48,7 +48,7 @@ void OysterByte::Resize(unsigned int cap)
 	}
 }
 
-int OysterByte::GetSize()
+unsigned int OysterByte::GetSize()
 {
 	return size;
 }
@@ -60,7 +60,7 @@ unsigned char* OysterByte::GetByteArray()
 
 void OysterByte::AddSize(unsigned int size)
 {
-	int newCapacity = this->size + size;
+	unsigned int newCapacity = this->size + size;
 
 	if(newCapacity >= capacity)
 	{
@@ -79,6 +79,32 @@ void OysterByte::SetBytes(unsigned char* bytes)
 void OysterByte::SetSize(unsigned int size)
 {
 	this->size = size;
+}
+
+void OysterByte::AppendPartOfArray(OysterByte& source, unsigned int startIndex, unsigned int endIndex)
+{
+	if(startIndex < 0 && startIndex >= endIndex)
+		return;
+	if(endIndex > source.size)
+		return;
+
+	unsigned int totalSize = endIndex - startIndex;
+	totalSize += size;
+
+	//Make sure the new data can fit in the array.
+	if(totalSize > capacity)
+	{
+		IncreaseCapacity(totalSize);
+	}
+
+	//Copy over new data.
+	for(unsigned int i = size; i < totalSize; i++)
+	{
+		byteArray[i] = source.byteArray[startIndex++];
+	}
+
+	//Set the new size
+	size = totalSize;
 }
 
 OysterByte& OysterByte::operator =(const OysterByte& obj)
