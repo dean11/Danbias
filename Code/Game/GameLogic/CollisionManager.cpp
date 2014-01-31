@@ -20,7 +20,6 @@ using namespace GameLogic;
 		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
-		return;
 		switch (realObj->GetObjectType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
@@ -69,6 +68,10 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
 	//Oyster::Physics::ICustomBody::SubscriptMessage
 	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
 	{
@@ -81,8 +84,18 @@ using namespace GameLogic;
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void *args)
 	{
-		Oyster::Math::Float3 pushForce = Oyster::Math::Float4(1,0,0) * (1);
+		Oyster::Math::Float3 pushForce = Oyster::Math::Float4(1,0,0) * (500);
 		Oyster::Physics::ICustomBody::State state;
+		Object *realObj = (Object*)obj->GetCustomTag();
+		if(realObj->GetObjectType() == OBJECT_TYPE_BOX)
+		{
+			state = obj->GetState();
+			state.SetOrientation(Oyster::Math::Float3(1,0.5,1),Oyster::Math::Float3(1,0.5,1));
+			obj->SetState(state);
+		}
+
+		if(realObj->GetObjectType() == OBJECT_TYPE_PLAYER || realObj->GetObjectType() == OBJECT_TYPE_WORLD)
+			return;
 		state = obj->GetState();
 		state.ApplyLinearImpulse(pushForce);
 		obj->SetState(state);

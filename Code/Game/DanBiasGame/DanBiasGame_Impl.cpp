@@ -131,7 +131,7 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		m_data->recieverObj->Update();
+
 		m_data->recieverObj->Update();
 		m_data->inputObj->Update();
 

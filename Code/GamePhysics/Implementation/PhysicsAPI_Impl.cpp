@@ -26,7 +26,7 @@ namespace
 			ICustomBody::State protoState; proto->GetState( protoState );
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-			Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
+			Float4 protoG = protoState.GetLinearMomentum(worldPointOfContact.xyz ),
 					deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
 
 			// calc from perspective of deuter

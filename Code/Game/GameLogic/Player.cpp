@@ -86,24 +86,24 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	setState.ApplyLinearImpulse(this->lookDir * (20 * this->gameInstance->GetFrameTime()));
+	setState.ApplyLinearImpulse(this->lookDir * (2000 * this->gameInstance->GetFrameTime()));
 }
 void Player::MoveBackwards()
 {
-	setState.ApplyLinearImpulse(-this->lookDir * 20 * this->gameInstance->GetFrameTime());
+	setState.ApplyLinearImpulse(-this->lookDir * 2000 * this->gameInstance->GetFrameTime());
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
-	setState.ApplyLinearImpulse(r * 20 * this->gameInstance->GetFrameTime());
+	setState.ApplyLinearImpulse(r * 2000 * this->gameInstance->GetFrameTime());
 	
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
-	setState.ApplyLinearImpulse(-r * 20 * this->gameInstance->GetFrameTime());
+	setState.ApplyLinearImpulse(-r * 2000 * this->gameInstance->GetFrameTime());
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
@@ -123,7 +123,7 @@ void Player::Rotate(const Oyster::Math3D::Float3 lookDir)
 {
 	this->lookDir = lookDir;
 		
-	Oyster::Math::Float4 up(0,1,0,0);//-setState.GetGravityNormal(); 
+	Oyster::Math::Float4 up = -setState.GetGravityNormal(); 
 	Oyster::Math::Float4 pos = setState.GetCenterPosition();
 	Oyster::Math::Float4x4 world = Oyster::Math3D::OrientationMatrix_LookAtDirection(lookDir, up.xyz, pos.xyz);
 	// cant set rotation

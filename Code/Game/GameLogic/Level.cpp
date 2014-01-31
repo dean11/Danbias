@@ -25,7 +25,7 @@ void Level::InitiateLevel(float radius)
 	API::SphericalBodyDescription sbDesc;
 	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
 	sbDesc.ignoreGravity = true;
-	sbDesc.radius = 8; 
+	sbDesc.radius = 300; 
 	sbDesc.mass = 10e12f;
 	
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
@@ -39,27 +39,27 @@ void Level::InitiateLevel(float radius)
 	rigidBody->SetCustomTag(levelObj);
 	
 	
-	// add box 
+	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
-	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-5,15,0,0);
+	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(0,320,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
-	sbDesc_TestBox.mass = 10;
-	sbDesc_TestBox.size = Oyster::Math::Float4(0.5f,0.5f,0.5f,0);
+	sbDesc_TestBox.mass = 50;
+	sbDesc_TestBox.size = Oyster::Math::Float4(1,1,1,0);
 	
 	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 	rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
-	testBox = new DynamicObject(rigidBody_TestBox, OBJECT_TYPE::OBJECT_TYPE_BOX);
+	testBox = new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX);
 	rigidBody_TestBox->SetCustomTag(testBox);
 	rigidBody_TestBox->GetState(state);
-	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,4));
+	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,0));
 	rigidBody_TestBox->SetState(state);
 	
 	
 	// add gravitation 
 	API::Gravity gravityWell;
 	gravityWell.gravityType = API::Gravity::GravityType_Well;
-	gravityWell.well.mass = 10e14f;
+	gravityWell.well.mass = 1e15f;
 	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
 	API::Instance().AddGravity(gravityWell);
 }

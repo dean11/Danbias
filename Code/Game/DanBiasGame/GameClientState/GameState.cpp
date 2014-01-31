@@ -81,12 +81,8 @@ bool GameState::LoadModels(std::wstring mapFile)
 	Oyster::Math3D::Float4x4 translate;
 	C_Object* obj;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
-	scale.v[0].x = 8;
-	scale.v[1].y = 8;
-	scale.v[2].z = 8;
-	modelData.world = scale; //modelData.world * translate 
-	modelData.modelPath = L"..\\Content\\Models\\ball.dan";
+	modelData.world = translate  ;//modelData.world * translate 
+	modelData.modelPath = L"world_earth.dan";
 	modelData.id = 0;
 
 	obj = new C_Player();
@@ -95,7 +91,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	// add box model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-5,15,0));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4,320,0));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"..\\Content\\Models\\box.dan";
 	modelData.id = 1;
@@ -107,7 +103,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	// add player model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 15, 0));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 320, 0));
 
 	modelData.world = modelData.world * translate;
 	modelData.visible = true;
@@ -124,14 +120,14 @@ bool GameState::LoadModels(std::wstring mapFile)
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
 {
-	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,-1);
+	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,1);
 	Oyster::Math::Float3 up =Oyster::Math::Float3(0,1,0);
 	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 20);
 
 	camera->LookAt(pos, dir, up);
 	camera->SetLens(3.14f/2, 1024/768, 1, 1000);
 
-	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
+	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
 	Oyster::Graphics::API::SetProjection(privData->proj);
 	camera->UpdateViewMatrix();
@@ -350,7 +346,7 @@ void GameState::Protocol( ObjPos* pos )
 			//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
 			if(i == 2) // playerobj
 			{
-				camera->SetPosition(Oyster::Math::Float3(world[12], world[13], world[14]));
+				camera->SetPosition(Oyster::Math::Float3(world[12], world[13]+2.2f, world[14]-1));
 				camera->UpdateViewMatrix();
 			}
 		}
