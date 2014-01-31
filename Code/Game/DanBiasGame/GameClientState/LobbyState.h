@@ -36,6 +36,7 @@ public:
 	bool Release();
 	void Protocol(ProtocolStruct* protocol)override;
 	void PlayerJoinProtocol(PlayerName* name);
+	void GameStarted(); 
 
 };};};
 #endif // ! DANBIAS_CLIENT_GAMECLIENTSTATE_H

@@ -32,7 +32,7 @@ void Level::InitiateLevel(float radius)
 	
 	ICustomBody::State state;
 	rigidBody->GetState(state);
-	state.SetRestitutionCoeff(0.01);
+	state.SetRestitutionCoeff(0.2);
 	rigidBody->SetState(state);
 	
 	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
@@ -41,10 +41,10 @@ void Level::InitiateLevel(float radius)
 	
 	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
-	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(0,320,0,0);
+	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
 	sbDesc_TestBox.mass = 50;
-	sbDesc_TestBox.size = Oyster::Math::Float4(1,1,1,0);
+	sbDesc_TestBox.size = Oyster::Math::Float4(4,4,4,0);
 	
 	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 	rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);

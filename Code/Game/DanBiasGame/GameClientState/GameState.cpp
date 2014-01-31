@@ -114,6 +114,18 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
+	// add player model 2
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(10, 320, 0));
+
+	modelData.world = modelData.world * translate;
+	modelData.visible = true;
+	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.id = 3;
+	// load models
+	obj =  new C_Player();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
 
 
 	return true;
@@ -137,7 +149,10 @@ bool GameState::InitCamera(Oyster::Math::Float3 startPos)
 	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
 }
-
+void GameState::setClientId(int id)
+{
+	myId = id;
+}
 GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
 {
 	switch (privData->state)
@@ -344,7 +359,7 @@ void GameState::Protocol( ObjPos* pos )
 			//camera->setRight((Oyster::Math::Float3(world[0], world[1], world[2])));
 			//camera->setUp((Oyster::Math::Float3(world[4], world[5], world[6])));
 			//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
-			if(i == 2) // playerobj
+			if(i == myId) // playerobj
 			{
 				camera->SetPosition(Oyster::Math::Float3(world[12], world[13]+2.2f, world[14]-1));
 				camera->UpdateViewMatrix();

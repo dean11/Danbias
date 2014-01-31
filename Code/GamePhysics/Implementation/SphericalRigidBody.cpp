@@ -94,7 +94,7 @@ SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::St
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 {
 	this->rigid.centerPos			  = state.GetCenterPosition();
-	//this->rigid.SetRotation( state.GetRotation() ); //! HACK: @todo Rotation temporary disabled
+	this->rigid.axis				  = state.GetAngularAxis();
 	this->rigid.boundingReach		  = state.GetReach();
 	this->rigid.momentum_Linear		  = state.GetLinearMomentum();
 	this->rigid.momentum_Angular	  = state.GetAngularMomentum();
@@ -105,6 +105,7 @@ void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
 	this->rigid.frictionCoeff_Kinetic = state.GetFrictionCoeff_Kinetic();
 	this->rigid.SetMass_KeepMomentum( state.GetMass() );
 	this->rigid.SetMomentOfInertia_KeepMomentum( state.GetMomentOfInertia() );
+	this->rigid.gravityNormal		  = state.GetGravityNormal();
 
 	if( state.IsForwarded() )
 	{

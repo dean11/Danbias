@@ -17,6 +17,8 @@ namespace DanBias
 			virtual bool Init(Oyster::Network::NetworkClient* nwClient);
 			virtual ClientState Update(float deltaTime, InputClass* KeyInput);
 
+			ClientState ChangeState(InputClass* KeyInput);
+
 			bool LoadModels(std::wstring file);
 			bool InitCamera(Oyster::Math::Float3 startPos);
 
