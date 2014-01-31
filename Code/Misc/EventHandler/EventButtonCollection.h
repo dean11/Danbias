@@ -11,6 +11,15 @@ namespace Oyster
 {
 	namespace Event
 	{
+		enum EventCollectionState
+		{
+			EventCollectionState_Disabled,
+			EventCollectionState_Enabled,
+
+			EventCollectionState_Count,
+			EventCollectionState_Unknown = -1,
+		};
+
 		class EventButtonCollection
 		{
 		public:
@@ -19,10 +28,18 @@ namespace Oyster
 
 			void Update(InputClass* inputObject);
 
-			EventButton* AddButton(EventButton* button);
+			void AddButton(EventButton& button);
+			EventButton& CreateButton();
+
+			EventCollectionState GetState() const;
+			void SetState(const EventCollectionState state);
+
+			//Clear all buttons and reset the state.
+			void Clear();
 
 		private:
 			std::vector<EventButton*> buttons;
+			EventCollectionState collectionState;
 
 		};
 	}

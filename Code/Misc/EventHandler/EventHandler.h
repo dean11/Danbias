@@ -21,9 +21,8 @@ namespace Oyster
 
 			void Update(InputClass* inputObject);
 
-			EventButtonCollection* CreateCollection();
-			EventButtonCollection* GetCollection(/*ID*/);
-
+			void AddCollection(EventButtonCollection& collection);
+			EventButtonCollection& CreateCollection();
 
 		private:
 			std::vector<EventButtonCollection*> collections;

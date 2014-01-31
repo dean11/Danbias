@@ -11,7 +11,6 @@ EventHandler& EventHandler::Instance()
 
 EventHandler::EventHandler()
 {
-
 }
 
 EventHandler::~EventHandler()
@@ -26,12 +25,12 @@ void EventHandler::Update(InputClass* inputObject)
 	}
 }
 
-EventButtonCollection* EventHandler::CreateCollection()
+void EventHandler::AddCollection(EventButtonCollection& collection)
 {
-
+	collections.push_back(&collection);
 }
 
-EventButtonCollection* EventHandler::GetCollection(/*ID*/);
+EventButtonCollection& EventHandler::CreateCollection()
 {
 
 }

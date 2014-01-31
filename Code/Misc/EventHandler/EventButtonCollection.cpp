@@ -2,9 +2,9 @@
 
 using namespace Oyster::Event;
 
-EventButtonCollection::EventButtonCollection()
+EventButtonCollection::EventButtonCollection() 
+	: collectionState(EventCollectionState_Enabled)
 {
-
 }
 
 EventButtonCollection::~EventButtonCollection()
@@ -13,13 +13,39 @@ EventButtonCollection::~EventButtonCollection()
 
 void EventButtonCollection::Update(InputClass* inputObject)
 {
-	for(int i = 0; i < buttons.size(); i++)
+	if(this->collectionState == EventCollectionState_Enabled)
 	{
-		buttons.at(i)->Update(inputObject);
+		for(int i = 0; i < buttons.size(); i++)
+		{
+			buttons.at(i)->CheckCollision(inputObject);
+		}
 	}
 }
 
-EventButton* EventButtonCollection::AddButton(EventButton* button)
+void EventButtonCollection::AddButton(EventButton& button)
 {
+	buttons.push_back(button);
+}
 
+EventButton& EventButtonCollection::CreateButton()
+{
+	EventButton temp;
+	buttons.push_back(&temp);
+	return temp;
+}
+
+EventCollectionState EventButtonCollection::GetState() const
+{
+	return collectionState;
+}
+
+void EventButtonCollection::SetState(const EventCollectionState state)
+{
+	collectionState = state;
+}
+
+void EventButtonCollection::Clear()
+{
+	buttons.clear();
+	collectionState = EventCollectionState_Enabled;
 }
