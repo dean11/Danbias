@@ -47,24 +47,80 @@ namespace DanBias
 
 	void GameSession::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
 	{
+		int temp = -1;
+		//Find the idiot
+		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		{
+			if(this->clients[i]->Equals(e.sender))
+			{
+				temp = i;
+			}
+		}
 
+		if(temp == -1)		
+		{
+			this->Detach(e.sender)->Disconnect();
+			return;
+		}
+		SmartPointer<GameClient> cl = this->clients[temp];
+
+		switch (e.args.type)
+		{
+			case NetworkClient::ClientEventArgs::EventType_Disconnect:
+			break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
+			break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
+				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
+				this->Detach(e.sender)->Disconnect();
+			break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
+				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
+				this->ParseProtocol(e.args.data.protocol, cl);
+			break;
+		}
 	}
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		//GameLogic::IObjectData* obj = NULL;
-		//if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
-		//	obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
-		//if(obj)
-		//{
-		//	if(obj->GetType() == OBJECT_TYPE_BOX)
-		//	{
-		//		obj->GetID();
-		//		Oyster::Math::Float4x4 world =obj->GetOrientation();
-		//		Protocol_ObjectPosition p(world, 1);
-		//		GameSession::gameSession->Send(p.GetProtocol());
-		//	}
-		//}
+		if(dynamic_cast<IPlayerData*> (movedObject))
+		{
+			IPlayerData* temp = (IPlayerData*)movedObject;
+			temp->GetID();
+			Oyster::Math::Float4x4 world = temp->GetOrientation();
+					
+			Protocol_ObjectPosition p(world, 2);
+			GameSession::gameSession->Send(*p.GetProtocol());
+		}
+		GameLogic::IObjectData* obj = NULL;
+		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
+		{
+			obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
+			if(obj)
+			{
+				if(obj->GetObjectType() == OBJECT_TYPE_WORLD)
+				{
+					obj->GetID();
+					Oyster::Math::Float4x4 world =obj->GetOrientation();
+					
+					Protocol_ObjectPosition p(world, 0);
+					GameSession::gameSession->Send(*p.GetProtocol());
+				}
+			}
+
+			obj = NULL;
+			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
+			if(obj)
+			{
+				if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+				{
+					obj->GetID();
+					Oyster::Math::Float4x4 world = obj->GetOrientation();
+					Protocol_ObjectPosition p(world, 1);
+					GameSession::gameSession->Send(*p.GetProtocol());
+				}
+			}
+		}
 		
 	}
 

@@ -243,7 +243,7 @@ namespace Utility
 
 				this->_ptr = p._ptr;
 				this->_rc = p._rc;
-				this->_rc->Incref();
+				if(this->_rc)	this->_rc->Incref();
 			}
 			return *this;
 		}

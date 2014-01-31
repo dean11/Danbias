@@ -158,8 +158,6 @@ namespace GameLogic
 			this->protocol[0].value = protocol_Lobby_ClientData;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_UnsignedInt;	//DataType
-
 			list.Reserve(10);
 		}
 		Protocol_LobbyClientData(Oyster::Network::CustomNetProtocol& p)
@@ -229,7 +227,7 @@ namespace GameLogic
 		{
 			this->protocol[1].value = majorVersion;
 			this->protocol[2].value = minorVersion;
-			this->protocol[3].value.netCharPtr = const_cast<char*>(mapName.c_str());
+			this->protocol.Set(3, mapName.c_str());
 
 			return &protocol;
 		}

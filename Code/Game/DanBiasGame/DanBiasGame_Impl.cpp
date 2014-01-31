@@ -52,6 +52,7 @@ namespace DanBias
 	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
 	{
 
+		WindowShell::CreateConsoleWindow();
 		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
@@ -132,7 +133,7 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		
+		m_data->recieverObj->Update();
 		m_data->inputObj->Update();
 
 

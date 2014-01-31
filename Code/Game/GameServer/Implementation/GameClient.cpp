@@ -50,3 +50,9 @@ int GameClient::GetID() const
 {
 	return this->id;
 }
+bool GameClient::Equals(const NetworkClient* c)
+{
+	return (c->GetID() == this->client->GetID());
+}
+
+
