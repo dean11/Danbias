@@ -325,6 +325,12 @@ namespace LinearAlgebra2D
 
 namespace LinearAlgebra3D
 {
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> WorldAxisOf( const ::LinearAlgebra::Quaternion<ScalarType> &rotation, const ::LinearAlgebra::Vector3<ScalarType> &localAxis )
+	{
+		return (rotation*localAxis*rotation.GetConjugate()).imaginary;
+	}
+
 	// All Matrix to AngularAxis conversions here is incorrect
 	//template<typename ScalarType>
 	//inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )
@@ -740,6 +746,15 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector4<ScalarType> NormalProjection( const ::LinearAlgebra::Vector4<ScalarType> &vector, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
 	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
+
+	template<typename ScalarType>
+	::LinearAlgebra::Vector3<ScalarType> & SnapAngularAxis( ::LinearAlgebra::Vector4<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector4<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector4<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector3<ScalarType> &targetMem = ::LinearAlgebra::Vector3<ScalarType>() )
+	{
+		::LinearAlgebra::Vector4<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis), localStartNormal), (ScalarType)0 );
+		targetMem = worldStartNormal.xyz.Cross(worldEndNormal.xyz);
+		targetMem *= (ScalarType)::std::asin( worldStartNormal.Dot(worldEndNormal) );
+		return targetMem;
+	}
 
 	template<typename ScalarType>
 	::LinearAlgebra::Matrix4x4<ScalarType> & SnapAxisYToNormal_UsingNlerp( ::LinearAlgebra::Matrix4x4<ScalarType> &rotation, const ::LinearAlgebra::Vector4<ScalarType> &normalizedAxis )
