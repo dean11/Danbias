@@ -123,7 +123,7 @@ void Object::BeginFrame()
 	{
 		Oyster::Math3D::SnapAngularAxis(Oyster::Math::Float4(setState.GetAngularAxis(), 0), Oyster::Math::Float4::standard_unit_y, -Oyster::Math::Float4(setState.GetGravityNormal()), axis);
 		setState.SetRotation(axis.xyz);
-	
+		setState.SetAngularMomentum(Float3::null);
 		Oyster::Math::Float3 debug = ::LinearAlgebra3D::WorldAxisOf(::LinearAlgebra3D::Rotation(axis.xyz), Oyster::Math::Float3::standard_unit_y);
 		debug += setState.GetGravityNormal();
 	}

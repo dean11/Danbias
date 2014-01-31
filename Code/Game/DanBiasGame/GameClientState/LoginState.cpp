@@ -109,7 +109,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	if( KeyInput->IsKeyPressed(DIK_J)) 
 	{
 		// game ip
-		nwClient->Connect(15151, "193.11.184.109");
+		nwClient->Connect(15151, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{

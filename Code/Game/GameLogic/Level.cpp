@@ -32,7 +32,7 @@ void Level::InitiateLevel(float radius)
 	
 	ICustomBody::State state;
 	rigidBody->GetState(state);
-	state.SetRestitutionCoeff(0.01);
+	state.SetRestitutionCoeff(0.2);
 	rigidBody->SetState(state);
 	
 	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
