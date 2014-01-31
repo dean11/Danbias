@@ -9,11 +9,8 @@ namespace Oyster
 {
 	namespace Event
 	{
-
-		template <class T>
-		class EventButton
+		struct IButton
 		{
-		private:
 			enum ButtonState
 			{
 				Button_Clicked,
@@ -21,6 +18,12 @@ namespace Oyster
 				Button_Hold,
 				Button_Smashed,	
 			};
+		};
+		template <class T>
+		class EventButton :public IButton
+		{
+		private:
+			
 			struct ButtonEvent
 			{
 				ButtonState state; 

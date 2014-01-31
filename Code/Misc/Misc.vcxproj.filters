@@ -54,9 +54,6 @@
     <ClCompile Include="EventHandler\EventHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventHandler\EventButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EventHandler\EventButtonCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

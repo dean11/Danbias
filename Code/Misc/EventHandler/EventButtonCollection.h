@@ -3,6 +3,7 @@
 
 #include "../../Input/L_inputClass.h"
 
+#include "IEventButton.h"
 #include "EventButton.h"
 
 #include <vector>
@@ -28,8 +29,11 @@ namespace Oyster
 
 			void Update(InputClass* inputObject);
 
-			void AddButton(EventButton& button);
-			EventButton& CreateButton();
+			template <class Owner>
+			void AddButton(EventButton<Owner>& button);
+
+			template <class Owner>
+			EventButton<Owner>& CreateButton();
 
 			EventCollectionState GetState() const;
 			void SetState(const EventCollectionState state);
@@ -38,7 +42,7 @@ namespace Oyster
 			void Clear();
 
 		private:
-			std::vector<EventButton*> buttons;
+			std::vector<IEventButton*> buttons;
 			EventCollectionState collectionState;
 
 		};

@@ -22,12 +22,14 @@ void EventButtonCollection::Update(InputClass* inputObject)
 	}
 }
 
-void EventButtonCollection::AddButton(EventButton& button)
+template <class Owner>
+void EventButtonCollection::AddButton(EventButton<Owner>& button)
 {
 	buttons.push_back(button);
 }
 
-EventButton& EventButtonCollection::CreateButton()
+template <class Owner>
+EventButton<Owner>& EventButtonCollection::CreateButton()
 {
 	EventButton temp;
 	buttons.push_back(&temp);

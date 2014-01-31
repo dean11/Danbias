@@ -146,7 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EventHandler\EventButton.cpp" />
     <ClCompile Include="EventHandler\EventButtonCollection.cpp" />
     <ClCompile Include="EventHandler\EventHandler.cpp" />
     <ClCompile Include="Packing\Packing.cpp" />
