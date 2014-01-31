@@ -51,7 +51,13 @@
     <ClCompile Include="Packing\Packing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MessageHandler\MessageHandler.cpp">
+    <ClCompile Include="EventHandler\EventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler\EventButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler\EventButtonCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,7 +125,13 @@
     <ClInclude Include="Packing\Packing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageHandler\MessageHandler.h">
+    <ClInclude Include="EventHandler\EventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler\EventButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler\EventButtonCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

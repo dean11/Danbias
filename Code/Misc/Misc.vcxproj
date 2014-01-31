@@ -146,7 +146,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MessageHandler\MessageHandler.cpp" />
+    <ClCompile Include="EventHandler\EventButton.cpp" />
+    <ClCompile Include="EventHandler\EventButtonCollection.cpp" />
+    <ClCompile Include="EventHandler\EventHandler.cpp" />
     <ClCompile Include="Packing\Packing.cpp" />
     <ClCompile Include="Resource\Loaders\ByteLoader.cpp" />
     <ClCompile Include="Resource\Loaders\CustomLoader.cpp" />
@@ -163,9 +165,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DynamicArray.h" />
+    <ClInclude Include="EventHandler\EventButton.h" />
+    <ClInclude Include="EventHandler\EventButtonCollection.h" />
     <ClInclude Include="GID.h" />
     <ClInclude Include="IQueue.h" />
-    <ClInclude Include="MessageHandler\MessageHandler.h" />
+    <ClInclude Include="EventHandler\EventHandler.h" />
     <ClInclude Include="OysterCallback.h" />
     <ClInclude Include="Packing\Packing.h" />
     <ClInclude Include="PostBox\IPostBox.h" />
