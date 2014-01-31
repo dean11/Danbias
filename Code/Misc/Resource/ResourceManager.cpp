@@ -123,7 +123,7 @@ bool Release(std::map<std::wstring, ResourceData*>& resources, ResourceData* res
 				resource->resource = 0;
 			break;
 
-			case Oyster::Resource::ResourceType_UNKNOWN:
+			case Oyster::Resource::ResourceType_CUSTOM:
 				resource->unloadFnc(resource->resource);
 				resource->resource = 0;
 			break;
@@ -137,6 +137,13 @@ bool Release(std::map<std::wstring, ResourceData*>& resources, ResourceData* res
 }
 ResourceData* Load(/*Out*/ResourceData* targetMem, /*in*/const wchar_t source[], /*in*/ResourceType type)
 {
+	targetMem->resource = 0;
+	targetMem->loadFnc = 0;
+	targetMem->unloadFnc = 0;
+	targetMem->resourceID = 0;
+	targetMem->resourcetype = type;
+	targetMem->resourceSize = 0;
+
 	std::string sOut;
 	bool success = false;
 
@@ -182,13 +189,20 @@ ResourceData* Load(/*Out*/ResourceData* targetMem, /*in*/const wchar_t source[],
 }
 ResourceData* Load(/*Out*/ResourceData* targetMem, /*in*/const wchar_t source[], LoadFunction loadFnc, UnloadFunction unloadFnc)
 {
+	targetMem->resource = 0;
+	targetMem->loadFnc = 0;
+	targetMem->unloadFnc = 0;
+	targetMem->resourceID = 0;
+	targetMem->resourcetype = ResourceType_CUSTOM;
+	targetMem->resourceSize = 0;
+
 	if(loadFnc)	
 	{
 		targetMem->resource = loadFnc(source);
 		if(targetMem->resource)
 		{
 			targetMem->resourceSize = 0;
-			targetMem->resourcetype = ResourceType_UNKNOWN;
+			targetMem->resourcetype = ResourceType_CUSTOM;
 			targetMem->loadFnc = loadFnc;
 			targetMem->unloadFnc = unloadFnc;
 		}
@@ -208,7 +222,7 @@ ResourceData* Reload(std::map<std::wstring, ResourceData*> resources, ResourceDa
 				return Load(resource, filename, resource->loadFnc, resource->unloadFnc); 
 		break;
 
-		case Oyster::Resource::ResourceType_UNKNOWN:
+		case Oyster::Resource::ResourceType_CUSTOM:
 		{
 			resource->unloadFnc(resource->resource);
 
