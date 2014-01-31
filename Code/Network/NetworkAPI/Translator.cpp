@@ -15,10 +15,11 @@ using namespace ::Messages;
 using namespace Utility::DynamicMemory;
 using namespace std;
 
+
+//TODO: Fix this uggly hack
 struct MyCastingStruct
 {
 	std::map<int, NetAttributeContainer> attributes;
-	Utility::DynamicMemory::ReferenceCount *c;
 };
 
 // TODO: Check if the package has been packed correctly.
@@ -33,8 +34,8 @@ struct Translator::PrivateData
 	//Packages a header with a size(int) and a string of characters(char)
 	void PackHeader(OysterByte &bytes, CustomNetProtocol& protocol)
 	{
-		auto it = ((MyCastingStruct*)protocol.privateData)->attributes.begin();
-		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
+		auto it = ((MyCastingStruct*)protocol.privateData.Get())->attributes.begin();
+		auto end = ((MyCastingStruct*)protocol.privateData.Get())->attributes.end();
 
 		size = 4;	//size(int)
 		message.SetSize(0);
@@ -60,8 +61,8 @@ struct Translator::PrivateData
 
 	void PackMessage(OysterByte &bytes, CustomNetProtocol& protocol)
 	{
-		auto it = ((MyCastingStruct*)protocol.privateData)->attributes.begin();
-		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
+		auto it = ((MyCastingStruct*)protocol.privateData.Get())->attributes.begin();
+		auto end = ((MyCastingStruct*)protocol.privateData.Get())->attributes.end();
 
 		for(int i = 0; i < (int)headerString.size(); i++, it++)
 		{

@@ -19,6 +19,7 @@
 #include "../../Misc/Packing/Packing.h"
 
 #include <queue>
+#include <WinSock2.h>
 
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
@@ -83,12 +84,12 @@ struct NetworkClient::PrivateData : public IThreadObject
 
 		if(!this->sendQueue.IsEmpty())
 		{
-			SmartPointer<OysterByte> temp = new OysterByte();
+			OysterByte temp;
 			CustomNetProtocol p = this->sendQueue.Pop();
 			this->translator.Pack(temp, p);
 			errorCode = this->connection.Send(temp);
 
-			if(errorCode != 0)
+			if(errorCode != 0 && errorCode != WSAEWOULDBLOCK)
 			{
 				CEA parg;
 				parg.type = CEA::EventType_ProtocolFailedToSend;
@@ -299,12 +300,12 @@ void NetworkClient::Disconnect()
 
 void NetworkClient::Send(CustomProtocolObject& protocol)
 {
-	this->privateData->sendQueue.Push(*protocol.GetProtocol());
+	this->privateData->sendQueue.Push(protocol.GetProtocol());
 }
 
-void NetworkClient::Send(CustomNetProtocol* protocol)
+void NetworkClient::Send(CustomNetProtocol protocol)
 {
-	this->privateData->sendQueue.Push(*protocol);
+	this->privateData->sendQueue.Push(protocol);
 }
 
 void NetworkClient::SetOwner(NetworkSession* owner)

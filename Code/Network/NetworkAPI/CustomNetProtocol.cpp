@@ -4,7 +4,6 @@
 #include "CustomNetProtocol.h"
 #include <map>
 #include "Translator.h"
-#include "Utilities.h"
 using namespace Oyster::Network;
 using namespace Utility::DynamicMemory;
 
@@ -12,23 +11,17 @@ using namespace Utility::DynamicMemory;
 struct CustomNetProtocol::PrivateData
 {
 	std::map<int, NetAttributeContainer> attributes;		//...Im an idiot
-	Utility::DynamicMemory::ReferenceCount *c;
-
+	
 	PrivateData()
-	{
-		//this->attributes = new std::map<int, NetAttributeContainer>(); 
-		this->c = new ReferenceCount();
-		c->Incref();
-	}
+	{  }
 
 	~PrivateData()
 	{
-		delete c;
-		c = 0;
 		for (auto i = attributes.begin(); i != attributes.end(); i++)
 		{
 			RemoveAttribute(i->first);
 		}
+
 		attributes.clear();
 	}
 	void RemoveAttribute(int ID)
@@ -55,39 +48,14 @@ CustomNetProtocol::CustomNetProtocol()
 CustomNetProtocol::CustomNetProtocol(const CustomNetProtocol& o)
 {
 	this->privateData = o.privateData;
-	if(this->privateData)
-	{
-		this->privateData->c = o.privateData->c;
-		this->privateData->c->Incref();
-	}
 }
 const CustomNetProtocol& CustomNetProtocol::operator=(const CustomNetProtocol& o)
 {
-	if(this->privateData && this->privateData->c)
-	{
-		if(this->privateData->c->Decref() == 0)
-		{
-			delete this->privateData;
-		}
-	}
-
 	this->privateData = o.privateData;
-	if(this->privateData)
-	{
-		this->privateData->c = o.privateData->c;
-		this->privateData->c->Incref();
-	}
 	return *this;
 }
 CustomNetProtocol::~CustomNetProtocol()
 {
-	if(this->privateData && this->privateData->c)
-	{
-		if(this->privateData->c->Decref() == 0)
-		{
-			delete this->privateData;
-		}
-	}
 }
 NetAttributeContainer& CustomNetProtocol::operator[](int ID)
 {

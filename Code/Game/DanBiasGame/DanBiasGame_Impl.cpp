@@ -56,7 +56,8 @@ namespace DanBias
 	{
 
 		WindowShell::CreateConsoleWindow();
-		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
+		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
+		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )
@@ -200,6 +201,8 @@ namespace DanBias
 		delete m_data->recieverObj;
 		delete m_data->inputObj;
 		delete m_data;
+
+		GameServerAPI::ServerStop();
 		
 
 		Oyster::Graphics::API::Clean();

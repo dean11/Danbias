@@ -28,6 +28,7 @@ namespace DanBias
 		this->isCreated = false;
 		this->isRunning = false;
 		this->gameSession = this;
+		this->logicDeltaTime = 0.0f;
 
 		memset(&this->description, 0, sizeof(GameDescription));
 	}

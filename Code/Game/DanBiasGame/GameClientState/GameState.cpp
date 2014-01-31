@@ -33,7 +33,8 @@ GameState::GameState(void)
 
 GameState::~GameState(void)
 {
-
+	delete this->camera;
+	delete this->privData;
 }
 bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 {
@@ -82,7 +83,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	C_Object* obj;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
 	modelData.world = translate  ;//modelData.world * translate 
-	modelData.modelPath = L"world_earth.dan";
+	modelData.modelPath = L"..\\Content\\Models\\world_earth.dan";
 	modelData.id = 0;
 
 	obj = new C_Player();

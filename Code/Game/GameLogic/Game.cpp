@@ -93,7 +93,6 @@ void Game::CreateTeam()
 
 bool Game::NewFrame()
 {
-
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
@@ -105,28 +104,7 @@ bool Game::NewFrame()
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
-	}
 
-	API::Instance().Update();
-
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-	}
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
-	}
-
-	API::Instance().Update();
-
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-	}
 
 	gameInstance.onMoveFnc(this->level);
 
@@ -161,6 +139,7 @@ bool Game::Initiate()
 {
 	API::Instance().Init((int)pow(2u, 9u), 1u, Oyster::Math::Float3());
 	API::Instance().SetSubscription(Game::PhysicsOnDestroy);
+	API::Instance().SetFrameTimeLength(1.0f/120.0f);
 	this->initiated = true;
 	return true;
 }

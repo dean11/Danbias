@@ -75,7 +75,7 @@ namespace Oyster
 				/**
 				*	
 				*/
-				void Send(CustomNetProtocol* protocol);
+				void Send(CustomNetProtocol protocol);
 
 				/**
 				*	

@@ -29,16 +29,15 @@ namespace DanBias
 	{
 		if(this->isRunning)
 		{
-			double dt = this->timer.getElapsedSeconds();
-			gameInstance.SetFrameTimeLength((float)dt);
-
-			if(dt >= DELTA_TIME_20)
+			float dt = (float)this->logicTimer.getElapsedSeconds();
+			this->logicDeltaTime += dt;
+			this->logicTimer.reset();
+			while( logicDeltaTime >= DELTA_TIME_120 )
 			{
 				this->ProcessClients();
-
 				this->gameInstance.NewFrame();
 
-				this->timer.reset();
+				logicDeltaTime -= DELTA_TIME_120;
 			}
 		}
 
@@ -72,7 +71,7 @@ namespace DanBias
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
-				this->Detach(e.sender)->Disconnect();
+				this->Detach(e.sender);
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
@@ -83,43 +82,48 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		if(dynamic_cast<IPlayerData*> (movedObject))
+		if(gameSession->networkTimer.getElapsedSeconds() >= DELTA_TIME_60)
 		{
-			IPlayerData* temp = (IPlayerData*)movedObject;
+			gameSession->networkTimer.reset();
+
+			if(dynamic_cast<IPlayerData*> (movedObject))
+			{
+				IPlayerData* temp = (IPlayerData*)movedObject;
 			
-			int id = temp->GetID();
-			Oyster::Math::Float4x4 world = temp->GetOrientation();
+				int id = temp->GetID();
+				Oyster::Math::Float4x4 world = temp->GetOrientation();
 					
-			Protocol_ObjectPosition p(world, id);
-			GameSession::gameSession->Send(*p.GetProtocol());
+				Protocol_ObjectPosition p(world, id);
+				GameSession::gameSession->Send(*p.GetProtocol());
 		}
 
 		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
-		{
-			GameLogic::IObjectData* obj = NULL;
-			obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
-			if(obj)
 			{
-				if(obj->GetObjectType() == OBJECT_TYPE_WORLD)
+				GameLogic::IObjectData* obj = NULL;
+				obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
+				if(obj)
 				{
-					int id = obj->GetID();
-					Oyster::Math::Float4x4 world =obj->GetOrientation();
+					if(obj->GetObjectType() == OBJECT_TYPE_WORLD)
+					{
+						int id = obj->GetID();
+						Oyster::Math::Float4x4 world =obj->GetOrientation();
 					
-					Protocol_ObjectPosition p(world, id);
-					GameSession::gameSession->Send(*p.GetProtocol());
+						Protocol_ObjectPosition p(world, id);
+						gameSession->Send(p.GetProtocol());
+					}
 				}
-			}
 
-			obj = NULL;
-			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
-			if(obj)
-			{
-				if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+				obj = NULL;
+				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
+				if(obj)
 				{
-					int id = obj->GetID();
-					Oyster::Math::Float4x4 world = obj->GetOrientation();
-					Protocol_ObjectPosition p(world, id);
-					GameSession::gameSession->Send(*p.GetProtocol());
+					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+					{
+						int id = obj->GetID();
+						Oyster::Math::Float4x4 world = obj->GetOrientation();
+						Protocol_ObjectPosition p(world, id);
+						gameSession->Send(p.GetProtocol());
+					}
 				}
 			}
 		}

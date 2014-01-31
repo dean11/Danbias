@@ -53,6 +53,7 @@ void GameServerAPI::ServerStart()
 }
 void GameServerAPI::ServerStop()
 {
+	if(!server.IsStarted()) return;
 	lobby.Release();
 	server.Shutdown();
 	

@@ -40,6 +40,7 @@ namespace Utility
 			public:
 				Type item;
 				Node *next;
+				Node(){ this->next = NULL; };
 				Node(Type item){ this->item = item; this->next = NULL; };
 				~Node() {};
 			};

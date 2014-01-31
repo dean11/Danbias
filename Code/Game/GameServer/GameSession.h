@@ -55,6 +55,7 @@ namespace DanBias
 		
 		inline bool IsCreated() const	{ return this->isCreated; }
 		inline bool IsRunning() const	{ return this->isRunning; }
+		operator bool() { return (this->isCreated && this->isCreated); }
 
 		//Private member functions
 	private:
@@ -97,7 +98,9 @@ namespace DanBias
 		NetworkSession* owner;
 		bool isCreated;
 		bool isRunning;
-		Utility::WinTimer timer;
+		float logicDeltaTime;
+		Utility::WinTimer logicTimer;
+		Utility::WinTimer networkTimer;
 		GameDescription description;
 
 		//TODO: Remove this uggly hax

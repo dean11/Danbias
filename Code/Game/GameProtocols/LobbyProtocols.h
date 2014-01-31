@@ -33,7 +33,7 @@ namespace GameLogic
 			mapName = o[1].value.netCharPtr;
 			gameId = o[2].value.netChar;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			protocol[1].value = mapName;
 			protocol[2].value = gameId;
@@ -59,10 +59,10 @@ namespace GameLogic
 		{
 			gameId = o[1].value.netInt;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			protocol[1].value = gameId;
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -83,9 +83,9 @@ namespace GameLogic
 		{
 
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -109,7 +109,7 @@ namespace GameLogic
 	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 	//		value = p[1].value.netShort;
 	//	}
-	//	Oyster::Network::CustomNetProtocol* GetProtocol() override
+	//	Oyster::Network::CustomNetProtocol GetProtocol() override
 	//	{
 	//		protocol[1].value = value;
 	//		return &protocol;
@@ -130,8 +130,8 @@ namespace GameLogic
 		{
 			
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{ return &protocol; }
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{ return protocol; }
 		
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
@@ -175,7 +175,7 @@ namespace GameLogic
 				list.Push(d);
 			}
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = list.Size();
 
@@ -195,7 +195,7 @@ namespace GameLogic
 					this->protocol.Set(a++, list[i].ip);
 			}
 			
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -223,13 +223,13 @@ namespace GameLogic
 			minorVersion = (int)p.Get(2).value.netInt;
 			mapName = p.Get(3).value.netCharPtr;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = majorVersion;
 			this->protocol[2].value = minorVersion;
 			this->protocol.Set(3, mapName.c_str());
 
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -254,7 +254,7 @@ namespace GameLogic
 	//	{
 	//
 	//	}
-	//	Oyster::Network::CustomNetProtocol* GetProtocol() override
+	//	Oyster::Network::CustomNetProtocol GetProtocol() override
 	//	{
 	//		return &protocol;
 	//	}

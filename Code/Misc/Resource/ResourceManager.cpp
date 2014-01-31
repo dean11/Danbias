@@ -284,7 +284,7 @@ HRESOURCE ResourceManager::LoadResource(const wchar_t filename[], LoadFunction l
 	{
 		return 0;
 	}
-	if(!loadFnc)	
+	if(!loadFnc || !unloadFnc)	
 	{
 		return 0;
 	}
@@ -292,6 +292,8 @@ HRESOURCE ResourceManager::LoadResource(const wchar_t filename[], LoadFunction l
 	ResourceData *t = FindResource(this->resources, filename);
 	if(t)	
 	{
+		t->loadFnc = loadFnc;
+		t->unloadFnc = unloadFnc;
 		if(force)
 		{
 			return ResourceManager::ReloadResource(filename);

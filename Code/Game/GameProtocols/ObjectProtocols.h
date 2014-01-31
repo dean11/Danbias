@@ -39,11 +39,11 @@ namespace GameLogic
 			pickup_ID = pickupID;
 
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = pickup_ID;
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -80,11 +80,11 @@ namespace GameLogic
 			object_ID = id;
 			health = hp;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = health;
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -129,14 +129,14 @@ namespace GameLogic
 			object_ID = id;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			for (int i = 2; i <= 17; i++)
 			{
 				this->protocol[i].value = worldMatrix[i-2];
 			}
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -179,14 +179,14 @@ namespace GameLogic
 			object_ID = id;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			for (int i = 2; i <= 17; i++)
 			{
 				this->protocol[i].value = worldMatrix[i-2];
 			}
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -221,11 +221,11 @@ namespace GameLogic
 			object_ID = id;
 			timer = time;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = timer;
-			return &protocol;		 
+			return protocol;		 
 		}							 
 
 	private:
@@ -272,7 +272,7 @@ namespace GameLogic
 			this->name = path;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 
 			this->protocol[1].value = object_ID;
@@ -297,7 +297,7 @@ namespace GameLogic
 		
 		
 
-			return &protocol;		 
+			return protocol;		 
 		}							 
 
 	private:

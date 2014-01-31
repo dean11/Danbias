@@ -4,7 +4,11 @@
 #ifndef NETWORK_CUSTOM_NETWORK_PROTOCOL_H
 #define NETWORK_CUSTOM_NETWORK_PROTOCOL_H
 
+//needs to have dll-interface to be used by clients of class 'Oyster::Network::NetworkSession'
+#pragma warning(disable : 4251)
+
 #include <string>
+#include "Utilities.h"
 //#include <vld.h>
 #include "NetworkAPI_Preprocessor.h"
 
@@ -70,7 +74,7 @@ namespace Oyster
 			class CustomNetProtocol;
 			struct CustomProtocolObject
 			{
-				virtual CustomNetProtocol* GetProtocol() = 0;
+				virtual CustomNetProtocol GetProtocol() = 0;
 			};
 
 			class NET_API_EXPORT CustomNetProtocol
@@ -88,7 +92,7 @@ namespace Oyster
 
 			private:
 				struct PrivateData;
-				PrivateData* privateData;
+				Utility::DynamicMemory::SmartPointer<PrivateData> privateData;
 
 				friend class Translator;
 			};

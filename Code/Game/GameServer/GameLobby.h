@@ -52,6 +52,7 @@ namespace DanBias
 	private:
 		Utility::WinTimer timer;
 		float refreshFrequency;
+		
 		GameSession gameSession;
 		LobbyLevelData description;
 	};
