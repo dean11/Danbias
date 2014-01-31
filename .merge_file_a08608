@@ -1,55 +1,44 @@
-#include "LanMenuState.h"
-
+#include "LoginState.h"
+#include "DllInterfaces/GFXAPI.h"
+#include "OysterMath.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_StaticObj.h"
 #include "C_obj/C_DynamicObj.h"
-#include "DllInterfaces/GFXAPI.h"
-
-#include "LobbyState.h"
-#include "GameState.h"
-#include "../GameClientRecieverFunc.h"
-
 #include <GameServerAPI.h>
 
 using namespace DanBias::Client;
 
-struct  LanMenuState::myData
+struct  LoginState::myData
 {
 	myData(){}
 	Oyster::Math3D::Float4x4 view;
 	Oyster::Math3D::Float4x4 proj; 
 	C_Object* object[2]; 
 	int modelCount; 
-
-	GameRecieverObject* recieverObj;
-	bool serverOwner;
-
 	// UI object
 	// game client* 
 }privData;
 
-LanMenuState::LanMenuState()
+LoginState::LoginState(void)
 {
 
 }
 
-LanMenuState::~LanMenuState()
+LoginState::~LoginState(void)
 {
 
 }
 
-bool LanMenuState::Init(Oyster::Network::NetworkClient* nwClient)
+bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
 	this->nwClient = nwClient;	
 	// load models
 	LoadModels(L"UImodels.txt");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
-
 	return true;
 }
-
-bool LanMenuState::LoadModels(std::wstring file)
+bool LoginState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
 	plight.Pos = Oyster::Math::Float3(-2,3,0);
@@ -79,7 +68,7 @@ bool LanMenuState::LoadModels(std::wstring file)
 	return true;
 }
 
-bool LanMenuState::InitCamera(Oyster::Math::Float3 startPos)
+bool LoginState::InitCamera(Oyster::Math::Float3 startPos)
 {
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
@@ -89,52 +78,16 @@ bool LanMenuState::InitCamera(Oyster::Math::Float3 startPos)
 	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
 }
-
-GameClientState::ClientState LanMenuState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* KeyInput)
 {
-	/*ChangeState(KeyInput);
+	// picking 
+	// mouse events
+	// different menus
+	// play sounds
+	// update animation
+	// send data to server
+	// check data from server
 
-	if(privData->recieverObj->IsConnected())
-		privData->recieverObj->Update();
-	KeyInput->Update();
-
-	if(privData->serverOwner)
-	{
-		DanBias::GameServerAPI::ServerUpdate();
-	}
-
-	DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-	state = privData->recieverObj->gameClientState->Update(deltaTime, KeyInput);
-
-	if(state != Client::GameClientState::ClientState_Same)
-	{
-		privData->recieverObj->gameClientState->Release();
-		delete privData->recieverObj->gameClientState;
-		privData->recieverObj->gameClientState = NULL;
-
-		switch (state)
-		{
-		case Client::GameClientState::ClientState_LobbyCreated:
-			privData->serverOwner = true;
-		case Client::GameClientState::ClientState_Lobby:
-			privData->recieverObj->gameClientState = new Client::LobbyState();
-			break;
-		case Client::GameClientState::ClientState_Game:
-			privData->recieverObj->gameClientState = new Client::GameState();
-			break;
-		default:
-			//return E_FAIL;
-			break;
-		}
-		privData->recieverObj->gameClientState->Init(privData->recieverObj); // send game client
-				 
-	}*/
-
-	return ChangeState(KeyInput);
-}
-
-GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
-{
 	// create game
 	if( KeyInput->IsKeyPressed(DIK_C)) 
 	{
@@ -150,7 +103,7 @@ GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
 			// failed to connect
 			return ClientState_Same;
 		}
-		return ClientState_Lobby;
+		return ClientState_LobbyCreated;
 	}
 	// join game
 	if( KeyInput->IsKeyPressed(DIK_J)) 
@@ -167,9 +120,9 @@ GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
 	}
 	return ClientState_Same;
 }
-
-bool LanMenuState::Render()
+bool LoginState::Render()
 {
+
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 
@@ -188,8 +141,7 @@ bool LanMenuState::Render()
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
-
-bool LanMenuState::Release()
+bool LoginState::Release()
 {
 	for (int i = 0; i < privData->modelCount; i++)
 	{
@@ -200,16 +152,15 @@ bool LanMenuState::Release()
 
 	delete privData;  
 	privData = NULL;
-  
 	return true;
 }
-
-void LanMenuState::Protocol(ProtocolStruct* protocolStruct)
+void LoginState::Protocol(ProtocolStruct* protocol)
 {
-	if((PlayerName*)protocolStruct)
-		PlayerJoinProtocol((PlayerName*)protocolStruct);
+	if((PlayerName*)protocol)
+		PlayerJoinProtocol((PlayerName*)protocol);
+
 }
-void LanMenuState::PlayerJoinProtocol(PlayerName* name)
+void LoginState::PlayerJoinProtocol(PlayerName* name)
 {
 
 }

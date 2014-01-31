@@ -2,6 +2,8 @@
 #define DANBIAS_CLIENTRECIEVEROBJECT_H
 
 //WTF!? No headers included???
+#include "../DanBiasGame/Include/DanBiasGame.h"
+#include "../GameProtocols/GeneralProtocols.h"
 
 namespace DanBias
 {
@@ -128,8 +130,8 @@ namespace DanBias
 				break;
 				case protocol_Lobby_GameData:	//this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
 				{
-					GameLogic::Protocol_LobbyGameData temp(p);
-					printf("%s, %i.%i\n", temp.mapName.c_str(), temp.majorVersion, temp.minorVersion);
+					//GameLogic::Protocol_LobbyGameData temp(p);
+					//printf("%s, %i.%i\n", temp.mapName.c_str(), temp.majorVersion, temp.minorVersion);
 				}
 				break;
 				case protocol_Lobby_ClientData:	//this->LobbyMainData		(Protocol_LobbyClientData	(p), c);
