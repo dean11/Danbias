@@ -26,7 +26,7 @@ namespace
 			ICustomBody::State protoState; proto->GetState( protoState );
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-			Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
+			Float4 protoG = protoState.GetLinearMomentum(worldPointOfContact.xyz ),
 					deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
 
 			// calc from perspective of deuter
@@ -198,23 +198,26 @@ void API_Impl::Update()
 	proto = updateList.begin();
 	for( ; proto != updateList.end(); ++proto )
 	{
-		Float3 lM = state.GetLinearMomentum() + state.GetLinearImpulse();
+		(*proto)->GetState( state );
+		Float3 lM = state.GetLinearMomentum();
 
-		if( lM.x < this->epsilon )
+		//LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp(state.SetOrientation(, Float4(state.GetGravityNormal(), 0.0f), 1.0f);
+
+
+		if( abs(lM.x) < this->epsilon )
 		{
-			state.SetLinearMomentum( Float3(0, lM.y, lM.z) );
-			state.SetLinearImpulse( Float3(0, lM.y, lM.z) );
+			state.linearMomentum.x = 0;
 		}
-		if( lM.y < this->epsilon )
+		if( abs(lM.y) < this->epsilon )
 		{
-			state.SetLinearMomentum( Float3(lM.x, 0, lM.z) );
-			state.SetLinearImpulse( Float3(lM.x, 0, lM.z) );
+			state.linearMomentum.y = 0;
 		}
-		if( lM.z < this->epsilon )
+		if( abs(lM.z) < this->epsilon )
 		{
-			state.SetLinearMomentum( Float3(lM.x, lM.y, 0) );
-			state.SetLinearImpulse( Float3(lM.x, lM.y, 0) );
+			state.linearMomentum.z = 0;
 		}
+
+		(*proto)->SetState( state );
 
 		switch( (*proto)->Update(this->updateFrameLength) )
 		{

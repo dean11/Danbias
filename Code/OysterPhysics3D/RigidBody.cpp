@@ -50,7 +50,12 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	
 	// updating the linear
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
-	this->centerPos += ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
+	Float3 deltaPos = ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
+	if( deltaPos.GetLength() < 0.001f )
+	{
+		deltaPos = Float3::null;
+	}
+	this->centerPos += deltaPos;
 	
 	// updating the angular
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
