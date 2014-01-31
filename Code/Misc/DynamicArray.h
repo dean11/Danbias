@@ -4,6 +4,8 @@
 #ifndef MISC_DYNAMIC_ARRAY_H
 #define MISC_DYNAMIC_ARRAY_H
 
+#include <assert.h>
+
 namespace Utility
 {
 	namespace DynamicMemory

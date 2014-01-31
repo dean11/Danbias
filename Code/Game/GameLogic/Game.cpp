@@ -93,6 +93,7 @@ void Game::CreateTeam()
 
 bool Game::NewFrame()
 {
+
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
@@ -126,19 +127,13 @@ bool Game::NewFrame()
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
-	}
 
-	API::Instance().Update();
-
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-	}
-
+<<<<<<< HEAD
 	gameInstance.onMoveFnc(this->level);
+=======
+
+	//gameInstance.onMoveFnc(this->level);
+>>>>>>> cec022b3814c680d5be161e7cfe0596841736c77
 	return true;
 }
 

@@ -4,36 +4,27 @@
 #include "CustomNetProtocol.h"
 #include <map>
 #include "Translator.h"
+#include "Utilities.h"
 using namespace Oyster::Network;
+using namespace Utility::DynamicMemory;
 
 
 struct CustomNetProtocol::PrivateData
 {
-	std::map<int, NetAttributeContainer> attributes;
+	std::map<int, NetAttributeContainer> attributes;		//...Im an idiot
+	Utility::DynamicMemory::ReferenceCount *c;
 
 	PrivateData()
-	{ }
-	PrivateData( const CustomNetProtocol::PrivateData& o)
-	{ 
-		for (auto i = o.attributes.begin(); i != o.attributes.end(); i++)
-		{
-			if(i->second.type == NetAttributeType_CharArray)
-			{
-				size_t size = strlen(i->second.value.netCharPtr);
-				if(size == 0) continue;
-
-				attributes[i->first].value.netCharPtr = new char[size + 1];
-				memcpy(&attributes[i->first].value.netCharPtr[0], &i->second.value.netCharPtr[0], size + 1);
-				attributes[i->first].type = NetAttributeType_CharArray;
-			}
-			else
-			{
-				attributes[i->first] = i->second;
-			}
-		}
+	{
+		//this->attributes = new std::map<int, NetAttributeContainer>(); 
+		this->c = new ReferenceCount();
+		c->Incref();
 	}
+
 	~PrivateData()
 	{
+		delete c;
+		c = 0;
 		for (auto i = attributes.begin(); i != attributes.end(); i++)
 		{
 			RemoveAttribute(i->first);
@@ -49,7 +40,6 @@ struct CustomNetProtocol::PrivateData
 		{
 			case NetAttributeType_CharArray:
 				delete [] i->second.value.netCharPtr;
-				//i->second.value.netCharPtr = 0;
 			break;
 		}
 	}
@@ -64,17 +54,40 @@ CustomNetProtocol::CustomNetProtocol()
 }
 CustomNetProtocol::CustomNetProtocol(const CustomNetProtocol& o)
 {
-	this->privateData = new PrivateData(*o.privateData);
+	this->privateData = o.privateData;
+	if(this->privateData)
+	{
+		this->privateData->c = o.privateData->c;
+		this->privateData->c->Incref();
+	}
 }
 const CustomNetProtocol& CustomNetProtocol::operator=(const CustomNetProtocol& o)
 {
-	delete this->privateData;
-	this->privateData = new PrivateData(*o.privateData);
+	if(this->privateData && this->privateData->c)
+	{
+		if(this->privateData->c->Decref() == 0)
+		{
+			delete this->privateData;
+		}
+	}
+
+	this->privateData = o.privateData;
+	if(this->privateData)
+	{
+		this->privateData->c = o.privateData->c;
+		this->privateData->c->Incref();
+	}
 	return *this;
 }
 CustomNetProtocol::~CustomNetProtocol()
 {
-	delete this->privateData;
+	if(this->privateData && this->privateData->c)
+	{
+		if(this->privateData->c->Decref() == 0)
+		{
+			delete this->privateData;
+		}
+	}
 }
 NetAttributeContainer& CustomNetProtocol::operator[](int ID)
 {

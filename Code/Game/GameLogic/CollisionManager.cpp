@@ -21,7 +21,7 @@ using namespace GameLogic;
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
 		return;
-		switch (realObj->GetType())
+		switch (realObj->GetObjectType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);

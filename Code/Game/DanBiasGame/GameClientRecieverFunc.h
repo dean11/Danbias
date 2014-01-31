@@ -1,24 +1,32 @@
 #ifndef DANBIAS_CLIENTRECIEVEROBJECT_H
 #define DANBIAS_CLIENTRECIEVEROBJECT_H
 
+//WTF!? No headers included???
+
 namespace DanBias
 {
-inline bool IsLobbyProtocol(short ID) { return (ID >= protocol_LobbyMIN && ID <= protocol_LobbyMAX); }
-inline bool IsGeneralProtocol(short ID) { return (ID >= protocol_GeneralMIN && ID <= protocol_GeneralMAX); }
-inline bool IsGameplayProtocol(short ID) { return (ID >= protocol_GameplayMIN && ID <= protocol_GameplayMAX); }
-
-struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
+struct GameRecieverObject	:public Oyster::Network::NetworkClient
 {
-	Oyster::Network::NetworkClient* nwClient;
 	Client::GameClientState* gameClientState;
 
 	// receiver function for server messages 
 	// parsing protocols and sending it to the gameState
-	void ParseGamePlayEvent(Oyster::Network::CustomNetProtocol& p)
+	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
 	{
 		int pType = p[0].value.netInt;
 		switch (pType)
 		{
+		case protocol_General_Status:
+			{
+				GameLogic::Protocol_General_Status::States state;
+				state =  (GameLogic::Protocol_General_Status::States)p[1].value.netShort;
+				if( state == GameLogic::Protocol_General_Status::States_disconected)
+				{
+					// server disconnected 
+					DanBiasGame::Release();
+				}
+			}
+			break;
 		case protocol_Gameplay_PlayerMovement:
 			{
 				Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
@@ -33,6 +41,19 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 				protocolData = NULL;
 			}
 			break;
+		//case protocol_Gameplay_PlayerPosition:
+		//	{
+		//		Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
+		//		for(int i = 0; i< 3; i++)
+		//		{
+		//			protocolData->playerPos[i] = p[i].value.netFloat;
+		//		}
+		//		if(dynamic_cast<Client::GameState*>(gameClientState))
+		//			((Client::GameState*)gameClientState)->Protocol(protocolData);
+		//		delete protocolData;
+		//		protocolData = NULL;
+		//	}
+		//	break;
 
 		case protocol_Gameplay_ObjectCreate:
 			{
@@ -67,52 +88,22 @@ struct GameRecieverObject :public Oyster::Network::ProtocolRecieverObject
 		case protocol_Gameplay_ObjectPosition:
 			{
 
-				Client::GameClientState::ObjPos* protocolData = new Client::GameClientState::ObjPos;
-				protocolData->object_ID = p[1].value.netInt;
+				Client::GameClientState::ObjPos protocolData;
+				protocolData.object_ID = p[1].value.netInt;
 				for(int i = 0; i< 16; i++)
 				{
-					protocolData->worldPos[i] = p[i+2].value.netFloat;
+					protocolData.worldPos[i] = p[i+2].value.netFloat;
 				}
 
 				if(dynamic_cast<Client::GameState*>(gameClientState))
-					((Client::GameState*)gameClientState)->Protocol(protocolData);
-
-				delete protocolData;
-				protocolData = NULL;
+					((Client::GameState*)gameClientState)->Protocol(&protocolData);
 			}
 			break;
 
 		default:
 			break;
-		}
-	}
-	void ParseGeneralEvent(Oyster::Network::CustomNetProtocol& p)
-	{
-		int pType = p[0].value.netInt;
-		switch (pType)
-		{
-		
-		case protocol_General_Status:
-			{
-				GameLogic::Protocol_General_Status::States state;
-				state =  (GameLogic::Protocol_General_Status::States)p[1].value.netShort;
-				if( state == GameLogic::Protocol_General_Status::States_disconected)
-				{
-					// server disconnected 
-					DanBiasGame::Release();
-				}
-			}
-			break;
-		}
-	}
-	void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
-	{
+		}	
 
-		if( IsGameplayProtocol(p[protocol_INDEX_ID].value.netShort) )
-			ParseGamePlayEvent(p);
-
-		if( IsGeneralProtocol(p[protocol_INDEX_ID].value.netShort) )
-			ParseGeneralEvent(p);
 	}
 };
 } 

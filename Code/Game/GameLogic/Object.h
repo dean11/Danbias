@@ -26,7 +26,7 @@ namespace GameLogic
 		~Object(void);
 
 		// API overrides
-		OBJECT_TYPE GetType() const;
+		OBJECT_TYPE GetObjectType() const;
 		int GetID() const;
 		Oyster::Math::Float3 GetPosition();
 		Oyster::Math::Float4x4 GetOrientation();

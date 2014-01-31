@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Packing\Packing.cpp" />
     <ClCompile Include="Resource\Loaders\ByteLoader.cpp" />
     <ClCompile Include="Resource\Loaders\CustomLoader.cpp" />
     <ClCompile Include="Resource\OResourceHandler.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="GID.h" />
     <ClInclude Include="IQueue.h" />
     <ClInclude Include="OysterCallback.h" />
+    <ClInclude Include="Packing\Packing.h" />
     <ClInclude Include="PostBox\IPostBox.h" />
     <ClInclude Include="PostBox\PostBox.h" />
     <ClInclude Include="Queue.h" />

@@ -25,13 +25,17 @@ namespace GameLogic
 		
 		Protocol_PlayerMovement()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerMovement;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Gameplay_PlayerMovement;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
 			this->protocol[4].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		Protocol_PlayerMovement(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		const Protocol_PlayerMovement& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
@@ -65,13 +69,17 @@ namespace GameLogic
 
 		Protocol_PlayerLook()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerLookDir;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Gameplay_PlayerLookDir;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			
+		}
+		Protocol_PlayerLook(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		const Protocol_PlayerLook& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
@@ -101,13 +109,17 @@ namespace GameLogic
 
 		Protocol_PlayerChangeWeapon()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerChangeWeapon;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Gameplay_PlayerChangeWeapon;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			
+		}
+		Protocol_PlayerChangeWeapon(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		const Protocol_PlayerChangeWeapon& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
@@ -128,10 +140,14 @@ namespace GameLogic
 
 		Protocol_PlayerShot()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerShot;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Gameplay_PlayerShot;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		Protocol_PlayerShot(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		const Protocol_PlayerShot& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
@@ -154,10 +170,14 @@ namespace GameLogic
 
 		Protocol_PlayerJump()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Gameplay_PlayerJump;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Gameplay_PlayerJump;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		Protocol_PlayerJump(Oyster::Network::CustomNetProtocol& p)
+		{
+
 		}
 		const Protocol_PlayerJump& operator=(Oyster::Network::CustomNetProtocol& val)
 		{

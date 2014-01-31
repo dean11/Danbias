@@ -1,6 +1,7 @@
 #include "Connection.h"
 
 #include <winsock2.h>
+#include <WS2tcpip.h>
 #include <iostream>
 #include <string>
 #include <fcntl.h>
@@ -40,8 +41,23 @@ Connection::~Connection()
 	CloseSocket( this->socket );
 }
 
-int Connection::Connect(unsigned short port , const char serverName[])
+int Connection::Connect(ConnectionInfo info, bool blocking)
 {
+	this->addr = info.addr;
+	this->socket = info.socket;
+	this->stillSending = true;
+	this->closed = false;
+	
+
+	SetBlockingMode(blocking);
+	//connection succesfull!
+	return 0;
+}
+
+int Connection::Connect(unsigned short port , const char serverName[], bool blocking)
+{
+	if(this->socket == -1 || this->socket == 0) InitiateSocket();
+
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{
@@ -60,6 +76,8 @@ int Connection::Connect(unsigned short port , const char serverName[])
 	
 	closed = false;
 	stillSending = true;
+
+	SetBlockingMode(blocking);
 
 	//connection succesfull!
 	return 0;
@@ -152,17 +170,24 @@ int Connection::Recieve(OysterByte &bytes)
 }
 
 //Listen will only return the correct socket or -1 for failure.
-int Connection::Listen()
+ConnectionInfo Connection::Listen()
 {
-	if(this->closed) return -1;
+	ConnectionInfo val = { 0 };
+	if(this->closed) return val;
 
-	int clientSocket;
-	if((clientSocket = (int)accept(this->socket, NULL, NULL)) == INVALID_SOCKET)
+	SOCKADDR_IN client_info = { 0 };
+	int addrsize = sizeof(client_info);
+
+	if((val.socket = (int)accept(this->socket, (struct sockaddr*)&client_info, &addrsize)) == INVALID_SOCKET)
 	{
-		return (int)INVALID_SOCKET;//WSAGetLastError();
+		val.socket = WSAGetLastError();
+	}
+	else
+	{
+		val.addr = inet_ntoa(client_info.sin_addr);
 	}
 
-	return clientSocket;
+	return val;
 }
 
 bool Connection::IsSending()
@@ -196,6 +221,12 @@ int Connection::SetBlockingMode(bool blocking)
 
 	//Success
 	return 0;
+}
+
+
+std::string	Connection::GetIpAddress()
+{
+	return this->addr;
 }
 
 ///////////////////////////////////////

@@ -14,7 +14,6 @@ namespace Oyster
 	{
 		class Connection : public IConnection
 		{
-
 		public:
 			Connection();
 			Connection( int socket );
@@ -27,15 +26,18 @@ namespace Oyster
 			virtual int Recieve( OysterByte &bytes );
 
 			virtual int Disconnect();
-			virtual int Connect( unsigned short port , const char serverName[] );
+			virtual int Connect(ConnectionInfo info, bool blocking = false);
+			virtual int Connect(unsigned short port , const char serverName[], bool blocking = false);
 			
-			virtual int  Listen();
+			virtual ConnectionInfo Listen();
 
 			bool IsSending();
 			bool IsConnected();
 
 			//Setting the socket to blocking/non-blocking mode.
 			int SetBlockingMode( bool blocking );
+
+			std::string GetIpAddress();
 
 		private:
 			int InitiateSocket();
@@ -44,7 +46,7 @@ namespace Oyster
 
 			bool stillSending;
 			bool closed;
-
+			std::string addr;
 		};
 	}
 }

@@ -19,8 +19,8 @@ namespace GameLogic
 	
 		Protocol_General_Status()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_General_Status;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_General_Status;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
@@ -31,8 +31,8 @@ namespace GameLogic
 		}
 		Protocol_General_Status(States state)
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_General_Status;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_General_Status;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->status = state;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
@@ -61,7 +61,7 @@ namespace GameLogic
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-			this->protocol.Set(protocol_INDEX_ID, protocol_General_Text, Oyster::Network::NetAttributeType_Short);
+			this->protocol.Set(0, protocol_General_Text, Oyster::Network::NetAttributeType_Short);
 			this->protocol.Set(1, destination, Oyster::Network::NetAttributeType_Int);
 			this->protocol.Set(2, text);
 			return &protocol;

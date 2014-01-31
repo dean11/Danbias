@@ -27,7 +27,8 @@ Game::PlayerData::~PlayerData()
 	delete this->player;
 }
 
-void Game::PlayerData::Move(const PLAYER_MOVEMENT &movement){
+void Game::PlayerData::Move(const PLAYER_MOVEMENT &movement)
+{
 	this->player->Move(movement);
 }
 void Game::PlayerData::UseWeapon(const WEAPON_FIRE &usage)
@@ -55,9 +56,9 @@ int Game::PlayerData::GetTeamID() const
 	return this->player->GetTeamID();
 }
 
-OBJECT_TYPE Game::PlayerData::GetType()	const
+OBJECT_TYPE Game::PlayerData::GetObjectType()	const
 {
-	return this->player->GetType();
+	return this->player->GetObjectType();
 }
 void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir)
 {

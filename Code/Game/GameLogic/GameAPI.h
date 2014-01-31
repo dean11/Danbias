@@ -13,6 +13,7 @@
 #include "GameLogicStates.h"
 #include <OysterMath.h>
 
+
 namespace GameLogic
 {
 	class IObjectData;
@@ -61,7 +62,7 @@ namespace GameLogic
 			/** Get the type of the object
 			*	@return The OBJECT_TYPE of the object is returned
 			*/
-			virtual OBJECT_TYPE GetType() const = 0;
+			virtual OBJECT_TYPE GetObjectType() const = 0;
 		};
 
 		class IPlayerData :public IObjectData
@@ -78,7 +79,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const const Oyster::Math3D::Float3 lookDir) = 0;
+			virtual void Rotate(const Oyster::Math3D::Float3 lookDir) = 0;
 
 			/********************************************************
 			* Uses the chosen players weapon based on input
@@ -99,8 +100,7 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
-			virtual IObjectData* GetObjectAt( int ID) const = 0;
-
+			virtual IObjectData* GetObjectAt(int ID) const				= 0;
 		};
 
 	class DANBIAS_GAMELOGIC_DLL GameAPI

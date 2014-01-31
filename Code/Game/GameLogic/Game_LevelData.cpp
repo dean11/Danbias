@@ -30,9 +30,9 @@ int Game::LevelData::GetID() const
 {
 	return ((IObjectData*)this->level)->GetID();
 }
-OBJECT_TYPE Game::LevelData::GetType() const
+OBJECT_TYPE Game::LevelData::GetObjectType() const
 {
-	return ((IObjectData*)this->level)->GetType();
+	return ((IObjectData*)this->level)->GetObjectType();
 	//return OBJECT_TYPE_UNKNOWN;
 }
 

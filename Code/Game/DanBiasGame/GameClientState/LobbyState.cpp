@@ -4,6 +4,7 @@
 #include "C_obj/C_Player.h"
 #include "C_obj/C_StaticObj.h"
 #include "C_obj/C_DynamicObj.h"
+#include <GameServerAPI.h>
 
 using namespace DanBias::Client;
 
@@ -31,7 +32,7 @@ LobbyState::~LobbyState(void)
 bool LobbyState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
-	
+	this->nwClient = nwClient;
 	// load models
 	LoadModels(L"UImodels.txt");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
@@ -86,9 +87,14 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	// update animation
 	// send data to server
 	// check data from server
+	
 
 	if( KeyInput->IsKeyPressed(DIK_G)) 
-	  return ClientState_Game;
+	{
+		DanBias::GameServerAPI::GameStart();
+		return ClientState_Game;
+	}
+	  
 	return ClientState_Same;
 }
 bool LobbyState::Render()
