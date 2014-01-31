@@ -56,7 +56,7 @@ namespace DanBias
 	{
 
 		WindowShell::CreateConsoleWindow();
-		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
+		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )

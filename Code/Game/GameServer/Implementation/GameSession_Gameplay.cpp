@@ -92,9 +92,9 @@ namespace DanBias
 			Protocol_ObjectPosition p(world, 2);
 			GameSession::gameSession->Send(*p.GetProtocol());
 		}
-		GameLogic::IObjectData* obj = NULL;
-		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
+		else if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
 		{
+			GameLogic::IObjectData* obj = NULL;
 			obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
 			if(obj)
 			{

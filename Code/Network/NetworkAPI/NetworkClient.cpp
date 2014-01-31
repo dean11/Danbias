@@ -291,6 +291,8 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 
 void NetworkClient::Disconnect()
 {
+	if(!privateData) return;
+
 	privateData->connection.Disconnect();
 	privateData->thread.Terminate();
 }
