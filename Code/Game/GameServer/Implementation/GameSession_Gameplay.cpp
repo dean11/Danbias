@@ -94,7 +94,7 @@ namespace DanBias
 				Oyster::Math::Float4x4 world = temp->GetOrientation();
 					
 				Protocol_ObjectPosition p(world, id);
-				GameSession::gameSession->Send(*p.GetProtocol());
+				GameSession::gameSession->Send(p.GetProtocol());
 		}
 
 		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
