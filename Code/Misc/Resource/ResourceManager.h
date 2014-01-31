@@ -11,6 +11,8 @@ namespace Oyster
 		struct ResourceData;
 
 		typedef void* HRESOURCE;
+		typedef char HBYTE;
+		typedef HBYTE* HBYTEARRAY;
 		/** Typedef on a fuction required for custom unloading */
 		typedef void(*UnloadFunction)(void* loadedData);
 
@@ -41,8 +43,6 @@ namespace Oyster
 		public:
 			ResourceManager();
 			~ResourceManager();
-			ResourceManager(const ResourceManager&) = delete;
-			const ResourceManager& operator=(const ResourceManager&) = delete;
 
 			/**
 			*	Load a resource given a type.
@@ -52,7 +52,7 @@ namespace Oyster
 			*	@param force If set to true, the resource will be reloaded if it already exists. If it does not, nothing happens.
 			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
 			*/
-			char*			LoadBytes(const wchar_t filename[], ResourceType type, int customId = -1, bool force = false);
+			HBYTEARRAY		LoadBytes(const wchar_t filename[], ResourceType type, int customId = -1, bool force = false);
 
 			/**
 			*	Load a resource with a custom loading function
@@ -68,16 +68,16 @@ namespace Oyster
 			/**
 			*	Reload a resource
 			*	@param filename The path to the resource.
-			*	@return If function suceeds, the return value is true.
+			*	@return If function suceeds, the return value is the reloaded resource.
 			*/
-			bool			ReloadResource(const wchar_t filename[]);
+			HRESOURCE		ReloadResource(const wchar_t filename[]);
 
 			/**
 			*	Reload a resource
 			*	@param filename The path to the resource.
-			*	@return If function suceeds, a handle to the resource will be returned. If failed 0 is returned.
+			*	@return If function suceeds, the return value is the reloaded resource.
 			*/
-			bool			ReloadResource(HRESOURCE resource);
+			HRESOURCE		ReloadResource(HRESOURCE& resource);
 
 			/**
 			*	Releases all resources loaded by the resource handler.
@@ -151,6 +151,8 @@ namespace Oyster
 			int				GetResourceId(const wchar_t filename[]);
 		
 		private:
+			ResourceManager(const ResourceManager& obj);
+			const ResourceManager& operator=(const ResourceManager&);
 			std::map<std::wstring, ResourceData*> resources;
 
 		};	

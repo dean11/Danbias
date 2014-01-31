@@ -51,6 +51,7 @@ namespace DanBias
 		if(this->isCreated)				return false;
 
 		/* standard initialization of some data */
+		NetworkSession::clients = desc.clients;
 		this->clients.Resize(desc.clients.Size());
 		this->owner = desc.owner;
 
@@ -73,6 +74,7 @@ namespace DanBias
 		{
 			if( (p = this->gameInstance.CreatePlayer()) )
 			{
+				desc.clients[i]->SetOwner(this);
 				this->clients[i] = new GameClient(desc.clients[i], p);
 			}
 			else

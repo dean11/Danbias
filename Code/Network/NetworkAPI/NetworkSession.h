@@ -32,7 +32,7 @@ namespace Oyster
 
 			/**	Parse session events such as protocols recieved etc.
 			*/
-			void ProcessClients();
+			virtual void ProcessClients();
 
 			/**
 			*	
