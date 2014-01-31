@@ -166,6 +166,7 @@
     <ClInclude Include="DynamicArray.h" />
     <ClInclude Include="EventHandler\EventButton.h" />
     <ClInclude Include="EventHandler\EventButtonCollection.h" />
+    <ClInclude Include="EventHandler\IEventButton.h" />
     <ClInclude Include="GID.h" />
     <ClInclude Include="IQueue.h" />
     <ClInclude Include="EventHandler\EventHandler.h" />

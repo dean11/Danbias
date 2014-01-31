@@ -4,39 +4,23 @@
 
 #include "../../Input/L_inputClass.h"
 #include <vector>
+#include "IEventButton.h"
 
 namespace Oyster
 {
 	namespace Event
 	{
-		struct IButton
-		{
-			enum ButtonState
-			{
-				Button_Clicked,
-				Button_Hover,
-				Button_Hold,
-				Button_Smashed,	
-			};
-		};
-		template <class T>
-		class EventButton :public IButton
+
+		template <class owner>
+		class EventButton : public IEventButton
 		{
 		private:
-			
-			struct ButtonEvent
-			{
-				ButtonState state; 
-				EventButton &sender;
-				T          owner;
-			};	
-
 			struct PrivData
 			{
 				static unsigned int currID;
 				unsigned int ID;
 
-				T owner;
+				owner owner;
 				void (*EventFunc)( ButtonEvent e );
 			};
 
@@ -44,9 +28,9 @@ namespace Oyster
 
 		public:
 			EventButton();
-			EventButton(T owner);
+			EventButton(owner owner);
 			EventButton(void (*EventFunc)( ButtonEvent e));
-			EventButton(void (*EventFunc)( ButtonEvent e), T owner);
+			EventButton(void (*EventFunc)( ButtonEvent e), owner owner);
 			
 			~EventButton();
 			
@@ -55,13 +39,13 @@ namespace Oyster
 			void SetEventFunc(void (*EventFunc)( ButtonEvent e )); //?
 			
 			unsigned int GetID();
-			T& GetOwner(); 
+			owner& GetOwner(); 
 		
 		};
 
 
-		template <class T>
-		EventButton<T>::EventButton()
+		template <class owner>
+		EventButton<owner>::EventButton()
 		{
 			this->privData.ID = privData.currID;
 			this->privData.currID += 1;
@@ -69,8 +53,8 @@ namespace Oyster
 			this->privData.EventFunc = NULL;
 		}
 
-		template <class T>
-		EventButton<T>::EventButton(T owner)
+		template <class owner>
+		EventButton<owner>::EventButton(owner owner)
 		{
 			this->privData.ID = privData.currID;
 			this->privData.currID += 1;
@@ -78,8 +62,8 @@ namespace Oyster
 			this->privData.EventFunc = NULL;
 		}
 
-		template <class T>
-		EventButton<T>::EventButton(void (*EventFunc)( ButtonEvent e))
+		template <class owner>
+		EventButton<owner>::EventButton(void (*EventFunc)( ButtonEvent e))
 		{
 			this->privData.ID = privData.currID;
 			this->privData.currID += 1;
@@ -87,8 +71,8 @@ namespace Oyster
 			this->privData.EventFunc = EventFunc;
 		}
 
-		template <class T>
-		EventButton<T>::EventButton(void (*EventFunc)( ButtonEvent e), T owner)
+		template <class owner>
+		EventButton<owner>::EventButton(void (*EventFunc)( ButtonEvent e), owner owner)
 		{
 			this->privData.ID = privData.currID;
 			this->privData.currID += 1;
@@ -96,32 +80,32 @@ namespace Oyster
 			this->privData.EventFunc = EventFunc;
 		}
 
-		template <class T>
-		EventButton<T>~EventButton()
+		template <class owner>
+		EventButton<owner>~EventButton()
 		{
 
 		}
 		
-		template <class T>
-		void EventButton<T>::checkCollision(InputClass *input)
+		template <class owner>
+		void EventButton<owner>::checkCollision(InputClass *input)
 		{
 			//??????????????? TODO: everything
 		}
 
-		template <class T>
-		void EventButton<T>::SetEventFunc(void (*EventFunc)( ButtonEvent e ))
+		template <class owner>
+		void EventButton<owner>::SetEventFunc(void (*EventFunc)( ButtonEvent e ))
 		{
 			this->privData.EventFunc = EventFunc;
 		}
 		
-		template <class T>
-		unsigned int EventButton<T>::GetID()
+		template <class owner>
+		unsigned int EventButton<owner>::GetID()
 		{
 			return this->privData.ID;
 		}
 
-		template <class T>
-		T& EventButton<T>::GetOwner()
+		template <class owner>
+		owner& EventButton<owner>::GetOwner()
 		{
 			return this->privData.owner;
 		}
