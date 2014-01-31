@@ -124,7 +124,7 @@ namespace Oyster
 
 			inline const ::Oyster::Math::Float3 & CustomBodyState::GetAngularAxis() const
 			{
-				return ::Utility::Value::Radian(this->angularAxis);
+				return this->angularAxis;
 			}
 
 			inline ::Oyster::Math::Float4x4 CustomBodyState::GetRotation() const
