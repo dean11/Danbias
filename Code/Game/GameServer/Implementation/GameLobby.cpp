@@ -53,6 +53,8 @@ namespace DanBias
 		desc.mapNumber = this->description.mapNumber;
 		desc.owner = this;
 		desc.clients = this->clients;
+
+		this->clients.Clear();
 		
 		if(this->gameSession.Create(desc))
 		{

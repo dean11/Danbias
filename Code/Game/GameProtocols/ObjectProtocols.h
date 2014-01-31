@@ -8,7 +8,7 @@ namespace GameLogic
 {
 	struct Protocol_ObjectPickup :public Oyster::Network::CustomProtocolObject
 	{
-		int object_ID;
+		short object_ID;
 		short pickup_ID;
 
 		Protocol_ObjectPickup()
@@ -16,7 +16,7 @@ namespace GameLogic
 			this->protocol[0].value = protocol_Gameplay_ObjectPickup;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 									
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Short;
 			
 			object_ID = -1;
@@ -24,14 +24,15 @@ namespace GameLogic
 		}
 		Protocol_ObjectPickup(Oyster::Network::CustomNetProtocol& p)
 		{
-
+			object_ID = p[1].value.netShort;
+			pickup_ID = p[2].value.netShort;
 		}
 		Protocol_ObjectPickup(int objectID, short pickupID)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectPosition;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 									
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Short;
 			
 			object_ID = objectID;

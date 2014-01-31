@@ -38,11 +38,11 @@ namespace Oyster
 			{ 
 				return this->resourceData; 
 			}
-			inline unsigned long long	GetResourceSize()					const	
+			inline unsigned int			GetResourceSize()					const	
 			{ 
 				return this->resourceSize; 
 			}
-			inline unsigned long long	GetResourceElementSize()			const	
+			inline unsigned int			GetResourceElementSize()			const	
 			{ 
 				return this->resourceElementSize; 
 			}

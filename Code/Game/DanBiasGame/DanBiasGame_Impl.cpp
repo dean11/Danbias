@@ -55,6 +55,7 @@ namespace DanBias
 	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
 	{
 
+		WindowShell::CreateConsoleWindow();
 		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
@@ -68,7 +69,7 @@ namespace DanBias
 		m_data->serverOwner = false;
 
 		// Start in lobby state
-		m_data->recieverObj->gameClientState = new Client::LanMenuState();
+		m_data->recieverObj->gameClientState = new Client::LoginState();
 		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj))
 			return DanBiasClientReturn_Error;
 
@@ -131,6 +132,7 @@ namespace DanBias
 	{
 		if(m_data->recieverObj->IsConnected())
 			m_data->recieverObj->Update();
+
 		m_data->inputObj->Update();
 
 		if(m_data->serverOwner)

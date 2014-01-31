@@ -26,6 +26,8 @@ namespace DanBias
 		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> ReleaseClient();
 		int GetID() const;
 
+		bool Equals(const Oyster::Network::NetworkClient* c);
+
 	private:
 		GameLogic::IPlayerData* player;
 		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client;

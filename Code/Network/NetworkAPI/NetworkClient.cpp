@@ -240,6 +240,7 @@ bool NetworkClient::operator ==(const int& ID)
 
 void NetworkClient::Update()
 {
+	if(!this->privateData) return;
 	while (!this->privateData->recieveQueue.IsEmpty())
 	{
 		NetEvent<NetworkClient*, ClientEventArgs> temp = this->privateData->recieveQueue.Pop();
@@ -280,7 +281,7 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 	
 	//Connect has succeeded
 	if(result != 0)		return false;
-
+	this->privateData->owner = 0;
 	this->privateData->parent = this;
 	this->privateData->thread.Start();
 
