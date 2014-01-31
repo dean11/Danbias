@@ -2,6 +2,8 @@
 #define DANBIAS_CLIENTRECIEVEROBJECT_H
 
 //WTF!? No headers included???
+#include "../DanBiasGame/Include/DanBiasGame.h"
+#include "../GameProtocols/GeneralProtocols.h"
 
 namespace DanBias
 {

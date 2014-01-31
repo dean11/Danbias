@@ -53,6 +53,7 @@ public:
 	{
 		ClientState_Login,
 		ClientState_Lobby,
+		ClientState_Lan,
 		ClientState_LobbyCreated,
 		ClientState_Game,
 		ClientState_Same,

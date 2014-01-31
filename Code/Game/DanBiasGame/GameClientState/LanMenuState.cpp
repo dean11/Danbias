@@ -5,6 +5,10 @@
 #include "C_obj/C_DynamicObj.h"
 #include "DllInterfaces/GFXAPI.h"
 
+#include "LobbyState.h"
+#include "GameState.h"
+#include "../GameClientRecieverFunc.h"
+
 #include <GameServerAPI.h>
 
 using namespace DanBias::Client;
@@ -16,6 +20,10 @@ struct  LanMenuState::myData
 	Oyster::Math3D::Float4x4 proj; 
 	C_Object* object[2]; 
 	int modelCount; 
+
+	GameRecieverObject* recieverObj;
+	bool serverOwner;
+
 	// UI object
 	// game client* 
 }privData;
@@ -83,6 +91,49 @@ bool LanMenuState::InitCamera(Oyster::Math::Float3 startPos)
 }
 
 GameClientState::ClientState LanMenuState::Update(float deltaTime, InputClass* KeyInput)
+{
+	/*ChangeState(KeyInput);
+
+	if(privData->recieverObj->IsConnected())
+		privData->recieverObj->Update();
+	KeyInput->Update();
+
+	if(privData->serverOwner)
+	{
+		DanBias::GameServerAPI::ServerUpdate();
+	}
+
+	DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
+	state = privData->recieverObj->gameClientState->Update(deltaTime, KeyInput);
+
+	if(state != Client::GameClientState::ClientState_Same)
+	{
+		privData->recieverObj->gameClientState->Release();
+		delete privData->recieverObj->gameClientState;
+		privData->recieverObj->gameClientState = NULL;
+
+		switch (state)
+		{
+		case Client::GameClientState::ClientState_LobbyCreated:
+			privData->serverOwner = true;
+		case Client::GameClientState::ClientState_Lobby:
+			privData->recieverObj->gameClientState = new Client::LobbyState();
+			break;
+		case Client::GameClientState::ClientState_Game:
+			privData->recieverObj->gameClientState = new Client::GameState();
+			break;
+		default:
+			//return E_FAIL;
+			break;
+		}
+		privData->recieverObj->gameClientState->Init(privData->recieverObj); // send game client
+				 
+	}*/
+
+	return ChangeState(KeyInput);
+}
+
+GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
 {
 	// create game
 	if( KeyInput->IsKeyPressed(DIK_C)) 
