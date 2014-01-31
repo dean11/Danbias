@@ -41,7 +41,7 @@ void Level::InitiateLevel(float radius)
 	
 	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
-	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-5,15,0,0);
+	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(4,320,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
 	sbDesc_TestBox.mass = 10;
 	sbDesc_TestBox.size = Oyster::Math::Float4(0.5f,0.5f,0.5f,0);
@@ -52,7 +52,7 @@ void Level::InitiateLevel(float radius)
 	testBox = new DynamicObject(rigidBody_TestBox, OBJECT_TYPE::OBJECT_TYPE_BOX);
 	rigidBody_TestBox->SetCustomTag(testBox);
 	rigidBody_TestBox->GetState(state);
-	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,4));
+	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,4000));
 	rigidBody_TestBox->SetState(state);
 	
 	

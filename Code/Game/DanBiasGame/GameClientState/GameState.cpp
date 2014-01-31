@@ -95,7 +95,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	// add box model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-5,15,0));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4,320,0));
 	modelData.world = modelData.world * translate;
 	modelData.modelPath = L"box.dan";
 	modelData.id = 1;
