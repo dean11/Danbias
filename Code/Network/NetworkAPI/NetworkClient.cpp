@@ -16,11 +16,15 @@
 #include "../../Misc/Utilities.h"
 #include "../../Misc/Thread/IThreadObject.h"
 #include "../../Misc/Thread/OysterThread.h"
+#include "../../Misc/Packing/Packing.h"
+
+#include <queue>
 
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace Utility::DynamicMemory;
 using namespace Utility::Container;
+using namespace std;
 
 /*************************************
 			PrivateData
@@ -35,11 +39,12 @@ struct NetworkClient::PrivateData : public IThreadObject
 	Translator translator;
 	OysterThread thread;
 
+	OysterByte recieveBuffer;
 
 	//Message queue for sending and recieving
 	ThreadSafeQueue<CustomNetProtocol> sendQueue;
 	ThreadSafeQueue<NetEvent<NetworkClient*, NetworkClient::ClientEventArgs>> recieveQueue;
-	
+
 	//ID
 	static unsigned int currID;
 	const unsigned int ID;
@@ -66,7 +71,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 	bool DoWork() override
 	{
 		if(!this->connection.IsConnected())	return false;
-		
+
 		Send();
 		Recv();
 		
@@ -82,6 +87,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 			CustomNetProtocol p = this->sendQueue.Pop();
 			this->translator.Pack(temp, p);
 			errorCode = this->connection.Send(temp);
+
 			if(errorCode != 0)
 			{
 				CEA parg;
@@ -103,9 +109,13 @@ struct NetworkClient::PrivateData : public IThreadObject
 		
 		if(errorCode == 0 && temp.GetSize())
 		{
+			HandleRecievedData(temp);
+
+
+			/*	Replaced with EmptyOutbufferedQueue() and HandleRecievedData(OysterByte)
 			CustomNetProtocol protocol;
 			bool ok = this->translator.Unpack(protocol, temp);
-		
+
 			//Check if the protocol was unpacked correctly
 			if(ok)
 			{
@@ -114,7 +124,8 @@ struct NetworkClient::PrivateData : public IThreadObject
 				parg.data.protocol = protocol;
 				NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
 				this->recieveQueue.Push(e);
-			}
+			}*/
+
 		}
 		//else
 		//{
@@ -126,6 +137,76 @@ struct NetworkClient::PrivateData : public IThreadObject
 		//}
 	
 		return errorCode;
+	}
+
+	void HandleRecievedData(OysterByte& data)
+	{
+		//Loop through all packages that was recieved and add them to the queue.
+		unsigned int size = 0;
+
+		Oyster::Network::OysterByte msg;
+
+		//If there is part of a message in the buffer.
+		if(recieveBuffer.GetSize() > 0)
+		{
+			//cout << "the buffer size: " << recvBuffer.GetSize() <<endl;
+			unsigned int temp = recieveBuffer.GetSize();
+			size = Oyster::Packing::Unpacki(recieveBuffer);
+
+			if(temp + data.GetSize() > size)
+			{
+				msg = recieveBuffer;
+				recieveBuffer.Clear();
+				size -= msg.GetSize();
+				msg.AppendPartOfArray(data, 0, size);
+				UnpackMessageAndAddToQueue(msg);
+			}
+			else if(temp + data.GetSize() == size)
+			{
+				msg = recieveBuffer;
+				recieveBuffer.Clear();
+				size -= msg.GetSize();
+				msg += data;
+				UnpackMessageAndAddToQueue(msg);
+				return;
+			}
+			else
+			{
+				recieveBuffer += data;
+				size = data.GetSize();
+				return;
+			}
+		}
+
+ 		for(unsigned int i = size; i < data.GetSize(); i += size)
+		{
+			size = Oyster::Packing::Unpacki(&data.GetByteArray()[i]);
+			if(i+size > data.GetSize())
+			{
+				//Add it to the recvBuffer instead.
+				recieveBuffer.AppendPartOfArray(data, i, data.GetSize());
+				break;
+			}
+			msg.Clear();
+			msg.AppendPartOfArray(data, i, i+size);
+			UnpackMessageAndAddToQueue(msg);
+		}
+	}
+
+	void UnpackMessageAndAddToQueue(OysterByte& msg)
+	{
+		CustomNetProtocol protocol;
+		bool ok = this->translator.Unpack(protocol, msg);
+
+		//Check if the protocol was unpacked correctly
+		if(ok)
+		{
+			CEA parg;
+			parg.type = CEA::EventType_ProtocolRecieved;
+			parg.data.protocol = protocol;
+			NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
+			this->recieveQueue.Push(e);
+		}
 	}
 };
 unsigned int NetworkClient::PrivateData::currID = 0;
