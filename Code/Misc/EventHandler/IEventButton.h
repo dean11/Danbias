@@ -1,3 +1,5 @@
+#ifndef MISC_IEVENT_BUTTON
+#define MISC_IEVENT_BUTTON
 #include "../../Input/L_inputClass.h"
 
 namespace Oyster
@@ -6,8 +8,8 @@ namespace Oyster
 	{
 		class IEventButton
 		{
-
-		private:
+			
+		public:
 			
 			enum ButtonState
 			{
@@ -17,25 +19,15 @@ namespace Oyster
 				Button_Smashed,	
 			};
 
-			struct ButtonEvent
-			{
-				ButtonState state; 
-				IEventButton &sender;
+			virtual void CheckCollision(InputClass *input) = 0;
 
-				template<class owner>
-				owner          owner;
-			};	
-
-		public:
-			virtual void checkCollision(InputClass *input) = 0;
-
+			struct ButtonEvent;
 			virtual void SetEventFunc(void (*EventFunc)( ButtonEvent e )) = 0;
 			
 			virtual unsigned int GetID() = 0;
-
-			template<class owner>
-			virtual owner& GetOwner() = 0; 
 		
 		};
 	}
 }
+
+#endif

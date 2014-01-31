@@ -2,19 +2,25 @@
 // Sam Svensson 2013 //
 ///////////////////////
 
+#ifndef MISC_EVENT_BUTTON_H
+#define MISC_EVENT_BUTTON_H
 #include "../../Input/L_inputClass.h"
-#include <vector>
-#include "IEventButton.h"
 
 namespace Oyster
 {
 	namespace Event
 	{
-
-		template <class owner>
-		class EventButton : public IEventButton
+		template <typename owner>
+		class EventButton
 		{
 		private:
+			struct ButtonEvent
+			{
+				IEventButton::ButtonState state; 
+				EventButton<owner> &sender;
+				owner          owner;
+			};	
+
 			struct PrivData
 			{
 				static unsigned int currID;
@@ -34,7 +40,7 @@ namespace Oyster
 			
 			~EventButton();
 			
-			void checkCollision(InputClass *input);
+			void CheckCollision(InputClass *input);
 
 			void SetEventFunc(void (*EventFunc)( ButtonEvent e )); //?
 			
@@ -44,7 +50,7 @@ namespace Oyster
 		};
 
 
-		template <class owner>
+		template <typename owner>
 		EventButton<owner>::EventButton()
 		{
 			this->privData.ID = privData.currID;
@@ -53,7 +59,7 @@ namespace Oyster
 			this->privData.EventFunc = NULL;
 		}
 
-		template <class owner>
+		template <typename owner>
 		EventButton<owner>::EventButton(owner owner)
 		{
 			this->privData.ID = privData.currID;
@@ -62,7 +68,7 @@ namespace Oyster
 			this->privData.EventFunc = NULL;
 		}
 
-		template <class owner>
+		template <typename owner>
 		EventButton<owner>::EventButton(void (*EventFunc)( ButtonEvent e))
 		{
 			this->privData.ID = privData.currID;
@@ -71,7 +77,7 @@ namespace Oyster
 			this->privData.EventFunc = EventFunc;
 		}
 
-		template <class owner>
+		template <typename owner>
 		EventButton<owner>::EventButton(void (*EventFunc)( ButtonEvent e), owner owner)
 		{
 			this->privData.ID = privData.currID;
@@ -80,34 +86,36 @@ namespace Oyster
 			this->privData.EventFunc = EventFunc;
 		}
 
-		template <class owner>
-		EventButton<owner>~EventButton()
+		template <typename owner>
+		EventButton<owner>::~EventButton()
 		{
 
 		}
 		
-		template <class owner>
-		void EventButton<owner>::checkCollision(InputClass *input)
+		template <typename owner>
+		void EventButton<owner>::CheckCollision(InputClass *input)
 		{
 			//??????????????? TODO: everything
 		}
 
-		template <class owner>
+		template <typename owner>
 		void EventButton<owner>::SetEventFunc(void (*EventFunc)( ButtonEvent e ))
 		{
 			this->privData.EventFunc = EventFunc;
 		}
 		
-		template <class owner>
+		template <typename owner>
 		unsigned int EventButton<owner>::GetID()
 		{
 			return this->privData.ID;
 		}
 
-		template <class owner>
+		template <typename owner>
 		owner& EventButton<owner>::GetOwner()
 		{
 			return this->privData.owner;
 		}
 	}
 }
+
+#endif

@@ -14,6 +14,7 @@ namespace Oyster
 	{
 		class EventHandler
 		{
+		public:
 			EventHandler();
 			~EventHandler();
 

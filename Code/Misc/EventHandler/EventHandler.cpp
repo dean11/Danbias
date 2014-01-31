@@ -2,7 +2,7 @@
 
 using namespace Oyster::Event;
 
-EventHandler EvtHandler;
+Oyster::Event::EventHandler EvtHandler;
 
 EventHandler& EventHandler::Instance()
 {
@@ -32,5 +32,7 @@ void EventHandler::AddCollection(EventButtonCollection& collection)
 
 EventButtonCollection& EventHandler::CreateCollection()
 {
-
+	EventButtonCollection temp;
+	collections.push_back(&temp);
+	return temp;
 }
