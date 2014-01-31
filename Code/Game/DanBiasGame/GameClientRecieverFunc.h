@@ -100,6 +100,18 @@ namespace DanBias
 						((Client::GameState*)gameClientState)->Protocol(&protocolData);
 				}
 				break;
+			case protocol_Lobby_Start:
+				{
+					/*
+					if(dynamic_cast<Client::LobbyState*>(gameClientState))
+					{
+						gameClientState->Release();
+						delete gameClientState;
+						gameClientState = new Client::GameState();
+						gameClientState->Init(m_data->recieverObj);
+					}*/
+				}
+				break;
 
 			default:
 				break;
