@@ -41,7 +41,7 @@ void Level::InitiateLevel(float radius)
 	
 	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
-	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(0,320,0,0);
+	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
 	sbDesc_TestBox.mass = 50;
 	sbDesc_TestBox.size = Oyster::Math::Float4(4,4,4,0);
