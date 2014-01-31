@@ -46,7 +46,11 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float dt)
 {
 	//Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (500 * dt);
-	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
+
+	Oyster::Math::Float3 look = owner->GetLookDir();
+	Oyster::Math::Float3 up = -owner->GetRigidBody()->GetGravityNormal();
+	Oyster::Math::Float3 pos = owner->GetPosition();
+	Oyster::Math::Float4x4 aim = Oyster::Math3D::OrientationMatrix_LookAtDirection(owner->GetLookDir(), -owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
 	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1,1,20); 
 	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
 	int arg = 0;
