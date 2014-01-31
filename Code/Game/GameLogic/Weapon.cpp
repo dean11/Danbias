@@ -1,60 +1,52 @@
 #include "Weapon.h"
-#include "AttatchmentSocket.h"
 #include "AttatchmentMassDriver.h"
-#include "DynamicArray.h"
+#include "Player.h"
+
 
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 
-struct Weapon::PrivateData
-{
-	PrivateData()
-	{
-		weaponState = WEAPON_STATE_IDLE;
-		selectedAttatchment = 0;
-		currentNrOfAttatchments = 0;
-		selectedSocketID = 0;
-		attatchmentSockets = 0;
-	}
-
-	~PrivateData()
-	{
-	}
-
-	WEAPON_STATE weaponState;
-
-	DynamicArray<SmartPointer<AttatchmentSocket>> attatchmentSockets;
-	int currentNrOfAttatchments;
-	SmartPointer<IAttatchment> selectedAttatchment;
-	int selectedSocketID;
-
-}myData;
 
 Weapon::Weapon()
 {
-	myData = new PrivateData();
+	weaponState = WEAPON_STATE_IDLE;
+	selectedAttatchment = 0;
+	currentNrOfAttatchments = 0;
+	selectedSocketID = 0;
+	attatchmentSockets = 0;
 }
 
-Weapon::Weapon(int MaxNrOfSockets)
+Weapon::Weapon(int MaxNrOfSockets,Player *owner)
 {
-	myData = new PrivateData();
-	myData->attatchmentSockets.Resize(MaxNrOfSockets);
+	attatchmentSockets.Resize(MaxNrOfSockets);
+	attatchmentSockets[0] = new AttatchmentSocket();
+
+	weaponState = WEAPON_STATE_IDLE;
+	currentNrOfAttatchments = 0;
+	selectedAttatchment = 0;
+
+	//give the weapon a massdriver on socket 0
+		IAttatchment *mD = new AttatchmentMassDriver(*owner);
+		attatchmentSockets[0]->SetAttatchment(mD);
+		this->currentNrOfAttatchments = 1;
+		SelectAttatchment(0);
+	//give the weapon a massdriver on socket 0
 }
 
 
 Weapon::~Weapon(void)
 {
-	delete myData;
+
 }
 
 /********************************************************
 * Uses the weapon based on the input given and the current chosen attatchment
 ********************************************************/
-void Weapon::Use(const WEAPON_FIRE &usage)
+void Weapon::Use(const WEAPON_FIRE &usage, float dt)
 {
-	if (myData->selectedAttatchment)
+	if (selectedAttatchment)
 	{
-		myData->selectedAttatchment->UseAttatchment(usage);
+		selectedAttatchment->UseAttatchment(usage, dt);
 	}
 	
 }
@@ -68,24 +60,24 @@ void Weapon::Use(const WEAPON_FIRE &usage)
 ********************************************************/
 bool Weapon::IsFireing()
 {
-	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_FIRING);
+	return (weaponState == WEAPON_STATE::WEAPON_STATE_FIRING);
 }
 
 bool Weapon::IsIdle()
 {
-	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_IDLE);
+	return (weaponState == WEAPON_STATE::WEAPON_STATE_IDLE);
 }
 
 bool Weapon::IsReloading()
 {
-	return (myData->weaponState == WEAPON_STATE::WEAPON_STATE_RELOADING);
+	return (weaponState == WEAPON_STATE::WEAPON_STATE_RELOADING);
 }
 
 bool Weapon::IsValidSocket(int socketID)
 {
-	if(socketID < (int)myData->attatchmentSockets.Size() && socketID >= 0)
+	if(socketID < (int)attatchmentSockets.Size() && socketID >= 0)
 	{
-		if (myData->attatchmentSockets[socketID]->GetAttatchment() != 0)
+		if (attatchmentSockets[socketID]->GetAttatchment() != 0)
 		{
 			return true;
 		}
@@ -96,16 +88,16 @@ bool Weapon::IsValidSocket(int socketID)
 
 int Weapon::GetCurrentSocketID()
 {
-	return myData->selectedSocketID;
+	return selectedSocketID;
 }
 
 
 void Weapon::AddNewAttatchment(IAttatchment *attatchment, Player *owner)
 {
-	if(myData->currentNrOfAttatchments < (int)myData->attatchmentSockets.Size())
+	if(currentNrOfAttatchments < (int)attatchmentSockets.Size())
 	{
-		myData->attatchmentSockets[myData->currentNrOfAttatchments]->SetAttatchment(attatchment);
-		myData->currentNrOfAttatchments++;
+		attatchmentSockets[currentNrOfAttatchments]->SetAttatchment(attatchment);
+		currentNrOfAttatchments++;
 	}
 }
 
@@ -113,7 +105,7 @@ void Weapon::SwitchAttatchment(IAttatchment *attatchment, int socketID, Player *
 {
 	if (IsValidSocket(socketID))
 	{
-		myData->attatchmentSockets[socketID]->SetAttatchment(attatchment);
+		attatchmentSockets[socketID]->SetAttatchment(attatchment);
 	}
 }
 
@@ -121,7 +113,7 @@ void Weapon::RemoveAttatchment(int socketID)
 {
 	if (IsValidSocket(socketID))
 	{
-		myData->attatchmentSockets[socketID]->RemoveAttatchment();
+		attatchmentSockets[socketID]->RemoveAttatchment();
 	}
 }
 
@@ -129,8 +121,8 @@ void Weapon::SelectAttatchment(int socketID)
 {
 	if (IsValidSocket(socketID))
 	{
-		myData->selectedAttatchment = myData->attatchmentSockets[socketID]->GetAttatchment();
-		myData->selectedSocketID = socketID;
+		selectedAttatchment = attatchmentSockets[socketID]->GetAttatchment();
+		selectedSocketID = socketID;
 	}
 	
 }

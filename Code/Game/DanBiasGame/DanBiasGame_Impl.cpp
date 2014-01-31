@@ -5,6 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
+#include "GameClientState\LoginState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
 
@@ -51,6 +52,7 @@ namespace DanBias
 	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
 	{
 
+		WindowShell::CreateConsoleWindow();
 		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
@@ -61,22 +63,20 @@ namespace DanBias
 			return DanBiasClientReturn_Error;
 
 		m_data->recieverObj = new GameRecieverObject;
-		
-		m_data->recieverObj->nwClient = new Oyster::Network::NetworkClient(m_data->recieverObj, Oyster::Network::NetworkProtocolCallbackType_Object);
-		m_data->recieverObj->nwClient->Connect(desc.port, desc.IP);
+		/*m_data->recieverObj->Connect(desc.port, desc.IP);
 
-		if (!m_data->recieverObj->nwClient->IsConnected())
+		if (!m_data->recieverObj->IsConnected())
 		{
 			// failed to connect
 			return DanBiasClientReturn_Error;
-		}
+		}*/
 		// Start in lobby state
-		m_data->recieverObj->gameClientState = new  Client::LobbyState();
-		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient))
+		m_data->recieverObj->gameClientState = new  Client::LoginState();
+		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj))
 			return DanBiasClientReturn_Error;
 
-		 m_data->timer = new Utility::WinTimer(); //why dynamic memory?
-		 m_data->timer->reset();
+		m_data->timer = new Utility::WinTimer(); //why dynamic memory?
+		m_data->timer->reset();
 		return DanBiasClientReturn_Sucess;
 	}
 
@@ -133,8 +133,9 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		
+		m_data->recieverObj->Update();
 		m_data->inputObj->Update();
+
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
 		state = m_data->recieverObj->gameClientState->Update(deltaTime, m_data->inputObj);
@@ -157,7 +158,7 @@ namespace DanBias
 				return E_FAIL;
 				break;
 			}
-			m_data->recieverObj->gameClientState->Init(m_data->recieverObj->nwClient); // send game client
+			m_data->recieverObj->gameClientState->Init(m_data->recieverObj); // send game client
 				 
 		}
 		return S_OK;
@@ -184,10 +185,9 @@ namespace DanBias
 	{
 		m_data->recieverObj->gameClientState->Release();
 		delete m_data->recieverObj->gameClientState;
-		m_data->recieverObj->nwClient->Disconnect();
-		delete m_data->recieverObj->nwClient;
-		delete m_data->timer;
+		m_data->recieverObj->Disconnect();
 		delete m_data->recieverObj;
+		delete m_data->timer;
 		delete m_data->inputObj;
 		delete m_data;
 		

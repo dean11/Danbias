@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>632</x>
+      <y>232</y>
+      <w>88</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>lt=.
+&lt;Uses</panel_attributes>
+    <additional_attributes>24;24;24;64;72;64;72;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>136</x>
+      <y>232</y>
+      <w>40</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;24;152</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>448</x>
+      <y>496</y>
+      <w>40</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>24;72;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>432</x>
+      <y>232</y>
+      <w>40</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;24;152</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>608</x>
+      <y>216</y>
+      <w>128</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Resource Loader
+&lt;&lt;Dennis&gt;&gt;&lt;&lt;Singleton&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>232</x>
+      <y>112</y>
+      <w>128</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>GameLogic
+&lt;&lt;Erik&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>120</x>
+      <y>232</y>
+      <w>80</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>Defines</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>352</x>
+      <y>568</y>
+      <w>232</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+LevelParser
+--
+Functions:
+vector&lt;struct&gt; Parse();
+-
+Privates:
+enum headerType;
+const int FileHeaderSize;
+const int FileVersion;
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>336</x>
+      <y>88</y>
+      <w>136</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=lt=-&gt;&gt;&gt;&gt;
+m1=1..1
+m2=1..1
+Uses&gt;</panel_attributes>
+    <additional_attributes>24;40;80;40;120;40;120;144</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>560</x>
+      <y>496</y>
+      <w>136</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>120;24;120;88;24;88</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>352</x>
+      <y>384</y>
+      <w>232</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>LevelLoader
+&lt;&lt;API&gt;&gt;&lt;Interface&gt;&gt;
+--
+Functions:
+vector&lt;struct&gt; LoadLevel(String fileName);
+struct LoadLevelHeader(String fileName);
+-
+Privates:
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>560</x>
+      <y>600</y>
+      <w>176</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1..1
+m2=1..1
+Uses&gt;</panel_attributes>
+    <additional_attributes>24;40;160;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Package</type>
+    <coordinates>
+      <x>344</x>
+      <y>344</y>
+      <w>584</w>
+      <h>368</h>
+    </coordinates>
+    <panel_attributes>LevelLoader</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>472</x>
+      <y>200</y>
+      <w>152</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1..1
+m2=1..1
+Uses&gt;</panel_attributes>
+    <additional_attributes>24;40;136;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>416</x>
+      <y>232</y>
+      <w>80</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>LevelLoader
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>48</x>
+      <y>384</y>
+      <w>232</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>ObjectDefines.h
+&lt;&lt;Header file&gt;&gt;
+--
+Enum ObjectType(static, dynamic, specials);
+.
+Struct  static;
+Struct dynamic;
+Struct specials</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>720</x>
+      <y>584</y>
+      <w>200</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>Collection of functions
+&lt;&lt;lots of functions&gt;&gt;
+--
+functions for creating the right structs</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Package</type>
+    <coordinates>
+      <x>40</x>
+      <y>344</y>
+      <w>248</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>Defines</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>592</x>
+      <y>392</y>
+      <w>208</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+Loader
+--
+Functions: 
+wchar* LoadFile(string fileName);
+//Model* LoadHitBoxes(string modelName);
+//Model* LoadHitBoxes(int modelID);
+-
+Privates:</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>176</x>
+      <y>200</y>
+      <w>256</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=1..1
+m2=1..1
+&lt;Knows about</panel_attributes>
+    <additional_attributes>240;40;24;40</additional_attributes>
+  </element>
+</diagram>

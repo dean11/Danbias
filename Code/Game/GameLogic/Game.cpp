@@ -93,6 +93,7 @@ void Game::CreateTeam()
 
 bool Game::NewFrame()
 {
+
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
@@ -104,6 +105,30 @@ bool Game::NewFrame()
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+	}
+
+	API::Instance().Update();
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->EndFrame();
+	}
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+	}
+
+	API::Instance().Update();
+
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i]->player)	this->players[i]->player->EndFrame();
+	}
+
+	gameInstance.onMoveFnc(this->level);
 	return true;
 }
 
@@ -151,9 +176,9 @@ float Game::GetFrameTime() const
 
 void Game::PhysicsOnMove(const ICustomBody *object)
 {
-	IObjectData* temp = 0;
-	//IObjectData* temp = ((IObjectData*)object->GetDataTag());
-	if(gameInstance.onMoveFnc) gameInstance.onMoveFnc(temp);
+	IObjectData* temp = (IObjectData*)object->GetCustomTag();
+		
+	if(gameInstance.onMoveFnc && temp) gameInstance.onMoveFnc(temp);
 }
 void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
 {

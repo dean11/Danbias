@@ -5,25 +5,10 @@
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 
-struct AttatchmentSocket::PrivateData
-{
-	PrivateData()
-	{
-
-	}
-
-	~PrivateData()
-	{
-
-	}
-
-	SmartPointer<IAttatchment> attatchment;
-
-
-}myData;
 
 AttatchmentSocket::AttatchmentSocket(void)
 {
+	this->attatchment = 0;
 }
 
 
@@ -34,17 +19,17 @@ AttatchmentSocket::~AttatchmentSocket(void)
 
 IAttatchment* AttatchmentSocket::GetAttatchment()
 {
-	return myData->attatchment;
+	return this->attatchment;
 }
 
 void AttatchmentSocket::SetAttatchment(IAttatchment *attatchment)
 {
-	myData->attatchment = attatchment;
+	this->attatchment = attatchment;
 }
 
 void AttatchmentSocket::RemoveAttatchment()
 {
 	
-	myData->attatchment = 0;
+	this->attatchment = 0;
 
 }

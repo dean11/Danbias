@@ -113,6 +113,7 @@ namespace Oyster { namespace Physics3D
 
 		/******************************************************************
 		 * Returns the world angular momentum of a mass in rotation.
+		 * H = r x G
 		 * @todo TODO: improve doc
 		 ******************************************************************/
 		inline ::Oyster::Math::Float3 AngularMomentum( const ::Oyster::Math::Float3 linearMomentum, const ::Oyster::Math::Float3 &worldOffset )
@@ -381,7 +382,6 @@ namespace Oyster { namespace Physics3D
 
 				return inertia;
 			}
-		
 		}
 	}
 } }

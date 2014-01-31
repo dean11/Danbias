@@ -34,6 +34,7 @@ namespace Oyster
 		namespace Constant
 		{
 			const float gravity_constant = (const float)6.67284e-11; //!< The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
+			const float epsilon = (const float)1.0e-7;
 		}
 
 		class PHYSICS_DLL_USAGE API
@@ -139,9 +140,11 @@ namespace Oyster
 			/********************************************************
 			 * Applies an effect to objects that collide with the set volume.
 			 * @param collideable: An ICollideable that defines the volume of the effect.
-			 * @param hitAction: A function that contains the effect.
+			 * @param args: The arguments needed for the hitAction function.
+			 * @param hitAction: A function that contains the effect. Parameterlist contains the custom body 
+								 the collideable hits, and the arguments sent to the function.
 			 ********************************************************/
-			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) ) = 0;
+			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) ) = 0;
 
 			///********************************************************
 			// * Apply force on an object.
@@ -242,8 +245,8 @@ namespace Oyster
 				SubscriptMessage_ignore_collision_response
 			};
 
-			typedef SubscriptMessage (*EventAction_Collision)( const ICustomBody *proto, const ICustomBody *deuter );
-			typedef void (*EventAction_CollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
+			typedef SubscriptMessage (*EventAction_BeforeCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
+			typedef void (*EventAction_AfterCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
 			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::SimpleBodyDescription SimpleBodyDescription;
 			typedef Struct::SphericalBodyDescription SphericalBodyDescription;
@@ -260,12 +263,12 @@ namespace Oyster
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual SubscriptMessage CallSubscription_Collision( const ICustomBody *deuter ) = 0;
+			virtual SubscriptMessage CallSubscription_BeforeCollisionResponse( const ICustomBody *deuter ) = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
 			 ********************************************************/
-			virtual void CallSubscription_CollisionResponse( const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss ) = 0;
+			virtual void CallSubscription_AfterCollisionResponse( const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss ) = 0;
 
 			/********************************************************
 			 * @todo TODO: need doc
@@ -395,14 +398,14 @@ namespace Oyster
 			 * whenever a collision occurs.
 			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
-			virtual void SetSubscription( EventAction_Collision functionPointer ) = 0;
+			virtual void SetSubscription( EventAction_BeforeCollisionResponse functionPointer ) = 0;
 
 			/********************************************************
 			 * Sets the function that will be called by the engine
 			 * whenever a collision has finished.
 			 * @param functionPointer: If NULL, an empty default function will be set.
 			 ********************************************************/
-			virtual void SetSubscription( EventAction_CollisionResponse functionPointer ) = 0;
+			virtual void SetSubscription( EventAction_AfterCollisionResponse functionPointer ) = 0;
 
 			/********************************************************
 			 * Sets the function that will be called by the engine

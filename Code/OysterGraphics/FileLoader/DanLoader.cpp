@@ -132,9 +132,24 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 	{
 		SAFE_DELETE(info->Indecies);
 	}
+	if(info->Animated)
+	{
+		//clean animation
+		delete[] info->bones;
+		for(int a = 0; a < info->AnimationCount; ++a)
+		{
+			for(int x = 0; x < info->Animations[a].Bones; ++x)
+			{
+				delete[] info->Animations[a].Keyframes[x];
+			}
+			delete[] info->Animations[a].Frames;
+			delete[] info->Animations[a].Keyframes;
+		}
+		delete[] info->Animations;
+	}
 	for(int i =0;i<info->Material.size();++i)
 	{
-		Oyster::Resource::OysterResource::ReleaseResource(info->Material[i]);
+		Core::loader.ReleaseResource(info->Material[i]);
 	}
 	delete info;
 }
@@ -158,7 +173,7 @@ static void ReadData(void* Destination, std::ifstream& file,  int size)
 }
 
 ///
-void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resource::CustomData& out)
+void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 {
 	// 
 	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
@@ -168,7 +183,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 	std::ifstream danFile;
 	danFile.open(filename, std::ios::binary);
 	if (!danFile.is_open())
-		return;
+		return NULL;
 
 	// Read file header
 	char* buffer = new char[sizeof(FileHeader)];
@@ -180,7 +195,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 	if (fileHeader.versionMajor != DANFILEVERSIONMAJOR)
 	{
 		danFile.close();
-		return;
+		return NULL;
 	}
 
 	// Read the .dan-file
@@ -281,12 +296,12 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 
 				//load diffuse map 
 				wchar_t* path = charToWChar(materialHeader.diffuseMapPath);
-				ID3D11ShaderResourceView* diffuseMap = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(path, Oyster::Graphics::Loading::LoadTexture);
+				ID3D11ShaderResourceView* diffuseMap = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + path).c_str(), Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
 				delete[] path;
 
 				//load normal map
 				path = charToWChar(materialHeader.normalMapPath);
-				ID3D11ShaderResourceView* normalMap  = (ID3D11ShaderResourceView*)Oyster::Resource::OysterResource::LoadResource(path,  Oyster::Graphics::Loading::LoadTexture);
+				ID3D11ShaderResourceView* normalMap  = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + path).c_str(),  Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
 				delete[] path;
 
 				//add to model
@@ -333,6 +348,7 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 				delete[] buffer;
 
 				Oyster::Graphics::Model::Animation* anims = new Oyster::Graphics::Model::Animation[animationHeader.numAnims];
+
 				for(int a = 0; a < animationHeader.numAnims; ++a)
 				{
 					//read name of animation
@@ -348,11 +364,13 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 					wchar_t* wName = charToWChar(name);
 					anims[a].name = std::wstring(wName);
 					delete[] wName;
-
-					//read duration
+					delete name;
 
 					//read nr of bones in animation
 					ReadData(&anims[a].Bones,danFile,4);
+
+					//read duration
+					ReadData(&anims[a].duration,danFile,8);
 
 					//create Frame array and Bone part of KeyFrameArray;
 					anims[a].Frames = new int[anims[a].Bones];
@@ -399,6 +417,5 @@ void Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[], Oyster::Resour
 	danFile.close();
 
 	// Set modelinfo as output data
-	out.loadedData = modelInfo;
-	out.resourceUnloadFnc = Oyster::Graphics::Loading::UnloadDAN;
+	return modelInfo;
 }

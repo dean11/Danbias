@@ -32,9 +32,9 @@ SamplerState S1 : register(s0);
 
 cbuffer Animation : register(b0)
 {
+	float4x4 BoneAnimation[100];
 	int Animated;
 	float3 Pad;
-	float4x4 BoneAnimation[10];
 }
 
 cbuffer PerModel : register(b1)

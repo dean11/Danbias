@@ -160,7 +160,7 @@ HRESULT InitDirect3D()
 	}
 	
 	m =  Oyster::Graphics::API::CreateModel(L"untitled.dan");
-	m2 = Oyster::Graphics::API::CreateModel(L"knee_noAnimation.dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"still.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	m2->AnimationPlaying = 0;
 	m2->AnimationTime = 0.0f;
@@ -192,7 +192,7 @@ HRESULT Update(float deltaTime)
 
 	angle += Oyster::Math::pi/16 * deltaTime;
 	//m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle) * Oyster::Math3D::RotationMatrix_AxisX(-Oyster::Math::pi/2);
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-Oyster::Math::pi/4,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-Oyster::Math::pi/2,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
 	Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
 	ma *= 50;
 	ma.m44 = 1;

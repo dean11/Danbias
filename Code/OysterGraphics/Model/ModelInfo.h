@@ -27,6 +27,7 @@ namespace Oyster
 				int Bones;
 				int* Frames; //! Bone as index
 				Frame** Keyframes; //! @brief [Bone][Frame]
+				double duration;
 			};
 			struct ModelInfo
 			{

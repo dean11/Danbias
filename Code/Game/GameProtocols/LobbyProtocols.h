@@ -9,8 +9,12 @@
 #include <CustomNetProtocol.h>
 #include "ProtocolIdentificationID.h"
 
+#include <DynamicArray.h>
+
+
 namespace GameLogic
 {
+	/*
 	struct Protocol_LobbyCreateGame :public Oyster::Network::CustomProtocolObject
 	{
 		char* mapName;
@@ -18,8 +22,8 @@ namespace GameLogic
 
 		Protocol_LobbyCreateGame()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_CreateGame;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Create;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_CharArray;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Char;
@@ -39,38 +43,21 @@ namespace GameLogic
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
 	};
-
-	struct Protocol_LobbyJoinGame :public Oyster::Network::CustomProtocolObject
-	{
-		char gameId;
-
-		Protocol_LobbyJoinGame()
-		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_JoinGame;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
-
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
-		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{
-			protocol[1].value = gameId;
-			return &protocol;
-		}
-		
-		private:
-			Oyster::Network::CustomNetProtocol protocol;
-	};
-
+	*/
 	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
-		char gameId;
+		short gameId;
 
 		Protocol_LobbyStartGame()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_StartGame;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Start;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyStartGame(Oyster::Network::CustomNetProtocol& o)
+		{
+			gameId = o[1].value.netInt;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
@@ -82,39 +69,19 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_LobbyJoinLobby :public Oyster::Network::CustomProtocolObject
+	struct Protocol_LobbyLogin :public Oyster::Network::CustomProtocolObject
 	{
-		int LobbyID;
-		Protocol_LobbyJoinLobby(int id = -1)
+		// Login stuff
+		Protocol_LobbyLogin()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_JoinLobby;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_Join;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
-			LobbyID = id;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
-		Protocol_LobbyJoinLobby(Oyster::Network::CustomNetProtocol& o)
+		Protocol_LobbyLogin(Oyster::Network::CustomNetProtocol& p)
 		{
-			LobbyID = o[1].value.netInt;
-		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{
-			this->protocol[1].value = LobbyID;
 
-			return &protocol;
-		}
-		
-		private:
-			Oyster::Network::CustomNetProtocol protocol;
-	};
-
-	struct Protocol_LobbyLeaveLobby :public Oyster::Network::CustomProtocolObject
-	{
-		
-		Protocol_LobbyLeaveLobby()
-		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_LeaveLobby;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
@@ -125,53 +92,176 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_LobbyUpdate :public Oyster::Network::CustomProtocolObject
+	//struct Protocol_LobbyJoin :public Oyster::Network::CustomProtocolObject
+	//{
+	//	short value;
+	//
+	//	Protocol_LobbyJoin()
+	//	{
+	//		this->protocol[0].value = protocol_Lobby_Join;
+	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+	//	}
+	//	Protocol_LobbyJoin(Oyster::Network::CustomNetProtocol& p)
+	//	{
+	//		this->protocol[0].value = protocol_Lobby_Join;
+	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+	//		value = p[1].value.netShort;
+	//	}
+	//	Oyster::Network::CustomNetProtocol* GetProtocol() override
+	//	{
+	//		protocol[1].value = value;
+	//		return &protocol;
+	//	}
+	//	
+	//	private:
+	//		Oyster::Network::CustomNetProtocol protocol;
+	//};
+
+	struct Protocol_LobbyRefresh :public Oyster::Network::CustomProtocolObject
 	{
-		struct LobbyUpdateData
+		Protocol_LobbyRefresh()
 		{
-			std::string mapName;
-			int LobbyId;
+			this->protocol[0].value = protocol_Lobby_Login;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+		}
+		Protocol_LobbyRefresh(Oyster::Network::CustomNetProtocol& o)
+		{
+			
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{ return &protocol; }
+		
+		private:
+			Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	/**
+	*	A protocol that contains all data to send to client when update game lobby
+	*/
+
+	struct Protocol_LobbyClientData :public Oyster::Network::CustomProtocolObject
+	{
+		// Player list
+		struct PlayerData
+		{
+			std::string name;
+			std::string ip;
+			int id;
+			int team;
 		};
-		int count;
-		LobbyUpdateData* data;
-		Protocol_LobbyUpdate()
+		Utility::DynamicMemory::DynamicArray<PlayerData> list;
+		
+		Protocol_LobbyClientData()
 		{
-			this->protocol[protocol_INDEX_ID].value = protocol_Lobby_LeaveLobby;
-			this->protocol[protocol_INDEX_ID].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_ClientData;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			list.Reserve(10);
 		}
-		Protocol_LobbyUpdate( Oyster::Network::CustomNetProtocol* p )
+		Protocol_LobbyClientData(Oyster::Network::CustomNetProtocol& p)
 		{
-			count = (*p)[1].value.netInt;
-			data = new LobbyUpdateData[count];
-			for (int i = 0; i < count; i++)
+			unsigned int size = this->protocol[1].value.netUInt;
+			list.Reserve(size);
+			int a = 2;
+			for (unsigned int i = 0; i < list.Size(); i++)
 			{
-				//data[i].mapName = (*p)[i].value.
+				PlayerData d;
+				d.id = this->protocol[a++].value.netInt;
+				d.team = this->protocol[a++].value.netInt;
+				d.name = this->protocol.Get(a++).value.netCharPtr;
+				d.ip = this->protocol.Get(a++).value.netCharPtr;
+				list.Push(d);
 			}
-		}
-		~Protocol_LobbyUpdate()
-		{
-			delete [] data;
-			data = 0;
 		}
 		Oyster::Network::CustomNetProtocol* GetProtocol() override
 		{
-			this->protocol[1].value.netInt = count;
-			for (int i = 2; i < count; i++)
-			{
-				protocol[i].type = Oyster::Network::NetAttributeType_CharArray;
-				protocol[i+1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[1].value = list.Size();
 
-				protocol[i].value.netCharPtr = const_cast<char*>(data[i-2].mapName.c_str());
-				protocol[i+1].value.netInt = data[i-1].LobbyId;
+			int a = 2;
+			for (unsigned int i = 0; i < list.Size(); i++)
+			{
+				this->protocol[a].type = Oyster::Network::NetAttributeType_Int;			// client-id
+					this->protocol[a++].value = list[i].id;
+
+				this->protocol[a].type = Oyster::Network::NetAttributeType_Int;			// team-id
+					this->protocol[a++].value = list[i].team;
+
+				this->protocol[a].type = Oyster::Network::NetAttributeType_CharArray;	// clientName
+					this->protocol.Set(a++, list[i].name);
+
+				this->protocol[a].type = Oyster::Network::NetAttributeType_CharArray;	// clientIP
+					this->protocol.Set(a++, list[i].ip);
 			}
+			
 			return &protocol;
 		}
 		
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
 	};
+
+	struct Protocol_LobbyGameData :public Oyster::Network::CustomProtocolObject
+	{
+		std::string mapName;
+		int majorVersion;
+		int minorVersion;
+	
+		Protocol_LobbyGameData()
+		{
+			this->protocol[0].value = protocol_Lobby_GameData;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_CharArray;
+		}
+		Protocol_LobbyGameData(Oyster::Network::CustomNetProtocol& p)
+		{
+			majorVersion = (int)p.Get(1).value.netInt;
+			minorVersion = (int)p.Get(2).value.netInt;
+			mapName = p.Get(3).value.netCharPtr;
+		}
+		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		{
+			this->protocol[1].value = majorVersion;
+			this->protocol[2].value = minorVersion;
+			this->protocol.Set(3, mapName.c_str());
+
+			return &protocol;
+		}
+		
+		private:
+			Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	/**
+	*	A protocol that contains all data to send to client when update main lobby
+	*/
+	//struct Protocol_LobbyMainData :public Oyster::Network::CustomProtocolObject
+	//{
+	//	// Game instance list 
+	//
+	//	Protocol_LobbyMainData()
+	//	{
+	//		this->protocol[0].value = protocol_Lobby_MainData;
+	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+	//
+	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+	//	}
+	//	Protocol_LobbyMainData(Oyster::Network::CustomNetProtocol& p)
+	//	{
+	//
+	//	}
+	//	Oyster::Network::CustomNetProtocol* GetProtocol() override
+	//	{
+	//		return &protocol;
+	//	}
+	//	
+	//	private:
+	//		Oyster::Network::CustomNetProtocol protocol;
+	//};
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

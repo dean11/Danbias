@@ -4,7 +4,6 @@
 #include "ObjectProtocols.h"
 #include "PlayerProtocols.h"
 #include "LobbyProtocols.h"
-#include "ControlProtocols.h"
-#include "GameplayProtocols.h"
+#include "GeneralProtocols.h"
 
 #endif // !GAMEPROTOCOLS_GAMEPROTOCOLS_H

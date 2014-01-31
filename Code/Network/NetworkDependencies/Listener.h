@@ -5,7 +5,6 @@
 // Created by Pontus Fransson 2013 //
 /////////////////////////////////////
 
-#include "IListener.h"
 #include "Connection.h"
 #include "IPostBox.h"
 #include "../../Misc/Thread/OysterThread.h"
@@ -17,45 +16,43 @@ namespace Oyster
 {
 	namespace Network
 	{
-		namespace Server
+		class Listener : public ::Oyster::Thread::IThreadObject
 		{
-			class Listener : public IListener, public ::Oyster::Thread::IThreadObject
-			{
-			public:
-				Listener();
-				Listener(Oyster::Network::IPostBox<int>* postBox);
-				~Listener();
+		public:
+			Listener();
+			Listener(Oyster::Network::IPostBox<ConnectionInfo>* postBox);
+			~Listener();
 
-				bool Init(unsigned int port) override;
-				bool Init(unsigned int port, bool start);
-				bool Start();
-				void Stop();
-				void Shutdown();
+			bool Init(unsigned int port);
+			bool Init(unsigned int port, bool start);
+			bool Start();
+			void Stop();
+			void Shutdown();
 
-				void SetPostBox(IPostBox<int>* postBox);
+			void SetPostBox(IPostBox<ConnectionInfo>* postBox);
 
-			private:
-				//Thread functions
-				bool DoWork();
-				void ThreadEntry();
-				void ThreadExit();
+		private:
+			//Thread functions
+			bool DoWork();
+			void ThreadEntry();
+			void ThreadExit();
 
-				//Function that runs in the thread.
-				int Accept();
-				void StopListen();
+			//Function that runs in the thread.
+			int Accept();
+			void StopListen();
 
-			private:
-				::Oyster::Network::Connection* connection;
+		private:
+			::Oyster::Network::Connection* connection;
 
-				::Oyster::Thread::OysterThread thread;
-				OysterMutex mutex;
-				std::mutex stdMutex;
+			::Oyster::Thread::OysterThread thread;
+			OysterMutex mutex;
+			std::mutex stdMutex;
 
-				IPostBox<int>* postBox;
-				std::atomic<bool> isListening;
-				int port;
-			};
-		}
+			IPostBox<ConnectionInfo>* postBox;
+			std::atomic<bool> isListening;
+			int port;
+		};
+
 	}
 }
 

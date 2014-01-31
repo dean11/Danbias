@@ -4,6 +4,8 @@
 #ifndef MISC_DYNAMIC_ARRAY_H
 #define MISC_DYNAMIC_ARRAY_H
 
+#include <assert.h>
+
 namespace Utility
 {
 	namespace DynamicMemory
@@ -34,6 +36,8 @@ namespace Utility
 			void Clear();
 
 			void Resize(unsigned int size);
+
+			void Reserve(unsigned int size);
 
 			void Swap(unsigned int a, unsigned int b);
 
@@ -199,6 +203,11 @@ namespace Utility
 
 				delete [] this->data;
 				this->data = temp;
+			}
+
+			template <typename T> void DynamicArray<T>::Reserve(unsigned int size)
+			{
+				Expand(size);
 			}
 
 			template <typename T> void DynamicArray<T>::Swap(unsigned int a, unsigned int b)

@@ -75,6 +75,12 @@ namespace GameLogic
 			********************************************************/
 			virtual void Move(const PLAYER_MOVEMENT &movement) = 0;
 
+			/** Relative rotation around given axis
+			*	@param x: The relative x axis	
+			*	@param y: The relative y axis	
+			**/
+			virtual void Rotate(const Oyster::Math3D::Float3 lookDir) = 0;
+
 			/********************************************************
 			* Uses the chosen players weapon based on input
 			* @param Usage: enum value on what kind of action is to be taken
@@ -94,7 +100,7 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
-
+			virtual IObjectData* GetObjectAt(int ID) const				= 0;
 		};
 
 	class DANBIAS_GAMELOGIC_DLL GameAPI

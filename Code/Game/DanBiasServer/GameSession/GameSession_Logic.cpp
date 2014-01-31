@@ -24,24 +24,11 @@ using namespace GameLogic;
 
 namespace DanBias
 {
+
 	bool GameSession::DoWork(  )
 	{
 		if(this->isRunning)
 		{
-			if(GetAsyncKeyState(VK_UP))
-			{
-				Protocol_General_Status p(Protocol_General_Status::States_ready);
-				Send(p.GetProtocol());
-				Sleep(100);
-			}
-			if(GetAsyncKeyState(VK_DOWN))
-			{
-				Oyster::Math::Float4x4 world = Oyster::Math::Matrix::identity;
-				Protocol_CreateObject p(world, 2, "../Content/crate");
-				Send(p.GetProtocol());
-				Sleep(100);
-			}
-		
 			double dt = this->timer.getElapsedSeconds();
 			gameInstance.SetFrameTimeLength((float)dt);
 
@@ -65,9 +52,8 @@ namespace DanBias
 		if(clients.Size() >= 1 && clients[0])
 		{
 			Oyster::Math::Float4x4 world = 	this->clients[0]->GetPlayer()->GetOrientation();
-			Protocol_ObjectPosition p(world, 1);
+			Protocol_ObjectPosition p(world, 2);
 			Send(p.GetProtocol());
-			//Sleep(100);
 		}
 	}
 

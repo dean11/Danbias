@@ -18,6 +18,7 @@ namespace Oyster
 
 			void SetFrameTimeLength( float deltaTime );
 			void SetGravityConstant( float g );
+			void SetEpsilon( float e );
 			void SetSubscription( EventAction_Destruction functionPointer );
 
 			float GetFrameTimeLength() const;
@@ -35,7 +36,7 @@ namespace Oyster
 			void AddGravity( const API::Gravity &g );
 			void RemoveGravity( const API::Gravity &g );
 
-			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void(hitAction)(ICustomBody*) );
+			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) );
 
 			//void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
 
@@ -52,7 +53,7 @@ namespace Oyster
 			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const;
 
 		private:
-			::Oyster::Math::Float gravityConstant, updateFrameLength;
+			::Oyster::Math::Float gravityConstant, updateFrameLength, epsilon;
 			EventAction_Destruction destructionAction;
 			::std::vector<API::Gravity> gravity;
 			Octree worldScene;
@@ -61,8 +62,8 @@ namespace Oyster
 		namespace Default
 		{
 			void EventAction_Destruction( ::Utility::DynamicMemory::UniquePointer<::Oyster::Physics::ICustomBody> proto );
-			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_Collision( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
-			void EventAction_CollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
+			::Oyster::Physics::ICustomBody::SubscriptMessage EventAction_BeforeCollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter );
+			void EventAction_AfterCollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
 			void EventAction_Move( const ::Oyster::Physics::ICustomBody *object );
 		}
 	}

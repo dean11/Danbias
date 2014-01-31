@@ -46,8 +46,8 @@ SimpleRigidBody::SimpleRigidBody()
 	this->rigid = RigidBody();
 	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
-	this->onCollision = Default::EventAction_Collision;
-	this->onCollisionResponse = Default::EventAction_CollisionResponse;
+	this->onCollision = Default::EventAction_BeforeCollisionResponse;
+	this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	this->onMovement = Default::EventAction_Move;
 	this->scene = nullptr;
 	this->customTag = nullptr;
@@ -56,7 +56,7 @@ SimpleRigidBody::SimpleRigidBody()
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {
-	this->rigid.SetRotation( desc.rotation );
+	//this->rigid.SetRotation( desc.rotation );
 	this->rigid.centerPos = desc.centerPosition;
 	this->rigid.SetSize( desc.size );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
@@ -72,7 +72,7 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	}
 	else
 	{
-		this->onCollision = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	}
 
 	if( desc.subscription_onCollisionResponse )
@@ -81,7 +81,7 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	}
 	else
 	{
-		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+		this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	}
 
 	if( desc.subscription_onMovement )
@@ -143,8 +143,8 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 
 	if( state.IsForwarded() )
 	{
-		this->deltaPos += state.GetForward_DeltaPos();
-		this->deltaAxis += state.GetForward_DeltaAxis();
+		this->deltaPos += Float4(state.GetForward_DeltaPos(), 0);
+		this->deltaAxis += Float4(state.GetForward_DeltaAxis(), 0);
 		this->isForwarded;
 	}
 
@@ -163,12 +163,12 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	}
 }
 
-ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_Collision( const ICustomBody *deuter )
+ICustomBody::SubscriptMessage SimpleRigidBody::CallSubscription_BeforeCollisionResponse( const ICustomBody *deuter )
 {
 	return this->onCollision( this, deuter );
 }
 
-void SimpleRigidBody::CallSubscription_CollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
+void SimpleRigidBody::CallSubscription_AfterCollisionResponse( const ICustomBody *deuter, Float kineticEnergyLoss )
 {
 	return this->onCollisionResponse( this, deuter, kineticEnergyLoss );
 }
@@ -205,7 +205,7 @@ Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 
 Float4 & SimpleRigidBody::GetNormalAt( const Float4 &worldPos, Float4 &targetMem ) const
 {
-	Float4 offset = worldPos - this->rigid.centerPos;
+	Float4 offset = worldPos.xyz - this->rigid.centerPos;
 	Float distance = offset.Dot( offset );
 	Float3 normal = Float3::null;
 
@@ -295,7 +295,7 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
 	if( this->isForwarded )
 	{
-		this->rigid.Move( this->deltaPos, this->deltaAxis );
+		this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
 		this->deltaPos = Float4::null;
 		this->deltaAxis = Float4::null;
 		this->isForwarded = false;
@@ -310,7 +310,7 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 
 void SimpleRigidBody::Predict( Float4 &outDeltaPos, Float4 &outDeltaAxis, const Float4 &actingLinearImpulse, const Float4 &actingAngularImpulse, Float deltaTime )
 {
-	this->rigid.Predict_LeapFrog( outDeltaPos, outDeltaAxis, actingLinearImpulse, actingAngularImpulse, deltaTime );
+	this->rigid.Predict_LeapFrog( outDeltaPos.xyz, outDeltaAxis.xyz, actingLinearImpulse.xyz, actingAngularImpulse.xyz, deltaTime );
 }
 
 void SimpleRigidBody::SetScene( void *scene )
@@ -318,7 +318,7 @@ void SimpleRigidBody::SetScene( void *scene )
 	this->scene = (Octree*)scene;
 }
 
-void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functionPointer )
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_BeforeCollisionResponse functionPointer )
 {
 	if( functionPointer )
 	{
@@ -326,11 +326,11 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_Collision functi
 	}
 	else
 	{
-		this->onCollision = Default::EventAction_Collision;
+		this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	}
 }
 
-void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_CollisionResponse functionPointer )
+void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_AfterCollisionResponse functionPointer )
 {
 	if( functionPointer )
 	{
@@ -338,7 +338,7 @@ void SimpleRigidBody::SetSubscription( ICustomBody::EventAction_CollisionRespons
 	}
 	else
 	{
-		this->onCollisionResponse = Default::EventAction_CollisionResponse;
+		this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	}
 }
 

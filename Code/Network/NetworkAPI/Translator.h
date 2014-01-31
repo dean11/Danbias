@@ -27,13 +27,7 @@
 	"100F"
 */
 
-#ifdef CUSTOM_NET_PROTOCOL_EXPORT
-	#define NET_PROTOCOL_EXPORT __declspec(dllexport)
-#else
-	#define NET_PROTOCOL_EXPORT __declspec(dllimport)
-#endif
-
-#include "../../Misc/Utilities.h"
+#include "NetworkAPI_Preprocessor.h"
 
 namespace Oyster
 {
@@ -43,7 +37,8 @@ namespace Oyster
 		{
 			class OysterByte;
 			class CustomNetProtocol;
-			class NET_PROTOCOL_EXPORT Translator
+
+			class NET_API_EXPORT Translator
 			{
 			public:
 				Translator ();

@@ -51,9 +51,9 @@ namespace Oyster
 
 			struct AnimationData
 			{
+				Math::Float4x4 animatedData[100];
 				int Animated;
 				Math::Float3 Pad;
-				Math::Matrix animatedData[10];
 			};
 
 		}

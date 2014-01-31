@@ -4,37 +4,27 @@
 #include "CustomNetProtocol.h"
 #include <map>
 #include "Translator.h"
+#include "Utilities.h"
 using namespace Oyster::Network;
+using namespace Utility::DynamicMemory;
 
 
 struct CustomNetProtocol::PrivateData
 {
-	std::map<int, NetAttributeContainer> attributes;
+	std::map<int, NetAttributeContainer> attributes;		//...Im an idiot
+	Utility::DynamicMemory::ReferenceCount *c;
 
 	PrivateData()
-	{ }
-	PrivateData( const CustomNetProtocol::PrivateData& o)
-	{ 
-		for (auto i = o.attributes.begin(); i != o.attributes.end(); i++)
-		{
-			if(i->second.type == NetAttributeType_CharArray)
-			{
-				size_t size = strlen(i->second.value.netCharPtr);
-				if(size == 0) continue;
-
-				attributes[i->first].value.netCharPtr = new char[size + 1];
-				//strcpy_s(attributes[i->first].value.netCharPtr, size + 1, i->second.value.netCharPtr);
-				memcpy(&attributes[i->first].value.netCharPtr[0], &i->second.value.netCharPtr[0], size + 1);
-				attributes[i->first].type = NetAttributeType_CharArray;
-			}
-			else
-			{
-				attributes[i->first] = i->second;
-			}
-		}
+	{
+		//this->attributes = new std::map<int, NetAttributeContainer>(); 
+		this->c = new ReferenceCount();
+		c->Incref();
 	}
+
 	~PrivateData()
 	{
+		delete c;
+		c = 0;
 		for (auto i = attributes.begin(); i != attributes.end(); i++)
 		{
 			RemoveAttribute(i->first);
@@ -49,8 +39,7 @@ struct CustomNetProtocol::PrivateData
 		switch (i->second.type)
 		{
 			case NetAttributeType_CharArray:
-				//delete [] i->second.value.netCharPtr;
-				i->second.value.netCharPtr = 0;
+				delete [] i->second.value.netCharPtr;
 			break;
 		}
 	}
@@ -65,17 +54,40 @@ CustomNetProtocol::CustomNetProtocol()
 }
 CustomNetProtocol::CustomNetProtocol(const CustomNetProtocol& o)
 {
-	this->privateData = new PrivateData(*o.privateData);
+	this->privateData = o.privateData;
+	if(this->privateData)
+	{
+		this->privateData->c = o.privateData->c;
+		this->privateData->c->Incref();
+	}
 }
 const CustomNetProtocol& CustomNetProtocol::operator=(const CustomNetProtocol& o)
 {
-	delete this->privateData;
-	this->privateData = new PrivateData(*o.privateData);
+	if(this->privateData && this->privateData->c)
+	{
+		if(this->privateData->c->Decref() == 0)
+		{
+			delete this->privateData;
+		}
+	}
+
+	this->privateData = o.privateData;
+	if(this->privateData)
+	{
+		this->privateData->c = o.privateData->c;
+		this->privateData->c->Incref();
+	}
 	return *this;
 }
 CustomNetProtocol::~CustomNetProtocol()
 {
-	delete this->privateData;
+	if(this->privateData && this->privateData->c)
+	{
+		if(this->privateData->c->Decref() == 0)
+		{
+			delete this->privateData;
+		}
+	}
 }
 NetAttributeContainer& CustomNetProtocol::operator[](int ID)
 {
@@ -87,4 +99,39 @@ NetAttributeContainer& CustomNetProtocol::operator[](int ID)
 	}
 
 	return this->privateData->attributes[ID];
+}
+
+void CustomNetProtocol::Set(int ID, Oyster::Network::NetAttributeValue val, Oyster::Network::NetAttributeType type)
+{
+	this->privateData->attributes[ID].type = type;
+
+	switch (type)
+	{
+		case Oyster::Network::NetAttributeType_Bool:
+		case Oyster::Network::NetAttributeType_Char:
+		case Oyster::Network::NetAttributeType_UnsignedChar:
+		case Oyster::Network::NetAttributeType_Short:
+		case Oyster::Network::NetAttributeType_UnsignedShort:
+		case Oyster::Network::NetAttributeType_Int:
+		case Oyster::Network::NetAttributeType_UnsignedInt:
+		case Oyster::Network::NetAttributeType_Int64:
+		case Oyster::Network::NetAttributeType_UnsignedInt64:
+		case Oyster::Network::NetAttributeType_Float:
+		case Oyster::Network::NetAttributeType_Double:
+			this->privateData->attributes[ID].value = val;
+		break;
+	}
+}
+void CustomNetProtocol::Set(int ID, std::string s)
+{
+	if(s.size() == 0) return;
+
+	this->privateData->attributes[ID].type = Oyster::Network::NetAttributeType_CharArray;
+
+	this->privateData->attributes[ID].value.netCharPtr = new char[s.size() + 1];
+	memcpy(&this->privateData->attributes[ID].value.netCharPtr[0], &s[0], s.size() + 1);
+}
+const NetAttributeContainer& CustomNetProtocol::Get(int id)
+{
+	return this->privateData->attributes[id];
 }

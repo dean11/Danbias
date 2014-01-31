@@ -73,11 +73,16 @@ namespace Oyster
 								//loop bones in animation
 								am.Animated = 1;
 								
+								
+								Model::Frame Prev, Next;
+
+								models[i].AnimationTime = fmod(models[i].AnimationTime,info->Animations[models[i].AnimationPlaying].duration);
 
 								for(int x = 0; x < info->Animations[models[i].AnimationPlaying].Bones; ++x)
 								{
-									Model::Frame Prev, Next;
 									//loop frame per bone
+									Prev.bone.Parent = 0;
+									Next = Prev;
 									for(int y = 0; y < info->Animations[models[i].AnimationPlaying].Frames[x]; ++y)
 									{
 										///TODO replace with binary search?
@@ -113,7 +118,7 @@ namespace Oyster
 									//write magic to animated data
 									am2.animatedData[Prev.bone.Parent] =  Interpolated * am2.animatedData[info->bones[Prev.bone.Parent].Parent];
 									//sneaky write do correct data buffer
-									am.animatedData[x] = am2.animatedData[Prev.bone.Parent].GetInverse() * info->bones[Prev.bone.Parent].Transform;
+									am.animatedData[x] = (am2.animatedData[Prev.bone.Parent] * info->bones[Prev.bone.Parent].Transform.GetInverse());
 								}
 							}
 							else

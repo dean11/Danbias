@@ -8,20 +8,15 @@
 /* THERE CAN ABSOLUTLEY NOT BE TWO DEFINITIONS WITH THE SAME ID!! */
 
 
-/** Index where the identifier is located(aka protocol identification index) **/
-/* Use this as id accesser since it may change in the future. */
-#define protocol_INDEX_ID							0
-
-
 /***********************************/
 /********* RESERVERD PROTOCOLS ***************************************************************************************************/
-/**********   [ 0 - 100 ]  *********/
+/**********   [ 0 - 99 ]  *********/
 #define protocol_RESERVED_MIN							0
 #define protocol_RESERVED_MAX							99
 
 /***********************************/
 /********* GENERAL PROTOCOLS ***************************************************************************************************/
-/***********[ 100 - 200 ]***********/
+/***********[ 100 - 199 ]***********/
 #define protocol_GeneralMIN								100
 #define protocol_General_Status						100
 #define protocol_General_Text						101
@@ -30,28 +25,33 @@
 
 /***********************************/
 /********* LOBBY PROTOCOLS ***************************************************************************************************/
-/***********[ 200 - 300 ]***********/
+/***********[ 200 - 299 ]***********/
 #define protocol_LobbyMIN								200	
-#define protocol_Lobby_CreateGame					200
-#define protocol_Lobby_JoinGame						201
-#define protocol_Lobby_StartGame					202
-#define protocol_Lobby_JoinLobby					203
-#define protocol_Lobby_LeaveLobby					204
-#define protocol_Lobby_CreateGameLobby				205
+#define protocol_Lobby_Create						200
+#define protocol_Lobby_Start						201
+#define protocol_Lobby_Join							202
+#define protocol_Lobby_Login						203
+#define protocol_Lobby_Refresh						204
+#define protocol_Lobby_ClientData					205
+#define protocol_Lobby_GameData						206
 #define protocol_LobbyMAX								299
 
 
 /***********************************/
 /********* GAMEPLAY PROTOCOLS ***************************************************************************************************/
-/***********[ 300 - 400 ]***********/
+/***********[ 300 - 399 ]***********/
 #define protocol_GameplayMIN							300
-#define protocol_Gameplay_PlayerNavigation			300
-#define protocol_Gameplay_PlayerMouseMovement		301
-#define protocol_Gameplay_PlayerPosition			302
-#define protocol_Gameplay_CreateObject				303
-#define protocol_Gameplay_RemoveObject				304
-#define protocol_Gameplay_ObjectPosition			305
-#define protocol_Gameplay_Initiate					306
+#define protocol_Gameplay_PlayerMovement			300
+#define protocol_Gameplay_PlayerLookDir		301
+#define protocol_Gameplay_PlayerChangeWeapon		302
+#define protocol_Gameplay_PlayerShot				303
+#define protocol_Gameplay_PlayerJump				304
+#define protocol_Gameplay_ObjectPickup				305
+#define protocol_Gameplay_ObjectDamage				306
+#define protocol_Gameplay_ObjectPosition			307
+#define protocol_Gameplay_ObjectEnabled				308
+#define protocol_Gameplay_ObjectDisabled			309
+#define protocol_Gameplay_ObjectCreate				310
 #define protocol_GameplayMAX							399
 
 
