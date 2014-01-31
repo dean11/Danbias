@@ -88,6 +88,8 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	// send data to server
 	// check data from server
 
+
+
 	// create game
 	if( KeyInput->IsKeyPressed(DIK_C)) 
 	{
@@ -118,6 +120,9 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 		}
 		return ClientState_Lobby;
 	}
+
+
+
 	return ClientState_Same;
 }
 bool LoginState::Render()
