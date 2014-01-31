@@ -761,7 +761,7 @@ namespace LinearAlgebra3D
 	{
 		return targetMem = SnapAngularAxis( ::LinearAlgebra::Vector4<ScalarType>(startAngularAxis, (ScalarType)0),
 											::LinearAlgebra::Vector4<ScalarType>(localStartNormal, (ScalarType)0),
-											::LinearAlgebra::Vector4<ScalarType>(worldEndNormal, (ScalarType)0), ).xyz;
+											::LinearAlgebra::Vector4<ScalarType>(worldEndNormal, (ScalarType)0) ).xyz;
 	}
 
 	template<typename ScalarType>
