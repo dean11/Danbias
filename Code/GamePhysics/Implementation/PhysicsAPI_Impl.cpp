@@ -187,7 +187,7 @@ void API_Impl::Update()
 		if( gravityImpulse != Float4::null )
 		{
 			state.ApplyLinearImpulse( gravityImpulse.xyz );
-			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
+			state.SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 			(*proto)->SetState( state );
 		}
 
