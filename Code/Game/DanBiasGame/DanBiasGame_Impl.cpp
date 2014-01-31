@@ -38,7 +38,7 @@ namespace DanBias
 	public:
 		WindowShell* window;
 		InputClass* inputObj;
-		Utility::WinTimer* timer;
+		Utility::WinTimer timer;
 		GameRecieverObject* recieverObj;
 		bool serverOwner;
 
@@ -69,12 +69,11 @@ namespace DanBias
 		m_data->serverOwner = false;
 
 		// Start in lobby state
-		m_data->recieverObj->gameClientState = new  Client::LoginState();
+		m_data->recieverObj->gameClientState = new Client::LoginState();
 		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj))
 			return DanBiasClientReturn_Error;
 
-		m_data->timer = new Utility::WinTimer(); //why dynamic memory?
-		m_data->timer->reset();
+		m_data->timer.reset();
 		return DanBiasClientReturn_Sucess;
 	}
 
@@ -83,8 +82,8 @@ namespace DanBias
 		// Main message loop
 		while(m_data->window->Frame())
 		{
-			float dt = (float)m_data->timer->getElapsedSeconds();
-			m_data->timer->reset();
+			float dt = (float)m_data->timer.getElapsedSeconds();
+			m_data->timer.reset();
 
 			capFrame += dt;
 			if(capFrame > 0.03)
@@ -131,8 +130,9 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
+		if(m_data->recieverObj->IsConnected())
+			m_data->recieverObj->Update();
 
-		m_data->recieverObj->Update();
 		m_data->inputObj->Update();
 
 		if(m_data->serverOwner)
@@ -198,7 +198,6 @@ namespace DanBias
 		delete m_data->recieverObj->gameClientState;
 		m_data->recieverObj->Disconnect();
 		delete m_data->recieverObj;
-		delete m_data->timer;
 		delete m_data->inputObj;
 		delete m_data;
 		
