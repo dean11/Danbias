@@ -750,7 +750,7 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	::LinearAlgebra::Vector4<ScalarType> & SnapAngularAxis( ::LinearAlgebra::Vector4<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector4<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector4<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector4<ScalarType> &targetMem = ::LinearAlgebra::Vector4<ScalarType>() )
 	{
-		::LinearAlgebra::Vector4<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis.xyz), localStartNormal), (ScalarType)0 );
+		::LinearAlgebra::Vector4<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis.xyz), localStartNormal.xyz), (ScalarType)0 );
 		targetMem = ::LinearAlgebra::Vector4<ScalarType>( worldStartNormal.xyz.Cross(worldEndNormal.xyz), (ScalarType)0);
 		targetMem *= (ScalarType)::std::acos( worldStartNormal.Dot(worldEndNormal) );
 		return targetMem += startAngularAxis;
