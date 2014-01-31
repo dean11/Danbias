@@ -20,7 +20,6 @@ using namespace GameLogic;
 		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
-		return;
 		switch (realObj->GetObjectType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
@@ -66,6 +65,10 @@ using namespace GameLogic;
 		
 	}	
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
