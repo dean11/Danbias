@@ -91,8 +91,8 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 
 	if( KeyInput->IsKeyPressed(DIK_G)) 
 	{
-		if(!DanBias::GameServerAPI::GameStart())
-			return GameClientState::ClientState_Same;
+		//if(!DanBias::GameServerAPI::GameStart())
+			//return GameClientState::ClientState_Same;
 		return ClientState_Game;
 	}
 	  
