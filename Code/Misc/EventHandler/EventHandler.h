@@ -17,7 +17,7 @@ namespace Oyster
 			EventHandler();
 			~EventHandler();
 
-			EventHandler& Instance();
+			static EventHandler& Instance();
 
 			void Update(InputClass* inputObject);
 
