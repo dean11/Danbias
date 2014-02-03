@@ -117,7 +117,6 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 {
-
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
@@ -126,26 +125,9 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 {
 	Oyster::Math::Float dx = lookDir.w;
-	//deltaLook = this->lookDir - lookDir;
-	
-	//Oyster::Math::Float4 up = -setState.GetGravityNormal(); 
-	//Oyster::Math::Float4 pos = setState.GetCenterPosition();
-	//Oyster::Math::Float4x4 world = Oyster::Math3D::OrientationMatrix_LookAtDirection(lookDir, up.xyz, pos.xyz);
-
-	// cant set rotation
-	//setState.AddRotation();
-
 	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
 	Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
-
-	//setState.SetOrientation(world);
 	newPhysicsState.AddRotation(deltaAxis);
-	//setState.SetOrientation()
-	//this->lookDir = lookDir - up.xyz;
-	//this->lookDir = lookDir;
-
-	//this->setState.AddRotation(Oyster::Math::Float4(x, y));
-	//this->setState.SetRotation();
 
 	this->lookDir = lookDir.xyz;
 }
