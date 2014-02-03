@@ -79,3 +79,8 @@ bool Universe::Contains( const ICollideable &target ) const
 { // universe contains everything
 	return true;
 }
+
+Float Universe::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	return 0.0f;
+}

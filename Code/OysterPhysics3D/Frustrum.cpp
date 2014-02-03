@@ -243,6 +243,18 @@ bool Frustrum::Contains( const ICollideable &target ) const
 	}
 }
 
+Float Frustrum::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{ // TODO: more to implement
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
+	}
+}
+
 ::Oyster::Math::Float3 Frustrum::ExtractForwad()
 {
 	return this->bottomPlane.normal.xyz;

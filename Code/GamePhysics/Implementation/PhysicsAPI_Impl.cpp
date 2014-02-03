@@ -60,6 +60,8 @@ namespace
 				return;
 			}
 
+			// calculate and store time interpolation value, for later rebound.
+			proto->SetTimeOfContact( worldPointOfContact );
 
 			// bounce
 			Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),

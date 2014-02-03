@@ -9,29 +9,42 @@
 #include "OysterMath.h"
 #include "ICollideable.h"
 
-namespace Oyster { namespace Collision3D
+namespace Oyster
 {
-	class Sphere : public ICollideable
+	namespace Collision3D
 	{
-	public:
-		union
+		class Sphere : public ICollideable
 		{
-			struct{ ::Oyster::Math::Float4 center; ::Oyster::Math::Float radius; };
-			char byte[sizeof(::Oyster::Math::Float4) + sizeof(::Oyster::Math::Float)];
+		public:
+			union
+			{
+				struct{ ::Oyster::Math::Float4 center; ::Oyster::Math::Float radius; };
+				char byte[sizeof(::Oyster::Math::Float4) + sizeof(::Oyster::Math::Float)];
+			};
+
+			Sphere( );
+			Sphere( const ::Oyster::Math::Float3 &center, const ::Oyster::Math::Float &radius );
+			Sphere( const ::Oyster::Math::Float4 &center, const ::Oyster::Math::Float &radius );
+			virtual ~Sphere( );
+
+			Sphere & operator = ( const Sphere &sphere );
+
+			virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
+			bool Intersects( const ICollideable &target ) const;
+			bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
+			bool Contains( const ICollideable &target ) const;
+
+			::Oyster::Math::Float TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const;
 		};
+	}
 
-		Sphere( );
-		Sphere( const ::Oyster::Math::Float3 &center, const ::Oyster::Math::Float &radius );
-		Sphere( const ::Oyster::Math::Float4 &center, const ::Oyster::Math::Float &radius );
-		virtual ~Sphere( );
-
-		Sphere & operator = ( const Sphere &sphere );
-
-		virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
-		bool Intersects( const ICollideable &target ) const;
-		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
-		bool Contains( const ICollideable &target ) const;
-	};
-} }
+	namespace Math
+	{
+		/********************************************************************
+		 * Normalized Linear Interpolation
+		 ********************************************************************/
+		::Oyster::Collision3D::Sphere & Nlerp( const ::Oyster::Collision3D::Sphere &start, const ::Oyster::Collision3D::Sphere &end, ::Oyster::Math::Float t, ::Oyster::Collision3D::Sphere &targetMem = ::Oyster::Collision3D::Sphere() );
+	}
+}
 
 #endif

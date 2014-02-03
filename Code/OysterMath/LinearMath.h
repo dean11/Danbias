@@ -11,27 +11,6 @@
 #include "Quaternion.h"
 #include <math.h>
 
-namespace std
-{
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector2<ScalarType> asin( const ::LinearAlgebra::Vector2<ScalarType> &vec )
-	{
-		return ::LinearAlgebra::Vector2<ScalarType>( asin(vec.x), asin(vec.y) );
-	}
-
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector3<ScalarType> asin( const ::LinearAlgebra::Vector3<ScalarType> &vec )
-	{
-		return ::LinearAlgebra::Vector3<ScalarType>( asin(vec.x), asin(vec.y), asin(vec.z) );
-	}
-
-	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector4<ScalarType> asin( const ::LinearAlgebra::Vector4<ScalarType> &vec )
-	{
-		return ::LinearAlgebra::Vector4<ScalarType>( asin(vec.x), asin(vec.y), asin(vec.z), asin(vec.w) );
-	}
-}
-
 // x2
 
 template<typename ScalarType>
@@ -110,6 +89,69 @@ inline ::LinearAlgebra::Vector4<ScalarType> operator * ( const ::LinearAlgebra::
 												 (vector.x * matrix.m12) + (vector.y * matrix.m22) + (vector.z * matrix.m32) + (vector.w * matrix.m42),
 												 (vector.x * matrix.m13) + (vector.y * matrix.m23) + (vector.z * matrix.m33) + (vector.w * matrix.m43),
 												 (vector.x * matrix.m14) + (vector.y * matrix.m24) + (vector.z * matrix.m34) + (vector.w * matrix.m44) );
+}
+
+namespace std
+{
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> asin( const ::LinearAlgebra::Vector2<ScalarType> &vec )
+	{
+		return ::LinearAlgebra::Vector2<ScalarType>( asin(vec.x), asin(vec.y) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> asin( const ::LinearAlgebra::Vector3<ScalarType> &vec )
+	{
+		return ::LinearAlgebra::Vector3<ScalarType>( asin(vec.x), asin(vec.y), asin(vec.z) );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> asin( const ::LinearAlgebra::Vector4<ScalarType> &vec )
+	{
+		return ::LinearAlgebra::Vector4<ScalarType>( asin(vec.x), asin(vec.y), asin(vec.z), asin(vec.w) );
+	}
+
+	/*******************************************************************
+	 * @param numerator of the vector vec
+	 * @return the denomiator of the vector vec.
+	 *******************************************************************/
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector2<ScalarType> modf( const ::LinearAlgebra::Vector2<ScalarType> &vec, ::LinearAlgebra::Vector2<ScalarType> &numerator )
+	{
+		::LinearAlgebra::Vector2<ScalarType> denominator;
+		denominator.x = (ScalarType)modf( vec.x, &numerator.x );
+		denominator.y = (ScalarType)modf( vec.y, &numerator.y );
+		return denominator;
+	}
+
+	/*******************************************************************
+	 * @param numerator of the vector vec
+	 * @return the denomiator of the vector vec.
+	 *******************************************************************/
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> modf( const ::LinearAlgebra::Vector3<ScalarType> &vec, ::LinearAlgebra::Vector3<ScalarType> &numerator )
+	{
+		::LinearAlgebra::Vector3<ScalarType> denominator;
+		denominator.x = (ScalarType)modf( vec.x, &numerator.x );
+		denominator.y = (ScalarType)modf( vec.y, &numerator.y );
+		denominator.z = (ScalarType)modf( vec.z, &numerator.z );
+		return denominator;
+	}
+
+	/*******************************************************************
+	 * @param numerator of the vector vec
+	 * @return the denomiator of the vector vec.
+	 *******************************************************************/
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector4<ScalarType> modf( const ::LinearAlgebra::Vector4<ScalarType> &vec, ::LinearAlgebra::Vector4<ScalarType> &numerator )
+	{
+		::LinearAlgebra::Vector4<ScalarType> denominator;
+		denominator.x = (ScalarType)modf( vec.x, &numerator.x );
+		denominator.y = (ScalarType)modf( vec.y, &numerator.y );
+		denominator.z = (ScalarType)modf( vec.z, &numerator.z );
+		denominator.w = (ScalarType)modf( vec.w, &numerator.w );
+		return denominator;
+	}
 }
 
 namespace LinearAlgebra
@@ -795,11 +837,42 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingNonRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateRotation_UsingNonRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
 	{
 		targetMem.v[0] = ::LinearAlgebra::Nlerp( start.v[0], end.v[0], t );
 		targetMem.v[1] = ::LinearAlgebra::Nlerp( start.v[1], end.v[1], t );
 		targetMem.v[2] = ::LinearAlgebra::Nlerp( start.v[2], end.v[2], t );
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingNonRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		InterpolateRotation_UsingNonRigidNlerp( start, end, t, targetMem );
+		targetMem.v[3] = ::LinearAlgebra::Lerp( start.v[3], end.v[3], t );
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateRotation_UsingRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		// Nlerp y axis
+		targetMem.v[1] = ::LinearAlgebra::Nlerp( start.v[1], end.v[1], t );
+		
+		// Lerp z axis and orthogonolize against y axis
+		targetMem.v[2] = ::LinearAlgebra::Lerp( start.v[2], end.v[2], t );
+		targetMem.v[2] -= targetMem.v[2].Dot(targetMem.v[1]) * targetMem.v[1];
+		targetMem.v[2].Normalize();
+
+		// Cross product x axis from y and z
+		targetMem.v[0].xyz = targetMem.v[1].xyz.Cross(targetMem.v[2].xyz);
+		return targetMem;
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> & InterpolateOrientation_UsingRigidNlerp( const ::LinearAlgebra::Matrix4x4<ScalarType> &start, const ::LinearAlgebra::Matrix4x4<ScalarType> &end, ScalarType t, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem )
+	{
+		InterpolateRotation_UsingRigidNlerp( start, end, t, targetMem );
 		targetMem.v[3] = ::LinearAlgebra::Lerp( start.v[3], end.v[3], t );
 		return targetMem;
 	}

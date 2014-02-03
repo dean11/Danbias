@@ -93,3 +93,26 @@ bool Box::Contains( const ICollideable &target ) const
 	default: return false;
 	}
 }
+
+Float Box::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{ // TODO: more to implement
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
+	}
+}
+
+namespace Oyster { namespace Math
+{
+	Box & Nlerp( const Box &start, const Box &end, Float t, Box &targetMem )
+	{
+		InterpolateRotation_UsingRigidNlerp( start.rotation, end.rotation, t, targetMem.rotation );
+		targetMem.center = Lerp( start.center, end.center, t );
+		targetMem.boundingOffset = Lerp( start.boundingOffset, end.boundingOffset, t );
+		return targetMem;
+	}
+} }
