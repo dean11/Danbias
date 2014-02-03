@@ -161,7 +161,7 @@ HRESULT InitDirect3D()
 	
 	m =  Oyster::Graphics::API::CreateModel(L"untitled.dan");
 	m2 = Oyster::Graphics::API::CreateModel(L"still.dan");
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	m2->AnimationPlaying = 0;
 	m2->AnimationTime = 0.0f;
 	//m3 = Oyster::Graphics::API::CreateModel(L"box_2.dan");
@@ -171,7 +171,7 @@ HRESULT InitDirect3D()
 	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1280.0f/720.0f,.1f,10000);
 	Oyster::Graphics::API::SetProjection(P);
 
-	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,200,500.4f));
+	V = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),Oyster::Math::Float3(0,0,5.4f));
 	V = V.GetInverse();
 	
 
@@ -192,11 +192,11 @@ HRESULT Update(float deltaTime)
 
 	angle += Oyster::Math::pi/16 * deltaTime;
 	//m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle) * Oyster::Math3D::RotationMatrix_AxisX(-Oyster::Math::pi/2);
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-Oyster::Math::pi/2,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
+	//m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-Oyster::Math::pi/2,Oyster::Math::Float3(0,-4,0),Oyster::Math::Float3::null);
 	Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
-	ma *= 50;
-	ma.m44 = 1;
-	m2->WorldMatrix = m2->WorldMatrix *  ma;
+	//ma *= 50;
+	//ma.m44 = 1;
+	//m2->WorldMatrix = m2->WorldMatrix *  ma;
 	m2->AnimationTime += deltaTime * 0.5f;
 	//m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;

@@ -40,6 +40,14 @@ namespace Oyster
 					Resources::Deffered::PointLightsData.Unmap();
 				}
 
+				Math::Matrix RecursiveBindPos(int index, Model::ModelInfo* mi)
+				{
+					if(mi->bones[index].Parent == index)
+						return mi->bones[index].Transform;
+
+					return mi->bones[index].Transform.GetInverse() * RecursiveBindPos(mi->bones[index].Parent,mi);
+				}
+
 				void Basic::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
 				{
 					for(int i = 0; i < count; ++i)
@@ -57,69 +65,16 @@ namespace Oyster
 							Resources::Deffered::ModelData.Unmap();
 							
 							Model::ModelInfo* info = (Model::ModelInfo*)models[i].info;
-
 							
-
-							Definitions::AnimationData am;
+							
+							Definitions::AnimationData am;	//final
 							if(info->Animated && models[i].AnimationPlaying != -1)
 							{
-								
-								Definitions::AnimationData am2;
-								//write default data
-								for (int b = 0; b < info->BoneCount; b++)
+								for(int b = 0; b <info->BoneCount; ++b)
 								{
-									am2.animatedData[b] = info->bones[b].Transform;
+									am.animatedData[b] = RecursiveBindPos(b,info);
 								}
-								//loop bones in animation
 								am.Animated = 1;
-								
-								
-								Model::Frame Prev, Next;
-
-								models[i].AnimationTime = fmod(models[i].AnimationTime,info->Animations[models[i].AnimationPlaying].duration);
-
-								for(int x = 0; x < info->Animations[models[i].AnimationPlaying].Bones; ++x)
-								{
-									//loop frame per bone
-									Prev.bone.Parent = 0;
-									Next = Prev;
-									for(int y = 0; y < info->Animations[models[i].AnimationPlaying].Frames[x]; ++y)
-									{
-										///TODO replace with binary search?
-										Model::Frame f = info->Animations[models[i].AnimationPlaying].Keyframes[x][y];
-										
-										//if we hit frame
-										if(models[i].AnimationTime == f.time)
-										{
-											Prev = f;
-											Next = f;
-											break;
-										}
-
-										//if time is larger than frame time, store frames
-										if(models[i].AnimationTime < f.time)
-										{
-											Next = f;
-											Prev = info->Animations[models[i].AnimationPlaying].Keyframes[x][y-1];
-											break;
-										}
-									}
-
-
-									//calculate interpolated bone position
-									
-									//rebase model time to between prev and next
-									float interpoation =(models[i].AnimationTime - Prev.time) / (Next.time - Prev.time);
-
-									//interpolate
-									Math::Matrix Interpolated;
-									Math3D::InterpolateOrientation_UsingNonRigidNlerp(Prev.bone.Transform,Next.bone.Transform,interpoation, Interpolated);
-
-									//write magic to animated data
-									am2.animatedData[Prev.bone.Parent] =  Interpolated * am2.animatedData[info->bones[Prev.bone.Parent].Parent];
-									//sneaky write do correct data buffer
-									am.animatedData[x] = (am2.animatedData[Prev.bone.Parent] * info->bones[Prev.bone.Parent].Transform.GetInverse());
-								}
 							}
 							else
 								am.Animated = 0;

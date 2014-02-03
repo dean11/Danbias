@@ -8,6 +8,6 @@ RWTexture2D<float4> Output;
 void main( uint3 DTid : SV_DispatchThreadID )
 {
 	//Output[DTid.xy] = Diffuse[DTid.xy] + Specular[DTid.xy] + Diffuse[DTid.xy] * Ambient[DTid.xy/2].w;// + float4(Ambient[DTid.xy/4].xyz,1); GLOW
-	Output[DTid.xy] = Ambient[DTid.xy/2];
+	Output[DTid.xy] = float4(Ambient[DTid.xy/2].xyz * Ambient[DTid.xy/2].w, 1);
 	//Output[DTid.xy] = Diffuse[DTid.xy] + Specular[DTid.xy];
 }
