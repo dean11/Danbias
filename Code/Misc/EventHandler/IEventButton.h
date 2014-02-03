@@ -21,6 +21,8 @@ namespace Oyster
 
 			virtual void CheckCollision(InputClass *input) = 0;
 
+			virtual void SendEvent(IEventButton::ButtonState state) = 0;
+
 			struct ButtonEvent;
 			virtual void SetEventFunc(void (*EventFunc)( ButtonEvent e )) = 0;
 			

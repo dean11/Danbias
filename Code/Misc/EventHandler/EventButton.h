@@ -13,7 +13,7 @@ namespace Oyster
 		template <typename owner>
 		class EventButton
 		{
-		private:
+		public:
 			struct ButtonEvent
 			{
 				IEventButton::ButtonState state; 
@@ -42,13 +42,16 @@ namespace Oyster
 			
 			void CheckCollision(InputClass *input);
 
+			void SendEvent(IEventButton::ButtonState state);
+
 			void SetEventFunc(void (*EventFunc)( ButtonEvent e )); //?
 			
 			unsigned int GetID();
-			owner& GetOwner(); 
 		
 		};
-
+		
+		template <typename owner>
+		unsigned int EventButton<owner>::PrivData::currID = 0;
 
 		template <typename owner>
 		EventButton<owner>::EventButton()
@@ -73,7 +76,7 @@ namespace Oyster
 		{
 			this->privData.ID = privData.currID;
 			this->privData.currID += 1;
-			this->privData.owner = NULL;
+			//this->privData.owner = NULL;
 			this->privData.EventFunc = EventFunc;
 		}
 
@@ -96,6 +99,17 @@ namespace Oyster
 		void EventButton<owner>::CheckCollision(InputClass *input)
 		{
 			//??????????????? TODO: everything
+			SendEvent(Button_Smashed);
+		}
+		
+		template <typename owner>
+		void EventButton<owner>::SendEvent(IEventButton::ButtonState state)
+		{
+			ButtonEvent event;
+			event.state = state;
+			event.sender = this;
+			event.owner = privData.owner;
+			privData.EventFunc(event);
 		}
 
 		template <typename owner>
@@ -109,13 +123,8 @@ namespace Oyster
 		{
 			return this->privData.ID;
 		}
-
-		template <typename owner>
-		owner& EventButton<owner>::GetOwner()
-		{
-			return this->privData.owner;
-		}
 	}
 }
+
 
 #endif

@@ -23,16 +23,16 @@ void EventButtonCollection::Update(InputClass* inputObject)
 }
 
 template <class Owner>
-void EventButtonCollection::AddButton(EventButton<Owner>& button)
+void EventButtonCollection::AddButton(Owner a)
 {
-	buttons.push_back(button);
+	//buttons.push_back(button);
 }
 
 template <class Owner>
 EventButton<Owner>& EventButtonCollection::CreateButton()
 {
 	EventButton temp;
-	buttons.push_back(&temp);
+	buttons.push_back((IEventButton)&temp);
 	return temp;
 }
 

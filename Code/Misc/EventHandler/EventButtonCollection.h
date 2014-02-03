@@ -30,7 +30,7 @@ namespace Oyster
 			void Update(InputClass* inputObject);
 
 			template <class Owner>
-			void AddButton(EventButton<Owner>& button);
+			void AddButton(Owner a);
 
 			template <class Owner>
 			EventButton<Owner>& CreateButton();
