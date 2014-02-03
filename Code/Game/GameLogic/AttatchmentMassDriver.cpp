@@ -39,6 +39,12 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		ForcePush(usage,dt);
 	break;
 	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
+		
+		if(hasObject) 
+		{
+			ForcePush(usage,dt);//WARNING THIS IS A CRAP TEST TO MAKE SURE YOU CAN SHOOT BOXES
+			break;
+		}
 		ForcePull(usage,dt);
 		break;
 	case WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS:
@@ -56,8 +62,9 @@ void AttatchmentMassDriver::Update(float dt)
 	{
 		Oyster::Physics::ICustomBody::State state;
 		state = heldObject->GetState();
-
-		Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized();
+		Oyster::Math::Float3 ownerPos = owner->GetPosition();
+		ownerPos.y += 2;
+		Oyster::Math::Float3 pos = ownerPos + owner->GetLookDir().GetNormalized()*2;
 
 		state.SetCenterPosition(pos);
 
@@ -76,11 +83,12 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	if(hasObject)
 	{
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (800 * dt);
+		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (2000);
 		Oyster::Physics::ICustomBody::State state = heldObject->GetState();
 		state.ApplyLinearImpulse((Oyster::Math::Float3)pushForce);
 		heldObject->SetState(state);
-		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
+		
 		hasObject = false;
 		heldObject = NULL;
 		return;
@@ -134,9 +142,14 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float4 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized();
-	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos,1);
+	//Oyster::Math::Float4 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized();
+	//Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos,2000);
+	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitSphere,this,AttemptPickUp);
+	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1,1,20); 
+	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
 
+
+
+	Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,this,AttemptPickUp);
 }
