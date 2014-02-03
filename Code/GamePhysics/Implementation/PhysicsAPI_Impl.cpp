@@ -237,17 +237,16 @@ void API_Impl::Update()
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {
-	//! @todo TODO: implement stub
-	return true;
+	return this->worldScene.IsInLimbo( objRef );
 }
 
 void API_Impl::MoveToLimbo( const ICustomBody* objRef )
 {
-	/** @todo TODO: Fix this function.*/
+	this->worldScene.MoveToLimbo( objRef );
 }
 void API_Impl::ReleaseFromLimbo( const ICustomBody* objRef )
 {
-	/** @todo TODO: Fix this function.*/
+	this->worldScene.ReleaseFromLimbo( objRef );
 }
 
 void API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle )
