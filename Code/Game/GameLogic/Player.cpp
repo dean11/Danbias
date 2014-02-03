@@ -146,7 +146,8 @@ void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 
 void Player::Jump()
 {
-	
+	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
+	newPhysicsState.ApplyLinearImpulse(up * 2000 * this->gameInstance->GetFrameTime());
 }
 
 bool Player::IsWalking()
