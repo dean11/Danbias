@@ -84,8 +84,8 @@ namespace Oyster
 				*/
 				std::string GetLanAddress();
 
-				/**
-				*	
+				/** Returns the port the server is listening on.
+				*	@return Returns the port the server has been initiated with.
 				*/
 				int NetworkServer::GetPort();
 

@@ -5,6 +5,7 @@
 
 using namespace GameLogic;
 using namespace ::LevelFileLoader;
+using namespace Utility::DynamicMemory;
 
 LevelParser::LevelParser()
 {
@@ -16,12 +17,12 @@ LevelParser::~LevelParser()
 {
 }
 
-std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
+std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filename)
 {
 	int bufferSize = 0;
 	int counter = 0;
 
-	std::vector<ObjectTypeHeader> objects;
+	std::vector<SmartPointer<ObjectTypeHeader>> objects;
 
 	//Read entire level file.
 	Loader loader;
@@ -42,26 +43,66 @@ std::vector<ObjectTypeHeader> LevelParser::Parse(std::string filename)
 		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
 		switch((int)typeID.typeID)
 		{
-		case ObjectType_LevelMetaData:
-		{
-			LevelMetaData header;
-			ParseLevelMetaData(&buffer[counter], header, counter);
-			objects.push_back(header);
-			break;
-		}
+			case ObjectType_LevelMetaData:
+			{
+				LevelMetaData* header = new LevelMetaData;
+				ParseLevelMetaData(&buffer[counter], *header, counter);
+				objects.push_back(header);
+				break;
+			}
 
-		case ObjectType_Dynamic:
-		{
-			ObjectHeader header;
-			ParseObject(&buffer[counter], &header, sizeof(header));
-			objects.push_back(header);
-			counter += sizeof(header);
-			break;
-		}
+			//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them.
+			case ObjectType_Static: case ObjectType_Dynamic:
+			{
+				ObjectHeader* header = new ObjectHeader;
+				ParseObject(&buffer[counter], header, sizeof(*header));
+				objects.push_back(header);
+				counter += sizeof(*header);
+				break;
+			}
 			
-		default:
-			//Couldn't find typeID. FAIL!!!!!!
-			break;
+			case ObjectType_Light:
+			{
+				LightType lightType;
+
+				//Get Light type
+				ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
+
+				switch(lightType)
+				{
+				case LightType_PointLight:
+				{
+					PointLight* header = new PointLight;
+					ParseObject(&buffer[counter], header, sizeof(*header));
+					counter += sizeof(*header);
+					objects.push_back(header);
+					break;
+				}
+				case LightType_DirectionalLight:
+				{
+					DirectionalLight* header = new DirectionalLight;
+					ParseObject(&buffer[counter], header, sizeof(*header));
+					counter += sizeof(*header);
+					objects.push_back(header);
+					break;
+				}
+				case LightType_SpotLight:
+				{
+					SpotLight* header = new SpotLight;
+					ParseObject(&buffer[counter], header, sizeof(*header));
+					counter += sizeof(*header);
+					objects.push_back(header);
+					break;
+				}
+				default:
+					//Undefined LightType.
+					break;
+				}
+				break;
+			}
+			default:
+				//Couldn't find typeID. FAIL!!!!!!
+				break;
 		}
 	}
 

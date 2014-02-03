@@ -7,36 +7,36 @@
 
 #include <string>
 #include <vector>
-#include <Vector.h>
+#include "../Misc/Utilities.h"
 #include "ObjectDefines.h"
-#include "LevelParser.h"
 
 namespace GameLogic
 {
-		class LevelLoader
-		{
+	class LevelLoader
+	{
 
-		public:
-			LevelLoader(){this->parser =  GameLogic::LevelFileLoader::LevelParser(); }
-			~LevelLoader(){}
+	public:
+		LevelLoader();
+		~LevelLoader();
 
-			/********************************************************
-			 * Loads the level and objects from file.
-			 * @param fileName: Path to the level-file that you want to load.
-			 * @return: Returns all structs with objects and information about the level.
-			 ********************************************************/
-			std::vector<ObjectTypeHeader> LoadLevel(std::string fileName);
+		/********************************************************
+			* Loads the level and objects from file.
+			* @param fileName: Path to the level-file that you want to load.
+			* @return: Returns all structs with objects and information about the level.
+			********************************************************/
+		std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> LoadLevel(std::string fileName);
 
-			/********************************************************
-			 * Just for fast access for the meta information about the level.
-			 * @param fileName: Path to the level-file that you want to load.
-			 * @return: Returns the meta information about the level.
-			 ********************************************************/
-			LevelMetaData LoadLevelHeader(std::string fileName); //.
+		/********************************************************
+			* Just for fast access for the meta information about the level.
+			* @param fileName: Path to the level-file that you want to load.
+			* @return: Returns the meta information about the level.
+			********************************************************/
+		LevelMetaData LoadLevelHeader(std::string fileName); //.
 
-		private:
-			GameLogic::LevelFileLoader::LevelParser parser;
-		};
+	private:
+		struct PrivData;
+		Utility::DynamicMemory::SmartPointer<PrivData> pData;
+	};
 }
 
 #endif

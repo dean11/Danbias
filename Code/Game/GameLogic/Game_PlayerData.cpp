@@ -12,6 +12,7 @@ Game::PlayerData::PlayerData()
 	sbDesc.mass = 70;
 	sbDesc.restitutionCoeff = 0.5;
 	sbDesc.rotation = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
+
 	//create rigid body
 	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
 	

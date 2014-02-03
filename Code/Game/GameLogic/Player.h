@@ -71,6 +71,9 @@ namespace GameLogic
 
 		void DamageLife(int damage);
 
+		void BeginFrame();
+		void EndFrame();
+
 	private:
 		void Jump();
 

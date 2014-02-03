@@ -11,6 +11,7 @@ namespace GameLogic
 	{
 	public:
 		//put general collision functions here that are not part of a specific object
+		static Oyster::Physics::ICustomBody::SubscriptMessage IgnoreCollision(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody *obj);
 			
 	};
 
