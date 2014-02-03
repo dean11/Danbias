@@ -78,10 +78,14 @@ namespace
 																			deuterState.GetMass(), deuterG_Magnitude );
 
 			Float4 bounce = Average( bounceD, bounceP );
+
+			Float4 friction = Formula::CollisionResponse::Friction( protoG_Magnitude, normal,
+															  Float4(protoState.GetLinearMomentum(), 0),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+															  Float4(deuterState.GetLinearMomentum(), 0), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 			
 			Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
 
-			protoState.ApplyImpulse( bounce.xyz, worldPointOfContact.xyz, normal.xyz );
+			protoState.ApplyImpulse( bounce.xyz - friction.xyz, worldPointOfContact.xyz, normal.xyz );
 			proto->SetState( protoState );
 
 			Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
