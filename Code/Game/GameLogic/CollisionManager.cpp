@@ -11,7 +11,6 @@ using namespace Oyster;
 
 using namespace GameLogic;
 
-	void PlayerVBox(Player &player, DynamicObject &box, Oyster::Math::Float kineticEnergyLoss);
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
 
 	//Physics::ICustomBody::SubscriptMessage
@@ -29,7 +28,7 @@ using namespace GameLogic;
 			break;
 		
 		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-			PlayerVBox(*player,(*(DynamicObject*) realObj), kineticEnergyLoss);
+			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
@@ -42,13 +41,7 @@ using namespace GameLogic;
 
 		//return Physics::ICustomBody::SubscriptMessage_none;
 	}
-		
-	void PlayerVBox(Player &player, DynamicObject &box, Oyster::Math::Float kineticEnergyLoss)
-	{
-		//use kinetic energyloss of the collision in order too determin how much damage to take
-		//use as part of the damage algorithm
-		player.DamageLife(20);
-	}
+	
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
