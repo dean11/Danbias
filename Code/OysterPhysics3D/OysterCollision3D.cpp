@@ -1061,4 +1061,43 @@ namespace Oyster { namespace Collision3D { namespace Utility
 			return container.normal == -plane.normal;
 		return false;
 	}
+
+	Float TimeOfContact( const Sphere &protoStart, const Sphere &protoEnd, const Point &deuter )
+	{ // Bisection with 5 levels of detail
+		Float t = 0.5f;
+		Sphere s;
+		for( int i = 0; i < 5; ++i )
+		{
+			Nlerp( protoStart, protoEnd, t, s );
+			if( Intersect(s, deuter) )
+			{
+				t *= 0.5f;
+			}
+			else
+			{
+				t *= 1.5f;
+			}
+		}
+		return t;
+	}
+
+	Float TimeOfContact( const Box &protoStart, const Box &protoEnd, const Point &deuter )
+	{ // Bisection with 5 levels of detail
+		Float t = 0.5f;
+		Box b;
+		for( int i = 0; i < 5; ++i )
+		{
+			Nlerp( protoStart, protoEnd, t, b );
+			if( Intersect(b, deuter) )
+			{
+				t *= 0.5f;
+			}
+			else
+			{
+				t *= 1.5f;
+			}
+		}
+		return t;
+	}
+
 } } }

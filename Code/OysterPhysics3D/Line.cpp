@@ -76,3 +76,15 @@ bool Line::Intersects( const ICollideable &target, Float4 &worldPointOfContact )
 
 bool Line::Contains( const ICollideable &target ) const
 { /* TODO: : */ return false; }
+
+Float Line::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{ // TODO: more to implement
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
+	}
+}

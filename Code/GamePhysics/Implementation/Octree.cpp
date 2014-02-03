@@ -40,6 +40,7 @@ void Octree::AddObject(UniquePointer< ICustomBody > customBodyRef)
 	data.next = NULL;
 	data.prev = NULL;
 	data.customBodyRef = customBodyRef;
+	data.limbo = false;
 	this->mapReferences.insert(std::pair <ICustomBody*, unsigned int> (data.customBodyRef, this->leafData.size()));
 	this->leafData.push_back(data);
 
@@ -64,6 +65,33 @@ void Octree::MoveToUpdateQueue(UniquePointer< ICustomBody > customBodyRef)
 	this->updateQueue.push_back(&this->leafData[this->mapReferences[customBodyRef]]);*/
 }
 
+void Octree::MoveToLimbo(const ICustomBody* customBodyRef)
+{
+	auto object = this->mapReferences.find(customBodyRef);
+
+	unsigned int tempRef = object->second;
+
+	this->leafData[tempRef].limbo = true;
+}
+
+bool Octree::IsInLimbo(const ICustomBody* customBodyRef)
+{
+	auto object = this->mapReferences.find(customBodyRef);
+
+	unsigned int tempRef = object->second;
+
+	return this->leafData[tempRef].limbo;
+}
+
+void Octree::ReleaseFromLimbo(const ICustomBody* customBodyRef)
+{
+	auto object = this->mapReferences.find(customBodyRef);
+
+	unsigned int tempRef = object->second;
+
+	this->leafData[tempRef].limbo = false;
+}
+
 void Octree::DestroyObject(UniquePointer< ICustomBody > customBodyRef)
 {
 	std::map<const ICustomBody*, unsigned int>::iterator it = this->mapReferences.find(customBodyRef);
@@ -86,7 +114,7 @@ std::vector<ICustomBody*>& Octree::Sample(ICustomBody* customBodyRef, std::vecto
 
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(tempRef != i) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
+		if(tempRef != i && !this->leafData[i].limbo) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
 		{
 			updateList.push_back(this->leafData[i].customBodyRef);
 		}
@@ -99,7 +127,7 @@ std::vector<ICustomBody*>& Octree::Sample(const Oyster::Collision3D::ICollideabl
 {
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(this->leafData[i].container.Intersects(collideable))
+		if(!this->leafData[i].limbo && this->leafData[i].container.Intersects(collideable))
 		{
 			updateList.push_back(this->leafData[i].customBodyRef);
 		}
@@ -121,7 +149,7 @@ void Octree::Visit(ICustomBody* customBodyRef, VisitorAction hitAction )
 
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(tempRef != i) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
+		if(tempRef != i && !this->leafData[i].limbo) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
 		{
 			hitAction(*this, tempRef, i);
 		}
@@ -132,7 +160,7 @@ void Octree::Visit(const Oyster::Collision3D::ICollideable& collideable, void* a
 {
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
-		if(collideable.Intersects(this->leafData[i].container))
+		if(!this->leafData[i].limbo && collideable.Intersects(this->leafData[i].container))
 		{
 			hitAction( this->GetCustomBody(i), args );
 		}

@@ -12,7 +12,7 @@ namespace Oyster
 		{
 			inline SimpleBodyDescription::SimpleBodyDescription()
 			{
-				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->rotation = ::Oyster::Math::Float3::null;
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->size = ::Oyster::Math::Float3( 1.0f );
 				this->mass = 6.0f;
@@ -28,7 +28,7 @@ namespace Oyster
 
 			inline SphericalBodyDescription::SphericalBodyDescription()
 			{
-				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->rotation = ::Oyster::Math::Float3::null;
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->radius = 0.5f;
 				this->mass = 10.0f;

@@ -11,7 +11,7 @@ namespace Oyster { namespace Physics
 	{
 		struct SimpleBodyDescription
 		{
-			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 rotation;
 			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float3 size;
 			::Oyster::Math::Float mass;
@@ -29,7 +29,7 @@ namespace Oyster { namespace Physics
 
 		struct SphericalBodyDescription
 		{
-			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 rotation;
 			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;

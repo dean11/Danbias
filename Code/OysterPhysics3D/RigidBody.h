@@ -64,7 +64,7 @@ namespace Oyster { namespace Physics3D
 		void SetMass_KeepMomentum( const ::Oyster::Math::Float &m );
 
 		//void SetOrientation( const ::Oyster::Math::Float4x4 &o );
-		//void SetRotation( const ::Oyster::Math::Float4x4 &r );
+		void SetRotation( const ::Oyster::Math::Float3 &axis );
 		void SetSize( const ::Oyster::Math::Float3 &widthHeight );
 
 		void SetMomentum_Linear( const ::Oyster::Math::Float3 &worldG, const ::Oyster::Math::Float3 &atWorldPos );

@@ -11,11 +11,17 @@ using namespace ::Utility::Value;
 SphericalRigidBody::SphericalRigidBody()
 {
 	this->rigid = RigidBody();
-	this->rigid.SetMass_KeepMomentum( 10.0f );
+	this->rigid.SetMass_KeepMomentum( 16.0f );
 	this->gravityNormal = Float3::null;
 	this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	this->onMovement = Default::EventAction_Move;
+	
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+	this->collisionRebound.timeOfContact = 1.0f;
+
 	this->scene = nullptr;
 	this->customTag = nullptr;
 	this->ignoreGravity = this->isForwarded = false;
@@ -24,7 +30,7 @@ SphericalRigidBody::SphericalRigidBody()
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
 {
 	this->rigid = RigidBody();
-	//this->rigid.SetRotation( desc.rotation );
+	this->rigid.SetRotation( desc.rotation );
 	this->rigid.centerPos = desc.centerPosition;
 	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
 	this->rigid.SetMass_KeepMomentum( desc.mass );
@@ -33,6 +39,11 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	this->deltaAxis = Float4::null;
 
 	this->gravityNormal = Float3::null;
+
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+	this->collisionRebound.timeOfContact = 1.0f;
 
 	if( desc.subscription_onCollision )
 	{
@@ -64,6 +75,11 @@ SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &des
 	this->scene = nullptr;
 	this->customTag = nullptr;
 	this->ignoreGravity = desc.ignoreGravity;
+
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+	this->collisionRebound.timeOfContact = 1.0f;
 }
 
 SphericalRigidBody::~SphericalRigidBody() {}
@@ -165,6 +181,17 @@ bool SphericalRigidBody::Intersects( const ICustomBody &object, Float4 &worldPoi
 	return object.Intersects( Sphere(this->rigid.centerPos, this->rigid.boundingReach.x), worldPointOfContact );
 }
 
+void SphericalRigidBody::SetTimeOfContact( Float4 &worldPointOfContact )
+{
+	Point pointOfContact = Point( worldPointOfContact );
+	Sphere start = Sphere( this->collisionRebound.previousSpatial.center, this->collisionRebound.previousSpatial.reach.x );
+	Sphere end = Sphere( this->rigid.centerPos, this->rigid.boundingReach.x );
+
+	Float timeOfContact = ::Oyster::Collision3D::Utility::TimeOfContact( start, end, pointOfContact );
+
+	this->collisionRebound.timeOfContact = Min( this->collisionRebound.timeOfContact, timeOfContact );
+}
+
 Sphere & SphericalRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
 	return targetMem = Sphere( this->rigid.centerPos, this->rigid.boundingReach.x );
@@ -219,18 +246,52 @@ void * SphericalRigidBody::GetCustomTag() const
 
 UpdateState SphericalRigidBody::Update( Float timeStepLength )
 {
-	if( this->isForwarded )
-	{
-		this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
-		this->deltaPos = Float4::null;
-		this->deltaAxis = Float4::null;
-		this->isForwarded = false;
-	}
+	//if( this->isForwarded )
+	//{
+	//	this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
+	//	this->deltaPos = Float4::null;
+	//	this->deltaAxis = Float4::null;
+	//	this->isForwarded = false;
+	//}
 
 	this->rigid.Update_LeapFrog( timeStepLength );
 
-	// compare previous and new state and return result
-	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
+	{ // Rebound if needed
+		if( this->collisionRebound.timeOfContact < 1.0f )
+		{
+			this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
+			this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
+			this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
+		}
+
+		// Update rebound data
+		this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+		this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+		this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+		this->collisionRebound.timeOfContact = 1.0f;
+	}
+
+	{ // Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
+		Float3 n;
+		::std::modf( this->rigid.axis * (0.5f / pi), n );
+		this->rigid.axis -= (2.0f * pi) * n;
+	}
+
+	{ // Check if this is close enough to be set resting
+		unsigned char resting = 0;
+		if( this->rigid.momentum_Linear.Dot(this->rigid.momentum_Linear) <= (Constant::epsilon * Constant::epsilon) )
+		{
+			this->rigid.momentum_Linear = Float3::null;
+			resting = 1;
+		}
+		if( this->rigid.momentum_Angular.Dot(this->rigid.momentum_Angular) <= (Constant::epsilon * Constant::epsilon) )
+		{
+			this->rigid.momentum_Angular = Float3::null;
+			++resting;
+		}
+		if( resting == 2 ) return UpdateState_resting;
+	}
+
 	return UpdateState_altered;
 }
 

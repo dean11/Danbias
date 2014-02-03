@@ -29,6 +29,8 @@ namespace Oyster
 
 				::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef;
 
+				bool limbo;
+
 				unsigned int queueRef;
 			};
 
@@ -48,6 +50,10 @@ namespace Oyster
 
 			void MoveToUpdateQueue(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
+			void MoveToLimbo(const ICustomBody* customBodyRef);
+			bool IsInLimbo(const ICustomBody* customBodyRef);
+			void ReleaseFromLimbo(const ICustomBody* customBodyRef);
+
 			void DestroyObject(::Utility::DynamicMemory::UniquePointer< ICustomBody > customBodyRef);
 
 			std::vector<ICustomBody*>& Sample(ICustomBody* customBodyRef, std::vector<ICustomBody*>& updateList);
@@ -66,6 +72,7 @@ namespace Oyster
 		private:
 			std::vector < Data > leafData;
 			std::vector < Data* > updateQueue;
+			std::vector < Data* > limbo;
 
 			std::map< const ICustomBody*, unsigned int > mapReferences;
 

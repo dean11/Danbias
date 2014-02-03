@@ -31,6 +31,8 @@ namespace Oyster { namespace Physics
 		bool Intersects( const ::Oyster::Collision3D::ICollideable &shape, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Intersects( const ICustomBody &object, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 
+		void SetTimeOfContact( ::Oyster::Math::Float4 &worldPointOfContact );
+
 		::Oyster::Collision3D::Sphere &	GetBoundingSphere( ::Oyster::Collision3D::Sphere &targetMem = ::Oyster::Collision3D::Sphere() ) const;
 		::Oyster::Math::Float4 &		GetNormalAt( const ::Oyster::Math::Float4 &worldPos, ::Oyster::Math::Float4 &targetMem = ::Oyster::Math::Float4() ) const;
 		::Oyster::Math::Float3 &		GetGravityNormal( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() ) const;
@@ -66,6 +68,13 @@ namespace Oyster { namespace Physics
 		::Oyster::Physics3D::RigidBody rigid;
 		::Oyster::Math::Float4 deltaPos, deltaAxis;
 		::Oyster::Math::Float3 gravityNormal;
+
+		struct
+		{
+			struct { ::Oyster::Math::Float3 center, axis, reach; } previousSpatial;
+			::Oyster::Math::Float timeOfContact;
+		} collisionRebound;
+
 		EventAction_BeforeCollisionResponse onCollision;
 		EventAction_AfterCollisionResponse onCollisionResponse;
 		EventAction_Move onMovement;
