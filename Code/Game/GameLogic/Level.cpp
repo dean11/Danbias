@@ -43,8 +43,15 @@ void Level::InitiateLevel(float radius)
 	API::SimpleBodyDescription sbDesc_TestBox;
 	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
+<<<<<<< HEAD
 	sbDesc_TestBox.mass = 50;
 	sbDesc_TestBox.size = Oyster::Math::Float4(4,4,4,0);
+=======
+
+	sbDesc_TestBox.mass = 10;
+	sbDesc_TestBox.size = Oyster::Math::Float4(4,4,4,0);
+
+>>>>>>> GL - mergeissues
 	
 	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 	rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);

@@ -46,7 +46,10 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 ********************************************************/
 void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float dt)
 {
+<<<<<<< HEAD
 
+=======
+>>>>>>> GL - mergeissues
 	Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (500 * dt);
 	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
 
