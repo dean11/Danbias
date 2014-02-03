@@ -794,7 +794,7 @@ namespace LinearAlgebra3D
 	{
 		::LinearAlgebra::Vector4<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis.xyz), localStartNormal.xyz), (ScalarType)0 );
 		targetMem = ::LinearAlgebra::Vector4<ScalarType>( worldStartNormal.xyz.Cross(worldEndNormal.xyz), (ScalarType)0);
-		targetMem *= (ScalarType)::std::acos( worldStartNormal.Dot(worldEndNormal) );
+		targetMem *= (ScalarType)::std::acos( ::Utility::Value::Clamp(worldStartNormal.Dot(worldEndNormal), (ScalarType)0, (ScalarType)1) );
 		return targetMem += startAngularAxis;
 	}
 
