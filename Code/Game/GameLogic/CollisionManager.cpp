@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "AttatchmentMassDriver.h"
 #include "Game.h"
+#include "CollisionManager.h"
 
 using namespace Oyster;
 
@@ -77,6 +78,13 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
+
+	Oyster::Physics::ICustomBody::SubscriptMessage CollisionManager::IgnoreCollision(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
+	}
+
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
@@ -93,4 +101,33 @@ using namespace GameLogic;
 		state = obj->GetState();
 		state.ApplyLinearImpulse(((forcePushData*)(args))->pushForce);
 		obj->SetState(state);
+	}
+
+	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
+	{
+		AttatchmentMassDriver *weapon = ((AttatchmentMassDriver*)args);
+
+		if(weapon->hasObject)
+		{
+			//do nothing
+		}
+		else
+		{
+			Object* realObj = (Object*)(obj->GetCustomTag());
+			//check so that it is an object that you can pickup
+
+			switch(realObj->GetObjectType())
+			{
+			case OBJECT_TYPE::OBJECT_TYPE_BOX:
+				obj->SetGravity(true); //will now ignore gravity, dont mind the naming
+				//move obj to limbo in physics to make sure it wont collide with anything
+				weapon->heldObject = obj; //weapon now holds the object
+				weapon->hasObject = true;
+
+				break;
+			}
+			
+		}
+		
+
 	}

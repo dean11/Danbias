@@ -58,6 +58,18 @@ Player::~Player(void)
 	}	
 }
 
+void Player::BeginFrame()
+{
+	weapon->Update(0.002f);
+	Object::BeginFrame();
+}
+
+void Player::EndFrame()
+{
+	
+	Object::EndFrame();
+}
+
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
 	switch(movement)

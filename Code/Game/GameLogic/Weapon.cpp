@@ -126,3 +126,8 @@ void Weapon::SelectAttatchment(int socketID)
 	}
 	
 }
+
+void Weapon::Update(float dt)
+{
+	selectedAttatchment->Update(dt);
+}
