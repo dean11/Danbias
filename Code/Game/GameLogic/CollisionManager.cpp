@@ -119,8 +119,8 @@ using namespace GameLogic;
 			switch(realObj->GetObjectType())
 			{
 			case OBJECT_TYPE::OBJECT_TYPE_BOX:
-				obj->SetGravity(true); //will now ignore gravity, dont mind the naming
 				//move obj to limbo in physics to make sure it wont collide with anything
+				Oyster::Physics::API::Instance().MoveToLimbo(obj);
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
 

@@ -80,6 +80,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		Oyster::Physics::ICustomBody::State state = heldObject->GetState();
 		state.ApplyLinearImpulse((Oyster::Math::Float3)pushForce);
 		heldObject->SetState(state);
+		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
 		hasObject = false;
 		heldObject = NULL;
 		return;
