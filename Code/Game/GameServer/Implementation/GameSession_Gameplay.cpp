@@ -172,10 +172,11 @@ namespace DanBias
 	}
 	void GameSession::Gameplay_PlayerLookDir		( Protocol_PlayerLook& p, DanBias::GameClient* c )
 	{
-		Oyster::Math3D::Float3 lookDir; 
+		Oyster::Math3D::Float4 lookDir; 
 		lookDir.x = p.lookDirX;
 		lookDir.y = p.lookDirY;
 		lookDir.z = p.lookDirZ;
+		lookDir.w = p.deltaX;
 		c->GetPlayer()->Rotate(lookDir);
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon	( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )

@@ -86,24 +86,28 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	setState.ApplyLinearImpulse(this->lookDir * (2000 * this->gameInstance->GetFrameTime()));
+	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
+	newPhysicsState.ApplyLinearImpulse(forward * (2000 * this->gameInstance->GetFrameTime()));
 }
 void Player::MoveBackwards()
 {
-	setState.ApplyLinearImpulse(-this->lookDir * 2000 * this->gameInstance->GetFrameTime());
+	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
+	newPhysicsState.ApplyLinearImpulse(-forward * 2000 * this->gameInstance->GetFrameTime());
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 r = (-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);
-	setState.ApplyLinearImpulse(r * 2000 * this->gameInstance->GetFrameTime());
+	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
+	Oyster::Math::Float3 r = (-currPhysicsState.GetGravityNormal()).Cross(forward);
+	newPhysicsState.ApplyLinearImpulse(r * 2000 * this->gameInstance->GetFrameTime());
 	
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 r = -(-rigidBody->GetGravityNormal()).Cross((Oyster::Math::Float3)this->lookDir);	//Still get zero
-	setState.ApplyLinearImpulse(-r * 2000 * this->gameInstance->GetFrameTime());
+	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
+	Oyster::Math::Float3 r = (-currPhysicsState.GetGravityNormal()).Cross(forward);	//Still get zero
+	newPhysicsState.ApplyLinearImpulse(-r * 2000 * this->gameInstance->GetFrameTime());
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
@@ -119,20 +123,31 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->lookDir = Oyster::Math::Float4(1,0,0);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float3 lookDir)
+void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 {
-	this->lookDir = lookDir;
-		
-	Oyster::Math::Float4 up = -setState.GetGravityNormal(); 
-	Oyster::Math::Float4 pos = setState.GetCenterPosition();
-	Oyster::Math::Float4x4 world = Oyster::Math3D::OrientationMatrix_LookAtDirection(lookDir, up.xyz, pos.xyz);
+	Oyster::Math::Float dx = lookDir.w;
+	//deltaLook = this->lookDir - lookDir;
+	
+	//Oyster::Math::Float4 up = -setState.GetGravityNormal(); 
+	//Oyster::Math::Float4 pos = setState.GetCenterPosition();
+	//Oyster::Math::Float4x4 world = Oyster::Math3D::OrientationMatrix_LookAtDirection(lookDir, up.xyz, pos.xyz);
+
 	// cant set rotation
+	//setState.AddRotation();
+
+	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
+	Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
+
 	//setState.SetOrientation(world);
+	newPhysicsState.AddRotation(deltaAxis);
+	//setState.SetOrientation()
 	//this->lookDir = lookDir - up.xyz;
 	//this->lookDir = lookDir;
 
 	//this->setState.AddRotation(Oyster::Math::Float4(x, y));
 	//this->setState.SetRotation();
+
+	this->lookDir = lookDir.xyz;
 }
 
 void Player::Jump()
@@ -155,11 +170,11 @@ bool Player::IsIdle()
 
 Oyster::Math::Float3 Player::GetPosition() const
 {
-	return (Oyster::Math::Float3)getState.GetCenterPosition();
+	return (Oyster::Math::Float3)currPhysicsState.GetCenterPosition();
 }
 Oyster::Math::Float4x4 Player::GetOrientation() const 
 {
-	return this->getState.GetOrientation();
+	return this->currPhysicsState.GetOrientation();
 }
 Oyster::Math::Float3 Player::GetLookDir() const
 {
