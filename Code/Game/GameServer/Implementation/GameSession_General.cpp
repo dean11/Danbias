@@ -9,6 +9,7 @@
 
 #define NOMINMAX
 #include <Windows.h>
+#include <Queue.h>
 
 
 using namespace Utility::DynamicMemory;
@@ -92,6 +93,9 @@ namespace DanBias
 
 		/* Set some game instance data options */
 		this->gameInstance.SetSubscription(GameLogic::GameEvent::ObjectEventFunctionType_OnMove, GameSession::ObjectMove);
+		//this->gameInstance.SetSubscription(GameLogic::GameEvent::ObjectEventFunctionType_OnDead, GameSession::ObjectDead);
+
+		this->description.clients.Clear();
 
 		this->isCreated = true;
 		return this->isCreated;
@@ -109,7 +113,53 @@ namespace DanBias
 		}
 	}
 
+	void GameSession::ThreadEntry(  )
+	{
+		//A timer so we dont lock because 1 client disconnected..
+		Utility::WinTimer t;
 
+		DynamicArray<SmartPointer<GameClient>> readyList = this->clients;
+
+		//First we need to clean invalid clients, if any, and tell them to start loading game data
+		for (unsigned int i = 0; i < readyList.Size(); i++)
+		{
+			if(!readyList[i]) 
+			{
+				readyList.Remove(i);
+			}
+			else
+			{
+				Protocol_LobbyStartGame p(readyList[i]->GetPlayer()->GetID());
+				readyList[i]->GetClient()->Send(p);
+			}
+		}
+	
+		unsigned int readyCounter = readyList.Size();
+		//Sync with clients
+		while (readyCounter != 0)
+		{
+			this->ProcessClients();
+			for (unsigned int i = 0; i < readyList.Size(); i++)
+			{
+				if(readyList[i] && readyList[i]->IsReady())
+				{
+					//Need to send information about other players to all players
+					for (unsigned int k = 0; k < readyList.Size(); k++)
+					{
+						if(k != i && this->clients[k])
+						{
+							Protocol_ObjectCreate p(this->clients[k]->GetPlayer()->GetOrientation(), this->clients[k]->GetPlayer()->GetID(), "char_white.dan"); //The model name will be custom later..
+							readyList[i]->GetClient()->Send(p);
+						}
+					}
+					
+					readyCounter-- ;
+					readyList[i] = 0;
+				}
+			}
+			Sleep(5); //TODO: This might not be needed here.
+		}
+	}
 
 	bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> client)
 	{
@@ -130,6 +180,12 @@ namespace DanBias
 		clients.Push(obj);
 			
 		return true;
+	}
+
+	void GameSession::CloseSession( bool dissconnectClients )
+	{
+		NetworkSession::CloseSession(true);
+		this->clients.Clear();
 	}
 
 

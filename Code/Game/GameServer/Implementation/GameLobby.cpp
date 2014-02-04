@@ -24,13 +24,11 @@ namespace DanBias
 	void GameLobby::Release()
 	{  
 		NetworkSession::CloseSession(true);
+		this->gameSession.CloseSession(true);
 	}
 
 	void GameLobby::Update()
 	{
-		if(GetAsyncKeyState(VK_DOWN))	//TODO: Dont forget to remove this...
-			this->Send(GameLogic::Protocol_General_Status().GetProtocol());
-
 		this->ProcessClients();
 	}
 	void GameLobby::SetGameDesc(const LobbyLevelData& desc)
@@ -47,20 +45,21 @@ namespace DanBias
 		desc.mapNumber = this->description.mapNumber;		
 		desc.maxClients = this->description.maxClients;	
 	}
-	bool GameLobby::StartGameSession()
+	bool GameLobby::StartGameSession(  )
 	{
 		GameSession::GameDescription desc;
-		desc.gameMode = this->description.gameMode;
-		desc.gameTime = this->description.gameTime;
-		desc.mapNumber = this->description.mapNumber;
-		desc.owner = this;
-		desc.clients = this->clients;
+			desc.gameMode = this->description.gameMode;
+			desc.gameTime = this->description.gameTime;
+			desc.mapNumber = this->description.mapNumber;
+			desc.owner = this;
+			desc.clients = this->clients;
 
-		this->clients.Clear();
+		this->clients.Clear();	//Remove clients from lobby list
 		
 		if(this->gameSession.Create(desc))
 		{
 			this->gameSession.Run();
+
 			return true;
 		}
 		return false;

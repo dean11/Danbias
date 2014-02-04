@@ -44,7 +44,10 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 	privData->state = gameStateState_loading;
 	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
-	
+
+	//tELL SERver ready
+	nwClient->Send(GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready));
+
 	return true;
 }
 GameState::gameStateState GameState::LoadGame() 
@@ -83,7 +86,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	C_Object* obj;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
 	modelData.world = translate  ;//modelData.world * translate 
-	modelData.modelPath = L"..\\Content\\Models\\world_earth.dan";
+	modelData.modelPath = L"world_earth.dan";
 	modelData.id = 0;
 
 	obj = new C_Player();
@@ -94,7 +97,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4,320,0));
 	modelData.world = modelData.world * translate;
-	modelData.modelPath = L"..\\Content\\Models\\box.dan";
+	modelData.modelPath = L"box.dan";
 	modelData.id = 1;
 
 	obj = new C_Player();
@@ -108,7 +111,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	modelData.world = modelData.world * translate;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.modelPath = L"char_white.dan";
 	modelData.id = 2;
 	// load models
 	obj =  new C_Player();
@@ -121,7 +124,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	modelData.world = modelData.world * translate;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\char_white.dan";
+	modelData.modelPath = L"char_white.dan";
 	modelData.id = 3;
 	// load models
 	obj =  new C_Player();
@@ -158,7 +161,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 {
 	switch (privData->state)
 	{
-	case gameStateState_loading:
+	case gameStateState_loading:	//Will this ever happen in this scope??
 		{
 			// load map
 			// wait for all players

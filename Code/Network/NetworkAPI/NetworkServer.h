@@ -77,7 +77,7 @@ namespace Oyster
 				/**	
 				*	
 				*/
-				bool IsStarted() const;
+				bool IsRunning() const;
 
 				/**
 				*	

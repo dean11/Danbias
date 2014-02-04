@@ -374,7 +374,191 @@ namespace Utility
 			return (this->_ptr != NULL)  ?	true : false;
 		}
 #pragma endregion
-		
+
+	}
+
+	namespace Thread
+	{
+#pragma region ThreadSafeSmartPointer
+		template<typename T> void ThreadSafeSmartPointer<T>::Destroy()
+		{
+			delete this->_rc.load();
+			this->_rc = NULL;
+
+			//Use default function for memory deallocation.
+			SafeDeleteInstance<T>(this->_ptr.load());
+
+			this->_ptr = NULL;
+		}
+		template<typename T> ThreadSafeSmartPointer<T>::ThreadSafeSmartPointer()
+				:_rc(0), _ptr(0)
+			{ }
+		template<typename T> ThreadSafeSmartPointer<T>::ThreadSafeSmartPointer(UniquePointer<T>& p)
+				:_ptr(p.Release())
+		{ 
+			this->_rc = new ReferenceCount();
+			this->_rc->Incref();
+		}
+		template<typename T> ThreadSafeSmartPointer<T>::ThreadSafeSmartPointer(T* p)
+			:_ptr(p)
+		{ 
+			this->_rc.store = new ReferenceCount();
+			this->_rc->Incref();
+		}
+		template<typename T> ThreadSafeSmartPointer<T>::ThreadSafeSmartPointer(const ThreadSafeSmartPointer& d)
+			:_ptr(d._ptr), _rc(d._rc)
+		{
+			if(this->_rc)
+				this->_rc->Incref();
+		}
+		template<typename T> ThreadSafeSmartPointer<T>::~ThreadSafeSmartPointer()
+		{
+			this->Release();
+		}
+		template<typename T> ThreadSafeSmartPointer<T>& ThreadSafeSmartPointer<T>::operator= (const ThreadSafeSmartPointer<T>& p)
+		{
+			if (this != &p)
+			{
+				//Last to go?
+				if(this->_rc.load() && this->_rc.load()->Decref() == 0)
+				{
+					//Call child specific
+					Destroy();
+				}
+
+				this->_ptr.store(p._ptr.load());
+				this->_rc.store(p._rc.load());
+				if(this->_rc.load())	this->_rc.load()->Incref();
+			}
+			return *this;
+		}
+		template<typename T> ThreadSafeSmartPointer<T>& ThreadSafeSmartPointer<T>::operator= (UniquePointer<T>& p)
+		{
+			//Last to go?
+			if(this->_rc)
+			{
+				if(this->_rc->Decref() == 0)
+				{
+					//Call child specific
+					Destroy();
+					this->_rc = new ReferenceCount();
+				}
+			}
+			else
+			{
+				if(p) this->_rc = new ReferenceCount();
+			}
+
+			if(this->_rc)
+				this->_rc->Incref();
+
+			this->_ptr = p.Release();
+
+			return *this;
+		}
+		template<typename T> ThreadSafeSmartPointer<T>& ThreadSafeSmartPointer<T>::operator= (T* p)
+		{
+			if (this->_ptr != p)
+			{
+				//Last to go?
+				if(this->_rc.load())
+				{
+					if(this->_rc.load()->Decref() == 0)
+					{
+						//Call child specific
+						Destroy();
+						if(p)	this->_rc = new ReferenceCount();
+					}
+				}
+				else if(p)
+				{
+					this->_rc = new ReferenceCount();
+				}
+
+				this->_ptr = p;
+
+				if(p)	this->_rc.load()->Incref();
+				else	this->_rc = 0;
+			}
+			return *this;
+		}
+		template<typename T> inline bool ThreadSafeSmartPointer<T>::operator== (const ThreadSafeSmartPointer<T>& d) const
+		{
+			return d._ptr == this->_ptr;
+		}
+		template<typename T> inline bool ThreadSafeSmartPointer<T>::operator== (const T& p) const
+		{
+			return &p == this->_ptr;
+		}
+		template<typename T> inline bool ThreadSafeSmartPointer<T>::operator!= (const ThreadSafeSmartPointer<T>& d) const
+		{
+			return d._ptr != this->_ptr;
+		}
+		template<typename T> inline bool ThreadSafeSmartPointer<T>::operator!= (const T& p) const
+		{
+			return &p != this->_ptr;
+		}
+		template<typename T> inline T& ThreadSafeSmartPointer<T>::operator* ()
+		{
+			return *this->_ptr;
+		}
+		template<typename T> inline const T& ThreadSafeSmartPointer<T>::operator* () const
+		{
+			return *this->_ptr;
+		}
+		template<typename T> inline T* ThreadSafeSmartPointer<T>::operator-> ()
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline const T* ThreadSafeSmartPointer<T>::operator-> () const
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline ThreadSafeSmartPointer<T>::operator T* () const
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline ThreadSafeSmartPointer<T>::operator const T* () const
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline ThreadSafeSmartPointer<T>::operator T& () const
+		{
+			return *this->_ptr;
+		}
+		template<typename T> inline ThreadSafeSmartPointer<T>::operator bool() const
+		{
+			return (this->_ptr != 0);
+		}
+		template<typename T> inline T* ThreadSafeSmartPointer<T>::Get()
+		{
+			return this->_ptr;
+		}
+		template<typename T> inline T* ThreadSafeSmartPointer<T>::Get() const
+		{
+			return this->_ptr;
+		}
+		template<typename T> int ThreadSafeSmartPointer<T>::Release()
+		{
+			int returnVal = 0;
+			
+			if(this->_rc.load() && ((returnVal = this->_rc.load()->Decref()) == 0))
+			{
+				Destroy();
+			}
+			return returnVal;
+		}
+		template<typename T> int ThreadSafeSmartPointer<T>::ReleaseDummy()
+		{
+			int val = this->_rc->Decref();
+			this->_rc->Incref();
+			return val;
+		}
+		template<typename T> inline bool ThreadSafeSmartPointer<T>::IsValid() const
+		{
+			return (this->_ptr != NULL)  ?	true : false;
+		}
+#pragma endregion
 	}
 }
 

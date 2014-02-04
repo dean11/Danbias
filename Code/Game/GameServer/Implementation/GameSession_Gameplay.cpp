@@ -88,16 +88,14 @@ namespace DanBias
 
 			if(dynamic_cast<IPlayerData*> (movedObject))
 			{
-				IPlayerData* temp = (IPlayerData*)movedObject;
-			
-				int id = temp->GetID();
-				Oyster::Math::Float4x4 world = temp->GetOrientation();
-					
+				int id = movedObject->GetID();
+				Oyster::Math::Float4x4 world = movedObject->GetOrientation();
+
 				Protocol_ObjectPosition p(world, id);
 				GameSession::gameSession->Send(p.GetProtocol());
-		}
+			}
 
-		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
+			if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
 			{
 				GameLogic::IObjectData* obj = NULL;
 				obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
@@ -136,6 +134,8 @@ namespace DanBias
 
 	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
+		//TODO: Update response timer
+
 		switch (p[0].value.netShort)
 		{
 			case protocol_Gameplay_PlayerMovement:		this->Gameplay_PlayerMovement		( Protocol_PlayerMovement		(p), c );
@@ -224,6 +224,8 @@ namespace DanBias
 		{
 			case GameLogic::Protocol_General_Status::States_disconected:
 				printf("Client with ID [%i] dissconnected\n", c->GetClient()->GetID());
+				//TODO: Tell other clients
+				//Protocol_
 				this->Detach(c->GetClient()->GetID());
 			break;
 
@@ -232,7 +234,7 @@ namespace DanBias
 			break;
 
 			case GameLogic::Protocol_General_Status::States_ready:
-
+				c->SetReadyState(true);
 			break;
 
 			case GameLogic::Protocol_General_Status::States_leave:

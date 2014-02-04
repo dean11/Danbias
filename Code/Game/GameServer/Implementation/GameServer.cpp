@@ -53,7 +53,7 @@ void GameServerAPI::ServerStart()
 }
 void GameServerAPI::ServerStop()
 {
-	if(!server.IsStarted()) return;
+	if(!server.IsRunning()) return;
 	lobby.Release();
 	server.Shutdown();
 	
@@ -62,19 +62,19 @@ void GameServerAPI::ServerStop()
 	int time = (int)total;
 	int hour, min, sec; 
 
-	hour=time / 3600; 
-	time=time % 3600; 
-	min=time / 60; 
-	time=time % 60;
+	hour = time / 3600; 
+	time = time % 3600; 
+	min = time / 60; 
+	time = time % 60;
 	sec = time; 
 
 	printf( "Server has been running for: %i:%i:%i - [hh:mm:ss] \n\n", hour, min, sec );
-	printf( "Terminating in : ");
-	for (int i = 0; i < 3; i++)
-	{
-		printf( "%i ", 3-i );
-		Sleep(1000);
-	}
+	//printf( "Terminating in : ");
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	printf( "%i ", 3-i );
+	//	Sleep(1000);
+	//}
 	printf( "\nServer terminated!" );
 }
 void GameServerAPI::ServerUpdate()
@@ -83,7 +83,6 @@ void GameServerAPI::ServerUpdate()
 	lobby.Update();
 
 }
-
 GameServerAPI::GameServerInfo GameServerAPI::ServerGetInfo()
 {
 	GameServerAPI::GameServerInfo i;
@@ -91,6 +90,11 @@ GameServerAPI::GameServerInfo GameServerAPI::ServerGetInfo()
 	i.listenPort = server.GetPort();
 	return i;
 }
+bool GameServerAPI::ServerIsRunning()
+{
+	return server.IsRunning();
+}
+
 void		GameServerAPI::GameSetMapId(const int& val)
 {
 	LobbyLevelData d;
@@ -151,6 +155,11 @@ const char*	GameServerAPI::GameGetGameName()
 }
 bool		GameServerAPI::GameStart()
 {
-	return lobby.StartGameSession();
+	if(lobby.StartGameSession())
+	{
+		
+		return true;
+	}
+	return false;
 }
 

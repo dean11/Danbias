@@ -24,17 +24,18 @@ namespace GameLogic
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
-		Protocol_General_Status(Oyster::Network::CustomNetProtocol& p)
-		{
-			this->protocol = p;
-			status = (States)p[1].value.netShort;
-		}
 		Protocol_General_Status(States state)
 		{
 			this->protocol[0].value = protocol_General_Status;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-			this->status = state;
+
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->status = state;
+		}
+	
+		Protocol_General_Status(Oyster::Network::CustomNetProtocol& p)
+		{
+			status = (States)this->protocol[1].value.netShort;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{

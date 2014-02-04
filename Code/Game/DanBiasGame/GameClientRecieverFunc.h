@@ -4,6 +4,7 @@
 //WTF!? No headers included???
 #include "../DanBiasGame/Include/DanBiasGame.h"
 #include "../GameProtocols/GeneralProtocols.h"
+#include "..\GameProtocols\Protocols.h"
 
 namespace DanBias
 {
@@ -14,9 +15,15 @@ namespace DanBias
 
 		// receiver function for server messages 
 		// parsing protocols and sending it to the gameState
-		void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
+		//void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
+		void GameRecieverObject::DataRecieved(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override
 		{
+			Oyster::Network::CustomNetProtocol p = e.args.data.protocol;
 			int pType = p[0].value.netInt;
+
+			//printf("Message(%i) arrived at client(%i)\n", pType, this->GetID());
+
+
 			switch (pType)
 			{
 			case protocol_General_Status:
@@ -60,20 +67,20 @@ namespace DanBias
 
 			case protocol_Gameplay_ObjectCreate:
 				{
-					Client::GameClientState::NewObj* protocolData = new Client::GameClientState::NewObj;
-					protocolData->object_ID = p[1].value.netInt;
-					protocolData->path = p[2].value.netCharPtr;
+					Client::GameClientState::NewObj protocolData;// = new Client::GameClientState::NewObj;
+					protocolData.object_ID = p[1].value.netInt;
+					protocolData.path = p[2].value.netCharPtr;
 					for(int i = 0; i< 16; i++)
 					{
-						protocolData->worldPos[i] = p[i+3].value.netFloat;
+						protocolData.worldPos[i] = p[i+3].value.netFloat;
 					}
 
 					if(dynamic_cast<Client::GameState*>(gameClientState))
-						((Client::GameState*)gameClientState)->Protocol(protocolData);
+						((Client::GameState*)gameClientState)->Protocol(&protocolData);
 
-					delete p[2].value.netCharPtr; //delete char array
-					delete protocolData;
-					protocolData = NULL;
+					//delete p[2].value.netCharPtr; //delete char array
+					//delete protocolData;
+					//protocolData = NULL;
 				}
 				break;
 			case protocol_Gameplay_ObjectDisabled:
@@ -104,14 +111,16 @@ namespace DanBias
 				break;
 			case protocol_Lobby_Start:
 				{
-					/*
 					if(dynamic_cast<Client::LobbyState*>(gameClientState))
 					{
+						GameLogic::Protocol_LobbyStartGame pt(p);
+
 						gameClientState->Release();
 						delete gameClientState;
 						gameClientState = new Client::GameState();
-						gameClientState->Init(m_data->recieverObj);
-					}*/
+						gameClientState->Init(this);
+						((Client::GameState*)gameClientState)->setClientId(pt.clientID);
+					}
 				}
 				break;
 

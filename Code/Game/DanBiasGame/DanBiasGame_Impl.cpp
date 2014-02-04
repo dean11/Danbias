@@ -112,6 +112,10 @@ namespace DanBias
 	{
 		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
+		Oyster::Graphics::API::Option p;
+		p.modelPath = L"..\\Content\\Models\\";
+		p.texturePath = L"..\\Content\\Textures\\";
+		Oyster::Graphics::API::SetOptions(p);
 		return S_OK;
 	}
 
@@ -146,6 +150,7 @@ namespace DanBias
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
+			bool stateVal = false;
 			m_data->recieverObj->gameClientState->Release();
 			delete m_data->recieverObj->gameClientState;
 			m_data->recieverObj->gameClientState = NULL;
@@ -154,23 +159,36 @@ namespace DanBias
 			{
 			case Client::GameClientState::ClientState_LobbyCreated:
 				m_data->serverOwner = true;
+				stateVal = true;
 			case Client::GameClientState::ClientState_Lobby:
 				m_data->recieverObj->gameClientState = new Client::LobbyState();
+				stateVal = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
-				if(m_data->serverOwner)
-					DanBias::GameServerAPI::GameStart();
-				m_data->recieverObj->gameClientState = new Client::GameState();
-				if(m_data->serverOwner)
-					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(2);
-				else
-					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(3);
+				//if(m_data->serverOwner)
+					//Initiate the game server through the server API
+					
+					
+				//if(m_data->serverOwner)
+				//{
+				//	((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(2);
+				//}
+				//else
+				//	((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(3);
 				break;
 			default:
 				return E_FAIL;
 				break;
 			}
-			m_data->recieverObj->gameClientState->Init(m_data->recieverObj); // send game client
+
+			if(stateVal)
+			{
+				m_data->recieverObj->gameClientState->Init(m_data->recieverObj); // send game client
+			}
+			else
+			{
+
+			}
 				 
 		}
 		return S_OK;
@@ -202,10 +220,10 @@ namespace DanBias
 		delete m_data->inputObj;
 		delete m_data;
 
-		GameServerAPI::ServerStop();
-		
-
 		Oyster::Graphics::API::Clean();
+
+		GameServerAPI::ServerStop();
+
 		return S_OK;
 	}	
 

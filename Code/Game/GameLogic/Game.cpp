@@ -162,6 +162,6 @@ void Game::PhysicsOnMove(const ICustomBody *object)
 }
 void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
 {
-	if(gameInstance.onDeadFnc) gameInstance.onDeadFnc(0);
+	
 }
 

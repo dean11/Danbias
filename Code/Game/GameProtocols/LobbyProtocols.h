@@ -46,7 +46,7 @@ namespace GameLogic
 	*/
 	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
-		short gameId;
+		short clientID; // The unuiqe id reprsenting a specific client
 
 		Protocol_LobbyStartGame()
 		{
@@ -55,13 +55,21 @@ namespace GameLogic
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
+		Protocol_LobbyStartGame(short _clientID)
+		{
+			this->protocol[0].value = protocol_Lobby_Start;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			clientID = _clientID;
+		}
 		Protocol_LobbyStartGame(Oyster::Network::CustomNetProtocol& o)
 		{
-			gameId = o[1].value.netInt;
+			clientID = o[1].value.netInt;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			protocol[1].value = gameId;
+			protocol[1].value = clientID;
 			return protocol;
 		}
 		

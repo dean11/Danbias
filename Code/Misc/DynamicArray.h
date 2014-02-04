@@ -44,6 +44,11 @@ namespace Utility
 			unsigned int Size() const;
 			unsigned int Capacity() const;
 
+			bool IsEmpty() const;
+
+			T* begin();
+			T* end();
+
 		private:
 			void Expand(int elements = 0);
 
@@ -165,7 +170,7 @@ namespace Utility
 	
 			template <typename T> void DynamicArray<T>::Remove(unsigned int index)
 			{
-				assert(index > this->size);
+				assert(index > (unsigned int) this->size);
 
 				T* temp = new T[this->capacity - 1];
 		
@@ -181,7 +186,8 @@ namespace Utility
 	
 			template <typename T> void DynamicArray<T>::Clear()
 			{
-				delete [] this->data;
+				if(this->data)
+					delete [] this->data;
 
 				this->data = 0;
 				this->size = 0;
@@ -227,6 +233,11 @@ namespace Utility
 				return (unsigned int)this->capacity;
 			}
 
+			template <typename T> bool DynamicArray<T>::IsEmpty() const
+			{
+				return (this->size == 0);
+			}
+
 			template <typename T> void DynamicArray<T>::Expand(int elements)
 			{
 				if(elements < 1) return;
@@ -246,6 +257,18 @@ namespace Utility
 					delete [] this->data;
 					this->data = temp;
 				}
+			}
+
+			template <typename T> T* DynamicArray<T>::begin()
+			{
+				if(this->size == 0) return 0;
+				return &this->data[0];
+			}
+
+			template <typename T> T* DynamicArray<T>::end()
+			{
+				if(this->size == 0) return 0;
+				return ((&this->data[this->size - 1]) + 1);
 			}
 
 		#pragma endregion

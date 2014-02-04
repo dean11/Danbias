@@ -73,11 +73,9 @@ namespace GameLogic
 
 		float GetFrameTime() const;
 
-	private:
 		static void PhysicsOnMove(const Oyster::Physics::ICustomBody *object);
 		static void PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> proto);
 
-	private:
 		Utility::DynamicMemory::DynamicArray<PlayerData*> players;
 		LevelData* level;
 		float frameTime;

@@ -69,7 +69,55 @@ namespace Oyster
 			{
 				NetAttributeType type;
 				NetAttributeValue value;
-				NetAttributeContainer() { type = NetAttributeType_UNKNOWN; }
+				NetAttributeContainer() 
+				{ type = NetAttributeType_UNKNOWN; }
+				~NetAttributeContainer() 
+				{ 
+					if (this->type == NetAttributeType_CharArray)
+					{
+						delete this->value.netCharPtr;
+						this->value.netCharPtr = 0;
+					}
+				}
+				NetAttributeContainer(NetAttributeContainer& p) 
+				{ 
+					type = p.type; 
+					if(type == NetAttributeType_CharArray && p.value.netCharPtr)
+					{
+						int len = 0;
+						if((len = strlen(p.value.netCharPtr)) == 0) return;
+						len++;
+						value.netCharPtr = new char[len];
+						memcpy(&value.netCharPtr[0], &p.value.netCharPtr[0], sizeof(p.value.netCharPtr[0]) * len);
+					}
+					else
+					{
+						value = p.value;
+					}
+				}
+				const NetAttributeContainer& operator=(const NetAttributeContainer& p) 
+				{ 
+					if(this->type == NetAttributeType_CharArray)
+					{
+						delete this->value.netCharPtr;
+						this->value.netCharPtr = 0;
+					}
+
+					type = p.type; 
+					if(type == NetAttributeType_CharArray && p.value.netCharPtr)
+					{
+						int len = 0;
+						if((len = strlen(p.value.netCharPtr)) == 0) return *this;
+						len++;
+						value.netCharPtr = new char[len];
+						memcpy(&value.netCharPtr[0], &p.value.netCharPtr[0], sizeof(p.value.netCharPtr[0]) * len);
+					}
+					else
+					{
+						value = p.value;
+					}
+					return *this;
+				}
 			};
 			class CustomNetProtocol;
 			struct CustomProtocolObject
@@ -82,8 +130,8 @@ namespace Oyster
 			public:
 				CustomNetProtocol();
 				~CustomNetProtocol();
-				CustomNetProtocol(const CustomNetProtocol& o);
-				const CustomNetProtocol& operator=(const CustomNetProtocol& o);
+				CustomNetProtocol(CustomNetProtocol& o);
+				const CustomNetProtocol& operator=(CustomNetProtocol& o);
 
 				NetAttributeContainer& operator[](int ID);
 				void Set(int id, Oyster::Network::NetAttributeValue val, Oyster::Network::NetAttributeType type);
@@ -92,7 +140,9 @@ namespace Oyster
 
 			private:
 				struct PrivateData;
-				Utility::DynamicMemory::SmartPointer<PrivateData> privateData;
+				//Utility::DynamicMemory::SmartPointer<PrivateData> privateData;
+				//Utility::Thread::ThreadSafeSmartPointer<PrivateData> privateData;
+				PrivateData* privateData;
 
 				friend class Translator;
 			};

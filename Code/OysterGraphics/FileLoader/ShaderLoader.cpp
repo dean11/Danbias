@@ -143,8 +143,7 @@ namespace Oyster
 				}
 				else
 				{
-					memset(&out,0,sizeof(out));
-					return;
+					return NULL;
 				}
 #endif
 				return Core::PipelineManager::CreateShader(data, Core::PipelineManager::ShaderType(type));

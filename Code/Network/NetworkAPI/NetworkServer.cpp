@@ -261,7 +261,7 @@ NetworkSession const* NetworkServer::ReleaseMainSession()
 	return temp;
 }
 
-bool NetworkServer::IsStarted() const
+bool NetworkServer::IsRunning() const
 {
 	return this->privateData->isRunning;
 }

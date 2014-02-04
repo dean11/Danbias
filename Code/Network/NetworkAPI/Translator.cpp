@@ -8,7 +8,7 @@
 #include "../../Misc/Utilities.h"
 #include "../NetworkDependencies/Messages/MessageHeader.h"
 #include "../NetworkDependencies/OysterByte.h"
-
+#include <DynamicArray.h>
 
 using namespace Oyster::Network;
 using namespace ::Messages;
@@ -19,7 +19,7 @@ using namespace std;
 //TODO: Fix this uggly hack
 struct MyCastingStruct
 {
-	std::map<int, NetAttributeContainer> attributes;
+	Utility::DynamicMemory::DynamicArray<NetAttributeContainer> attributes;
 };
 
 // TODO: Check if the package has been packed correctly.
@@ -34,8 +34,8 @@ struct Translator::PrivateData
 	//Packages a header with a size(int) and a string of characters(char)
 	void PackHeader(OysterByte &bytes, CustomNetProtocol& protocol)
 	{
-		auto it = ((MyCastingStruct*)protocol.privateData.Get())->attributes.begin();
-		auto end = ((MyCastingStruct*)protocol.privateData.Get())->attributes.end();
+		auto it = ((MyCastingStruct*)protocol.privateData)->attributes.begin();
+		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
 
 		size = 4;	//size(int)
 		message.SetSize(0);
@@ -44,7 +44,7 @@ struct Translator::PrivateData
 		//Find all the data types
 		for(; it != end; it++)
 		{
-			headerString.push_back(it->second.type);
+			headerString.push_back(it->type);
 		}
 
 		message.PackShort(headerString.size(), bytes);
@@ -61,48 +61,48 @@ struct Translator::PrivateData
 
 	void PackMessage(OysterByte &bytes, CustomNetProtocol& protocol)
 	{
-		auto it = ((MyCastingStruct*)protocol.privateData.Get())->attributes.begin();
-		auto end = ((MyCastingStruct*)protocol.privateData.Get())->attributes.end();
+		auto it = ((MyCastingStruct*)protocol.privateData)->attributes.begin();
+		auto end = ((MyCastingStruct*)protocol.privateData)->attributes.end();
 
 		for(int i = 0; i < (int)headerString.size(); i++, it++)
 		{
 			switch((int)headerString.at(i))
 			{
 			case NetAttributeType_Bool:
-				message.PackBool(it->second.value.netBool, bytes);
+				message.PackBool(it->value.netBool, bytes);
 				break;
 			case NetAttributeType_Char:
-				message.PackChar(it->second.value.netChar, bytes);
+				message.PackChar(it->value.netChar, bytes);
 				break;
 			case NetAttributeType_UnsignedChar:
-				message.PackUnsignedChar(it->second.value.netUChar, bytes);
+				message.PackUnsignedChar(it->value.netUChar, bytes);
 				break;
 			case NetAttributeType_Short:
-				message.PackShort(it->second.value.netShort, bytes);
+				message.PackShort(it->value.netShort, bytes);
 				break;
 			case NetAttributeType_UnsignedShort:
-				message.PackUnsignedShort(it->second.value.netUShort, bytes);
+				message.PackUnsignedShort(it->value.netUShort, bytes);
 				break;
 			case NetAttributeType_Int:
-				message.PackInt(it->second.value.netInt, bytes);
+				message.PackInt(it->value.netInt, bytes);
 				break;
 			case NetAttributeType_UnsignedInt:
-				message.PackUnsignedInt(it->second.value.netUInt, bytes);
+				message.PackUnsignedInt(it->value.netUInt, bytes);
 				break;
 			case NetAttributeType_Int64:
-				message.PackInt64(it->second.value.netInt64, bytes);
+				message.PackInt64(it->value.netInt64, bytes);
 				break;
 			case NetAttributeType_UnsignedInt64:
-				message.PackUnsignedInt64(it->second.value.netUInt64, bytes);
+				message.PackUnsignedInt64(it->value.netUInt64, bytes);
 				break;
 			case NetAttributeType_Float:
-				message.PackFloat(it->second.value.netFloat, bytes);
+				message.PackFloat(it->value.netFloat, bytes);
 				break;
 			case NetAttributeType_Double:
-				message.PackDouble(it->second.value.netDouble, bytes);
+				message.PackDouble(it->value.netDouble, bytes);
 				break;
 			case NetAttributeType_CharArray:
-				message.PackStr(it->second.value.netCharPtr, bytes);
+				message.PackStr(it->value.netCharPtr, bytes);
 				break;
 			default:
 				numberOfUnknownTypes++;
@@ -216,6 +216,7 @@ const Translator& Translator::operator=(const Translator& obj)
 
 void Translator::Pack(OysterByte &bytes, CustomNetProtocol& protocol)
 {
+
 	privateData->headerString.clear();
 
 	privateData->PackHeader(bytes, protocol);

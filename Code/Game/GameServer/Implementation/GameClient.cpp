@@ -18,12 +18,14 @@ GameClient::GameClient(SmartPointer<NetworkClient> client, GameLogic::IPlayerDat
 	this->client = client;
 	this->id = gameClientIDCount++;
 	this->player = player;
+	isReady = false;
 }
 GameClient::~GameClient()
 {
 	this->client->Disconnect();
 	this->player = 0;
 	this->id = -1;
+	isReady = false;
 }
 
 GameLogic::IPlayerData* GameClient::GetPlayer()
@@ -50,9 +52,25 @@ int GameClient::GetID() const
 {
 	return this->id;
 }
+float GameClient::GetSinceLastResponse() const
+{
+	return this->secondsSinceLastResponse;
+}
+bool GameClient::IsReady() const
+{
+	return this->isReady;
+}
 bool GameClient::Equals(const NetworkClient* c)
 {
 	return (c->GetID() == this->client->GetID());
+}
+void GameClient::SetReadyState(bool r)
+{
+	this->isReady = r;
+}
+void GameClient::SetSinceLastResponse(float s)
+{
+	this->secondsSinceLastResponse = s;
 }
 
 

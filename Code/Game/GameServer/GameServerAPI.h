@@ -32,9 +32,11 @@ namespace DanBias
 			{
 				char* serverName;
 				int listenPort;
+				bool broadcast;			//Not fully implemented!
 				ServerInitDesc() 
 					: serverName("Game Server")
 					, listenPort(15151)
+					, broadcast(true)
 				{};
 			};
 			struct GameServerInfo
@@ -49,6 +51,7 @@ namespace DanBias
 			static void					ServerStop();
 			static void					ServerUpdate();
 			static GameServerInfo		ServerGetInfo();
+			static bool					ServerIsRunning();
 
 			static void					GameSetMapId(const int& val);
 			static void					GameSetMaxClients(const int& val);

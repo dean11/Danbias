@@ -133,7 +133,7 @@ NetClient NetworkSession::Detach(const NetworkClient* client)
 
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(this->clients[i] && this->clients[0]->GetID() == client->GetID())
+			if(this->clients[i] && this->clients[i]->GetID() == client->GetID())
 			{
 				val = this->clients[i];
 				this->clients[i] = 0;

@@ -235,7 +235,7 @@ namespace GameLogic
 	struct Protocol_ObjectCreate :public Oyster::Network::CustomProtocolObject
 	{
 		int object_ID;
-		char *name;
+		std::string name;
 		float worldMatrix[16];
 
 		Protocol_ObjectCreate()
@@ -244,7 +244,7 @@ namespace GameLogic
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray; 
+			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray;
 			
 			for (int i = 3; i <= 18; i++)
 			{
@@ -276,7 +276,7 @@ namespace GameLogic
 		{
 
 			this->protocol[1].value = object_ID;
-			this->protocol[2].value = name;
+			this->protocol.Set(2, name);
 			this->protocol[3].value = worldMatrix[0];
 			this->protocol[4].value = worldMatrix[1]; 
 			this->protocol[5].value	= worldMatrix[2];

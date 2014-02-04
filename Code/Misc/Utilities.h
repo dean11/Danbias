@@ -400,7 +400,59 @@ namespace Utility
 
 	namespace Thread
 	{
-		//Utilities for threading
+		using namespace DynamicMemory;
+		//! Wrapper to manage references on a pointer.
+		template<typename T> struct ThreadSafeSmartPointer
+		{
+			private:
+				std::atomic<ReferenceCount*>	_rc;
+				std::atomic<T*>					_ptr;
+
+				/** Destroys the pointer and returns the memory allocated. */
+				void Destroy();
+
+			public:
+				ThreadSafeSmartPointer();
+				ThreadSafeSmartPointer(UniquePointer<T>& up);
+				ThreadSafeSmartPointer(T* p);
+				ThreadSafeSmartPointer(const ThreadSafeSmartPointer& d);
+				virtual~ThreadSafeSmartPointer();
+				ThreadSafeSmartPointer<T>& operator= (const ThreadSafeSmartPointer<T>& p);
+				ThreadSafeSmartPointer<T>& operator= (UniquePointer<T>& p);
+				ThreadSafeSmartPointer<T>& operator= (T* p);
+				bool operator== (const ThreadSafeSmartPointer<T>& d) const;
+				bool operator== (const T& p) const;
+				bool operator!= (const ThreadSafeSmartPointer<T>& d) const;
+				bool operator!= (const T& p) const;
+				T& operator* ();
+				const T& operator* () const;
+				T* operator-> ();
+				const T* operator-> () const;
+				operator T* () const;
+				operator const T* () const;
+				operator T& () const;
+				operator bool() const;
+				
+				/**
+				*	Returns the connected pointer 
+				*/
+				T* Get();
+				T* Get() const;
+
+				/**
+				*	Releases one reference of the pointer and set value to null, making the current ThreadSafeSmartPointer invalid.
+				*/
+				int Release();
+				/**
+				*	Only test to release to check reference count.
+				*/
+				int ReleaseDummy();
+
+				/** Checks if the pointer is valid (not NULL)
+				*	Returns true for valid, else false. 
+				*/
+				bool IsValid() const;
+		};
 	}
 }
 

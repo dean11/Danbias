@@ -7,11 +7,18 @@ using namespace Oyster::Physics;
 
 
 Level::Level(void)
+	:levelObj(0)
+	,testBox(0)
 {
 
 }
 Level::~Level(void)
 {
+	delete this->levelObj;
+	this->levelObj = 0;
+
+	delete  this->testBox;
+	this->testBox = 0;
 }
 
 void Level::InitiateLevel(std::string levelPath)
@@ -23,7 +30,7 @@ void Level::InitiateLevel(float radius)
 
 	// add level sphere
 	API::SphericalBodyDescription sbDesc;
-	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
+	sbDesc.centerPosition = Oyster::Math::Float3(0,0,0);
 	sbDesc.ignoreGravity = true;
 	sbDesc.radius = 300; 
 	sbDesc.mass = 10e12f;
@@ -32,12 +39,18 @@ void Level::InitiateLevel(float radius)
 	
 	ICustomBody::State state;
 	rigidBody->GetState(state);
-	state.SetRestitutionCoeff(0.2);
+	state.SetRestitutionCoeff(0.2f);
 	rigidBody->SetState(state);
 	
-	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
+	this->levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 	rigidBody->SetCustomTag(levelObj);
 	
+	// add gravitation 
+	API::Gravity gravityWell;
+	gravityWell.gravityType = API::Gravity::GravityType_Well;
+	gravityWell.well.mass = 1e15f;
+	gravityWell.well.position = Oyster::Math::Float3(0,0,0);
+	API::Instance().AddGravity(gravityWell);
 	
 	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
@@ -52,16 +65,8 @@ void Level::InitiateLevel(float radius)
 	testBox = new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX);
 	rigidBody_TestBox->SetCustomTag(testBox);
 	rigidBody_TestBox->GetState(state);
-	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,0));
+	state.ApplyLinearImpulse(Oyster::Math::Float3(1,0,0));
 	rigidBody_TestBox->SetState(state);
-	
-	
-	// add gravitation 
-	API::Gravity gravityWell;
-	gravityWell.gravityType = API::Gravity::GravityType_Well;
-	gravityWell.well.mass = 1e15f;
-	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
-	API::Instance().AddGravity(gravityWell);
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)
