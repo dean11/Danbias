@@ -29,14 +29,17 @@ SphericalRigidBody::SphericalRigidBody()
 
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
 {
-	this->rigid = RigidBody();
+	this->rigid							= RigidBody();
 	this->rigid.SetRotation( desc.rotation );
-	this->rigid.centerPos = desc.centerPosition;
-	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
+	this->rigid.centerPos				= desc.centerPosition;
+	this->rigid.boundingReach			= Float4( desc.radius, desc.radius, desc.radius, 0.0f );
+	this->rigid.restitutionCoeff		= desc.restitutionCoeff;
+	this->rigid.frictionCoeff_Static	= desc.frictionCoeff_Static;
+	this->rigid.frictionCoeff_Kinetic	= desc.frictionCoeff_Dynamic;
 	this->rigid.SetMass_KeepMomentum( desc.mass );
 	this->rigid.SetMomentOfInertia_KeepMomentum( MomentOfInertia::Sphere(desc.mass, desc.radius) );
-	this->deltaPos = Float4::null;
-	this->deltaAxis = Float4::null;
+	this->deltaPos						= Float4::null;
+	this->deltaAxis						= Float4::null;
 
 	this->gravityNormal = Float3::null;
 
@@ -254,22 +257,22 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 	//	this->isForwarded = false;
 	//}
 
-	this->rigid.Update_LeapFrog( timeStepLength );
-
 	{ // Rebound if needed
 		if( this->collisionRebound.timeOfContact < 1.0f )
 		{
 			this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
 			this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
 			this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
+			this->collisionRebound.timeOfContact = 1.0f;
 		}
 
 		// Update rebound data
 		this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
 		this->collisionRebound.previousSpatial.axis = this->rigid.axis;
 		this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
-		this->collisionRebound.timeOfContact = 1.0f;
 	}
+
+	this->rigid.Update_LeapFrog( timeStepLength );
 
 	{ // Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
 		Float3 n;
