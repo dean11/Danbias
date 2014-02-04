@@ -333,22 +333,22 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 	//	this->isForwarded = false;
 	//}
 
-	this->rigid.Update_LeapFrog( timeStepLength );
-
 	{ // Rebound if needed
 		if( this->collisionRebound.timeOfContact < 1.0f )
 		{
 			this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
 			this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
 			this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
+			this->collisionRebound.timeOfContact = 1.0f;
 		}
 
 		// Update rebound data
 		this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
 		this->collisionRebound.previousSpatial.axis = this->rigid.axis;
 		this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
-		this->collisionRebound.timeOfContact = 1.0f;
 	}
+
+	this->rigid.Update_LeapFrog( timeStepLength );
 
 	{ // Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
 		Float3 n;
