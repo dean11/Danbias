@@ -120,16 +120,42 @@ void Object::BeginFrame()
 {
 	
 	
-
-	
-	
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+	if(currPhysicsState.GetCenterPosition() !=currPhysicsState.GetCenterPosition())
+	{
+		//error
+		int i =0 ;
+	}
+	if(currPhysicsState.GetAngularAxis() !=currPhysicsState.GetAngularAxis())
+	{
+		//error
+		int i =0 ;
+	}
 	this->rigidBody->SetState(this->newPhysicsState);
 }
 // update physic 
 void Object::EndFrame()
 {
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
 	this->currPhysicsState = this->rigidBody->GetState();
-
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+	if(currPhysicsState.GetGravityNormal() !=currPhysicsState.GetGravityNormal())
+	{
+		//error
+		int i =0 ;
+	}
 	if(currPhysicsState.GetGravityNormal()!= Float3::null)
 	{
 		Oyster::Math::Float4 axis;
@@ -144,6 +170,14 @@ void Object::EndFrame()
 		Oyster::Math::Float3 debug = ::LinearAlgebra3D::WorldAxisOf(::LinearAlgebra3D::Rotation(axis.xyz), Oyster::Math::Float3::standard_unit_y);
 		debug += currPhysicsState.GetGravityNormal();
 	}
+
+
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+
 	this->newPhysicsState = this->currPhysicsState;
 }
 

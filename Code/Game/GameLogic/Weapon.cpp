@@ -141,5 +141,7 @@ void Weapon::SelectAttatchment(int socketID)
 
 void Weapon::Update(float dt)
 {
+	if(!selectedAttatchment) return;
+
 	selectedAttatchment->Update(dt);
 }

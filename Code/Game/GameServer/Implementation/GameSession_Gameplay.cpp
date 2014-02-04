@@ -86,18 +86,18 @@ namespace DanBias
 		{
 			gameSession->networkTimer.reset();
 
+			GameLogic::IObjectData* obj = movedObject;
+
 			if(dynamic_cast<IPlayerData*> (movedObject))
 			{
-				int id = movedObject->GetID();
-				Oyster::Math::Float4x4 world = movedObject->GetOrientation();
+				int id = obj->GetID();
+				Oyster::Math::Float4x4 world = obj->GetOrientation();
 
 				Protocol_ObjectPosition p(world, id);
 				GameSession::gameSession->Send(p.GetProtocol());
 			}
-
-			if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
+			else if(dynamic_cast<GameLogic::ILevelData*>(obj))
 			{
-				GameLogic::IObjectData* obj = NULL;
 				obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
 				if(obj)
 				{
@@ -111,7 +111,6 @@ namespace DanBias
 					}
 				}
 
-				obj = NULL;
 				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
 				if(obj)
 				{
@@ -121,6 +120,18 @@ namespace DanBias
 						Oyster::Math::Float4x4 world = obj->GetOrientation();
 						Protocol_ObjectPosition p(world, id);
 						gameSession->Send(p.GetProtocol());
+					}
+				}
+			
+				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(2);
+				if(obj)
+				{
+					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+					{
+						int id = obj->GetID();
+						Oyster::Math::Float4x4 world = obj->GetOrientation();
+						Protocol_ObjectPosition p(world, id);
+						GameSession::gameSession->Send(p.GetProtocol());
 					}
 				}
 			}
