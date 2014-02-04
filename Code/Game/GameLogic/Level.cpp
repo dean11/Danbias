@@ -34,7 +34,8 @@ void Level::InitiateLevel(float radius)
 	sbDesc.ignoreGravity = true;
 	sbDesc.radius = 300; 
 	sbDesc.mass = 10e12f;
-	
+	sbDesc.frictionCoeff_Static = 0;
+	sbDesc.frictionCoeff_Dynamic = 0;
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 	
 	ICustomBody::State state;
@@ -45,19 +46,15 @@ void Level::InitiateLevel(float radius)
 	this->levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 	rigidBody->SetCustomTag(levelObj);
 	
-	// add gravitation 
-	API::Gravity gravityWell;
-	gravityWell.gravityType = API::Gravity::GravityType_Well;
-	gravityWell.well.mass = 1e15f;
-	gravityWell.well.position = Oyster::Math::Float3(0,0,0);
-	API::Instance().AddGravity(gravityWell);
 	
 	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
 	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,0);
 	sbDesc_TestBox.ignoreGravity = false;
+
 	sbDesc_TestBox.mass = 50;
 	sbDesc_TestBox.size = Oyster::Math::Float4(4,4,4,0);
+
 	
 	ICustomBody* rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 	rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
@@ -65,8 +62,16 @@ void Level::InitiateLevel(float radius)
 	testBox = new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX);
 	rigidBody_TestBox->SetCustomTag(testBox);
 	rigidBody_TestBox->GetState(state);
-	state.ApplyLinearImpulse(Oyster::Math::Float3(1,0,0));
+	state.ApplyLinearImpulse(Oyster::Math::Float3(0,0,0));
 	rigidBody_TestBox->SetState(state);
+	
+	
+	// add gravitation 
+	API::Gravity gravityWell;
+	gravityWell.gravityType = API::Gravity::GravityType_Well;
+	gravityWell.well.mass = 1e18f;
+	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
+	API::Instance().AddGravity(gravityWell);
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)

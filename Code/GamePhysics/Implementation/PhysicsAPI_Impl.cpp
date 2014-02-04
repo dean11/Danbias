@@ -60,6 +60,8 @@ namespace
 				return;
 			}
 
+			// calculate and store time interpolation value, for later rebound.
+			proto->SetTimeOfContact( worldPointOfContact );
 
 			// bounce
 			Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
@@ -78,10 +80,14 @@ namespace
 																			deuterState.GetMass(), deuterG_Magnitude );
 
 			Float4 bounce = Average( bounceD, bounceP );
+
+			Float4 friction = Formula::CollisionResponse::Friction( protoG_Magnitude, normal,
+															  Float4(protoState.GetLinearMomentum(), 0),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+															  Float4(deuterState.GetLinearMomentum(), 0), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 			
 			Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
 
-			protoState.ApplyImpulse( bounce.xyz, worldPointOfContact.xyz, normal.xyz );
+			protoState.ApplyImpulse( bounce.xyz - friction.xyz, worldPointOfContact.xyz, normal.xyz );
 			proto->SetState( protoState );
 
 			Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
@@ -233,17 +239,16 @@ void API_Impl::Update()
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {
-	//! @todo TODO: implement stub
-	return true;
+	return this->worldScene.IsInLimbo( objRef );
 }
 
 void API_Impl::MoveToLimbo( const ICustomBody* objRef )
 {
-	/** @todo TODO: Fix this function.*/
+	this->worldScene.MoveToLimbo( objRef );
 }
 void API_Impl::ReleaseFromLimbo( const ICustomBody* objRef )
 {
-	/** @todo TODO: Fix this function.*/
+	this->worldScene.ReleaseFromLimbo( objRef );
 }
 
 void API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle )

@@ -49,23 +49,38 @@ SimpleRigidBody::SimpleRigidBody()
 	this->onCollision = Default::EventAction_BeforeCollisionResponse;
 	this->onCollisionResponse = Default::EventAction_AfterCollisionResponse;
 	this->onMovement = Default::EventAction_Move;
+	
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+	this->collisionRebound.timeOfContact = 1.0f;
+
 	this->scene = nullptr;
 	this->customTag = nullptr;
 	this->ignoreGravity = this->isForwarded = false;
 }
 
 SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
-{
-	//this->rigid.SetRotation( desc.rotation );
-	this->rigid.centerPos = desc.centerPosition;
+{	
+	this->rigid = RigidBody();
+	this->rigid.SetRotation( desc.rotation );
+	this->rigid.centerPos				= desc.centerPosition;
 	this->rigid.SetSize( desc.size );
+	this->rigid.restitutionCoeff		= desc.restitutionCoeff;
+	this->rigid.frictionCoeff_Static	= desc.frictionCoeff_Static;
+	this->rigid.frictionCoeff_Kinetic	= desc.frictionCoeff_Dynamic;
 	this->rigid.SetMass_KeepMomentum( desc.mass );
 	this->rigid.SetMomentOfInertia_KeepMomentum( desc.inertiaTensor );
-	this->deltaPos = Float4::null;
-	this->deltaAxis = Float4::null;
+	this->deltaPos						= Float4::null;
+	this->deltaAxis						= Float4::null;
 
 	this->gravityNormal = Float3::null;
 	
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+	this->collisionRebound.timeOfContact = 1.0f;
+
 	if( desc.subscription_onCollision )
 	{
 		this->onCollision = desc.subscription_onCollision;
@@ -198,6 +213,26 @@ bool SimpleRigidBody::Intersects( const ICustomBody &object, Float4 &worldPointO
 	return object.Intersects( Box(this->rigid.GetRotationMatrix(), this->rigid.centerPos, this->rigid.GetSize()), worldPointOfContact );
 }
 
+void SimpleRigidBody::SetTimeOfContact( Float4 &worldPointOfContact )
+{
+	Point pointOfContact = Point( worldPointOfContact );
+	Box start = Box();
+	{
+		start.rotation = RotationMatrix( this->collisionRebound.previousSpatial.axis );
+		start.center = this->collisionRebound.previousSpatial.center;
+		start.boundingOffset = this->collisionRebound.previousSpatial.reach;
+	}
+	Box end = Box();
+	{
+		end.rotation = RotationMatrix( this->rigid.axis );
+		end.center = this->rigid.centerPos;
+		end.boundingOffset = this->rigid.boundingReach;
+	}
+	Float timeOfContact = ::Oyster::Collision3D::Utility::TimeOfContact( start, end, pointOfContact );
+
+	this->collisionRebound.timeOfContact = Min( this->collisionRebound.timeOfContact, timeOfContact );
+}
+
 Sphere & SimpleRigidBody::GetBoundingSphere( Sphere &targetMem ) const
 {
 	return targetMem = Sphere( this->rigid.centerPos, this->rigid.boundingReach.GetMagnitude() );
@@ -290,21 +325,49 @@ void * SimpleRigidBody::GetCustomTag() const
 //	return this->rigid.GetLinearVelocity();
 //}
 
-
 UpdateState SimpleRigidBody::Update( Float timeStepLength )
 {
-	if( this->isForwarded )
+	if( this->collisionRebound.timeOfContact < 1.0f )
+	{ // Rebound if needed
+		this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
+		this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
+		this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
+		this->collisionRebound.timeOfContact = 1.0f;
+	}
+
+	// Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
+	Float4 temp;
+	::std::modf( this->rigid.axis * (0.5f / pi), temp.xyz );
+	this->rigid.axis -= ((2.0f * pi) * temp).xyz;
+
+	// Update rebound data
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+
+	// Check if this is close enough to be set resting
+	temp = Float4( this->rigid.impulse_Linear, 0.0f ) + Float4( this->rigid.impulse_Angular, 0.0f );
+	if( temp.Dot(temp) <= (Constant::epsilon * Constant::epsilon) )
 	{
-		this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
-		this->deltaPos = Float4::null;
-		this->deltaAxis = Float4::null;
-		this->isForwarded = false;
+		unsigned char resting = 0;
+		if( this->rigid.momentum_Linear.Dot(this->rigid.momentum_Linear) <= (Constant::epsilon * Constant::epsilon) )
+		{
+			this->rigid.momentum_Linear = Float3::null;
+			resting = 1;
+		}
+		if( this->rigid.momentum_Angular.Dot(this->rigid.momentum_Angular) <= (Constant::epsilon * Constant::epsilon) )
+		{
+			this->rigid.momentum_Angular = Float3::null;
+			++resting;
+		}
+		if( resting == 2 )
+		{
+			this->rigid.impulse_Linear = this->rigid.impulse_Angular = Float3::null;
+			return UpdateState_resting;
+		}
 	}
 
 	this->rigid.Update_LeapFrog( timeStepLength );
-
-	//! @todo TODO: compare previous and new state and return result
-	//return this->current == this->previous ? UpdateState_resting : UpdateState_altered;
 	return UpdateState_altered;
 }
 

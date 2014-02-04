@@ -15,37 +15,37 @@ namespace PrivateStatic
 		Float4x4 m = vp.GetTranspose();
 
 		// left
-		lp.normal  = m.v[3].xyz + m.v[0].xyz;
+		lp.normal  = Float4(m.v[3].xyz + m.v[0].xyz,0);
 		lp.phasing = lp.normal.GetMagnitude();
 		lp.normal /= lp.phasing;
 		lp.phasing = (m.v[3].w + m.v[0].w) / lp.phasing;
 
 		// right
-		rp.normal  = m.v[3].xyz - m.v[0].xyz;
+		rp.normal  = Float4(m.v[3].xyz - m.v[0].xyz,0);
 		rp.phasing = rp.normal.GetMagnitude();
 		rp.normal /= rp.phasing;
 		rp.phasing = (m.v[3].w - m.v[0].w) / rp.phasing;
 		
 		// bottom
-		bp.normal  = m.v[3].xyz + m.v[1].xyz;
+		bp.normal  = Float4(m.v[3].xyz + m.v[1].xyz,0);
 		bp.phasing = bp.normal.GetMagnitude();
 		bp.normal /= bp.phasing;
 		bp.phasing = (m.v[3].w + m.v[1].w) / bp.phasing;
 
 		// top
-		tp.normal  = m.v[3].xyz - m.v[1].xyz;
+		tp.normal  = Float4(m.v[3].xyz - m.v[1].xyz,0);
 		tp.phasing = tp.normal.GetMagnitude();
 		tp.normal /= tp.phasing;
 		tp.phasing = (m.v[3].w - m.v[1].w) / tp.phasing;
 		
 		// near leftHanded DirectX
-		np.normal  = m.v[2].xyz;
+		np.normal  = Float4(m.v[2].xyz,0);
 		np.phasing = np.normal.GetMagnitude();
 		np.normal /= np.phasing;
 		np.phasing = m.v[2].w / np.phasing;
 
 		// far lefthanded
-		fp.normal  = m.v[3].xyz - m.v[2].xyz;
+		fp.normal  = Float4(m.v[3].xyz - m.v[2].xyz,0);
 		fp.phasing = fp.normal.GetMagnitude();
 		fp.normal /= fp.phasing;
 		fp.phasing = (m.v[3].w - m.v[2].w) / fp.phasing;
@@ -240,6 +240,18 @@ bool Frustrum::Contains( const ICollideable &target ) const
 	//case Type_frustrum:			return false; // TODO: 
 	//case Type_line:				return false; // TODO: 
 	default:					return false;
+	}
+}
+
+Float Frustrum::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{ // TODO: more to implement
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
 	}
 }
 

@@ -176,10 +176,11 @@ namespace DanBias
 	}
 	void GameSession::Gameplay_PlayerLookDir		( Protocol_PlayerLook& p, DanBias::GameClient* c )
 	{
-		Oyster::Math3D::Float3 lookDir; 
+		Oyster::Math3D::Float4 lookDir; 
 		lookDir.x = p.lookDirX;
 		lookDir.y = p.lookDirY;
 		lookDir.z = p.lookDirZ;
+		lookDir.w = p.deltaX;
 		c->GetPlayer()->Rotate(lookDir);
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon	( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
@@ -188,7 +189,9 @@ namespace DanBias
 	}
 	void GameSession::Gameplay_PlayerShot			( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{
-		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+		//c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
+		//c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
 	}
 	void GameSession::Gameplay_PlayerJump			( Protocol_PlayerJump& p, DanBias::GameClient* c )
 	{

@@ -20,11 +20,33 @@ namespace GameLogic
 			memcpy(header, buffer, size);
 		}
 
+		void ParseObject(char* buffer, ObjectHeader& header, int& size)
+		{
+			char tempName[128];
+			int tempSize = 0;
+			int start = 0;
+
+			memcpy(&header.typeID, &buffer[start], 4);
+			start += 4;
+
+			memcpy(&tempSize, &buffer[start], 4);
+			start += 4;
+
+			memcpy(&tempName, &buffer[start], tempSize);
+			header.ModelFile.assign(&tempName[0], &tempName[tempSize]);
+			start += tempSize;
+
+			memcpy(&header.position, &buffer[start], 36);
+			start += 36;
+
+			size += start;
+		}
+
 		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size)
 		{
 			int start = 0;
 			int tempSize;
-			char tempName[100];
+			char tempName[128];
 
 			memcpy(&header.typeID, &buffer[start], 4);
 			start += 4;
@@ -36,8 +58,8 @@ namespace GameLogic
 			header.levelName.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
 
-			memcpy(&header.levelVersion, &buffer[start], 8);
-			start += 8;
+			memcpy(&header.levelVersion, &buffer[start], 4);
+			start += 4;
 
 			memcpy(&tempSize, &buffer[start], 4);
 			start +=4;
@@ -59,8 +81,12 @@ namespace GameLogic
 			memcpy(&header.worldSize, &buffer[start], 4);
 			start += 4;
 
-			memcpy(&header.overviewPictureID, &buffer[start], 4);
+			memcpy(&tempSize, &buffer[start], 4);
 			start += 4;
+
+			memcpy(&tempName, &buffer[start], tempSize);
+			header.overviewPicturePath.assign(&tempName[0], &tempName[tempSize]);
+			start += tempSize;
 
 			memcpy(&tempSize, &buffer[start], 4);
 			start += 4;

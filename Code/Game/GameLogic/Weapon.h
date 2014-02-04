@@ -20,6 +20,7 @@ namespace GameLogic
 		~Weapon(void);
 
 		void Use(const WEAPON_FIRE &usage, float dt);
+		void Update(float dt);
 
 		void AddNewAttatchment(IAttatchment *attatchment, Player *owner);
 		void SwitchAttatchment(IAttatchment *attatchment, int socketID, Player *owner);

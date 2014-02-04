@@ -82,3 +82,17 @@ bool Point::Contains( const ICollideable &target ) const
 	default:					return false;
 	}
 }
+
+Float Point::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{ // TODO: more to implement
+	case Type_sphere:			return Utility::TimeOfContact( (const Sphere&)deuterStart, (const Sphere&)deuterEnd, *this );
+	case Type_box:				return Utility::TimeOfContact( (const Box&)deuterStart, (const Box&)deuterEnd, *this );
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
+	}
+}

@@ -77,3 +77,15 @@ bool BoxAxisAligned::Contains( const ICollideable &target ) const
 	//}
 	return false;
 }
+
+Float BoxAxisAligned::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{ // TODO: more to implement
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
+	}
+}

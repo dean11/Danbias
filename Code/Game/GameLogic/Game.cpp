@@ -42,7 +42,7 @@ GameAPI& GameAPI::Instance()
 Game::Game(void)
 	:	initiated(false)
 	,	onMoveFnc(0)
-	,	onDeadFnc(0)
+	,	onDisableFnc(0)
 	,	frameTime(1.0f/120.0f)
 {}
 
@@ -129,7 +129,7 @@ void Game::SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::O
 			this->onMoveFnc = functionPointer;
 		break;
 		case GameLogic::GameEvent::ObjectEventFunctionType_OnDead:
-			this->onDeadFnc = functionPointer;
+			this->onDisableFnc = functionPointer;
 		break;
 	}
 	
@@ -162,6 +162,6 @@ void Game::PhysicsOnMove(const ICustomBody *object)
 }
 void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
 {
-	
+	if(gameInstance.onDisableFnc) gameInstance.onDisableFnc(0);
 }
 

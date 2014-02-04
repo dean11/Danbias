@@ -323,6 +323,11 @@ namespace Oyster
 			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float4 &worldPointOfContact ) const = 0;
 
 			/********************************************************
+			 * Sets how far back it needs to be interpolated to not be overlapping worldPointOfContact.
+			 ********************************************************/
+			virtual void SetTimeOfContact( ::Oyster::Math::Float4 &worldPointOfContact ) = 0;
+
+			/********************************************************
 			 * Required by Engine's Collision Search.
 			 * @param targetMem: Provided memory that written into and then returned.
 			 * @return a sphere shape that contains the ICustomBody.

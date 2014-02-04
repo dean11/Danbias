@@ -32,6 +32,8 @@ namespace Oyster { namespace Collision3D
 		bool Intersects( const ICollideable &target ) const;
 		bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const;
 		bool Contains( const ICollideable &target ) const;
+
+		::Oyster::Math::Float TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const;
 	};
 } }
 

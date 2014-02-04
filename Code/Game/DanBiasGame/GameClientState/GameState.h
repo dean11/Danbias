@@ -27,6 +27,7 @@ private:
 	Camera* camera;
 
 	int myId;
+	float pitch;
 	struct myData;
 	myData* privData;
 public:

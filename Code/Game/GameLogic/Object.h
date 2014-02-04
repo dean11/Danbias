@@ -35,8 +35,8 @@ namespace GameLogic
 		Oyster::Physics::ICustomBody* GetRigidBody();
 		void ApplyLinearImpulse(Oyster::Math::Float3 force);
 
-		void BeginFrame();
-		void EndFrame();
+		virtual void BeginFrame();
+		virtual void EndFrame();
 
 		void setBeforeCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter));
 		void setAfterCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss));
@@ -49,11 +49,12 @@ namespace GameLogic
 
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
-		Oyster::Physics::ICustomBody::State setState;
-		Oyster::Physics::ICustomBody::State getState;
+		Oyster::Physics::ICustomBody::State newPhysicsState;
+		Oyster::Physics::ICustomBody::State currPhysicsState;
 
 		static const Game* gameInstance;
-
+		Oyster::Math::Float3 currLook;
+		Oyster::Math::Float3 newLook;
 	};
 
 }

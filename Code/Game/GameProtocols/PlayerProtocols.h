@@ -69,6 +69,7 @@ namespace GameLogic
 		float lookDirX;
 		float lookDirY;
 		float lookDirZ;
+		float deltaX;
 
 		Protocol_PlayerLook()
 		{
@@ -78,6 +79,7 @@ namespace GameLogic
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
 			
 		}
 		Protocol_PlayerLook(Oyster::Network::CustomNetProtocol& p)
@@ -85,12 +87,14 @@ namespace GameLogic
 			lookDirX		= p[1].value.netFloat;
 			lookDirY		= p[2].value.netFloat;
 			lookDirZ		= p[3].value.netFloat;
+			deltaX			= p[4].value.netFloat;
 		}
 		const Protocol_PlayerLook& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
 			lookDirX		= val[1].value.netFloat;
 			lookDirY		= val[2].value.netFloat;
 			lookDirZ		= val[3].value.netFloat;
+			deltaX			= val[4].value.netFloat;
 
 			return *this;
 		}
@@ -99,6 +103,8 @@ namespace GameLogic
 			this->protocol[1].value = lookDirX;
 			this->protocol[2].value = lookDirY;
 			this->protocol[3].value = lookDirZ;
+			this->protocol[4].value	= deltaX;
+
 
 			return protocol;
 		}

@@ -87,3 +87,29 @@ bool Sphere::Contains( const ICollideable &target ) const
 	default:					return false;
 	}
 }
+
+Float Sphere::TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const
+{
+	if( deuterStart.type != deuterEnd.type )
+		return -1.0f;
+
+	switch( deuterStart.type )
+	{
+	//case Type_point:			// not implemented
+	//case Type_sphere:			// not implemented
+	//case Type_box:			// not implemented
+	case Type_universe:			return 0.0f;
+	default:					return 1.0f;
+	}
+}
+
+namespace Oyster { namespace Math
+{
+	Sphere & Nlerp( const Sphere &start, const Sphere &end, Float t, Sphere &targetMem )
+	{
+		Float4 i = Lerp( Float4(start.center.xyz, start.radius), Float4(end.center.xyz, end.radius), t );
+		targetMem.center.xyz = i.xyz;
+		targetMem.radius = i.w;
+		return targetMem;
+	}
+} }

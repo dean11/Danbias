@@ -86,6 +86,9 @@ namespace DanBias
 			float dt = (float)m_data->timer.getElapsedSeconds();
 			m_data->timer.reset();
 
+			if(m_data->recieverObj->IsConnected())
+				m_data->recieverObj->Update();
+			
 			capFrame += dt;
 			if(capFrame > 0.03)
 			{
@@ -135,8 +138,7 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		if(m_data->recieverObj->IsConnected())
-			m_data->recieverObj->Update();
+
 
 		m_data->inputObj->Update();
 
