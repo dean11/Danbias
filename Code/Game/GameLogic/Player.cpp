@@ -6,7 +6,7 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-
+const int MOVE_FORCE = 50000;
 Player::Player()
 	:DynamicObject()
 {
@@ -67,8 +67,17 @@ void Player::BeginFrame()
 
 void Player::EndFrame()
 {
-	
+	// snap to axis
 	Object::EndFrame();
+	// rotate 
+
+	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
+	Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
+	Oyster::Math::Float3 oldOrt = currPhysicsState.GetRotation();
+
+	currPhysicsState.AddRotation(deltaAxis);
+	dx = 0; 
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -101,13 +110,13 @@ void Player::MoveForward()
 {
 	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
 	//Oyster::Math::Float3 forward = lookDir;
-	newPhysicsState.ApplyLinearImpulse(forward * (30000 * this->gameInstance->GetFrameTime()));
+	newPhysicsState.ApplyLinearImpulse(forward * (MOVE_FORCE * this->gameInstance->GetFrameTime()));
 }
 void Player::MoveBackwards()
 {
 	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
 	//Oyster::Math::Float3 forward = lookDir;
-	newPhysicsState.ApplyLinearImpulse(-forward * 30000 * this->gameInstance->GetFrameTime());
+	newPhysicsState.ApplyLinearImpulse(-forward * MOVE_FORCE * this->gameInstance->GetFrameTime());
 }
 void Player::MoveRight()
 {
@@ -115,7 +124,7 @@ void Player::MoveRight()
 	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
 	//Oyster::Math::Float3 forward = lookDir;
 	Oyster::Math::Float3 r = (-currPhysicsState.GetGravityNormal()).Cross(forward);
-	newPhysicsState.ApplyLinearImpulse(-r * 30000 * this->gameInstance->GetFrameTime());
+	newPhysicsState.ApplyLinearImpulse(-r * MOVE_FORCE * this->gameInstance->GetFrameTime());
 	
 }
 void Player::MoveLeft()
@@ -124,7 +133,7 @@ void Player::MoveLeft()
 	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
 	//Oyster::Math::Float3 forward = lookDir;
 	Oyster::Math::Float3 r = (-currPhysicsState.GetGravityNormal()).Cross(forward);	//Still get zero
-	newPhysicsState.ApplyLinearImpulse(r * 30000 * this->gameInstance->GetFrameTime());
+	newPhysicsState.ApplyLinearImpulse(r * MOVE_FORCE * this->gameInstance->GetFrameTime());
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
@@ -147,19 +156,20 @@ void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 	{
 		int i =0 ;
 	}
-	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
-	Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
-	Oyster::Math::Float3 oldOrt = currPhysicsState.GetRotation();
+	//Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
+	//Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
+	//Oyster::Math::Float3 oldOrt = currPhysicsState.GetRotation();
 
-	newPhysicsState.SetRotation(oldOrt + deltaAxis);
+	//newPhysicsState.SetRotation(oldOrt + deltaAxis);
 
 	this->lookDir = lookDir.xyz;
+	this->dx =  lookDir.w;
 }
 
 void Player::Jump()
 {
 	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
-	newPhysicsState.ApplyLinearImpulse(up * 30000 * this->gameInstance->GetFrameTime());
+	newPhysicsState.ApplyLinearImpulse(up * MOVE_FORCE * this->gameInstance->GetFrameTime());
 }
 
 bool Player::IsWalking()

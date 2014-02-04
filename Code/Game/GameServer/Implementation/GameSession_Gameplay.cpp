@@ -122,6 +122,18 @@ namespace DanBias
 					GameSession::gameSession->Send(*p.GetProtocol());
 				}
 			}
+			obj = NULL;
+			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(2);
+			if(obj)
+			{
+				if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+				{
+					int id = obj->GetID();
+					Oyster::Math::Float4x4 world = obj->GetOrientation();
+					Protocol_ObjectPosition p(world, id);
+					GameSession::gameSession->Send(*p.GetProtocol());
+				}
+			}
 		}
 		
 	}

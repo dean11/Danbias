@@ -163,9 +163,9 @@ namespace DanBias
 					DanBias::GameServerAPI::GameStart();
 				m_data->recieverObj->gameClientState = new Client::GameState();
 				if(m_data->serverOwner)
-					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(2);
+					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(0);
 				else
-					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(3);
+					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(1);
 				break;
 			default:
 				return E_FAIL;

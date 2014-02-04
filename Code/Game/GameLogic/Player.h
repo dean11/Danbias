@@ -83,6 +83,7 @@ namespace GameLogic
 		Weapon *weapon;
 		PLAYER_STATE playerState;
 		Oyster::Math::Float3 lookDir;
+		Oyster::Math::Float dx;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;
