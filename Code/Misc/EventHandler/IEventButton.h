@@ -8,9 +8,7 @@ namespace Oyster
 	{
 		class IEventButton
 		{
-			
 		public:
-			
 			enum ButtonState
 			{
 				Button_Clicked,

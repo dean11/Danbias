@@ -29,11 +29,22 @@ namespace Oyster
 
 			void Update(InputClass* inputObject);
 
-			template <class Owner>
-			void AddButton(Owner a);
+			template <typename Owner>
+			void AddButton(EventButton<Owner>& button)
+			{
+				EventButton<Owner>* b = new EventButton<Owner>();
+				buttons.size(); 
+				buttons.push_back((IEventButton*)b);
+				//buttons.push_back((IEventButton*)&button);
+			}
 
-			template <class Owner>
-			EventButton<Owner>& CreateButton();
+			template <typename Owner>
+			EventButton<Owner>& CreateButton()
+			{
+				EventButton<Owner> temp;
+				buttons.push_back(&temp);
+				return temp;
+			}
 
 			EventCollectionState GetState() const;
 			void SetState(const EventCollectionState state);

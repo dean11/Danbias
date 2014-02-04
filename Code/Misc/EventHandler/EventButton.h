@@ -58,7 +58,7 @@ namespace Oyster
 		{
 			this->privData.ID = privData.currID;
 			this->privData.currID += 1;
-			this->privData.owner = NULL;
+			//this->privData.owner = NULL;
 			this->privData.EventFunc = NULL;
 		}
 
