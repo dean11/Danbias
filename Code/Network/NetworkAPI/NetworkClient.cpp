@@ -62,9 +62,10 @@ struct NetworkClient::PrivateData : public IThreadObject
 	}
 	~PrivateData()
 	{ 
+		this->thread.Terminate();
+
 		ShutdownWinSock();
 		this->connection.Disconnect();
-		this->thread.Terminate();
 		this->owner = 0;
 		this->parent = 0;
 	}
@@ -296,8 +297,11 @@ void NetworkClient::Disconnect()
 {
 	if(!privateData) return;
 
+	this->privateData->sendQueue.Clear();
+
 	privateData->connection.Disconnect();
 	privateData->thread.Terminate();
+
 }
 
 void NetworkClient::Send(CustomProtocolObject& protocol)

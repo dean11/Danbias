@@ -34,6 +34,8 @@ namespace Utility
 			virtual bool IsEmpty();
 			virtual void Swap( IQueue<Type> &queue );
 
+			virtual void Clear();
+
 		private:
 			class Node
 			{
@@ -215,6 +217,15 @@ namespace Utility
 			}
 			stdMutex.unlock();
 		}		
+
+		template < typename Type > 
+		void ThreadSafeQueue<Type>::Clear()
+		{
+			while (!IsEmpty())
+			{
+				Pop();
+			}
+		}
 
 
 	}
