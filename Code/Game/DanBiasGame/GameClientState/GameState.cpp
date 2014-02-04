@@ -43,7 +43,7 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 	privData->state = gameStateState_loading;
 	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
-	
+	pitch = 0;
 	return true;
 }
 GameState::gameStateState GameState::LoadGame() 
@@ -309,7 +309,8 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	if (KeyInput->IsMousePressed())
 	{
 		camera->Yaw(-KeyInput->GetYaw());
-		camera->Pitch(KeyInput->GetPitch());
+		//camera->Pitch(KeyInput->GetPitch());
+		//pitch = KeyInput->GetPitch();
 		camera->UpdateViewMatrix();
 		GameLogic::Protocol_PlayerLook playerLookDir;
 		Oyster::Math::Float4 look = camera->GetLook();
@@ -391,10 +392,21 @@ void GameState::Protocol( ObjPos* pos )
 			{
 				camera->setRight((Oyster::Math::Float3(world[0], world[1], world[2])));
 				camera->setUp(Oyster::Math::Float3(world[4], world[5], world[6]));
-				//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
-				Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13]+2, world[14]+2);
-				//Oyster::Math::Float3 cameraPos = up + pos;
-				camera->SetPosition(pos);
+				Oyster::Math::Float3 cameraLook = camera->GetLook();
+				Oyster::Math::Float3 objForward = (Oyster::Math::Float3(world[8], world[9], world[10]));
+				
+				camera->setLook(objForward);
+				camera->UpdateViewMatrix();
+				Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13], world[14]);
+				Oyster::Math::Float3 up = Oyster::Math::Float3(world[4], world[5], world[6]);
+				
+				up *= 2;
+				objForward *= -3;
+				Oyster::Math::Float3 cameraPos = up + pos + objForward;
+				//camera->Pitch(pitch);
+				camera->SetPosition(cameraPos);
+				//camera->LookAt(pos, dir, up);
+				//Oyster::Math::Float3 newLook = objForward;
 				camera->UpdateViewMatrix();
 			}
 		}
