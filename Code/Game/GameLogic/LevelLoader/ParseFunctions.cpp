@@ -58,8 +58,8 @@ namespace GameLogic
 			header.levelName.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
 
-			memcpy(&header.levelVersion, &buffer[start], 8);
-			start += 8;
+			memcpy(&header.levelVersion, &buffer[start], 4);
+			start += 4;
 
 			memcpy(&tempSize, &buffer[start], 4);
 			start +=4;
