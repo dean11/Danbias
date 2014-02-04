@@ -249,38 +249,28 @@ void * SphericalRigidBody::GetCustomTag() const
 
 UpdateState SphericalRigidBody::Update( Float timeStepLength )
 {
-	//if( this->isForwarded )
-	//{
-	//	this->rigid.Move( this->deltaPos.xyz, this->deltaAxis.xyz );
-	//	this->deltaPos = Float4::null;
-	//	this->deltaAxis = Float4::null;
-	//	this->isForwarded = false;
-	//}
-
+	if( this->collisionRebound.timeOfContact < 1.0f )
 	{ // Rebound if needed
-		if( this->collisionRebound.timeOfContact < 1.0f )
-		{
-			this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
-			this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
-			this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
-			this->collisionRebound.timeOfContact = 1.0f;
-		}
-
-		// Update rebound data
-		this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
-		this->collisionRebound.previousSpatial.axis = this->rigid.axis;
-		this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+		this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
+		this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
+		this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
+		this->collisionRebound.timeOfContact = 1.0f;
 	}
 
-	this->rigid.Update_LeapFrog( timeStepLength );
+	// Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
+	Float4 temp;
+	::std::modf( this->rigid.axis * (0.5f / pi), temp.xyz );
+	this->rigid.axis -= ((2.0f * pi) * temp).xyz;
 
-	{ // Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
-		Float3 n;
-		::std::modf( this->rigid.axis * (0.5f / pi), n );
-		this->rigid.axis -= (2.0f * pi) * n;
-	}
+	// Update rebound data
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
 
-	{ // Check if this is close enough to be set resting
+	// Check if this is close enough to be set resting
+	temp = Float4( this->rigid.impulse_Linear, 0.0f ) + Float4( this->rigid.impulse_Angular, 0.0f );
+	if( temp.Dot(temp) <= (Constant::epsilon * Constant::epsilon) )
+	{
 		unsigned char resting = 0;
 		if( this->rigid.momentum_Linear.Dot(this->rigid.momentum_Linear) <= (Constant::epsilon * Constant::epsilon) )
 		{
@@ -292,9 +282,14 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 			this->rigid.momentum_Angular = Float3::null;
 			++resting;
 		}
-		if( resting == 2 ) return UpdateState_resting;
+		if( resting == 2 )
+		{
+			this->rigid.impulse_Linear = this->rigid.impulse_Angular = Float3::null;
+			return UpdateState_resting;
+		}
 	}
 
+	this->rigid.Update_LeapFrog( timeStepLength );
 	return UpdateState_altered;
 }
 
