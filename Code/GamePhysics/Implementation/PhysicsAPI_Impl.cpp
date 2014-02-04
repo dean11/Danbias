@@ -51,6 +51,15 @@ namespace
 			Float4 protoG  = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
 				   deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
 
+			if( normal != normal ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
+			if( protoG != protoG ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
+			if( deuterG != deuterG ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
 			Float protoG_Magnitude = protoG.Dot( normal ),
 				  deuterG_Magnitude = deuterG.Dot( normal );
 
@@ -106,7 +115,10 @@ namespace
 				protoG_Magnitude = -protoG_Magnitude;
 				deuterG_Magnitude = -deuterG_Magnitude;
 			}
-					
+			
+			if( normal != normal ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
 			// bounce
 			Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
 																		  protoState.GetMass(), protoG_Magnitude,
@@ -222,6 +234,9 @@ void API_Impl::Update()
 			default: break;
 			}
 		}
+
+		if( gravityImpulse != gravityImpulse ) // debug: trap
+				const char *breakpoint = "This should never happen";
 
 		if( gravityImpulse != Float4::null )
 		{

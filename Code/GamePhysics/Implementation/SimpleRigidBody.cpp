@@ -332,6 +332,7 @@ UpdateState SimpleRigidBody::Update( Float timeStepLength )
 		this->rigid.centerPos = Lerp( this->collisionRebound.previousSpatial.center, this->rigid.centerPos, this->collisionRebound.timeOfContact );
 		this->rigid.SetRotation( Lerp(this->collisionRebound.previousSpatial.axis, this->rigid.axis, this->collisionRebound.timeOfContact) );
 		this->rigid.boundingReach = Lerp( this->collisionRebound.previousSpatial.reach, this->rigid.boundingReach, this->collisionRebound.timeOfContact );
+		timeStepLength *= 2.0f - this->collisionRebound.timeOfContact; // compensate for rebounded time
 		this->collisionRebound.timeOfContact = 1.0f;
 	}
 
