@@ -3,6 +3,12 @@
 VertexOut main( VertexIn input )
 {
 	VertexOut output;
+	Matrix boneTrans = BoneAnimation[input.boneIndex.x]*input.boneWeight.x +
+					   BoneAnimation[input.boneIndex.y]*input.boneWeight.y +
+					   BoneAnimation[input.boneIndex.z]*input.boneWeight.z +
+					   BoneAnimation[input.boneIndex.w]*input.boneWeight.w; 
+
+	input.pos = mul(boneTrans, input.pos) + input.pos * int(1-Animated);;
 	/*input.pos =
 		(mul(BoneAnimation[input.boneIndex.x], input.pos) * input.boneWeight.x * Animated) +
 		(mul(BoneAnimation[input.boneIndex.y], input.pos) * input.boneWeight.y * Animated) +

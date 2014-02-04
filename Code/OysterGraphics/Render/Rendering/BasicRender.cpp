@@ -83,15 +83,17 @@ namespace Oyster
 							if(info->Animated && models[i].AnimationPlaying != -1)
 							{
 								cube->WorldMatrix == Math::Matrix::identity;
-								//store inverse absolut transform
+								////store inverse absolut transform
 								Math::Matrix* SkinTransform = new Math::Matrix[info->BoneCount];
 								Math::Matrix* BoneAnimated = new Math::Matrix[info->BoneCount];
 								Math::Matrix* BoneAbsAnimated = new Math::Matrix[info->BoneCount];
 
 								Math::Matrix Scale = Math::Matrix::identity;
-								Scale.m[0][0] = 0.1f;
-								Scale.m[1][1] = 0.1f;
-								Scale.m[2][2] = 1;
+								Scale.m[0][0] = 1;
+								Scale.m[1][1] = 1;
+								Scale.m[2][2] = 2;
+
+								
 
 								for(int b = 0; b <info->BoneCount; ++b)
 								{
@@ -101,36 +103,39 @@ namespace Oyster
 									BoneAbsAnimated[b] = Bone.Absolute;
 
 									
-									cube2->WorldMatrix = Scale * info->bones[b].Absolute;
+									cube2->WorldMatrix = Scale;
 									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
-									Basic::RenderScene(cube2,1, View, Projection);
+									//Basic::RenderScene(cube2,1, View, Projection);
 								}
-								//for each bone in animation 
-								//HACK use first bone
-								int b = 0;
-								Model::Animation A = info->Animations[models[i].AnimationPlaying];
+								BoneAnimated[8] = Math3D::RotationMatrix(3.14/4, Math::Float3(0, 0, 1)) * info->bones[8].Relative;
+								BoneAnimated[31] = Math3D::RotationMatrix(3.14/4, Math::Float3(0, 0, 1)) * info->bones[31].Relative;
+								////for each bone in animation 
+								////HACK use first bone
+								//int b = 0;
+								//Model::Animation A = info->Animations[models[i].AnimationPlaying];
 								//for(int b = 0; b < A.Bones;++b)
-								{
-									//for each frame on bone Write current relative data
-									//HACK use first frame
-									int f = 0;
-									//for(int f = 0; f < A.Frames[b]; ++b)
-									{
-										//find right frame
-										//HACK accept first
-										Model::Frame Current = A.Keyframes[b][f];
+								//{
+								//	//for each frame on bone Write current relative data
+								//	//HACK use first frame
+								//	int f = 0;
+								//	//for(int f = 0; f < A.Frames[b]; ++b)
+								//	{
+								//		//find right frame
+								//		//HACK accept first
+								//		Model::Frame Current = A.Keyframes[b][f];
+								//
+								//		//calculate new matrix
+								//		Model::Bone CBone = Current.bone;
+								//		BoneAnimated[CBone.Parent] = CBone.Relative;
+								//	}
+								//}
 
-										//calculate new matrix
-										Model::Bone CBone = Current.bone;
-										BoneAnimated[CBone.Parent] = CBone.Relative;
-									}
-								}
-
-								//calculate Absolute Animation Transform
+								////calculate Absolute Animation Transform
 								for(int b = 0; b < info->BoneCount; ++b)
 								{
 									BoneAbsAnimated[b] = BoneAbsAnimated[info->bones[b].Parent] * BoneAnimated[b];
-									cube->WorldMatrix = Scale * BoneAbsAnimated[b];
+									//SkinTransform[b] = BoneAbsAnimated[b];
+									cube->WorldMatrix = Scale;
 									cube->WorldMatrix.v[3] = BoneAbsAnimated[b].v[3];
 									Basic::RenderScene(cube,1,View,Projection);
 								}
@@ -138,7 +143,7 @@ namespace Oyster
 								//write data to am
 								for(int b = 0; b < info->BoneCount; ++b)
 								{
-									am.animatedData[b] = BoneAbsAnimated[b] * SkinTransform[b];
+									am.animatedData[b] =  SkinTransform[b] * BoneAbsAnimated[b];
 								}
 
 								//retore to draw animated model
@@ -149,6 +154,10 @@ namespace Oyster
 								void* data  = Resources::Deffered::ModelData.Map();
 								memcpy(data,&(pm),sizeof(pm));
 								Resources::Deffered::ModelData.Unmap();
+
+								delete[]SkinTransform;
+								delete[]BoneAbsAnimated;
+								delete[]BoneAnimated;
 
 								am.Animated = 1;
 							}
