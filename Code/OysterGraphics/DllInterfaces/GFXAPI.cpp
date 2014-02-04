@@ -32,6 +32,8 @@ namespace Oyster
 			Render::Resources::Deffered::Init();
 
 			Render::Preparations::Basic::SetViewPort();
+			Render::Rendering::Basic::cube = API::CreateModel(L"box.dan");
+			Render::Rendering::Basic::cube2 = API::CreateModel(L"box2.dan");
 			return API::Sucsess;
 		}
 

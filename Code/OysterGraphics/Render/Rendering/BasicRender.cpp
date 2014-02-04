@@ -2,6 +2,7 @@
 #include "../Resources/Deffered.h"
 #include "../../Definitions/GraphicalDefinition.h"
 #include "../../Model/ModelInfo.h"
+#include "../../DllInterfaces/GFXAPI.h"
 #include <map>
 #include <vector>
 
@@ -14,6 +15,8 @@ namespace Oyster
 			namespace Rendering
 			{
 				Definitions::Pointlight pl;
+				Model::Model* Basic::cube = NULL;
+				Model::Model* Basic::cube2 = NULL; 
 
 				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
@@ -40,12 +43,21 @@ namespace Oyster
 					Resources::Deffered::PointLightsData.Unmap();
 				}
 
-				Math::Matrix RecursiveBindPos(int index, Model::ModelInfo* mi)
+				Math::Matrix RecursiveBindPosRotation(int index, Model::ModelInfo* mi)
 				{
 					if(mi->bones[index].Parent == index)
-						return mi->bones[index].Transform;
+						return mi->bones[index].Relative;
+					
+					return mi->bones[index].Relative*mi->bones[mi->bones->Parent].Relative;
+				}
 
-					return mi->bones[index].Transform.GetInverse() * RecursiveBindPos(mi->bones[index].Parent,mi);
+				Math::Vector4 RecursiveBindPosPosition(int index, Model::ModelInfo* mi)
+				{
+					//return Math::Vector4::standard_unit_w;
+					if(mi->bones[index].Parent == index)
+						return mi->bones[index].Relative.v[3];
+					
+					return Math::Vector4(RecursiveBindPosPosition(mi->bones->Parent, mi).xyz + (mi->bones[index].Relative.v[3] * RecursiveBindPosRotation(mi->bones->Parent,mi)).xyz,1);
 				}
 
 				void Basic::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
@@ -70,10 +82,71 @@ namespace Oyster
 							Definitions::AnimationData am;	//final
 							if(info->Animated && models[i].AnimationPlaying != -1)
 							{
+								//store inverse absolut transform
+								Math::Matrix* SkinTransform = new Math::Matrix[info->BoneCount];
+								Math::Matrix* BoneAnimated = new Math::Matrix[info->BoneCount];
+								Math::Matrix* BoneAbsAnimated = new Math::Matrix[info->BoneCount];
+
+								Math::Matrix Scale = Math::Matrix::identity;
+								Scale.m[1][1] = 0.1f;
+								Scale.m[2][2] = 0.1f;
+								Scale.m[3][3] = 2;
+
 								for(int b = 0; b <info->BoneCount; ++b)
 								{
-									am.animatedData[b] = RecursiveBindPos(b,info);
+									Model::Bone Bone = info->bones[b];
+									SkinTransform[b] = Bone.Absolute.GetInverse();
+									BoneAnimated[b] = Bone.Relative;
+									BoneAbsAnimated[b] = Bone.Absolute;
 								}
+								//for each bone in animation 
+								//HACK use first bone
+								int b = 0;
+								Model::Animation A = info->Animations[models[i].AnimationPlaying];
+								//for(int b = 0; b < A.Bones;++b)
+								{
+									//for each frame on bone Write current relative data
+									//HACK use first frame
+									int f = 0;
+									//for(int f = 0; f < A.Frames[b]; ++b)
+									{
+										//find right frame
+										//HACK accept first
+										Model::Frame Current = A.Keyframes[b][f];
+
+										//calculate new matrix
+										Model::Bone CBone = Current.bone;
+										BoneAnimated[CBone.Parent] = CBone.Relative;
+									}
+								}
+
+								//calculate Absolute Animation Transform
+								for(int b = 0; b < info->BoneCount; ++b)
+								{
+									BoneAbsAnimated[b] = BoneAbsAnimated[info->bones[b].Parent] * BoneAnimated[b];
+									cube->WorldMatrix = BoneAbsAnimated[b] * Scale;
+									cube->WorldMatrix.v[3] = BoneAbsAnimated[b].v[3];
+									//Basic::RenderScene(cube,1,View,Projection);
+								}
+
+								//write data to am
+								for(int b = 0; b < info->BoneCount; ++b)
+								{
+									am.animatedData[b] = BoneAbsAnimated[b] * SkinTransform[b];
+									cube2->WorldMatrix = Scale;
+									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
+									Basic::RenderScene(cube2,1,View,Projection);
+								}
+
+								//retore to draw animated model
+								Definitions::PerModel pm;
+								pm.WV = View * models[i].WorldMatrix;
+								pm.WVP = Projection * pm.WV;
+
+								void* data  = Resources::Deffered::ModelData.Map();
+								memcpy(data,&(pm),sizeof(pm));
+								Resources::Deffered::ModelData.Unmap();
+
 								am.Animated = 1;
 							}
 							else
@@ -97,7 +170,7 @@ namespace Oyster
 							}
 							else
 							{
-								Oyster::Graphics::Core::deviceContext->Draw(info->VertexCount,0);
+									Oyster::Graphics::Core::deviceContext->Draw(info->VertexCount,0);
 							}
 						}
 					}				

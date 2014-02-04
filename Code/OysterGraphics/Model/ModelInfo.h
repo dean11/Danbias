@@ -13,7 +13,8 @@ namespace Oyster
 		{
 			struct Bone
 			{
-				Math::Float4x4 Transform;
+				Math::Matrix Relative;
+				Math::Matrix Absolute;
 				int Parent;
 			};
 			struct Frame

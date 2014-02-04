@@ -397,8 +397,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 							anims[a].Keyframes[b][f].bone.Parent = boneIndex;
 
 							//read bone transform
-							ReadData(&anims[a].Keyframes[b][f].bone.Transform,danFile,sizeof(Oyster::Math::Matrix));
-
+							ReadData(&anims[a].Keyframes[b][f].bone.Relative, danFile, sizeof(Math::Matrix));
 							
 							ReadData(&anims[a].Keyframes[b][f].time,danFile,sizeof(double));
 						}
