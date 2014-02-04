@@ -61,6 +61,7 @@ Player::~Player(void)
 void Player::BeginFrame()
 {
 	weapon->Update(0.002f);
+	if(playerState == PLAYER_STATE_DEAD) Respawn(Oyster::Math::Float3(0,308,0));
 	Object::BeginFrame();
 }
 
@@ -136,6 +137,7 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
+	this->setState.SetCenterPosition(spawnPoint);
 }
 
 void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
@@ -197,5 +199,13 @@ PLAYER_STATE Player::GetState() const
 void Player::DamageLife(int damage)
 {
 	this->life -= damage;
+	this->life = 0;
+
+	if(this->life <= 0)
+	{
+		this->life = 0;
+		playerState = PLAYER_STATE_DEAD;
+		//do stuff that makes you dead
+	}
 }
 

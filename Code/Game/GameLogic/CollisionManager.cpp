@@ -35,7 +35,7 @@ using namespace GameLogic;
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
-			int test = 5;
+			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			break;
 		}
 

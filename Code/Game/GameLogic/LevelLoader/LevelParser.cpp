@@ -30,13 +30,14 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 
 	//Read format version
 	FormatVersion levelFormatVersion;
-	//ParseObject(&buffer[counter], &levelFormatVersion, sizeof(formatVersion));
+	ParseObject(&buffer[counter], &levelFormatVersion, sizeof(levelFormatVersion));
+	counter += sizeof(levelFormatVersion);
 	if(this->formatVersion != levelFormatVersion)
 	{
 		//Do something if it's not the same version
 	}
 
-	while(counter < bufferSize)
+  	while(counter < bufferSize)
 	{
 		//Get typeID
 		ObjectTypeHeader typeID;
@@ -55,9 +56,8 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 			case ObjectType_Static: case ObjectType_Dynamic:
 			{
 				ObjectHeader* header = new ObjectHeader;
-				ParseObject(&buffer[counter], header, sizeof(*header));
+				ParseObject(&buffer[counter], *header, counter);
 				objects.push_back(header);
-				counter += sizeof(*header);
 				break;
 			}
 			
@@ -124,7 +124,8 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 
 	//Read format version
 	FormatVersion levelFormatVersion;
-	//ParseObject(&buffer[counter], &levelFormatVersion, sizeof(formatVersion));
+	ParseObject(&buffer[counter], &levelFormatVersion, sizeof(formatVersion));
+	counter += sizeof(levelFormatVersion);
 	if(this->formatVersion != levelFormatVersion)
 	{
 		//Do something if it's not the same version
@@ -142,11 +143,42 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 			ParseLevelMetaData(&buffer[counter], levelHeader, counter);
 			return levelHeader;
 			break;
-		case ObjectType_Dynamic:
-			//Do not call parse this object, since we are only interested in the LevelMetaData
-			//Only increase the counter size
-			counter += sizeof(ObjectHeader);
+		
+			//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them.
+		case ObjectType_Static: case ObjectType_Dynamic:
+		{
+			ObjectHeader header;
+			ParseObject(&buffer[counter], header, counter);
 			break;
+		}
+
+		case ObjectType_Light:
+		{
+			LightType lightType;
+			ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
+
+			switch(lightType)
+			{
+			case LightType_PointLight:
+			{
+				counter += sizeof(PointLight);
+				break;
+			}
+			case LightType_DirectionalLight:
+			{
+				counter += sizeof(DirectionalLight);
+				break;
+			}
+			case LightType_SpotLight:
+			{
+				counter += sizeof(SpotLight);
+				break;
+			}
+			default:
+				//Undefined LightType.
+				break;
+			}
+		}
 
 		default:
 			//Couldn't find typeID. FAIL!!!!!!
