@@ -389,10 +389,12 @@ void GameState::Protocol( ObjPos* pos )
 			//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
 			if(i == myId) // playerobj
 			{
-				Oyster::Math::Float3 up = (Oyster::Math::Float3(world[4], world[5], world[6]));
-				Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13]+2, world[14]);
-				Oyster::Math::Float3 cameraPos = up + pos;
-				camera->SetPosition(cameraPos);
+				camera->setRight((Oyster::Math::Float3(world[0], world[1], world[2])));
+				camera->setUp(Oyster::Math::Float3(world[4], world[5], world[6]));
+				//camera->setLook((Oyster::Math::Float3(world[8], world[9], world[10])));
+				Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13]+2, world[14]+2);
+				//Oyster::Math::Float3 cameraPos = up + pos;
+				camera->SetPosition(pos);
 				camera->UpdateViewMatrix();
 			}
 		}
