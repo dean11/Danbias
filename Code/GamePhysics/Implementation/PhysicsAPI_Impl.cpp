@@ -15,7 +15,7 @@ API_Impl API_instance;
 namespace
 {
 	void OnPossibleCollision( Octree& worldScene, unsigned int protoTempRef, unsigned int deuterTempRef )
-	{ /** @todo TODO: OnPossibleCollision is a temporary solution .*/
+	{
 		auto proto = worldScene.GetCustomBody( protoTempRef );
 		auto deuter = worldScene.GetCustomBody( deuterTempRef );
 
@@ -26,13 +26,30 @@ namespace
 			ICustomBody::State protoState; proto->GetState( protoState );
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-			Float4 protoG = protoState.GetLinearMomentum(worldPointOfContact.xyz ),
-					deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
-
 			// calc from perspective of deuter
 			Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
+
+			if( normal.Dot(normal) == 0.0f )
+			{ // special case: deuter is completly contained within proto or they have overlapping centers.
+				
+				normal = Float4( protoState.GetCenterPosition() - deuterState.GetCenterPosition(), 0.0f );
+				if( normal.Dot(normal) == 0.0f )
+				{ // they have overlapping centers. Rebound at least
+					// calculate and store time interpolation value, for later rebound.
+					proto->SetTimeOfContact( worldPointOfContact );
+					return;
+				}
+				
+				// borrowing the negated normal of proto.
+				proto->GetNormalAt( worldPointOfContact, normal );
+				normal = -normal;
+			}
+
+			Float4 protoG  = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
+				   deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
+
 			Float protoG_Magnitude = protoG.Dot( normal ),
-					deuterG_Magnitude = deuterG.Dot( normal );
+				  deuterG_Magnitude = deuterG.Dot( normal );
 
 			// if they are not relatively moving towards eachother, there is no collision
 			Float deltaPos = normal.Dot( Float4(deuterState.GetCenterPosition(), 1) - Float4(protoState.GetCenterPosition(), 1) );
@@ -65,8 +82,8 @@ namespace
 
 			// bounce
 			Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
-																			deuterState.GetMass(), deuterG_Magnitude,
-																			protoState.GetMass(), protoG_Magnitude );
+																		   deuterState.GetMass(), deuterG_Magnitude,
+																		   protoState.GetMass(), protoG_Magnitude );
 					
 
 			// calc from perspective of proto
@@ -76,14 +93,14 @@ namespace
 					
 			// bounce
 			Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
-																			protoState.GetMass(), protoG_Magnitude,
-																			deuterState.GetMass(), deuterG_Magnitude );
+																		  protoState.GetMass(), protoG_Magnitude,
+																		  deuterState.GetMass(), deuterG_Magnitude );
 
 			Float4 bounce = Average( bounceD, bounceP );
 
 			Float4 friction = Formula::CollisionResponse::Friction( protoG_Magnitude, normal,
-															  Float4(protoState.GetLinearMomentum(), 0),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
-															  Float4(deuterState.GetLinearMomentum(), 0), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
+																	Float4(protoState.GetLinearMomentum(), 0),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+																	Float4(deuterState.GetLinearMomentum(), 0), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 			
 			Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
 

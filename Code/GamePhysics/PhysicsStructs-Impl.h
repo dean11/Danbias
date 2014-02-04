@@ -159,7 +159,12 @@ namespace Oyster
 
 			inline ::Oyster::Math::Float3 CustomBodyState::GetLinearMomentum( const ::Oyster::Math::Float3 &at ) const
 			{
-				return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, at - this->centerPos );
+				::Oyster::Math::Float3 offset = at - this->centerPos;
+				if( offset.Dot(offset) > 0.0f )
+				{
+					return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, offset );
+				}
+				return this->linearMomentum;
 			}
 
 			inline const ::Oyster::Math::Float3 & CustomBodyState::GetAngularMomentum() const
