@@ -49,7 +49,7 @@ using namespace GameLogic;
 		//use kinetic energyloss of the collision in order too determin how much damage to take
 		//use as part of the damage algorithm
 		int damageDone = 0;
-		int forceThreashHold = 200;
+		int forceThreashHold = 200000;
 
 		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
 		{
