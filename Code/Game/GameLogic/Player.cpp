@@ -137,7 +137,7 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
-	this->setState.SetCenterPosition(spawnPoint);
+	this->newPhysicsState.SetCenterPosition(spawnPoint);
 }
 
 void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
