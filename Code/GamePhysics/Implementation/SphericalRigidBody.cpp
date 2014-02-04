@@ -29,14 +29,17 @@ SphericalRigidBody::SphericalRigidBody()
 
 SphericalRigidBody::SphericalRigidBody( const API::SphericalBodyDescription &desc )
 {
-	this->rigid = RigidBody();
+	this->rigid							= RigidBody();
 	this->rigid.SetRotation( desc.rotation );
-	this->rigid.centerPos = desc.centerPosition;
-	this->rigid.boundingReach = Float4( desc.radius, desc.radius, desc.radius, 0.0f );
+	this->rigid.centerPos				= desc.centerPosition;
+	this->rigid.boundingReach			= Float4( desc.radius, desc.radius, desc.radius, 0.0f );
+	this->rigid.restitutionCoeff		= desc.restitutionCoeff;
+	this->rigid.frictionCoeff_Static	= desc.frictionCoeff_Static;
+	this->rigid.frictionCoeff_Kinetic	= desc.frictionCoeff_Dynamic;
 	this->rigid.SetMass_KeepMomentum( desc.mass );
 	this->rigid.SetMomentOfInertia_KeepMomentum( MomentOfInertia::Sphere(desc.mass, desc.radius) );
-	this->deltaPos = Float4::null;
-	this->deltaAxis = Float4::null;
+	this->deltaPos						= Float4::null;
+	this->deltaAxis						= Float4::null;
 
 	this->gravityNormal = Float3::null;
 

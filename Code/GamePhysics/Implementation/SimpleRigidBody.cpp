@@ -64,12 +64,15 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 {	
 	this->rigid = RigidBody();
 	this->rigid.SetRotation( desc.rotation );
-	this->rigid.centerPos = desc.centerPosition;
+	this->rigid.centerPos				= desc.centerPosition;
 	this->rigid.SetSize( desc.size );
+	this->rigid.restitutionCoeff		= desc.restitutionCoeff;
+	this->rigid.frictionCoeff_Static	= desc.frictionCoeff_Static;
+	this->rigid.frictionCoeff_Kinetic	= desc.frictionCoeff_Dynamic;
 	this->rigid.SetMass_KeepMomentum( desc.mass );
 	this->rigid.SetMomentOfInertia_KeepMomentum( desc.inertiaTensor );
-	this->deltaPos = Float4::null;
-	this->deltaAxis = Float4::null;
+	this->deltaPos						= Float4::null;
+	this->deltaAxis						= Float4::null;
 
 	this->gravityNormal = Float3::null;
 	
