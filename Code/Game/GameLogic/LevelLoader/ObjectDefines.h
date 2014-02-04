@@ -28,6 +28,7 @@ namespace GameLogic
 		UsePhysics_UseFullPhysics,
 		UsePhysics_IgnoreGravity,
 		UsePhysics_IgnorePhysics,
+		UsePhysics_IgnoreCollision,
 
 		UsePhysics_Count,
 		UsePhysics_Unknown = -1
@@ -82,12 +83,13 @@ namespace GameLogic
 
 	struct PhysicsObject
 	{
+		UsePhysics usePhysics;
 		float mass;
-		float elasticity;
+		float inertiaMagnitude[3];
+		float inertiaRotation[3];
 		float frictionCoeffStatic;
 		float frictionCoeffDynamic;
-		float inertiaTensor[16];
-		UsePhysics usePhysics;
+		
 	};
 
 	struct LevelMetaData : ObjectTypeHeader
@@ -97,17 +99,15 @@ namespace GameLogic
 		std::string levelDescription;
 		std::string levelAuthor;
 		int maxNumberOfPlayer;
-		float worldSize;
-		int overviewPictureID;
+		int worldSize;
+		std::string overviewPicturePath;
 		std::vector<GameMode> gameModesSupported;
 	};
 
 	struct ObjectHeader : public ObjectTypeHeader
 	{
 		//Model,
-		int ModelID;
-		//Texture
-		int TextureID;
+		std::string ModelFile;
 		//Position
 		float position[3];
 		//Rotation
