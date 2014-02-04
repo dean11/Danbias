@@ -26,12 +26,15 @@ namespace
 			ICustomBody::State protoState; proto->GetState( protoState );
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-			// calc from perspective of deuter
-			Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
-
-			if( normal.Dot(normal) == 0.0f )
+			// calc from perspective of deuter.
+			Float4 normal = worldPointOfContact - Float4(deuterState.GetCenterPosition(), 1.0f ); // Init value is only borrowed
+			if( normal.Dot(normal) > 0.0f )
+			{
+				deuter->GetNormalAt( worldPointOfContact, normal );
+			}
+			else
 			{ // special case: deuter is completly contained within proto or they have overlapping centers.
-				
+
 				normal = Float4( protoState.GetCenterPosition() - deuterState.GetCenterPosition(), 0.0f );
 				if( normal.Dot(normal) == 0.0f )
 				{ // they have overlapping centers. Rebound at least
@@ -87,9 +90,22 @@ namespace
 					
 
 			// calc from perspective of proto
-			proto->GetNormalAt( worldPointOfContact, normal );
-			protoG_Magnitude = protoG.Dot( normal ),
-			deuterG_Magnitude = deuterG.Dot( normal );
+
+			normal = worldPointOfContact - Float4(protoState.GetCenterPosition(), 1.0f );
+			if( normal.Dot(normal) > 0.0f )
+			{
+				proto->GetNormalAt( worldPointOfContact, normal );
+				protoG_Magnitude = protoG.Dot( normal );
+				deuterG_Magnitude = deuterG.Dot( normal );
+			}
+			else
+			{ // special case: proto is completly contained within deuter.
+				// borrowing the negated normal of deuter.
+				deuter->GetNormalAt( worldPointOfContact, normal );
+				normal = -normal;
+				protoG_Magnitude = -protoG_Magnitude;
+				deuterG_Magnitude = -deuterG_Magnitude;
+			}
 					
 			// bounce
 			Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
