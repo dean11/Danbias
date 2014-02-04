@@ -27,7 +27,8 @@ void Level::InitiateLevel(float radius)
 	sbDesc.ignoreGravity = true;
 	sbDesc.radius = 300; 
 	sbDesc.mass = 10e12f;
-	
+	sbDesc.frictionCoeff_Static = 0;
+	sbDesc.frictionCoeff_Dynamic = 0;
 	ICustomBody* rigidBody = API::Instance().CreateRigidBody(sbDesc).Release();
 	
 	ICustomBody::State state;
@@ -61,7 +62,7 @@ void Level::InitiateLevel(float radius)
 	// add gravitation 
 	API::Gravity gravityWell;
 	gravityWell.gravityType = API::Gravity::GravityType_Well;
-	gravityWell.well.mass = 1e15f;
+	gravityWell.well.mass = 1e18f;
 	gravityWell.well.position = Oyster::Math::Float4(0,0,0,1);
 	API::Instance().AddGravity(gravityWell);
 }

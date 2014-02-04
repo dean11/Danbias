@@ -118,9 +118,9 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 
 void Object::BeginFrame()
 {
-
-	this->rigidBody->SetState(this->newPhysicsState);
-	this->rigidBody->GetState(this->newPhysicsState);
+	//newPhysicsState.SetAngularMomentum(Float3::null);
+	//this->rigidBody->SetState(this->newPhysicsState);
+	//this->rigidBody->GetState(this->newPhysicsState);
 	
 	Oyster::Math::Float4 axis;
 	if(newPhysicsState.GetGravityNormal()!= Float3::null)
@@ -131,7 +131,7 @@ void Object::BeginFrame()
 			//error
 			int i =0 ;
 		}
-		newPhysicsState.SetRotation(axis.xyz);
+		//newPhysicsState.SetRotation(axis.xyz);
 		newPhysicsState.SetAngularMomentum(Float3::null);
 		Oyster::Math::Float3 debug = ::LinearAlgebra3D::WorldAxisOf(::LinearAlgebra3D::Rotation(axis.xyz), Oyster::Math::Float3::standard_unit_y);
 		debug += newPhysicsState.GetGravityNormal();
