@@ -148,7 +148,12 @@ Float3 RigidBody::GetVelocity_Angular() const
 
 Float3 RigidBody::GetLinearMomentum( const Float3 &atWorldPos ) const
 { // by Dan Andersson
-	return this->momentum_Linear + Formula::TangentialLinearMomentum( this->momentum_Angular, atWorldPos - this->centerPos );
+	Float3 offset = atWorldPos - this->centerPos;
+	if( offset.Dot(offset) > 0.0f )
+	{
+		return this->momentum_Linear + Formula::TangentialLinearMomentum( this->momentum_Angular, offset );
+	}
+	return this->momentum_Linear;
 }
 
 void RigidBody::SetMomentOfInertia_KeepVelocity( const MomentOfInertia &localTensorI )
