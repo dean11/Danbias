@@ -132,7 +132,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(50, 300, 0));
 	//Oyster::Math3D::RotationMatrix_AxisZ()
 	modelData.world = modelData.world * translate;
-	modelData.visible = true;
+	modelData.visible = false;
 	modelData.modelPath = L"building_corporation.dan";
 	modelData.id = 4;
 	// load models

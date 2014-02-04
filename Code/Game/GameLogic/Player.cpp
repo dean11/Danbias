@@ -61,7 +61,7 @@ Player::~Player(void)
 void Player::BeginFrame()
 {
 	weapon->Update(0.002f);
-	if(playerState == PLAYER_STATE_DEAD) Respawn(Oyster::Math::Float3(0,308,0));
+	//if(playerState == PLAYER_STATE_DEAD) Respawn(Oyster::Math::Float3(0,308,0));
 	Object::BeginFrame();
 }
 
