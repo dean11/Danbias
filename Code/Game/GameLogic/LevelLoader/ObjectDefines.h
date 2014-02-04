@@ -95,7 +95,7 @@ namespace GameLogic
 	struct LevelMetaData : ObjectTypeHeader
 	{
 		std::string levelName;
-		FormatVersion levelVersion;
+		int levelVersion;
 		std::string levelDescription;
 		std::string levelAuthor;
 		int maxNumberOfPlayer;
