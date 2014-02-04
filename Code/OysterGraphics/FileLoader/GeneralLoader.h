@@ -1,5 +1,4 @@
 #pragma once
-#include "..\..\Misc\Resource\OysterResource.h"
 namespace Oyster
 {
 	namespace Graphics
@@ -7,31 +6,31 @@ namespace Oyster
 		namespace Loading
 		{
 			void UnloadTexture(void* loadedData);
-			void LoadTexture(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadTexture(const wchar_t filename[]);
 
 			void UnloadShaderP(void* loadedData);
-			void LoadShaderP(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadShaderP(const wchar_t filename[]);
 
 			void UnloadShaderG(void* loadedData);
-			void LoadShaderG(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadShaderG(const wchar_t filename[]);
 
 			void UnloadShaderC(void* loadedData);
-			void LoadShaderC(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadShaderC(const wchar_t filename[]);
 
 			void UnloadShaderV(void* loadedData);
-			void LoadShaderV(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadShaderV(const wchar_t filename[]);
 
 			void UnloadShaderH(void* loadedData);
-			void LoadShaderH(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadShaderH(const wchar_t filename[]);
 
 			void UnloadShaderD(void* loadedData);
-			void LoadShaderD(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadShaderD(const wchar_t filename[]);
 
 			void UnloadOBJ(void* loadedData);
-			void LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadOBJ(const wchar_t filename[]);
 
 			void UnloadDAN(void* loadedData);
-			void LoadDAN(const wchar_t filename[], Oyster::Resource::CustomData& out);
+			void* LoadDAN(const wchar_t filename[]);
 		}
 	}
 }

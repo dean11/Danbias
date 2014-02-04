@@ -108,7 +108,7 @@ void SaveResource( std::map<std::wstring, ResourceData*>& resources, ResourceDat
 }
 bool Release(std::map<std::wstring, ResourceData*>& resources, ResourceData* resource)
 {
-	if(resource->referenceCount.Decref() == 0)
+	if(resource->referenceCount.Decref() < 1)
 	{
 		const wchar_t* temp = FindResourceKey(resources, resource->resource);
 
@@ -308,7 +308,7 @@ HRESOURCE ResourceManager::LoadResource(const wchar_t filename[], LoadFunction l
 	else
 	{
 		t = Load(new ResourceData(), filename, loadFnc, unloadFnc );
-		if(t)
+		if(t && t->resource)
 		{
 			t->resourceID = (customId);
 			SaveResource(this->resources, t, filename, true);
@@ -316,6 +316,7 @@ HRESOURCE ResourceManager::LoadResource(const wchar_t filename[], LoadFunction l
 		else
 		{
 			delete t;
+			t = 0;
 		}
 	}
 	if(!t)
@@ -349,24 +350,20 @@ void ResourceManager::Clean()
 	for (i; i != last; i++)
 	{
 		//Remove all the references
-		while (!Release(this->resources, i->second));
+		while (!Release(resources, i->second));
 	}
 	resources.clear();
 }
 void ResourceManager::ReleaseResource(const HRESOURCE& resourceData)
 {
-	ResourceData *t = FindResource(this->resources, resourceData);
-	if(t)
+	const wchar_t* temp = FindResourceKey(resources, resourceData);
+	
+	if(temp)
 	{
+		ResourceData *t = FindResource(this->resources, resourceData);
 		if(Release(resources, t))
 		{
-			const wchar_t* temp = 0;
-			if((temp = FindResourceKey(resources, resourceData)))
-			{
-				std::wstring ws = std::wstring(temp);
-				delete resources[ws];
-				resources.erase(ws);
-			}
+			resources.erase(temp);
 		}
 	}
 }
@@ -377,7 +374,6 @@ void ResourceManager::ReleaseResource(const wchar_t filename[])
 	{
 		if(Release(resources, t))
 		{
-			delete resources[filename];
 			resources.erase(filename);
 		}
 	}

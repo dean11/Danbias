@@ -4,7 +4,8 @@
 #include "../Render/Resources/Deffered.h"
 #include "../Render/Rendering/Render.h"
 #include "../FileLoader/ObjReader.h"
-#include "../../Misc/Resource/OysterResource.h"
+//#include "../../Misc/Resource/OysterResource.h"
+#include "../../Misc/Resource/ResourceManager.h"
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
 #include <vld.h>
@@ -73,6 +74,8 @@ namespace Oyster
 
 		API::State API::SetOptions(API::Option option)
 		{
+			Core::modelPath = option.modelPath;
+			Core::texturePath = option.texturePath;
 			return API::Sucsess;
 		}
 
@@ -82,8 +85,8 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-
-			m->info = Oyster::Resource::OysterResource::LoadResource(filename.c_str(),Oyster::Graphics::Loading::LoadDAN);
+			m->AnimationPlaying = -1;
+			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
 			if(!mi || mi->Vertices->GetBufferPointer() == NULL)
@@ -101,13 +104,13 @@ namespace Oyster
 				return;
 			Model::ModelInfo* info = (Model::ModelInfo*)model->info;
 			delete model;
-			Oyster::Resource::OysterResource::ReleaseResource((Oyster::Resource::OHRESOURCE)info);
+			Core::loader.ReleaseResource(info);
 		}
 
 		void API::Clean()
 		{
 			SAFE_DELETE(Core::viewPort);
-			Oyster::Resource::OysterResource::Clean();
+			Core::loader.Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();
 			Oyster::Graphics::Render::Resources::Deffered::Clean();
 
