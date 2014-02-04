@@ -140,8 +140,17 @@ void Object::BeginFrame()
 // update physic 
 void Object::EndFrame()
 {
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
 	this->currPhysicsState = this->rigidBody->GetState();
-
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
 	if(currPhysicsState.GetGravityNormal() !=currPhysicsState.GetGravityNormal())
 	{
 		//error
@@ -163,6 +172,11 @@ void Object::EndFrame()
 	}
 
 
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
 
 	this->newPhysicsState = this->currPhysicsState;
 }

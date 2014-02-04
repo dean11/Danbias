@@ -6,7 +6,7 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-const int MOVE_FORCE = 50000;
+const int MOVE_FORCE = 5000;
 Player::Player()
 	:DynamicObject()
 {
@@ -73,7 +73,6 @@ void Player::EndFrame()
 
 	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
 	Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
-	Oyster::Math::Float3 oldOrt = currPhysicsState.GetRotation();
 
 	currPhysicsState.AddRotation(deltaAxis);
 	dx = 0; 
