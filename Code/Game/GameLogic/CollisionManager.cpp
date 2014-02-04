@@ -6,12 +6,14 @@
 #include "AttatchmentMassDriver.h"
 #include "Game.h"
 #include "CollisionManager.h"
+#include "JumpPad.h"
 
 using namespace Oyster;
 
 using namespace GameLogic;
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
+	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force);
 
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -40,6 +42,34 @@ using namespace GameLogic;
 		}
 
 		//return Physics::ICustomBody::SubscriptMessage_none;
+	}
+
+	void JumpPad::JumpPadActivated(Oyster::Physics::ICustomBody *rigidBodyJumpPad, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		JumpPad *jumpPad = (JumpPad*)(rigidBodyJumpPad->GetCustomTag());
+		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
+
+		switch (realObj->GetObjectType())
+		{
+		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
+			break;
+		case OBJECT_TYPE::OBJECT_TYPE_BOX:
+			break;
+		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+			SendObjectFlying(*obj, jumpPad->pushForce);
+			break;
+		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+			break;
+		}
+	}
+
+	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
+	{
+		Oyster::Physics::ICustomBody::State state;
+
+		state = obj.GetState();
+		state.ApplyLinearImpulse(force);
+		obj.SetState(state);
 	}
 	
 

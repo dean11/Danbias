@@ -60,8 +60,7 @@ Player::~Player(void)
 
 void Player::BeginFrame()
 {
-	weapon->Update(0.002f);
-	//if(playerState == PLAYER_STATE_DEAD) Respawn(Oyster::Math::Float3(0,308,0));
+	weapon->Update(0.002f); 
 	Object::BeginFrame();
 }
 
@@ -214,7 +213,7 @@ void Player::DamageLife(int damage)
 	{
 		this->life = 0;
 		playerState = PLAYER_STATE_DEAD;
-		//do stuff that makes you dead
+		this->gameInstance->onDisableFnc(this);
 	}
 }
 
