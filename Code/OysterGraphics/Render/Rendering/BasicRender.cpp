@@ -82,15 +82,16 @@ namespace Oyster
 							Definitions::AnimationData am;	//final
 							if(info->Animated && models[i].AnimationPlaying != -1)
 							{
+								cube->WorldMatrix == Math::Matrix::identity;
 								//store inverse absolut transform
 								Math::Matrix* SkinTransform = new Math::Matrix[info->BoneCount];
 								Math::Matrix* BoneAnimated = new Math::Matrix[info->BoneCount];
 								Math::Matrix* BoneAbsAnimated = new Math::Matrix[info->BoneCount];
 
 								Math::Matrix Scale = Math::Matrix::identity;
+								Scale.m[0][0] = 0.1f;
 								Scale.m[1][1] = 0.1f;
-								Scale.m[2][2] = 0.1f;
-								Scale.m[3][3] = 2;
+								Scale.m[2][2] = 1;
 
 								for(int b = 0; b <info->BoneCount; ++b)
 								{
@@ -98,6 +99,11 @@ namespace Oyster
 									SkinTransform[b] = Bone.Absolute.GetInverse();
 									BoneAnimated[b] = Bone.Relative;
 									BoneAbsAnimated[b] = Bone.Absolute;
+
+									
+									cube2->WorldMatrix = Scale * info->bones[b].Absolute;
+									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
+									Basic::RenderScene(cube2,1, View, Projection);
 								}
 								//for each bone in animation 
 								//HACK use first bone
@@ -124,18 +130,15 @@ namespace Oyster
 								for(int b = 0; b < info->BoneCount; ++b)
 								{
 									BoneAbsAnimated[b] = BoneAbsAnimated[info->bones[b].Parent] * BoneAnimated[b];
-									cube->WorldMatrix = BoneAbsAnimated[b] * Scale;
+									cube->WorldMatrix = Scale * BoneAbsAnimated[b];
 									cube->WorldMatrix.v[3] = BoneAbsAnimated[b].v[3];
-									//Basic::RenderScene(cube,1,View,Projection);
+									Basic::RenderScene(cube,1,View,Projection);
 								}
 
 								//write data to am
 								for(int b = 0; b < info->BoneCount; ++b)
 								{
 									am.animatedData[b] = BoneAbsAnimated[b] * SkinTransform[b];
-									cube2->WorldMatrix = Scale;
-									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
-									Basic::RenderScene(cube2,1,View,Projection);
 								}
 
 								//retore to draw animated model
