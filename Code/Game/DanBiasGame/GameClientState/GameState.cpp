@@ -454,7 +454,7 @@ void GameState::Protocol( ObjPos* pos )
 
 				camera->setRight(right);
 				camera->setUp(up);
-				//camera->setLook(objForward);
+				camera->setLook(objForward);
 				
 				up *= 2;
 				objForward *= -3;

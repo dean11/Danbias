@@ -91,7 +91,7 @@ namespace
 			}
 
 			// PLayerHAck
-			/*if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_player_collision_response )
+			if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_player_collision_response )
 			{
 				Float3 linearMomentum = protoState.GetLinearMomentum();
 				Float3 up = -protoState.GetGravityNormal();
@@ -101,7 +101,7 @@ namespace
 				protoState.SetLinearMomentum(noBounceForce);
 				proto->SetState(protoState);
 				return;
-			}*/
+			}
 			// calculate and store time interpolation value, for later rebound.
 			proto->SetTimeOfContact( worldPointOfContact );
 

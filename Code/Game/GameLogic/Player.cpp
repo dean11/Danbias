@@ -154,11 +154,6 @@ void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 	{
 		int i =0 ;
 	}
-	//Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
-	//Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
-	//Oyster::Math::Float3 oldOrt = currPhysicsState.GetRotation();
-
-	//newPhysicsState.SetRotation(oldOrt + deltaAxis);
 
 	this->lookDir = lookDir.xyz;
 	this->dx =  lookDir.w;

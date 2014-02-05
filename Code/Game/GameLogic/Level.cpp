@@ -84,7 +84,7 @@ void Level::InitiateLevel(float radius)
 	int nrOfBoxex = 5;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10 + ( i*5) ,320,0,0);
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(20 ,320,0 + ( i*7),0);
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
