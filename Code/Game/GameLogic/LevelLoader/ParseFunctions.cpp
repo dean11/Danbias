@@ -23,7 +23,7 @@ namespace GameLogic
 		void ParseObject(char* buffer, ObjectHeader& header, int& size)
 		{
 			char tempName[128];
-			int tempSize = 0;
+			unsigned int tempSize = 0;
 			int start = 0;
 
 			memcpy(&header.typeID, &buffer[start], 4);
@@ -36,8 +36,13 @@ namespace GameLogic
 			header.ModelFile.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
 
-			memcpy(&header.position, &buffer[start], 36);
-			start += 36;
+			//3 float[3], 1 float
+			memcpy(&header.position, &buffer[start], 40);
+			start += 40;
+
+			//2 float[3], 3 float, 2 uint
+			memcpy(&header.usePhysics, &buffer[start], 44);
+			start += 44;
 
 			size += start;
 		}
@@ -45,7 +50,7 @@ namespace GameLogic
 		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size)
 		{
 			int start = 0;
-			int tempSize;
+			unsigned int tempSize;
 			char tempName[128];
 
 			memcpy(&header.typeID, &buffer[start], 4);

@@ -4,17 +4,20 @@
 
 #include "LevelLoader.h"
 #include "LevelParser.h"
+
 using namespace GameLogic;
 using namespace GameLogic::LevelFileLoader;
 
 struct LevelLoader::PrivData
 {
 	LevelParser parser;
+	std::string folderPath;
 };
 
 LevelLoader::LevelLoader()
 	: pData(new PrivData)
 {
+	pData->folderPath = "Standard path";
 }
 
 LevelLoader::~LevelLoader()
