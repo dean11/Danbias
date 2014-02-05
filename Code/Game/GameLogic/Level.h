@@ -59,7 +59,8 @@ namespace GameLogic
 		********************************************************/
 		static Oyster::Physics::ICustomBody::SubscriptMessage LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 		static Oyster::Physics::ICustomBody::SubscriptMessage LevelCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
-
+		
+		int getNrOfDynamicObj();
 		Object* GetObj( int ID ) const;
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		

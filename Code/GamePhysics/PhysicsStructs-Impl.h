@@ -322,10 +322,14 @@ namespace Oyster
 			inline void CustomBodyState::ApplyImpulse( const ::Oyster::Math::Float3 &j, const ::Oyster::Math::Float3 &at, const ::Oyster::Math::Float3 &normal )
 			{
 				::Oyster::Math::Float3 offset = at - this->centerPos;
-				::Oyster::Math::Float3 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
-				this->linearImpulse += j - ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
+				if( offset.Dot(offset) > 0.0f )
+				{
+					::Oyster::Math::Float3 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
 
-				this->angularImpulse += deltaAngularImpulse;
+					this->linearImpulse -= ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
+					this->angularImpulse += deltaAngularImpulse;
+				}
+				this->linearImpulse += j;
 				this->isDisturbed = true;
 			}
 

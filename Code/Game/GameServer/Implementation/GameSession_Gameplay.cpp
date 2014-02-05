@@ -111,27 +111,19 @@ namespace DanBias
 			}
 
 			obj = NULL;
-			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
-			if(obj)
+			int count = ((GameLogic::ILevelData*)movedObject)->getNrOfDynamicObj();
+			for( int i = 0; i < count; i++  )
 			{
-				if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(i+1);
+				if(obj)
 				{
-					int id = obj->GetID();
-					Oyster::Math::Float4x4 world = obj->GetOrientation();
-					Protocol_ObjectPosition p(world, id);
-					GameSession::gameSession->Send(*p.GetProtocol());
-				}
-			}
-			obj = NULL;
-			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(2);
-			if(obj)
-			{
-				if(obj->GetObjectType() == OBJECT_TYPE_BOX)
-				{
-					int id = obj->GetID();
-					Oyster::Math::Float4x4 world = obj->GetOrientation();
-					Protocol_ObjectPosition p(world, id);
-					GameSession::gameSession->Send(*p.GetProtocol());
+					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+					{
+						int id = obj->GetID();
+						Oyster::Math::Float4x4 world = obj->GetOrientation();
+						Protocol_ObjectPosition p(world, id);
+						GameSession::gameSession->Send(*p.GetProtocol());
+					}
 				}
 			}
 		}
@@ -197,9 +189,9 @@ namespace DanBias
 	}
 	void GameSession::Gameplay_PlayerShot			( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{
-		//c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
-		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
-		//c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+		if(p.primaryPressed) c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+		if(p.secondaryPressed) c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
+		if(p.utilityPressed) c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
 	}
 	void GameSession::Gameplay_PlayerJump			( Protocol_PlayerJump& p, DanBias::GameClient* c )
 	{

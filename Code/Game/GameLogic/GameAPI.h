@@ -100,6 +100,7 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
+			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
 		};
 

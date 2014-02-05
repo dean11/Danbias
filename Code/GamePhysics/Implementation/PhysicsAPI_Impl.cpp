@@ -27,7 +27,7 @@ namespace
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
 			// calc from perspective of deuter.
-			Float4 normal = worldPointOfContact - Float4(deuterState.GetCenterPosition(), 1.0f ); // Init value is only borrowed
+			Float4 normal = (worldPointOfContact - Float4(deuterState.GetCenterPosition(), 1.0f )).GetNormalized(); // Init value is only borrowed
 			if( normal.Dot(normal) > 0.0f )
 			{
 				deuter->GetNormalAt( worldPointOfContact, normal );
@@ -47,9 +47,10 @@ namespace
 				proto->GetNormalAt( worldPointOfContact, normal );
 				normal = -normal;
 			}
+			normal.Normalize();
 
-			Float4 protoG  = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
-				   deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
+			Float4 protoG  = Float4(protoState.GetLinearMomentum( worldPointOfContact.xyz ), 0),
+				   deuterG = Float4(deuterState.GetLinearMomentum( worldPointOfContact.xyz ), 0);
 
 			if( normal != normal ) // debug: trap
 				const char *breakpoint = "This should never happen";
@@ -89,6 +90,18 @@ namespace
 				return;
 			}
 
+			// PLayerHAck
+			if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_player_collision_response )
+			{
+				Float3 linearMomentum = protoState.GetLinearMomentum();
+				Float3 up = -protoState.GetGravityNormal();
+				Float3 upForce = (linearMomentum.Dot(up) * up);
+
+				Float3 noBounceForce = linearMomentum - upForce;
+				protoState.SetLinearMomentum(noBounceForce);
+				proto->SetState(protoState);
+				return;
+			}
 			// calculate and store time interpolation value, for later rebound.
 			proto->SetTimeOfContact( worldPointOfContact );
 
@@ -100,7 +113,7 @@ namespace
 
 			// calc from perspective of proto
 
-			normal = worldPointOfContact - Float4(protoState.GetCenterPosition(), 1.0f );
+			normal = (worldPointOfContact - Float4(protoState.GetCenterPosition(), 1.0f )).GetNormalized();
 			if( normal.Dot(normal) > 0.0f )
 			{
 				proto->GetNormalAt( worldPointOfContact, normal );

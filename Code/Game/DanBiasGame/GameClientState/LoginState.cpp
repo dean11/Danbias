@@ -41,9 +41,9 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 bool LoginState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(-2,3,0);
-	plight.Color = Oyster::Math::Float3(0,1,0);
-	plight.Radius = 10;
+	plight.Pos = Oyster::Math::Float3(0,0,5.4f);
+	plight.Color = Oyster::Math::Float3(1,1,1);
+	plight.Radius = 100;
 	plight.Bright = 1;
 	Oyster::Graphics::API::AddLight(plight);
 	// open file
@@ -55,12 +55,13 @@ bool LoginState::LoadModels(std::wstring file)
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\box_2.dan";
+	modelData.modelPath = L"..\\Content\\Models\\box.dan";
 	// load models
-	privData->object[0] = new C_StaticObj();
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
+	privData->object[0] = new C_DynamicObj();
 	privData->object[0]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
 	modelData.world = modelData.world * translate;
 
 	privData->object[1] = new C_DynamicObj();
