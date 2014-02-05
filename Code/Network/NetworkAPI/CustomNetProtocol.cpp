@@ -19,11 +19,6 @@ struct CustomNetProtocol::PrivateData
 
 	~PrivateData()
 	{
-		for (auto i = attributes.begin(); i != attributes.end(); i++)
-		{
-			//RemoveAttribute(i);
-		}
-
 		attributes.Clear();
 	}
 	void RemoveAttribute(NetAttributeContainer* i)
@@ -41,17 +36,12 @@ struct CustomNetProtocol::PrivateData
 	//Do network stuff
 };
 
-static int ia = 0;
-static int ib = 0;
-	
 CustomNetProtocol::CustomNetProtocol()
 {
-	ia++;
 	this->privateData = new PrivateData();
 }
 CustomNetProtocol::CustomNetProtocol(CustomNetProtocol& o)
 {
-	ib ++;
 	this->privateData = new PrivateData();
 	this->privateData->attributes = o.privateData->attributes;
 }
@@ -62,14 +52,12 @@ const CustomNetProtocol& CustomNetProtocol::operator=(CustomNetProtocol& o)
 		delete this->privateData;
 		this->privateData = 0;
 	}
-	ib ++;
 	this->privateData = new PrivateData();
 	this->privateData->attributes = o.privateData->attributes;
 	return *this;
 }
 CustomNetProtocol::~CustomNetProtocol()
 {
-	//ia--;
 	delete this->privateData;
 	this->privateData = 0;
 }

@@ -129,7 +129,7 @@ namespace DanBias
 			}
 			else
 			{
-				Protocol_LobbyStartGame p(readyList[i]->GetPlayer()->GetID());
+				Protocol_LobbyStartGame p(readyList[i]->GetPlayer()->GetID(), "char_white.dan", readyList[i]->GetPlayer()->GetOrientation());
 				readyList[i]->GetClient()->Send(p);
 			}
 		}

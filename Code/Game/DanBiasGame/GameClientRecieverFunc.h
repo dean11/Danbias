@@ -5,6 +5,7 @@
 #include "../DanBiasGame/Include/DanBiasGame.h"
 #include "../GameProtocols/GeneralProtocols.h"
 #include "..\GameProtocols\Protocols.h"
+#include <Utilities.h>
 
 namespace DanBias
 {
@@ -113,13 +114,22 @@ namespace DanBias
 				{
 					if(dynamic_cast<Client::LobbyState*>(gameClientState))
 					{
-						GameLogic::Protocol_LobbyStartGame pt(p);
+						int id = p[1].value.netInt;
+						std::string name = p.Get(19).value.netCharPtr;
+						Oyster::Math::Float4x4 w;
+						for(int i = 0; i< 16; i++)
+						{
+							w[i] = p[i+3].value.netFloat;
+						}
 
 						gameClientState->Release();
 						delete gameClientState;
+
 						gameClientState = new Client::GameState();
 						gameClientState->Init(this);
-						((Client::GameState*)gameClientState)->setClientId(pt.clientID);
+						std::wstring temp;
+						Utility::String::StringToWstring(name, temp);
+						((Client::GameState*)gameClientState)->InitiatePlayer(id, temp, w);
 					}
 				}
 				break;

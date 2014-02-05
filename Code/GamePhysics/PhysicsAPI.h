@@ -242,7 +242,8 @@ namespace Oyster
 			{
 				SubscriptMessage_none,
 				SubscriptMessage_kineticLoss,
-				SubscriptMessage_ignore_collision_response
+				SubscriptMessage_ignore_collision_response,
+				SubscriptMessage_player_collision_response
 			};
 
 			typedef SubscriptMessage (*EventAction_BeforeCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );

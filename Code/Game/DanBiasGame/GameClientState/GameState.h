@@ -37,8 +37,8 @@ public:
 	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
 	bool LoadModels(std::wstring mapFile) ;
 	bool InitCamera(Oyster::Math::Float3 startPos) ;
+	void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 	gameStateState LoadGame();
-	void setClientId(int id);
 	void readKeyInput(InputClass* KeyInput);
 	bool Render()override;
 	bool Release()override;

@@ -73,6 +73,9 @@ namespace GameLogic
 
 		void BeginFrame();
 		void EndFrame();
+		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
+		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+
 
 	private:
 		void Jump();

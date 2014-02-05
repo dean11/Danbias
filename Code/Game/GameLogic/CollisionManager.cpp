@@ -84,7 +84,7 @@ using namespace GameLogic;
 		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
 		{
 			damageDone = (int)kineticEnergyLoss * 0.10f;
-			player.DamageLife(damageDone);
+			//player.DamageLife(damageDone);
 		}
 		
 	}	
@@ -93,6 +93,14 @@ using namespace GameLogic;
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_player_collision_response;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}

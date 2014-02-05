@@ -297,10 +297,9 @@ void NetworkClient::Disconnect()
 {
 	if(!privateData) return;
 
-	this->privateData->sendQueue.Clear();
-
-	privateData->connection.Disconnect();
 	privateData->thread.Terminate();
+	privateData->connection.Disconnect();
+	this->privateData->sendQueue.Clear();
 
 }
 

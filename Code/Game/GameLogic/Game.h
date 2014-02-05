@@ -53,6 +53,7 @@ namespace GameLogic
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;
+			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
 			Level *level;
 		};

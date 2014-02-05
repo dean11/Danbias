@@ -234,6 +234,7 @@ namespace GameLogic
 
 	struct Protocol_ObjectCreate :public Oyster::Network::CustomProtocolObject
 	{
+		//ObjectType type; //ie player, box or whatever
 		int object_ID;
 		std::string name;
 		float worldMatrix[16];

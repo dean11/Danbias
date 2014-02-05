@@ -42,7 +42,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		
 		if(hasObject) 
 		{
-			ForcePush(usage,dt);//WARNING THIS IS A CRAP TEST TO MAKE SURE YOU CAN SHOOT BOXES
+			//ForcePush(usage,dt);//WARNING THIS IS A CRAP TEST TO MAKE SURE YOU CAN SHOOT BOXES
 			break;
 		}
 		ForcePull(usage,dt);
