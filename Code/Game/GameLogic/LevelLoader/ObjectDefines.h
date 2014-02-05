@@ -34,6 +34,15 @@ namespace GameLogic
 		UsePhysics_Unknown = -1
 	};
 
+	enum CollisionGeometryType
+	{
+		CollisionGeometryType_Box,
+		CollisionGeometryType_Sphere,
+
+		CollisionGeometryType_Count,
+		CollisionGeometryType_Unknown = -1
+	};
+
 	enum LightType
 	{
 		LightType_PointLight,
@@ -55,6 +64,18 @@ namespace GameLogic
 		GameMode_Unknown = -1
 	};
 
+	enum WorldSize
+	{
+		WorldSize_Tiny,
+		WorldSize_Small,
+		WorldSize_Medium,
+		WorldSize_Big,
+		WorldSize_Humongous,
+
+		WorldSize_Count,
+		WorldSize_Unknown = -1
+	};
+
 
 	/************************************
 				Structs
@@ -62,8 +83,8 @@ namespace GameLogic
 
 	struct FormatVersion
 	{
-		int formatVersionMajor;
-		int formatVersionMinor;
+		unsigned int formatVersionMajor;
+		unsigned int formatVersionMinor;
 
 		bool operator ==(const FormatVersion& obj)
 		{
@@ -89,22 +110,22 @@ namespace GameLogic
 		float inertiaRotation[3];
 		float frictionCoeffStatic;
 		float frictionCoeffDynamic;
-		
+		CollisionGeometryType geometryType;
 	};
 
-	struct LevelMetaData : ObjectTypeHeader
+	struct LevelMetaData : public ObjectTypeHeader
 	{
 		std::string levelName;
-		int levelVersion;
+		unsigned int levelVersion;
 		std::string levelDescription;
 		std::string levelAuthor;
-		int maxNumberOfPlayer;
-		int worldSize;
+		unsigned int maxNumberOfPlayer;
+		WorldSize worldSize;
 		std::string overviewPicturePath;
 		std::vector<GameMode> gameModesSupported;
 	};
 
-	struct ObjectHeader : public ObjectTypeHeader
+	struct ObjectHeader : public ObjectTypeHeader, public PhysicsObject
 	{
 		//Model,
 		std::string ModelFile;
@@ -112,6 +133,7 @@ namespace GameLogic
 		float position[3];
 		//Rotation
 		float rotation[3];
+		float angle;
 		//Scale
 		float scale[3];
 	};
