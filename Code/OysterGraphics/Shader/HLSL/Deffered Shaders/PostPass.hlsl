@@ -4,10 +4,14 @@ Texture2D Ambient	: register(t2);
 
 RWTexture2D<float4> Output;
 
+#define AmbFactor 0.3f;
+
 [numthreads(16, 16, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-	//Output[DTid.xy] = Diffuse[DTid.xy] + Specular[DTid.xy] + Diffuse[DTid.xy] * Ambient[DTid.xy/2].w;// + float4(Ambient[DTid.xy/4].xyz,1); GLOW
-	Output[DTid.xy] = float4(Ambient[DTid.xy/2].xyz /* * Ambient[DTid.xy/2].w */, 1);
+	float4 Light  = Diffuse[DTid.xy] + Specular[DTid.xy];
+	float4 Amb = float4(Ambient[DTid.xy/2].xyz * Ambient[DTid.xy/2].w,1);
+	//Output[DTid.xy] = float4(Ambient[DTid.xy/2].xyz /* * Ambient[DTid.xy/2].w */, 1);
 	//Output[DTid.xy] = Diffuse[DTid.xy] + Specular[DTid.xy];
+	Output[DTid.xy] = Light + Amb * AmbFactor;
 }

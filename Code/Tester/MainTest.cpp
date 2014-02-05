@@ -160,7 +160,7 @@ HRESULT InitDirect3D()
 	}
 	
 	m =  Oyster::Graphics::API::CreateModel(L"untitled.dan");
-	m2 = Oyster::Graphics::API::CreateModel(L"still_root_origo.dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"rigidbind_animtest_arms_bindpose (1).dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	m2->AnimationPlaying = 0;
 	m2->AnimationTime = 0.0f;
@@ -179,7 +179,7 @@ HRESULT InitDirect3D()
 	Oyster::Graphics::Definitions::Pointlight pl;
 	pl.Color = Oyster::Math::Float3(1,1,1);
 	pl.Bright = 1;
-	pl.Pos = Oyster::Math::Float3(0,-20.0f,30.4f);
+	pl.Pos = Oyster::Math::Float3(0,-20.0f,0.4f);
 	pl.Radius = 90;
 
 	Oyster::Graphics::API::AddLight(pl);
@@ -198,7 +198,7 @@ HRESULT Update(float deltaTime)
 	//ma *= 50;
 	//ma.m44 = 1;
 	//m2->WorldMatrix = m2->WorldMatrix *  ma;
-	m2->AnimationTime += deltaTime * 0.5f;
+	//m2->AnimationTime += deltaTime * 0.5f;
 	//m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
 }
@@ -249,6 +249,17 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 				Oyster::Graphics::API::ReloadShaders();
 #endif
 				break;
+			//Z -
+			case 0x5A:
+				m2->AnimationTime -= 0.1f;
+				if(m2->AnimationTime < 0)
+					m2->AnimationTime = 0;
+				break;
+			//X +
+			case 0x58:
+				m2->AnimationTime += 0.1f;
+				break;
+
 		}
 		break;
 

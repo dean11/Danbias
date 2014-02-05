@@ -5,7 +5,7 @@ struct VertexIn
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;
 	float3 biTangent	: BITANGENT;
-	float4 boneIndex	: BONEINDEX;
+	int4 boneIndex	: BONEINDEX;
 	float4 boneWeight	: BONEWEIGHT;
 };
 
@@ -32,7 +32,9 @@ SamplerState S1 : register(s0);
 
 cbuffer Animation : register(b0)
 {
-	float4x4 BoneAnimation[100];
+	float4x4 AnimatedData[100];
+	float4x4 BindPoseData[100];
+	float4x4 RotationData[100];
 	int Animated;
 	float3 Pad;
 }
