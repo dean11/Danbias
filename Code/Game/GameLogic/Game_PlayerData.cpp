@@ -11,6 +11,8 @@ Game::PlayerData::PlayerData()
 	sbDesc.size = Oyster::Math::Float3(4,7,4);
 	sbDesc.mass = 70;
 	sbDesc.restitutionCoeff = 0.5;
+	sbDesc.frictionCoeff_Static = 0.4;
+	sbDesc.frictionCoeff_Dynamic = 0.3;
 	sbDesc.rotation = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
 
 	//create rigid body

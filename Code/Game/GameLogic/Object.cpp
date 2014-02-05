@@ -156,6 +156,8 @@ void Object::EndFrame()
 		//error
 		int i =0 ;
 	}
+
+
 	if(currPhysicsState.GetGravityNormal()!= Float3::null)
 	{
 		Oyster::Math::Float4 axis;
@@ -169,6 +171,18 @@ void Object::EndFrame()
 		currPhysicsState.SetAngularMomentum(Float3::null);
 		Oyster::Math::Float3 debug = ::LinearAlgebra3D::WorldAxisOf(::LinearAlgebra3D::Rotation(axis.xyz), Oyster::Math::Float3::standard_unit_y);
 		debug += currPhysicsState.GetGravityNormal();
+	}
+	Oyster::Math::Float3 pos = currPhysicsState.GetCenterPosition(); 
+	Oyster::Math::Float3 up = -currPhysicsState.GetGravityNormal();
+	//300, 0,0,
+	//1,0,0
+	
+	if( pos.GetLength() < 303.5f) 
+	{
+		Oyster::Math::Float moveUp = 303.5 - pos.GetLength();
+		up *= moveUp;
+
+		//currPhysicsState.SetCenterPosition(pos + up);
 	}
 
 

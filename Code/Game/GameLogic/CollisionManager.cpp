@@ -84,7 +84,7 @@ using namespace GameLogic;
 		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
 		{
 			damageDone = kineticEnergyLoss * 0.10f;
-			player.DamageLife(damageDone);
+			//player.DamageLife(damageDone);
 		}
 		
 	}	
