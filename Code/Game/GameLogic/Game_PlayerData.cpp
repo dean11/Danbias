@@ -8,7 +8,7 @@ Game::PlayerData::PlayerData()
 	//set some stats that are appropriate to a player
 	Oyster::Physics::API::SimpleBodyDescription sbDesc;
 	sbDesc.centerPosition = Oyster::Math::Float3(0,308,0);
-	sbDesc.size = Oyster::Math::Float3(4,7,4);
+	sbDesc.size = Oyster::Math::Float3(0.5f,2,1);
 	sbDesc.mass = 70;
 	sbDesc.restitutionCoeff = 0.5;
 	sbDesc.frictionCoeff_Static = 0.4;

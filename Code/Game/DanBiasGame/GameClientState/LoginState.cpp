@@ -41,7 +41,7 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 bool LoginState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(0,0,5.4f);
+	plight.Pos = Oyster::Math::Float3(0,0,5);
 	plight.Color = Oyster::Math::Float3(1,1,1);
 	plight.Radius = 100;
 	plight.Bright = 1;
@@ -55,14 +55,22 @@ bool LoginState::LoadModels(std::wstring file)
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\box.dan";
+	modelData.modelPath = L"identityPlane.dan";
 	// load models
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,2));
+	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,-2));
+	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
+	int scaling = 2;
+	scale.v[0].x = scaling;
+	scale.v[1].y = scaling;
+	scale.v[2].z = scaling;
+
+	modelData.world = translate; //scale * translate * rot;
 	privData->object[0] = new C_DynamicObj();
 	privData->object[0]->Init(modelData);
 
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
-	modelData.world = modelData.world * translate;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,-2));
+	modelData.world = translate ;//* rot;
 
 	privData->object[1] = new C_DynamicObj();
 	privData->object[1]->Init(modelData);
@@ -126,7 +134,6 @@ bool LoginState::Render()
 
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
-
 
 	Oyster::Graphics::API::NewFrame();
 	// render objects

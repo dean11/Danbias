@@ -63,8 +63,10 @@ void AttatchmentMassDriver::Update(float dt)
 		Oyster::Physics::ICustomBody::State state;
 		state = heldObject->GetState();
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
-		ownerPos.y += 2;
-		Oyster::Math::Float3 pos = ownerPos + owner->GetLookDir().GetNormalized()*2;
+		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
+		Oyster::Math::Float3  up = -ownerState.GetGravityNormal();
+		up *= -0.3;
+		Oyster::Math::Float3 pos = ownerPos + up + (owner->GetLookDir().GetNormalized()*5);
 
 		state.SetCenterPosition(pos);
 
@@ -84,7 +86,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	if(hasObject)
 	{
 		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (2000);
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (700);
 		Oyster::Physics::ICustomBody::State state = heldObject->GetState();
 		state.ApplyLinearImpulse((Oyster::Math::Float3)pushForce);
 		heldObject->SetState(state);
@@ -97,10 +99,10 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float3 look = owner->GetLookDir();
 	Oyster::Math::Float3 pos = owner->GetPosition();
 
-	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (50000 * dt);
+	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (20000 * dt);
 	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(look, up, pos);
 
-	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/8,1,1,5); 
+	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/8,1,1,50); 
 	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
 	forcePushData args;
 	args.pushForce = pushForce;
