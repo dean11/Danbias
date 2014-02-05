@@ -143,5 +143,14 @@ namespace Oyster
 			return State::Sucsess;
 		}
 #endif
+
+		API::Option API::GetOption()
+		{
+			Option o;
+			o.BytesUsed = Core::UsedMem;
+			o.modelPath = Core::modelPath;
+			o.texturePath = Core::texturePath;
+			return o;
+		}
 	}
 }

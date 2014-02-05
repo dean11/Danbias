@@ -43,6 +43,7 @@ namespace Oyster
 				ID3D11ShaderResourceView* Deffered::SSAOKernel = NULL;
 				ID3D11ShaderResourceView* Deffered::SSAORandom = NULL;
 
+
 				Core::Init::State Deffered::InitShaders()
 				{
 					#ifdef _DEBUG

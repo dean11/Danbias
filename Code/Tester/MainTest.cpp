@@ -90,6 +90,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 		}
 	}
 
+	Oyster::Graphics::API::Option o = Oyster::Graphics::API::GetOption();
+
 	Oyster::Graphics::API::DeleteModel(m);
 	Oyster::Graphics::API::DeleteModel(m2);
 	Oyster::Graphics::API::DeleteModel(m3);

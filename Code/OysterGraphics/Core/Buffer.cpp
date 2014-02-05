@@ -155,6 +155,10 @@ HRESULT Core::Buffer::Init(const BUFFER_INIT_DESC& initDesc)
 	{
 		//MessageBox(NULL, L"Unable to create buffer.", L"Slenda Error", MB_ICONERROR | MB_OK);
 	}
+	else
+	{
+		Core::UsedMem += bufferDesc.ByteWidth;
+	}
 
 	return hr;
 }

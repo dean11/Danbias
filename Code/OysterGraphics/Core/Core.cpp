@@ -34,3 +34,5 @@ Oyster::Math::Float2 Core::resolution = Oyster::Math::Float2::null;
 ID3D11ShaderResourceView* Core::srvNULL[16] = {0};
 ID3D11RenderTargetView* Core::rtvNULL[8] = {0};
 ID3D11UnorderedAccessView* Core::uavNULL[8] = {0};
+
+int Core::UsedMem = 0;

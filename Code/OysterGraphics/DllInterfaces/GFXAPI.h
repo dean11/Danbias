@@ -27,6 +27,7 @@ namespace Oyster
 			struct Option
 			{
 				std::wstring modelPath, texturePath;
+				int BytesUsed;
 			};
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
@@ -63,8 +64,11 @@ namespace Oyster
 			//! @brief removes all lights from the scene
 			static void ClearLights();
 
-			//! @brief Sets Options to the graphics, note: currently unused
+			//! @brief Sets Options to the graphics
 			static State SetOptions(Option);
+
+			//! @brief Gets Options to the graphics
+			static Option GetOption();
 		};
 	}
 }
