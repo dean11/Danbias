@@ -182,7 +182,7 @@ void Object::EndFrame()
 		Oyster::Math::Float moveUp = 303.5 - pos.GetLength();
 		up *= moveUp;
 
-		//currPhysicsState.SetCenterPosition(pos + up);
+		currPhysicsState.SetCenterPosition(pos + up);
 	}
 
 

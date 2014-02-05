@@ -73,7 +73,7 @@ void Player::EndFrame()
 	Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
 	Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
 
-	//currPhysicsState.AddRotation(deltaAxis);
+	currPhysicsState.AddRotation(deltaAxis);
 	dx = 0; 
 	this->newPhysicsState = this->currPhysicsState;
 }

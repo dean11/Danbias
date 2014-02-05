@@ -96,6 +96,14 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_player_collision_response;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
 	//Oyster::Physics::ICustomBody::SubscriptMessage
 	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
 	{
