@@ -162,7 +162,7 @@ HRESULT InitDirect3D()
 	}
 	
 	m =  Oyster::Graphics::API::CreateModel(L"untitled.dan");
-	m2 = Oyster::Graphics::API::CreateModel(L"rigidbind_animtest_arms_bindpose (1).dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"still.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	m2->AnimationPlaying = 0;
 	m2->AnimationTime = 0.0f;
@@ -200,7 +200,7 @@ HRESULT Update(float deltaTime)
 	//ma *= 50;
 	//ma.m44 = 1;
 	//m2->WorldMatrix = m2->WorldMatrix *  ma;
-	//m2->AnimationTime += deltaTime * 0.5f;
+	m2->AnimationTime += deltaTime;// * 0.5f;
 	//m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
 }

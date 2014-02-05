@@ -111,6 +111,8 @@ namespace Oyster
 
 		void API::Clean()
 		{
+			DeleteModel(Render::Rendering::Basic::cube);
+			DeleteModel(Render::Rendering::Basic::cube2);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();

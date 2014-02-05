@@ -135,7 +135,6 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 	if(info->Animated)
 	{
 		//clean animation
-		delete[] info->bones;
 		for(int a = 0; a < info->AnimationCount; ++a)
 		{
 			for(int x = 0; x < info->Animations[a].Bones; ++x)
@@ -151,6 +150,8 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 	{
 		Core::loader.ReleaseResource(info->Material[i]);
 	}
+	if(info->BoneCount>0)
+		delete[] info->bones;
 	delete info;
 }
 
@@ -179,6 +180,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
 	modelInfo->Indexed = false;
 	modelInfo->Animated = false;
+	modelInfo->BoneCount = 0;
 	// Open file in binary mode
 	std::ifstream danFile;
 	danFile.open(filename, std::ios::binary);

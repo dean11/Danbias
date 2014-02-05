@@ -14,7 +14,7 @@ VertexOut main( VertexIn input )
 					   AnimatedData[input.boneIndex.z]*input.boneWeight.z +
 					   AnimatedData[input.boneIndex.w]*input.boneWeight.w; 
 
-	input.pos = mul(boneTrans,input.pos) * Animated + input.pos * int(1-Animated);
+	input.pos = mul(boneTrans,float4(input.pos,1)) * Animated + input.pos * int(1-Animated);
 	
 	input.normal = mul(boneTrans,input.normal) * Animated + input.normal * int(1-Animated);
 	/*input.pos =
