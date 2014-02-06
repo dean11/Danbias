@@ -51,12 +51,19 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	// updating the linear
 	//Decrease momentum with 1% as "fall-off"
 	//! HACK: @todo Add real solution with fluid drag
-	this->momentum_Linear = this->momentum_Linear*0.9999f;
-	this->momentum_Angular = this->momentum_Angular*0.9999f;
+	//this->momentum_Linear = this->momentum_Linear*0.99f;
+	//this->momentum_Angular = this->momentum_Angular*0.99f;
 
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
-	this->centerPos += ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
+	Float3 delta = AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
+	Float3 newPos = ( updateFrameLength)*this->momentum_Linear;
+	this->centerPos += newPos;
 	
+	if(this->mass == 70)
+	{
+		const char *breakpoint = "STOP";
+	}
+
 	// updating the angular
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
 	this->axis += updateFrameLength * this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );

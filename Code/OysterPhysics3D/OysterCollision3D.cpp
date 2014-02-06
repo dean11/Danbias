@@ -516,7 +516,7 @@ namespace Oyster { namespace Collision3D { namespace Utility
 		Float4 C = sphereA.center;
 		C -= sphereB.center;
 		Float r = (sphereA.radius + sphereB.radius);
-
+		Float dotprod = C.Dot(C);
 		if (r*r >= C.Dot(C))
 		{
 			return true; // Intersect detected!
