@@ -126,6 +126,9 @@ namespace GameLogic
 	struct ObjectTypeHeader
 	{
 		ObjectType typeID;
+
+		//Unless this is here the object destructor wont be called.
+		virtual ~ObjectTypeHeader(){}
 	};
 
 	namespace LevelLoaderInternal
@@ -182,6 +185,9 @@ namespace GameLogic
 		WorldSize worldSize;
 		std::string overviewPicturePath;
 		std::vector<GameMode> gameModesSupported;
+		
+		virtual ~LevelMetaData(){}
+
 	};
 
 	struct ObjectHeader : public ObjectTypeHeader, public LevelLoaderInternal::PhysicsObject
@@ -197,6 +203,8 @@ namespace GameLogic
 		float angle;
 		//Scale
 		float scale[3];
+
+		virtual ~ObjectHeader(){}
 	};
 
 	/************************************

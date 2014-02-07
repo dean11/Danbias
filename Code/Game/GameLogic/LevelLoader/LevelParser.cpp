@@ -43,14 +43,14 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
   	while(counter < bufferSize)
 	{
 		//Get typeID
-		ObjectTypeHeader typeID;
+		ObjectType typeID;
 		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
-		switch((int)typeID.typeID)
+		switch((int)typeID)
 		{
 			case ObjectType_LevelMetaData:
 			{
-				LevelMetaData* header = new LevelMetaData;
-				ParseLevelMetaData(&buffer[counter], *header, counter);
+				SmartPointer<ObjectTypeHeader> header = new LevelMetaData;
+				ParseLevelMetaData(&buffer[counter], *(LevelMetaData*)header.Get(), counter);
 				objects.push_back(header);
 				break;
 			}
