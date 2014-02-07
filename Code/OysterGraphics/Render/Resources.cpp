@@ -32,7 +32,7 @@ namespace Oyster
 
 				Shader::RenderPass Resources::Gather::Pass;
 				Shader::RenderPass Resources::Light::Pass;
-				Shader::RenderPass Resources::PostPass;
+				Shader::RenderPass Resources::Post::Pass;
 				Shader::RenderPass Resources::Gui::Pass;
 				Shader::RenderPass Resources::Blur::VertPass; //Set this pass second when doing a "fullscreen" blur
 				Shader::RenderPass Resources::Blur::HorPass;  //Set this pass first when doing a "fullscreen" blur
@@ -107,6 +107,7 @@ namespace Oyster
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
 					desc.NumElements = 1;
 					desc.ElementSize = sizeof(Definitions::GuiData);
+					Gui::Data.Init(desc);
 
 					desc.ElementSize = sizeof(Definitions::LightConstants);
 					desc.NumElements = 1;
@@ -325,18 +326,19 @@ namespace Oyster
 					Light::Pass.SRV.Compute.push_back(Light::SSAORandom);
 
 					////---------------- Post Pass Setup ----------------------------
-					PostPass.Shaders.Compute = GetShader::Compute(L"PostPass");
+					Post::Pass.Shaders.Compute = GetShader::Compute(L"PostPass");
 					for(int i = 0; i<LBufferSize;++i)
 					{
-						PostPass.SRV.Compute.push_back(LBufferSRV[i]);
+						Post::Pass.SRV.Compute.push_back(LBufferSRV[i]);
 					}
-					PostPass.UAV.Compute.push_back(Core::backBufferUAV);
+					Post::Pass.UAV.Compute.push_back(Core::backBufferUAV);
 
 					////---------------- GUI Pass Setup ----------------------------
 					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
 					Gui::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
 					Gui::Pass.RTV.push_back(GBufferRTV[2]);
+					Gui::Pass.CBuffers.Geometry.push_back(Gui::Data);
 
 					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
 					{

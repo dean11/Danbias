@@ -4,6 +4,11 @@ Texture2D Ambient	: register(t2);
 
 RWTexture2D<float4> Output;
 
+cbuffer Size : register(b0)
+{
+	int2 Pixels;
+}
+
 #define AmbFactor 0.3f;
 
 [numthreads(16, 16, 1)]
@@ -15,4 +20,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	//Output[DTid.xy] = Diffuse[DTid.xy] + Specular[DTid.xy];
 	Output[DTid.xy] = Light + Amb * AmbFactor;
 	//Output[DTid.xy] = Ambient[DTid.xy/2].w;
+	Output[DTid.xy] = Ambient[DTid.xy/2 + Pixels/2];
 }

@@ -12,6 +12,7 @@ namespace Oyster
 			{
 				void Gui::BeginRender()
 				{
+					Core::PipelineManager::SetRenderPass(Render::Resources::Gui::Pass);
 				}
 
 				void Gui::Render(ID3D11ShaderResourceView* tex,Math::Float2 pos, Math::Float2 size)
@@ -32,7 +33,7 @@ namespace Oyster
 
 
 					void* data = Render::Resources::Gui::Data.Map();
-					memcpy(data,&gd,sizeof(gd));
+					memcpy(data,&gd,sizeof(Definitions::GuiData));
 					Render::Resources::Gui::Data.Unmap();
 
 					Core::deviceContext->Draw(1,0);

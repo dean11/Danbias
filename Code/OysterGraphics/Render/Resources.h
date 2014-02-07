@@ -60,6 +60,7 @@ namespace Oyster
 					{
 						static Core::PipelineManager::RenderPass Pass;
 						static Core::Buffer Data;
+						static Core::Buffer Vertex;
 					};
 
 					struct Blur
@@ -73,8 +74,11 @@ namespace Oyster
 						static ID3D11ShaderResourceView* BufferSRV;
 					};
 
-					
-					static Core::PipelineManager::RenderPass PostPass;
+					struct Post
+					{
+						static Core::PipelineManager::RenderPass Pass;
+						static Core::Buffer Data;
+					};
 
 					
 

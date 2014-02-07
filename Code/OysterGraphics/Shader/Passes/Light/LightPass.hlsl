@@ -35,6 +35,7 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID )
 	{
 		float AmbValue = GetSSAO(ViewPos, UV, DTid.xy, GTid.xy/2);
 		Ambient[DTid.xy/2] = float4(DiffuseGlow[DTid.xy].xyz, AmbValue);
+		Ambient[DTid.xy + Pixels/2] = GUI[DTid.xy];
 	}
 
 }
