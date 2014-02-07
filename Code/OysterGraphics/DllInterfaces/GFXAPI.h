@@ -29,6 +29,7 @@ namespace Oyster
 				std::wstring modelPath, texturePath;
 				int BytesUsed;
 			};
+			typedef void* Texture;
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
 #ifdef _DEBUG
@@ -51,6 +52,13 @@ namespace Oyster
 			static void RenderScene(Oyster::Graphics::Model::Model models[], int count);
 			//! @brief Renders a single model
 			static void RenderModel(Oyster::Graphics::Model::Model& model);
+
+			//! @brief Configures Renderer to process 2D graphics, data will be passed in to EndFrame()
+			static void StartGuiRender();
+
+			//! @brief Renders a single GUI element using the texture provided and the Pos in the upper right corner, %based system
+			static void RenderGuiElement(Texture, Math::Float2 Pos, Math::Float2 Size);
+
 			//! @brief Performs light calculations, post effects and presents the scene
 			static void EndFrame();
 
@@ -58,6 +66,8 @@ namespace Oyster
 			static Oyster::Graphics::Model::Model* CreateModel(std::wstring filename);
 			//! @brief deletes a model and relases the models resources
 			static void DeleteModel(Oyster::Graphics::Model::Model* model);
+
+			static Texture CreateTexture(std::wstring filename);
 
 			//! @brief adds a light to the scene
 			static void AddLight(Definitions::Pointlight light);

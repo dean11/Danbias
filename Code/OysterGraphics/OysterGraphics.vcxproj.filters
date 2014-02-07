@@ -51,6 +51,9 @@
     <ClCompile Include="FileLoader\DanLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Rendering\GuiRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Core.h">
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\Resources\Deffered.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Rendering\GuiRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

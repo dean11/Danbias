@@ -8,6 +8,7 @@
 #include "../../Misc/Resource/ResourceManager.h"
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
+#include "../Render/Rendering/GuiRender.h"
 #include <vld.h>
 
 namespace Oyster
@@ -153,6 +154,16 @@ namespace Oyster
 			o.modelPath = Core::modelPath;
 			o.texturePath = Core::texturePath;
 			return o;
+		}
+
+		void API::StartGuiRender()
+		{
+			Render::Rendering::Gui::BeginRender();
+		}
+
+		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size)
+		{
+			Render::Rendering::Gui::Render((ID3D11Texture2D*)tex,pos,size);
 		}
 	}
 }

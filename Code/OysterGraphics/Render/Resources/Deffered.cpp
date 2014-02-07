@@ -337,6 +337,7 @@ namespace Oyster
 					Resources::Deffered::AnimationData.~Buffer();
 					Resources::Deffered::LightConstantsData.~Buffer();
 					Resources::Deffered::PointLightsData.~Buffer();
+					GuiData.~Buffer();
 					SAFE_RELEASE(Resources::Deffered::PointLightView);
 					SAFE_RELEASE(Deffered::SSAOKernel);
 					SAFE_RELEASE(Deffered::SSAORandom);
@@ -367,6 +368,8 @@ namespace Oyster
 					}
 				
 					SAFE_DELETE_ARRAY(GeometryPass.RenderStates.SampleState);
+
+					SAFE_RELEASE(GuiPass.IAStage.Layout);
 				}
 			}
 		}

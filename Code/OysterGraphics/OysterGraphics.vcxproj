@@ -182,6 +182,7 @@
     <ClCompile Include="FileLoader\ModelLoader.cpp" />
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp" />
     <ClCompile Include="Render\Rendering\BasicRender.cpp" />
+    <ClCompile Include="Render\Rendering\GuiRender.cpp" />
     <ClCompile Include="Render\Resources\Deffered.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +194,7 @@
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Model\ModelInfo.h" />
     <ClInclude Include="Render\Preparations\Preparations.h" />
+    <ClInclude Include="Render\Rendering\GuiRender.h" />
     <ClInclude Include="Render\Rendering\Render.h" />
     <ClInclude Include="Definitions\GraphicalDefinition.h" />
     <ClInclude Include="Render\Resources\Deffered.h" />
