@@ -1,4 +1,6 @@
 #include "GuiRender.h"
+#include "../Resources/Deffered.h"
+#include "../../Definitions/GraphicalDefinition.h"
 
 namespace Oyster
 {
@@ -12,31 +14,28 @@ namespace Oyster
 				{
 				}
 
-				void Gui::Render(ID3D11Texture2D* tex,Math::Float2 pos, Math::Float2 size)
+				void Gui::Render(ID3D11ShaderResourceView* tex,Math::Float2 pos, Math::Float2 size)
 				{
-					//Oyster::Core::DeviceContext->PSSetShaderResources(0,1,&srv);
+					Core::deviceContext->PSSetShaderResources(0,1,&tex);
 
-					//Pos.x -= instance.sizeX/2;
-					//Pos.x += size.x/2;
+					pos *= 2;
+					pos -= 1;
+					pos.y *= -1;
 
-					//Pos.y -= instance.sizeY/2;
-					//Pos.y += size.y/2;
+					Definitions::GuiData gd;
 
-					//Matrix m;
-					//m = Math::Matrix::identity;
-					//float width = (1.0f/(instance.sizeX/2.0f));
-					//float height = (1.0f/(instance.sizeY/2.0f));
-					//m.m41=Pos.x * width;
-					//m.m42=-Pos.y * height;
-					//m.m43=Pos.z;
-					//m.m11=width*size.x/2;
-					//m.m22=height*size.y/2;
-	
-					//void* dest = Resources::Buffers::CBufferGs.Map();
-					//memcpy(dest,&m.GetTranspose(),64);
-					//Resources::Buffers::CBufferGs.Unmap();
+					gd.Translation = Math::Matrix::identity;
+					gd.Translation.m41 = pos.x;
+					gd.Translation.m42 = pos.y;
+					gd.Translation.m11 = size.x;
+					gd.Translation.m22 = size.y;
 
-					//Oyster::Core::DeviceContext->Draw(1,0);
+
+					void* data = Render::Resources::Deffered::GuiData.Map();
+					memcpy(data,&gd,sizeof(gd));
+					Render::Resources::Deffered::GuiData.Unmap();
+
+					Core::deviceContext->Draw(1,0);
 				}
 			}
 		}

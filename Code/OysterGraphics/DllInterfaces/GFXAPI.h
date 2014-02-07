@@ -68,6 +68,7 @@ namespace Oyster
 			static void DeleteModel(Oyster::Graphics::Model::Model* model);
 
 			static Texture CreateTexture(std::wstring filename);
+			static void DeleteTexture(Texture);
 
 			//! @brief adds a light to the scene
 			static void AddLight(Definitions::Pointlight light);
