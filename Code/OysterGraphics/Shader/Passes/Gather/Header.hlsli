@@ -33,12 +33,12 @@ SamplerState S1 : register(s0);
 cbuffer Animation : register(b0)
 {
 	float4x4 AnimatedData[100];
-	int Animated;
-	float3 Pad;
 }
 
 cbuffer PerModel : register(b1)
 {
 	matrix WV;
 	matrix WVP;
+	int Animated;
+	float3 Pad;
 }

@@ -165,5 +165,15 @@ namespace Oyster
 		{
 			Render::Rendering::Gui::Render((ID3D11Texture2D*)tex,pos,size);
 		}
+
+		API::Texture API::CreateTexture(std::wstring filename)
+		{
+			return Core::loader.LoadResource((Core::texturePath + filename).c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+		}
+
+		void API::DeleteTexture(API::Texture tex)
+		{
+			Core::loader.ReleaseResource(tex);
+		}
 	}
 }

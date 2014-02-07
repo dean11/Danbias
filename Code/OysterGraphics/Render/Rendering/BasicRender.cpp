@@ -72,12 +72,7 @@ namespace Oyster
 							pm.WV = View * models[i].WorldMatrix;
 							pm.WVP = Projection * pm.WV;
 
-							void* data  = Resources::Deffered::ModelData.Map();
-							memcpy(data,&(pm),sizeof(pm));
-							Resources::Deffered::ModelData.Unmap();
-							
-							Model::ModelInfo* info = (Model::ModelInfo*)models[i].info;
-							
+							Model::ModelInfo* info = models[i].info;
 							
 							Definitions::AnimationData am;	//final
 							if(info->Animated && models[i].AnimationPlaying != -1)
@@ -105,12 +100,7 @@ namespace Oyster
 									
 									cube2->WorldMatrix = Scale;
 									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
-									//Basic::RenderScene(cube2,1, View, Projection);
 								}
-								//BoneAnimated[8] = Math3D::RotationMatrix(3.14/4, Math::Float3(0, 0, 1)) * info->bones[8].Relative;
-								//BoneAnimated[31] = Math3D::RotationMatrix(3.14/4, Math::Float3(0, 0, 1)) * info->bones[31].Relative;
-								////for each bone in animation 
-								////HACK use first bone
 								int b = 0;
 								Model::Animation A = info->Animations[models[i].AnimationPlaying];
 								while(models[i].AnimationTime>A.duration)
@@ -160,27 +150,19 @@ namespace Oyster
 									am.AnimatedData[b] =  (BoneAbsAnimated[b] * SkinTransform[b]);
 								}
 
-								//retore to draw animated model
-								Definitions::PerModel pm;
-								pm.WV = View * models[i].WorldMatrix;
-								pm.WVP = Projection * pm.WV;
+								
+								void *data = Resources::Deffered::AnimationData.Map();
+								memcpy(data,&am,sizeof(Definitions::AnimationData));
+								Resources::Deffered::AnimationData.Unmap();
 
-								void* data  = Resources::Deffered::ModelData.Map();
-								memcpy(data,&(pm),sizeof(pm));
-								Resources::Deffered::ModelData.Unmap();
-
-								//delete[]SkinTransform;
-								//delete[]BoneAbsAnimated;
-								//delete[]BoneAnimated;
-
-								am.Animated = 1;
+								pm.Animated = 1;
 							}
 							else
-								am.Animated = 0;
+								pm.Animated = 0;
 
-							data = Resources::Deffered::AnimationData.Map();
-							memcpy(data,&am,sizeof(Definitions::AnimationData));
-							Resources::Deffered::AnimationData.Unmap();
+							void* data  = Resources::Deffered::ModelData.Map();
+							memcpy(data,&(pm),sizeof(pm));
+							Resources::Deffered::ModelData.Unmap();
 
 							if(info->Material.size())
 							{
