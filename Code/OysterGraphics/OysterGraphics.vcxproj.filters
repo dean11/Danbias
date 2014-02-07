@@ -45,10 +45,10 @@
     <ClCompile Include="Render\Resources\Deffered.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Resources\Debug.cpp">
+    <ClCompile Include="Core\PipelineManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\PipelineManager.cpp">
+    <ClCompile Include="FileLoader\DanLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,24 +86,27 @@
     <ClInclude Include="Render\Resources\Deffered.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Resources\Debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugVertex.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\TextureDebug.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\LightPass.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\PixelGatherData.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\VertexGatherData.hlsl" />
+    <FxCompile Include="Shader\Passes\Light\LightPass.hlsl" />
+    <FxCompile Include="Shader\Passes\Post\PostPass.hlsl" />
+    <FxCompile Include="Shader\Passes\Gather\GatherPixel.hlsl" />
+    <FxCompile Include="Shader\Passes\Gather\GatherVertex.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\2DVertex.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\2DPixel.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\2DGeometry.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
-    <None Include="Shader\HLSL\Deffered Shaders\Defines.hlsli" />
-    <None Include="Shader\HLSL\Deffered Shaders\GBufferHeader.hlsli" />
-    <None Include="Shader\HLSL\Deffered Shaders\LightCalc.hlsli" />
-    <None Include="Shader\HLSL\Deffered Shaders\PosManipulation.hlsli" />
+    <None Include="Shader\Passes\Light\Defines.hlsli" />
+    <None Include="Shader\Passes\Light\LightCalc.hlsli" />
+    <None Include="Shader\Passes\Light\PosManipulation.hlsli" />
+    <None Include="Shader\Passes\Light\SSAO.hlsli" />
+    <None Include="Shader\Passes\2D\Header.hlsli" />
+    <None Include="Shader\Passes\Gather\Header.hlsli" />
   </ItemGroup>
 </Project>

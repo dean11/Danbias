@@ -1,13 +1,8 @@
-#include "GBufferHeader.hlsli"
+#include "Header.hlsli"
 
 VertexOut main( VertexIn input )
 {
 	VertexOut output;
-
-	float3 offsetX = input.pos - BindPoseData[input.boneIndex.x][3].xyz;
-	float3 offsetY = input.pos - BindPoseData[input.boneIndex.y][3].xyz;
-	float3 offsetZ = input.pos - BindPoseData[input.boneIndex.z][3].xyz;
-	float3 offsetW = input.pos - BindPoseData[input.boneIndex.w][3].xyz;
 
 	Matrix boneTrans = AnimatedData[input.boneIndex.x]*input.boneWeight.x +
 					   AnimatedData[input.boneIndex.y]*input.boneWeight.y +

@@ -1,4 +1,4 @@
-#include "GBufferHeader.hlsli"
+#include "Header.hlsli"
 
 PixelOut main(VertexOut input)
 {

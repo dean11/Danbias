@@ -33,8 +33,6 @@ SamplerState S1 : register(s0);
 cbuffer Animation : register(b0)
 {
 	float4x4 AnimatedData[100];
-	float4x4 BindPoseData[100];
-	float4x4 RotationData[100];
 	int Animated;
 	float3 Pad;
 }

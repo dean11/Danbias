@@ -14,13 +14,14 @@ namespace Oyster
 				{
 				public:
 					
-					static const int GBufferSize = 2;
+					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
 					static const int MaxLightSize = 100;
 
 					//! GBuffers
 					//! 0 = Diffuse + Glow
 					//! 1 = Normal + Spec
+					//! 2 = GUI
 					static ID3D11RenderTargetView* GBufferRTV[GBufferSize];
 					static ID3D11ShaderResourceView* GBufferSRV[GBufferSize];
 
@@ -32,6 +33,7 @@ namespace Oyster
 					static ID3D11ShaderResourceView* LBufferSRV[LBufferSize];
 
 					static Core::PipelineManager::RenderPass GeometryPass;
+					static Core::PipelineManager::RenderPass GuiPass;
 					static Core::PipelineManager::RenderPass LightPass;
 					static Core::PipelineManager::RenderPass PostPass;
 
@@ -42,6 +44,9 @@ namespace Oyster
 					static Core::Buffer LightConstantsData;
 
 					static Core::Buffer PointLightsData;
+
+					static Core::Buffer GuiData;
+
 					static ID3D11ShaderResourceView* PointLightView;
 
 					static ID3D11ShaderResourceView* SSAOKernel;

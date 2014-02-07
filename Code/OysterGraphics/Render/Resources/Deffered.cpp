@@ -8,7 +8,7 @@ typedef Oyster::Graphics::Core::PipelineManager::Get GetShader;
 typedef Oyster::Graphics::Core::PipelineManager Shader;
 typedef Oyster::Graphics::Core::Buffer Buffer;
 
-const std::wstring PathToHLSL = L"..\\..\\Code\\OysterGraphics\\Shader\\HLSL\\Deffered Shaders\\";
+const std::wstring PathToHLSL = L"..\\..\\Code\\OysterGraphics\\Shader\\Passes\\";
 const std::wstring PathToCSO = L"..\\Content\\Shaders\\";
 
 const int KernelSize = 10;
@@ -32,10 +32,12 @@ namespace Oyster
 				Shader::RenderPass Deffered::GeometryPass;
 				Shader::RenderPass Deffered::LightPass;
 				Shader::RenderPass Deffered::PostPass;
+				Shader::RenderPass Deffered::GuiPass;
 
 				Buffer Deffered::ModelData = Buffer();
 				Buffer Deffered::AnimationData = Buffer();
 				Buffer Deffered::LightConstantsData = Buffer();
+				Buffer Deffered::GuiData = Buffer();
 
 				Buffer Deffered::PointLightsData = Buffer();
 				ID3D11ShaderResourceView* Deffered::PointLightView = NULL;
@@ -46,18 +48,31 @@ namespace Oyster
 
 				Core::Init::State Deffered::InitShaders()
 				{
-					#ifdef _DEBUG
-					std::wstring path = PathToHLSL;
+#ifdef _DEBUG
+					std::wstring path = PathToHLSL+L"Gather\\";
 					std::wstring end = L".hlsl";
 #else
 					std::wstring path = PathToCSO;
 					std::wstring end = L".cso";
 #endif
 					//Load Shaders
-					Core::PipelineManager::Init(path + L"PixelGatherData" + end, ShaderType::Pixel, L"Geometry");
-					Core::PipelineManager::Init(path + L"VertexGatherData" + end, ShaderType::Vertex, L"Geometry");
+					Core::PipelineManager::Init(path + L"GatherPixel" + end, ShaderType::Pixel, L"Gather");
+					Core::PipelineManager::Init(path + L"GatherVertex" + end, ShaderType::Vertex, L"Gather");
+#ifdef _DEBUG
+					path = PathToHLSL+L"Light\\";
+#endif
 					Core::PipelineManager::Init(path + L"LightPass" + end, ShaderType::Compute, L"LightPass"); 
-					Core::PipelineManager::Init(path + L"PostPass" + end, ShaderType::Compute, L"PostPass"); 
+#ifdef _DEBUG
+					path = PathToHLSL+L"Post\\";
+#endif
+					Core::PipelineManager::Init(path + L"PostPass" + end, ShaderType::Compute, L"PostPass");
+#ifdef _DEBUG	
+					path = PathToHLSL+L"2D\\";
+#endif
+					Core::PipelineManager::Init(path + L"2DVertex" + end,ShaderType::Vertex, L"2D");
+					Core::PipelineManager::Init(path + L"2DGeometry" + end,ShaderType::Geometry, L"2D");
+					Core::PipelineManager::Init(path + L"2DPixel" + end,ShaderType::Pixel, L"2D");
+
 					return Core::Init::State::Success;
 				}
 
@@ -78,6 +93,10 @@ namespace Oyster
 					desc.NumElements = 1;
 					desc.ElementSize = sizeof(Definitions::AnimationData);
 					AnimationData.Init(desc);
+
+					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
+					desc.NumElements = 1;
+					desc.ElementSize = sizeof(Definitions::GuiData);
 
 					desc.ElementSize = sizeof(Definitions::LightConstants);
 					desc.NumElements = 1;
@@ -240,8 +259,8 @@ namespace Oyster
 					////Create ShaderEffects
 
 					////---------------- Geometry Pass Setup ----------------------------
-					GeometryPass.Shaders.Pixel = GetShader::Pixel(L"Geometry");
-					GeometryPass.Shaders.Vertex = GetShader::Vertex(L"Geometry");
+					GeometryPass.Shaders.Pixel = GetShader::Pixel(L"Gather");
+					GeometryPass.Shaders.Vertex = GetShader::Vertex(L"Gather");
 
 					D3D11_INPUT_ELEMENT_DESC indesc[] =
 					{
@@ -254,7 +273,7 @@ namespace Oyster
 						{ "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 					};
 
-					Shader::CreateInputLayout(indesc,7,GetShader::Vertex(L"Geometry"),GeometryPass.IAStage.Layout);
+					Shader::CreateInputLayout(indesc,7,GetShader::Vertex(L"Gather"),GeometryPass.IAStage.Layout);
 					GeometryPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 					GeometryPass.CBuffers.Vertex.push_back(AnimationData);
 					GeometryPass.CBuffers.Vertex.push_back(ModelData);
@@ -262,7 +281,7 @@ namespace Oyster
 					GeometryPass.RenderStates.SampleCount = 1;
 					GeometryPass.RenderStates.SampleState = ss;
 					GeometryPass.RenderStates.DepthStencil = dsState;
-					for(int i = 0; i<Deffered::GBufferSize;++i)
+					for(int i = 0; i<GBufferSize;++i)
 					{
 						GeometryPass.RTV.push_back(GBufferRTV[i]);
 					}
@@ -291,6 +310,23 @@ namespace Oyster
 						PostPass.SRV.Compute.push_back(LBufferSRV[i]);
 					}
 					PostPass.UAV.Compute.push_back(Core::backBufferUAV);
+
+					////---------------- GUI Pass Setup ----------------------------
+					GuiPass.Shaders.Vertex = GetShader::Vertex(L"2D");
+					GuiPass.Shaders.Pixel = GetShader::Pixel(L"2D");
+					GuiPass.Shaders.Geometry = GetShader::Geometry(L"2D");
+					GuiPass.RTV.push_back(GBufferRTV[2]);
+
+					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
+					{
+						{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+					};
+
+					Shader::CreateInputLayout(indesc2D,1,GetShader::Vertex(L"2D"),GuiPass.IAStage.Layout);
+					GuiPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+					
+					GuiPass.RenderStates.SampleCount = 1;
+					GuiPass.RenderStates.SampleState = ss;
 
 					return Core::Init::State::Success;
 				}

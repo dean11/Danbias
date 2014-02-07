@@ -158,7 +158,6 @@ namespace Oyster
 								for(int b = 0; b < info->BoneCount; ++b)
 								{
 									am.AnimatedData[b] =  (BoneAbsAnimated[b] * SkinTransform[b]);
-									am.BindPoseData[b] = info->bones[b].Absolute;//Math3D::ExtractRotationMatrix(am.animatedData[b]);
 								}
 
 								//retore to draw animated model
