@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Deffered.h"
-#include "..\..\Definitions\GraphicalDefinition.h"
+#include "Resources.h"
+#include "..\Definitions\GraphicalDefinition.h"
 
 typedef Oyster::Graphics::Core::PipelineManager::ShaderType ShaderType;
 typedef Oyster::Graphics::Core::PipelineManager::Get GetShader;
@@ -20,38 +20,40 @@ namespace Oyster
 	{
 		namespace Render
 		{
-			namespace Resources
-			{
 
-				ID3D11RenderTargetView* Deffered::GBufferRTV[Deffered::GBufferSize] = {0};
-				ID3D11ShaderResourceView* Deffered::GBufferSRV[Deffered::GBufferSize] = {0};
+			ID3D11RenderTargetView* Resources::GBufferRTV[Resources::GBufferSize] = {0};
+				ID3D11ShaderResourceView* Resources::GBufferSRV[Resources::GBufferSize] = {0};
 
-				ID3D11UnorderedAccessView* Deffered::LBufferUAV[Deffered::LBufferSize] = {0};
-				ID3D11ShaderResourceView* Deffered::LBufferSRV[Deffered::LBufferSize] = {0};
+				ID3D11UnorderedAccessView* Resources::LBufferUAV[Resources::LBufferSize] = {0};
+				ID3D11ShaderResourceView* Resources::LBufferSRV[Resources::LBufferSize] = {0};
 				
-				ID3D11UnorderedAccessView* Deffered::BlurBufferUAV = {0};
-				ID3D11ShaderResourceView* Deffered::BlurBufferSRV = {0};
+				ID3D11UnorderedAccessView* Resources::Blur::BufferUAV = {0};
+				ID3D11ShaderResourceView* Resources::Blur::BufferSRV = {0};
 
-				Shader::RenderPass Deffered::GeometryPass;
-				Shader::RenderPass Deffered::LightPass;
-				Shader::RenderPass Deffered::PostPass;
-				Shader::RenderPass Deffered::GuiPass;
-				Shader::RenderPass Deffered::BlurVertPass; //Set this pass second when doing a "fullscreen" blur
-				Shader::RenderPass Deffered::BlurHorPass;  //Set this pass first when doing a "fullscreen" blur
+				Shader::RenderPass Resources::Gather::Pass;
+				Shader::RenderPass Resources::Light::Pass;
+				Shader::RenderPass Resources::PostPass;
+				Shader::RenderPass Resources::Gui::Pass;
+				Shader::RenderPass Resources::Blur::VertPass; //Set this pass second when doing a "fullscreen" blur
+				Shader::RenderPass Resources::Blur::HorPass;  //Set this pass first when doing a "fullscreen" blur
 
-				Buffer Deffered::ModelData = Buffer();
-				Buffer Deffered::AnimationData = Buffer();
-				Buffer Deffered::LightConstantsData = Buffer();
-				Buffer Deffered::GuiData = Buffer();
+				Buffer Resources::Gather::ModelData = Buffer();
+				Buffer Resources::Gather::AnimationData = Buffer();
+				Buffer Resources::Light::LightConstantsData = Buffer();
+				Buffer Resources::Gui::Data = Buffer();
 
-				Buffer Deffered::PointLightsData = Buffer();
-				ID3D11ShaderResourceView* Deffered::PointLightView = NULL;
+				Buffer Resources::Light::PointLightsData = Buffer();
+				ID3D11ShaderResourceView* Resources::Light::PointLightView = NULL;
 
-				ID3D11ShaderResourceView* Deffered::SSAOKernel = NULL;
-				ID3D11ShaderResourceView* Deffered::SSAORandom = NULL;
+				ID3D11ShaderResourceView* Resources::Light::SSAOKernel = NULL;
+				ID3D11ShaderResourceView* Resources::Light::SSAORandom = NULL;
+
+				ID3D11RasterizerState* Resources::RenderStates::rs = NULL;
+				ID3D11SamplerState** Resources::RenderStates::ss = new ID3D11SamplerState*[1];
+				ID3D11DepthStencilState* Resources::RenderStates::dsState = NULL;
 
 
-				Core::Init::State Deffered::InitShaders()
+				Core::Init::State Resources::InitShaders()
 				{
 #ifdef _DEBUG
 					std::wstring path = PathToHLSL+L"Gather\\";
@@ -71,6 +73,9 @@ namespace Oyster
 					path = PathToHLSL+L"Post\\";
 #endif
 					Core::PipelineManager::Init(path + L"PostPass" + end, ShaderType::Compute, L"PostPass");
+#ifdef _DEBUG
+					path = PathToHLSL+L"Blur\\";
+#endif
 					Core::PipelineManager::Init(path + L"BlurHor" + end, ShaderType::Compute, L"BlurHor");
 					Core::PipelineManager::Init(path + L"BlurVert" + end, ShaderType::Compute, L"BlurVert");
 #ifdef _DEBUG	
@@ -83,10 +88,8 @@ namespace Oyster
 					return Core::Init::State::Success;
 				}
 
-				Core::Init::State Deffered::Init()
+				Core::Init::State Resources::InitBuffers()
 				{
-					InitShaders();
-
 					//Create Buffers
 					Buffer::BUFFER_INIT_DESC desc;
 					desc.ElementSize = sizeof(Definitions::PerModel);
@@ -95,11 +98,11 @@ namespace Oyster
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_VS;
 					desc.Usage = Buffer::BUFFER_USAGE::BUFFER_CPU_WRITE_DISCARD;
 
-					ModelData.Init(desc);
+					Gather::ModelData.Init(desc);
 
 					desc.NumElements = 1;
 					desc.ElementSize = sizeof(Definitions::AnimationData);
-					AnimationData.Init(desc);
+					Gather::AnimationData.Init(desc);
 
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
 					desc.NumElements = 1;
@@ -109,13 +112,17 @@ namespace Oyster
 					desc.NumElements = 1;
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_CS;
 					
-					LightConstantsData.Init(desc);
+					Light::LightConstantsData.Init(desc);
 
 					desc.ElementSize = sizeof(Definitions::Pointlight);
 					desc.NumElements = MaxLightSize;
 					desc.Type = Buffer::STRUCTURED_BUFFER;
-					PointLightsData.Init(desc);
+					Light::PointLightsData.Init(desc);
+					return Core::Init::Success;
+				}
 
+				Core::Init::State Resources::InitRenderStates()
+				{
 					////Create States
 					D3D11_RASTERIZER_DESC rdesc;
 					rdesc.CullMode = D3D11_CULL_BACK;
@@ -129,8 +136,8 @@ namespace Oyster
 					rdesc.MultisampleEnable = false;
 					rdesc.AntialiasedLineEnable = false;
 
-					ID3D11RasterizerState* rs = NULL;
-					Oyster::Graphics::Core::device->CreateRasterizerState(&rdesc,&rs);
+					
+					Oyster::Graphics::Core::device->CreateRasterizerState(&rdesc,&RenderStates::rs);
 
 					D3D11_SAMPLER_DESC sdesc;
 					sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -144,8 +151,8 @@ namespace Oyster
 					sdesc.MinLOD = 0;
 					sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-					ID3D11SamplerState** ss = new ID3D11SamplerState*[1];
-					Oyster::Graphics::Core::device->CreateSamplerState(&sdesc,ss);
+					
+					Oyster::Graphics::Core::device->CreateSamplerState(&sdesc,RenderStates::ss);
 
 					D3D11_DEPTH_STENCIL_DESC ddesc;
 					ddesc.DepthEnable = true;
@@ -166,23 +173,27 @@ namespace Oyster
 					ddesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 					ddesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-					ID3D11DepthStencilState* dsState;
-					Core::device->CreateDepthStencilState(&ddesc,&dsState);
+					
+					Core::device->CreateDepthStencilState(&ddesc,&RenderStates::dsState);
+					return Core::Init::Success;
+				}
 
+				Core::Init::State Resources::InitViews()
+				{
 					//Create Views
-					for(int i = 0; i< Resources::Deffered::GBufferSize; ++i)
+					for(int i = 0; i< GBufferSize; ++i)
 					{
 						Core::Init::CreateLinkedShaderResourceFromTexture(&GBufferRTV[i],&GBufferSRV[i],NULL);
 					}
 
-					for(int i = 0; i < Resources::Deffered::LBufferSize; ++i)
+					for(int i = 0; i < LBufferSize; ++i)
 					{
 						Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&LBufferSRV[i],&LBufferUAV[i]);
 					}
 
-					Buffer* b = &PointLightsData;
+					Buffer* b = &Light::PointLightsData;
 
-					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&PointLightView,NULL);
+					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&Light::PointLightView,NULL);
 					srand((unsigned int)time(0));
 
 					//SSAO
@@ -241,7 +252,7 @@ namespace Oyster
 					ID3D11Texture1D *pTexture1;
 
 					 Core::device->CreateTexture1D( &T1desc, &sphere, &pTexture1 );
-					 Core::device->CreateShaderResourceView( pTexture1, 0, &SSAOKernel );
+					 Core::device->CreateShaderResourceView( pTexture1, 0, &Light::SSAOKernel );
 					pTexture1->Release();
 
 					D3D11_TEXTURE2D_DESC T2desc;
@@ -260,14 +271,17 @@ namespace Oyster
 					ID3D11Texture2D *pTexture2;
 
 					Core::device->CreateTexture2D( &T2desc, &rnd, &pTexture2 );
-					Core::device->CreateShaderResourceView( (pTexture2), 0, &SSAORandom );
+					Core::device->CreateShaderResourceView( (pTexture2), 0, &Light::SSAORandom );
 					pTexture2->Release();
+					return Core::Init::Success;
+				}
 
-					////Create ShaderEffects
+				Core::Init::State Resources::InitPasses()
+				{
 
 					////---------------- Geometry Pass Setup ----------------------------
-					GeometryPass.Shaders.Pixel = GetShader::Pixel(L"Gather");
-					GeometryPass.Shaders.Vertex = GetShader::Vertex(L"Gather");
+					Gather::Pass.Shaders.Pixel = GetShader::Pixel(L"Gather");
+					Gather::Pass.Shaders.Vertex = GetShader::Vertex(L"Gather");
 
 					D3D11_INPUT_ELEMENT_DESC indesc[] =
 					{
@@ -280,91 +294,104 @@ namespace Oyster
 						{ "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 					};
 
-					Shader::CreateInputLayout(indesc,7,GetShader::Vertex(L"Gather"),GeometryPass.IAStage.Layout);
-					GeometryPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-					GeometryPass.CBuffers.Vertex.push_back(AnimationData);
-					GeometryPass.CBuffers.Vertex.push_back(ModelData);
-					GeometryPass.RenderStates.Rasterizer = rs;
-					GeometryPass.RenderStates.SampleCount = 1;
-					GeometryPass.RenderStates.SampleState = ss;
-					GeometryPass.RenderStates.DepthStencil = dsState;
+					Shader::CreateInputLayout(indesc,7,GetShader::Vertex(L"Gather"),Gather::Pass.IAStage.Layout);
+					Gather::Pass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+					Gather::Pass.CBuffers.Vertex.push_back(Gather::AnimationData);
+					Gather::Pass.CBuffers.Vertex.push_back(Gather::ModelData);
+					Gather::Pass.RenderStates.Rasterizer = RenderStates::rs;
+					Gather::Pass.RenderStates.SampleCount = 1;
+					Gather::Pass.RenderStates.SampleState = RenderStates::ss;
+					Gather::Pass.RenderStates.DepthStencil = RenderStates::dsState;
 					for(int i = 0; i<GBufferSize;++i)
 					{
-						GeometryPass.RTV.push_back(GBufferRTV[i]);
+						Gather::Pass.RTV.push_back(GBufferRTV[i]);
 					}
-					GeometryPass.depth = Core::depthStencil;
+					Gather::Pass.depth = Core::depthStencil;
 
 					////---------------- Light Pass Setup ----------------------------
-					LightPass.Shaders.Compute = GetShader::Compute(L"LightPass");
-					for(int i = 0; i<Deffered::LBufferSize;++i)
+					Light::Pass.Shaders.Compute = GetShader::Compute(L"LightPass");
+					for(int i = 0; i<LBufferSize;++i)
 					{
-						LightPass.UAV.Compute.push_back(LBufferUAV[i]);
+						Light::Pass.UAV.Compute.push_back(LBufferUAV[i]);
 					}
-					for(int i = 0; i<Deffered::GBufferSize;++i)
+					for(int i = 0; i<GBufferSize;++i)
 					{
-						LightPass.SRV.Compute.push_back(GBufferSRV[i]);
+						Light::Pass.SRV.Compute.push_back(GBufferSRV[i]);
 					}
-					LightPass.SRV.Compute.push_back(Core::depthStencilUAV);
-					LightPass.CBuffers.Compute.push_back(LightConstantsData);
-					LightPass.SRV.Compute.push_back(PointLightView);
-					LightPass.SRV.Compute.push_back(SSAOKernel);
-					LightPass.SRV.Compute.push_back(SSAORandom);
+					Light::Pass.SRV.Compute.push_back(Core::depthStencilUAV);
+					Light::Pass.CBuffers.Compute.push_back(Light::LightConstantsData);
+					Light::Pass.SRV.Compute.push_back(Light::PointLightView);
+					Light::Pass.SRV.Compute.push_back(Light::SSAOKernel);
+					Light::Pass.SRV.Compute.push_back(Light::SSAORandom);
 
 					////---------------- Post Pass Setup ----------------------------
 					PostPass.Shaders.Compute = GetShader::Compute(L"PostPass");
-					for(int i = 0; i<Deffered::LBufferSize;++i)
+					for(int i = 0; i<LBufferSize;++i)
 					{
 						PostPass.SRV.Compute.push_back(LBufferSRV[i]);
 					}
 					PostPass.UAV.Compute.push_back(Core::backBufferUAV);
 
 					////---------------- GUI Pass Setup ----------------------------
-					GuiPass.Shaders.Vertex = GetShader::Vertex(L"2D");
-					GuiPass.Shaders.Pixel = GetShader::Pixel(L"2D");
-					GuiPass.Shaders.Geometry = GetShader::Geometry(L"2D");
-					GuiPass.RTV.push_back(GBufferRTV[2]);
+					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
+					Gui::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
+					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
+					Gui::Pass.RTV.push_back(GBufferRTV[2]);
 
 					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
 					{
 						{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 					};
 
-					Shader::CreateInputLayout(indesc2D,1,GetShader::Vertex(L"2D"),GuiPass.IAStage.Layout);
-					GuiPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+					Shader::CreateInputLayout(indesc2D,1,GetShader::Vertex(L"2D"),Gui::Pass.IAStage.Layout);
+					Gui::Pass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 					
-					GuiPass.RenderStates.SampleCount = 1;
-					GuiPass.RenderStates.SampleState = ss;
+					Gui::Pass.RenderStates.SampleCount = 1;
+					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
 
 					////---------------- Blur Pass Setup ----------------------------
-					BlurHorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
-					BlurVertPass.Shaders.Compute = GetShader::Compute(L"BlurVert");
+					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
+					Blur::VertPass.Shaders.Compute = GetShader::Compute(L"BlurVert");
 
 					//Taking the Ambient SRV from LBufferSRV and setting it as input texture
-					BlurHorPass.SRV.Compute.push_back(LBufferSRV[2]); 
+					Blur::HorPass.SRV.Compute.push_back(LBufferSRV[2]); 
 					//Output texture is the Blur UAV buffer
-					BlurHorPass.UAV.Compute.push_back(BlurBufferUAV);
+					Blur::HorPass.UAV.Compute.push_back(Blur::BufferUAV);
 
 					//Taking the Blur SRV and setting it as input texture now
-					BlurVertPass.SRV.Compute.push_back(BlurBufferSRV);
+					Blur::VertPass.SRV.Compute.push_back(Blur::BufferSRV);
 					//And the Ambient UAV is now the output texture
-					BlurVertPass.UAV.Compute.push_back(LBufferUAV[2]);
+					Blur::VertPass.UAV.Compute.push_back(LBufferUAV[2]);
+
+					return Core::Init::Success;
+				}
+
+				Core::Init::State Resources::Init()
+				{
+					InitShaders();
+					InitBuffers();
+					InitRenderStates();
+					InitViews();
+					InitPasses();
 
 					return Core::Init::State::Success;
 				}
 
-				void Deffered::Clean()
-				{
-					Resources::Deffered::ModelData.~Buffer();
-					Resources::Deffered::AnimationData.~Buffer();
-					Resources::Deffered::LightConstantsData.~Buffer();
-					Resources::Deffered::PointLightsData.~Buffer();
-					GuiData.~Buffer();
-					SAFE_RELEASE(Resources::Deffered::PointLightView);
-					SAFE_RELEASE(Deffered::SSAOKernel);
-					SAFE_RELEASE(Deffered::SSAORandom);
 
-					SAFE_RELEASE(BlurBufferSRV);
-					SAFE_RELEASE(BlurBufferUAV);
+
+				void Resources::Clean()
+				{
+					Gather::ModelData.~Buffer();
+					Gather::AnimationData.~Buffer();
+					Light::LightConstantsData.~Buffer();
+					Light::PointLightsData.~Buffer();
+					Gui::Data.~Buffer();
+					SAFE_RELEASE(Light::PointLightView);
+					SAFE_RELEASE(Light::SSAOKernel);
+					SAFE_RELEASE(Light::SSAORandom);
+
+					SAFE_RELEASE(Blur::BufferSRV);
+					SAFE_RELEASE(Blur::BufferUAV);
 
 					for(int i = 0; i< GBufferSize; ++i)
 					{
@@ -378,24 +405,23 @@ namespace Oyster
 						SAFE_RELEASE(LBufferSRV[i]);
 					}
 
-					SAFE_RELEASE(GeometryPass.IAStage.Layout);
+					SAFE_RELEASE(Gather::Pass.IAStage.Layout);
 
-					SAFE_RELEASE(GeometryPass.RenderStates.BlendState);
+					SAFE_RELEASE(Gather::Pass.RenderStates.BlendState);
 
-					SAFE_RELEASE(GeometryPass.RenderStates.DepthStencil);
+					SAFE_RELEASE(Gather::Pass.RenderStates.DepthStencil);
 
-					SAFE_RELEASE(GeometryPass.RenderStates.Rasterizer);
+					SAFE_RELEASE(Gather::Pass.RenderStates.Rasterizer);
 
-					for(int i = 0; i < GeometryPass.RenderStates.SampleCount; ++i)
+					for(int i = 0; i < Gather::Pass.RenderStates.SampleCount; ++i)
 					{
-						SAFE_RELEASE(GeometryPass.RenderStates.SampleState[i]);
+						SAFE_RELEASE(Gather::Pass.RenderStates.SampleState[i]);
 					}
 				
-					SAFE_DELETE_ARRAY(GeometryPass.RenderStates.SampleState);
+					SAFE_DELETE_ARRAY(Gather::Pass.RenderStates.SampleState);
 
-					SAFE_RELEASE(GuiPass.IAStage.Layout);
+					SAFE_RELEASE(Gui::Pass.IAStage.Layout);
 				}
-			}
 		}
 	}
 }

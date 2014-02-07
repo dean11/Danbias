@@ -1,6 +1,6 @@
-#include "GuiRender.h"
-#include "../Resources/Deffered.h"
-#include "../../Definitions/GraphicalDefinition.h"
+#include "GuiRenderer.h"
+#include "Resources.h"
+#include "../Definitions/GraphicalDefinition.h"
 
 namespace Oyster
 {
@@ -31,9 +31,9 @@ namespace Oyster
 					gd.Translation.m22 = size.y;
 
 
-					void* data = Render::Resources::Deffered::GuiData.Map();
+					void* data = Render::Resources::Gui::Data.Map();
 					memcpy(data,&gd,sizeof(gd));
-					Render::Resources::Deffered::GuiData.Unmap();
+					Render::Resources::Gui::Data.Unmap();
 
 					Core::deviceContext->Draw(1,0);
 				}

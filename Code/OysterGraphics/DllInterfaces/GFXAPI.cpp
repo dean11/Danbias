@@ -1,14 +1,12 @@
 #include "GFXAPI.h"
 #include "../Core/Core.h"
-#include "../Render/Resources/Debug.h"
-#include "../Render/Resources/Deffered.h"
-#include "../Render/Rendering/Render.h"
+#include "../Render/Resources.h"
+#include "../Render/DefaultRenderer.h"
 #include "../FileLoader/ObjReader.h"
-//#include "../../Misc/Resource/OysterResource.h"
 #include "../../Misc/Resource/ResourceManager.h"
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
-#include "../Render/Rendering/GuiRender.h"
+#include "../Render/GuiRenderer.h"
 #include <vld.h>
 
 namespace Oyster
@@ -30,11 +28,11 @@ namespace Oyster
 			{
 				return API::Fail;
 			}
-			Render::Resources::Deffered::Init();
+			Render::Resources::Init();
 
 			Render::Preparations::Basic::SetViewPort();
-			Render::Rendering::Basic::cube = API::CreateModel(L"box.dan");
-			Render::Rendering::Basic::cube2 = API::CreateModel(L"box2.dan");
+			Render::DefaultRenderer::cube = API::CreateModel(L"box.dan");
+			Render::DefaultRenderer::cube2 = API::CreateModel(L"box2.dan");
 			return API::Sucsess;
 		}
 
@@ -52,27 +50,27 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::Rendering::Basic::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
+				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
 			}
 			else
 			{
-				Render::Rendering::Basic::NewFrame(View, Projection, NULL, 0);
+				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0);
 			}
 		}
 
 		void API::RenderScene(Model::Model models[], int count)
 		{
-			Render::Rendering::Basic::RenderScene(models,count, View, Projection);
+			Render::DefaultRenderer::RenderScene(models,count, View, Projection);
 		}
 
 		void API::RenderModel(Model::Model& m)
 		{
-			Render::Rendering::Basic::RenderScene(&m,1, View, Projection);
+			Render::DefaultRenderer::RenderScene(&m,1, View, Projection);
 		}
 
 		void API::EndFrame()
 		{
-			Render::Rendering::Basic::EndFrame();
+			Render::DefaultRenderer::EndFrame();
 		}
 
 		API::State API::SetOptions(API::Option option)
@@ -112,12 +110,12 @@ namespace Oyster
 
 		void API::Clean()
 		{
-			DeleteModel(Render::Rendering::Basic::cube);
-			DeleteModel(Render::Rendering::Basic::cube2);
+			DeleteModel(Render::DefaultRenderer::cube);
+			DeleteModel(Render::DefaultRenderer::cube2);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();
-			Oyster::Graphics::Render::Resources::Deffered::Clean();
+			Oyster::Graphics::Render::Resources::Clean();
 
 			SAFE_RELEASE(Core::depthStencil);
 			SAFE_RELEASE(Core::depthStencilUAV);
@@ -142,7 +140,7 @@ namespace Oyster
 #ifdef _DEBUG
 		API::State API::ReloadShaders()
 		{
-			Render::Resources::Deffered::InitShaders();
+			Render::Resources::InitShaders();
 			return State::Sucsess;
 		}
 #endif

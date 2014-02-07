@@ -24,9 +24,6 @@
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Rendering\BasicRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,16 +39,19 @@
     <ClCompile Include="FileLoader\ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Resources\Deffered.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\PipelineManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileLoader\DanLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Rendering\GuiRender.cpp">
+    <ClCompile Include="Render\DefaultRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GuiRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\Preparations\Preparations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\Rendering\Render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model\ModelInfo.h">
@@ -86,10 +83,13 @@
     <ClInclude Include="FileLoader\GeneralLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Resources\Deffered.h">
+    <ClInclude Include="Render\DefaultRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Rendering\GuiRender.h">
+    <ClInclude Include="Render\GuiRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,8 +105,8 @@
     <FxCompile Include="Shader\Passes\2D\2DVertex.hlsl" />
     <FxCompile Include="Shader\Passes\2D\2DPixel.hlsl" />
     <FxCompile Include="Shader\Passes\2D\2DGeometry.hlsl" />
-    <FxCompile Include="Shader\Passes\Post\BlurVert.hlsl" />
-    <FxCompile Include="Shader\Passes\Post\BlurHor.hlsl" />
+    <FxCompile Include="Shader\Passes\Blur\BlurHor.hlsl" />
+    <FxCompile Include="Shader\Passes\Blur\BlurVert.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
@@ -116,6 +116,6 @@
     <None Include="Shader\Passes\Light\SSAO.hlsli" />
     <None Include="Shader\Passes\2D\Header.hlsli" />
     <None Include="Shader\Passes\Gather\Header.hlsli" />
-    <None Include="Shader\Passes\Post\BlurSharedData.hlsli" />
+    <None Include="Shader\Passes\Blur\BlurSharedData.hlsli" />
   </ItemGroup>
 </Project>

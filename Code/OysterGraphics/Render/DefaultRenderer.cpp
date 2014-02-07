@@ -1,8 +1,8 @@
-#include "Render.h"
-#include "../Resources/Deffered.h"
-#include "../../Definitions/GraphicalDefinition.h"
-#include "../../Model/ModelInfo.h"
-#include "../../DllInterfaces/GFXAPI.h"
+#include "DefaultRenderer.h"
+#include "Resources.h"
+#include "../Definitions/GraphicalDefinition.h"
+#include "../Model/ModelInfo.h"
+#include "../DllInterfaces/GFXAPI.h"
 #include <map>
 #include <vector>
 
@@ -12,17 +12,15 @@ namespace Oyster
 	{
 		namespace Render
 		{
-			namespace Rendering
-			{
 				Definitions::Pointlight pl;
-				Model::Model* Basic::cube = NULL;
-				Model::Model* Basic::cube2 = NULL; 
+				Model::Model* DefaultRenderer::cube = NULL;
+				Model::Model* DefaultRenderer::cube2 = NULL; 
 
-				void Basic::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
+				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
-					Preparations::Basic::ClearRTV(Resources::Deffered::GBufferRTV,Resources::Deffered::GBufferSize,Math::Float4(0,0,0,1));
-					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Deffered::GeometryPass);
+					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,1));
+					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
 
 					void* data;
 
@@ -34,13 +32,13 @@ namespace Oyster
 					lc.Proj = Projection;
 					lc.SSAORadius = 3;
 
-					data = Resources::Deffered::LightConstantsData.Map();
+					data = Resources::Light::LightConstantsData.Map();
 					memcpy(data, &lc, sizeof(Definitions::LightConstants));
-					Resources::Deffered::LightConstantsData.Unmap();
+					Resources::Light::LightConstantsData.Unmap();
 
-					data = Resources::Deffered::PointLightsData.Map();
+					data = Resources::Light::PointLightsData.Map();
 					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
-					Resources::Deffered::PointLightsData.Unmap();
+					Resources::Light::PointLightsData.Unmap();
 				}
 
 				Math::Matrix RecursiveBindPosRotation(int index, Model::ModelInfo* mi)
@@ -60,7 +58,7 @@ namespace Oyster
 					return Math::Vector4(RecursiveBindPosPosition(mi->bones->Parent, mi).xyz + (mi->bones[index].Relative.v[3] * RecursiveBindPosRotation(mi->bones->Parent,mi)).xyz,1);
 				}
 
-				void Basic::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
+				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
 				{
 					for(int i = 0; i < count; ++i)
 					{
@@ -141,7 +139,7 @@ namespace Oyster
 									cube->WorldMatrix = Scale;
 									cube->WorldMatrix.v[3] = BoneAbsAnimated[b].v[3];
 									cube->WorldMatrix = models[i].WorldMatrix * cube->WorldMatrix;
-									Basic::RenderScene(cube,1,View,Projection);
+									DefaultRenderer::RenderScene(cube,1,View,Projection);
 								}
 
 								//write data to am
@@ -151,18 +149,18 @@ namespace Oyster
 								}
 
 								
-								void *data = Resources::Deffered::AnimationData.Map();
+								void *data = Resources::Gather::AnimationData.Map();
 								memcpy(data,&am,sizeof(Definitions::AnimationData));
-								Resources::Deffered::AnimationData.Unmap();
+								Resources::Gather::AnimationData.Unmap();
 
 								pm.Animated = 1;
 							}
 							else
 								pm.Animated = 0;
 
-							void* data  = Resources::Deffered::ModelData.Map();
+							void* data  = Resources::Gather::ModelData.Map();
 							memcpy(data,&(pm),sizeof(pm));
-							Resources::Deffered::ModelData.Unmap();
+							Resources::Gather::ModelData.Unmap();
 
 							if(info->Material.size())
 							{
@@ -185,25 +183,24 @@ namespace Oyster
 				}
 
 
-				void Basic::EndFrame()
+				void DefaultRenderer::EndFrame()
 				{
-					Core::PipelineManager::SetRenderPass(Resources::Deffered::LightPass);
+					Core::PipelineManager::SetRenderPass(Resources::Light::Pass);
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Deffered::BlurHorPass);
+					Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Deffered::BlurVertPass);
+					Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Deffered::PostPass);
+					Core::PipelineManager::SetRenderPass(Resources::PostPass);
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 					Core::swapChain->Present(0,0);
 				}
-			}
 		}
 	}
 }
