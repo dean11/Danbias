@@ -353,7 +353,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	}
 
 	//send delta mouse movement 
-	if (KeyInput->IsMousePressed())
+	//if (KeyInput->IsMousePressed())
 	{
 		camera->Yaw(-KeyInput->GetYaw());
 		camera->Pitch(KeyInput->GetPitch());

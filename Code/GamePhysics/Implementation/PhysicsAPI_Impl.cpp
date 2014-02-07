@@ -375,20 +375,21 @@ float API_Impl::GetFrameTimeLength() const
 void API_Impl::Update()
 { /** @todo TODO: Update is a temporary solution .*/
 	::std::vector<ICustomBody*> updateList;
-	auto proto = this->worldScene.Sample( Universe(), updateList ).begin();
+	this->worldScene.Sample( Universe(), updateList );
 	ICustomBody::State state;
-	for( ; proto != updateList.end(); ++proto )
+	for( int i = 0; i < updateList.size(); i++ )
 	{
+		auto proto = updateList[i];
 		// Step 1: Apply Gravity
 		Float4 gravityImpulse = Float4::null;
-		(*proto)->GetState( state );
-		for( ::std::vector<Gravity>::size_type i = 0; i < this->gravity.size(); ++i )
+		proto->GetState( state );
+		for( int j = 0; j < this->gravity.size(); ++j )
 		{
-			switch( this->gravity[i].gravityType )
+			switch( this->gravity[j].gravityType )
 			{
 			case Gravity::GravityType_Well:
 				{
-					Float4 d = Float4( this->gravity[i].well.position, 1.0f ) - Float4( state.GetCenterPosition(), 1.0f );
+					Float4 d = Float4( this->gravity[j].well.position, 1.0f ) - Float4( state.GetCenterPosition(), 1.0f );
 					Float rSquared = d.Dot( d );
 					if( rSquared != 0.0 )
 					{
@@ -402,7 +403,7 @@ void API_Impl::Update()
 					break;
 				}
 			case Gravity::GravityType_Directed:
-				gravityImpulse += Float4( this->gravity[i].directed.impulse, 0.0f );
+				gravityImpulse += Float4( this->gravity[j].directed.impulse, 0.0f );
 				break;
 //			case Gravity::GravityType_DirectedField:
 //				//this->gravity[i].directedField.
@@ -419,20 +420,21 @@ void API_Impl::Update()
 		{
 			state.ApplyLinearImpulse( gravityImpulse.xyz );
 			state.SetGravityNormal( gravityImpulse.GetNormalized().xyz );
-			(*proto)->SetState( state );
+			proto->SetState( state );
 		}
 		if(state.GetMass() == 70)
 		{
 			const char *breakpoint = "STOP";
 		}
 		// Step 2: Apply Collision Response
-		this->worldScene.Visit( *proto, OnPossibleCollision );
+		this->worldScene.Visit( proto, OnPossibleCollision );
 	}
 
-	proto = updateList.begin();
-	for( ; proto != updateList.end(); ++proto )
+	
+	for( int i = 0; i < updateList.size(); i++ )
 	{
-		(*proto)->GetState( state );
+		auto proto = updateList[i];
+		proto->GetState( state );
 		Float3 lM = state.GetLinearMomentum();
 
 		//LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp(state.SetOrientation(, Float4(state.GetGravityNormal(), 0.0f), 1.0f);
@@ -451,13 +453,13 @@ void API_Impl::Update()
 			state.linearMomentum.z = 0;
 		}
 
-		(*proto)->SetState( state );
+		proto->SetState( state );
 
-		switch( (*proto)->Update(this->updateFrameLength) )
+		switch( proto->Update(this->updateFrameLength) )
 		{
 		case UpdateState_altered:
-			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(*proto) );
-			(*proto)->CallSubscription_Move();
+			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(proto) );
+			proto->CallSubscription_Move();
 		case UpdateState_resting: 
 		default:
 			break;
