@@ -210,7 +210,7 @@ namespace Oyster
 
 					D3D11_SUBRESOURCE_DATA rnd;
 					rnd.pSysMem = random;
-					rnd.SysMemPitch = sqrt(SampleSpread) * sizeof(Oyster::Math::Vector3);
+					rnd.SysMemPitch = (UINT)(sqrt(SampleSpread) * sizeof(Oyster::Math::Vector3));
 
 					ID3D11Texture1D *pTexture1;
 
@@ -226,8 +226,8 @@ namespace Oyster
 					T2desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 					T2desc.CPUAccessFlags = 0;
 					T2desc.MiscFlags = 0;
-					T2desc.Height = sqrt(SampleSpread);
-					T2desc.Width = SampleSpread/sqrt(SampleSpread);
+					T2desc.Height = (UINT)sqrt(SampleSpread);
+					T2desc.Width = (UINT)(SampleSpread/sqrt(SampleSpread));
 					T2desc.SampleDesc.Quality = 0;
 					T2desc.SampleDesc.Count = 1;
 

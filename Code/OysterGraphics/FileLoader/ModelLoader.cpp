@@ -70,7 +70,7 @@ void Oyster::Graphics::Loading::UnloadOBJ(void* data)
 	{
 		SAFE_DELETE(info->Indecies);
 	}
-	for(int i =0;i<info->Material.size();++i)
+	for(UINT i =0;i<info->Material.size();++i)
 	{
 		Core::loader.ReleaseResource(info->Material[i]);
 	}

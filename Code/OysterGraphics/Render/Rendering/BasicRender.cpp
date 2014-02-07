@@ -82,7 +82,7 @@ namespace Oyster
 							Definitions::AnimationData am;	//final
 							if(info->Animated && models[i].AnimationPlaying != -1)
 							{
-								cube->WorldMatrix == Math::Matrix::identity;
+								cube->WorldMatrix = Math::Matrix::identity;
 								////store inverse absolut transform
 								Math::Matrix SkinTransform[100];
 								Math::Matrix BoneAnimated[100];
@@ -114,7 +114,7 @@ namespace Oyster
 								int b = 0;
 								Model::Animation A = info->Animations[models[i].AnimationPlaying];
 								while(models[i].AnimationTime>A.duration)
-									models[i].AnimationTime -= A.duration;
+									models[i].AnimationTime -= (float)A.duration;
 									
 								float position = models[i].AnimationTime;
 								for(int b = 0; b < A.Bones;++b)
@@ -133,7 +133,7 @@ namespace Oyster
 											break;
 										}
 									}
-									float denominator = (NFrame.time - PFrame.time);
+									float denominator = (float)(NFrame.time - PFrame.time);
 									if(denominator == 0)
 									{
 										BoneAnimated[PFrame.bone.Parent] = PFrame.bone.Relative;
@@ -150,6 +150,7 @@ namespace Oyster
 									//SkinTransform[b] = BoneAbsAnimated[b];
 									cube->WorldMatrix = Scale;
 									cube->WorldMatrix.v[3] = BoneAbsAnimated[b].v[3];
+									cube->WorldMatrix = models[i].WorldMatrix * cube->WorldMatrix;
 									Basic::RenderScene(cube,1,View,Projection);
 								}
 

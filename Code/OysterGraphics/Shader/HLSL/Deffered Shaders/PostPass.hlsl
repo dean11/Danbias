@@ -10,8 +10,9 @@ RWTexture2D<float4> Output;
 void main( uint3 DTid : SV_DispatchThreadID )
 {
 	float4 Light  = Diffuse[DTid.xy] + Specular[DTid.xy];
-	float4 Amb = float4(Ambient[DTid.xy/2].xyz * Ambient[DTid.xy/2].w,1);
+	float4 Amb = float4(Ambient[DTid.xy/2].xyz,1);// * Ambient[DTid.xy/2].w,1);
 	//Output[DTid.xy] = float4(Ambient[DTid.xy/2].xyz /* * Ambient[DTid.xy/2].w */, 1);
 	//Output[DTid.xy] = Diffuse[DTid.xy] + Specular[DTid.xy];
 	Output[DTid.xy] = Light + Amb * AmbFactor;
+	//Output[DTid.xy] = Ambient[DTid.xy/2].w;
 }

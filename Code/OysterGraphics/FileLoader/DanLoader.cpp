@@ -146,7 +146,7 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 		}
 		delete[] info->Animations;
 	}
-	for(int i =0;i<info->Material.size();++i)
+	for(UINT i =0;i<info->Material.size();++i)
 	{
 		Core::loader.ReleaseResource(info->Material[i]);
 	}
@@ -351,7 +351,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 
 				Oyster::Graphics::Model::Animation* anims = new Oyster::Graphics::Model::Animation[animationHeader.numAnims];
 
-				for(int a = 0; a < animationHeader.numAnims; ++a)
+				for(UINT a = 0; a < animationHeader.numAnims; ++a)
 				{
 					//read name of animation
 					int nameLength;

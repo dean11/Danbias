@@ -5,7 +5,7 @@ struct VertexIn
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;
 	float3 biTangent	: BITANGENT;
-	int4 boneIndex	: BONEINDEX;
+	float4 boneIndex	: BONEINDEX;
 	float4 boneWeight	: BONEWEIGHT;
 };
 
