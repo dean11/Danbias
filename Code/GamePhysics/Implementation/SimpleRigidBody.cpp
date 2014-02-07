@@ -111,6 +111,11 @@ SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
 	this->scene = nullptr;
 	this->customTag = nullptr;
 	this->ignoreGravity = desc.ignoreGravity;
+
+	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
+	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
+	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
+	this->collisionRebound.timeOfContact = 1.0f;
 }
 
 SimpleRigidBody::~SimpleRigidBody() {}

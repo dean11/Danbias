@@ -56,7 +56,7 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
 	Float3 delta = AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
-	Float3 newPos = ( updateFrameLength)*this->momentum_Linear;
+	Float3 newPos = updateFrameLength*this->momentum_Linear;
 	this->centerPos += newPos;
 	
 	if(this->mass == 70)
@@ -66,7 +66,7 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 
 	// updating the angular
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
-	this->axis += updateFrameLength * this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
+	this->axis += updateFrameLength*this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
 	this->rotation = Rotation( this->axis );
 
 	// update momentums and clear impulse_Linear and impulse_Angular

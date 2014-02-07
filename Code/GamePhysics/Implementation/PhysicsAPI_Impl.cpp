@@ -166,11 +166,6 @@ namespace
 		auto proto = worldScene.GetCustomBody( protoTempRef );
 		auto deuter = worldScene.GetCustomBody( deuterTempRef );
 
-		if(proto->GetState().GetMass() == 70)
-		{
-			const char *breakpoint = "STOP";
-		}
-
 		Float4 worldPointOfContact;
 		if( proto->Intersects(*deuter, worldPointOfContact) )
 		{
@@ -178,25 +173,12 @@ namespace
 			ICustomBody::State protoState; proto->GetState( protoState );
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-			Float4 normal = (worldPointOfContact - Float4(deuterState.GetCenterPosition(), 1.0f )); // Init value is only borrowed
-			if( normal.Dot(normal) > 0.0f )
-			{
-				deuter->GetNormalAt( worldPointOfContact, normal );
-			}
-			else
-			{ // special case: deuter is completly contained within proto or they have overlapping centers.
+			
 
-				normal = Float4( protoState.GetCenterPosition() - deuterState.GetCenterPosition(), 0.0f );
-				if( normal.Dot(normal) == 0.0f )
-				{ // they have overlapping centers. Rebound at least
-					// calculate and store time interpolation value, for later rebound.
-					proto->SetTimeOfContact( worldPointOfContact );
-					return;
-				}
-				
-				// borrowing the negated normal of proto.
-				proto->GetNormalAt( worldPointOfContact, normal );
-				normal = -normal;
+			Float4 normal = deuter->GetNormalAt(worldPointOfContact);
+			if(normal == Float4::null)
+			{
+				normal = Float4(deuterState.GetCenterPosition(), 1) - Float4(protoState.GetCenterPosition(), 1);
 			}
 			normal.Normalize();
 
@@ -206,12 +188,16 @@ namespace
 			Float protoG_Magnitude = protoG.Dot( normal ),
 				  deuterG_Magnitude = deuterG.Dot( normal );
 
-			if(protoState.GetMass() == 20)
+			// If true the object is inside the world
+			if(worldPointOfContact.GetLength() < 600 && protoState.GetCenterPosition().GetLength() != 0)
 			{
-				const char *breakpoint = "STOP";
+				Float overlap = 600 - worldPointOfContact.GetLength();
+				Float3 newPos = overlap*worldPointOfContact.GetNormalized();
+				protoState.SetCenterPosition(protoState.GetCenterPosition() + newPos);
+				protoState.SetLinearMomentum(Float3(0, 0, 0));
 			}
 
-			// if they are not relatively moving towards eachother, there is no collision
+			// If they are not relatively moving towards eachother, there is no collision
 			Float deltaPos = normal.Dot( Float4(deuterState.GetCenterPosition(), 1) - Float4(protoState.GetCenterPosition(), 1) );
 			if( deltaPos < 0.0f )
 			{
@@ -232,64 +218,34 @@ namespace
 				return;
 			}
 
-			// bounce
-			Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
-																		   deuterState.GetMass(), deuterG_Magnitude,
-																		   protoState.GetMass(), protoG_Magnitude );
-
-			normal = (worldPointOfContact - Float4(protoState.GetCenterPosition(), 1.0f )).GetNormalized();
-			if( normal.Dot(normal) > 0.0f )
+			// Proto
+			normal = -proto->GetNormalAt(worldPointOfContact);
+			if(normal == Float4::null)
 			{
-				proto->GetNormalAt( worldPointOfContact, normal );
-				protoG_Magnitude = protoG.Dot( normal );
-				deuterG_Magnitude = deuterG.Dot( normal );
-				normal.Normalize();
-			}
-			else
-			{ // special case: proto is completly contained within deuter.
-				// borrowing the negated normal of deuter.
-				deuter->GetNormalAt( worldPointOfContact, normal );
-				normal = -normal;
-				protoG_Magnitude = -protoG_Magnitude;
-				deuterG_Magnitude = -deuterG_Magnitude;
+				normal = Float4(protoState.GetCenterPosition(), 1) - Float4(deuterState.GetCenterPosition(), 1);	
 			}
 			normal.Normalize();
-			
-			if( normal != normal ) // debug: trap
-				const char *breakpoint = "This should never happen";
 
+			// Calculate and apply friction to rigid body
 			Float4 friction = Formula::CollisionResponse::Friction( protoG_Magnitude, normal,
 																	Float4(protoState.GetLinearMomentum(), 0),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
 																	Float4(deuterState.GetLinearMomentum(), 0), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 
+			//protoState.ApplyFriction( -friction.xyz );
 
-
-			protoState.ApplyFriction( -friction.xyz );
-
+			// If no other collision response is wanted then this will stop the bounce
 			if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_ignore_collision_response )
 			{
 				return;
 			}
 
-			// PLayerHAck
-			if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_player_collision_response )
-			{
-				return;
-			}
-
-
+		
 			
-			
-			// bounce
-			Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
+			// Calaculate bounce
+			Float4 bounce = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
 																		  protoState.GetMass(), protoG_Magnitude,
 																		  deuterState.GetMass(), deuterG_Magnitude );
-
-			Float4 bounce = bounceP;
-
-			//LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp(state.SetOrientation(, Float4(state.GetGravityNormal(), 0.0f), 1.0f);
-
-
+			// If bounce is not big enough to matter, set to 0
 			if( abs(bounce.x) < 0.001 )
 			{
 				bounce.x = 0;
@@ -303,14 +259,23 @@ namespace
 				bounce.z = 0;
 			}
 
-			Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
+			if( bounce != bounce)
+			{
+				const char* breakpoint = "STOP";
+			}
 
+			// Calculate kinetic energy before impulse is applied
+			Float kineticEnergyBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
+
+			// Apply the bounce as impulse
 			protoState.ApplyImpulse( bounce.xyz, worldPointOfContact.xyz, normal.xyz );
 			proto->SetState( protoState );
 
-			Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
+			// Calculate kinetic energy after impulse is applied
+			Float kineticEnergyAfter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
 
-			proto->CallSubscription_AfterCollisionResponse( deuter,  kineticEnergyPBefore - kineticEnergyPAFter );
+			// Call a collision function with kinetic energy loss
+			proto->CallSubscription_AfterCollisionResponse( deuter,  kineticEnergyBefore - kineticEnergyAfter );
 		}
 	}
 }
@@ -373,91 +338,50 @@ float API_Impl::GetFrameTimeLength() const
 }
 
 void API_Impl::Update()
-{ /** @todo TODO: Update is a temporary solution .*/
-	::std::vector<ICustomBody*> updateList;
-	this->worldScene.Sample( Universe(), updateList );
+{ 
 	ICustomBody::State state;
+	::std::vector<ICustomBody*> updateList;
+
+	// Fetch objects in universe
+	this->worldScene.Sample( Universe(), updateList );
+
+	// Change momentum for all rigid bodies
 	for( int i = 0; i < updateList.size(); i++ )
 	{
-		auto proto = updateList[i];
-		// Step 1: Apply Gravity
+		ICustomBody* proto = updateList[i];
+		// Step 1: Apply gravity to rigid body
 		Float4 gravityImpulse = Float4::null;
 		proto->GetState( state );
-		for( int j = 0; j < this->gravity.size(); ++j )
+
+		Float4 deltaPosGrav = Float4( this->gravity[0].well.position, 1.0f ) - Float4( state.GetCenterPosition(), 1.0f );
+		Float rSquared = deltaPosGrav.Dot( deltaPosGrav );
+		if( rSquared != 0.0 )
 		{
-			switch( this->gravity[j].gravityType )
-			{
-			case Gravity::GravityType_Well:
-				{
-					Float4 d = Float4( this->gravity[j].well.position, 1.0f ) - Float4( state.GetCenterPosition(), 1.0f );
-					Float rSquared = d.Dot( d );
-					if( rSquared != 0.0 )
-					{
-						if(state.GetMass() == 70)
-						{
-							const char *breakpoint = "STOP";
-						}
-						Float force = 9.82*10;
-						gravityImpulse += ((this->updateFrameLength * force)) * d.GetNormalized();
-					}
-					break;
-				}
-			case Gravity::GravityType_Directed:
-				gravityImpulse += Float4( this->gravity[j].directed.impulse, 0.0f );
-				break;
-//			case Gravity::GravityType_DirectedField:
-//				//this->gravity[i].directedField.
-//				//! TODO: @todo rethink
-//				break;
-			default: break;
-			}
+			Float force = 9.82*10;
+			gravityImpulse += (this->updateFrameLength*force)*deltaPosGrav.GetNormalized();
 		}
 
-		if( gravityImpulse != gravityImpulse ) // debug: trap
-				const char *breakpoint = "This should never happen";
 		Float posLength = state.GetCenterPosition().GetLength();
-		if( gravityImpulse != Float4::null && posLength - 300 > state.GetReach().y )
+		if( gravityImpulse != Float4::null && posLength - 601 > state.GetReach().GetLength() )
 		{
 			state.ApplyLinearImpulse( gravityImpulse.xyz );
 			state.SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 			proto->SetState( state );
 		}
-		if(state.GetMass() == 70)
-		{
-			const char *breakpoint = "STOP";
-		}
-		// Step 2: Apply Collision Response
+
+		// Step 2: Step through octree and apply collision responses to rigid body
 		this->worldScene.Visit( proto, OnPossibleCollision );
 	}
 
-	
+	// Go through all rigid bodies and move them according to their momentums
 	for( int i = 0; i < updateList.size(); i++ )
 	{
 		auto proto = updateList[i];
-		proto->GetState( state );
-		Float3 lM = state.GetLinearMomentum();
-
-		//LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp(state.SetOrientation(, Float4(state.GetGravityNormal(), 0.0f), 1.0f);
-
-
-		if( abs(lM.x) < this->epsilon )
-		{
-			state.linearMomentum.x = 0;
-		}
-		if( abs(lM.y) < this->epsilon )
-		{
-			state.linearMomentum.y = 0;
-		}
-		if( abs(lM.z) < this->epsilon )
-		{
-			state.linearMomentum.z = 0;
-		}
-
-		proto->SetState( state );
 
 		switch( proto->Update(this->updateFrameLength) )
 		{
 		case UpdateState_altered:
+			// Moves the container in the octree to the new rigid body position
 			this->worldScene.SetAsAltered( this->worldScene.GetTemporaryReferenceOf(proto) );
 			proto->CallSubscription_Move();
 		case UpdateState_resting: 

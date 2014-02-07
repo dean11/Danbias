@@ -98,7 +98,8 @@ SphericalRigidBody::State SphericalRigidBody::GetState() const
 				  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 				  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
 				  this->rigid.centerPos, this->rigid.axis,
-				  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
+				  this->rigid.momentum_Linear, this->rigid.momentum_Angular,
+				  this->gravityNormal );
 }
 
 SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::State &targetMem ) const
@@ -107,7 +108,8 @@ SphericalRigidBody::State & SphericalRigidBody::GetState( SphericalRigidBody::St
 							  this->rigid.frictionCoeff_Static, this->rigid.frictionCoeff_Kinetic,
 							  this->rigid.GetMomentOfInertia(), this->rigid.boundingReach,
 							  this->rigid.centerPos, this->rigid.axis,
-							  this->rigid.momentum_Linear, this->rigid.momentum_Angular );
+							  this->rigid.momentum_Linear, this->rigid.momentum_Angular,
+							  this->gravityNormal );
 }
 
 void SphericalRigidBody::SetState( const SphericalRigidBody::State &state )
@@ -299,6 +301,11 @@ void SphericalRigidBody::Predict( ::Oyster::Math::Float4 &outDeltaPos, ::Oyster:
 	this->rigid.Predict_LeapFrog( outDeltaPos.xyz, outDeltaAxis.xyz, actingLinearImpulse.xyz, actingAngularImpulse.xyz, deltaTime );
 }
 
+void SphericalRigidBody::SetScene( void *scene )
+{
+	this->scene = (Octree*)scene;
+}
+
 void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_BeforeCollisionResponse functionPointer )
 {
 	if( functionPointer )
@@ -335,11 +342,6 @@ void SphericalRigidBody::SetSubscription( ICustomBody::EventAction_Move function
 	}
 }
 
-void SphericalRigidBody::SetScene( void *scene )
-{
-	this->scene = (Octree*)scene;
-}
-
 void SphericalRigidBody::SetGravity( bool ignore )
 {
 	this->ignoreGravity = ignore;
@@ -349,6 +351,7 @@ void SphericalRigidBody::SetGravity( bool ignore )
 void SphericalRigidBody::SetGravityNormal( const Float3 &normalizedVector )
 {
 	this->gravityNormal = normalizedVector;
+	this->rigid.gravityNormal = Float4( this->gravityNormal, 0 );
 }
 
 void SphericalRigidBody::SetCustomTag( void *ref )

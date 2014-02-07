@@ -54,7 +54,7 @@ void Level::InitiateLevel(float radius)
 	API::SphericalBodyDescription sbDesc;
 	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
 	sbDesc.ignoreGravity = true;
-	sbDesc.radius = 300; 
+	sbDesc.radius = 600; 
 	sbDesc.mass = 100;
 	sbDesc.frictionCoeff_Static = 0;
 	sbDesc.frictionCoeff_Dynamic = 0;
@@ -76,7 +76,7 @@ void Level::InitiateLevel(float radius)
 	sbDesc_TestBox.ignoreGravity = false;
 
 	sbDesc_TestBox.mass = 20;
-	sbDesc_TestBox.size = Oyster::Math::Float4(1,1,1,0);
+	sbDesc_TestBox.size = Oyster::Math::Float4(0.5,0.5,0.5,0);
 
 	
 	ICustomBody* rigidBody_TestBox;
@@ -85,7 +85,7 @@ void Level::InitiateLevel(float radius)
 	int offset = 0;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(0,305 + i*5,5,1);
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(0,605 + i*5,5,1);
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
@@ -95,7 +95,7 @@ void Level::InitiateLevel(float radius)
 	offset += nrOfBoxex;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-20,320, -200 +( i*7),0);
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-20,620, -200 +( i*7),0);
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
@@ -105,7 +105,7 @@ void Level::InitiateLevel(float radius)
 	offset += nrOfBoxex;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(200,320 + ( i*7),0,0);
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(200,620 + ( i*7),0,0);
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
@@ -115,7 +115,7 @@ void Level::InitiateLevel(float radius)
 	offset += nrOfBoxex;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(5,305 + i*5,0,0);
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(5,605 + i*5,0,0);
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
@@ -129,7 +129,7 @@ void Level::InitiateLevel(float radius)
 
 	// add crystal
 	API::SimpleBodyDescription sbDesc_Crystal;
-	sbDesc_Crystal.centerPosition = Oyster::Math::Float4(10, 305, 0, 1);
+	sbDesc_Crystal.centerPosition = Oyster::Math::Float4(10, 605, 0, 1);
 	sbDesc_Crystal.ignoreGravity = false;
 	sbDesc_Crystal.mass = 80;
 	sbDesc_Crystal.size = Oyster::Math::Float3(1,2,1);
@@ -143,7 +143,7 @@ void Level::InitiateLevel(float radius)
 	// add house
 	API::SimpleBodyDescription sbDesc_House;
 	//sbDesc_House.centerPosition = Oyster::Math::Float4(212, 212, 0, 0);
-	sbDesc_House.centerPosition = Oyster::Math::Float4(-50, 290, 0, 1);
+	sbDesc_House.centerPosition = Oyster::Math::Float4(-50, 690, 0, 1);
 	sbDesc_House.ignoreGravity = false;
 	sbDesc_House.rotation = Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0);
 	sbDesc_House.mass = 90;

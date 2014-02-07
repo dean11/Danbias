@@ -94,6 +94,9 @@ bool GameState::LoadModels(std::wstring mapFile)
 	C_Object* obj;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
 	modelData.world = translate  ;//modelData.world * translate 
+	modelData.world.v[0].x = 2;
+	modelData.world.v[1].y = 2;
+	modelData.world.v[2].z = 2;
 	modelData.modelPath = L"world_earth.dan";
 	modelData.id = id++;
 
@@ -483,7 +486,7 @@ void GameState::Protocol( ObjPos* pos )
 
 				camera->setRight(right);
 				camera->setUp(up);
-				camera->setLook(objForward);
+				//camera->setLook(objForward);
 				
 				up *= 1;
 				objForward *= -2;
