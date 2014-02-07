@@ -28,11 +28,16 @@ namespace Oyster
 
 				ID3D11UnorderedAccessView* Deffered::LBufferUAV[Deffered::LBufferSize] = {0};
 				ID3D11ShaderResourceView* Deffered::LBufferSRV[Deffered::LBufferSize] = {0};
+				
+				ID3D11UnorderedAccessView* Deffered::BlurBufferUAV = {0};
+				ID3D11ShaderResourceView* Deffered::BlurBufferSRV = {0};
 
 				Shader::RenderPass Deffered::GeometryPass;
 				Shader::RenderPass Deffered::LightPass;
 				Shader::RenderPass Deffered::PostPass;
 				Shader::RenderPass Deffered::GuiPass;
+				Shader::RenderPass Deffered::BlurVertPass; //Set this pass second when doing a "fullscreen" blur
+				Shader::RenderPass Deffered::BlurHorPass;  //Set this pass first when doing a "fullscreen" blur
 
 				Buffer Deffered::ModelData = Buffer();
 				Buffer Deffered::AnimationData = Buffer();
@@ -66,6 +71,8 @@ namespace Oyster
 					path = PathToHLSL+L"Post\\";
 #endif
 					Core::PipelineManager::Init(path + L"PostPass" + end, ShaderType::Compute, L"PostPass");
+					Core::PipelineManager::Init(path + L"BlurHor" + end, ShaderType::Compute, L"BlurHor");
+					Core::PipelineManager::Init(path + L"BlurVert" + end, ShaderType::Compute, L"BlurVert");
 #ifdef _DEBUG	
 					path = PathToHLSL+L"2D\\";
 #endif
@@ -328,6 +335,20 @@ namespace Oyster
 					GuiPass.RenderStates.SampleCount = 1;
 					GuiPass.RenderStates.SampleState = ss;
 
+					////---------------- Blur Pass Setup ----------------------------
+					BlurHorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
+					BlurVertPass.Shaders.Compute = GetShader::Compute(L"BlurVert");
+
+					//Taking the Ambient SRV from LBufferSRV and setting it as input texture
+					BlurHorPass.SRV.Compute.push_back(LBufferSRV[2]); 
+					//Output texture is the Blur UAV buffer
+					BlurHorPass.UAV.Compute.push_back(BlurBufferUAV);
+
+					//Taking the Blur SRV and setting it as input texture now
+					BlurVertPass.SRV.Compute.push_back(BlurBufferSRV);
+					//And the Ambient UAV is now the output texture
+					BlurVertPass.UAV.Compute.push_back(LBufferUAV[2]);
+
 					return Core::Init::State::Success;
 				}
 
@@ -341,6 +362,9 @@ namespace Oyster
 					SAFE_RELEASE(Resources::Deffered::PointLightView);
 					SAFE_RELEASE(Deffered::SSAOKernel);
 					SAFE_RELEASE(Deffered::SSAORandom);
+
+					SAFE_RELEASE(BlurBufferSRV);
+					SAFE_RELEASE(BlurBufferUAV);
 
 					for(int i = 0; i< GBufferSize; ++i)
 					{

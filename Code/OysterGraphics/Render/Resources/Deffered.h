@@ -32,9 +32,15 @@ namespace Oyster
 					static ID3D11UnorderedAccessView* LBufferUAV[LBufferSize];
 					static ID3D11ShaderResourceView* LBufferSRV[LBufferSize];
 
+					//Blur UAV and SRV
+					static ID3D11UnorderedAccessView* BlurBufferUAV;
+					static ID3D11ShaderResourceView* BlurBufferSRV;
+
 					static Core::PipelineManager::RenderPass GeometryPass;
 					static Core::PipelineManager::RenderPass GuiPass;
 					static Core::PipelineManager::RenderPass LightPass;
+					static Core::PipelineManager::RenderPass BlurHorPass;
+					static Core::PipelineManager::RenderPass BlurVertPass;
 					static Core::PipelineManager::RenderPass PostPass;
 
 

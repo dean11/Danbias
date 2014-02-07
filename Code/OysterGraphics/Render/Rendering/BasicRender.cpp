@@ -209,6 +209,12 @@ namespace Oyster
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
+					Core::PipelineManager::SetRenderPass(Resources::Deffered::BlurHorPass);
+					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+
+					Core::PipelineManager::SetRenderPass(Resources::Deffered::BlurVertPass);
+					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+
 					Core::PipelineManager::SetRenderPass(Resources::Deffered::PostPass);
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);

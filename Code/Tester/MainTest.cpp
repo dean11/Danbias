@@ -161,11 +161,11 @@ HRESULT InitDirect3D()
 		return E_FAIL;
 	}
 	
-	m =  Oyster::Graphics::API::CreateModel(L"untitled.dan");
-	m2 = Oyster::Graphics::API::CreateModel(L"T_reskinned.dan");
+	m =  Oyster::Graphics::API::CreateModel(L"crate_colonists.dan");
+	/*m2 = Oyster::Graphics::API::CreateModel(L"T_reskinned.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	m2->AnimationPlaying = 0;
-	m2->AnimationTime = 0.0f;
+	m2->AnimationTime = 0.0f;*/
 	//m3 = Oyster::Graphics::API::CreateModel(L"box_2.dan");
 	//m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	
@@ -194,13 +194,13 @@ HRESULT Update(float deltaTime)
 {
 
 	angle += Oyster::Math::pi/16 * deltaTime;
-	//m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle) * Oyster::Math3D::RotationMatrix_AxisX(-Oyster::Math::pi/2);
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-Oyster::Math::pi/2,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
-	Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
+	m->WorldMatrix =  Oyster::Math3D::RotationMatrix_AxisY(angle) * Oyster::Math3D::RotationMatrix_AxisX(-Oyster::Math::pi/2);
+	/*m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-Oyster::Math::pi/2,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
+	Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;*/
 	//ma *= 50;
 	//ma.m44 = 1;
 	//m2->WorldMatrix = m2->WorldMatrix *  ma;
-	m2->AnimationTime += deltaTime;// * 0.5f;
+	//m2->AnimationTime += deltaTime;// * 0.5f;
 	//m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
 }
@@ -210,8 +210,8 @@ HRESULT Render(float deltaTime)
 	Oyster::Graphics::API::SetView(V);
 	Oyster::Graphics::API::NewFrame();
 
-	//Oyster::Graphics::API::RenderModel(*m);
-	Oyster::Graphics::API::RenderModel(*m2);
+	Oyster::Graphics::API::RenderModel(*m);
+	//Oyster::Graphics::API::RenderModel(*m2);
 	//Oyster::Graphics::API::RenderModel(*m3);
 
 	Oyster::Graphics::API::EndFrame();

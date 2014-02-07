@@ -105,6 +105,8 @@
     <FxCompile Include="Shader\Passes\2D\2DVertex.hlsl" />
     <FxCompile Include="Shader\Passes\2D\2DPixel.hlsl" />
     <FxCompile Include="Shader\Passes\2D\2DGeometry.hlsl" />
+    <FxCompile Include="Shader\Passes\Post\BlurVert.hlsl" />
+    <FxCompile Include="Shader\Passes\Post\BlurHor.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
@@ -114,5 +116,6 @@
     <None Include="Shader\Passes\Light\SSAO.hlsli" />
     <None Include="Shader\Passes\2D\Header.hlsli" />
     <None Include="Shader\Passes\Gather\Header.hlsli" />
+    <None Include="Shader\Passes\Post\BlurSharedData.hlsli" />
   </ItemGroup>
 </Project>
