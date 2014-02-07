@@ -55,7 +55,7 @@ void Level::InitiateLevel(float radius)
 	sbDesc.centerPosition = Oyster::Math::Float4(0,0,0,1);
 	sbDesc.ignoreGravity = true;
 	sbDesc.radius = 600; 
-	sbDesc.mass = 100;
+	sbDesc.mass = 70;
 	sbDesc.frictionCoeff_Static = 0;
 	sbDesc.frictionCoeff_Dynamic = 0;
 	//sbDesc.rotation = 
@@ -75,8 +75,9 @@ void Level::InitiateLevel(float radius)
 	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,1);
 	sbDesc_TestBox.ignoreGravity = false;
 
-	sbDesc_TestBox.mass = 20;
-	sbDesc_TestBox.size = Oyster::Math::Float4(0.5,0.5,0.5,0);
+	sbDesc_TestBox.mass = 15;
+	sbDesc_TestBox.size = Oyster::Math::Float4(1, 1, 1, 0);
+	sbDesc_TestBox.inertiaTensor.Cuboid(15, 1, 1, 1);
 
 	
 	ICustomBody* rigidBody_TestBox;
@@ -131,8 +132,9 @@ void Level::InitiateLevel(float radius)
 	API::SimpleBodyDescription sbDesc_Crystal;
 	sbDesc_Crystal.centerPosition = Oyster::Math::Float4(10, 605, 0, 1);
 	sbDesc_Crystal.ignoreGravity = false;
-	sbDesc_Crystal.mass = 80;
-	sbDesc_Crystal.size = Oyster::Math::Float3(1,2,1);
+	sbDesc_Crystal.mass = 15;
+	sbDesc_Crystal.size = Oyster::Math::Float3(1, 2, 1);
+	sbDesc_Crystal.inertiaTensor.Cuboid(15, 1, 2, 1);
 
 	ICustomBody* rigidBody_Crystal = API::Instance().CreateRigidBody(sbDesc_Crystal).Release();
 	rigidBody_Crystal->SetSubscription(Level::PhysicsOnMoveLevel);

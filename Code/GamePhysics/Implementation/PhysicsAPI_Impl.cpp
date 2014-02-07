@@ -362,7 +362,7 @@ void API_Impl::Update()
 		}
 
 		Float posLength = state.GetCenterPosition().GetLength();
-		if( gravityImpulse != Float4::null && posLength - 601 > state.GetReach().GetLength() )
+		if( gravityImpulse != Float4::null && posLength - 600 > state.GetReach().GetLength() )
 		{
 			state.ApplyLinearImpulse( gravityImpulse.xyz );
 			state.SetGravityNormal( gravityImpulse.GetNormalized().xyz );
