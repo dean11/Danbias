@@ -55,7 +55,7 @@ bool LobbyState::LoadModels(std::wstring file)
 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\box_2.dan";
+	modelData.modelPath = L"crate_colonists.dan";
 	// load models
 	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);

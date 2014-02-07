@@ -257,17 +257,17 @@ UpdateState SphericalRigidBody::Update( Float timeStepLength )
 		timeStepLength *= 2.0f - this->collisionRebound.timeOfContact; // compensate for rebounded time
 		this->collisionRebound.timeOfContact = 1.0f;
 	}
-
+	
 	// Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
 	Float4 temp;
 	::std::modf( this->rigid.axis * (0.5f / pi), temp.xyz );
 	this->rigid.axis -= ((2.0f * pi) * temp).xyz;
-
+	
 	// Update rebound data
 	this->collisionRebound.previousSpatial.center = this->rigid.centerPos;
 	this->collisionRebound.previousSpatial.axis = this->rigid.axis;
 	this->collisionRebound.previousSpatial.reach = this->rigid.boundingReach;
-
+	
 	// Check if this is close enough to be set resting
 	temp = Float4( this->rigid.impulse_Linear, 0.0f ) + Float4( this->rigid.impulse_Angular, 0.0f );
 	if( temp.Dot(temp) <= (Constant::epsilon * Constant::epsilon) )

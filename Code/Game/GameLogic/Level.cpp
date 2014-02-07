@@ -72,11 +72,11 @@ void Level::InitiateLevel(float radius)
 	//this->dynamicObjects = new DynamicArray< DynamicObject>;
 	// add box
 	API::SimpleBodyDescription sbDesc_TestBox;
-	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,0);
+	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,1);
 	sbDesc_TestBox.ignoreGravity = false;
 
 	sbDesc_TestBox.mass = 20;
-	sbDesc_TestBox.size = Oyster::Math::Float4(2,2,2,0);
+	sbDesc_TestBox.size = Oyster::Math::Float4(1,1,1,0);
 
 	
 	ICustomBody* rigidBody_TestBox;
@@ -132,7 +132,7 @@ void Level::InitiateLevel(float radius)
 	sbDesc_Crystal.centerPosition = Oyster::Math::Float4(10, 305, 0, 1);
 	sbDesc_Crystal.ignoreGravity = false;
 	sbDesc_Crystal.mass = 80;
-	sbDesc_Crystal.size = Oyster::Math::Float3(2,3,2);
+	sbDesc_Crystal.size = Oyster::Math::Float3(1,2,1);
 
 	ICustomBody* rigidBody_Crystal = API::Instance().CreateRigidBody(sbDesc_Crystal).Release();
 	rigidBody_Crystal->SetSubscription(Level::PhysicsOnMoveLevel);

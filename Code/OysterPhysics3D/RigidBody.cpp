@@ -66,14 +66,14 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 
 	// updating the angular
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
-	this->axis += updateFrameLength * this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
-	this->rotation = Rotation( this->axis );
+	//this->axis += updateFrameLength * this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
+	//this->rotation = Rotation( this->axis );
 
 	// update momentums and clear impulse_Linear and impulse_Angular
 	this->momentum_Linear += this->impulse_Linear;
 	this->impulse_Linear = Float4::null;
 
-	this->momentum_Angular += this->impulse_Angular; //! HACK: @todo Rotation temporary disabled
+	//this->momentum_Angular += this->impulse_Angular; //! HACK: @todo Rotation temporary disabled
 	this->impulse_Angular = Float4::null;
 }
 
