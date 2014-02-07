@@ -152,9 +152,15 @@ namespace GameLogic
 
 			case CollisionGeometryType_Sphere:
 				memcpy(&volume.sphere, &buf[12], sizeof(volume.sphere));
-				int a = sizeof(volume.sphere);
-				a = 5;
 				//start += sizeof(volume.sphere);
+				break;
+
+			case CollisionGeometryType_Cylinder:
+				memcpy(&volume.cylinder, &buf[12], sizeof(volume.cylinder));
+				//start += sizeof(volume.cylinder);
+				break;
+
+			default:
 				break;
 			}
 

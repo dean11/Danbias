@@ -25,7 +25,7 @@ namespace GameLogic
 
 	enum ObjectSpecialType
 	{
-		ObjectSpecialType_World,
+		ObjectSpecialType_World,		//Always the main celestial body
 		ObjectSpecialType_Building,
 		ObjectSpecialType_Damaging,
 		ObjectSpecialType_Explosive,
@@ -53,6 +53,7 @@ namespace GameLogic
 	{
 		CollisionGeometryType_Box,
 		CollisionGeometryType_Sphere,
+		CollisionGeometryType_Cylinder,
 
 		CollisionGeometryType_Count,
 		CollisionGeometryType_Unknown = -1
@@ -152,6 +153,14 @@ namespace GameLogic
 			float radius;
 		};
 
+		struct BoundingVolumeCylinder : public BoundingVolumeBase
+		{
+			float length;
+			float angularAxis[3];
+			float angle;
+			float radius;
+		};
+
 		struct BoundingVolume
 		{
 			CollisionGeometryType geoType;
@@ -159,6 +168,7 @@ namespace GameLogic
 			{
 				LevelLoaderInternal::BoundingVolumeBox box;
 				LevelLoaderInternal::BoundingVolumeSphere sphere;
+				LevelLoaderInternal::BoundingVolumeCylinder cylinder;
 			};
 		};
 

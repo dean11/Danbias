@@ -1,3 +1,7 @@
+/////////////////////////////////////
+// Created by Pontus Fransson 2013 //
+/////////////////////////////////////
+
 #include "LevelParser.h"
 
 #include "Loader.h"
@@ -208,10 +212,10 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 	//Find the header in the returned string.
 	while(counter < bufferSize)
 	{
-		ObjectTypeHeader typeID;
+		ObjectType typeID;
 		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
 
-		switch(typeID.typeID)
+		switch(typeID)
 		{
 		case ObjectType_LevelMetaData:
 			ParseLevelMetaData(&buffer[counter], levelHeader, counter);
@@ -223,6 +227,24 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 		{
 			ObjectHeader header;
 			ParseObject(&buffer[counter], header, counter);
+
+			switch(header.specialTypeID)
+			{
+			case ObjectSpecialType_JumpPad:
+				counter += sizeof(16);
+				break;
+			case ObjectSpecialType_BoostPad:
+				counter += sizeof(16);
+				break;
+			case ObjectSpecialType_Portal:
+				counter += sizeof(12);
+				break;
+			case ObjectSpecialType_SpawnPoint:
+				counter += sizeof(12);
+				break;
+			default:
+				break;
+			}	
 			break;
 		}
 
