@@ -163,7 +163,7 @@ namespace Oyster
 
 		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size)
 		{
-			Render::Rendering::Gui::Render((ID3D11Texture2D*)tex,pos,size);
+			Render::Rendering::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size);
 		}
 
 		API::Texture API::CreateTexture(std::wstring filename)
