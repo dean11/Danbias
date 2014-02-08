@@ -346,7 +346,7 @@ void API_Impl::Update()
 	this->worldScene.Sample( Universe(), updateList );
 
 	// Change momentum for all rigid bodies
-	for( int i = 0; i < updateList.size(); i++ )
+	for( unsigned int i = 0; i < updateList.size(); i++ )
 	{
 		ICustomBody* proto = updateList[i];
 		// Step 1: Apply gravity to rigid body
@@ -357,7 +357,7 @@ void API_Impl::Update()
 		Float rSquared = deltaPosGrav.Dot( deltaPosGrav );
 		if( rSquared != 0.0 )
 		{
-			Float force = 9.82*10;
+			Float force = 9.82f*10.0f;
 			gravityImpulse += (this->updateFrameLength*force)*deltaPosGrav.GetNormalized();
 		}
 
@@ -374,7 +374,7 @@ void API_Impl::Update()
 	}
 
 	// Go through all rigid bodies and move them according to their momentums
-	for( int i = 0; i < updateList.size(); i++ )
+	for( unsigned int i = 0; i < updateList.size(); i++ )
 	{
 		auto proto = updateList[i];
 
