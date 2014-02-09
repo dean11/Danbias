@@ -68,12 +68,12 @@ void Game::GetAllPlayerPositions() const
 Game::PlayerData* Game::CreatePlayer()
 {
 	// Find a free space in array or insert at end
-	int id = InsertObject(this->players, (PlayerData*)0);
+	int i = InsertObject(this->players, (PlayerData*)0);
 
-	this->players[id] = new PlayerData();
-	this->players[id]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	this->players[i] = new PlayerData();
+	this->players[i]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
 
-	return this->players[id];
+	return this->players[i];
 }
 
 Game::LevelData* Game::CreateLevel()
@@ -105,8 +105,7 @@ bool Game::NewFrame()
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
 
-
-	gameInstance.onMoveFnc(this->level);
+	//gameInstance.onMoveFnc(this->level);
 
 	return true;
 }
@@ -121,25 +120,21 @@ void Game::SetFrameTimeLength( float seconds )
 	this->frameTime = seconds;
 }
 
-void Game::SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::ObjectEventFunction functionPointer)
+void Game::SetSubscription(GameEvent::ObjectMovedFunction functionPointer)
 {
-	switch (type)
-	{
-		case GameLogic::GameEvent::ObjectEventFunctionType_OnMove:
-			this->onMoveFnc = functionPointer;
-		break;
-		case GameLogic::GameEvent::ObjectEventFunctionType_OnDead:
-			this->onDisableFnc = functionPointer;
-		break;
-	}
-	
+	this->onMoveFnc = functionPointer;
+}
+void Game::SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)
+{
+	this->onDisableFnc = functionPointer;
+
 }
 
 bool Game::Initiate()
 {
 	API::Instance().Init((int)pow(2u, 9u), 1u, Oyster::Math::Float3());
 	API::Instance().SetSubscription(Game::PhysicsOnDestroy);
-	API::Instance().SetFrameTimeLength(1.0f/120.0f);
+	API::Instance().SetFrameTimeLength(this->frameTime);
 	this->initiated = true;
 	return true;
 }
@@ -162,6 +157,6 @@ void Game::PhysicsOnMove(const ICustomBody *object)
 }
 void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
 {
-	if(gameInstance.onDisableFnc) gameInstance.onDisableFnc(0);
+	if(gameInstance.onDisableFnc) gameInstance.onDisableFnc(0, 0);
 }
 

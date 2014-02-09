@@ -1,5 +1,6 @@
 #include "Level.h"
 #include "CollisionManager.h"
+#include "Game.h"
 
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
@@ -70,9 +71,10 @@ void Level::InitiateLevel(float radius)
 	rigidBody->SetState(state);
 	
 	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
+	levelObj->objectID = idCount++;
 	rigidBody->SetCustomTag(levelObj);
 	
-	//this->dynamicObjects = new DynamicArray< DynamicObject>;
+/*
 // add box
 	API::SimpleBodyDescription sbDesc_TestBox;
 	sbDesc_TestBox.centerPosition = Oyster::Math::Float4(10,320,0,0);
@@ -91,13 +93,11 @@ void Level::InitiateLevel(float radius)
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		DynamicObject *box = new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX);
+		box->objectID = idCount++;
+		this->dynamicObjects.Push(box);
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
 	}
-	
-
-
-
 
 // add crystal
 	API::SimpleBodyDescription sbDesc_Crystal;
@@ -108,7 +108,9 @@ void Level::InitiateLevel(float radius)
 
 	ICustomBody* rigidBody_Crystal = API::Instance().CreateRigidBody(sbDesc_Crystal).Release();
 	rigidBody_Crystal->SetSubscription(Level::PhysicsOnMoveLevel);
-	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+	DynamicObject *cry = new DynamicObject(rigidBody_Crystal,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX);
+	cry->objectID = idCount++;
+	this->dynamicObjects.Push(cry);
 	rigidBody_Crystal->SetCustomTag(this->dynamicObjects[nrOfBoxex]);
 
 
@@ -123,9 +125,11 @@ void Level::InitiateLevel(float radius)
 
 	ICustomBody* rigidBody_House = API::Instance().CreateRigidBody(sbDesc_House).Release();
 	rigidBody_House->SetSubscription(Level::PhysicsOnMoveLevel);
-	this->staticObjects.Push(new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC));
+	StaticObject* house = new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC);
+	house->objectID = idCount++;
+	this->staticObjects.Push(house);
 	rigidBody_House->SetCustomTag(this->staticObjects[0]);
-
+*/
 	
 // add gravitation 
 	API::Gravity gravityWell;
@@ -167,4 +171,6 @@ void Level::PhysicsOnMoveLevel(const ICustomBody *object)
 {
 	// function call from physics update when object was moved
 	Object* temp = (Object*)object->GetCustomTag();
+	((Game*)&Game::Instance())->onMoveFnc(temp);
+	
 }

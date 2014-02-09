@@ -85,8 +85,8 @@ namespace GameLogic
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
-		Oyster::Math::Float3 lookDir;
-		Oyster::Math::Float dx;
+		Oyster::Math::Float3 lookDir;	//Duplicate in Object.h?
+		Oyster::Math::Float dx;			//dx of what?
 
 		bool hasTakenDamage;
 		float invincibleCooldown;

@@ -62,7 +62,6 @@ namespace DanBias
 	private:
 		// TODO: find out what this method does..
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
-
 		
 		//Sends a client to the owner, if obj is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);
@@ -91,6 +90,7 @@ namespace DanBias
 		
 		//Callback method recieving from gamelogic
 		static void ObjectMove				( GameLogic::IObjectData* movedObject );
+		static void ObjectDisabled			( GameLogic::IObjectData* movedObject, float seconds );
 
 		//Private member variables
 	private:
@@ -102,7 +102,8 @@ namespace DanBias
 		NetworkSession* owner;
 		bool isCreated;
 		bool isRunning;
-		float logicDeltaTime;
+		float logicFrameTime;
+		float networkFrameTime;
 		Utility::WinTimer logicTimer;
 		Utility::WinTimer networkTimer;
 		GameDescription description;

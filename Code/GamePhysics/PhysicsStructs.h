@@ -109,6 +109,7 @@ namespace Oyster { namespace Physics
 			void ApplyLinearImpulse( const ::Oyster::Math::Float3 &j );
 			void ApplyAngularImpulse( const ::Oyster::Math::Float3 &j );
 			void ApplyImpulse( const ::Oyster::Math::Float3 &j, const ::Oyster::Math::Float3 &at, const ::Oyster::Math::Float3 &normal );
+			void CustomBodyState::ApplyFriction( const ::Oyster::Math::Float3 &j);
 			void ApplyForwarding( const ::Oyster::Math::Float3 &deltaPos, const ::Oyster::Math::Float3 &deltaAxis );
 
 			bool IsSpatiallyAltered() const;

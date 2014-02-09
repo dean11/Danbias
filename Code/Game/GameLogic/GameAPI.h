@@ -23,16 +23,8 @@ namespace GameLogic
 	*/
 	namespace GameEvent
 	{
-		/**
-		*	The type of event to listen on.
-		*/
-		enum ObjectEventFunctionType
-		{
-			ObjectEventFunctionType_OnMove,
-			ObjectEventFunctionType_OnDead,
-		};
-
-		typedef void(*ObjectEventFunction)(IObjectData* object);	// Callback method that recieves and object
+		typedef void(*ObjectMovedFunction)(IObjectData* object);	// Callback method that recieves and object
+		typedef void(*ObjectDisabledFunction)(IObjectData* object, float seconds);	// Callback method that recieves and object
 		//etc...
 	};
 
@@ -147,17 +139,22 @@ namespace GameLogic
 		/**	Set the frame time in fps
 		*	@param FPS The fps to set
 		*/
-		virtual void SetFPS( int FPS = 60 ) = 0;
+		virtual void SetFPS( int FPS = 120 ) = 0;
 
 		/**	Set the frames time in seconds
 		*	@param seconds The frame length
 		*/
-		virtual void SetFrameTimeLength( float seconds ) = 0;
+		virtual void SetFrameTimeLength( float seconds = (1.0f/120.0f) ) = 0;
 
 		/**	Set a specific object event subscription callback
 		*	@param 
 		*/
-		virtual void SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::ObjectEventFunction functionPointer) = 0;
+		virtual void SetSubscription(GameEvent::ObjectMovedFunction functionPointer) = 0;
+
+		/**	Set a specific object event subscription callback
+		*	@param 
+		*/
+		virtual void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
 
 	};	
 }

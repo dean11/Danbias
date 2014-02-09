@@ -117,7 +117,7 @@ namespace Utility
 	
 			template <typename T> const T& DynamicArray<T>::operator[](unsigned int index) const
 			{
-				assert(index < this->size);
+				assert((int)index < this->size);
 		
 				return this->data[index];
 			}

@@ -279,7 +279,7 @@ namespace Oyster { namespace Physics3D
 		 ******************************************************************/
 		inline ::Oyster::Math::Float ForceField( ::Oyster::Math::Float g, ::Oyster::Math::Float massA, ::Oyster::Math::Float massB, ::Oyster::Math::Float radiusSquared )
 		{
-			return g * massA * massB / radiusSquared;
+			return g * massB / radiusSquared;
 		}
 
 		/******************************************************************

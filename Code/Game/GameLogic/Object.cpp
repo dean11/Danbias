@@ -118,8 +118,6 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 
 void Object::BeginFrame()
 {
-	
-	
 	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
 	{
 		//error

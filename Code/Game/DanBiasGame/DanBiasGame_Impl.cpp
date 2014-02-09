@@ -167,16 +167,7 @@ namespace DanBias
 				stateVal = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
-				//if(m_data->serverOwner)
-					//Initiate the game server through the server API
-					
-					
-				//if(m_data->serverOwner)
-				//{
-				//	((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(2);
-				//}
-				//else
-				//	((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(3);
+				
 				break;
 			default:
 				return E_FAIL;
@@ -198,15 +189,7 @@ namespace DanBias
 
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
-		int isPressed = 0;
-		if(m_data->inputObj->IsKeyPressed(DIK_A))
-		{
-			isPressed = 1;
-		}
 		
-		wchar_t title[255];
-		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
-		SetWindowText(m_data->window->GetHWND(), title);
 	
 		m_data->recieverObj->gameClientState->Render();
 

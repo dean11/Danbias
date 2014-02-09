@@ -110,16 +110,17 @@ namespace DanBias
 						((Client::GameState*)gameClientState)->Protocol(&protocolData);
 				}
 				break;
-			case protocol_Lobby_Start:
+			case protocol_Lobby_Create:
 				{
 					if(dynamic_cast<Client::LobbyState*>(gameClientState))
 					{
-						int id = p[1].value.netInt;
+						GameLogic::Protocol_LobbyCreateGame tp();
+						int id = p.Get(1).value.netInt;
 						std::string name = p.Get(19).value.netCharPtr;
 						Oyster::Math::Float4x4 w;
 						for(int i = 0; i< 16; i++)
 						{
-							w[i] = p[i+3].value.netFloat;
+							w[i] = p[i+2].value.netFloat;
 						}
 
 						gameClientState->Release();
@@ -130,6 +131,20 @@ namespace DanBias
 						std::wstring temp;
 						Utility::String::StringToWstring(name, temp);
 						((Client::GameState*)gameClientState)->InitiatePlayer(id, temp, w);
+
+						//Do some wait state?
+					}
+				}
+				break;
+			case protocol_Lobby_Start:
+				{
+					if(dynamic_cast<Client::GameState*>(gameClientState))
+					{
+						//Game state should start in n seconds
+						GameLogic::Protocol_LobbyStartGame p(p);
+						p.seconds;
+
+						//Sleep((int)(p.seconds * 1000));
 					}
 				}
 				break;

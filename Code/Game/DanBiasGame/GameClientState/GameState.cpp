@@ -15,7 +15,6 @@ struct  GameState::myData
 	Oyster::Math3D::Float4x4 view;
 	Oyster::Math3D::Float4x4 proj; 
 	std::vector<C_Object*> object;
-	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
 	
@@ -88,11 +87,12 @@ bool GameState::LoadModels(std::wstring mapFile)
 	// open file
 	// read file 
 	// init models
+
 	int nrOfBoxex = 5;
-	privData->modelCount = 3 + nrOfBoxex;
-	
 	int id = 100; 
-	// add world model
+// add world model
+
+
 	ModelInitData modelData;
 	Oyster::Math3D::Float4x4 translate;
 	C_Object* obj;
@@ -105,7 +105,8 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	// add box model
+/*
+// add box model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	modelData.modelPath = L"box.dan";
 
@@ -122,7 +123,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 		modelData.world = Oyster::Math3D::Float4x4::identity;
 	}
 
-	// add crystal model 
+// add crystal model 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(10, 305, 0));
 
@@ -135,7 +136,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	// add house model 
+// add house model 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(50, 300, 0));
 	//Oyster::Math3D::RotationMatrix_AxisZ()
@@ -148,6 +149,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
+	*/
 	return true;
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
@@ -183,6 +185,34 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	obj =  new C_Player();
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+	//printf("Move message recieved!");
+	Oyster::Math::Float3 right = Oyster::Math::Float3(world[0], world[1], world[2]);
+	Oyster::Math::Float3 up = Oyster::Math::Float3(world[4], world[5], world[6]);
+	Oyster::Math::Float3 objForward = (Oyster::Math::Float3(world[8], world[9], world[10]));
+	Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13], world[14]);
+
+	Oyster::Math::Float3 cameraLook = camera->GetLook();
+	Oyster::Math::Float3 cameraUp = camera->GetUp();
+				
+			
+
+	/*Oyster::Math::Float3 newUp = cameraUp.Dot(up);
+	up *= newUp;
+	up.Normalize();
+	Oyster::Math::Float3 newLook = up.Cross(right);
+	newLook.Normalize();*/
+
+	camera->setRight(right);
+	camera->setUp(up);
+	camera->setLook(objForward);
+				
+	up *= 2;
+	objForward *= -3;
+	Oyster::Math::Float3 cameraPos = up + pos + objForward;
+	camera->SetPosition(cameraPos);
+
+	camera->UpdateViewMatrix();
 	
 }
 GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
@@ -422,8 +452,9 @@ void GameState::Protocol( ObjPos* pos )
 		{
 			privData->object[i]->setPos(world);
 
-			if(i == myId) // playerobj
+			if(pos->object_ID == myId) // playerobj
 			{
+				//printf("Move message recieved!");
 				Oyster::Math::Float3 right = Oyster::Math::Float3(world[0], world[1], world[2]);
 				Oyster::Math::Float3 up = Oyster::Math::Float3(world[4], world[5], world[6]);
 				Oyster::Math::Float3 objForward = (Oyster::Math::Float3(world[8], world[9], world[10]));

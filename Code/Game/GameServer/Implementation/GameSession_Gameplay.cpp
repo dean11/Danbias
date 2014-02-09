@@ -3,19 +3,16 @@
 /////////////////////////////////////////////////////////////////////
 #include "..\GameSession.h"
 #include "..\GameClient.h"
+#include <WinTimer.h>
 
 #include <Protocols.h>
 #include <PostBox\PostBox.h>
 #include <GameLogicStates.h>
 #include <OysterMath.h>
+
 #define NOMINMAX
 #include <Windows.h>
 
-#define DELTA_TIME_20	0.05f
-#define DELTA_TIME_24	0.04166666666666666666666666666667f
-#define DELTA_TIME_30	0.03333333333333333333333333333333f
-#define DELTA_TIME_60	0.01666666666666666666666666666667f
-#define DELTA_TIME_120	0.00833333333333333333333333333333f
 
 using namespace Utility::DynamicMemory;
 using namespace Oyster;
@@ -25,19 +22,20 @@ using namespace GameLogic;
 
 namespace DanBias
 {
+	Utility::WinTimer testTimer;
+	int testID = -1;
+
 	bool GameSession::DoWork(  )
 	{
 		if(this->isRunning)
 		{
 			float dt = (float)this->logicTimer.getElapsedSeconds();
-			this->logicDeltaTime += dt;
-			this->logicTimer.reset();
-			while( logicDeltaTime >= DELTA_TIME_120 )
+			if( dt >= this->logicFrameTime )
 			{
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
 
-				logicDeltaTime -= DELTA_TIME_120;
+				this->logicTimer.reset();
 			}
 		}
 
@@ -70,11 +68,16 @@ namespace DanBias
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
-				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
+				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 				this->Detach(e.sender);
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
-				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
+				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				testID = 2;
+				if(cl->GetPlayer()->GetID() == testID)//TODO: TEST
+				{
+					testTimer.reset();
+				}
 				this->ParseProtocol(e.args.data.protocol, cl);
 			break;
 		}
@@ -82,21 +85,32 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		if(gameSession->networkTimer.getElapsedSeconds() >= DELTA_TIME_60)
+		float dt = GameSession::gameSession->networkTimer.getElapsedSeconds();
+		//Duh... This was causing alot of problems, it's in the wrong place...
+		//Need to figure out where to put this frame locker.
+		//We only need to send network packages when necessary, ie not 120 times per frame. 
+		//I think it would be enough with 60-70 packages per second due to the nature of
+		//graphics update (60 fps) on the client side. To send more than this would be lost
+		//bandwidth.
+		//if( dt >= GameSession::gameSession->networkFrameTime )
 		{
-			gameSession->networkTimer.reset();
+			GameSession::gameSession->networkTimer.reset();
 
 			GameLogic::IObjectData* obj = movedObject;
-
-			if(dynamic_cast<IPlayerData*> (movedObject))
+			if(movedObject->GetID() == testID)	//TODO: TEST
 			{
-				int id = obj->GetID();
-				Oyster::Math::Float4x4 world = obj->GetOrientation();
-
-				Protocol_ObjectPosition p(world, id);
-				GameSession::gameSession->Send(p.GetProtocol());
+				float sec = (float)testTimer.getElapsedSeconds();
+				sec = 0;
 			}
-			else if(dynamic_cast<GameLogic::ILevelData*>(obj))
+
+			int id = obj->GetID();
+			Protocol_ObjectPosition p(obj->GetOrientation(), id);
+			//if(id != 1)
+			GameSession::gameSession->Send(p.GetProtocol());
+
+
+			/*
+			if(dynamic_cast<GameLogic::ILevelData*>(obj))
 			{
 				obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
 				if(obj)
@@ -135,8 +149,13 @@ namespace DanBias
 					}
 				}
 			}
+			*/
 		}
 		
+	}
+	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject, float seconds )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID(), seconds).GetProtocol());
 	}
 
 //*****************************************************//
@@ -258,7 +277,7 @@ namespace DanBias
 	}
 	void GameSession::General_Text					( Protocol_General_Text& p, DanBias::GameClient* c )
 	{
-		printf("Message recieved from (%i):\t %s\n", c->GetID(), p.text.c_str());
+		printf("Message recieved from (%i):\t %s\n", c->GetClient()->GetID(), p.text.c_str());
 	}
 
 }//End namespace DanBias

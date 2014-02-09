@@ -11,12 +11,10 @@ using namespace Oyster::Network;
 using namespace DanBias;
 using namespace GameLogic;
 
-static int gameClientIDCount = 1;
 
 GameClient::GameClient(SmartPointer<NetworkClient> client, GameLogic::IPlayerData* player)
 {
 	this->client = client;
-	this->id = gameClientIDCount++;
 	this->player = player;
 	isReady = false;
 }
@@ -24,7 +22,6 @@ GameClient::~GameClient()
 {
 	this->client->Disconnect();
 	this->player = 0;
-	this->id = -1;
 	isReady = false;
 }
 
@@ -48,10 +45,7 @@ SmartPointer<Oyster::Network::NetworkClient> GameClient::ReleaseClient()
 	this->client = 0;
 	return temp;
 }
-int GameClient::GetID() const
-{
-	return this->id;
-}
+
 float GameClient::GetSinceLastResponse() const
 {
 	return this->secondsSinceLastResponse;

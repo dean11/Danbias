@@ -89,7 +89,7 @@ namespace DanBias
 
 		if(this->gameSession)
 		{
-			this->gameSession.ClientConnectedEvent(client);
+			this->gameSession.Attach(client);
 		}
 		else
 		{

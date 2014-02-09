@@ -300,6 +300,7 @@ void NetworkClient::Disconnect()
 	privateData->thread.Terminate();
 	privateData->connection.Disconnect();
 	this->privateData->sendQueue.Clear();
+	this->privateData->recieveQueue.Clear();
 
 }
 

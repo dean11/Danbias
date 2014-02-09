@@ -35,7 +35,7 @@ namespace DanBias
 				bool broadcast;			//Not fully implemented!
 				ServerInitDesc() 
 					: serverName("Game Server")
-					, listenPort(15151)
+					, listenPort(15152)
 					, broadcast(true)
 				{};
 			};
