@@ -71,7 +71,7 @@ Game::PlayerData* Game::CreatePlayer()
 	int id = InsertObject(this->players, (PlayerData*)0);
 
 	this->players[id] = new PlayerData();
-	this->players[id]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	//this->players[id]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
 
 	return this->players[id];
 }
@@ -99,7 +99,7 @@ bool Game::NewFrame()
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
-	API::Instance().Update();
+	API::Instance().UpdateWorld();
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
@@ -110,7 +110,7 @@ bool Game::NewFrame()
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
-	API::Instance().Update();
+	API::Instance().UpdateWorld();
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
@@ -121,7 +121,7 @@ bool Game::NewFrame()
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
-	API::Instance().Update();
+	API::Instance().UpdateWorld();
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
@@ -159,8 +159,8 @@ void Game::SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::O
 
 bool Game::Initiate()
 {
-	API::Instance().Init((int)pow(2u, 9u), 1u, Oyster::Math::Float3());
-	API::Instance().SetSubscription(Game::PhysicsOnDestroy);
+	API::Instance().Init();
+	//API::Instance().SetSubscription(Game::PhysicsOnDestroy);
 	this->initiated = true;
 	return true;
 }

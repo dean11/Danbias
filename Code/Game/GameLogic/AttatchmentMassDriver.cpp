@@ -64,11 +64,11 @@ void AttatchmentMassDriver::Update(float dt)
 		state = heldObject->GetState();
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
 		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
-		Oyster::Math::Float3  up = -ownerState.GetGravityNormal();
+		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
 		up *= -0.3;
 		Oyster::Math::Float3 pos = ownerPos + up + (owner->GetLookDir().GetNormalized()*5);
 
-		state.SetCenterPosition(pos);
+		state.centerPos = pos;
 
 		heldObject->SetState(state);
 	}
@@ -88,7 +88,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
 		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (700);
 		Oyster::Physics::ICustomBody::State state = heldObject->GetState();
-		state.ApplyLinearImpulse((Oyster::Math::Float3)pushForce);
+		//state.ApplyLinearImpulse((Oyster::Math::Float3)pushForce);
 		heldObject->SetState(state);
 		
 		hasObject = false;
@@ -118,7 +118,7 @@ void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 	Oyster::Physics::Struct::CustomBodyState state = this->owner->GetRigidBody()->GetState();
 
 	//do something with state
-	state.ApplyLinearImpulse(Oyster::Math::Float3(this->owner->GetLookDir()) * (500 * dt));
+	//state.ApplyLinearImpulse(Oyster::Math::Float3(this->owner->GetLookDir()) * (500 * dt));
 
 	this->owner->GetRigidBody()->SetState(state);
 }
@@ -135,7 +135,7 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 	//if no object has been picked up then suck objects towards you
 	Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (100 * dt);
-	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
+	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetState().GetOrientation().v[2].xyz, owner->GetPosition());
 
 	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1,1,20); 
 	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));

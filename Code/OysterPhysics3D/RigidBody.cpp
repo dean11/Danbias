@@ -13,7 +13,7 @@ using namespace ::Utility::Value;
 RigidBody::RigidBody( )
 { // by Dan Andersson
 	this->centerPos = Float4::standard_unit_w;
-	this->axis = Float4::null;
+	this->quaternion = Quaternion(Float3(0, 0, 0), 1);
 	this->boundingReach = Float4( 0.5f, 0.5f, 0.5f, 0.0f );
 	this->momentum_Linear = Float4::null;
 	this->momentum_Angular = Float4::null;
@@ -24,13 +24,12 @@ RigidBody::RigidBody( )
 	this->frictionCoeff_Kinetic = 1.0f;
 	this->mass = 10;
 	this->momentOfInertiaTensor = MomentOfInertia();
-	this->rotation = Quaternion::identity;
 }
 
 RigidBody & RigidBody::operator = ( const RigidBody &body )
 { // by Dan Andersson
 	this->centerPos = body.centerPos;
-	this->axis = body.axis;
+	this->quaternion = body.quaternion;
 	this->boundingReach = body.boundingReach;
 	this->momentum_Linear = body.momentum_Linear;
 	this->momentum_Angular = body.momentum_Angular;
@@ -41,7 +40,6 @@ RigidBody & RigidBody::operator = ( const RigidBody &body )
 	this->frictionCoeff_Kinetic = body.frictionCoeff_Kinetic;
 	this->mass = body.mass;
 	this->momentOfInertiaTensor = body.momentOfInertiaTensor;
-	this->rotation = body.rotation;
 	return *this;
 }
 
@@ -55,19 +53,14 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 	this->momentum_Angular = this->momentum_Angular*0.99f;
 
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
-	Float3 delta = AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
-	Float3 newPos = updateFrameLength*this->momentum_Linear;
+	Float3 delta = this->momentum_Linear;
+	Float3 newPos = (updateFrameLength)*this->momentum_Linear;
 	this->centerPos += newPos;
-	
-	if(this->mass == 70)
-	{
-		const char *breakpoint = "STOP";
-	}
 
 	// updating the angular
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H	
-	this->axis += updateFrameLength*this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
-	this->rotation = Rotation( this->axis );
+	/*this->axis += updateFrameLength*this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
+	this->rotation = Rotation( this->axis );*/
 
 	// update momentums and clear impulse_Linear and impulse_Angular
 	this->momentum_Linear += this->impulse_Linear;
@@ -89,14 +82,14 @@ void RigidBody::Predict_LeapFrog( Float3 &outDeltaPos, Float3 &outDeltaAxis, con
 
 	// dO = dt * Formula::AngularVelocity( (RI)^-1, avg_H ) = dt * (RI)^-1 * avg_H
 	//outDeltaAxis = Formula::AngularVelocity( wMomentOfInertiaTensor.GetInverse(), AverageWithDelta(this->momentum_Angular, actingAngularImpulse) );
-	outDeltaAxis = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
+	//utDeltaAxis = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, AverageWithDelta(this->momentum_Angular, this->impulse_Angular) );
 }
 
 void RigidBody::Move( const Float3 &deltaPos, const Float3 &deltaAxis )
 {
-	this->centerPos += deltaPos;
-	this->axis += deltaAxis;
-	this->rotation = Rotation( this->axis );
+	//this->centerPos += deltaPos;
+	//this->axis += deltaAxis;
+	//this->rotation = Rotation( this->axis );
 }
 
 void RigidBody::ApplyImpulse( const Float3 &worldJ, const Float3 &atWorldPos )
@@ -125,22 +118,22 @@ Float RigidBody::GetMass() const
 
 const Quaternion & RigidBody::GetRotationQuaternion() const
 { // by Dan Andersson
-	return this->rotation;
+	return this->quaternion;
 }
 
 Float4x4 RigidBody::GetRotationMatrix() const
 { // by Dan Andersson
-	return RotationMatrix( this->rotation );
+	return RotationMatrix( quaternion );
 }
 
 Float4x4 RigidBody::GetOrientation() const
 { // by Dan Andersson
-	return ::Oyster::Math3D::OrientationMatrix( this->rotation, this->centerPos );
+	return ::Oyster::Math3D::OrientationMatrix( this->quaternion, this->centerPos );
 }
 
 Float4x4 RigidBody::GetView() const
 { // by Dan Andersson
-	return ViewMatrix( this->rotation, this->centerPos );
+	return ViewMatrix( this->quaternion, this->centerPos );
 }
 
 Float3 RigidBody::GetVelocity_Linear() const
@@ -150,7 +143,7 @@ Float3 RigidBody::GetVelocity_Linear() const
 
 Float3 RigidBody::GetVelocity_Angular() const
 { // by Dan Andersson
-	return this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
+	return Float3(0, 0, 0);
 }
 
 Float3 RigidBody::GetLinearMomentum( const Float3 &atWorldPos ) const
@@ -165,9 +158,7 @@ Float3 RigidBody::GetLinearMomentum( const Float3 &atWorldPos ) const
 
 void RigidBody::SetMomentOfInertia_KeepVelocity( const MomentOfInertia &localTensorI )
 { // by Dan Andersson
-	Float3 w = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, this->momentum_Angular );
-	this->momentOfInertiaTensor = localTensorI;
-	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularVelocity( this->rotation, w );
+	
 }
 
 void RigidBody::SetMomentOfInertia_KeepMomentum( const MomentOfInertia &localTensorI )
@@ -193,10 +184,9 @@ void RigidBody::SetMass_KeepMomentum( const Float &m )
 	}
 }
 
-void RigidBody::SetRotation( const Float3 &axis )
+void RigidBody::SetRotation( const ::Oyster::Math::Quaternion &quaternion )
 { // by Dan Andersson
-	this->axis = axis;
-	this->rotation = Rotation( this->axis );
+	this->quaternion = quaternion;
 }
 
 void RigidBody::SetMomentum_Linear( const Float3 &worldG, const Float3 &atWorldPos )
@@ -215,12 +205,12 @@ void RigidBody::SetVelocity_Linear( const Float3 &worldV, const Float3 &atWorldP
 { // by Dan Andersson
 	Float3 worldOffset = atWorldPos - this->centerPos;
 	this->momentum_Linear  = Formula::LinearMomentum( this->mass, VectorProjection(worldV, worldOffset) );
-	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularMomentum( this->rotation, Formula::AngularVelocity(worldV, worldOffset) );
+	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularMomentum( this->quaternion, Formula::AngularVelocity(worldV, worldOffset) );
 }
 
 void RigidBody::SetVelocity_Angular( const Float3 &worldW )
 { // by Dan Andersson
-	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularMomentum( this->rotation, worldW );
+	this->momentum_Angular = this->momentOfInertiaTensor.CalculateAngularMomentum( this->quaternion, worldW );
 }
 
 void RigidBody::SetImpulse_Linear( const Float3 &worldJ, const Float3 &atWorldPos )

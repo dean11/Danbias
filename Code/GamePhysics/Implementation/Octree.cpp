@@ -31,11 +31,11 @@ Octree& Octree::operator=(const Octree& orig)
 
 void Octree::AddObject(UniquePointer< ICustomBody > customBodyRef)
 {
-	customBodyRef->SetScene( this );
+	//customBodyRef->SetScene( this );
 	Data data;
 	//Data* tempPtr = this->worldNode.dataPtr;
 
-	data.container = customBodyRef->GetBoundingSphere();
+	//data.container = customBodyRef->GetBoundingSphere();
 	data.queueRef = -1;
 	data.next = NULL;
 	data.prev = NULL;
@@ -216,7 +216,7 @@ unsigned int Octree::GetTemporaryReferenceOf( const ICustomBody* objRef ) const
 
 void Octree::SetAsAltered( unsigned int tempRef )
 {
-	this->leafData[tempRef].container = this->leafData[tempRef].customBodyRef->GetBoundingSphere();
+	//this->leafData[tempRef].container = this->leafData[tempRef].customBodyRef->GetBoundingSphere();
 	//! @todo TODO: implement stub
 }
 

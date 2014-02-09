@@ -68,7 +68,7 @@ using namespace GameLogic;
 		Oyster::Physics::ICustomBody::State state;
 
 		state = obj.GetState();
-		state.ApplyLinearImpulse(force);
+		//state.ApplyLinearImpulse(force);
 		obj.SetState(state);
 	}
 	
@@ -130,7 +130,7 @@ using namespace GameLogic;
 			return;
 
 		state = obj->GetState();
-		state.ApplyLinearImpulse(((forcePushData*)(args))->pushForce);
+		//state.ApplyLinearImpulse(((forcePushData*)(args))->pushForce);
 		obj->SetState(state);
 	}
 
