@@ -87,9 +87,10 @@ void Level::InitiateLevel(float radius)
 	ICustomBody* rigidBody_TestBox;
 
 	int nrOfBoxex = 5;
+	int offset = 0;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(20 ,320,0 + ( i*7),0);
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-20 +( i*7) ,320,20,0);
 		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
 		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
 
@@ -97,6 +98,36 @@ void Level::InitiateLevel(float radius)
 		box->objectID = idCount++;
 		this->dynamicObjects.Push(box);
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
+	}
+	offset += nrOfBoxex;
+	for(int i =0; i< nrOfBoxex; i ++)
+	{
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-20,320, -20 +( i*7),0);
+		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
+		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
+
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);
+	}
+	offset += nrOfBoxex;
+	for(int i =0; i< nrOfBoxex; i ++)
+	{
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(20,320,-20 + ( i*7),0);
+		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
+		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
+
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);
+	}
+	offset += nrOfBoxex;
+	for(int i =0; i< nrOfBoxex; i ++)
+	{
+		sbDesc_TestBox.centerPosition = Oyster::Math::Float4(-20 +( i*7) ,320,-20,0);
+		rigidBody_TestBox = API::Instance().CreateRigidBody(sbDesc_TestBox).Release();
+		rigidBody_TestBox->SetSubscription(Level::PhysicsOnMoveLevel);
+
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);
 	}
 
 // add crystal
@@ -116,22 +147,23 @@ void Level::InitiateLevel(float radius)
 
 // add house
 	API::SimpleBodyDescription sbDesc_House;
-	sbDesc_House.centerPosition = Oyster::Math::Float4(50, 300, 0, 0);
+	//sbDesc_House.centerPosition = Oyster::Math::Float4(212, 212, 0, 0);
+	sbDesc_House.centerPosition = Oyster::Math::Float4(-50, 290, 0, 0);
 	sbDesc_House.ignoreGravity = false;
-
+	sbDesc_House.rotation = Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0);
 	sbDesc_House.mass = 70;
-	sbDesc_House.size = Oyster::Math::Float4(2,3,2,0);
+	sbDesc_House.size = Oyster::Math::Float4(40,40,40,0);
 
 
 	ICustomBody* rigidBody_House = API::Instance().CreateRigidBody(sbDesc_House).Release();
 	rigidBody_House->SetSubscription(Level::PhysicsOnMoveLevel);
-	StaticObject* house = new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC);
-	house->objectID = idCount++;
-	this->staticObjects.Push(house);
+	this->staticObjects.Push(new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC));
 	rigidBody_House->SetCustomTag(this->staticObjects[0]);
-*/
+	rigidBody_House->GetState(state);
+	Oyster::Math::Float4x4 world = state.GetOrientation();
 	
-// add gravitation 
+	
+	// add gravitation 
 	API::Gravity gravityWell;
 	gravityWell.gravityType = API::Gravity::GravityType_Well;
 	gravityWell.well.mass = 1e17f;

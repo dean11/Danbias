@@ -87,12 +87,10 @@ bool GameState::LoadModels(std::wstring mapFile)
 	// open file
 	// read file 
 	// init models
-
-	int nrOfBoxex = 5;
+	int nrOfBoxex = 20;
 	int id = 100; 
+	
 // add world model
-
-
 	ModelInitData modelData;
 	Oyster::Math3D::Float4x4 translate;
 	C_Object* obj;
@@ -108,7 +106,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 /*
 // add box model
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	modelData.modelPath = L"box.dan";
+	modelData.modelPath = L"crate_colonists.dan";
 
 	
 	for(int i =0; i< nrOfBoxex; i ++)
@@ -125,7 +123,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 // add crystal model 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(10, 305, 0));
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(10, 301, 0));
 
 	modelData.world = modelData.world * translate;
 	modelData.visible = true;
@@ -138,10 +136,11 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 // add house model 
 	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(50, 300, 0));
-	//Oyster::Math3D::RotationMatrix_AxisZ()
-	modelData.world = modelData.world * translate;
-	modelData.visible = false;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-50, 290, 0));
+	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
+	
+	modelData.world = modelData.world * translate * rot;
+	modelData.visible = true;
 	modelData.modelPath = L"building_corporation.dan";
 	modelData.id = id++;
 	// load models
@@ -150,6 +149,35 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
 	*/
+	// add jumppad
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4, 300.3, 0));
+	//Oyster::Math3D::RotationMatrix_AxisZ()
+	modelData.world = modelData.world * translate;
+	modelData.visible = true;
+	modelData.modelPath = L"jumppad_round.dan";
+	modelData.id = id++;
+	// load models
+	obj =  new C_Player();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
+
+	// add sky sphere
+	modelData.world = Oyster::Math3D::Float4x4::identity;
+	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 0, 0));
+	//Oyster::Math3D::RotationMatrix_AxisZ()
+	modelData.world = modelData.world * translate;
+	modelData.world.v[0].x = 800;
+	modelData.world.v[1].y = 800;
+	modelData.world.v[2].z = 800;
+	modelData.visible = true;
+	modelData.modelPath = L"skysphere.dan";
+	modelData.id = id++;
+	// load models
+	obj =  new C_Player();
+	privData->object.push_back(obj);
+	privData->object[privData->object.size() -1 ]->Init(modelData);
+
 	return true;
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
@@ -475,8 +503,8 @@ void GameState::Protocol( ObjPos* pos )
 				camera->setUp(up);
 				camera->setLook(objForward);
 				
-				up *= 2;
-				objForward *= -3;
+				up *= 1;
+				objForward *= -2;
 				Oyster::Math::Float3 cameraPos = up + pos + objForward;
 				camera->SetPosition(cameraPos);
 
