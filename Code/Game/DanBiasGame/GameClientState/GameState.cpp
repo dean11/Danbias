@@ -44,6 +44,7 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
 	pitch = 0;
+
 	//tELL SERver ready
 	nwClient->Send(GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready));
 
@@ -148,7 +149,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
-	*/
+
 	// add jumppad
 	modelData.world = Oyster::Math3D::Float4x4::identity;
 	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4, 300.3, 0));
@@ -178,6 +179,7 @@ bool GameState::LoadModels(std::wstring mapFile)
 	privData->object.push_back(obj);
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 
+	*/
 	return true;
 }
 bool GameState::InitCamera(Oyster::Math::Float3 startPos)
