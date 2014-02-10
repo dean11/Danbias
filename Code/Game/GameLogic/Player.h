@@ -48,7 +48,7 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float3 lookDir);
+		void Rotate(const Oyster::Math3D::Float4 lookDir);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -71,6 +71,12 @@ namespace GameLogic
 
 		void DamageLife(int damage);
 
+		void BeginFrame();
+		void EndFrame();
+		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
+		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+
+
 	private:
 		void Jump();
 
@@ -80,6 +86,7 @@ namespace GameLogic
 		Weapon *weapon;
 		PLAYER_STATE playerState;
 		Oyster::Math::Float3 lookDir;
+		Oyster::Math::Float dx;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;

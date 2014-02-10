@@ -2,6 +2,8 @@
 #define DANBIAS_CLIENTRECIEVEROBJECT_H
 
 //WTF!? No headers included???
+#include "../DanBiasGame/Include/DanBiasGame.h"
+#include "../GameProtocols/GeneralProtocols.h"
 
 namespace DanBias
 {
@@ -100,6 +102,18 @@ namespace DanBias
 						((Client::GameState*)gameClientState)->Protocol(&protocolData);
 				}
 				break;
+			case protocol_Lobby_Start:
+				{
+					/*
+					if(dynamic_cast<Client::LobbyState*>(gameClientState))
+					{
+						gameClientState->Release();
+						delete gameClientState;
+						gameClientState = new Client::GameState();
+						gameClientState->Init(m_data->recieverObj);
+					}*/
+				}
+				break;
 
 			default:
 				break;
@@ -128,8 +142,8 @@ namespace DanBias
 				break;
 				case protocol_Lobby_GameData:	//this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
 				{
-					GameLogic::Protocol_LobbyGameData temp(p);
-					printf("%s, %i.%i\n", temp.mapName.c_str(), temp.majorVersion, temp.minorVersion);
+					//GameLogic::Protocol_LobbyGameData temp(p);
+					//printf("%s, %i.%i\n", temp.mapName.c_str(), temp.majorVersion, temp.minorVersion);
 				}
 				break;
 				case protocol_Lobby_ClientData:	//this->LobbyMainData		(Protocol_LobbyClientData	(p), c);

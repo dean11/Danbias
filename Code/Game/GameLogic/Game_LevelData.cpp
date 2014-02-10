@@ -35,7 +35,10 @@ OBJECT_TYPE Game::LevelData::GetObjectType() const
 	return ((IObjectData*)this->level)->GetObjectType();
 	//return OBJECT_TYPE_UNKNOWN;
 }
-
+int Game::LevelData::getNrOfDynamicObj()const
+{
+	return this->level->getNrOfDynamicObj();
+}
 IObjectData* Game::LevelData::GetObjectAt(int ID) const
 {	
 	return this->level->GetObj(ID);

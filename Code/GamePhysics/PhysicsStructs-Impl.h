@@ -12,7 +12,7 @@ namespace Oyster
 		{
 			inline SimpleBodyDescription::SimpleBodyDescription()
 			{
-				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->rotation = ::Oyster::Math::Float3::null;
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->size = ::Oyster::Math::Float3( 1.0f );
 				this->mass = 6.0f;
@@ -28,7 +28,7 @@ namespace Oyster
 
 			inline SphericalBodyDescription::SphericalBodyDescription()
 			{
-				this->rotation = ::Oyster::Math::Float4x4::identity;
+				this->rotation = ::Oyster::Math::Float3::null;
 				this->centerPosition = ::Oyster::Math::Float3::null;
 				this->radius = 0.5f;
 				this->mass = 10.0f;
@@ -124,7 +124,7 @@ namespace Oyster
 
 			inline const ::Oyster::Math::Float3 & CustomBodyState::GetAngularAxis() const
 			{
-				return ::Utility::Value::Radian(this->angularAxis);
+				return this->angularAxis;
 			}
 
 			inline ::Oyster::Math::Float4x4 CustomBodyState::GetRotation() const
@@ -159,7 +159,12 @@ namespace Oyster
 
 			inline ::Oyster::Math::Float3 CustomBodyState::GetLinearMomentum( const ::Oyster::Math::Float3 &at ) const
 			{
-				return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, at - this->centerPos );
+				::Oyster::Math::Float3 offset = at - this->centerPos;
+				if( offset.Dot(offset) > 0.0f )
+				{
+					return this->linearMomentum + ::Oyster::Physics3D::Formula::TangentialLinearMomentum( this->angularMomentum, offset );
+				}
+				return this->linearMomentum;
 			}
 
 			inline const ::Oyster::Math::Float3 & CustomBodyState::GetAngularMomentum() const
@@ -317,10 +322,14 @@ namespace Oyster
 			inline void CustomBodyState::ApplyImpulse( const ::Oyster::Math::Float3 &j, const ::Oyster::Math::Float3 &at, const ::Oyster::Math::Float3 &normal )
 			{
 				::Oyster::Math::Float3 offset = at - this->centerPos;
-				::Oyster::Math::Float3 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
-				this->linearImpulse += j - ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
+				if( offset.Dot(offset) > 0.0f )
+				{
+					::Oyster::Math::Float3 deltaAngularImpulse = ::Oyster::Physics3D::Formula::AngularMomentum( j, offset );
 
-				this->angularImpulse += deltaAngularImpulse;
+					this->linearImpulse -= ::Oyster::Physics3D::Formula::TangentialLinearMomentum( deltaAngularImpulse, offset );
+					this->angularImpulse += deltaAngularImpulse;
+				}
+				this->linearImpulse += j;
 				this->isDisturbed = true;
 			}
 

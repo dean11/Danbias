@@ -316,6 +316,14 @@ namespace Utility
 		using ::std::numeric_limits;
 
 		template<typename ValueType>
+		inline bool Within( const ValueType &value, const ValueType &lower, const ValueType &upper )
+		{
+			if( value < lower ) return false;
+			if( value > upper ) return false;
+			return true;
+		}
+
+		template<typename ValueType>
 		inline ValueType Abs( const ValueType &value )
 		{ return value < 0 ? value * -1 : value; }
 

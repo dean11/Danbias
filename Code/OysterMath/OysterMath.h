@@ -322,8 +322,12 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 
 	using ::LinearAlgebra3D::SnapAxisYToNormal_UsingNlerp;
 	using ::LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp;
+	using ::LinearAlgebra3D::InterpolateRotation_UsingNonRigidNlerp;
+	using ::LinearAlgebra3D::InterpolateRotation_UsingRigidNlerp;
 	using ::LinearAlgebra3D::InterpolateOrientation_UsingNonRigidNlerp;
+	using ::LinearAlgebra3D::InterpolateOrientation_UsingRigidNlerp;
 	using ::LinearAlgebra3D::InterpolateOrientation_UsingSlerp;
+	using ::LinearAlgebra3D::SnapAngularAxis;
 } }
 
 #endif

@@ -20,6 +20,7 @@ namespace GameLogic
 		~IAttatchment(void);
 
 		virtual void UseAttatchment(const WEAPON_FIRE &usage, float dt) = 0;
+		virtual void Update(float dt) = 0;
 
 	private:
 

@@ -1,5 +1,6 @@
 #ifndef GAMELOGICSTATES_H
 #define GAMELOGICSTATES_H
+#include "OysterMath.h"
 
 namespace GameLogic
 {
@@ -45,6 +46,12 @@ namespace GameLogic
 		WEAPON_STATE_IDLE = 1,
 		WEAPON_STATE_RELOADING = 2,
 	};
+
+	struct forcePushData
+	{
+		Oyster::Math::Float3 pushForce;
+	};
+
 
 	
 };

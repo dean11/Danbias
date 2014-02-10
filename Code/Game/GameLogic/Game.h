@@ -39,7 +39,7 @@ namespace GameLogic
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;
-			void Rotate(const Oyster::Math3D::Float3 lookDir)		override;
+			void Rotate(const Oyster::Math3D::Float4 lookDir)		override;
 
 			Player *player;
 		};
@@ -53,6 +53,7 @@ namespace GameLogic
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;
+			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
 			Level *level;
 		};
@@ -73,16 +74,14 @@ namespace GameLogic
 
 		float GetFrameTime() const;
 
-	private:
 		static void PhysicsOnMove(const Oyster::Physics::ICustomBody *object);
 		static void PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> proto);
 
-	private:
 		Utility::DynamicMemory::DynamicArray<PlayerData*> players;
 		LevelData* level;
 		float frameTime;
 		bool initiated;
-		GameEvent::ObjectEventFunction onDeadFnc;
+		GameEvent::ObjectEventFunction onDisableFnc;
 		GameEvent::ObjectEventFunction onMoveFnc;
 
 	};	

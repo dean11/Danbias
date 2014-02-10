@@ -49,6 +49,11 @@ void RigidBody::Update_LeapFrog( Float updateFrameLength )
 { // by Dan Andersson: Euler leap frog update when Runga Kutta is not needed
 	
 	// updating the linear
+	//Decrease momentum with 1% as "fall-off"
+	//! HACK: @todo Add real solution with fluid drag
+	this->momentum_Linear = this->momentum_Linear*0.9999f;
+	this->momentum_Angular = this->momentum_Angular*0.9999f;
+
 	// ds = dt * Formula::LinearVelocity( m, avg_G ) = dt * avg_G / m = (dt / m) * avg_G
 	this->centerPos += ( updateFrameLength / this->mass ) * AverageWithDelta( this->momentum_Linear, this->impulse_Linear );
 	
@@ -143,7 +148,12 @@ Float3 RigidBody::GetVelocity_Angular() const
 
 Float3 RigidBody::GetLinearMomentum( const Float3 &atWorldPos ) const
 { // by Dan Andersson
-	return this->momentum_Linear + Formula::TangentialLinearMomentum( this->momentum_Angular, atWorldPos - this->centerPos );
+	Float3 offset = atWorldPos - this->centerPos;
+	if( offset.Dot(offset) > 0.0f )
+	{
+		return this->momentum_Linear + Formula::TangentialLinearMomentum( this->momentum_Angular, offset );
+	}
+	return this->momentum_Linear;
 }
 
 void RigidBody::SetMomentOfInertia_KeepVelocity( const MomentOfInertia &localTensorI )
@@ -174,6 +184,12 @@ void RigidBody::SetMass_KeepMomentum( const Float &m )
 	{ // insanity check! Mass must be invertable
 		this->mass = m;
 	}
+}
+
+void RigidBody::SetRotation( const Float3 &axis )
+{ // by Dan Andersson
+	this->axis = axis;
+	this->rotation = Rotation( this->axis );
 }
 
 void RigidBody::SetMomentum_Linear( const Float3 &worldG, const Float3 &atWorldPos )

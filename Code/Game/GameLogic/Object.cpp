@@ -22,8 +22,8 @@ Object::Object()
 
 	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
 	this->objectID = GID();
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	this->currPhysicsState = this->rigidBody->GetState();
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(OBJECT_TYPE type)
@@ -34,8 +34,8 @@ Object::Object(OBJECT_TYPE type)
 	Oyster::Physics::API::Instance().AddObject(rigidBody);
 	this->type = type;
 	this->objectID = GID();
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	this->currPhysicsState = this->rigidBody->GetState();
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
@@ -44,8 +44,8 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
 	this->rigidBody = rigidBody;
 	this->type = type;
 	this->objectID = GID();
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	this->currPhysicsState = this->rigidBody->GetState();
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
@@ -57,8 +57,8 @@ Object::Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE 
 	
 	this->type = type;
 	this->objectID = GID();
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	this->currPhysicsState = this->rigidBody->GetState();
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
@@ -71,8 +71,8 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefor
 
 	this->type = type;
 	this->objectID = GID();
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	this->currPhysicsState = this->rigidBody->GetState();
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
@@ -86,13 +86,13 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustom
 	
 	this->type = type;
 	this->objectID = GID();
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	this->currPhysicsState = this->rigidBody->GetState();
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 void Object::ApplyLinearImpulse(Oyster::Math::Float3 force)
 {
-	setState.ApplyLinearImpulse(force);
+	newPhysicsState.ApplyLinearImpulse(force);
 }
 
 
@@ -118,20 +118,81 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 
 void Object::BeginFrame()
 {
-
-	this->rigidBody->SetState(this->setState);
-
+	
+	
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+	if(currPhysicsState.GetCenterPosition() !=currPhysicsState.GetCenterPosition())
+	{
+		//error
+		int i =0 ;
+	}
+	if(currPhysicsState.GetAngularAxis() !=currPhysicsState.GetAngularAxis())
+	{
+		//error
+		int i =0 ;
+	}
+	this->rigidBody->SetState(this->newPhysicsState);
 }
 // update physic 
 void Object::EndFrame()
 {
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+	this->currPhysicsState = this->rigidBody->GetState();
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+	if(currPhysicsState.GetGravityNormal() !=currPhysicsState.GetGravityNormal())
+	{
+		//error
+		int i =0 ;
+	}
 
-	Oyster::Math::Float4x4 rotMatrix = setState.GetOrientation(); //Oyster::Math3D::RotationMatrix(rot, axis);
-	//Oyster::Math3D::SnapAxisYToNormal_UsingNlerp(rotMatrix, -setState.GetGravityNormal());
-	//setState.SetOrientation(rotMatrix);
 
-	this->getState = this->rigidBody->GetState();
-	this->setState = this->getState;
+	if(currPhysicsState.GetGravityNormal()!= Float3::null)
+	{
+		Oyster::Math::Float4 axis;
+		Oyster::Math3D::SnapAngularAxis(Oyster::Math::Float4(currPhysicsState.GetAngularAxis(), 0), Oyster::Math::Float4::standard_unit_y, -Oyster::Math::Float4(currPhysicsState.GetGravityNormal()), axis);
+		if(axis !=axis)
+		{
+			//error
+			int i =0 ;
+		}
+		currPhysicsState.SetRotation(axis.xyz);
+		currPhysicsState.SetAngularMomentum(Float3::null);
+		Oyster::Math::Float3 debug = ::LinearAlgebra3D::WorldAxisOf(::LinearAlgebra3D::Rotation(axis.xyz), Oyster::Math::Float3::standard_unit_y);
+		debug += currPhysicsState.GetGravityNormal();
+	}
+	Oyster::Math::Float3 pos = currPhysicsState.GetCenterPosition(); 
+	Oyster::Math::Float3 up = -currPhysicsState.GetGravityNormal();
+	//300, 0,0,
+	//1,0,0
+	
+	if( pos.GetLength() < 303.5f) 
+	{
+		Oyster::Math::Float moveUp = 303.5 - pos.GetLength();
+		up *= moveUp;
+
+		currPhysicsState.SetCenterPosition(pos + up);
+	}
+
+
+	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
+	{
+		//error
+		int i =0 ;
+	}
+
+	this->newPhysicsState = this->currPhysicsState;
 }
 
 void Object::setBeforeCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter))

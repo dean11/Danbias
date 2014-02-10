@@ -25,7 +25,7 @@ namespace Oyster
 			//Resizes the array with, it does not keep anything in it.
 			void Resize(unsigned int cap);
 
-			int GetSize();
+			unsigned int GetSize();
 			unsigned char* GetByteArray();
 
 			void AddSize(unsigned int size);
@@ -33,6 +33,9 @@ namespace Oyster
 
 			//Only sets the private variable 'size'
 			void SetSize(unsigned int size);
+
+			//Copies over a part of the addFrom array and adds it to the end of this array. 
+			void AppendPartOfArray(OysterByte& source, unsigned int startIndex, unsigned int endIndex);
 
 			OysterByte& operator =(const OysterByte& obj);
 

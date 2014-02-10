@@ -87,12 +87,9 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	// update animation
 	// send data to server
 	// check data from server
-	DanBias::GameServerAPI::ServerUpdate();
 
 	if( KeyInput->IsKeyPressed(DIK_G)) 
 	{
-		if(!DanBias::GameServerAPI::GameStart())
-			return GameClientState::ClientState_Same;
 		return ClientState_Game;
 	}
 	  

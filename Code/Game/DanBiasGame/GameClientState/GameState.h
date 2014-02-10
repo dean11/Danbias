@@ -26,6 +26,8 @@ private:
 	bool key_Jump;
 	Camera* camera;
 
+	int myId;
+	float pitch;
 	struct myData;
 	myData* privData;
 public:
@@ -36,7 +38,7 @@ public:
 	bool LoadModels(std::wstring mapFile) ;
 	bool InitCamera(Oyster::Math::Float3 startPos) ;
 	gameStateState LoadGame();
-
+	void setClientId(int id);
 	void readKeyInput(InputClass* KeyInput);
 	bool Render()override;
 	bool Release()override;

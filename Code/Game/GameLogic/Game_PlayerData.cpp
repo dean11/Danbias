@@ -7,16 +7,25 @@ Game::PlayerData::PlayerData()
 {	
 	//set some stats that are appropriate to a player
 	Oyster::Physics::API::SimpleBodyDescription sbDesc;
-	sbDesc.centerPosition = Oyster::Math::Float3(0,165,0);
-	sbDesc.size = Oyster::Math::Float3(4,7,4);
-	
+	sbDesc.centerPosition = Oyster::Math::Float3(0,308,0);
+	sbDesc.size = Oyster::Math::Float3(0.5f,2,1);
+	sbDesc.mass = 70;
+	sbDesc.restitutionCoeff = 0.5;
+	sbDesc.frictionCoeff_Static = 0.4;
+	sbDesc.frictionCoeff_Dynamic = 0.3;
+	sbDesc.rotation = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
+
 	//create rigid body
 	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
 	
 	//create player with this rigid body
-	this->player = new Player(rigidBody,Object::DefaultCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
+	this->player = new Player(rigidBody,Player::PlayerCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
-
+	/*Oyster::Physics::ICustomBody::State state;
+	this->player->GetRigidBody()->GetState(state);
+	state.SetRotation(Oyster::Math::Float3(0, Oyster::Math::pi, 0));
+	this->player->GetRigidBody()->SetState(state);
+	player->EndFrame();*/
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
@@ -60,7 +69,7 @@ OBJECT_TYPE Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetObjectType();
 }
-void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir)
+void Game::PlayerData::Rotate(const Oyster::Math3D::Float4 lookDir)
 {
 	this->player->Rotate(lookDir);
 }

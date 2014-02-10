@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "ObjectDefines.h"
+#include "../Misc/Utilities.h"
 
 namespace GameLogic
 {
@@ -16,13 +17,13 @@ namespace GameLogic
 			~LevelParser();
 
 			//
-			std::vector<ObjectTypeHeader> Parse(std::string filename);
+			std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> Parse(std::string filename);
 
 			//
 			LevelMetaData ParseHeader(std::string filename);
 
 		private:
-			FormatVersion formatVersion;
+			LevelLoaderInternal::FormatVersion formatVersion;
 
 		};
 	}

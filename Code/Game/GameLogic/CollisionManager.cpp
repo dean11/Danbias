@@ -5,13 +5,15 @@
 #include "Level.h"
 #include "AttatchmentMassDriver.h"
 #include "Game.h"
+#include "CollisionManager.h"
+#include "JumpPad.h"
 
 using namespace Oyster;
 
 using namespace GameLogic;
 
-	void PlayerVBox(Player &player, DynamicObject &box, Oyster::Math::Float kineticEnergyLoss);
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
+	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force);
 
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -20,7 +22,6 @@ using namespace GameLogic;
 		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
-		return;
 		switch (realObj->GetObjectType())
 		{
 		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
@@ -29,26 +30,48 @@ using namespace GameLogic;
 			break;
 		
 		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-			PlayerVBox(*player,(*(DynamicObject*) realObj), kineticEnergyLoss);
+			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
-			int test = 5;
+			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			break;
 		}
 
 		//return Physics::ICustomBody::SubscriptMessage_none;
 	}
-		
-	void PlayerVBox(Player &player, DynamicObject &box, Oyster::Math::Float kineticEnergyLoss)
+
+	void JumpPad::JumpPadActivated(Oyster::Physics::ICustomBody *rigidBodyJumpPad, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
-		//use kinetic energyloss of the collision in order too determin how much damage to take
-		//use as part of the damage algorithm
-		player.DamageLife(20);
+		JumpPad *jumpPad = (JumpPad*)(rigidBodyJumpPad->GetCustomTag());
+		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
+
+		switch (realObj->GetObjectType())
+		{
+		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
+			break;
+		case OBJECT_TYPE::OBJECT_TYPE_BOX:
+			break;
+		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+			SendObjectFlying(*obj, jumpPad->pushForce);
+			break;
+		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+			break;
+		}
 	}
+
+	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
+	{
+		Oyster::Physics::ICustomBody::State state;
+
+		state = obj.GetState();
+		state.ApplyLinearImpulse(force);
+		obj.SetState(state);
+	}
+	
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
@@ -56,16 +79,28 @@ using namespace GameLogic;
 		//use kinetic energyloss of the collision in order too determin how much damage to take
 		//use as part of the damage algorithm
 		int damageDone = 0;
-		int forceThreashHold = 200;
+		int forceThreashHold = 200000;
 
 		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
 		{
 			damageDone = kineticEnergyLoss * 0.10f;
-			player.DamageLife(damageDone);
+			//player.DamageLife(damageDone);
 		}
 		
 	}	
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		return Physics::ICustomBody::SubscriptMessage_none;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_player_collision_response;
+	}
+	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
@@ -74,6 +109,13 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
 	}
+
+	Oyster::Physics::ICustomBody::SubscriptMessage CollisionManager::IgnoreCollision(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody *obj)
+	{
+		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
+	}
+
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
@@ -81,10 +123,42 @@ using namespace GameLogic;
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void *args)
 	{
-		Oyster::Math::Float3 pushForce = Oyster::Math::Float4(1,0,0) * (1);
 		Oyster::Physics::ICustomBody::State state;
+		Object *realObj = (Object*)obj->GetCustomTag();
+
+		if(realObj->GetObjectType() == OBJECT_TYPE_PLAYER || realObj->GetObjectType() == OBJECT_TYPE_WORLD)
+			return;
+
 		state = obj->GetState();
-		state.ApplyLinearImpulse(pushForce);
+		state.ApplyLinearImpulse(((forcePushData*)(args))->pushForce);
 		obj->SetState(state);
-		//((Object*)obj->GetCustomTag())->ApplyLinearImpulse(pushForce);
+	}
+
+	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
+	{
+		AttatchmentMassDriver *weapon = ((AttatchmentMassDriver*)args);
+
+		if(weapon->hasObject)
+		{
+			//do nothing
+		}
+		else
+		{
+			Object* realObj = (Object*)(obj->GetCustomTag());
+			//check so that it is an object that you can pickup
+
+			switch(realObj->GetObjectType())
+			{
+			case OBJECT_TYPE::OBJECT_TYPE_BOX:
+				//move obj to limbo in physics to make sure it wont collide with anything
+				Oyster::Physics::API::Instance().MoveToLimbo(obj);
+				weapon->heldObject = obj; //weapon now holds the object
+				weapon->hasObject = true;
+
+				break;
+			}
+			
+		}
+		
+
 	}

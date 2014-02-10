@@ -3,16 +3,33 @@
 //////////////////////////////////
 
 #include "LevelLoader.h"
+#include "LevelParser.h"
+
 using namespace GameLogic;
 using namespace GameLogic::LevelFileLoader;
 
-
-std::vector<ObjectTypeHeader> LevelLoader::LoadLevel(std::string fileName)
+struct LevelLoader::PrivData
 {
-	return parser.Parse(fileName);
+	LevelParser parser;
+	std::string folderPath;
+};
+
+LevelLoader::LevelLoader()
+	: pData(new PrivData)
+{
+	pData->folderPath = "Standard path";
+}
+
+LevelLoader::~LevelLoader()
+{
+}
+
+std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> LevelLoader::LoadLevel(std::string fileName)
+{
+	return pData->parser.Parse(fileName);
 }
 
 LevelMetaData LevelLoader::LoadLevelHeader(std::string fileName)
 {
-	return parser.ParseHeader(fileName);
+	return pData->parser.ParseHeader(fileName);
 }

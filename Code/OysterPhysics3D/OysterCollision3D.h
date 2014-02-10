@@ -121,6 +121,9 @@ namespace Oyster { namespace Collision3D { namespace Utility
 //	bool Contains( const Frustrum &container, const BoxAxisAligned &box );
 //	bool Contains( const Frustrum &container, const Box &box );
 //	bool Contains( const Frustrum &container, const Frustrum &frustrum );
+
+	::Oyster::Math::Float TimeOfContact( const Sphere &protoStart, const Sphere &protoEnd, const Point &deuter );
+	::Oyster::Math::Float TimeOfContact( const Box &protoStart, const Box &protoEnd, const Point &deuter );
 } } }
 
 #endif

@@ -38,6 +38,8 @@ namespace Oyster { namespace Collision3D //! Contains a collection of 3D shapes 
 		virtual bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const = 0;
 		virtual bool Intersects( const ICollideable &target ) const = 0;
 		virtual bool Contains( const ICollideable &target ) const = 0;
+
+		virtual ::Oyster::Math::Float TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const = 0;
 	};
 } }
 #endif

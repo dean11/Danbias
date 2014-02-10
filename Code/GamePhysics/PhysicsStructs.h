@@ -11,7 +11,7 @@ namespace Oyster { namespace Physics
 	{
 		struct SimpleBodyDescription
 		{
-			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 rotation;
 			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float3 size;
 			::Oyster::Math::Float mass;
@@ -29,7 +29,7 @@ namespace Oyster { namespace Physics
 
 		struct SphericalBodyDescription
 		{
-			::Oyster::Math::Float4x4 rotation;
+			::Oyster::Math::Float3 rotation;
 			::Oyster::Math::Float3 centerPosition;
 			::Oyster::Math::Float radius;
 			::Oyster::Math::Float mass;
@@ -115,11 +115,13 @@ namespace Oyster { namespace Physics
 			bool IsDisturbed() const;
 			bool IsForwarded() const;
 
+			::Oyster::Math::Float3 linearMomentum;
+
 		private:
 			::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, kineticFrictionCoeff;
 			::Oyster::Physics3D::MomentOfInertia inertiaTensor;
 			::Oyster::Math::Float3 reach, centerPos, angularAxis;
-			::Oyster::Math::Float3 linearMomentum, angularMomentum;
+			::Oyster::Math::Float3 angularMomentum;
 			::Oyster::Math::Float3 linearImpulse, angularImpulse;
 			::Oyster::Math::Float3 deltaPos, deltaAxis; // Forwarding data sum
 			::Oyster::Math::Float3 gravityNormal;

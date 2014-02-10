@@ -79,7 +79,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const Oyster::Math3D::Float3 lookDir) = 0;
+			virtual void Rotate(const Oyster::Math3D::Float4 lookDir) = 0;
 
 			/********************************************************
 			* Uses the chosen players weapon based on input
@@ -100,6 +100,7 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
+			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
 		};
 

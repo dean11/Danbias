@@ -15,7 +15,7 @@ API_Impl API_instance;
 namespace
 {
 	void OnPossibleCollision( Octree& worldScene, unsigned int protoTempRef, unsigned int deuterTempRef )
-	{ /** @todo TODO: OnPossibleCollision is a temporary solution .*/
+	{
 		auto proto = worldScene.GetCustomBody( protoTempRef );
 		auto deuter = worldScene.GetCustomBody( deuterTempRef );
 
@@ -26,13 +26,43 @@ namespace
 			ICustomBody::State protoState; proto->GetState( protoState );
 			ICustomBody::State deuterState; deuter->GetState( deuterState );
 
-			Float4 protoG = protoState.GetLinearMomentum( worldPointOfContact.xyz ),
-					deuterG = deuterState.GetLinearMomentum( worldPointOfContact.xyz );
+			// calc from perspective of deuter.
+			Float4 normal = (worldPointOfContact - Float4(deuterState.GetCenterPosition(), 1.0f )).GetNormalized(); // Init value is only borrowed
+			if( normal.Dot(normal) > 0.0f )
+			{
+				deuter->GetNormalAt( worldPointOfContact, normal );
+			}
+			else
+			{ // special case: deuter is completly contained within proto or they have overlapping centers.
 
-			// calc from perspective of deuter
-			Float4 normal; deuter->GetNormalAt( worldPointOfContact, normal );
+				normal = Float4( protoState.GetCenterPosition() - deuterState.GetCenterPosition(), 0.0f );
+				if( normal.Dot(normal) == 0.0f )
+				{ // they have overlapping centers. Rebound at least
+					// calculate and store time interpolation value, for later rebound.
+					proto->SetTimeOfContact( worldPointOfContact );
+					return;
+				}
+				
+				// borrowing the negated normal of proto.
+				proto->GetNormalAt( worldPointOfContact, normal );
+				normal = -normal;
+			}
+			normal.Normalize();
+
+			Float4 protoG  = Float4(protoState.GetLinearMomentum( worldPointOfContact.xyz ), 0),
+				   deuterG = Float4(deuterState.GetLinearMomentum( worldPointOfContact.xyz ), 0);
+
+			if( normal != normal ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
+			if( protoG != protoG ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
+			if( deuterG != deuterG ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
 			Float protoG_Magnitude = protoG.Dot( normal ),
-					deuterG_Magnitude = deuterG.Dot( normal );
+				  deuterG_Magnitude = deuterG.Dot( normal );
 
 			// if they are not relatively moving towards eachother, there is no collision
 			Float deltaPos = normal.Dot( Float4(deuterState.GetCenterPosition(), 1) - Float4(protoState.GetCenterPosition(), 1) );
@@ -60,28 +90,62 @@ namespace
 				return;
 			}
 
+			// PLayerHAck
+			if( proto->CallSubscription_BeforeCollisionResponse(proto) == ICustomBody::SubscriptMessage_player_collision_response )
+			{
+				Float3 linearMomentum = protoState.GetLinearMomentum();
+				Float3 up = -protoState.GetGravityNormal();
+				Float3 upForce = (linearMomentum.Dot(up) * up);
+
+				Float3 noBounceForce = linearMomentum - upForce;
+				protoState.SetLinearMomentum(noBounceForce);
+				proto->SetState(protoState);
+				return;
+			}
+			// calculate and store time interpolation value, for later rebound.
+			proto->SetTimeOfContact( worldPointOfContact );
 
 			// bounce
 			Float4 bounceD = normal * -Formula::CollisionResponse::Bounce( deuterState.GetRestitutionCoeff(),
-																			deuterState.GetMass(), deuterG_Magnitude,
-																			protoState.GetMass(), protoG_Magnitude );
+																		   deuterState.GetMass(), deuterG_Magnitude,
+																		   protoState.GetMass(), protoG_Magnitude );
 					
 
 			// calc from perspective of proto
-			proto->GetNormalAt( worldPointOfContact, normal );
-			protoG_Magnitude = protoG.Dot( normal ),
-			deuterG_Magnitude = deuterG.Dot( normal );
-					
+
+			normal = (worldPointOfContact - Float4(protoState.GetCenterPosition(), 1.0f )).GetNormalized();
+			if( normal.Dot(normal) > 0.0f )
+			{
+				proto->GetNormalAt( worldPointOfContact, normal );
+				protoG_Magnitude = protoG.Dot( normal );
+				deuterG_Magnitude = deuterG.Dot( normal );
+			}
+			else
+			{ // special case: proto is completly contained within deuter.
+				// borrowing the negated normal of deuter.
+				deuter->GetNormalAt( worldPointOfContact, normal );
+				normal = -normal;
+				protoG_Magnitude = -protoG_Magnitude;
+				deuterG_Magnitude = -deuterG_Magnitude;
+			}
+			
+			if( normal != normal ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
 			// bounce
 			Float4 bounceP = normal * Formula::CollisionResponse::Bounce( protoState.GetRestitutionCoeff(),
-																			protoState.GetMass(), protoG_Magnitude,
-																			deuterState.GetMass(), deuterG_Magnitude );
+																		  protoState.GetMass(), protoG_Magnitude,
+																		  deuterState.GetMass(), deuterG_Magnitude );
 
 			Float4 bounce = Average( bounceD, bounceP );
+
+			Float4 friction = Formula::CollisionResponse::Friction( protoG_Magnitude, normal,
+																	Float4(protoState.GetLinearMomentum(), 0),  protoState.GetFrictionCoeff_Static(),  protoState.GetFrictionCoeff_Kinetic(),  protoState.GetMass(), 
+																	Float4(deuterState.GetLinearMomentum(), 0), deuterState.GetFrictionCoeff_Static(), deuterState.GetFrictionCoeff_Kinetic(), deuterState.GetMass());
 			
 			Float kineticEnergyPBefore = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), protoState.GetLinearMomentum()/protoState.GetMass() );
 
-			protoState.ApplyImpulse( bounce.xyz, worldPointOfContact.xyz, normal.xyz );
+			protoState.ApplyImpulse( bounce.xyz - friction.xyz, worldPointOfContact.xyz, normal.xyz );
 			proto->SetState( protoState );
 
 			Float kineticEnergyPAFter = Oyster::Physics3D::Formula::LinearKineticEnergy( protoState.GetMass(), (protoState.GetLinearMomentum() + protoState.GetLinearImpulse())/protoState.GetMass() );
@@ -184,10 +248,13 @@ void API_Impl::Update()
 			}
 		}
 
+		if( gravityImpulse != gravityImpulse ) // debug: trap
+				const char *breakpoint = "This should never happen";
+
 		if( gravityImpulse != Float4::null )
 		{
 			state.ApplyLinearImpulse( gravityImpulse.xyz );
-			(*proto)->SetGravityNormal( gravityImpulse.GetNormalized().xyz );
+			state.SetGravityNormal( gravityImpulse.GetNormalized().xyz );
 			(*proto)->SetState( state );
 		}
 
@@ -198,23 +265,26 @@ void API_Impl::Update()
 	proto = updateList.begin();
 	for( ; proto != updateList.end(); ++proto )
 	{
-		Float3 lM = state.GetLinearMomentum() + state.GetLinearImpulse();
+		(*proto)->GetState( state );
+		Float3 lM = state.GetLinearMomentum();
 
-		if( lM.x < this->epsilon )
+		//LinearAlgebra3D::InterpolateAxisYToNormal_UsingNlerp(state.SetOrientation(, Float4(state.GetGravityNormal(), 0.0f), 1.0f);
+
+
+		if( abs(lM.x) < this->epsilon )
 		{
-			state.SetLinearMomentum( Float3(0, lM.y, lM.z) );
-			state.SetLinearImpulse( Float3(0, lM.y, lM.z) );
+			state.linearMomentum.x = 0;
 		}
-		if( lM.y < this->epsilon )
+		if( abs(lM.y) < this->epsilon )
 		{
-			state.SetLinearMomentum( Float3(lM.x, 0, lM.z) );
-			state.SetLinearImpulse( Float3(lM.x, 0, lM.z) );
+			state.linearMomentum.y = 0;
 		}
-		if( lM.z < this->epsilon )
+		if( abs(lM.z) < this->epsilon )
 		{
-			state.SetLinearMomentum( Float3(lM.x, lM.y, 0) );
-			state.SetLinearImpulse( Float3(lM.x, lM.y, 0) );
+			state.linearMomentum.z = 0;
 		}
+
+		(*proto)->SetState( state );
 
 		switch( (*proto)->Update(this->updateFrameLength) )
 		{
@@ -230,17 +300,16 @@ void API_Impl::Update()
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {
-	//! @todo TODO: implement stub
-	return true;
+	return this->worldScene.IsInLimbo( objRef );
 }
 
 void API_Impl::MoveToLimbo( const ICustomBody* objRef )
 {
-	/** @todo TODO: Fix this function.*/
+	this->worldScene.MoveToLimbo( objRef );
 }
 void API_Impl::ReleaseFromLimbo( const ICustomBody* objRef )
 {
-	/** @todo TODO: Fix this function.*/
+	this->worldScene.ReleaseFromLimbo( objRef );
 }
 
 void API_Impl::AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle )

@@ -34,7 +34,7 @@ namespace Oyster
 		namespace Constant
 		{
 			const float gravity_constant = (const float)6.67284e-11; //!< The _big_G_! ( N(m/kg)^2 ) Used in real gravityforcefields.
-			const float epsilon = (const float)1.0e-7;
+			const float epsilon = (const float)1.0e-3;
 		}
 
 		class PHYSICS_DLL_USAGE API
@@ -242,7 +242,8 @@ namespace Oyster
 			{
 				SubscriptMessage_none,
 				SubscriptMessage_kineticLoss,
-				SubscriptMessage_ignore_collision_response
+				SubscriptMessage_ignore_collision_response,
+				SubscriptMessage_player_collision_response
 			};
 
 			typedef SubscriptMessage (*EventAction_BeforeCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
@@ -321,6 +322,11 @@ namespace Oyster
 			 * @return true if this truly intersects with object.
 			 ********************************************************/
 			virtual bool Intersects( const ICustomBody &object, ::Oyster::Math::Float4 &worldPointOfContact ) const = 0;
+
+			/********************************************************
+			 * Sets how far back it needs to be interpolated to not be overlapping worldPointOfContact.
+			 ********************************************************/
+			virtual void SetTimeOfContact( ::Oyster::Math::Float4 &worldPointOfContact ) = 0;
 
 			/********************************************************
 			 * Required by Engine's Collision Search.

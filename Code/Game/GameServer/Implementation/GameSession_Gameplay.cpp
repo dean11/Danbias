@@ -86,12 +86,14 @@ namespace DanBias
 		if(dynamic_cast<IPlayerData*> (movedObject))
 		{
 			IPlayerData* temp = (IPlayerData*)movedObject;
-			temp->GetID();
+			
+			int id = temp->GetID();
 			Oyster::Math::Float4x4 world = temp->GetOrientation();
 					
-			Protocol_ObjectPosition p(world, 2);
+			Protocol_ObjectPosition p(world, id);
 			GameSession::gameSession->Send(*p.GetProtocol());
 		}
+
 		GameLogic::IObjectData* obj = NULL;
 		if(dynamic_cast<GameLogic::ILevelData*>(movedObject))
 		{
@@ -100,24 +102,28 @@ namespace DanBias
 			{
 				if(obj->GetObjectType() == OBJECT_TYPE_WORLD)
 				{
-					obj->GetID();
+					int id = obj->GetID();
 					Oyster::Math::Float4x4 world =obj->GetOrientation();
 					
-					Protocol_ObjectPosition p(world, 0);
-					GameSession::gameSession->Send(*p.GetProtocol());
+					Protocol_ObjectPosition p(world, id);
+					//GameSession::gameSession->Send(*p.GetProtocol());
 				}
 			}
 
 			obj = NULL;
-			obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
-			if(obj)
+			int count = ((GameLogic::ILevelData*)movedObject)->getNrOfDynamicObj();
+			for( int i = 0; i < count; i++  )
 			{
-				if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(i+1);
+				if(obj)
 				{
-					obj->GetID();
-					Oyster::Math::Float4x4 world = obj->GetOrientation();
-					Protocol_ObjectPosition p(world, 1);
-					GameSession::gameSession->Send(*p.GetProtocol());
+					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
+					{
+						int id = obj->GetID();
+						Oyster::Math::Float4x4 world = obj->GetOrientation();
+						Protocol_ObjectPosition p(world, id);
+						GameSession::gameSession->Send(*p.GetProtocol());
+					}
 				}
 			}
 		}
@@ -170,10 +176,11 @@ namespace DanBias
 	}
 	void GameSession::Gameplay_PlayerLookDir		( Protocol_PlayerLook& p, DanBias::GameClient* c )
 	{
-		Oyster::Math3D::Float3 lookDir; 
+		Oyster::Math3D::Float4 lookDir; 
 		lookDir.x = p.lookDirX;
 		lookDir.y = p.lookDirY;
 		lookDir.z = p.lookDirZ;
+		lookDir.w = p.deltaX;
 		c->GetPlayer()->Rotate(lookDir);
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon	( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
@@ -181,8 +188,11 @@ namespace DanBias
 
 	}
 	void GameSession::Gameplay_PlayerShot			( Protocol_PlayerShot& p, DanBias::GameClient* c )
-	{
-		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+	{ 
+		if(p.secondaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
+		if(p.primaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+		
+		if(p.utilityPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
 	}
 	void GameSession::Gameplay_PlayerJump			( Protocol_PlayerJump& p, DanBias::GameClient* c )
 	{
