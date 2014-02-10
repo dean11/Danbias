@@ -123,6 +123,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 
 						break;
 					}
+
 					default:
 						//Couldn't find specialType
 						break;

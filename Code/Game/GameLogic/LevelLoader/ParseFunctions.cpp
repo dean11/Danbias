@@ -44,11 +44,6 @@ namespace GameLogic
 			//3 float[3], 1 float
 			memcpy(&header.position, &buffer[start], 40);
 			start += 40;
-
-			//Physics struct
-			//2 float[3], 4 float, 1 uint
-			memcpy(&header.usePhysics, &buffer[start], 44);
-			start += 44;
 			
 			//Read path for bounding volume
 			ParseBoundingVolume(&buffer[start], header.boundingVolume, start);
@@ -122,7 +117,7 @@ namespace GameLogic
 			int start = 0;
 			int tempSize = 0;
 			char tempName[128];
-
+			
 			memcpy(&tempSize, &buffer[start], 4);
 			start += 4;
 
@@ -132,39 +127,41 @@ namespace GameLogic
 			fileName.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
 
+			size += start;
+
 			//Läs in filen.
 			int fileLength = 0;
 			Loader loader;
 			char* buf = loader.LoadFile("E:\\Dropbox\\Programming\\Github\\Danbias\\Bin\\Content\\Worlds\\cgf\\"+ fileName, fileLength);
-			
-			LevelLoaderInternal::FormatVersion version;
-			memcpy(&version, &buffer[0], sizeof(version));
 
-			memcpy(&volume.geoType, &buf[8], sizeof(volume.geoType));
-			//start += sizeof(volume.geoType);
+			start = 0;
+			LevelLoaderInternal::FormatVersion version;
+			memcpy(&version, &buf[0], sizeof(version));
+			start += 4;
+
+			memcpy(&volume.geoType, &buf[start], sizeof(volume.geoType));
+			start += sizeof(volume.geoType);
 
 			switch(volume.geoType)
 			{
 			case CollisionGeometryType_Box:
-				memcpy(&volume.box, &buf[12], sizeof(volume.box));
-				//start += sizeof(volume.box);
+				memcpy(&volume.box, &buf[start], sizeof(volume.box));
+				start += sizeof(volume.box);
 				break;
 
 			case CollisionGeometryType_Sphere:
-				memcpy(&volume.sphere, &buf[12], sizeof(volume.sphere));
-				//start += sizeof(volume.sphere);
+				memcpy(&volume.sphere, &buf[start], sizeof(volume.sphere));
+				start += sizeof(volume.sphere);
 				break;
 
 			case CollisionGeometryType_Cylinder:
-				memcpy(&volume.cylinder, &buf[12], sizeof(volume.cylinder));
-				//start += sizeof(volume.cylinder);
+				memcpy(&volume.cylinder, &buf[start], sizeof(volume.cylinder));
+				start += sizeof(volume.cylinder);
 				break;
 
 			default:
 				break;
 			}
-
-			size += start;
 		}
 	}
 }
