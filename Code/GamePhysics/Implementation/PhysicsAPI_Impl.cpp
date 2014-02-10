@@ -64,6 +64,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	collisionShape->calculateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
 	rigidBody->setUserPointer(body);
 	body->SetRigidBody(rigidBody);
 
@@ -91,6 +93,8 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	collisionShape->calculateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
 	rigidBody->setUserPointer(body);
 	body->SetRigidBody(rigidBody);
 
@@ -118,6 +122,8 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	collisionShape->calculateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
 	rigidBody->setUserPointer(body);
 	body->SetRigidBody(rigidBody);
 
