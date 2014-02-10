@@ -22,15 +22,18 @@ namespace Oyster
 			void SetSubscription(EventAction_Move function);
 
 			void SetLinearVelocity(Math::Float3 velocity);
+			void SetPosition(::Oyster::Math::Float3 position);
 			void SetRotation(Math::Float4 quaternion);
+			void SetRotation(::Oyster::Math::Quaternion quaternion);
 			void SetRotation(Math::Float3 eulerAngles);
+
+			Math::Float4x4 GetRotation() const;
+			Math::Float4x4 GetOrientation() const;
+			Math::Float4x4 GetView() const;
+			Math::Float4x4 GetView( const ::Oyster::Math::Float3 &offset ) const;
 
 			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss);
 			void CallSubscription_Move();
-
-			State GetState() const;
-			State & GetState( State &targetMem ) const;
-			void SetState( const State &state );
 
 			btCollisionShape* GetCollisionShape() const;
 			btDefaultMotionState* GetMotionState() const;

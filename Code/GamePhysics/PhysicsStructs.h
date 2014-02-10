@@ -30,12 +30,6 @@ namespace Oyster
 				::Oyster::Math::Float4x4	 GetOrientation() const;
 				::Oyster::Math::Float4x4	 GetView() const;
 				::Oyster::Math::Float4x4	 GetView( const ::Oyster::Math::Float3 &offset ) const;
-
-				::Oyster::Math::Float		GetMass() const;
-				::Oyster::Math::Float		GetStaticFriction() const;
-				::Oyster::Math::Float		GetDynamicFriction() const;
-				::Oyster::Math::Float		GetRestitution() const;
-
 			
 				// Variables for state
 				::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, dynamicFrictionCoeff;

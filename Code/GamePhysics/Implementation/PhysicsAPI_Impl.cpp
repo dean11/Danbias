@@ -142,19 +142,15 @@ void API_Impl::UpdateWorld()
 
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
-		this->customBodies[i]->GetState(state);
-
 		btTransform trans;
 		dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetMotionState()->getWorldTransform(trans);
-		state.centerPos = Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
-		state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
+		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
+		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
 		
 		if(dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetRigidBody()->getActivationState() == ACTIVE_TAG)
 		{
 			dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->CallSubscription_Move();
 		}
-
-		this->customBodies[i]->SetState(state);
 	}
 
 	int numManifolds = this->dynamicsWorld->getDispatcher()->getNumManifolds();

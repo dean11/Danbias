@@ -123,30 +123,20 @@ namespace Oyster
 
 			virtual ~ICustomBody() {};
 
-			/********************************************************
-			 * Gets the current state of the rigid body
-			 * @return the current state of the rigid body
-			 ********************************************************/
-			virtual State GetState() const = 0;
-
-			/********************************************************
-			 * Gets the current state of the rigid body
-			 * @param targetMem: The state is copied into targetMem
-			 * @return the current state of the rigid body
-			 ********************************************************/
-			virtual State & GetState( State &targetMem ) const = 0;
-
-			/********************************************************
-			 * Sets the current state of the rigid body
-			 ********************************************************/
-			virtual void SetState( const State &state ) = 0;		
 
 			virtual void SetSubscription(EventAction_AfterCollisionResponse function) = 0;
 			virtual void SetSubscription(EventAction_Move function) = 0;
 
 			virtual void SetLinearVelocity(::Oyster::Math::Float3 velocity) = 0;
+			virtual void SetPosition(::Oyster::Math::Float3 position) = 0;
 			virtual void SetRotation(::Oyster::Math::Float4 quaternion) = 0;
+			virtual void SetRotation(::Oyster::Math::Quaternion quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
+
+			::Oyster::Math::Float4x4 GetRotation() const;
+			::Oyster::Math::Float4x4 GetOrientation() const;
+			::Oyster::Math::Float4x4 GetView() const;
+			::Oyster::Math::Float4x4 GetView( const ::Oyster::Math::Float3 &offset ) const;
 
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.
