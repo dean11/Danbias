@@ -16,6 +16,7 @@ namespace GameLogic
 {
 	namespace LevelFileLoader
 	{
+		//can parse any struct without strings or char[]
 		void ParseObject(char* buffer, void *header, int size)
 		{
 			memcpy(header, buffer, size);

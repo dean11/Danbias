@@ -32,7 +32,7 @@ namespace GameLogic
 		ObjectSpecialType_JumpPad,
 		ObjectSpecialType_BoostPad,
 		ObjectSpecialType_Portal,
-		ObjectSpecialType_SpawnPoint,
+		ObjectSpecialType_Sky,
 
 		ObjectSpecialType_Count,
 		ObjectSpecialType_Unknown  = -1
@@ -134,7 +134,7 @@ namespace GameLogic
 
 	namespace LevelLoaderInternal
 	{
-		const FormatVersion boundingVolumeVersion(1, 0);
+		const FormatVersion boundingVolumeVersion(2, 0);
 
 		struct BoundingVolumeBase
 		{
@@ -224,10 +224,18 @@ namespace GameLogic
 		float destination[3];
 	};
 
-	struct SpawnPointAttributes : public ObjectHeader
+	struct WorldAttributes : public ObjectHeader
 	{
-		float spawnPosition[3];
+		float worldSize;
+		float atmoSphereSize;
 	};
+
+	struct SkyAttributes : public ObjectHeader
+	{
+		float skySize;
+	};
+
+	
 
 	/************************************
 				Lights
