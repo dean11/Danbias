@@ -21,6 +21,7 @@ public:
 	void Move( const ::Oyster::Math::Float3 &deltaPosition );
 	void Rotate( const ::Oyster::Math::Float3 &deltaAngularAxis );
 
+		  ::Oyster::Math::Float3	   GetNormalOf( const ::Oyster::Math::Float3 &axis ) const;
 	const ::Oyster::Math::Quaternion & GetRotation() const;
 		  ::Oyster::Math::Float3x3   & GetRotationMatrix( ::Oyster::Math::Float3x3 &targetMem ) const;
 		  ::Oyster::Math::Float4x4   & GetRotationMatrix( ::Oyster::Math::Float4x4 &targetMem ) const;

@@ -68,10 +68,18 @@ void Camera_Basic::Rotate( const Float3 &deltaAngularAxis )
 	this->rotationIsOutOfDate = true;
 }
 
+Float3 Camera_Basic::GetNormalOf( const Float3 &axis ) const
+{
+	return WorldAxisOf( this->GetRotation(), axis );
+}
+
 const Quaternion & Camera_Basic::GetRotation() const
 {
 	if( this->rotationIsOutOfDate )
 	{
+		/*Float4 temp;
+		::std::fmod( Float4(this->angularAxis, 0.0f) );*/
+
 		this->rotation = Rotation( this->angularAxis );
 		this->rotationIsOutOfDate = false;
 	}
