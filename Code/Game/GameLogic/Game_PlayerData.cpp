@@ -15,7 +15,7 @@ Game::PlayerData::PlayerData()
 	//sbDesc.quaternion = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
 
 	//create rigid body
-	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass);
+	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 1, 1, 1);
 	
 	//create player with this rigid body
 	this->player = new Player(rigidBody,Player::DefaultCollisionAfter, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);

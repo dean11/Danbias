@@ -50,6 +50,7 @@ API_Impl::~API_Impl()
 ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
+	SimpleRigidBody::State state;
 
 	// Add collision shape
 	btCollisionShape* collisionShape = new btSphereShape(radius);
@@ -73,12 +74,22 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
+	state.centerPos = position;
+	state.reach = Float3(radius, radius, radius);
+	state.dynamicFrictionCoeff = 0.5f;
+	state.staticFrictionCoeff = 0.5f;
+	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
+	state.mass = mass;
+
+	body->SetState(state);
+
 	return body;
 }
 
 ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
+	SimpleRigidBody::State state;
 
 	// Add collision shape
 	btCollisionShape* collisionShape = new btBoxShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
@@ -102,12 +113,22 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
+	state.centerPos = position;
+	state.reach = halfSize;
+	state.dynamicFrictionCoeff = 0.5f;
+	state.staticFrictionCoeff = 0.5f;
+	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
+	state.mass = mass;
+
+	body->SetState(state);
+
 	return body;
 }
 
 ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
+	SimpleRigidBody::State state;
 
 	// Add collision shape
 	btCollisionShape* collisionShape = new btCylinderShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
@@ -130,6 +151,15 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	// Add rigid body to world
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
+
+	state.centerPos = position;
+	state.reach = halfSize;
+	state.dynamicFrictionCoeff = 0.5f;
+	state.staticFrictionCoeff = 0.5f;
+	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
+	state.mass = mass;
+
+	body->SetState(state);
 
 	return body;
 }
