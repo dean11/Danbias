@@ -43,7 +43,8 @@ public:
 	~GameState(void);
 	bool Init(Oyster::Network::NetworkClient* nwClient);
 	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
-	bool LoadModels(std::string mapFile) ;
+	bool LoadModels(std::string mapFile);
+	bool LoadModels();
 	bool InitCamera(Oyster::Math::Float3 startPos) ;
 	void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 	gameStateState LoadGame();

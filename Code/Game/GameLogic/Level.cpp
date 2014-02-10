@@ -40,7 +40,7 @@ void Level::parseObjectType(ObjectTypeHeader* obj)
 		break;
 	}*/
 }
-void Level::parsePhysicsObj(LevelLoaderInternal::PhysicsObject* obj)
+void Level::parsePhysicsObj(LevelLoaderInternal::BoundingVolumeBase* obj)
 {
 	// offset physObj med modelObj
 }
@@ -68,7 +68,7 @@ void Level::InitiateLevel(std::string levelPath)
 			{
 				
 				ObjectHeader* staticObjData = ((ObjectHeader*)obj);
-				LevelLoaderInternal::PhysicsObject* staticObjPhysicData = ((ObjectHeader*)obj);
+				//LevelLoaderInternal::BoundingVolumeBase* staticObjPhysicData = ((ObjectHeader*)obj);
 				staticObjData->ModelFile;
 
 				ICustomBody* rigidBody_Static;			
@@ -132,7 +132,7 @@ void Level::InitiateLevel(std::string levelPath)
 		case ObjectType::ObjectType_Dynamic:
 			{
 				ObjectHeader* staticObjData = ((ObjectHeader*)obj);
-				LevelLoaderInternal::PhysicsObject* staticObjPhysicData = ((ObjectHeader*)obj);
+				//LevelLoaderInternal::BoundingVolumeBase* staticObjPhysicData = ((ObjectHeader*)obj);
 				staticObjData->ModelFile;
 
 				ICustomBody* rigidBody_Dynamic;			

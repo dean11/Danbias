@@ -52,9 +52,11 @@ SimpleRigidBody::State& SimpleRigidBody::GetState( SimpleRigidBody::State &targe
 void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 {
 	btTransform trans;
+	btVector3 position(state.centerPos.x, state.centerPos.y, state.centerPos.z);
+	btQuaternion quaternion(state.quaternion.imaginary.x, state.quaternion.imaginary.y, state.quaternion.imaginary.z, state.quaternion.real);
 	this->motionState->getWorldTransform(trans);
-	trans.setRotation(btQuaternion(state.quaternion.imaginary.x, state.quaternion.imaginary.y, state.quaternion.imaginary.z, state.quaternion.real));
-	trans.setOrigin(btVector3(state.centerPos.x, state.centerPos.y, state.centerPos.z));
+	trans.setRotation(quaternion);
+	trans.setOrigin(position);
 	this->motionState->setWorldTransform(trans);
 	this->rigidBody->setFriction(state.staticFrictionCoeff);
 	this->rigidBody->setRestitution(state.restitutionCoeff);
@@ -154,7 +156,7 @@ Float4x4 SimpleRigidBody::GetView( const ::Oyster::Math::Float3 &offset ) const
 
 void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
 {
-	if(this->onMovement)
+	if(this->afterCollision)
 		this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
 }
 

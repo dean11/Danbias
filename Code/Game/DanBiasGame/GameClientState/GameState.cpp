@@ -76,10 +76,106 @@ GameState::gameStateState GameState::LoadGame()
 	plight.Bright = 2;
 
 	Oyster::Graphics::API::AddLight(plight);
-	LoadModels("3bana.bias");
+	// use level loader
+	//LoadModels("3bana.bias");
+	// hardcoded objects
+	LoadModels();
 	Float3 startPos = Float3(0,0,20.0f);
 	InitCamera(startPos);
 	return gameStateState_playing;
+}
+bool GameState::LoadModels()
+{
+	// open file
+	// read file 
+	// init models
+	int nrOfBoxex = 5;
+	int id = 100; 
+
+	// add world model
+	ModelInitData modelData;
+
+	modelData.position = Oyster::Math::Float3(0,0,0);
+	modelData.rotation = Oyster::Math::Quaternion::identity;
+	modelData.scale =  Oyster::Math::Float3(2,2,2);
+
+	modelData.modelPath = L"world_earth.dan";
+	modelData.id = id++;
+
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
+
+	// add box model
+	modelData.position = Oyster::Math::Float3(0,0,0);
+	modelData.rotation = Oyster::Math::Quaternion::identity;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"crate_colonists.dan";
+
+
+	for(int i =0; i< nrOfBoxex; i ++)
+	{
+		modelData.position = Oyster::Math::Float3(4,320,0);
+		modelData.id = id++;
+
+		this->dynamicObjects.Push(new C_DynamicObj());
+		this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	}
+
+
+	// add crystal model 
+	modelData.position = Oyster::Math::Float3(10, 301, 0);
+	modelData.modelPath = L"crystalformation_b.dan";
+	modelData.id = id++;
+	// load models
+	this->dynamicObjects.Push(new C_DynamicObj());
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+
+	// add house model 
+	modelData.position = Oyster::Math::Float3(-50, 290, 0);
+	//Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
+
+	modelData.visible = true;
+	modelData.modelPath = L"building_corporation.dan";
+	modelData.id = id++;
+	// load models
+	this->dynamicObjects.Push(new C_DynamicObj());
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+
+
+	// add player model
+	modelData.position = Oyster::Math::Float3(0, 320, 0);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = id++;
+	// load models
+	this->dynamicObjects.Push(new C_DynamicObj());
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+
+	// add player model 2
+	modelData.position = Oyster::Math::Float3(50, 320, 0);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = id++;
+	// load models
+	this->dynamicObjects.Push(new C_DynamicObj());
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+
+	// add jumppad
+	modelData.position = Oyster::Math::Float3(4, 300.3, 0);
+	modelData.modelPath = L"jumppad_round.dan";
+	modelData.id = id++;
+	// load models
+	this->dynamicObjects.Push(new C_DynamicObj());
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+
+	// add sky sphere
+	modelData.position = Oyster::Math::Float3(0,0,0);
+	modelData.scale =  Oyster::Math::Float3(800,800,800);
+	modelData.modelPath = L"skysphere.dan";
+	modelData.id = id++;
+	// load models
+	this->dynamicObjects.Push(new C_DynamicObj());
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	return true;
 }
 bool GameState::LoadModels(std::string mapFile)
 {
@@ -166,130 +262,7 @@ bool GameState::LoadModels(std::string mapFile)
 	privData->object[privData->object.size() -1 ]->Init(modelData);
 	*/
 	return true;
-	/*// open file
-	// read file 
-	// init models
-	int nrOfBoxex = 5;
-	int id = 100; 
 	
-// add world model
-	ModelInitData modelData;
-	Oyster::Math3D::Float4x4 translate;
-	C_Object* obj;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,0));
-	modelData.world = translate  ;//modelData.world * translate 
-	modelData.world.v[0].x = 2;
-	modelData.world.v[1].y = 2;
-	modelData.world.v[2].z = 2;
-	modelData.modelPath = L"world_earth.dan";
-	modelData.id = id++;
-
-	obj = new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-
-// add box model
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	modelData.modelPath = L"crate_colonists.dan";
-
-	
-	for(int i =0; i< nrOfBoxex; i ++)
-	{
-		translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4,320,0));
-		modelData.world = modelData.world * translate;
-		modelData.id = id++;
-
-		obj = new C_Player();
-		privData->object.push_back(obj);
-		privData->object[privData->object.size() -1 ]->Init(modelData);
-		modelData.world = Oyster::Math3D::Float4x4::identity;
-	}
-
-
-	// add crystal model 
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(10, 301, 0));
-
-	modelData.world = modelData.world * translate;
-	modelData.visible = true;
-	modelData.modelPath = L"crystalformation_b.dan";
-	modelData.id = id++;
-	// load models
-	obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	// add house model 
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-50, 290, 0));
-	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
-	
-	modelData.world = modelData.world * translate * rot;
-	modelData.visible = true;
-	modelData.modelPath = L"building_corporation.dan";
-	modelData.id = id++;
-	// load models
-	obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-
-	// add player model
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 320, 0));
-
-	modelData.world = modelData.world * translate;
-	modelData.visible = true;
-	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = id++;
-	// load models
-	obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	// add player model 2
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(50, 320, 0));
-
-	modelData.world = modelData.world * translate;
-	modelData.visible = true;
-	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = id++;
-	// load models
-	obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	// add jumppad
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(4, 300.3, 0));
-	//Oyster::Math3D::RotationMatrix_AxisZ()
-	modelData.world = modelData.world * translate;
-	modelData.visible = true;
-	modelData.modelPath = L"jumppad_round.dan";
-	modelData.id = id++;
-	// load models
-	obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-
-	// add sky sphere
-	modelData.world = Oyster::Math3D::Float4x4::identity;
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0, 0, 0));
-	//Oyster::Math3D::RotationMatrix_AxisZ()
-	modelData.world = modelData.world * translate;
-	modelData.world.v[0].x = 800;
-	modelData.world.v[1].y = 800;
-	modelData.world.v[2].z = 800;
-	modelData.visible = true;
-	modelData.modelPath = L"skysphere.dan";
-	modelData.id = id++;
-	// load models
-	obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData); */
-
 }
 bool GameState::InitCamera(Float3 startPos)
 {

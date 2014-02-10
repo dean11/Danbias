@@ -33,7 +33,7 @@ namespace GameLogic
 		void InitiateLevel(float radius);
 
 		void parseObjectType(ObjectTypeHeader* obj);
-		void parsePhysicsObj(LevelLoaderInternal::PhysicsObject* obj);
+		void parsePhysicsObj(LevelLoaderInternal::BoundingVolumeBase* obj);
 		/********************************************************
 		* Creates a team in the level
 		* @param teamSize: The size of the team you want to create
