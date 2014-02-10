@@ -13,6 +13,7 @@ namespace Oyster
 		typedef void* HRESOURCE;
 		typedef char HBYTE;
 		typedef HBYTE* HBYTEARRAY;
+
 		/** Typedef on a fuction required for custom unloading */
 		typedef void(*UnloadFunction)(void* loadedData);
 
@@ -30,7 +31,7 @@ namespace Oyster
 			ResourceType_Byte_UTF16LE,				/**< Handle can be interpeted as char[] or char* */
 
 			ResourceType_CUSTOM,					/**< Handle can be interpeted as whatever */
-			ResourceType_INVALID,					/**< Handle can be interpeted as whatever */
+			ResourceType_INVALID,
 		};
 		
 		/** A resource handler interface to interact with when loading resources. 
