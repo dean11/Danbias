@@ -33,7 +33,7 @@ namespace Oyster
 				createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 			#endif
 			
-			createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+			//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 
 			D3D_FEATURE_LEVEL featureLevelsToTry[] = 
 			{
