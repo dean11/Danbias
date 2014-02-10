@@ -61,6 +61,11 @@ namespace Oyster
 				Math::Matrix Translation;
 			};
 
+			struct PostData
+			{
+				int x;
+				int y;
+			};
 		}
 	}
 }

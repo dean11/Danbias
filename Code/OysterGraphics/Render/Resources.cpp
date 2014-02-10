@@ -41,6 +41,7 @@ namespace Oyster
 				Buffer Resources::Gather::AnimationData = Buffer();
 				Buffer Resources::Light::LightConstantsData = Buffer();
 				Buffer Resources::Gui::Data = Buffer();
+				Buffer Resources::Post::Data = Buffer();
 
 				Buffer Resources::Light::PointLightsData = Buffer();
 				ID3D11ShaderResourceView* Resources::Light::PointLightView = NULL;
@@ -109,10 +110,11 @@ namespace Oyster
 					desc.ElementSize = sizeof(Definitions::GuiData);
 					Gui::Data.Init(desc);
 
-					desc.ElementSize = sizeof(Definitions::LightConstants);
-					desc.NumElements = 1;
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_CS;
-					
+					desc.ElementSize = sizeof(Definitions::PostData);
+					Post::Data.Init(desc);
+
+					desc.ElementSize = sizeof(Definitions::LightConstants);
 					Light::LightConstantsData.Init(desc);
 
 					desc.ElementSize = sizeof(Definitions::Pointlight);
@@ -332,6 +334,7 @@ namespace Oyster
 						Post::Pass.SRV.Compute.push_back(LBufferSRV[i]);
 					}
 					Post::Pass.UAV.Compute.push_back(Core::backBufferUAV);
+					Post::Pass.CBuffers.Compute.push_back(Post::Data);
 
 					////---------------- GUI Pass Setup ----------------------------
 					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
@@ -379,8 +382,6 @@ namespace Oyster
 					return Core::Init::State::Success;
 				}
 
-
-
 				void Resources::Clean()
 				{
 					Gather::ModelData.~Buffer();
@@ -388,6 +389,7 @@ namespace Oyster
 					Light::LightConstantsData.~Buffer();
 					Light::PointLightsData.~Buffer();
 					Gui::Data.~Buffer();
+					Post::Data.~Buffer();
 					SAFE_RELEASE(Light::PointLightView);
 					SAFE_RELEASE(Light::SSAOKernel);
 					SAFE_RELEASE(Light::SSAORandom);

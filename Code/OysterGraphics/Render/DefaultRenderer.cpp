@@ -19,7 +19,7 @@ namespace Oyster
 				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
-					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,1));
+					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
 					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
 
 					void* data;
@@ -39,6 +39,14 @@ namespace Oyster
 					data = Resources::Light::PointLightsData.Map();
 					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
+
+					Definitions::PostData pd;
+					pd.x = lc.Pixels.x;
+					pd.y = lc.Pixels.y;
+
+					data = Resources::Post::Data.Map();
+					memcpy(data, &pd, sizeof(Definitions::PostData));
+					Resources::Post::Data.Unmap();
 				}
 
 				Math::Matrix RecursiveBindPosRotation(int index, Model::ModelInfo* mi)
