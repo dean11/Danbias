@@ -67,7 +67,7 @@ void SimpleRigidBody::SetSubscription(EventAction_AfterCollisionResponse functio
 
 void SimpleRigidBody::CallSubsciptMessage(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
 {
-	return;
+	this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
 }
 
 btDefaultMotionState* SimpleRigidBody::GetMotionState() const

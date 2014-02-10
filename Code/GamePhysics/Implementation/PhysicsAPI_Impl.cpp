@@ -129,8 +129,8 @@ void API_Impl::UpdateWorld()
 		ICustomBody* bodyA = (ICustomBody*)obA->getUserPointer();
 		ICustomBody* bodyB = (ICustomBody*)obB->getUserPointer();
 
-		dynamic_cast<SimpleRigidBody*>(bodyA)->CallSubsciptMessage(bodyA, bodyB, 0.0f);
-		dynamic_cast<SimpleRigidBody*>(bodyB)->CallSubsciptMessage(bodyB, bodyA, 0.0f);
+		//dynamic_cast<SimpleRigidBody*>(bodyA)->CallSubsciptMessage(bodyA, bodyB, 0.0f);
+		//dynamic_cast<SimpleRigidBody*>(bodyB)->CallSubsciptMessage(bodyB, bodyA, 0.0f);
 
 		int numContacts = contactManifold->getNumContacts();
 		for (int j=0;j<numContacts;j++)
