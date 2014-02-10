@@ -68,6 +68,16 @@ void Camera_Basic::Rotate( const Float3 &deltaAngularAxis )
 	this->rotationIsOutOfDate = true;
 }
 
+const Float3 & Camera_Basic::GetPosition() const
+{
+	return this->translation;
+}
+
+const Float3 & Camera_Basic::GetAngularAxis() const
+{
+	return this->angularAxis;
+}
+
 Float3 Camera_Basic::GetNormalOf( const Float3 &axis ) const
 {
 	return WorldAxisOf( this->GetRotation(), axis );
@@ -77,8 +87,10 @@ const Quaternion & Camera_Basic::GetRotation() const
 {
 	if( this->rotationIsOutOfDate )
 	{
-		/*Float4 temp;
-		::std::fmod( Float4(this->angularAxis, 0.0f) );*/
+		// Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
+		Float4 numerator;
+		::std::modf( this->angularAxis * (0.5f / pi), numerator.xyz );
+		this->angularAxis -= ((2.0f * pi) * numerator).xyz;
 
 		this->rotation = Rotation( this->angularAxis );
 		this->rotationIsOutOfDate = false;

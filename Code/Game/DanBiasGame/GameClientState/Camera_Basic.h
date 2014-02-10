@@ -21,6 +21,8 @@ public:
 	void Move( const ::Oyster::Math::Float3 &deltaPosition );
 	void Rotate( const ::Oyster::Math::Float3 &deltaAngularAxis );
 
+	const ::Oyster::Math::Float3	 & GetPosition() const;
+	const ::Oyster::Math::Float3	 & GetAngularAxis() const;
 		  ::Oyster::Math::Float3	   GetNormalOf( const ::Oyster::Math::Float3 &axis ) const;
 	const ::Oyster::Math::Quaternion & GetRotation() const;
 		  ::Oyster::Math::Float3x3   & GetRotationMatrix( ::Oyster::Math::Float3x3 &targetMem ) const;
@@ -30,8 +32,9 @@ public:
 		  ::Oyster::Math::Float4x4   & GetViewsProjMatrix( Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
 
 	private:
-	::Oyster::Math::Float3 translation, angularAxis;
-	::Oyster::Math::Float4x4 projection;
+			::Oyster::Math::Float3 translation;
+	mutable ::Oyster::Math::Float3 angularAxis;
+			::Oyster::Math::Float4x4 projection;
 	mutable ::Oyster::Math::Quaternion rotation;
 	mutable bool rotationIsOutOfDate;
 };
