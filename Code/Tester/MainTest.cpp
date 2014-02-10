@@ -168,7 +168,7 @@ HRESULT InitDirect3D()
 	Oyster::Graphics::API::SetOptions(o);
 
 	m =  Oyster::Graphics::API::CreateModel(L"crate_colonists.dan");
-	m2 = Oyster::Graphics::API::CreateModel(L"char_bindpose.dan");
+	m2 = Oyster::Graphics::API::CreateModel(L"char_fake_bin.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	Oyster::Graphics::API::PlayAnimation(m2, L"Bend",true);
 	
