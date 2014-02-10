@@ -64,6 +64,27 @@ void SimpleRigidBody::SetSubscription(EventAction_Move function)
 	this->onMovement = function;
 }
 
+void SimpleRigidBody::SetLinearVelocity(Float3 velocity)
+{
+	this->rigidBody->setLinearVelocity(btVector3(velocity.x, velocity.y, velocity.z));
+}
+
+void SimpleRigidBody::SetRotation(Float4 quaternion)
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+	this->motionState->setWorldTransform(trans);
+}
+
+void SimpleRigidBody::SetRotation(Float3 eulerAngles)
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setRotation(btQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z));
+	this->motionState->setWorldTransform(trans);
+}
+
 void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
 {
 	if(this->onMovement)

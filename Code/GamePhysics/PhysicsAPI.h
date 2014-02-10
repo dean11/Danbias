@@ -80,9 +80,9 @@ namespace Oyster
 
 
 			// Bullet physics
-			virtual ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass) = 0;
-
-			virtual ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass) = 0;
+			virtual ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
+			virtual ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
+			virtual ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 
 			virtual void UpdateWorld() = 0;
 
@@ -144,6 +144,9 @@ namespace Oyster
 			virtual void SetSubscription(EventAction_AfterCollisionResponse function) = 0;
 			virtual void SetSubscription(EventAction_Move function) = 0;
 
+			virtual void SetLinearVelocity(::Oyster::Math::Float3 velocity) = 0;
+			virtual void SetRotation(::Oyster::Math::Float4 quaternion) = 0;
+			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
 
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.

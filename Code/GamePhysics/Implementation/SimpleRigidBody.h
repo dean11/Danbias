@@ -21,6 +21,10 @@ namespace Oyster
 			void SetSubscription(EventAction_AfterCollisionResponse function);
 			void SetSubscription(EventAction_Move function);
 
+			void SetLinearVelocity(Math::Float3 velocity);
+			void SetRotation(Math::Float4 quaternion);
+			void SetRotation(Math::Float3 eulerAngles);
+
 			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss);
 			void CallSubscription_Move();
 

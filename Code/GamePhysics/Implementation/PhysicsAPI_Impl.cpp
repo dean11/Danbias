@@ -47,7 +47,7 @@ API_Impl::~API_Impl()
 }
 
 // Bullet physics
-ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass)
+ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
 
@@ -73,12 +73,40 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 
 	return body;
 }
-ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass)
+
+ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
 
 	// Add collision shape
 	btCollisionShape* collisionShape = new btBoxShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
+	body->SetCollisionShape(collisionShape);
+
+	// Add motion state
+	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w),btVector3(position.x, position.y, position.z)));
+	body->SetMotionState(motionState);
+
+	// Add rigid body
+	btVector3 fallInertia(0, 0, 0);
+	collisionShape->calculateLocalInertia(mass, fallInertia);
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
+    btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setUserPointer(body);
+	body->SetRigidBody(rigidBody);
+
+	// Add rigid body to world
+	this->dynamicsWorld->addRigidBody(rigidBody);
+	this->customBodies.push_back(body);
+
+	return body;
+}
+
+ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
+{
+	SimpleRigidBody* body = new SimpleRigidBody;
+
+	// Add collision shape
+	btCollisionShape* collisionShape = new btCylinderShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
 	body->SetCollisionShape(collisionShape);
 
 	// Add motion state
