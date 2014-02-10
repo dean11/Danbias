@@ -2,7 +2,6 @@
 #include <fstream>
 #include <map>
 #include "../FileLoader/GeneralLoader.h"
-#include "Resource\OysterResource.h"
 
 const char* ShaderFunction = "main";
 
@@ -49,7 +48,7 @@ namespace Oyster
 			case Oyster::Graphics::Core::PipelineManager::Vertex:
 				if(!VSMap.count(name) || ForceReload)
 				{
-					data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderV, -1, ForceReload);
+					data = Core::loader.LoadResource(filename.c_str(),Loading::LoadShaderV, Loading::UnloadShaderV, -1, ForceReload);
 					if(data)
 					{
 						if(ForceReload && VSMap.count(name))
@@ -65,7 +64,7 @@ namespace Oyster
 				}
 				break;
 			case Oyster::Graphics::Core::PipelineManager::Hull:
-				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderH, -1, ForceReload);
+				data = Core::loader.LoadResource(filename.c_str(),Loading::LoadShaderH, Loading::UnloadShaderH, -1, ForceReload);
 				if(!HSMap.count(name) || ForceReload)
 				{
 					if(data!=0)
@@ -84,7 +83,7 @@ namespace Oyster
 				}
 				break;
 			case Oyster::Graphics::Core::PipelineManager::Domain:
-				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderD, -1, ForceReload);
+				data = Core::loader.LoadResource(filename.c_str(),Loading::LoadShaderD, Loading::UnloadShaderD, -1, ForceReload);
 				if(!DSMap.count(name) || ForceReload)
 				{
 					if(data!=0)
@@ -102,7 +101,7 @@ namespace Oyster
 				}
 				break;
 			case Oyster::Graphics::Core::PipelineManager::Geometry:
-				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderG, -1, ForceReload);
+				data = Core::loader.LoadResource(filename.c_str(),Loading::LoadShaderG, Loading::UnloadShaderG, -1, ForceReload);
 				if(!GSMap.count(name) || ForceReload)
 				{
 					if(data!=0)
@@ -120,7 +119,7 @@ namespace Oyster
 				}
 				break;
 			case Oyster::Graphics::Core::PipelineManager::Pixel:
-				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderP, -1, ForceReload);
+				data = Core::loader.LoadResource(filename.c_str(),Loading::LoadShaderP, Loading::UnloadShaderP, -1, ForceReload);
 				if(!PSMap.count(name) || ForceReload)
 				{
 					if(data!=0)
@@ -138,7 +137,7 @@ namespace Oyster
 				}
 				break;
 			case Oyster::Graphics::Core::PipelineManager::Compute:
-				data = Resource::OysterResource::LoadResource(filename.c_str(),Loading::LoadShaderC, -1, ForceReload);
+				data = Core::loader.LoadResource(filename.c_str(),Loading::LoadShaderC, Loading::UnloadShaderC, -1, ForceReload);
 				if(!CSMap.count(name) || ForceReload)
 				{
 					if(data!=0)

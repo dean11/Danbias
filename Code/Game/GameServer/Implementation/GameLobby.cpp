@@ -17,18 +17,18 @@ namespace DanBias
 	{   }
 
 	GameLobby::~GameLobby()
-	{  }
+	{  
+		this->clients.Clear();
+	}
 
 	void GameLobby::Release()
 	{  
 		NetworkSession::CloseSession(true);
+		this->gameSession.CloseSession(true);
 	}
 
 	void GameLobby::Update()
 	{
-		if(GetAsyncKeyState(VK_DOWN))	//TODO: Dont forget to remove this...
-			this->Send(*GameLogic::Protocol_General_Status().GetProtocol());
-
 		this->ProcessClients();
 	}
 	void GameLobby::SetGameDesc(const LobbyLevelData& desc)
@@ -45,20 +45,21 @@ namespace DanBias
 		desc.mapNumber = this->description.mapNumber;		
 		desc.maxClients = this->description.maxClients;	
 	}
-	bool GameLobby::StartGameSession()
+	bool GameLobby::StartGameSession(  )
 	{
 		GameSession::GameDescription desc;
-		desc.gameMode = this->description.gameMode;
-		desc.gameTime = this->description.gameTime;
-		desc.mapNumber = this->description.mapNumber;
-		desc.owner = this;
-		desc.clients = this->clients;
+			desc.gameMode = this->description.gameMode;
+			desc.gameTime = this->description.gameTime;
+			desc.mapNumber = this->description.mapNumber;
+			desc.owner = this;
+			desc.clients = this->clients;
 
-		this->clients.Clear();
+		this->clients.Clear();	//Remove clients from lobby list
 		
 		if(this->gameSession.Create(desc))
 		{
 			this->gameSession.Run();
+
 			return true;
 		}
 		return false;
@@ -85,29 +86,36 @@ namespace DanBias
 	void GameLobby::ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client)
 	{
 		printf("New client(%i) connected - %s \n", client->GetID(), client->GetIpAddress().c_str());
-		Attach(client);
 
-		Protocol_LobbyClientData p1;
-		Protocol_LobbyGameData p2;
-		
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		if(this->gameSession)
 		{
-			if(this->clients[i])
-			{
-				Protocol_LobbyClientData::PlayerData t;
-				t.id = this->clients[i]->GetID();
-				t.ip = this->clients[i]->GetIpAddress();
-				t.team = 0;
-				t.name = "DennisÄrKung";
-				p1.list.Push(t);
-			}
+			this->gameSession.Attach(client);
 		}
-		p2.majorVersion = 1;
-		p2.minorVersion = 0;
-		p2.mapName = "BetsMap";
+		else
+		{
+			Attach(client);
+			Protocol_LobbyClientData p1;
+			Protocol_LobbyGameData p2;
+		
+			for (unsigned int i = 0; i < this->clients.Size(); i++)
+			{
+				if(this->clients[i])
+				{
+					Protocol_LobbyClientData::PlayerData t;
+					t.id = this->clients[i]->GetID();
+					t.ip = this->clients[i]->GetIpAddress();
+					t.team = 0;
+					t.name = "Dennis är kung tycker Erik!";
+					p1.list.Push(t);
+				}
+			}
+			p2.majorVersion = 1;
+			p2.minorVersion = 0;
+			p2.mapName = "Dennis är kung tycker Erik!";
 
-		client->Send(p1.GetProtocol());
-		client->Send(p2.GetProtocol());
+			client->Send(p1.GetProtocol());
+			client->Send(p2.GetProtocol());
+		}
 	}
 
 }//End namespace DanBias

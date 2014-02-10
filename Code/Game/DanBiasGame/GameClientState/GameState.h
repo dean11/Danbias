@@ -7,6 +7,11 @@
 //#include "Camera.h"
 #include "Camera_FPS.h"
 
+#include "LevelLoader/LevelLoader.h"
+#include "C_obj/C_Player.h"
+#include "C_obj/C_DynamicObj.h"
+#include "C_obj/C_StaticObj.h"
+#include "DynamicArray.h"
 namespace DanBias
 {
 namespace Client
@@ -34,15 +39,19 @@ private:
 	//float pitch;
 	struct myData;
 	myData* privData;
+	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_StaticObj>> staticObjects;
+	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Object>> dynamicObjects;
+	//Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Player>> playObjects;
 public:
 	GameState(void);
 	~GameState(void);
 	bool Init(Oyster::Network::NetworkClient* nwClient);
 	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
-	bool LoadModels(std::wstring mapFile) ;
+	bool LoadModels(std::string mapFile);
+	bool LoadModels();
 	bool InitCamera(Oyster::Math::Float3 startPos) ;
+	void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 	gameStateState LoadGame();
-	void setClientId(int id);
 	void readKeyInput(InputClass* KeyInput);
 	bool Render()override;
 	bool Release()override;

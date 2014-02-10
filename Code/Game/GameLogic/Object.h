@@ -27,6 +27,7 @@ namespace GameLogic
 
 		// API overrides
 		OBJECT_TYPE GetObjectType() const;
+		void setID(int id);
 		int GetID() const;
 		Oyster::Math::Float3 GetPosition();
 		Oyster::Math::Float4x4 GetOrientation();
@@ -43,7 +44,8 @@ namespace GameLogic
 
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
-	private:
+	
+	public: //TODO: Hax This should be private when level is dynamic
 		OBJECT_TYPE type;
 		int objectID;
 

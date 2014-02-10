@@ -32,10 +32,10 @@ Texture2D DepthTexture					: register(t2);
 StructuredBuffer<PointLight> Points		: register(t3);
 
 Texture1D SSAOKernel					: register(t4);
-Texture1D SSAORand						: register(t5);
+Texture2D SSAORand						: register(t5);
 
 RWTexture2D<float4> Diffuse				: register(u0);
 RWTexture2D<float4> Specular			: register(u1);
-RWTexture2D<float> Ambient				: register(u2);
+RWTexture2D<float4> Ambient				: register(u2);
 
 #endif

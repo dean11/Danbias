@@ -35,13 +35,11 @@ TeamManager::~TeamManager(void)
 
 void TeamManager::RespawnPlayerRandom(Player *player)
 {
-																// Whats going on here?
-	int teamID = player->GetTeamID();							// ?
-																// ?
-	Player *respawnOnThis = this->teams[teamID]->GetPlayer(0);	// ?
-																// ?
-	player->Respawn(respawnOnThis->GetPosition());				// ?
-																// player->Respawn(player->GetPosition()); ?
+	int teamID = player->GetTeamID();
+
+	Player *respawnOnThis = this->teams[teamID]->GetPlayer(0);
+
+	player->Respawn(respawnOnThis->GetPosition());
 }
 
 void TeamManager::CreateTeam(int teamSize)

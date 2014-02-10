@@ -2,7 +2,6 @@
 #include "..\Core\Dx11Includes.h"
 #include "..\Core\Core.h"
 #include "ObjReader.h"
-#include "..\..\Misc\Resource\OysterResource.h"
 
 HRESULT CreateWICTextureFromFileEx( ID3D11Device* d3dDevice,
 											 ID3D11DeviceContext* d3dContext,
@@ -16,18 +15,17 @@ HRESULT CreateWICTextureFromFileEx( ID3D11Device* d3dDevice,
 											 ID3D11Resource** texture,
 											 ID3D11ShaderResourceView** textureView );
 
-void Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[], Oyster::Resource::CustomData& out)
+void* Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[])
 {
 	ID3D11ShaderResourceView* srv = NULL;
 	HRESULT hr = CreateWICTextureFromFileEx(Core::device,Core::deviceContext,filename,0,D3D11_USAGE_DEFAULT,D3D11_BIND_SHADER_RESOURCE,0,0,false,NULL,&srv);
 	if(hr!=S_OK)
 	{
-		memset(&out,0,sizeof(out));
+		return NULL;
 	}
 	else
 	{
-		out.loadedData = (void*)srv;
-		out.resourceUnloadFnc = Loading::UnloadTexture;
+		return srv;
 	}
 }
 
@@ -37,7 +35,7 @@ void Oyster::Graphics::Loading::UnloadTexture(void* data)
 	SAFE_RELEASE(srv);
 }
 
-void Oyster::Graphics::Loading::LoadOBJ(const wchar_t filename[], Oyster::Resource::CustomData& out)
+void* Oyster::Graphics::Loading::LoadOBJ(const wchar_t filename[])
 {
 	FileLoaders::ObjReader obj;
 	obj.LoadFile(filename);
@@ -57,12 +55,11 @@ void Oyster::Graphics::Loading::LoadOBJ(const wchar_t filename[], Oyster::Resour
 	info->Vertices->Init(desc);
 	info->Indexed = false;
 
-	void* texture = Oyster::Resource::OysterResource::LoadResource((std::wstring(filename)+ L".png").c_str(),Graphics::Loading::LoadTexture);
+	void* texture = Core::loader.LoadResource((std::wstring(filename)+ L".png").c_str(),Graphics::Loading::LoadTexture, Graphics::Loading::UnloadTexture);
 
 	info->Material.push_back((ID3D11ShaderResourceView*)texture);
 
-	out.loadedData = info;
-	out.resourceUnloadFnc = Oyster::Graphics::Loading::UnloadOBJ;
+	return info;
 }
 
 void Oyster::Graphics::Loading::UnloadOBJ(void* data)
@@ -75,7 +72,7 @@ void Oyster::Graphics::Loading::UnloadOBJ(void* data)
 	}
 	for(int i =0;i<info->Material.size();++i)
 	{
-		Oyster::Resource::OysterResource::ReleaseResource(info->Material[i]);
+		Core::loader.ReleaseResource(info->Material[i]);
 	}
 	delete info;
 }

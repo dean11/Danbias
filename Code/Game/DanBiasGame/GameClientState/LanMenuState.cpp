@@ -64,15 +64,16 @@ bool LanMenuState::LoadModels(std::wstring file)
 
 	ModelInitData modelData;
 
-	modelData.world = Oyster::Math3D::Float4x4::identity;
+	modelData.position = Oyster::Math::Float3(0,0,0);
+	modelData.rotation = Oyster::Math::Quaternion::identity;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.visible = true;
 	modelData.modelPath = L"..\\Content\\Models\\box_2.dan";
 	// load models
 	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);
 
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(-2,-2,-2));
-	modelData.world = modelData.world * translate;
+	modelData.position = Oyster::Math::Float3(-2, -2, -2);
 
 	privData->object[1] = new C_DynamicObj();
 	privData->object[1]->Init(modelData);

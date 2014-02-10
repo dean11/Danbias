@@ -19,11 +19,12 @@ C_UIobject::~C_UIobject(void)
 }
 void C_UIobject::Init(ModelInitData modelInit)
 {
+	C_Object::Init(modelInit);
 	// load models
 	privData = new myData();
 	privData->model = Oyster::Graphics::API::CreateModel(modelInit.modelPath);
-	privData->model->WorldMatrix = modelInit.world;
 	privData->model->Visible = modelInit.visible;
+	privData->model->WorldMatrix = getWorld();
 	privData->ID = modelInit.id;
 
 }

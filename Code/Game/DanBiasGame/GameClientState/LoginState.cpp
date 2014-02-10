@@ -53,26 +53,18 @@ bool LoginState::LoadModels(std::wstring file)
 
 	ModelInitData modelData;
 
-	modelData.world = Oyster::Math3D::Float4x4::identity;
+	modelData.rotation = Oyster::Math::Quaternion::identity;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.visible = true;
-	modelData.modelPath = L"identityPlane.dan";
-	// load models
-	Oyster::Math3D::Float4x4 translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(2,2,-2));
-	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Float4x4::identity;
-	int scaling = 2;
-	scale.v[0].x = scaling;
-	scale.v[1].y = scaling;
-	scale.v[2].z = scaling;
+	modelData.modelPath = L"box.dan";
+	
 
-	modelData.world = translate; //scale * translate * rot;
-	privData->object[0] = new C_DynamicObj();
+	modelData.position = Oyster::Math::Float3(2,2,2);
+	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);
 
-	translate =  Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(0,0,-2));
-	modelData.world = translate ;//* rot;
-
-	privData->object[1] = new C_DynamicObj();
+	modelData.position = Oyster::Math::Float3(-2,0,-2);
+	privData->object[1] = new C_StaticObj();
 	privData->object[1]->Init(modelData);
 	return true;
 }
@@ -105,7 +97,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 		DanBias::GameServerAPI::ServerInitiate(desc);
 		DanBias::GameServerAPI::ServerStart();
 		// my ip
-		nwClient->Connect(15151, "127.0.0.1");
+		nwClient->Connect(15152, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{
@@ -118,7 +110,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	if( KeyInput->IsKeyPressed(DIK_J)) 
 	{
 		// game ip
-		nwClient->Connect(15151, "127.0.0.1");
+		nwClient->Connect(15152, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{

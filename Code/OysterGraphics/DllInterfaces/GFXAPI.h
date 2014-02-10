@@ -26,6 +26,7 @@ namespace Oyster
 			};
 			struct Option
 			{
+				std::wstring modelPath, texturePath;
 			};
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
