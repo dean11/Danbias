@@ -27,8 +27,8 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID )
 		Shaded.Specular += light.Specular;
 	}
 
-	Diffuse[DTid.xy] = float4(Shaded.Diffuse * DiffuseGlow[DTid.xy].xyz,1);
-	Specular[DTid.xy] = float4(Shaded.Specular, 1);
+	Diffuse[DTid.xy] = float4(Shaded.Diffuse * DiffuseGlow[DTid.xy].xyz,0);
+	Specular[DTid.xy] = float4(Shaded.Specular, 0);
 
 	
 	if(DTid.x & 1 && DTid.y & 1 )
