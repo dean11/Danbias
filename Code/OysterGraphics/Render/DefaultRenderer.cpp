@@ -49,7 +49,7 @@ namespace Oyster
 					Resources::Post::Data.Unmap();
 				}
 
-				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
+				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection, float deltaTime)
 				{
 					for(int i = 0; i < count; ++i)
 					{
@@ -64,8 +64,9 @@ namespace Oyster
 							Model::ModelInfo* info = models[i].info;
 							
 							Definitions::AnimationData am;	//final
-							if(info->Animated && models[i].Animation.data.AnimationPlaying != NULL)
+							if(info->Animated && models[i].Animation.AnimationPlaying != NULL)
 							{
+								models[i].Animation.AnimationTime += deltaTime;
 								cube->WorldMatrix = Math::Matrix::identity;
 								////store inverse absolut transform
 								Math::Matrix SkinTransform[100];
@@ -91,11 +92,11 @@ namespace Oyster
 									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
 								}
 								int b = 0;
-								Model::Animation A = *models[i].Animation.data.AnimationPlaying;
-								while(models[i].Animation.data.AnimationTime>A.duration)
-									models[i].Animation.data.AnimationTime -= (float)A.duration;
+								Model::Animation A = *models[i].Animation.AnimationPlaying;
+								while(models[i].Animation.AnimationTime>A.duration)
+									models[i].Animation.AnimationTime -= (float)A.duration;
 									
-								float position = models[i].Animation.data.AnimationTime;
+								float position = models[i].Animation.AnimationTime;
 								for(int b = 0; b < A.Bones;++b)
 								{
 									//find current frame

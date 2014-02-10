@@ -14,7 +14,7 @@ namespace Oyster
 			{
 			public:
 				static void NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights);
-				static void RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection);
+				static void RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection, float DeltaTime = 0);
 				static void EndFrame();
 				
 				static Model::Model* cube;

@@ -19,17 +19,12 @@ namespace Oyster
 				float AnimationTime;
 				bool LoopAnimation;
 			};
-			struct AnimationPlayer
-			{
-				AnimationData data;
-				ModelInfo* info;
-			};
 			struct Model
 			{
 				ModelInfo* info;
 				Oyster::Math::Float4x4 WorldMatrix;
 				bool Visible;
-				AnimationPlayer Animation;
+				AnimationData Animation;
 			};
 		}
 		

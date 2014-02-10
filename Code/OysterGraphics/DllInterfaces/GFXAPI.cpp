@@ -18,7 +18,7 @@ namespace Oyster
 			Math::Float4x4 View;
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight*> Lights;
-			float dt=0;
+			float deltaTime;
 		}
 
 		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
@@ -61,12 +61,12 @@ namespace Oyster
 
 		void API::RenderScene(Model::Model models[], int count)
 		{
-			Render::DefaultRenderer::RenderScene(models,count, View, Projection);
+			Render::DefaultRenderer::RenderScene(models,count, View, Projection, deltaTime);
 		}
 
-		void API::RenderModel(Model::Model& m)
+		void API::RenderModel(Model::Model* m)
 		{
-			Render::DefaultRenderer::RenderScene(&m,1, View, Projection);
+			Render::DefaultRenderer::RenderScene(m,1, View, Projection, deltaTime);
 		}
 
 		void API::EndFrame()
@@ -87,7 +87,7 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-			m->Animation.data.AnimationPlaying = NULL;
+			m->Animation.AnimationPlaying = NULL;
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -177,10 +177,15 @@ namespace Oyster
 
 		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
 		{
-			m->Animation.data.AnimationPlaying = &(*m->info->Animations.find(name)).second;
-			m->Animation.data.AnimationTime=0;
-			m->Animation.data.LoopAnimation = looping;
-			return m->Animation.data.AnimationPlaying->duration;
+			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
+			m->Animation.AnimationTime=0;
+			m->Animation.LoopAnimation = looping;
+			return m->Animation.AnimationPlaying->duration;
+		}
+
+		void API::Update(float dt)
+		{
+			deltaTime = dt;
 		}
 	}
 }

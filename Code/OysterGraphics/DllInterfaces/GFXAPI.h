@@ -51,7 +51,7 @@ namespace Oyster
 			//! @brief Renders a list of models
 			static void RenderScene(Oyster::Graphics::Model::Model models[], int count);
 			//! @brief Renders a single model
-			static void RenderModel(Oyster::Graphics::Model::Model& model);
+			static void RenderModel(Oyster::Graphics::Model::Model* model);
 
 			//! @brief Configures Renderer to process 2D graphics, data will be passed in to EndFrame()
 			static void StartGuiRender();
