@@ -3,7 +3,10 @@
 #include "GameClientState.h"
 #include "OysterMath.h"
 #include <string>
-#include "Camera.h"
+
+//#include "Camera.h"
+#include "Camera_FPS.h"
+
 namespace DanBias
 {
 namespace Client
@@ -24,10 +27,11 @@ private:
 	bool key_strafeLeft;
 	bool key_Shoot;
 	bool key_Jump;
-	Camera* camera;
+	Camera_FPS camera;
+	//Camera* camera;
 
 	int myId;
-	float pitch;
+	//float pitch;
 	struct myData;
 	myData* privData;
 public:

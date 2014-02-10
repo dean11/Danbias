@@ -200,6 +200,9 @@
     <ProjectReference Include="..\..\OysterMath\OysterMath.vcxproj">
       <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\WindowManager\WindowManager.vcxproj">
+      <Project>{35aea3c0-e0a7-4e1e-88cd-514aa5a442b1}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GameLogic\GameLogic.vcxproj">
       <Project>{b1195bb9-b3a5-47f0-906c-8dea384d1520}</Project>
     </ProjectReference>

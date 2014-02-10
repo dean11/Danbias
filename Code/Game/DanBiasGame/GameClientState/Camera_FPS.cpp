@@ -116,7 +116,7 @@ void Camera_FPS::PitchUp( Float radian )
 
 void Camera_FPS::PitchDown( Float radian )
 {
-	this->PitchDown( -radian );
+	this->PitchUp( -radian );
 }
 
 void Camera_FPS::YawRight( Float radian )

@@ -4,23 +4,22 @@
 #include "C_obj/C_DynamicObj.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-#include "Camera.h"
+//#include "Camera.h"
 #include <GameServerAPI.h>
 
 using namespace DanBias::Client;
+using namespace ::Oyster::Math3D;
 
 struct  GameState::myData
 {
 	myData(){}
-	Oyster::Math3D::Float4x4 view;
-	Oyster::Math3D::Float4x4 proj; 
+	//Oyster::Math3D::Float4x4 view;
+	//Oyster::Math3D::Float4x4 proj; 
 	std::vector<C_Object*> object;
 	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
-	
-
-}privData;
+} privData;
 
 GameState::GameState(void)
 {
@@ -38,12 +37,12 @@ GameState::~GameState(void)
 bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	// load models
-	camera = new Camera;
+	//camera = new Camera;
 	privData = new myData();
 	privData->state = gameStateState_loading;
 	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
-	pitch = 0;
+	//pitch = 0;
 	return true;
 }
 GameState::gameStateState GameState::LoadGame() 
@@ -203,29 +202,37 @@ bool GameState::LoadModels(std::wstring mapFile)
 
 	return true;
 }
-bool GameState::InitCamera(Oyster::Math::Float3 startPos)
+bool GameState::InitCamera( Oyster::Math::Float3 startPos )
 {
-	Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,1);
-	Oyster::Math::Float3 up =Oyster::Math::Float3(0,1,0);
-	Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 20);
+	camera.SetHeadOffset( Float3(0.0f, 1.0f, -2.0f) );
 
-	camera->LookAt(pos, dir, up);
-	camera->SetLens(3.14f/2, 1024/768, 1, 1000);
+	//Oyster::Math::Float3 dir = Oyster::Math::Float3(0,0,1);
+	//Oyster::Math::Float3 up =Oyster::Math::Float3(0,1,0);
+	//Oyster::Math::Float3 pos = Oyster::Math::Float3(0, 0, 20);
 
-	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1024.0f/768.0f,.1f,1000);
+	camera.SetPerspectiveProjection( Oyster::Math::pi/2.0f, 1024.0f/768.0f, 1.0f, 1000.0f );
+	Oyster::Graphics::API::SetProjection( Float4x4(camera.GetProjectionMatrix()) ); // TODO: remove copy wrapper when no longer needed
+
+	//camera->LookAt(pos, dir, up);
+	//camera->SetLens(3.14f/2, 1024/768, 1, 1000);
+
+	//privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
-	Oyster::Graphics::API::SetProjection(privData->proj);
-	camera->UpdateViewMatrix();
-	privData->view = camera->View();
-	privData->view = Oyster::Math3D::ViewMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
-	privData->view = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
-	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
+	//Oyster::Graphics::API::SetProjection( privData->proj );
+
+	//camera->UpdateViewMatrix();
+	//privData->view = camera->View();
+	//privData->view = Oyster::Math3D::ViewMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
+	//privData->view = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
+	//privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
 }
+
 void GameState::setClientId(int id)
 {
 	myId = id;
 }
+
 GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
 {
 	switch (privData->state)
@@ -246,7 +253,8 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 		// update objects
 		{
 			readKeyInput(KeyInput);
-			camera->UpdateViewMatrix();
+			camera.UpdateOrientation();
+			//camera->UpdateViewMatrix();
 
 		}
 		break;
@@ -262,10 +270,13 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 }
 bool GameState::Render()
 {
-	Oyster::Graphics::API::SetView(camera->View());
+	Oyster::Graphics::API::SetView( camera.GetViewMatrix() );
+
+	//Oyster::Graphics::API::SetView(camera->View());
 	//Oyster::Graphics::API::SetProjection(camera->Proj());
 	//Oyster::Graphics::API::SetView(privData->view);
-	Oyster::Graphics::API::SetProjection(privData->proj);
+	//Oyster::Graphics::API::SetProjection(privData->proj);
+
 	Oyster::Graphics::API::NewFrame();
 	for (unsigned int i = 0; i < privData->object.size(); i++)
 	{
@@ -355,18 +366,23 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	//send delta mouse movement 
 	if (KeyInput->IsMousePressed())
 	{
-		camera->Yaw(-KeyInput->GetYaw());
-		camera->Pitch(KeyInput->GetPitch());
-		pitch = KeyInput->GetPitch();
-		camera->UpdateViewMatrix();
+		camera.YawRight( KeyInput->GetYaw() );
+		camera.PitchUp( KeyInput->GetPitch() );
+		camera.UpdateOrientation();
+
+		//camera->Yaw(-KeyInput->GetYaw());
+		//->Pitch(KeyInput->GetPitch());
+		//pitch = KeyInput->GetPitch();
+		//camera->UpdateViewMatrix();
 		GameLogic::Protocol_PlayerLook playerLookDir;
-		Oyster::Math::Float4 look = camera->GetLook();
+		Float4 look = Float4( camera.GetLook(), 0.0f );
+		//Float4 look = camera->GetLook();
 		playerLookDir.lookDirX = look.x;
 		playerLookDir.lookDirY = look.y;
 		playerLookDir.lookDirZ = look.z;
 		playerLookDir.deltaX = -KeyInput->GetYaw();
 
-		privData->nwClient->Send(playerLookDir);
+		privData->nwClient->Send( playerLookDir );
 	}
 
 	// shoot
@@ -470,16 +486,15 @@ void GameState::Protocol( ObjPos* pos )
 				Oyster::Math::Float3 objForward = (Oyster::Math::Float3(world[8], world[9], world[10]));
 				Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13], world[14]);
 
-				Oyster::Math::Float3 cameraLook = camera->GetLook();
-				Oyster::Math::Float3 cameraUp = camera->GetUp();
-				
-			
+				//Oyster::Math::Float3 cameraLook = camera->GetLook();
+				//Oyster::Math::Float3 cameraUp = camera->GetUp();
 
 				/*Oyster::Math::Float3 newUp = cameraUp.Dot(up);
 				up *= newUp;
 				up.Normalize();
 				Oyster::Math::Float3 newLook = up.Cross(right);
 				newLook.Normalize();*/
+
 
 				camera->setRight(right);
 				camera->setUp(up);
