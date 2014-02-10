@@ -34,7 +34,7 @@ void C_UIobject::setPos(Oyster::Math::Float4x4 world)
 
 void C_UIobject::Render()
 {
-	Oyster::Graphics::API::RenderModel(*(privData->model));
+	Oyster::Graphics::API::RenderModel(privData->model);
 }
 void C_UIobject::Release()
 {

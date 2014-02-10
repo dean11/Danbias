@@ -187,7 +187,7 @@ HRESULT InitDirect3D()
 	pl.Pos = Oyster::Math::Float3(0,-20.0f,0.4f);
 	pl.Radius = 90;
 
-	Oyster::Graphics::API::AddLight(&pl);
+	Oyster::Graphics::API::AddLight(pl);
 
 
 	return S_OK;

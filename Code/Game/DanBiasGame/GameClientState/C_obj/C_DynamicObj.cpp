@@ -35,7 +35,7 @@ void C_DynamicObj::setPos(Oyster::Math::Float4x4 world)
 
 void C_DynamicObj::Render()
 {
-	Oyster::Graphics::API::RenderModel(*(privData->model));
+	Oyster::Graphics::API::RenderModel(privData->model);
 }
 void C_DynamicObj::Release()
 {

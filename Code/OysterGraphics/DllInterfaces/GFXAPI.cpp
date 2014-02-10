@@ -17,7 +17,7 @@ namespace Oyster
 		{
 			Math::Float4x4 View;
 			Math::Float4x4 Projection;
-			std::vector<Definitions::Pointlight*> Lights;
+			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
 		}
 
@@ -55,7 +55,7 @@ namespace Oyster
 			}
 			else
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0);
+				Render::DefaultRenderer::NewFrame(View, Projection, Definitions::Pointlight(), 0);
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace Oyster
 			SAFE_RELEASE(Core::device);
 		}
 
-		void API::AddLight(Definitions::Pointlight *light)
+		void API::AddLight(Definitions::Pointlight light)
 		{
 			Lights.push_back(light);
 		}

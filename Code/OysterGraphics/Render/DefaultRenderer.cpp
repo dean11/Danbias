@@ -16,7 +16,7 @@ namespace Oyster
 				Model::Model* DefaultRenderer::cube = NULL;
 				Model::Model* DefaultRenderer::cube2 = NULL; 
 
-				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
+				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight Lights, int numLights)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
 					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
@@ -37,7 +37,7 @@ namespace Oyster
 					Resources::Light::LightConstantsData.Unmap();
 
 					data = Resources::Light::PointLightsData.Map();
-					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
+					memcpy(data, &Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
 
 					Definitions::PostData pd;

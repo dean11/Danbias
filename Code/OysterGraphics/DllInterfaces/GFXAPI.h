@@ -71,7 +71,7 @@ namespace Oyster
 			static void DeleteTexture(Texture);
 
 			//! @brief adds a light to the scene
-			static void AddLight(Definitions::Pointlight* light);
+			static void AddLight(Definitions::Pointlight light);
 			//! @brief removes all lights from the scene
 			static void ClearLights();
 
