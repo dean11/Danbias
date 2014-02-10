@@ -71,7 +71,7 @@ Game::PlayerData* Game::CreatePlayer()
 	int i = InsertObject(this->players, (PlayerData*)0);
 
 	this->players[i] = new PlayerData();
-	//this->players[i]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	this->players[i]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
 
 	return this->players[i];
 }

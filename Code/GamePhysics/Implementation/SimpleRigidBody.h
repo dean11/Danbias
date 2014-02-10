@@ -4,42 +4,50 @@
 #include "..\PhysicsAPI.h"
 #include <btBulletDynamicsCommon.h>
 
-namespace Oyster { namespace Physics
-{
-	class SimpleRigidBody : public ICustomBody
+namespace Oyster 
+{ 
+	namespace Physics
 	{
-	public:
-		SimpleRigidBody();
-		SimpleRigidBody( const API::SimpleBodyDescription &desc );
-		virtual ~SimpleRigidBody();
+		class SimpleRigidBody : public ICustomBody
+		{
+		public:
+			SimpleRigidBody();
+			virtual ~SimpleRigidBody();
 
-		void SetCollisionShape(btCollisionShape* shape);
-		void SetMotionState(btDefaultMotionState* motionState);
-		void SetRigidBody(btRigidBody* rigidBody);
-		
-		void SetSubscription(EventAction_AfterCollisionResponse function);
-		void CallSubsciptMessage(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss);
+			void SetCollisionShape(btCollisionShape* shape);
+			void SetMotionState(btDefaultMotionState* motionState);
+			void SetRigidBody(btRigidBody* rigidBody);
+			
+			void SetSubscription(EventAction_AfterCollisionResponse function);
+			void SetSubscription(EventAction_Move function);
 
-		State GetState() const;
-		State & GetState( State &targetMem ) const;
-		void SetState( const State &state );
+			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss);
+			void CallSubscription_Move();
 
-		btDefaultMotionState* GetMotionState() const;
+			State GetState() const;
+			State & GetState( State &targetMem ) const;
+			void SetState( const State &state );
 
-		void SetCustomTag( void *ref );
-		void* GetCustomTag() const;
+			btCollisionShape* GetCollisionShape() const;
+			btDefaultMotionState* GetMotionState() const;
+			btRigidBody* GetRigidBody() const;
 
-	private:
-		btCollisionShape* collisionShape;
-		btDefaultMotionState* motionState;
-		btRigidBody* rigidBody;
+			void SetCustomTag( void *ref );
+			void* GetCustomTag() const;
 
-		Struct::CustomBodyState state;
+			private:
+			btCollisionShape* collisionShape;
+			btDefaultMotionState* motionState;
+			btRigidBody* rigidBody;
 
-		EventAction_AfterCollisionResponse afterCollision;
+			Struct::CustomBodyState state;
 
-		void *customTag;
-	};
-} }
+			EventAction_AfterCollisionResponse afterCollision;
+			EventAction_Move onMovement;
+
+			void *customTag;
+		};
+	} 
+}
 
 #endif

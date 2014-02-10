@@ -142,6 +142,8 @@ namespace Oyster
 			virtual void SetState( const State &state ) = 0;		
 
 			virtual void SetSubscription(EventAction_AfterCollisionResponse function) = 0;
+			virtual void SetSubscription(EventAction_Move function) = 0;
+
 
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.

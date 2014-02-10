@@ -102,7 +102,7 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 
 void API_Impl::UpdateWorld()
 {
-	this->dynamicsWorld->stepSimulation(1.0f/120.0f, 1.0f, 1.0f/120.0f);
+	this->dynamicsWorld->stepSimulation(1.0f/60.0f, 1.0f, 1.0f/60.0f);
 
 	ICustomBody::State state;
 
@@ -115,6 +115,10 @@ void API_Impl::UpdateWorld()
 		state.centerPos = Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
 		state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
 		
+		if(dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetRigidBody()->getActivationState() == ACTIVE_TAG)
+		{
+			dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->CallSubscription_Move();
+		}
 
 		this->customBodies[i]->SetState(state);
 	}
@@ -129,8 +133,8 @@ void API_Impl::UpdateWorld()
 		ICustomBody* bodyA = (ICustomBody*)obA->getUserPointer();
 		ICustomBody* bodyB = (ICustomBody*)obB->getUserPointer();
 
-		//dynamic_cast<SimpleRigidBody*>(bodyA)->CallSubsciptMessage(bodyA, bodyB, 0.0f);
-		//dynamic_cast<SimpleRigidBody*>(bodyB)->CallSubsciptMessage(bodyB, bodyA, 0.0f);
+		dynamic_cast<SimpleRigidBody*>(bodyA)->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
+		dynamic_cast<SimpleRigidBody*>(bodyB)->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
 
 		int numContacts = contactManifold->getNumContacts();
 		for (int j=0;j<numContacts;j++)

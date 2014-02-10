@@ -22,14 +22,8 @@ SimpleRigidBody::SimpleRigidBody()
 	this->state.restitutionCoeff = 0.0f;
 	this->state.reach = Float3(0.0f, 0.0f, 0.0f);
 
-	this->customTag = nullptr;
-}
-
-SimpleRigidBody::SimpleRigidBody( const API::SimpleBodyDescription &desc )
-{	
-	this->collisionShape = NULL;
-	this->motionState = NULL;
-	this->rigidBody = NULL;
+	this->afterCollision = NULL;
+	this->onMovement = NULL;
 
 	this->customTag = nullptr;
 }
@@ -65,14 +59,36 @@ void SimpleRigidBody::SetSubscription(EventAction_AfterCollisionResponse functio
 	this->afterCollision = function;
 }
 
-void SimpleRigidBody::CallSubsciptMessage(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
+void SimpleRigidBody::SetSubscription(EventAction_Move function)
 {
-	this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
+	this->onMovement = function;
+}
+
+void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
+{
+	if(this->onMovement)
+		this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
+}
+
+void SimpleRigidBody::CallSubscription_Move()
+{
+	if(this->onMovement)
+		this->onMovement(this);
+}
+
+btCollisionShape* SimpleRigidBody::GetCollisionShape() const
+{
+	return this->collisionShape;
 }
 
 btDefaultMotionState* SimpleRigidBody::GetMotionState() const
 {
 	return this->motionState;
+}
+
+btRigidBody* SimpleRigidBody::GetRigidBody() const
+{
+	return this->rigidBody;
 }
 
 SimpleRigidBody::State SimpleRigidBody::GetState() const
