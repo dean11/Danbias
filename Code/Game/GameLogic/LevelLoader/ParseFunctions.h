@@ -21,6 +21,7 @@ namespace GameLogic
 		void ParseObject(char* buffer, void *header, int size);
 		void ParseObject(char* buffer, ObjectHeader& header, int& size);
 		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size);
+		void ParseBoundingVolume(char* buffer, LevelLoaderInternal::BoundingVolume& volume, int &size);
 	}
 }
 
