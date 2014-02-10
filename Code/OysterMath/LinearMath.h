@@ -392,6 +392,25 @@ namespace LinearAlgebra3D
 	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
 	//}
 
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> ScalingMatrix( const ::LinearAlgebra::Vector3<ScalarType> &s )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( s.x, 0, 0, 0,
+													   0, s.y, 0, 0,
+													   0, 0, s.z, 0,
+													   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> ScalingMatrix( const ::LinearAlgebra::Vector4<ScalarType> &s )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( s.x, 0, 0, 0,
+													   0, s.y, 0, 0,
+													   0, 0, s.z, 0,
+													   0, 0, 0, s.w );
+	}
+
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
