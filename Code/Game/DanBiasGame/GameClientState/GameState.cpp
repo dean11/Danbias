@@ -53,34 +53,34 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 GameState::gameStateState GameState::LoadGame() 
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(315, 0 ,5);
-	plight.Color = Oyster::Math::Float3(0.9,0.7,0.2);
-	plight.Radius = 100;
-	plight.Bright = 0.9;
+	plight.Pos = Oyster::Math::Float3(315.0f, 0.0f ,5.0f);
+	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.2f);
+	plight.Radius = 100.0f;
+	plight.Bright = 0.9f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(10,350,5);
-	plight.Color = Oyster::Math::Float3(0.9,0.7,0.3);
-	plight.Radius = 200;
-	plight.Bright = 0.7;
+	plight.Pos = Oyster::Math::Float3(10.0f,350.0f,5.0f);
+	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.3f);
+	plight.Radius = 200.0f;
+	plight.Bright = 0.7f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(350,350,5);
-	plight.Color = Oyster::Math::Float3(0.9,0.7,0.3);
-	plight.Radius = 200;
-	plight.Bright = 0.7;
+	plight.Pos = Oyster::Math::Float3(350.0f,350.0f,5.0f);
+	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.3f);
+	plight.Radius = 200.0f;
+	plight.Bright = 0.7f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(10,350,350);
-	plight.Color = Oyster::Math::Float3(0.9,0.7,0.3);
-	plight.Radius = 200;
-	plight.Bright = 0.7;
+	plight.Pos = Oyster::Math::Float3(10.0f,350.0f,350.0f);
+	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.3f);
+	plight.Radius = 200.0f;
+	plight.Bright = 0.7f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(10,-15,5);
-	plight.Color = Oyster::Math::Float3(0,0,1);
-	plight.Radius = 50;
-	plight.Bright = 2;
+	plight.Pos = Oyster::Math::Float3(10.0f,-15.0f,5.0f);
+	plight.Color = Oyster::Math::Float3(0.0f,0.0f,1.0f);
+	plight.Radius = 50.0f;
+	plight.Bright = 2.0f;
 
 	Oyster::Graphics::API::AddLight(plight);
 	LoadModels(L"map");
-	InitCamera(Oyster::Math::Float3(0,0,20.0f));
+	InitCamera(Oyster::Math::Float3(0.0f,0.0f,20.0f));
 	return gameStateState_playing;
 }
 bool GameState::LoadModels(std::wstring mapFile)

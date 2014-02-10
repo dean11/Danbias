@@ -39,7 +39,7 @@ void C_Player::setPos(Oyster::Math::Float4x4 world)
 
 void C_Player::Render()
 {
-		Oyster::Graphics::API::RenderModel(*(privData->model));
+		Oyster::Graphics::API::RenderModel(privData->model);
 }
 void C_Player::Release()
 {

@@ -33,7 +33,7 @@ namespace Oyster
 				createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 			#endif
 			
-			createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+			//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 
 			D3D_FEATURE_LEVEL featureLevelsToTry[] = 
 			{
@@ -110,6 +110,7 @@ namespace Oyster
 			if(Core::swapChain)
 			{
 				Core::swapChain->Release();
+				Core::UsedMem -= desc.BufferDesc.Height * desc.BufferDesc.Width * 16;
 				delete Core::swapChain;
 			}
 
@@ -167,7 +168,7 @@ namespace Oyster
 			}
 
 			dxgiFactory->Release();
-
+			Core::UsedMem += desc.BufferDesc.Height * desc.BufferDesc.Width * 16;
 			return Init::Success;
 		}
 
@@ -187,6 +188,7 @@ namespace Oyster
 			if(Core::depthStencil)
 			{
 				Core::depthStencil->Release();
+				Core::UsedMem -= desc.Height * desc.Width * 4;
 				delete Core::depthStencil;
 			}
 
@@ -214,6 +216,7 @@ namespace Oyster
 			{
 				return Init::Fail;
 			}
+			Core::UsedMem += desc.Height * desc.Width * 4;
 			D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 			dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
 			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
@@ -382,6 +385,9 @@ namespace Oyster
 
 			if(FAILED(Core::device->CreateTexture2D(&texDesc,NULL,&tex)))
 				return State::Fail;
+
+			Core::UsedMem += texDesc.Height*texDesc.Width*16;
+
 			if(rtv)
 			{
 				D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;

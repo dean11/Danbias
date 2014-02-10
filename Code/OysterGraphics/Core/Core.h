@@ -46,6 +46,8 @@ namespace Oyster
 			static ID3D11RenderTargetView* rtvNULL[8];
 			static ID3D11UnorderedAccessView* uavNULL[8];
 
+			static int UsedMem;
+
 			class Buffer
 			{
 				public:

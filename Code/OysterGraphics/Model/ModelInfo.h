@@ -13,7 +13,8 @@ namespace Oyster
 		{
 			struct Bone
 			{
-				Math::Float4x4 Transform;
+				Math::Matrix Relative;
+				Math::Matrix Absolute;
 				int Parent;
 			};
 			struct Frame
@@ -23,7 +24,6 @@ namespace Oyster
 			};
 			struct Animation
 			{
-				std::wstring name;
 				int Bones;
 				int* Frames; //! Bone as index
 				Frame** Keyframes; //! @brief [Bone][Frame]
@@ -36,7 +36,7 @@ namespace Oyster
 				bool Indexed, Animated;
 				int VertexCount, IndexCount, BoneCount, AnimationCount;
 				Bone* bones;
-				Animation* Animations;
+				std::map<std::wstring,Animation> Animations;
 			};	
 		}
 	}

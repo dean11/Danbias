@@ -31,7 +31,7 @@ namespace Oyster
 			ResourceType_Byte_UTF16LE,				/**< Handle can be interpeted as char[] or char* */
 
 			ResourceType_CUSTOM,					/**< Handle can be interpeted as whatever */
-			ResourceType_INVALID,
+			ResourceType_INVALID,					/**< Handle can be interpeted as whatever */
 		};
 		
 		/** A resource handler interface to interact with when loading resources. 
