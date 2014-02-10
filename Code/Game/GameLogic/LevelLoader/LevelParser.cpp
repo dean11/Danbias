@@ -13,7 +13,7 @@ using namespace Utility::DynamicMemory;
 
 LevelParser::LevelParser()
 {
-	formatVersion.formatVersionMajor = 2;
+	formatVersion.formatVersionMajor = 3;
 	formatVersion.formatVersionMinor = 0;
 }
 
@@ -71,7 +71,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 				{
 					//These three does not have any specail variables at this time. 
 					//There for they are using the same 'parser'.
-					case ObjectSpecialType_World:
 					case ObjectSpecialType_Building:
 					case ObjectSpecialType_Damaging:
 					case ObjectSpecialType_Explosive:
@@ -113,17 +112,26 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 
 						break;
 					}
-					case ObjectSpecialType_SpawnPoint:
+					
+					case ObjectSpecialType_World:
 					{
-						SpawnPointAttributes* header = new SpawnPointAttributes;
+						WorldAttributes* header = new WorldAttributes;
 						ParseObject(&buffer[counter], *header, counter);
 
-						ParseObject(&buffer[counter], header->spawnPosition, 12);
+						ParseObject(&buffer[counter], &header->worldSize, 8);
 						objects.push_back(header);
-
 						break;
 					}
 
+					case ObjectSpecialType_Sky:
+					{
+						SkyAttributes* header = new SkyAttributes;
+						ParseObject(&buffer[counter], *header, counter);
+
+						ParseObject(&buffer[counter], &header->skySize, 4);
+						objects.push_back(header);
+						break;
+					}
 					default:
 						//Couldn't find specialType
 						break;
@@ -238,9 +246,6 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 				counter += sizeof(16);
 				break;
 			case ObjectSpecialType_Portal:
-				counter += sizeof(12);
-				break;
-			case ObjectSpecialType_SpawnPoint:
 				counter += sizeof(12);
 				break;
 			default:
