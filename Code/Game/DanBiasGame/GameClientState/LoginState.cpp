@@ -105,7 +105,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 		DanBias::GameServerAPI::ServerInitiate(desc);
 		DanBias::GameServerAPI::ServerStart();
 		// my ip
-		nwClient->Connect(15151, "127.0.0.1");
+		nwClient->Connect(15152, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{
@@ -118,7 +118,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	if( KeyInput->IsKeyPressed(DIK_J)) 
 	{
 		// game ip
-		nwClient->Connect(15151, "127.0.0.1");
+		nwClient->Connect(15152, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{

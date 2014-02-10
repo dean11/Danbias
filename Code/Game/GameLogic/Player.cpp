@@ -208,7 +208,7 @@ void Player::DamageLife(int damage)
 	{
 		this->life = 0;
 		playerState = PLAYER_STATE_DEAD;
-		this->gameInstance->onDisableFnc(this);
+		this->gameInstance->onDisableFnc(this, 0.0f);
 	}
 }
 

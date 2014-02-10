@@ -4,7 +4,11 @@
 #ifndef NETWORK_CUSTOM_NETWORK_PROTOCOL_H
 #define NETWORK_CUSTOM_NETWORK_PROTOCOL_H
 
+//needs to have dll-interface to be used by clients of class 'Oyster::Network::NetworkSession'
+#pragma warning(disable : 4251)
+
 #include <string>
+#include "Utilities.h"
 //#include <vld.h>
 #include "NetworkAPI_Preprocessor.h"
 
@@ -65,12 +69,60 @@ namespace Oyster
 			{
 				NetAttributeType type;
 				NetAttributeValue value;
-				NetAttributeContainer() { type = NetAttributeType_UNKNOWN; }
+				NetAttributeContainer() 
+				{ type = NetAttributeType_UNKNOWN; }
+				~NetAttributeContainer() 
+				{ 
+					if (this->type == NetAttributeType_CharArray)
+					{
+						delete this->value.netCharPtr;
+						this->value.netCharPtr = 0;
+					}
+				}
+				NetAttributeContainer(NetAttributeContainer& p) 
+				{ 
+					type = p.type; 
+					if(type == NetAttributeType_CharArray && p.value.netCharPtr)
+					{
+						int len = 0;
+						if((len = strlen(p.value.netCharPtr)) == 0) return;
+						len++;
+						value.netCharPtr = new char[len];
+						memcpy(&value.netCharPtr[0], &p.value.netCharPtr[0], sizeof(p.value.netCharPtr[0]) * len);
+					}
+					else
+					{
+						value = p.value;
+					}
+				}
+				const NetAttributeContainer& operator=(const NetAttributeContainer& p) 
+				{ 
+					if(this->type == NetAttributeType_CharArray)
+					{
+						delete this->value.netCharPtr;
+						this->value.netCharPtr = 0;
+					}
+
+					type = p.type; 
+					if(type == NetAttributeType_CharArray && p.value.netCharPtr)
+					{
+						int len = 0;
+						if((len = strlen(p.value.netCharPtr)) == 0) return *this;
+						len++;
+						value.netCharPtr = new char[len];
+						memcpy(&value.netCharPtr[0], &p.value.netCharPtr[0], sizeof(p.value.netCharPtr[0]) * len);
+					}
+					else
+					{
+						value = p.value;
+					}
+					return *this;
+				}
 			};
 			class CustomNetProtocol;
 			struct CustomProtocolObject
 			{
-				virtual CustomNetProtocol* GetProtocol() = 0;
+				virtual CustomNetProtocol GetProtocol() = 0;
 			};
 
 			class NET_API_EXPORT CustomNetProtocol
@@ -78,8 +130,8 @@ namespace Oyster
 			public:
 				CustomNetProtocol();
 				~CustomNetProtocol();
-				CustomNetProtocol(const CustomNetProtocol& o);
-				const CustomNetProtocol& operator=(const CustomNetProtocol& o);
+				CustomNetProtocol(CustomNetProtocol& o);
+				const CustomNetProtocol& operator=(CustomNetProtocol& o);
 
 				NetAttributeContainer& operator[](int ID);
 				void Set(int id, Oyster::Network::NetAttributeValue val, Oyster::Network::NetAttributeType type);
@@ -88,6 +140,8 @@ namespace Oyster
 
 			private:
 				struct PrivateData;
+				//Utility::DynamicMemory::SmartPointer<PrivateData> privateData;
+				//Utility::Thread::ThreadSafeSmartPointer<PrivateData> privateData;
 				PrivateData* privateData;
 
 				friend class Translator;

@@ -62,7 +62,14 @@ void GameLobby::GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network
 //}
 void GameLobby::LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c)
 {
-	//TODO: Prio 1
+	if(this->sessionOwner->GetClient()->GetID() == c->GetID())
+	{
+		
+	}
+	else
+	{
+		//Someone else tried to start the server..
+	}
 }
 //void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c)
 //{

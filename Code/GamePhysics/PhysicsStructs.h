@@ -30,6 +30,7 @@ namespace Oyster
 				::Oyster::Math::Float4x4	 GetOrientation() const;
 				::Oyster::Math::Float4x4	 GetView() const;
 				::Oyster::Math::Float4x4	 GetView( const ::Oyster::Math::Float3 &offset ) const;
+			void CustomBodyState::ApplyFriction( const ::Oyster::Math::Float3 &j);
 
 				// Variables for state
 				::Oyster::Math::Float mass, restitutionCoeff, staticFrictionCoeff, dynamicFrictionCoeff;

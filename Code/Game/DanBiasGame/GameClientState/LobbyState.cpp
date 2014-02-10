@@ -5,6 +5,7 @@
 #include "C_obj/C_StaticObj.h"
 #include "C_obj/C_DynamicObj.h"
 #include <GameServerAPI.h>
+#include <Protocols.h>
 
 using namespace DanBias::Client;
 
@@ -88,9 +89,15 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	// send data to server
 	// check data from server
 
-	if( KeyInput->IsKeyPressed(DIK_G)) 
+	if(GameServerAPI::ServerIsRunning() && GameServerAPI::ServerIsRunning())	//May be a problem if server is not shut down properly after lan session.
 	{
-		return ClientState_Game;
+		if( KeyInput->IsKeyPressed(DIK_G)) 
+		{
+			if(!DanBias::GameServerAPI::GameStart())
+			{
+				//this->nwClient->Send(GameLogic::Protocol_LobbyStartGame());
+			}
+		}
 	}
 	  
 	return ClientState_Same;

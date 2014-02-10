@@ -300,7 +300,7 @@ namespace Utility
 
 		//To wstring
 
-		::std::wstring & StringToWString( const ::std::string &str, ::std::wstring &wstr )
+		::std::wstring & StringToWstring( const ::std::string &str, ::std::wstring &wstr )
 		{
 			const char *orig = str.c_str();
 

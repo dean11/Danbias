@@ -7,7 +7,11 @@
 
 #include <Windows.h>
 
-
+struct cPOINT :public POINT
+{
+	cPOINT() { x=(0); y=(0); }
+	cPOINT(int width, int height) { x=(width); y=(height); }
+};
 class WindowShell
 {
 public:
@@ -28,23 +32,70 @@ public:
 		HCURSOR				cursor;					//!< Optional	
 		HBRUSH				background;				//!< Optional	
 
-		WINDOW_INIT_DESC()
+		WINDOW_INIT_DESC(
+							HWND				_parent = 0,
+							HINSTANCE			_hInstance = 0,
+							WNDPROC				_windowProcCallback = 0,
+							const wchar_t*		_windowName = L"Window",
+							POINT				_windowSize = cPOINT(800, 600),
+							POINT				_windowPosition = cPOINT(0,0),
+							UINT				_windowClassStyle = (CS_HREDRAW | CS_VREDRAW | CS_OWNDC),
+							UINT				_windowStyle = (WS_POPUPWINDOW|WS_SYSMENU|WS_CAPTION),
+							HICON				_icon = LoadIcon(0, IDI_APPLICATION),
+							HCURSOR				_cursor = LoadCursor(NULL, IDC_ARROW),
+							HBRUSH				_background = (HBRUSH)GetStockObject(BLACK_BRUSH)
+						)
 		{
-			parent				= 0;
-			hInstance			= NULL;
-			windowName			= L"Window";
-			windowSize.x		= 800;
-			windowSize.y		= 600;
-			windowPosition.x	= 0;
-			windowPosition.y	= 0;
-			windowProcCallback	= NULL;
-			windowClassStyle	= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-			windowStyle			= WS_POPUPWINDOW|WS_SYSMENU|WS_CAPTION;
-			//windowStyle			= WS_OVERLAPPEDWINDOW;
+			parent				= _parent;
+			hInstance			= _hInstance;
+			windowName			= _windowName;
+			windowSize			= _windowSize;
+			windowPosition		= _windowPosition;
+			windowProcCallback	= _windowProcCallback;
+			windowClassStyle	= _windowClassStyle;
+			windowStyle			= _windowStyle;
+			icon				= _icon;
+			cursor				= _cursor;
+			background			= _background;
+		}
+		WINDOW_INIT_DESC(
+							HWND				_parent,
+							HINSTANCE			_hInstance,
+							WNDPROC				_windowProcCallback,
+							const wchar_t*		_windowName,
+							cPOINT				_windowSize,
+							cPOINT				_windowPosition
+						)
+		{
+			parent				= _parent;
+			hInstance			= _hInstance;
+			windowName			= _windowName;
+			windowSize			= _windowSize;
+			windowPosition		= _windowPosition;
+			windowProcCallback	= _windowProcCallback;
+			windowClassStyle	= (CS_HREDRAW | CS_VREDRAW | CS_OWNDC);
+			windowStyle			= (WS_POPUPWINDOW|WS_SYSMENU|WS_CAPTION);
 			icon				= LoadIcon(0, IDI_APPLICATION);
 			cursor				= LoadCursor(NULL, IDC_ARROW);
 			background			= (HBRUSH)GetStockObject(BLACK_BRUSH);
-			//background			= (HBRUSH)GetStockObject(BACKGROUND_BLUE);(HBRUSH)(COLOR_WINDOW+1);
+		}
+		WINDOW_INIT_DESC(
+							const wchar_t*		_windowName,
+							cPOINT				_windowSize,
+							cPOINT				_windowPosition
+						)
+		{
+			parent				= 0;
+			hInstance			= 0;
+			windowName			= _windowName;
+			windowSize			= _windowSize;
+			windowPosition		= _windowPosition;
+			windowProcCallback	= 0;
+			windowClassStyle	= (CS_HREDRAW | CS_VREDRAW | CS_OWNDC);
+			windowStyle			= (WS_POPUPWINDOW|WS_SYSMENU|WS_CAPTION);
+			icon				= LoadIcon(0, IDI_APPLICATION);
+			cursor				= LoadCursor(NULL, IDC_ARROW);
+			background			= (HBRUSH)GetStockObject(BLACK_BRUSH);
 		}
 	};
 

@@ -69,7 +69,8 @@ namespace GameLogic
 		bool NewFrame()																									override;
 		void SetFPS( int FPS )																							override;
 		void SetFrameTimeLength( float seconds )																		override;
-		void SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::ObjectEventFunction functionPointer)	override;
+		void SetSubscription(GameEvent::ObjectMovedFunction functionPointer)											override;
+		void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)											override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -81,8 +82,8 @@ namespace GameLogic
 		LevelData* level;
 		float frameTime;
 		bool initiated;
-		GameEvent::ObjectEventFunction onDisableFnc;
-		GameEvent::ObjectEventFunction onMoveFnc;
+		GameEvent::ObjectDisabledFunction onDisableFnc;
+		GameEvent::ObjectMovedFunction onMoveFnc;
 
 	};	
 }

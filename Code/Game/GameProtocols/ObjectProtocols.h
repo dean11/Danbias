@@ -39,11 +39,11 @@ namespace GameLogic
 			pickup_ID = pickupID;
 
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = pickup_ID;
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -80,11 +80,11 @@ namespace GameLogic
 			object_ID = id;
 			health = hp;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = health;
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -129,14 +129,14 @@ namespace GameLogic
 			object_ID = id;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			for (int i = 2; i <= 17; i++)
 			{
 				this->protocol[i].value = worldMatrix[i-2];
 			}
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -179,14 +179,14 @@ namespace GameLogic
 			object_ID = id;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			for (int i = 2; i <= 17; i++)
 			{
 				this->protocol[i].value = worldMatrix[i-2];
 			}
-			return &protocol;		 
+			return protocol;		 
 		}	
 
 	private:
@@ -221,11 +221,11 @@ namespace GameLogic
 			object_ID = id;
 			timer = time;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
 			this->protocol[2].value = timer;
-			return &protocol;		 
+			return protocol;		 
 		}							 
 
 	private:
@@ -234,8 +234,9 @@ namespace GameLogic
 
 	struct Protocol_ObjectCreate :public Oyster::Network::CustomProtocolObject
 	{
+		//ObjectType type; //ie player, box or whatever
 		int object_ID;
-		char *name;
+		std::string name;
 		float worldMatrix[16];
 
 		Protocol_ObjectCreate()
@@ -244,7 +245,7 @@ namespace GameLogic
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray; 
+			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray;
 			
 			for (int i = 3; i <= 18; i++)
 			{
@@ -272,11 +273,11 @@ namespace GameLogic
 			this->name = path;
 			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 
 			this->protocol[1].value = object_ID;
-			this->protocol[2].value = name;
+			this->protocol.Set(2, name);
 			this->protocol[3].value = worldMatrix[0];
 			this->protocol[4].value = worldMatrix[1]; 
 			this->protocol[5].value	= worldMatrix[2];
@@ -297,7 +298,7 @@ namespace GameLogic
 		
 		
 
-			return &protocol;		 
+			return protocol;		 
 		}							 
 
 	private:

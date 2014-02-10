@@ -68,12 +68,12 @@ void Game::GetAllPlayerPositions() const
 Game::PlayerData* Game::CreatePlayer()
 {
 	// Find a free space in array or insert at end
-	int id = InsertObject(this->players, (PlayerData*)0);
+	int i = InsertObject(this->players, (PlayerData*)0);
 
-	this->players[id] = new PlayerData();
-	//this->players[id]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	this->players[i] = new PlayerData();
+	//this->players[i]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
 
-	return this->players[id];
+	return this->players[i];
 }
 
 Game::LevelData* Game::CreateLevel()
@@ -93,7 +93,6 @@ void Game::CreateTeam()
 
 bool Game::NewFrame()
 {
-
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
@@ -104,31 +103,10 @@ bool Game::NewFrame()
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-	}
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+		gameInstance.onMoveFnc(this->players[i]);
 	}
 
-	API::Instance().UpdateWorld();
-
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-	}
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
-	}
-
-	API::Instance().UpdateWorld();
-
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-	}
-
-	gameInstance.onMoveFnc(this->level);
+	
 
 	return true;
 }
@@ -143,24 +121,21 @@ void Game::SetFrameTimeLength( float seconds )
 	this->frameTime = seconds;
 }
 
-void Game::SetSubscription(GameEvent::ObjectEventFunctionType type, GameEvent::ObjectEventFunction functionPointer)
+void Game::SetSubscription(GameEvent::ObjectMovedFunction functionPointer)
 {
-	switch (type)
-	{
-		case GameLogic::GameEvent::ObjectEventFunctionType_OnMove:
-			this->onMoveFnc = functionPointer;
-		break;
-		case GameLogic::GameEvent::ObjectEventFunctionType_OnDead:
-			this->onDisableFnc = functionPointer;
-		break;
-	}
-	
+	this->onMoveFnc = functionPointer;
+}
+void Game::SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)
+{
+	this->onDisableFnc = functionPointer;
+
 }
 
 bool Game::Initiate()
 {
 	API::Instance().Init();
 	//API::Instance().SetSubscription(Game::PhysicsOnDestroy);
+	//API::Instance().SetFrameTimeLength(this->frameTime);
 	this->initiated = true;
 	return true;
 }
@@ -183,6 +158,6 @@ void Game::PhysicsOnMove(const ICustomBody *object)
 }
 void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody> proto)
 {
-	if(gameInstance.onDisableFnc) gameInstance.onDisableFnc(0);
+	if(gameInstance.onDisableFnc) gameInstance.onDisableFnc(0, 0);
 }
 

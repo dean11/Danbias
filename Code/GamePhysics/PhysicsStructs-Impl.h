@@ -52,6 +52,7 @@ namespace Oyster
 			{
 				return ::Oyster::Math3D::ViewMatrix( this->quaternion, (this->centerPos + offset) );
 			}
+
 		}
 	} 
 }

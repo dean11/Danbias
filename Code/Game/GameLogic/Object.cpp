@@ -102,8 +102,6 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 void Object::BeginFrame()
 {
 	
-
-	
 	this->rigidBody->SetState(this->newPhysicsState);
 }
 // update physic 
