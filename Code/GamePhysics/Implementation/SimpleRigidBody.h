@@ -14,6 +14,10 @@ namespace Oyster
 			SimpleRigidBody();
 			virtual ~SimpleRigidBody();
 
+			State GetState() const;
+			State& GetState( State &targetMem ) const;
+			void SetState( const State &state );
+
 			void SetCollisionShape(btCollisionShape* shape);
 			void SetMotionState(btDefaultMotionState* motionState);
 			void SetRigidBody(btRigidBody* rigidBody);

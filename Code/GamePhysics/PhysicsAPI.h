@@ -123,6 +123,9 @@ namespace Oyster
 
 			virtual ~ICustomBody() {};
 
+			virtual State GetState() const = 0;
+			virtual State & GetState( State &targetMem ) const = 0;
+			virtual void SetState( const State &state ) = 0;
 
 			virtual void SetSubscription(EventAction_AfterCollisionResponse function) = 0;
 			virtual void SetSubscription(EventAction_Move function) = 0;
