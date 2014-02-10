@@ -49,23 +49,6 @@ namespace Oyster
 					Resources::Post::Data.Unmap();
 				}
 
-				Math::Matrix RecursiveBindPosRotation(int index, Model::ModelInfo* mi)
-				{
-					if(mi->bones[index].Parent == index)
-						return mi->bones[index].Relative;
-					
-					return mi->bones[index].Relative*mi->bones[mi->bones->Parent].Relative;
-				}
-
-				Math::Vector4 RecursiveBindPosPosition(int index, Model::ModelInfo* mi)
-				{
-					//return Math::Vector4::standard_unit_w;
-					if(mi->bones[index].Parent == index)
-						return mi->bones[index].Relative.v[3];
-					
-					return Math::Vector4(RecursiveBindPosPosition(mi->bones->Parent, mi).xyz + (mi->bones[index].Relative.v[3] * RecursiveBindPosRotation(mi->bones->Parent,mi)).xyz,1);
-				}
-
 				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection)
 				{
 					for(int i = 0; i < count; ++i)
@@ -81,7 +64,7 @@ namespace Oyster
 							Model::ModelInfo* info = models[i].info;
 							
 							Definitions::AnimationData am;	//final
-							if(info->Animated && models[i].AnimationPlaying != -1)
+							if(info->Animated && models[i].Animation.data.AnimationPlaying != NULL)
 							{
 								cube->WorldMatrix = Math::Matrix::identity;
 								////store inverse absolut transform
@@ -108,11 +91,11 @@ namespace Oyster
 									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
 								}
 								int b = 0;
-								Model::Animation A = info->Animations[models[i].AnimationPlaying];
-								while(models[i].AnimationTime>A.duration)
-									models[i].AnimationTime -= (float)A.duration;
+								Model::Animation A = *models[i].Animation.data.AnimationPlaying;
+								while(models[i].Animation.data.AnimationTime>A.duration)
+									models[i].Animation.data.AnimationTime -= (float)A.duration;
 									
-								float position = models[i].AnimationTime;
+								float position = models[i].Animation.data.AnimationTime;
 								for(int b = 0; b < A.Bones;++b)
 								{
 									//find current frame

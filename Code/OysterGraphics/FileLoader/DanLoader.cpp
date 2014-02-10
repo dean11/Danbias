@@ -135,16 +135,16 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 	if(info->Animated)
 	{
 		//clean animation
-		for(int a = 0; a < info->AnimationCount; ++a)
+		for(auto a = info->Animations.begin(); a != info->Animations.end(); ++a)
 		{
-			for(int x = 0; x < info->Animations[a].Bones; ++x)
+			for(int x = 0; x < (*a).second.Bones; ++x)
 			{
-				delete[] info->Animations[a].Keyframes[x];
+				delete[] (*a).second.Keyframes[x];
 			}
-			delete[] info->Animations[a].Frames;
-			delete[] info->Animations[a].Keyframes;
+			delete[] (*a).second.Frames;
+			delete[] (*a).second.Keyframes;
 		}
-		delete[] info->Animations;
+		info->Animations.clear();
 	}
 	for(UINT i =0;i<info->Material.size();++i)
 	{
@@ -364,9 +364,6 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 					name[nameLength] = 0;
 
 					wchar_t* wName = charToWChar(name);
-					anims[a].name = std::wstring(wName);
-					delete[] wName;
-					delete name;
 
 					//read nr of bones in animation
 					ReadData(&anims[a].Bones,danFile,4);
@@ -404,11 +401,13 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 							ReadData(&anims[a].Keyframes[b][f].time,danFile,sizeof(double));
 						}
 					}
-				}
-				modelInfo->AnimationCount = animationHeader.numAnims;
-				modelInfo->Animations = anims;
-				modelInfo->Animated = true;
 
+					modelInfo->Animations.insert(std::pair<std::wstring,Model::Animation>(std::wstring(wName), anims[a]));
+					delete[] wName;
+					delete name;
+				}
+				modelInfo->Animated = true;
+				delete[] anims;
 				break;
 			}
 		}

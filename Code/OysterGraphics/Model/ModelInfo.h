@@ -24,7 +24,6 @@ namespace Oyster
 			};
 			struct Animation
 			{
-				std::wstring name;
 				int Bones;
 				int* Frames; //! Bone as index
 				Frame** Keyframes; //! @brief [Bone][Frame]
@@ -37,7 +36,7 @@ namespace Oyster
 				bool Indexed, Animated;
 				int VertexCount, IndexCount, BoneCount, AnimationCount;
 				Bone* bones;
-				Animation* Animations;
+				std::map<std::wstring,Animation> Animations;
 			};	
 		}
 	}

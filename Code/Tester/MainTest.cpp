@@ -23,6 +23,7 @@ Oyster::Graphics::Model::Model* m3				= NULL;
 Oyster::Graphics::API::Texture t				= NULL;
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
+Oyster::Graphics::Definitions::Pointlight pl;
 
 
 //--------------------------------------------------------------------------------------
@@ -169,8 +170,7 @@ HRESULT InitDirect3D()
 	m =  Oyster::Graphics::API::CreateModel(L"crate_colonists.dan");
 	m2 = Oyster::Graphics::API::CreateModel(L"T_reskinned.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
-	m2->AnimationPlaying = 0;
-	m2->AnimationTime = 0.0f;
+	Oyster::Graphics::API::PlayAnimation(m2, L"Bend",true);
 	//m3 = Oyster::Graphics::API::CreateModel(L"box_2.dan");
 	//m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,5,0),Oyster::Math::Float3::null);
 	
@@ -183,13 +183,13 @@ HRESULT InitDirect3D()
 	V = V.GetInverse();
 	
 
-	Oyster::Graphics::Definitions::Pointlight pl;
+	
 	pl.Color = Oyster::Math::Float3(1,0,1);
 	pl.Bright = 1;
 	pl.Pos = Oyster::Math::Float3(0,-20.0f,0.4f);
 	pl.Radius = 90;
 
-	Oyster::Graphics::API::AddLight(pl);
+	Oyster::Graphics::API::AddLight(&pl);
 
 
 	return S_OK;
@@ -205,7 +205,7 @@ HRESULT Update(float deltaTime)
 	//ma *= 50;
 	//ma.m44 = 1;
 	//m2->WorldMatrix = m2->WorldMatrix *  ma;
-	m2->AnimationTime += deltaTime;// * 0.5f;
+	m2->Animation.data.AnimationTime += deltaTime;// * 0.5f;
 	//m3->WorldMatrix =  Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0)*-0,Oyster::Math::Float3(3,4,-1*angle),Oyster::Math::Float3::null);
 	return S_OK;
 }
@@ -218,7 +218,7 @@ HRESULT Render(float deltaTime)
 	Oyster::Graphics::API::RenderModel(*m);
 	Oyster::Graphics::API::RenderModel(*m2);
 	//Oyster::Graphics::API::RenderModel(*m3);
-	Oyster::Graphics::API::StartGuiRender();
+	//Oyster::Graphics::API::StartGuiRender();
 	Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(0.2f,0.2f));
 	Oyster::Graphics::API::EndFrame();
 
@@ -259,13 +259,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 				break;
 			//Z -
 			case 0x5A:
-				m2->AnimationTime -= 0.1f;
-				if(m2->AnimationTime < 0)
-					m2->AnimationTime = 0;
+				//m2->AnimationTime -= 0.1f;
+				//if(m2->AnimationTime < 0)
+					//m2->AnimationTime = 0;
 				break;
 			//X +
 			case 0x58:
-				m2->AnimationTime += 0.1f;
+				//m2->AnimationTime += 0.1f;
 				break;
 
 		}

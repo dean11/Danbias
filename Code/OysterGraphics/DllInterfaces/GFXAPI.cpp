@@ -17,7 +17,8 @@ namespace Oyster
 		{
 			Math::Float4x4 View;
 			Math::Float4x4 Projection;
-			std::vector<Definitions::Pointlight> Lights;
+			std::vector<Definitions::Pointlight*> Lights;
+			float dt=0;
 		}
 
 		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
@@ -50,7 +51,7 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
+				Render::DefaultRenderer::NewFrame(View, Projection, Lights[0], (int)Lights.size());
 			}
 			else
 			{
@@ -86,7 +87,7 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-			m->AnimationPlaying = -1;
+			m->Animation.data.AnimationPlaying = NULL;
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -127,7 +128,7 @@ namespace Oyster
 			SAFE_RELEASE(Core::device);
 		}
 
-		void API::AddLight(Definitions::Pointlight light)
+		void API::AddLight(Definitions::Pointlight *light)
 		{
 			Lights.push_back(light);
 		}
@@ -172,6 +173,14 @@ namespace Oyster
 		void API::DeleteTexture(API::Texture tex)
 		{
 			Core::loader.ReleaseResource(tex);
+		}
+
+		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
+		{
+			m->Animation.data.AnimationPlaying = &(*m->info->Animations.find(name)).second;
+			m->Animation.data.AnimationTime=0;
+			m->Animation.data.LoopAnimation = looping;
+			return m->Animation.data.AnimationPlaying->duration;
 		}
 	}
 }

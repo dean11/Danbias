@@ -56,7 +56,7 @@ namespace Oyster
 			//! @brief Configures Renderer to process 2D graphics, data will be passed in to EndFrame()
 			static void StartGuiRender();
 
-			//! @brief Renders a single GUI element using the texture provided and the Pos in the upper right corner, %based system
+			//! @brief Renders a single GUI element using the texture provided and the Pos in the center, %based system
 			static void RenderGuiElement(Texture, Math::Float2 Pos, Math::Float2 Size);
 
 			//! @brief Performs light calculations, post effects and presents the scene
@@ -71,15 +71,21 @@ namespace Oyster
 			static void DeleteTexture(Texture);
 
 			//! @brief adds a light to the scene
-			static void AddLight(Definitions::Pointlight light);
+			static void AddLight(Definitions::Pointlight* light);
 			//! @brief removes all lights from the scene
 			static void ClearLights();
 
 			//! @brief Sets Options to the graphics
 			static State SetOptions(Option);
 
-			//! @brief Gets Options to the graphics
+			//! @brief Gets Options from the graphics
 			static Option GetOption();
+
+			//! @brief Starts an animation and returns the time of the animation
+			static float PlayAnimation(Model::Model* model, std::wstring name, bool looping = false);
+
+			//! @brief Moves all animating models forward the specified time;
+			static void Update(float deltaTime);
 		};
 	}
 }
