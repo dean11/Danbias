@@ -37,12 +37,12 @@ namespace Oyster
 			return API::Sucsess;
 		}
 
-		void API::SetProjection(Math::Float4x4& projection)
+		void API::SetProjection(const Math::Float4x4& projection)
 		{
 			Projection = projection;
 		}
 
-		void API::SetView(Math::Float4x4& view)
+		void API::SetView(const Math::Float4x4& view)
 		{
 			View = view;
 		}

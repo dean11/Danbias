@@ -42,9 +42,9 @@ namespace Oyster
 			static void Clean();
 
 			//! @brief Sets the view matrix to use next frame
-			static void SetView(Oyster::Math::Float4x4& View);
+			static void SetView(const Oyster::Math::Float4x4& View);
 			//! @brief Sets the projection matrix to use next frame
-			static void SetProjection(Oyster::Math::Float4x4& Projection);
+			static void SetProjection(const Oyster::Math::Float4x4& Projection);
 
 			//! @brief will internally use last values from SetView and SetProjection
 			static void NewFrame();
@@ -71,7 +71,7 @@ namespace Oyster
 			static void DeleteTexture(Texture);
 
 			//! @brief adds a light to the scene
-			static void AddLight(Definitions::Pointlight light);
+			static void AddLight(const Definitions::Pointlight light);
 			//! @brief removes all lights from the scene
 			static void ClearLights();
 
