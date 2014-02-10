@@ -52,24 +52,27 @@ namespace DanBias
 		*	@param client The client to attach to the session
 		*/
 		bool Attach(Oyster::Network::NetClient client) override;
+		void CloseSession( bool dissconnectClients ) override; 
 		
 		inline bool IsCreated() const	{ return this->isCreated; }
 		inline bool IsRunning() const	{ return this->isRunning; }
+		operator bool() { return (this->isCreated && this->isCreated); }
 
 		//Private member functions
 	private:
 		// TODO: find out what this method does..
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
-
 		
 		//Sends a client to the owner, if obj is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);
 		
-		//Frame function, derived from IThreadObject
+		//Derived from IThreadObject
+		void ThreadEntry() override;
 		bool DoWork	( ) override;
 
+
 	private:
-		void ParseProtocol					(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c);
+		void ParseProtocol					( Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c );
 
 		void Gameplay_PlayerMovement		( GameLogic::Protocol_PlayerMovement& p, DanBias::GameClient* c );
 		void Gameplay_PlayerLookDir			( GameLogic::Protocol_PlayerLook& p, DanBias::GameClient* c );
@@ -86,18 +89,23 @@ namespace DanBias
 		void General_Text					( GameLogic::Protocol_General_Text& p, DanBias::GameClient* c );
 		
 		//Callback method recieving from gamelogic
-		static void ObjectMove(GameLogic::IObjectData* movedObject);
+		static void ObjectMove				( GameLogic::IObjectData* movedObject );
+		static void ObjectDisabled			( GameLogic::IObjectData* movedObject, float seconds );
 
 		//Private member variables
 	private:
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
+		Utility::DynamicMemory::SmartPointer<DanBias::GameClient> sessionOwner;
 		Oyster::Thread::OysterThread worker;
 		GameLogic::GameAPI& gameInstance;
 		GameLogic::ILevelData *levelData;
 		NetworkSession* owner;
 		bool isCreated;
 		bool isRunning;
-		Utility::WinTimer timer;
+		float logicFrameTime;
+		float networkFrameTime;
+		Utility::WinTimer logicTimer;
+		Utility::WinTimer networkTimer;
 		GameDescription description;
 
 		//TODO: Remove this uggly hax

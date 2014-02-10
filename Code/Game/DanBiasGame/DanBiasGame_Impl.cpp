@@ -56,6 +56,7 @@ namespace DanBias
 	{
 
 		WindowShell::CreateConsoleWindow();
+		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
@@ -114,6 +115,10 @@ namespace DanBias
 	{
 		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
+		Oyster::Graphics::API::Option p;
+		p.modelPath = L"..\\Content\\Models\\";
+		p.texturePath = L"..\\Content\\Textures\\";
+		Oyster::Graphics::API::SetOptions(p);
 		return S_OK;
 	}
 
@@ -147,6 +152,7 @@ namespace DanBias
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
+			bool stateVal = false;
 			m_data->recieverObj->gameClientState->Release();
 			delete m_data->recieverObj->gameClientState;
 			m_data->recieverObj->gameClientState = NULL;
@@ -155,23 +161,27 @@ namespace DanBias
 			{
 			case Client::GameClientState::ClientState_LobbyCreated:
 				m_data->serverOwner = true;
+				stateVal = true;
 			case Client::GameClientState::ClientState_Lobby:
 				m_data->recieverObj->gameClientState = new Client::LobbyState();
+				stateVal = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
-				if(m_data->serverOwner)
-					DanBias::GameServerAPI::GameStart();
-				m_data->recieverObj->gameClientState = new Client::GameState();
-				if(m_data->serverOwner)
-					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(0);
-				else
-					((Client::GameState*)m_data->recieverObj->gameClientState)->setClientId(1);
+				
 				break;
 			default:
 				return E_FAIL;
 				break;
 			}
-			m_data->recieverObj->gameClientState->Init(m_data->recieverObj); // send game client
+
+			if(stateVal)
+			{
+				m_data->recieverObj->gameClientState->Init(m_data->recieverObj); // send game client
+			}
+			else
+			{
+
+			}
 				 
 		}
 		return S_OK;
@@ -179,15 +189,7 @@ namespace DanBias
 
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
-		int isPressed = 0;
-		if(m_data->inputObj->IsKeyPressed(DIK_A))
-		{
-			isPressed = 1;
-		}
 		
-		wchar_t title[255];
-		swprintf(title, sizeof(title), L"| Pressing A:  %d | \n", (int)(isPressed));
-		SetWindowText(m_data->window->GetHWND(), title);
 	
 		m_data->recieverObj->gameClientState->Render();
 
@@ -202,9 +204,11 @@ namespace DanBias
 		delete m_data->recieverObj;
 		delete m_data->inputObj;
 		delete m_data;
-		
 
 		Oyster::Graphics::API::Clean();
+
+		GameServerAPI::ServerStop();
+
 		return S_OK;
 	}	
 

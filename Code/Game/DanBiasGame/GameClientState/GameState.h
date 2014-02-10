@@ -36,8 +36,8 @@ private:
 	struct myData;
 	myData* privData;
 	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_StaticObj>> staticObjects;
-	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_DynamicObj>> dynamicObjects;
-	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_DynamicObj>> playObjects;
+	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Object>> dynamicObjects;
+	//Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Player>> playObjects;
 public:
 	GameState(void);
 	~GameState(void);
@@ -45,8 +45,8 @@ public:
 	GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
 	bool LoadModels(std::string mapFile) ;
 	bool InitCamera(Oyster::Math::Float3 startPos) ;
+	void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 	gameStateState LoadGame();
-	void setClientId(int id);
 	void readKeyInput(InputClass* KeyInput);
 	bool Render()override;
 	bool Release()override;

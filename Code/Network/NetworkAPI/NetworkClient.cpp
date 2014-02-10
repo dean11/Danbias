@@ -19,6 +19,7 @@
 #include "../../Misc/Packing/Packing.h"
 
 #include <queue>
+#include <WinSock2.h>
 
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
@@ -61,9 +62,10 @@ struct NetworkClient::PrivateData : public IThreadObject
 	}
 	~PrivateData()
 	{ 
+		this->thread.Terminate();
+
 		ShutdownWinSock();
 		this->connection.Disconnect();
-		this->thread.Terminate();
 		this->owner = 0;
 		this->parent = 0;
 	}
@@ -83,12 +85,13 @@ struct NetworkClient::PrivateData : public IThreadObject
 
 		if(!this->sendQueue.IsEmpty())
 		{
-			SmartPointer<OysterByte> temp = new OysterByte();
+			//printf("\t(%i)\n", this->sendQueue.Size());
+			OysterByte temp;
 			CustomNetProtocol p = this->sendQueue.Pop();
 			this->translator.Pack(temp, p);
 			errorCode = this->connection.Send(temp);
 
-			if(errorCode != 0)
+			if(errorCode != 0 && errorCode != WSAEWOULDBLOCK)
 			{
 				CEA parg;
 				parg.type = CEA::EventType_ProtocolFailedToSend;
@@ -204,7 +207,11 @@ struct NetworkClient::PrivateData : public IThreadObject
 			CEA parg;
 			parg.type = CEA::EventType_ProtocolRecieved;
 			parg.data.protocol = protocol;
-			NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e = { this->parent, parg };
+			NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e;
+			e.sender = this->parent;
+			e.args.data.protocol = parg.data.protocol;
+			e.args.type = parg.type;
+			
 			this->recieveQueue.Push(e);
 		}
 	}
@@ -247,9 +254,6 @@ void NetworkClient::Update()
 
 		this->DataRecieved(temp);
 
-	//--------- Deprecate --------- 
-		this->NetworkCallback(temp.args.data.protocol);
-	//------------------------------
 	}
 }
 
@@ -291,18 +295,23 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 
 void NetworkClient::Disconnect()
 {
-	privateData->connection.Disconnect();
+	if(!privateData) return;
+
 	privateData->thread.Terminate();
+	privateData->connection.Disconnect();
+	this->privateData->sendQueue.Clear();
+	this->privateData->recieveQueue.Clear();
+
 }
 
 void NetworkClient::Send(CustomProtocolObject& protocol)
 {
-	this->privateData->sendQueue.Push(*protocol.GetProtocol());
+	this->privateData->sendQueue.Push(protocol.GetProtocol());
 }
 
-void NetworkClient::Send(CustomNetProtocol* protocol)
+void NetworkClient::Send(CustomNetProtocol& protocol)
 {
-	this->privateData->sendQueue.Push(*protocol);
+	this->privateData->sendQueue.Push(protocol);
 }
 
 void NetworkClient::SetOwner(NetworkSession* owner)
@@ -329,8 +338,8 @@ void NetworkClient::DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e)
 	}
 }
 
-void NetworkClient::NetworkCallback(Oyster::Network::CustomNetProtocol& p)
-{}
+//void NetworkClient::NetworkCallback(Oyster::Network::CustomNetProtocol& p)
+//{}
 
 std::string NetworkClient::GetIpAddress()
 {

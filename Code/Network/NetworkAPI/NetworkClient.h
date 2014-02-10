@@ -36,7 +36,33 @@ namespace Oyster
 					{
 						struct { Oyster::Network::CustomNetProtocol protocol; };
 						void * nothing;
+						EventData(){}
+						EventData(Oyster::Network::CustomNetProtocol& o) 
+						{ 
+							protocol = o; 
+						}
+						const EventData& operator=(EventData& o)
+						{
+							protocol = o.protocol;
+							return *this;
+						}
+						const EventData& operator=(Oyster::Network::CustomNetProtocol& o) 
+						{ 
+							protocol = o; return *this; 
+						}
 					} data;
+					ClientEventArgs(){}
+					ClientEventArgs(ClientEventArgs& o)
+					{ 
+						type = o.type; 
+						data = o.data; 
+					}
+					const ClientEventArgs& operator=(ClientEventArgs& o)
+					{ 
+						type = o.type; 
+						data = o.data; 
+						return *this; 
+					}
 				};
 				typedef void(*ClientEventFunction)(NetEvent<NetworkClient*, ClientEventArgs> e);
 
@@ -75,7 +101,7 @@ namespace Oyster
 				/**
 				*	
 				*/
-				void Send(CustomNetProtocol* protocol);
+				void Send(CustomNetProtocol& protocol);
 
 				/**
 				*	
@@ -101,7 +127,7 @@ namespace Oyster
 				*	Do not use this furthermore, instead use void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
 				*	@see DataRecieved
 				*/
-				virtual void NetworkCallback(Oyster::Network::CustomNetProtocol& p);
+				//virtual void NetworkCallback(Oyster::Network::CustomNetProtocol& p);
 
 				virtual std::string GetIpAddress();
 

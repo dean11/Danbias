@@ -31,11 +31,11 @@ Octree& Octree::operator=(const Octree& orig)
 
 void Octree::AddObject(UniquePointer< ICustomBody > customBodyRef)
 {
-	customBodyRef->SetScene( this );
+	//customBodyRef->SetScene( this );
 	Data data;
 	//Data* tempPtr = this->worldNode.dataPtr;
 
-	data.container = customBodyRef->GetBoundingSphere();
+	//data.container = customBodyRef->GetBoundingSphere();
 	data.queueRef = -1;
 	data.next = NULL;
 	data.prev = NULL;
@@ -140,6 +140,7 @@ void Octree::Visit(ICustomBody* customBodyRef, VisitorAction hitAction )
 {
 	auto object = this->mapReferences.find(customBodyRef);
 
+	// If rigid body is not found
 	if(object == this->mapReferences.end())
 	{	
 		return;
@@ -147,8 +148,10 @@ void Octree::Visit(ICustomBody* customBodyRef, VisitorAction hitAction )
 
 	unsigned int tempRef = object->second;
 
+	// Go through all object and test for intersection
 	for(unsigned int i = 0; i<this->leafData.size(); i++)
 	{
+		// If objects intersect call collision response function
 		if(tempRef != i && !this->leafData[i].limbo) if(this->leafData[tempRef].container.Intersects(this->leafData[i].container))
 		{
 			hitAction(*this, tempRef, i);
@@ -213,7 +216,7 @@ unsigned int Octree::GetTemporaryReferenceOf( const ICustomBody* objRef ) const
 
 void Octree::SetAsAltered( unsigned int tempRef )
 {
-	this->leafData[tempRef].container = this->leafData[tempRef].customBodyRef->GetBoundingSphere();
+	//this->leafData[tempRef].container = this->leafData[tempRef].customBodyRef->GetBoundingSphere();
 	//! @todo TODO: implement stub
 }
 

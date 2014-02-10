@@ -33,7 +33,7 @@ namespace GameLogic
 		void InitiateLevel(float radius);
 
 		void parseObjectType(ObjectTypeHeader* obj);
-		void parsePhysicsObj(PhysicsObject* obj);
+		void parsePhysicsObj(LevelLoaderInternal::PhysicsObject* obj);
 		/********************************************************
 		* Creates a team in the level
 		* @param teamSize: The size of the team you want to create
@@ -68,7 +68,7 @@ namespace GameLogic
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
 
-	private:
+	//private:
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;

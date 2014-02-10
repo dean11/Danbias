@@ -18,8 +18,8 @@ StaticObject::StaticObject(OBJECT_TYPE type)
 StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
 	:Object(rigidBody,type)
 {
-	this->rigidBody->SetGravity(true);
-	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_BeforeCollisionResponse)(CollisionManager::IgnoreCollision));
+	//this->rigidBody->SetGravity(true);
+	//this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_BeforeCollisionResponse)(CollisionManager::IgnoreCollision));
 }
 
 StaticObject::StaticObject(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)

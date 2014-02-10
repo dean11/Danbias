@@ -68,4 +68,7 @@ Oyster::Math::Float3 C_Object::getScale() const
 {
 	return this->scale;
 }
-
+//int C_Object::GetId() const
+//{
+//	return 
+//}

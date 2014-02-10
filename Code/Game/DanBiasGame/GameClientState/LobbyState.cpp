@@ -5,6 +5,7 @@
 #include "C_obj/C_StaticObj.h"
 #include "C_obj/C_DynamicObj.h"
 #include <GameServerAPI.h>
+#include <Protocols.h>
 
 using namespace DanBias::Client;
 
@@ -57,7 +58,7 @@ bool LobbyState::LoadModels(std::wstring file)
 	modelData.rotation = Oyster::Math::Quaternion::identity;
 	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\box_2.dan";
+	modelData.modelPath = L"crate_colonists.dan";
 	// load models
 	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);
@@ -89,9 +90,15 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	// send data to server
 	// check data from server
 
-	if( KeyInput->IsKeyPressed(DIK_G)) 
+	if(GameServerAPI::ServerIsRunning() && GameServerAPI::ServerIsRunning())	//May be a problem if server is not shut down properly after lan session.
 	{
-		return ClientState_Game;
+		if( KeyInput->IsKeyPressed(DIK_G)) 
+		{
+			if(!DanBias::GameServerAPI::GameStart())
+			{
+				//this->nwClient->Send(GameLogic::Protocol_LobbyStartGame());
+			}
+		}
 	}
 	  
 	return ClientState_Same;

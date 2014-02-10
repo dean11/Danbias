@@ -49,14 +49,14 @@ namespace GameLogic
 
 			return *this;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = bForward;
 			this->protocol[2].value = bBackward;
 			this->protocol[3].value = bLeft;
 			this->protocol[4].value = bRight;
 
-			return &protocol;
+			return protocol;
 		}
 
 		private:
@@ -98,7 +98,7 @@ namespace GameLogic
 
 			return *this;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = lookDirX;
 			this->protocol[2].value = lookDirY;
@@ -106,7 +106,7 @@ namespace GameLogic
 			this->protocol[4].value	= deltaX;
 
 
-			return &protocol;
+			return protocol;
 		}
 
 	private:
@@ -131,9 +131,9 @@ namespace GameLogic
 		{
 			return *this;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			return &protocol;
+			return protocol;
 		}
 
 	private:
@@ -168,12 +168,12 @@ namespace GameLogic
 			utilityPressed		= val[3].value.netBool;
 			return *this;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = primaryPressed;
 			this->protocol[2].value = secondaryPressed;
 			this->protocol[3].value = utilityPressed;
-			return &protocol;
+			return protocol;
 		}
 
 	private:
@@ -200,10 +200,10 @@ namespace GameLogic
 			hasJumped		= val[1].value.netBool;
 			return *this;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = hasJumped;
-			return &protocol;
+			return protocol;
 		}
 
 	private:

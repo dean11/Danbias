@@ -26,7 +26,15 @@ struct NetworkSession::PrivateSessionData
 	{}
 };
 
-
+int FindClient(NetClientList& list, NetClient c)
+{
+	for (unsigned int i = 0; i < list.Size(); i++)
+	{
+		if(c == list[i])
+			return i;
+	}
+	return -1;
+}
 
 NetworkSession::NetworkSession()
 	:	data(new PrivateSessionData())
@@ -125,7 +133,7 @@ NetClient NetworkSession::Detach(const NetworkClient* client)
 
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(this->clients[i] && this->clients[0]->GetID() == client->GetID())
+			if(this->clients[i] && this->clients[i]->GetID() == client->GetID())
 			{
 				val = this->clients[i];
 				this->clients[i] = 0;
@@ -188,7 +196,7 @@ bool NetworkSession::Send(Oyster::Network::CustomNetProtocol& protocol)
 	{
 		if(this->clients[i])
 		{
-			this->clients[i]->Send(&protocol);
+			this->clients[i]->Send(protocol);
 			returnValue = true;
 		}
 	}
@@ -202,7 +210,7 @@ bool NetworkSession::Send(Oyster::Network::CustomNetProtocol& protocol, int ID)
 	{
 		if(this->clients[i] && this->clients[i]->GetID() == ID)
 		{
-			this->clients[i]->Send(&protocol);
+			this->clients[i]->Send(protocol);
 			return true;
 		}
 	}
@@ -237,5 +245,8 @@ void NetworkSession::SetOwner(NetworkSession* owner)
 void NetworkSession::ClientConnectedEvent(NetClient client)
 {
 	this->Attach(client);
+
+	if(FindClient(this->clients, client) == -1)
+		NetworkSession::Attach(client);
 }
 

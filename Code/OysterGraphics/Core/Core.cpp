@@ -15,6 +15,11 @@ IDXGISwapChain* Core::swapChain = NULL;
 
 std::stringstream Core::log;
 
+Oyster::Resource::ResourceManager Core::loader;
+
+std::wstring Core::modelPath;
+std::wstring Core::texturePath;
+
 ID3D11RenderTargetView* Core::backBufferRTV = NULL;
 
 ID3D11UnorderedAccessView* Core::backBufferUAV = NULL;

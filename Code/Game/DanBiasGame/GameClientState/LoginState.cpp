@@ -56,14 +56,14 @@ bool LoginState::LoadModels(std::wstring file)
 	modelData.rotation = Oyster::Math::Quaternion::identity;
 	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.visible = true;
-	modelData.modelPath = L"identityPlane.dan";
+	modelData.modelPath = L"box.dan";
 	
 
 	modelData.position = Oyster::Math::Float3(2,2,2);
 	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);
 
-	modelData.position = Oyster::Math::Float3(0,0,-2);
+	modelData.position = Oyster::Math::Float3(-2,0,-2);
 	privData->object[1] = new C_StaticObj();
 	privData->object[1]->Init(modelData);
 	return true;
@@ -97,7 +97,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 		DanBias::GameServerAPI::ServerInitiate(desc);
 		DanBias::GameServerAPI::ServerStart();
 		// my ip
-		nwClient->Connect(15151, "127.0.0.1");
+		nwClient->Connect(15152, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{
@@ -110,7 +110,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	if( KeyInput->IsKeyPressed(DIK_J)) 
 	{
 		// game ip
-		nwClient->Connect(15151, "127.0.0.1");
+		nwClient->Connect(15152, "127.0.0.1");
 
 		if (!nwClient->IsConnected())
 		{

@@ -12,61 +12,111 @@
 #include <DynamicArray.h>
 
 
+/**	OBS!
+**	It seems like if a string is set in the middle of a data set, 
+**	the reciever will crach when trying to use the protocol. 
+**	Only tested on Protocol_LobbyStartGame.
+**/
+
+
 namespace GameLogic
 {
-	/*
 	struct Protocol_LobbyCreateGame :public Oyster::Network::CustomProtocolObject
 	{
-		char* mapName;
-		char gameId;
+		short clientID; // The unuiqe id reprsenting a specific client
+		std::string modelName;
+		float worldMatrix[16];
 
 		Protocol_LobbyCreateGame()
 		{
-			this->protocol[0].value = protocol_Lobby_Create;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			int c = 0;
+			this->protocol[c].value = protocol_Lobby_Create;
+			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_CharArray;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
+			for (int i = 0; i <= 16; i++)
+			{
+				this->protocol[c++].type = Oyster::Network::NetAttributeType_Float;
+			}
+			this->protocol[c++].type = Oyster::Network::NetAttributeType_CharArray;
 		}
-		Protocol_LobbyCreateGame(Oyster::Network::CustomNetProtocol& o)
+		Protocol_LobbyCreateGame(short _clientID, std::string name, float world[16])
 		{
-			mapName = o[1].value.netCharPtr;
-			gameId = o[2].value.netChar;
+			int c = 0;
+			this->protocol[c].value = protocol_Lobby_Create;
+			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
+			for (int i = 0; i <= 16; i++)
+			{
+				this->protocol[c++].type = Oyster::Network::NetAttributeType_Float;
+			}
+
+			this->protocol[c++].type = Oyster::Network::NetAttributeType_CharArray;
+
+			clientID = _clientID;
+			modelName = name;
+			memcpy(&worldMatrix[0], &world[0], sizeof(float) * 16);
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Protocol_LobbyCreateGame(Oyster::Network::CustomNetProtocol o)
 		{
-			protocol[1].value = mapName;
-			protocol[2].value = gameId;
-			return &protocol;
+			int c = 1;
+			clientID = o[c++].value.netInt;
+			for (int i = 0; i <= 16; i++)
+			{
+				this->worldMatrix[i] = o[c++].value.netFloat;
+			}
+			modelName.assign(o[c++].value.netCharPtr);
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			int c = 1;
+			protocol[c++].value = clientID;
+			
+			for (int i = 0; i <= 16; i++)
+			{
+				this->protocol[c++].value = this->worldMatrix[i];
+			}
+			protocol.Set(c++, this->modelName);
+			return protocol;
 		}
 		
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
+
 	};
-	*/
+
 	struct Protocol_LobbyStartGame :public Oyster::Network::CustomProtocolObject
 	{
-		short gameId;
+		float seconds;
 
 		Protocol_LobbyStartGame()
 		{
 			this->protocol[0].value = protocol_Lobby_Start;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			seconds = 0;
+		}
+		Protocol_LobbyStartGame(float _seconds)
+		{
+			this->protocol[0].value = protocol_Lobby_Start;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			seconds = _seconds;
 		}
 		Protocol_LobbyStartGame(Oyster::Network::CustomNetProtocol& o)
 		{
-			gameId = o[1].value.netInt;
+			seconds = o[1].value.netFloat;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			protocol[1].value = gameId;
-			return &protocol;
+			this->protocol[1].value = seconds;
+			return protocol;
 		}
 		
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
+
 	};
 
 	struct Protocol_LobbyLogin :public Oyster::Network::CustomProtocolObject
@@ -83,9 +133,9 @@ namespace GameLogic
 		{
 
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -109,7 +159,7 @@ namespace GameLogic
 	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 	//		value = p[1].value.netShort;
 	//	}
-	//	Oyster::Network::CustomNetProtocol* GetProtocol() override
+	//	Oyster::Network::CustomNetProtocol GetProtocol() override
 	//	{
 	//		protocol[1].value = value;
 	//		return &protocol;
@@ -130,8 +180,8 @@ namespace GameLogic
 		{
 			
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
-		{ return &protocol; }
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{ return protocol; }
 		
 		private:
 			Oyster::Network::CustomNetProtocol protocol;
@@ -175,7 +225,7 @@ namespace GameLogic
 				list.Push(d);
 			}
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = list.Size();
 
@@ -195,7 +245,7 @@ namespace GameLogic
 					this->protocol.Set(a++, list[i].ip);
 			}
 			
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -223,13 +273,13 @@ namespace GameLogic
 			minorVersion = (int)p.Get(2).value.netInt;
 			mapName = p.Get(3).value.netCharPtr;
 		}
-		Oyster::Network::CustomNetProtocol* GetProtocol() override
+		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = majorVersion;
 			this->protocol[2].value = minorVersion;
 			this->protocol.Set(3, mapName.c_str());
 
-			return &protocol;
+			return protocol;
 		}
 		
 		private:
@@ -254,7 +304,7 @@ namespace GameLogic
 	//	{
 	//
 	//	}
-	//	Oyster::Network::CustomNetProtocol* GetProtocol() override
+	//	Oyster::Network::CustomNetProtocol GetProtocol() override
 	//	{
 	//		return &protocol;
 	//	}

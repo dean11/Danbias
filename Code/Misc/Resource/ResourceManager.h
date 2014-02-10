@@ -29,10 +29,8 @@ namespace Oyster
 			ResourceType_Byte_UNICODE,				/**< Handle can be interpeted as char[] or char* */
 			ResourceType_Byte_UTF16LE,				/**< Handle can be interpeted as char[] or char* */
 
-			ResourceType_COUNT,						/**< Handle can be interpeted as ? */
-
-			ResourceType_UNKNOWN = -1,				/**< Handle can be interpeted as void* */
-			ResourceType_INVALID = -2,				/**< Invalid or non existing resource */
+			ResourceType_CUSTOM,					/**< Handle can be interpeted as whatever */
+			ResourceType_INVALID,					/**< Handle can be interpeted as whatever */
 		};
 		
 		/** A resource handler interface to interact with when loading resources. 

@@ -10,7 +10,7 @@ namespace Oyster
 	{
 		namespace Loading
 		{
-			void LoadShader(const wchar_t filename[], Oyster::Resource::CustomData& out, int type);
+			void* LoadShader(const wchar_t filename[], int type);
 
 			void UnloadShaderP(void* loadedData)
 			{
@@ -48,78 +48,41 @@ namespace Oyster
 				SAFE_RELEASE(ps);
 			}
 
-			void LoadShaderP(const wchar_t filename[], Oyster::Resource::CustomData& out)
+			void* LoadShaderP(const wchar_t filename[])
 			{
-				LoadShader(filename,out,Core::PipelineManager::Pixel);
-				if(out.loadedData==NULL)
-				{
-					memset(&out,0,sizeof(out));
-					return;
-				}
-				out.resourceUnloadFnc = UnloadShaderP;
+				return LoadShader(filename,Core::PipelineManager::Pixel);
 			}
 
-			void LoadShaderG(const wchar_t filename[], Oyster::Resource::CustomData& out)
+			void* LoadShaderG(const wchar_t filename[])
 			{
 				
-				LoadShader(filename,out,Core::PipelineManager::Geometry);
-				if(out.loadedData==NULL)
-				{
-					memset(&out,0,sizeof(out));
-					return;
-				}
-				out.resourceUnloadFnc = UnloadShaderG;
+				return LoadShader(filename,Core::PipelineManager::Geometry);
 			}
 
-			void LoadShaderC(const wchar_t filename[], Oyster::Resource::CustomData& out)
+			void* LoadShaderC(const wchar_t filename[])
 			{
 				
-				LoadShader(filename,out,Core::PipelineManager::Compute);
-				if(out.loadedData==NULL)
-				{
-					memset(&out,0,sizeof(out));
-					return;
-				}
-				out.resourceUnloadFnc = UnloadShaderC;
+				return LoadShader(filename,Core::PipelineManager::Compute);
 			}
 
-			void LoadShaderH(const wchar_t filename[], Oyster::Resource::CustomData& out)
+			void* LoadShaderH(const wchar_t filename[])
 			{
 				
-				LoadShader(filename,out,Core::PipelineManager::Hull);
-				if(out.loadedData==NULL)
-				{
-					memset(&out,0,sizeof(out));
-					return;
-				}
-				out.resourceUnloadFnc = UnloadShaderH;
+				return LoadShader(filename,Core::PipelineManager::Hull);
 			}
 
-			void LoadShaderD(const wchar_t filename[], Oyster::Resource::CustomData& out)
+			void* LoadShaderD(const wchar_t filename[])
 			{
 				
-				LoadShader(filename,out,Core::PipelineManager::Domain);
-				if(out.loadedData==NULL)
-				{
-					memset(&out,0,sizeof(out));
-					return;
-				}
-				out.resourceUnloadFnc = UnloadShaderD;
+				return LoadShader(filename,Core::PipelineManager::Domain);
 			}
 
-			void LoadShaderV(const wchar_t filename[], Oyster::Resource::CustomData& out)
+			void* LoadShaderV(const wchar_t filename[])
 			{
-				
-				LoadShader(filename,out,Core::PipelineManager::Vertex);
-				if(out.loadedData==NULL)
-				{
-					memset(&out,0,sizeof(out));
-					return;
-				}
-				out.resourceUnloadFnc = UnloadShaderV;
+				return LoadShader(filename,Core::PipelineManager::Vertex);
 			}
 
-			void LoadShader(const wchar_t filename[], Oyster::Resource::CustomData& out, int type)
+			void* LoadShader(const wchar_t filename[], int type)
 			{
 				Core::PipelineManager::ShaderData data;
 #ifdef _DEBUG
@@ -159,8 +122,7 @@ namespace Oyster
 					{
 						Shader->Release();
 					}
-					memset(&out,0,sizeof(out));
-					return;
+					return NULL;
 				}
 
 				data.size = Shader->GetBufferSize();
@@ -181,11 +143,10 @@ namespace Oyster
 				}
 				else
 				{
-					memset(&out,0,sizeof(out));
-					return;
+					return NULL;
 				}
 #endif
-				out.loadedData = Core::PipelineManager::CreateShader(data, Core::PipelineManager::ShaderType(type));
+				return Core::PipelineManager::CreateShader(data, Core::PipelineManager::ShaderType(type));
 			}
 		}
 	}

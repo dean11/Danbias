@@ -15,8 +15,8 @@ namespace Oyster { namespace Physics3D
 	struct RigidBody
 	{ //! A struct of a simple rigid body.
 	public:
+		::Oyster::Math::Quaternion  quaternion;
 		::Oyster::Math::Float3		centerPos,				//!< Location of the body's center in the world.
-									axis,					//!< Euler rotationAxis of the body.
 									boundingReach,			//!< 
 									momentum_Linear,		//!< The linear momentum G (kg*m/s).
 									momentum_Angular,		//!< The angular momentum H (Nm*s) around an parallell axis.
@@ -64,7 +64,7 @@ namespace Oyster { namespace Physics3D
 		void SetMass_KeepMomentum( const ::Oyster::Math::Float &m );
 
 		//void SetOrientation( const ::Oyster::Math::Float4x4 &o );
-		void SetRotation( const ::Oyster::Math::Float3 &axis );
+		void SetRotation( const ::Oyster::Math::Quaternion &quaternion );
 		void SetSize( const ::Oyster::Math::Float3 &widthHeight );
 
 		void SetMomentum_Linear( const ::Oyster::Math::Float3 &worldG, const ::Oyster::Math::Float3 &atWorldPos );
@@ -81,7 +81,7 @@ namespace Oyster { namespace Physics3D
 		::Oyster::Math::Float mass;						//!< m (kg)
 		//::Oyster::Math::Float4x4 momentOfInertiaTensor;	//!< I (Nm*s) Tensor matrix ( only need to be 3x3 matrix, but is 4x4 for future hardware acceleration )	(localValue)
 		::Oyster::Physics3D::MomentOfInertia momentOfInertiaTensor;
-		::Oyster::Math::Quaternion rotation;			//!< RotationAxis of the body.
+		//::Oyster::Math::Quaternion rotation;			//!< RotationAxis of the body.
 	};
 } }
 

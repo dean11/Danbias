@@ -69,25 +69,25 @@
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
-    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
-    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)Misc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -7,6 +7,7 @@
 #include "Dx11Includes.h"
 #include <sstream>
 #include "OysterMath.h"
+#include "../Misc/Resource/ResourceManager.h"
 //#include <vld.h>
 
 namespace Oyster
@@ -24,6 +25,10 @@ namespace Oyster
 			static IDXGISwapChain* swapChain;
 
 			static std::stringstream log;
+
+			static Resource::ResourceManager loader;
+
+			static std::wstring modelPath, texturePath;
 
 			//BackBufferRTV
 			static ID3D11RenderTargetView* backBufferRTV;

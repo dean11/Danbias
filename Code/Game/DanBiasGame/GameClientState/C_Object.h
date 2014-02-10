@@ -42,6 +42,6 @@ public:
 
 	virtual void Render() = 0;
 	virtual void Release() = 0;
-	int GetId();
+	virtual int GetId() = 0;
 };};};
 #endif
