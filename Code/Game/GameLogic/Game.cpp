@@ -81,7 +81,8 @@ Game::LevelData* Game::CreateLevel()
 	if(this->level) return this->level;
 
 	this->level = new LevelData();
-	this->level->level->InitiateLevel(1000);
+	//this->level->level->InitiateLevel(1000);
+	this->level->level->InitiateLevel("3bana.bias");
 
 	return this->level;
 }

@@ -19,7 +19,7 @@ Game::PlayerData::PlayerData()
 	Oyster::Physics::ICustomBody *rigidBody = Oyster::Physics::API::Instance().CreateRigidBody(sbDesc).Release();
 	
 	//create player with this rigid body
-	this->player = new Player(rigidBody,Player::DefaultCollisionAfter, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
+	this->player = new Player(rigidBody,Level::LevelCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
 	/*Oyster::Physics::ICustomBody::State state;
 	this->player->GetRigidBody()->GetState(state);

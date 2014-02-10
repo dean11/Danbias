@@ -3,16 +3,16 @@
 //////////////////////////////////////////////////
 
 
-#ifndef GAMEMODE_H
-#define GAMEMODE_H
+#ifndef GAMEMODETYPE_H
+#define GAMEMODETYPE_H
 
 namespace GameLogic
 {
-	class GameMode
+	class GameModeType
 	{
 		public:
-			GameMode(void);
-			~GameMode(void);
+			GameModeType(void);
+			~GameModeType(void);
 
 		private:
 

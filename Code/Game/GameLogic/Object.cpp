@@ -178,13 +178,13 @@ void Object::EndFrame()
 	//300, 0,0,
 	//1,0,0
 	
-	/*if( pos.GetLength() < 303.5f) 
+	if( pos.GetLength() < 303.5f) 
 	{
 		Oyster::Math::Float moveUp = 303.5 - pos.GetLength();
 		up *= moveUp;
 
 		currPhysicsState.SetCenterPosition(pos + up);
-	}*/
+	}
 
 
 	if(currPhysicsState.GetLinearMomentum() !=currPhysicsState.GetLinearMomentum())
