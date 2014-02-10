@@ -452,6 +452,17 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
+
+		targetMem.v[0] = (rotationQuaternion * ::LinearAlgebra::Vector3<ScalarType>(1,0,0) * conjugate).imaginary;
+		targetMem.v[1] = (rotationQuaternion * ::LinearAlgebra::Vector3<ScalarType>(0,1,0) * conjugate).imaginary;
+		targetMem.v[2] = (rotationQuaternion * ::LinearAlgebra::Vector3<ScalarType>(0,0,1) * conjugate).imaginary;
+		return targetMem;
+	}
+
+	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & RotationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
 		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
