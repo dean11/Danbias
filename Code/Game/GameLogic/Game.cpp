@@ -105,7 +105,10 @@ bool Game::NewFrame()
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
 		gameInstance.onMoveFnc(this->players[i]);
 	}
-
+	for (unsigned int i = 0; i < this->level->level->dynamicObjects.Size(); i++)
+	{
+		gameInstance.onMoveFnc(this->level->level->dynamicObjects[i]);
+	}
 	
 
 	return true;

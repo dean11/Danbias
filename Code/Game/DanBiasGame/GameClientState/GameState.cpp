@@ -483,7 +483,7 @@ void GameState::Protocol( ObjPos* pos )
 		if(privData->object[i]->GetId() == pos->object_ID)
 		{
 			privData->object[i]->setPos(world);
-			Oyster::Math::Float3 position = Oyster::Math::Float3(0, 605, 15);
+			Oyster::Math::Float3 position = Oyster::Math::Float3(0, 605, -15);
 			if(pos->object_ID == myId) // playerobj
 			{
 				//printf("Move message recieved!");

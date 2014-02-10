@@ -65,7 +65,7 @@ namespace GameLogic
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
 
-	private:
+	//private:
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
