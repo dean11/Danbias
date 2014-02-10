@@ -38,6 +38,33 @@ SimpleRigidBody::~SimpleRigidBody()
 	this->rigidBody = NULL;
 }
 
+SimpleRigidBody::State SimpleRigidBody::GetState() const
+{
+	return this->state;
+}
+
+SimpleRigidBody::State& SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
+{
+	targetMem = this->state;
+	return targetMem;
+}
+
+void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setRotation(btQuaternion(state.quaternion.imaginary.x, state.quaternion.imaginary.y, state.quaternion.imaginary.z, state.quaternion.real));
+	trans.setOrigin(btVector3(state.centerPos.x, state.centerPos.y, state.centerPos.z));
+	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setFriction(state.staticFrictionCoeff);
+	this->rigidBody->setRestitution(state.restitutionCoeff);
+	btVector3 fallInertia(0, 0, 0);
+	collisionShape->calculateLocalInertia(state.mass, fallInertia);
+	this->rigidBody->setMassProps(state.mass, fallInertia);
+
+	this->state = state;
+}
+
 void SimpleRigidBody::SetCollisionShape(btCollisionShape* shape)
 {
 	this->collisionShape = shape;
