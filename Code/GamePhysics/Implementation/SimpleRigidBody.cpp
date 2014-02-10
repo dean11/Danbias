@@ -64,6 +64,67 @@ void SimpleRigidBody::SetSubscription(EventAction_Move function)
 	this->onMovement = function;
 }
 
+void SimpleRigidBody::SetLinearVelocity(Float3 velocity)
+{
+	this->rigidBody->setLinearVelocity(btVector3(velocity.x, velocity.y, velocity.z));
+}
+
+void SimpleRigidBody::SetPosition(::Oyster::Math::Float3 position)
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setOrigin(btVector3(position.x, position.y, position.z));
+	this->motionState->setWorldTransform(trans);
+	this->state.centerPos = position;
+}
+
+void SimpleRigidBody::SetRotation(Float4 quaternion)
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+	this->motionState->setWorldTransform(trans);
+	this->state.quaternion = Quaternion(quaternion.xyz, quaternion.w);
+}
+
+void SimpleRigidBody::SetRotation(::Oyster::Math::Quaternion quaternion)
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setRotation(btQuaternion(quaternion.imaginary.x, quaternion.imaginary.y, quaternion.imaginary.z, quaternion.real));
+	this->motionState->setWorldTransform(trans);
+	this->state.quaternion = quaternion;
+}
+
+void SimpleRigidBody::SetRotation(Float3 eulerAngles)
+{
+	btTransform trans;
+	this->motionState->getWorldTransform(trans);
+	trans.setRotation(btQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z));
+	this->motionState->setWorldTransform(trans);
+	this->state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
+}
+
+Float4x4 SimpleRigidBody::GetRotation() const
+{
+	return this->state.GetRotation();
+}
+
+Float4x4 SimpleRigidBody::GetOrientation() const
+{
+	return this->state.GetOrientation();
+}
+
+Float4x4 SimpleRigidBody::GetView() const
+{
+	return this->state.GetView();
+}
+
+Float4x4 SimpleRigidBody::GetView( const ::Oyster::Math::Float3 &offset ) const
+{
+	return this->state.GetView(offset);
+}
+
 void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
 {
 	if(this->onMovement)
@@ -89,22 +150,6 @@ btDefaultMotionState* SimpleRigidBody::GetMotionState() const
 btRigidBody* SimpleRigidBody::GetRigidBody() const
 {
 	return this->rigidBody;
-}
-
-SimpleRigidBody::State SimpleRigidBody::GetState() const
-{
-	return this->state;
-}
-
-SimpleRigidBody::State & SimpleRigidBody::GetState( SimpleRigidBody::State &targetMem ) const
-{
-	targetMem = this->state;
-	return targetMem;
-}
-
-void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
-{
-	this->state = state;
 }
 
 void * SimpleRigidBody::GetCustomTag() const

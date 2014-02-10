@@ -47,7 +47,7 @@ API_Impl::~API_Impl()
 }
 
 // Bullet physics
-ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass)
+ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
 
@@ -64,6 +64,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	collisionShape->calculateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
 	rigidBody->setUserPointer(body);
 	body->SetRigidBody(rigidBody);
 
@@ -73,7 +75,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 
 	return body;
 }
-ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass)
+
+ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
 
@@ -90,6 +93,37 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	collisionShape->calculateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
+	rigidBody->setUserPointer(body);
+	body->SetRigidBody(rigidBody);
+
+	// Add rigid body to world
+	this->dynamicsWorld->addRigidBody(rigidBody);
+	this->customBodies.push_back(body);
+
+	return body;
+}
+
+ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
+{
+	SimpleRigidBody* body = new SimpleRigidBody;
+
+	// Add collision shape
+	btCollisionShape* collisionShape = new btCylinderShape(btVector3(halfSize.x, halfSize.y, halfSize.z));
+	body->SetCollisionShape(collisionShape);
+
+	// Add motion state
+	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w),btVector3(position.x, position.y, position.z)));
+	body->SetMotionState(motionState);
+
+	// Add rigid body
+	btVector3 fallInertia(0, 0, 0);
+	collisionShape->calculateLocalInertia(mass, fallInertia);
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
+    btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
 	rigidBody->setUserPointer(body);
 	body->SetRigidBody(rigidBody);
 
@@ -108,19 +142,15 @@ void API_Impl::UpdateWorld()
 
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
-		this->customBodies[i]->GetState(state);
-
 		btTransform trans;
 		dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetMotionState()->getWorldTransform(trans);
-		state.centerPos = Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
-		state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
+		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
+		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
 		
 		if(dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetRigidBody()->getActivationState() == ACTIVE_TAG)
 		{
 			dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->CallSubscription_Move();
 		}
-
-		this->customBodies[i]->SetState(state);
 	}
 
 	int numManifolds = this->dynamicsWorld->getDispatcher()->getNumManifolds();
