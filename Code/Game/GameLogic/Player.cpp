@@ -109,6 +109,7 @@ void Player::MoveForward()
 	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
 	//Oyster::Math::Float3 forward = lookDir;
 	//newPhysicsState.ApplyLinearImpulse(forward * (MOVE_FORCE * this->gameInstance->GetFrameTime()));
+	//rigidBody->SetLinearVelocity( 10 *  this->gameInstance->GetFrameTime() );
 }
 void Player::MoveBackwards()
 {
@@ -120,10 +121,10 @@ void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float3 forward = currPhysicsState.GetOrientation().v[2];
+
 	//Oyster::Math::Float3 forward = lookDir;
-	//Oyster::Math::Float3 r = (-currPhysicsState.GetGravityNormal()).Cross(forward);
-	//newPhysicsState.ApplyLinearImpulse(-r * MOVE_FORCE * this->gameInstance->GetFrameTime());
-	
+	Oyster::Math::Float3 r = (-currPhysicsState.centerPos.Normalize()).Cross(forward);
+	//rigidBody->SetLinearVelocity(-r * 10 *  this->gameInstance->GetFrameTime() );
 }
 void Player::MoveLeft()
 {

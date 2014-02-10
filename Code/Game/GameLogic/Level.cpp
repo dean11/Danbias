@@ -230,12 +230,7 @@ void Level::InitiateLevel(float radius)
 
 	int idCount = 100;
 	// add level sphere
-	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0);
-	
-	ICustomBody::State state;
-	rigidBody->GetState(state);
-	state.restitutionCoeff = 0.2f;
-	rigidBody->SetState(state);
+	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 	this->levelObj->objectID = idCount++;
 	rigidBody->SetCustomTag(levelObj);
@@ -247,7 +242,7 @@ void Level::InitiateLevel(float radius)
 	int offset = 0;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5);
+		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5, 0.5f, 0.8f, 0.6f);
 
 		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
 		this->dynamicObjects[i]->objectID = idCount++;

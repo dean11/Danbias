@@ -15,16 +15,16 @@ Game::PlayerData::PlayerData()
 	//sbDesc.quaternion = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
 
 	//create rigid body
-	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass);
+	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
 	
 	//create player with this rigid body
 	this->player = new Player(rigidBody,Level::LevelCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
 
-	Oyster::Physics::ICustomBody::State state;
-	this->player->GetRigidBody()->GetState(state);
-	//state.SetRotation(Oyster::Math::Float3(0, Oyster::Math::pi, 0));
-	this->player->GetRigidBody()->SetState(state);
+	//Oyster::Physics::ICustomBody::State state;
+	//this->player->GetRigidBody()->GetState(state);
+	////state.SetRotation(Oyster::Math::Float3(0, Oyster::Math::pi, 0));
+	//this->player->GetRigidBody()->SetState(state);
 	player->EndFrame();
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)

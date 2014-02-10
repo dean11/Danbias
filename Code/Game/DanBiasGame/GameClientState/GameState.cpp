@@ -311,9 +311,9 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	C_Object* obj;
 	modelData.visible = true;
 	//modelData.world = world;
-	//modelData.position = ;
-	//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-	//modelData.scale =  Oyster::Math::Float3(2,2,2);
+	modelData.position = Oyster::Math::Float3(world[12], world[13], world[14]);
+	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
+	modelData.scale =  Oyster::Math::Float3(2,2,2);
 	modelData.modelPath = modelName;
 	modelData.id = myId;
 	
@@ -612,15 +612,15 @@ void GameState::Protocol( ObjPos* pos )
 				Oyster::Math::Float3 newLook = up.Cross(right);
 				newLook.Normalize();*/
 
-				camera->setRight(right);
-				camera->setUp(up);
+				//camera->setRight(right);
+				//camera->setUp(up);
 				//camera->setLook(objForward);
 				
 				up *= 1;
 				objForward *= -2;
 				Oyster::Math::Float3 cameraPos = pos + up + objForward;
-				camera->SetPosition(cameraPos);
-				camera->UpdateViewMatrix();
+				//camera->SetPosition(cameraPos);
+				//camera->UpdateViewMatrix();
 				
 			}
 		}

@@ -16,7 +16,7 @@ const Game *Object::gameInstance = (Game*)(&Game::Instance());
 Object::Object()
 {	
 
-	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0);
+	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 
 	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
 	this->objectID = GID();
@@ -26,7 +26,7 @@ Object::Object()
 
 Object::Object(OBJECT_TYPE type)
 {
-	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0);
+	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 	this->type = type;
 	this->objectID = GID();
 	this->currPhysicsState = this->rigidBody->GetState();
@@ -44,7 +44,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
 
 Object::Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
 {
-	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0);
+	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 	
 	this->type = type;
 	this->objectID = GID();
