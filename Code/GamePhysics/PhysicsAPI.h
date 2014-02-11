@@ -78,11 +78,15 @@ namespace Oyster
 			 ********************************************************/
 			virtual void ReleaseFromLimbo( const ICustomBody* objRef ) = 0;
 
+			virtual void SetGravityPoint(::Oyster::Math::Float3 gravityPoint) = 0; 
+			virtual void SetGravity(float gravity) = 0; 
 
 			// Bullet physics
 			virtual ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 			virtual ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 			virtual ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
+
+			virtual void SetTimeStep(float timeStep) = 0;
 
 			virtual void UpdateWorld() = 0;
 
@@ -135,11 +139,18 @@ namespace Oyster
 			virtual void SetRotation(::Oyster::Math::Float4 quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Quaternion quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
+			virtual void SetAngularFactor(::Oyster::Math::Float factor) = 0;
 
-			::Oyster::Math::Float4x4 GetRotation() const;
-			::Oyster::Math::Float4x4 GetOrientation() const;
-			::Oyster::Math::Float4x4 GetView() const;
-			::Oyster::Math::Float4x4 GetView( const ::Oyster::Math::Float3 &offset ) const;
+			virtual void SetGravity(::Oyster::Math::Float3 gravity) = 0;
+
+			virtual void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right) = 0;
+			virtual void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward) = 0;
+
+			virtual ::Oyster::Math::Float4x4 GetRotation() const = 0;
+			virtual ::Oyster::Math::Float4 GetRotationAsAngularAxis() = 0;
+			virtual ::Oyster::Math::Float4x4 GetOrientation() const = 0;
+			virtual ::Oyster::Math::Float4x4 GetView() const = 0;
+			virtual ::Oyster::Math::Float4x4 GetView(const ::Oyster::Math::Float3 &offset) const = 0;
 
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.
