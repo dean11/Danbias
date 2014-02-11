@@ -29,9 +29,16 @@ namespace GameLogic
 		OBJECT_TYPE GetObjectType() const;
 		void setID(int id);
 		int GetID() const;
-		Oyster::Math::Float3 GetPosition();
 		Oyster::Math::Float4x4 GetOrientation();
 
+
+		Oyster::Math::Float3 GetPosition();
+		Oyster::Math::Float3 GetRotation();
+		Oyster::Math::Float3 GetScaling();
+
+		void SetPosition(Oyster::Math::Float3 position);
+		void SetRotation(Oyster::Math::Float3 rotation);
+		void SetScaling(Oyster::Math::Float3 scale);
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 		void ApplyLinearImpulse(Oyster::Math::Float3 force);
@@ -55,6 +62,11 @@ namespace GameLogic
 		static const Game* gameInstance;
 		Oyster::Math::Float3 currLook;
 		Oyster::Math::Float3 newLook;
+
+		Oyster::Math::Float3 position;
+		Oyster::Math::Float3 rotation;
+		Oyster::Math::Float3 scale;
+
 	};
 
 }
