@@ -38,6 +38,11 @@ namespace DanBias { namespace Client
 
 		struct  KeyInput : public ProtocolStruct
 		{
+		/*
+		* key[0] = 
+		*
+		*
+		*/
 			bool key[6]; 
 		};
 

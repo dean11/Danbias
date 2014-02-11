@@ -20,8 +20,6 @@ Object::Object()
 
 	this->type = OBJECT_TYPE::OBJECT_TYPE_UNKNOWN;
 	this->objectID = GID();
-	this->currPhysicsState = this->rigidBody->GetState();
-	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(OBJECT_TYPE type)
@@ -29,8 +27,6 @@ Object::Object(OBJECT_TYPE type)
 	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 	this->type = type;
 	this->objectID = GID();
-	this->currPhysicsState = this->rigidBody->GetState();
-	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
@@ -38,8 +34,6 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
 	this->rigidBody = rigidBody;
 	this->type = type;
 	this->objectID = GID();
-	this->currPhysicsState = this->rigidBody->GetState();
-	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
@@ -48,8 +42,6 @@ Object::Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE 
 	
 	this->type = type;
 	this->objectID = GID();
-	this->currPhysicsState = this->rigidBody->GetState();
-	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
@@ -58,19 +50,14 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefor
 
 	this->type = type;
 	this->objectID = GID();
-	this->currPhysicsState = this->rigidBody->GetState();
-	this->newPhysicsState = this->currPhysicsState;
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
 {
 	this->rigidBody = rigidBody;
 
-	
 	this->type = type;
 	this->objectID = GID();
-	this->currPhysicsState = this->rigidBody->GetState();
-	this->newPhysicsState = this->currPhysicsState;
 }
 
 void Object::ApplyLinearImpulse(Oyster::Math::Float3 force)
@@ -102,12 +89,11 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 void Object::BeginFrame()
 {
 	
-	this->rigidBody->SetState(this->newPhysicsState);
 }
 // update physic 
 void Object::EndFrame()
 {
-	this->newPhysicsState = this->currPhysicsState;
+
 }
 
 void Object::setBeforeCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter))
@@ -124,6 +110,18 @@ Oyster::Math::Float3 Object::GetPosition()
 	Oyster::Physics::ICustomBody::State state; 
 	state = this->rigidBody->GetState();
 	return state.centerPos;
+}
+Oyster::Math::Quaternion Object::GetRotation() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return state.quaternion;
+}
+Oyster::Math::Float3 Object::GetScale() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return Float3();
 }
 Oyster::Math::Float4x4 Object::GetOrientation() 
 {

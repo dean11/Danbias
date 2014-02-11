@@ -156,6 +156,7 @@ namespace DanBias
 					{
 						if((this->clients[k] && readyList[i]) && readyList[i]->GetClient()->GetID() != this->clients[k]->GetClient()->GetID())
 						{
+							//Protocol_ObjectCreatePlayer
 							Protocol_ObjectCreate p(this->clients[k]->GetPlayer()->GetOrientation(), this->clients[k]->GetPlayer()->GetID(), "char_white.dan"); //The model name will be custom later..
 							readyList[i]->GetClient()->Send(p);
 						}

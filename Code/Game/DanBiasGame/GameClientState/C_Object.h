@@ -23,6 +23,8 @@ private:
 	Oyster::Math::Float3 position; 
 	Oyster::Math::Quaternion rotation; 
 	Oyster::Math::Float3 scale; 
+	Oyster::Graphics::Model::Model *model;
+	int id;
 	void updateWorld();
 public:
 
@@ -40,8 +42,8 @@ public:
 	void addScale(Oyster::Math::Float3 deltaScale);
 	Oyster::Math::Float3  getScale() const;
 
-	virtual void Render() = 0;
-	virtual void Release() = 0;
-	virtual int GetId() = 0;
+	virtual void Render();
+	virtual void Release();
+	virtual int GetId() const;
 };};};
 #endif
