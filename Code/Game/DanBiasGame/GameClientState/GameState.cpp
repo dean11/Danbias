@@ -309,20 +309,11 @@ bool GameState::Release()
 void GameState::readKeyInput(InputClass* KeyInput)
 {
 
-	bool send = false;
-	GameLogic::Protocol_PlayerMovement movePlayer;
-	movePlayer.bForward = false;
-	movePlayer.bBackward = false;
-	movePlayer.bLeft = false;
-	movePlayer.bRight = false;
-
 	if(KeyInput->IsKeyPressed(DIK_W))
 	{
-
 		if(!key_forward)
 		{
-			movePlayer.bForward = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementForward());
 			key_forward = true;
 		}
 	}
@@ -333,8 +324,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	{
 		if(!key_backward)
 		{
-			movePlayer.bBackward = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementBackward());
 			key_backward = true;
 		}
 	}
@@ -345,8 +335,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	{
 		if(!key_strafeLeft)
 		{
-			movePlayer.bLeft = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementLeft());
 			key_strafeLeft = true;
 		}
 	}
@@ -357,19 +346,13 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	{
 		if(!key_strafeRight)
 		{
-			movePlayer.bRight = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementRight());
 			key_strafeRight = true;
 		}
 	} 
 	else 
 		key_strafeRight = false;
 
-
-	if (privData->nwClient->IsConnected() && send)
-	{
-		privData->nwClient->Send(movePlayer);
-	}
 
 	//send delta mouse movement 
 	if (KeyInput->IsMousePressed())
@@ -437,9 +420,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	{
 		if(!key_Jump)
 		{
-			GameLogic::Protocol_PlayerJump playerJump;
-			playerJump.hasJumped = true;
-			privData->nwClient->Send(playerJump);
+			privData->nwClient->Send(GameLogic::Protocol_PlayerJump());
 			key_Jump = true;
 		}
 	}

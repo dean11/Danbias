@@ -71,9 +71,9 @@ void Level::InitiateLevel(float radius)
 	state.SetRestitutionCoeff(0.2);
 	rigidBody->SetState(state);
 	
-	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
-	levelObj->objectID = idCount++;
-	rigidBody->SetCustomTag(levelObj);
+	this->levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
+	this->levelObj->objectID = idCount++;
+	rigidBody->SetCustomTag(this->levelObj);
 	
 /*
 // add box

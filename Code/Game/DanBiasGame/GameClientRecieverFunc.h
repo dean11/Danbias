@@ -38,34 +38,6 @@ namespace DanBias
 					}
 				}
 				break;
-			case protocol_Gameplay_PlayerMovement:
-				{
-					Client::GameClientState::KeyInput* protocolData = new Client::GameClientState::KeyInput;
-					for(int i = 0; i< 6; i++)
-					{
-						protocolData->key[i] = p[i+1].value.netBool;
-					}
-
-					if(dynamic_cast<Client::GameState*>(gameClientState))
-						((Client::GameState*)gameClientState)->Protocol(protocolData);
-					delete protocolData;
-					protocolData = NULL;
-				}
-				break;
-			//case protocol_Gameplay_PlayerPosition:
-			//	{
-			//		Client::GameClientState::PlayerPos* protocolData = new Client::GameClientState::PlayerPos;
-			//		for(int i = 0; i< 3; i++)
-			//		{
-			//			protocolData->playerPos[i] = p[i].value.netFloat;
-			//		}
-			//		if(dynamic_cast<Client::GameState*>(gameClientState))
-			//			((Client::GameState*)gameClientState)->Protocol(protocolData);
-			//		delete protocolData;
-			//		protocolData = NULL;
-			//	}
-			//	break;
-
 			case protocol_Gameplay_ObjectCreate:
 				{
 					Client::GameClientState::NewObj protocolData;// = new Client::GameClientState::NewObj;
@@ -114,7 +86,6 @@ namespace DanBias
 				{
 					if(dynamic_cast<Client::LobbyState*>(gameClientState))
 					{
-						GameLogic::Protocol_LobbyCreateGame tp();
 						int id = p.Get(1).value.netInt;
 						std::string name = p.Get(19).value.netCharPtr;
 						Oyster::Math::Float4x4 w;

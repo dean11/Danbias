@@ -95,7 +95,7 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 		{
 			if(!DanBias::GameServerAPI::GameStart())
 			{
-				//this->nwClient->Send(GameLogic::Protocol_LobbyStartGame());
+				
 			}
 		}
 	}
