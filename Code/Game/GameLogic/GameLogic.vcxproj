@@ -181,7 +181,7 @@
     <ClInclude Include="GameAPI.h" />
     <ClInclude Include="GameLogicDef.h" />
     <ClInclude Include="GameLogicStates.h" />
-    <ClInclude Include="GameMode.h" />
+    <ClInclude Include="GameModeType.h" />
     <ClInclude Include="IAttatchment.h" />
     <ClInclude Include="JumpPad.h" />
     <ClInclude Include="Level.h" />
@@ -203,7 +203,7 @@
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="GameModeType.cpp" />
     <ClCompile Include="Game_LevelData.cpp" />
     <ClCompile Include="Game_PlayerData.cpp" />
     <ClCompile Include="IAttatchment.cpp" />

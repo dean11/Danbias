@@ -56,17 +56,17 @@
 #define protocol_Gameplay_ObjectPosition			353
 #define protocol_Gameplay_ObjectScale				354
 #define protocol_Gameplay_ObjectRotation			355
-#define protocol_Gameplay_ObjectEnabled				356
-#define protocol_Gameplay_ObjectDisabled			357
-#define protocol_Gameplay_ObjectCreate				358
-#define protocol_Gameplay_ObjectCreatePlayer		359
-#define protocol_Gameplay_ObjectJoinTeam			360
-#define protocol_Gameplay_ObjectLeaveTeam			361
-
-#define protocol_Gameplay_ObjectWeaponCooldown		362
-#define protocol_Gameplay_ObjectWeaponEnergy		363
-#define protocol_Gameplay_ObjectRespawn				364
-#define protocol_Gameplay_ObjectDie					365
+#define protocol_Gameplay_ObjectPositionRotation	356
+#define protocol_Gameplay_ObjectEnabled				357
+#define protocol_Gameplay_ObjectDisabled			358
+#define protocol_Gameplay_ObjectCreate				359
+#define protocol_Gameplay_ObjectCreatePlayer		360
+#define protocol_Gameplay_ObjectJoinTeam			361
+#define protocol_Gameplay_ObjectLeaveTeam			362
+#define protocol_Gameplay_ObjectWeaponCooldown		363
+#define protocol_Gameplay_ObjectWeaponEnergy		364
+#define protocol_Gameplay_ObjectRespawn				365
+#define protocol_Gameplay_ObjectDie					366
 #define protocol_GameplayMAX							399
 
 

@@ -94,54 +94,11 @@ namespace DanBias
 		//bandwidth.
 		//if( dt >= GameSession::gameSession->networkFrameTime )
 		//{
-			GameSession::gameSession->networkTimer.reset();
+		//	GameSession::gameSession->networkTimer.reset();
 			int id = movedObject->GetID();
-			Protocol_ObjectPosition p(movedObject->GetPosition(), id);
-			//if(id != 1)
+			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
+			Protocol_ObjectPositionRotation p(movedObject->GetPosition(), movedObject->GetRotation(), id);
 			GameSession::gameSession->Send(p.GetProtocol());
-
-
-			/*
-			if(dynamic_cast<GameLogic::ILevelData*>(obj))
-			{
-				obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
-				if(obj)
-				{
-					if(obj->GetObjectType() == OBJECT_TYPE_WORLD)
-					{
-						int id = obj->GetID();
-						Oyster::Math::Float4x4 world =obj->GetOrientation();
-					
-						Protocol_ObjectPosition p(world, id);
-						gameSession->Send(p.GetProtocol());
-					}
-				}
-
-				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
-				if(obj)
-				{
-					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
-					{
-						int id = obj->GetID();
-						Oyster::Math::Float4x4 world = obj->GetOrientation();
-						Protocol_ObjectPosition p(world, id);
-						gameSession->Send(p.GetProtocol());
-					}
-				}
-			
-				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(2);
-				if(obj)
-				{
-					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
-					{
-						int id = obj->GetID();
-						Oyster::Math::Float4x4 world = obj->GetOrientation();
-						Protocol_ObjectPosition p(world, id);
-						GameSession::gameSession->Send(p.GetProtocol());
-					}
-				}
-			}
-			*/
 		//}
 		
 	}

@@ -82,6 +82,7 @@ Game::LevelData* Game::CreateLevel()
 
 	this->level = new LevelData();
 	this->level->level->InitiateLevel(1000);
+	//this->level->level->InitiateLevel("3bana.bias");
 
 	return this->level;
 }
@@ -98,14 +99,18 @@ bool Game::NewFrame()
 		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
-	API::Instance().Update();
+	API::Instance().UpdateWorld();
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i]->player)	this->players[i]->player->EndFrame();
+		gameInstance.onMoveFnc(this->players[i]);
 	}
-
-	//gameInstance.onMoveFnc(this->level);
+	for (unsigned int i = 0; i < this->level->level->dynamicObjects.Size(); i++)
+	{
+		gameInstance.onMoveFnc(this->level->level->dynamicObjects[i]);
+	}
+	
 
 	return true;
 }
@@ -132,9 +137,9 @@ void Game::SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)
 
 bool Game::Initiate()
 {
-	API::Instance().Init((int)pow(2u, 9u), 1u, Oyster::Math::Float3());
-	API::Instance().SetSubscription(Game::PhysicsOnDestroy);
-	API::Instance().SetFrameTimeLength(this->frameTime);
+	API::Instance().Init();
+	//API::Instance().SetSubscription(Game::PhysicsOnDestroy);
+	//API::Instance().SetFrameTimeLength(this->frameTime);
 	this->initiated = true;
 	return true;
 }

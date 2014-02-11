@@ -17,6 +17,9 @@
 #include "vld.h"
 #include "GameClientRecieverFunc.h"
 
+#include "../Misc/EventHandler/EventHandler.h"
+using namespace Oyster::Event;
+
 namespace DanBias
 {
 
@@ -138,8 +141,6 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-
-
 		m_data->inputObj->Update();
 
 		if(m_data->serverOwner)

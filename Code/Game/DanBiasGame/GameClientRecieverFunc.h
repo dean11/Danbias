@@ -82,6 +82,20 @@ namespace DanBias
 						((Client::GameState*)gameClientState)->Protocol(&protocolData);
 				}
 				break;
+			case protocol_Gameplay_ObjectPositionRotation:
+				{
+
+					Client::GameClientState::ObjPos protocolData;
+					protocolData.object_ID = p[1].value.netInt;
+					for(int i = 0; i< 16; i++)
+					{
+						protocolData.worldPos[i] = p[i+2].value.netFloat;
+					}
+
+					if(dynamic_cast<Client::GameState*>(gameClientState))
+						((Client::GameState*)gameClientState)->Protocol(&protocolData);
+				}
+				break;
 			case protocol_Lobby_Create:
 				{
 					if(dynamic_cast<Client::LobbyState*>(gameClientState))

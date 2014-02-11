@@ -8,11 +8,12 @@
 #include "Player.h"
 #include "StaticObject.h"
 #include "DynamicObject.h"
-#include "GameMode.h"
+#include "GameModeType.h"
 #include "Player.h"
 #include "PhysicsAPI.h"
 #include "TeamManager.h"
 #include "DynamicArray.h"
+#include "LevelLoader/LevelLoader.h"
 
 namespace GameLogic
 {
@@ -29,8 +30,10 @@ namespace GameLogic
 		* @param levelPath: Path to a file that contains all information on the level
 		********************************************************/
 		void InitiateLevel(std::string levelPath);
-		void Level::InitiateLevel(float radius);
+		void InitiateLevel(float radius);
 
+		void parseObjectType(ObjectTypeHeader* obj);
+		void parsePhysicsObj(LevelLoaderInternal::BoundingVolumeBase* obj);
 		/********************************************************
 		* Creates a team in the level
 		* @param teamSize: The size of the team you want to create
@@ -65,11 +68,11 @@ namespace GameLogic
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
 
-	private:
+	//private:
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
-		GameMode gameMode;
+		GameModeType gameMode;
 		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
 		StaticObject *levelObj;
 

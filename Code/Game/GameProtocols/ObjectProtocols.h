@@ -288,6 +288,76 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 	
+	struct Protocol_ObjectPositionRotation :public Oyster::Network::CustomProtocolObject
+	{
+		short object_ID;
+		float position[3]; 
+		float rotation[3]; 
+		
+		Protocol_ObjectPositionRotation()
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectPositionRotation;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;		
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		//POSITION	
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+		//ROTATION
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+
+			this->object_ID = 0;
+			memset(&this->position[0], 0, sizeof(float) * 3);
+			memset(&this->rotation[0], 0, sizeof(float) * 3);
+		}
+		Protocol_ObjectPositionRotation(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->object_ID = p[1].value.netShort;
+		//POSITION
+			this->position[0] = p[2].value.netFloat;
+			this->position[1] = p[3].value.netFloat;
+			this->position[2] = p[4].value.netFloat;
+		//ROTATION
+			this->rotation[0] = p[5].value.netFloat;
+			this->rotation[1] = p[6].value.netFloat;
+			this->rotation[2] = p[7].value.netFloat;
+		}
+		Protocol_ObjectPositionRotation(float p[3], float r[3], int id)
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectPositionRotation;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+		//POSITION
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+		//ROTATION
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+
+			object_ID = id;
+			memcpy(&this->position[0], &p[0], sizeof(float) * 3);
+			memcpy(&this->rotation[0], &r[0], sizeof(float) * 3);
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = this->object_ID;
+			this->protocol[2].value = this->position[0];
+			this->protocol[3].value = this->position[1];
+			this->protocol[4].value = this->position[2];
+			this->protocol[5].value = this->rotation[0];
+			this->protocol[6].value = this->rotation[1];
+			this->protocol[7].value = this->rotation[2];
+			return protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
 	//#define protocol_Gameplay_ObjectEnabled			356
 	struct Protocol_ObjectEnable :public Oyster::Network::CustomProtocolObject
 	{
