@@ -1,13 +1,12 @@
 #include "GFXAPI.h"
 #include "../Core/Core.h"
-#include "../Render/Resources/Debug.h"
-#include "../Render/Resources/Deffered.h"
-#include "../Render/Rendering/Render.h"
+#include "../Render/Resources.h"
+#include "../Render/DefaultRenderer.h"
 #include "../FileLoader/ObjReader.h"
-//#include "../../Misc/Resource/OysterResource.h"
 #include "../../Misc/Resource/ResourceManager.h"
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
+#include "../Render/GuiRenderer.h"
 #include <vld.h>
 
 namespace Oyster
@@ -19,6 +18,7 @@ namespace Oyster
 			Math::Float4x4 View;
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight> Lights;
+			float deltaTime;
 		}
 
 		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
@@ -29,18 +29,20 @@ namespace Oyster
 			{
 				return API::Fail;
 			}
-			Render::Resources::Deffered::Init();
+			Render::Resources::Init();
 
 			Render::Preparations::Basic::SetViewPort();
+			Render::DefaultRenderer::cube = API::CreateModel(L"box.dan");
+			Render::DefaultRenderer::cube2 = API::CreateModel(L"box2.dan");
 			return API::Sucsess;
 		}
 
-		void API::SetProjection(Math::Float4x4& projection)
+		void API::SetProjection(const Math::Float4x4& projection)
 		{
 			Projection = projection;
 		}
 
-		void API::SetView(Math::Float4x4& view)
+		void API::SetView(const Math::Float4x4& view)
 		{
 			View = view;
 		}
@@ -49,27 +51,27 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::Rendering::Basic::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
+				Render::DefaultRenderer::NewFrame(View, Projection, Lights[0], (int)Lights.size());
 			}
 			else
 			{
-				Render::Rendering::Basic::NewFrame(View, Projection, NULL, 0);
+				Render::DefaultRenderer::NewFrame(View, Projection, Definitions::Pointlight(), 0);
 			}
 		}
 
 		void API::RenderScene(Model::Model models[], int count)
 		{
-			Render::Rendering::Basic::RenderScene(models,count, View, Projection);
+			Render::DefaultRenderer::RenderScene(models,count, View, Projection, deltaTime);
 		}
 
-		void API::RenderModel(Model::Model& m)
+		void API::RenderModel(Model::Model* m)
 		{
-			Render::Rendering::Basic::RenderScene(&m,1, View, Projection);
+			Render::DefaultRenderer::RenderScene(m,1, View, Projection, deltaTime);
 		}
 
 		void API::EndFrame()
 		{
-			Render::Rendering::Basic::EndFrame();
+			Render::DefaultRenderer::EndFrame();
 		}
 
 		API::State API::SetOptions(API::Option option)
@@ -85,7 +87,7 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-			m->AnimationPlaying = -1;
+			m->Animation.AnimationPlaying = NULL;
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -109,10 +111,12 @@ namespace Oyster
 
 		void API::Clean()
 		{
+			DeleteModel(Render::DefaultRenderer::cube);
+			DeleteModel(Render::DefaultRenderer::cube2);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();
-			Oyster::Graphics::Render::Resources::Deffered::Clean();
+			Oyster::Graphics::Render::Resources::Clean();
 
 			SAFE_RELEASE(Core::depthStencil);
 			SAFE_RELEASE(Core::depthStencilUAV);
@@ -137,9 +141,51 @@ namespace Oyster
 #ifdef _DEBUG
 		API::State API::ReloadShaders()
 		{
-			Render::Resources::Deffered::InitShaders();
+			Render::Resources::InitShaders();
 			return State::Sucsess;
 		}
 #endif
+
+		API::Option API::GetOption()
+		{
+			Option o;
+			o.BytesUsed = Core::UsedMem;
+			o.modelPath = Core::modelPath;
+			o.texturePath = Core::texturePath;
+			return o;
+		}
+
+		void API::StartGuiRender()
+		{
+			Render::Rendering::Gui::BeginRender();
+		}
+
+		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size)
+		{
+			Render::Rendering::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size);
+		}
+
+		API::Texture API::CreateTexture(std::wstring filename)
+		{
+			return Core::loader.LoadResource((Core::texturePath + filename).c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+		}
+
+		void API::DeleteTexture(API::Texture tex)
+		{
+			Core::loader.ReleaseResource(tex);
+		}
+
+		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
+		{
+			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
+			m->Animation.AnimationTime=0;
+			m->Animation.LoopAnimation = looping;
+			return m->Animation.AnimationPlaying->duration;
+		}
+
+		void API::Update(float dt)
+		{
+			deltaTime = dt;
+		}
 	}
 }

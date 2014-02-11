@@ -111,6 +111,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	{
 		// game ip
 		nwClient->Connect(15152, "127.0.0.1");
+		//nwClient->Connect(15152, "83.254.217.248");
 
 		if (!nwClient->IsConnected())
 		{

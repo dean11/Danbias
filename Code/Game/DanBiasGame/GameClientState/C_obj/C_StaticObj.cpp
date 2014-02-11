@@ -34,7 +34,7 @@ void C_StaticObj::Init(ModelInitData modelInit)
 
 void C_StaticObj::Render()
 {
-	Oyster::Graphics::API::RenderModel(*(privData->model));
+	Oyster::Graphics::API::RenderModel(privData->model);
 }
 void C_StaticObj::Release()
 {

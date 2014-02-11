@@ -38,7 +38,7 @@ void C_Player::Init(ModelInitData modelInit)
 
 void C_Player::Render()
 {
-		Oyster::Graphics::API::RenderModel(*(privData->model));
+		Oyster::Graphics::API::RenderModel(privData->model);
 }
 void C_Player::Release()
 {
