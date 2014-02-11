@@ -285,8 +285,8 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	modelData.visible = true;
 	//modelData.world = world;
 	modelData.position = Oyster::Math::Float3(world[12], world[13], world[14]);
-	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-	modelData.scale =  Oyster::Math::Float3(2,2,2);
+	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0,0,0), 1);
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.modelPath = modelName;
 	modelData.id = myId;
 	
@@ -565,7 +565,9 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		if(dynamicObjects[i]->GetId() == pos->object_ID)
 		{
-			dynamicObjects[i]->setWorld(world);
+
+			dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
+
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
