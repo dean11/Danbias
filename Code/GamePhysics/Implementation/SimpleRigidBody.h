@@ -38,6 +38,7 @@ namespace Oyster
 			void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward);
 
 			Math::Float4x4 GetRotation() const;
+			Math::Float4 GetRotationAsAngularAxis();
 			Math::Float4x4 GetOrientation() const;
 			Math::Float4x4 GetView() const;
 			Math::Float4x4 GetView( const ::Oyster::Math::Float3 &offset ) const;

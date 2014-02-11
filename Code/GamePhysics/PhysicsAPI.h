@@ -146,10 +146,11 @@ namespace Oyster
 			virtual void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right) = 0;
 			virtual void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward) = 0;
 
-			::Oyster::Math::Float4x4 GetRotation() const;
-			::Oyster::Math::Float4x4 GetOrientation() const;
-			::Oyster::Math::Float4x4 GetView() const;
-			::Oyster::Math::Float4x4 GetView( const ::Oyster::Math::Float3 &offset ) const;
+			virtual ::Oyster::Math::Float4x4 GetRotation() const = 0;
+			virtual ::Oyster::Math::Float4 GetRotationAsAngularAxis() = 0;
+			virtual ::Oyster::Math::Float4x4 GetOrientation() const = 0;
+			virtual ::Oyster::Math::Float4x4 GetView() const = 0;
+			virtual ::Oyster::Math::Float4x4 GetView(const ::Oyster::Math::Float3 &offset) const = 0;
 
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.
