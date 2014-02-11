@@ -27,16 +27,16 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID )
 		Shaded.Specular += light.Specular;
 	}
 
-	//Diffuse[DTid.xy] = float4(Shaded.Diffuse * DiffuseGlow[DTid.xy].xyz,1);
-	Diffuse[DTid.xy] = float4(DiffuseGlow[DTid.xy].xyz,1);
-	
-	Specular[DTid.xy] = float4(Shaded.Specular, 1);
+	Diffuse[DTid.xy] = float4(Shaded.Diffuse * DiffuseGlow[DTid.xy].xyz,0);
+	Specular[DTid.xy] = float4(Shaded.Specular, 0);
 
 	
 	if(DTid.x & 1 && DTid.y & 1 )
 	{
 		float AmbValue = GetSSAO(ViewPos, UV, DTid.xy, GTid.xy/2);
-		Ambient[DTid.xy/2] = AmbValue;
+		Ambient[DTid.xy/2] = float4(DiffuseGlow[DTid.xy].xyz, AmbValue);
+		Ambient[DTid.xy/2 + float2(Pixels.x/2, 0)] = GUI[DTid.xy];
+		//Ambient[DTid.xy] = GUI[DTid.xy];
 	}
 
 }

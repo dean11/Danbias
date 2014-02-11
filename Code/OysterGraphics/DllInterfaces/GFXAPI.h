@@ -27,7 +27,9 @@ namespace Oyster
 			struct Option
 			{
 				std::wstring modelPath, texturePath;
+				int BytesUsed;
 			};
+			typedef void* Texture;
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
 #ifdef _DEBUG
@@ -40,16 +42,23 @@ namespace Oyster
 			static void Clean();
 
 			//! @brief Sets the view matrix to use next frame
-			static void SetView(Oyster::Math::Float4x4& View);
+			static void SetView(const Oyster::Math::Float4x4& View);
 			//! @brief Sets the projection matrix to use next frame
-			static void SetProjection(Oyster::Math::Float4x4& Projection);
+			static void SetProjection(const Oyster::Math::Float4x4& Projection);
 
 			//! @brief will internally use last values from SetView and SetProjection
 			static void NewFrame();
 			//! @brief Renders a list of models
 			static void RenderScene(Oyster::Graphics::Model::Model models[], int count);
 			//! @brief Renders a single model
-			static void RenderModel(Oyster::Graphics::Model::Model& model);
+			static void RenderModel(Oyster::Graphics::Model::Model* model);
+
+			//! @brief Configures Renderer to process 2D graphics, data will be passed in to EndFrame()
+			static void StartGuiRender();
+
+			//! @brief Renders a single GUI element using the texture provided and the Pos in the center, %based system
+			static void RenderGuiElement(Texture, Math::Float2 Pos, Math::Float2 Size);
+
 			//! @brief Performs light calculations, post effects and presents the scene
 			static void EndFrame();
 
@@ -58,13 +67,25 @@ namespace Oyster
 			//! @brief deletes a model and relases the models resources
 			static void DeleteModel(Oyster::Graphics::Model::Model* model);
 
+			static Texture CreateTexture(std::wstring filename);
+			static void DeleteTexture(Texture);
+
 			//! @brief adds a light to the scene
-			static void AddLight(Definitions::Pointlight light);
+			static void AddLight(const Definitions::Pointlight light);
 			//! @brief removes all lights from the scene
 			static void ClearLights();
 
-			//! @brief Sets Options to the graphics, note: currently unused
+			//! @brief Sets Options to the graphics
 			static State SetOptions(Option);
+
+			//! @brief Gets Options from the graphics
+			static Option GetOption();
+
+			//! @brief Starts an animation and returns the time of the animation
+			static float PlayAnimation(Model::Model* model, std::wstring name, bool looping = false);
+
+			//! @brief Moves all animating models forward the specified time;
+			static void Update(float deltaTime);
 		};
 	}
 }

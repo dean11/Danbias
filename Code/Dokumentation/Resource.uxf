@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="12.1">
-  <zoom_level>16</zoom_level>
+<diagram program="umlet" version="12.2">
+  <zoom_level>6</zoom_level>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>560</x>
-      <y>80</y>
-      <w>176</w>
-      <h>80</h>
+      <x>198</x>
+      <y>300</y>
+      <w>66</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>&lt;&lt;interface&gt;&gt;
 OysterResource</panel_attributes>
@@ -16,23 +16,23 @@ OysterResource</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>528</x>
-      <y>112</y>
-      <w>206</w>
-      <h>160</h>
+      <x>186</x>
+      <y>312</y>
+      <w>76</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=&gt;&gt;
 implements
 </panel_attributes>
-    <additional_attributes>112;128;112;48</additional_attributes>
+    <additional_attributes>42;48;42;18</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Actor</type>
     <coordinates>
-      <x>352</x>
-      <y>240</y>
-      <w>128</w>
-      <h>192</h>
+      <x>120</x>
+      <y>360</y>
+      <w>48</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>Dev</panel_attributes>
     <additional_attributes/>
@@ -40,22 +40,22 @@ implements
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>320</x>
-      <y>32</y>
-      <w>272</w>
-      <h>240</h>
+      <x>108</x>
+      <y>282</y>
+      <w>102</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 interacts&gt;</panel_attributes>
-    <additional_attributes>240;80;96;80;96;208</additional_attributes>
+    <additional_attributes>90;30;36;30;36;78</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>576</x>
-      <y>576</y>
-      <w>160</w>
-      <h>32</h>
+      <x>204</x>
+      <y>486</y>
+      <w>60</w>
+      <h>12</h>
     </coordinates>
     <panel_attributes>CustomLoader</panel_attributes>
     <additional_attributes/>
@@ -63,10 +63,10 @@ interacts&gt;</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>576</x>
-      <y>528</y>
-      <w>160</w>
-      <h>32</h>
+      <x>204</x>
+      <y>468</y>
+      <w>60</w>
+      <h>12</h>
     </coordinates>
     <panel_attributes>
 ByteLoader</panel_attributes>
@@ -75,33 +75,33 @@ ByteLoader</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>464</x>
-      <y>384</y>
-      <w>144</w>
-      <h>192</h>
+      <x>162</x>
+      <y>414</y>
+      <w>54</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>80;48;48;48;48;160;112;160</additional_attributes>
+    <additional_attributes>30;18;18;18;18;60;42;60</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>368</x>
-      <y>384</y>
-      <w>266</w>
-      <h>240</h>
+      <x>126</x>
+      <y>414</y>
+      <w>98</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 implements partly</panel_attributes>
-    <additional_attributes>176;48;144;48;144;208;208;208</additional_attributes>
+    <additional_attributes>66;18;54;18;54;78;78;78</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>544</x>
-      <y>240</y>
-      <w>208</w>
-      <h>128</h>
+      <x>192</x>
+      <y>360</y>
+      <w>78</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>--
 &lt;&lt;interface&gt;&gt;
@@ -115,10 +115,10 @@ halign=center</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>544</x>
-      <y>400</y>
-      <w>208</w>
-      <h>80</h>
+      <x>192</x>
+      <y>420</y>
+      <w>78</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>
 OResource
@@ -130,13 +130,171 @@ halign=center</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>688</x>
-      <y>256</y>
-      <w>196</w>
-      <h>224</h>
+      <x>252</x>
+      <y>366</y>
+      <w>66</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>lt=&gt;&gt;&gt;&gt;
 manages&gt;</panel_attributes>
-    <additional_attributes>64;192;112;192;112;48;64;48</additional_attributes>
+    <additional_attributes>18;72;36;72;36;18;18;18</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>108</x>
+      <y>282</y>
+      <w>240</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>old
+bg=gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>402</x>
+      <y>342</y>
+      <w>576</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>ResourceManager
+--
++ ResourceManager() :void
++ ~ResourceManager() :void
++ HBYTEARRAY		LoadBytes(const wchar_t filename[], ResourceType type, int customId = -1, bool force = false)
++ HRESOURCE		LoadResource(const wchar_t filename[], LoadFunction loadFnc = 0, UnloadFunction unloadFnc = 0, int customId = -1, bool force = false)
++ HRESOURCE		ReloadResource(const wchar_t filename[])
++ HRESOURCE		ReloadResource(HRESOURCE&amp; resource)
++ void			Clean()
++ void			ReleaseResource(const HRESOURCE&amp; resource)
++ void			ReleaseResource(const wchar_t filename[])
++ void			SetResourceId(const HRESOURCE&amp; resource, unsigned int id)
++ void			SetResourceId(const wchar_t filename[], unsigned int id)
++ ResourceType	GetResourceType(const HRESOURCE&amp; resource)
++ ResourceType	GetResourceType (const wchar_t filename[])
++ const wchar_t*	GetResourceFilename(const HRESOURCE&amp; resource);
++ HRESOURCE		GetResourceHandle(const wchar_t filename[])
++ int				GetResourceId(const HRESOURCE&amp; resource);
++ int				GetResourceId(const wchar_t filename[]);
+--
+- ResourceManager(const ResourceManager&amp; obj);
+- const ResourceManager&amp; operator=(const ResourceManager&amp;);
+- std::map&lt;std::wstring, ResourceData*&gt; resources;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>390</x>
+      <y>198</y>
+      <w>600</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>Oyster &lt;&lt;namespace&gt;&gt;
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>396</x>
+      <y>222</y>
+      <w>588</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>Resource &lt;&lt;namespace&gt;&gt;
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>534</x>
+      <y>282</y>
+      <w>126</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>HRESOURCE: void* &lt;&lt;typedef&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>534</x>
+      <y>300</y>
+      <w>126</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>HBYTE: char &lt;&lt;typedef&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>534</x>
+      <y>318</y>
+      <w>126</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>HBYTEARRAY: char* &lt;&lt;typedef&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>534</x>
+      <y>246</y>
+      <w>264</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>UnloadFunction :void(*UnloadFunction)(void* loadedData) &lt;&lt;typedef&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>534</x>
+      <y>264</y>
+      <w>288</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>LoadFunction :void*(*LoadFunction)(const wchar_t filename[]) &lt;&lt;typedef&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>402</x>
+      <y>246</y>
+      <w>126</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>ResourceType &lt;&lt;enum&gt;&gt;
+--
+ResourceType_Byte_Raw
+ResourceType_Byte_ANSI
+ResourceType_Byte_UTF8
+ResourceType_Byte_UNICODE
+ResourceType_Byte_UTF16LE
+ResourceType_CUSTOM
+ResourceType_INVALID
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>378</x>
+      <y>174</y>
+      <w>630</w>
+      <h>396</h>
+    </coordinates>
+    <panel_attributes>New
+bg=green</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

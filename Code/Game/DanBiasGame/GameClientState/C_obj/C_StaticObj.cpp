@@ -1,4 +1,3 @@
-
 #include "C_StaticObj.h"
 #include "DllInterfaces/GFXAPI.h"
 using namespace DanBias::Client;
