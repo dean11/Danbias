@@ -88,7 +88,7 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 
 void Object::BeginFrame()
 {
-	
+
 }
 // update physic 
 void Object::EndFrame()

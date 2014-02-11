@@ -6,7 +6,7 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-const int MOVE_FORCE = 500;
+const int MOVE_FORCE = 30;
 Player::Player()
 	:DynamicObject()
 {
@@ -61,6 +61,8 @@ void Player::BeginFrame()
 {
 	//weapon->Update(0.002f); 
 	Object::BeginFrame();
+
+	
 }
 
 void Player::EndFrame()
@@ -98,31 +100,26 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 void Player::MoveForward()
 {
 	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-	//Oyster::Math::Float3 forward = lookDir;
-	rigidBody->SetLinearVelocity( 10 * forward.GetNormalized() );
+	rigidBody->SetLinearVelocity( MOVE_FORCE * forward.GetNormalized() );
 }
 void Player::MoveBackwards()
 {
 	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-	//Oyster::Math::Float3 forward = lookDir;
-	rigidBody->SetLinearVelocity( 10 * -forward.GetNormalized() );
+	rigidBody->SetLinearVelocity( MOVE_FORCE * -forward.GetNormalized() );
 }
 void Player::MoveRight()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-
-	//Oyster::Math::Float3 forward = lookDir;
 	Oyster::Math::Float3 r = (-this->rigidBody->GetState().centerPos.Normalize()).Cross(forward);
-	rigidBody->SetLinearVelocity(r * 10);
+	rigidBody->SetLinearVelocity(r * MOVE_FORCE);
 }
 void Player::MoveLeft()
 {
 	//Do cross product with forward vector and negative gravity vector
 	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-	//Oyster::Math::Float3 forward = lookDir;
 	Oyster::Math::Float3 r = (-this->rigidBody->GetState().centerPos.Normalize()).Cross(forward);
-	rigidBody->SetLinearVelocity(-r * 10);
+	rigidBody->SetLinearVelocity(-r * MOVE_FORCE);
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
@@ -153,6 +150,8 @@ void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 
 	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
 	this->rigidBody->SetUpAndRight(up, lookDir.xyz);
+	this->rigidBody->SetUpAndRight(this->rigidBody->GetState().centerPos.GetNormalized(), this->rigidBody->GetState().GetOrientation().v[0].xyz.GetNormalized());
+
 }
 
 void Player::Jump()

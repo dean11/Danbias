@@ -565,8 +565,6 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		if(dynamicObjects[i]->GetId() == pos->object_ID)
 		{
-
-			
 			//dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
 			dynamicObjects[i]->setWorld(world);
 
@@ -592,10 +590,10 @@ void GameState::Protocol( ObjPos* pos )
 				//camera->setUp(up);
 				//camera->setLook(objForward);
 				
-				up *= 1;
+				up *= 2;
 				objForward *= -2;
 				Oyster::Math::Float3 cameraPos = pos + up + objForward;
-				//camera->SetPosition(cameraPos);
+				camera->SetPosition(cameraPos);
 				//camera->UpdateViewMatrix();
 				
 			}
