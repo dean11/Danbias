@@ -20,7 +20,10 @@ public:
 	struct  ObjPos :public ProtocolStruct
 	{
 		int object_ID;
-		float worldPos[16]; 
+		//float worldPos[16]; 
+		float position[3];
+		float angularAxis[3];
+		float rotation[4];
 	};
 	struct  NewObj :public ProtocolStruct
 	{
@@ -39,7 +42,9 @@ public:
 	};
 	struct  PlayerPos :public ProtocolStruct
 	{
-		float playerPos[3]; 
+		float position[3];
+		float angularAxis[3];
+//		float playerPos[3]; 
 	};
 	struct  PlayerMove :public ProtocolStruct
 	{
