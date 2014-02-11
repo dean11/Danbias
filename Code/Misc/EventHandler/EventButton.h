@@ -4,124 +4,255 @@
 
 #ifndef MISC_EVENT_BUTTON_H
 #define MISC_EVENT_BUTTON_H
-#include "../../Input/L_inputClass.h"
+
+#include "IEventButton.h"
 
 namespace Oyster
 {
 	namespace Event
 	{
-		template <typename owner>
-		class EventButton
+		template <typename Owner>
+		struct ButtonEvent
 		{
-		public:
-			struct ButtonEvent
-			{
-				IEventButton::ButtonState state; 
-				EventButton<owner> &sender;
-				owner          owner;
-			};	
+			ButtonState state;
+			IEventButton* sender;
+			Owner owner;
+			void* userData;
+		};
+
+		template <typename Owner>
+		class EventButton : public IEventButton
+		{
+		protected:
+			//typedef for callback function pointer
+			typedef void (*EventFunc)(Oyster::Event::ButtonEvent<Owner>& e);
 
 			struct PrivData
 			{
+				PrivData() : ID(currID++){}
+
 				static unsigned int currID;
-				unsigned int ID;
+				const unsigned int ID;
 
-				owner owner;
-				void (*EventFunc)( ButtonEvent e );
+				ButtonState previousState;
+				Owner owner;
+				EventFunc eventCallback;
+				void* userData;
+				bool enabled;
 			};
-
+			
+			
 			PrivData privData;
+
+		private:
+			//Implement this in the inherited classes for collision against that shape.
+			virtual bool Collision(InputClass *input) = 0;
 
 		public:
 			EventButton();
-			EventButton(owner owner);
-			EventButton(void (*EventFunc)( ButtonEvent e));
-			EventButton(void (*EventFunc)( ButtonEvent e), owner owner);
-			
+			EventButton(Owner owner);
+			EventButton(EventFunc func);
+			EventButton(EventFunc func, Owner owner);
+			EventButton(EventFunc func, Owner owner, void* userData);
 			~EventButton();
-			
-			void CheckCollision(InputClass *input);
 
-			void SendEvent(IEventButton::ButtonState state);
+			void Update(InputClass *input);
 
-			void SetEventFunc(void (*EventFunc)( ButtonEvent e )); //?
+			//Send event to callback function
+			void SendEvent(ButtonState state);
 			
+			//Set
+			void SetUserData(void* data);
+			void SetEventFunc(EventFunc func);
+			void SetOwner(Owner owner);
+			
+			//Get
+			bool Enabled();
 			unsigned int GetID();
-		
+			//EventFunc GetFunctionPointer();
+			Owner GetOwner();
+
+			bool operator ==(const EventButton<Owner>& obj);
+
 		};
 		
-		template <typename owner>
-		unsigned int EventButton<owner>::PrivData::currID = 0;
+		template <typename Owner>
+		unsigned int EventButton<Owner>::PrivData::currID = 0;
 
-		template <typename owner>
-		EventButton<owner>::EventButton()
+		template <typename Owner>
+		EventButton<Owner>::EventButton()
 		{
-			this->privData.ID = privData.currID;
-			this->privData.currID += 1;
-			//this->privData.owner = NULL;
-			this->privData.EventFunc = NULL;
+			this->privData.eventCallback = NULL;
+			this->privData.userData = NULL;
+			this->privData.previousState = ButtonState_None;
+			this->privData.enabled = true;
 		}
 
-		template <typename owner>
-		EventButton<owner>::EventButton(owner owner)
+		template <typename Owner>
+		EventButton<Owner>::EventButton(Owner owner)
 		{
-			this->privData.ID = privData.currID;
-			this->privData.currID += 1;
 			this->privData.owner = owner;
-			this->privData.EventFunc = NULL;
+			this->privData.eventCallback = NULL;
+			this->privData.userData = NULL;
+			this->privData.previousState = ButtonState_None;
+			this->privData.enabled = true;
 		}
 
-		template <typename owner>
-		EventButton<owner>::EventButton(void (*EventFunc)( ButtonEvent e))
+		template <typename Owner>
+		EventButton<Owner>::EventButton(EventFunc func)
 		{
-			this->privData.ID = privData.currID;
-			this->privData.currID += 1;
-			//this->privData.owner = NULL;
-			this->privData.EventFunc = EventFunc;
+			this->privData.eventCallback = func;
+			this->privData.userData = NULL;
+			this->privData.previousState = ButtonState_None;
+			this->privData.enabled = true;
 		}
 
-		template <typename owner>
-		EventButton<owner>::EventButton(void (*EventFunc)( ButtonEvent e), owner owner)
+		template <typename Owner>
+		EventButton<Owner>::EventButton(EventFunc func, Owner owner)
 		{
-			this->privData.ID = privData.currID;
-			this->privData.currID += 1;
 			this->privData.owner = owner;
+			this->privData.eventCallback = func;
+			this->privData.userData = NULL;
+			this->privData.previousState = ButtonState_None;
+			this->privData.enabled = true;
+		}
+		
+		template <typename Owner>
+		EventButton<Owner>::EventButton(EventFunc func, Owner owner, void* userData)
+		{
+			this->privData.owner = owner;
+			this->privData.eventCallback = func;
+			this->privData.userData = userData;
+			this->privData.previousState = ButtonState_None;
+			this->privData.enabled = true;
+		}
+
+		template <typename Owner>
+		EventButton<Owner>::~EventButton()
+		{}
+		
+		//Checks for collision and 
+		template <typename Owner>
+		void EventButton<Owner>::Update(InputClass *input)
+		{
+			if(this->privData.enabled)
+			{
+				ButtonState currentState = ButtonState_None;
+
+				if(Collision(input))
+				{
+					if(input->IsMousePressed())
+					{
+						//Change state when the mouse button is pressed
+						switch(this->privData.previousState)
+						{
+						case ButtonState_None:
+							currentState = ButtonState_Hover;
+							break;
+
+						case ButtonState_Hover:
+						case ButtonState_Released:
+							currentState = ButtonState_Pressed;
+							break;
+
+						case ButtonState_Pressed:
+						case ButtonState_Down:
+							currentState = ButtonState_Down;
+							break;
+						default:
+							break;
+						}
+					}
+					else
+					{
+						//Change state when the mouse button is NOT pressed
+						switch(this->privData.previousState)
+						{
+						case ButtonState_None:
+						case ButtonState_Hover:
+						case ButtonState_Released:
+							currentState = ButtonState_Hover;
+							break;
+
+						case ButtonState_Pressed:
+						case ButtonState_Down:
+							currentState = ButtonState_Released;
+							break;
+						default:
+							break;
+						}
+					}
+				}
+
+				//Only call the callback function when the state has changed.
+				if(this->privData.previousState != currentState)
+					SendEvent(currentState);
+
+				this->privData.previousState = currentState;
+			}
+		}
+
+		template <typename Owner>
+		void EventButton<Owner>::SendEvent(ButtonState state)
+		{
+			if(privData.eventCallback != NULL)
+			{
+				Oyster::Event::ButtonEvent<Owner> event;
+				event.state = state;
+				event.sender = this;
+				event.owner = privData.owner;
+				event.userData = privData.userData;
+				privData.eventCallback(event);
+			}
+		}
+		
+		template <typename Owner>
+		void EventButton<Owner>::SetUserData(void* data)
+		{
+			this->privData.userData = data;
+		}
+
+		template <typename Owner>
+		void EventButton<Owner>::SetEventFunc(EventFunc func)
+		{
 			this->privData.EventFunc = EventFunc;
 		}
 
-		template <typename owner>
-		EventButton<owner>::~EventButton()
+		template <typename Owner>
+		void EventButton<Owner>::SetOwner(Owner owner)
 		{
-
+			this->privData.owner = owner;
 		}
 		
-		template <typename owner>
-		void EventButton<owner>::CheckCollision(InputClass *input)
+		template <typename Owner>
+		bool EventButton<Owner>::Enabled()
 		{
-			//??????????????? TODO: everything
-			SendEvent(Button_Smashed);
-		}
-		
-		template <typename owner>
-		void EventButton<owner>::SendEvent(IEventButton::ButtonState state)
-		{
-			ButtonEvent event;
-			event.state = state;
-			event.sender = this;
-			event.owner = privData.owner;
-			privData.EventFunc(event);
+			return this->privData.enabled;
 		}
 
-		template <typename owner>
-		void EventButton<owner>::SetEventFunc(void (*EventFunc)( ButtonEvent e ))
-		{
-			this->privData.EventFunc = EventFunc;
-		}
-		
-		template <typename owner>
-		unsigned int EventButton<owner>::GetID()
+		template <typename Owner>
+		unsigned int EventButton<Owner>::GetID()
 		{
 			return this->privData.ID;
+		}
+
+		/* Something is wrong, can't return EventFunc
+		template <typename Owner>
+		EventFunc EventButton<Owner>::GetFunctionPointer()
+		{
+			return this->privData.eventCallback;
+		}*/
+
+		template <typename Owner>
+		Owner EventButton<Owner>::GetOwner()
+		{
+			return this->privData.owner;
+		}
+		
+		template <typename Owner>
+		bool EventButton<Owner>::operator ==(const EventButton<Owner>& obj)
+		{
+			return (this->privData.ID == obj.privData.ID);
 		}
 	}
 }

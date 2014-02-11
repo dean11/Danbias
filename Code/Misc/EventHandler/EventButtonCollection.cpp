@@ -1,4 +1,10 @@
+//////////////////////////////////////
+// Created by Pontus Fransson 2014  //
+//////////////////////////////////////
+
 #include "EventButtonCollection.h"
+
+#include "../../Input/L_inputClass.h"
 
 using namespace Oyster::Event;
 
@@ -9,15 +15,21 @@ EventButtonCollection::EventButtonCollection()
 
 EventButtonCollection::~EventButtonCollection()
 {
+	int size = buttons.size();
+	for(int i = 0; i < size; i++)
+	{
+		delete buttons[i];
+		buttons[i] = NULL;
+	}
 }
 
 void EventButtonCollection::Update(InputClass* inputObject)
 {
 	if(this->collectionState == EventCollectionState_Enabled)
 	{
-		for(int i = 0; i < buttons.size(); i++)
+		for(int i = 0; i < (int)buttons.size(); i++)
 		{
-			buttons.at(i)->CheckCollision(inputObject);
+			buttons[i]->Update(inputObject);
 		}
 	}
 }

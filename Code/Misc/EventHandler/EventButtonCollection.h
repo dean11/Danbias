@@ -1,7 +1,13 @@
-#ifndef EVENT_BUTTON_COLLECTION_H
-#define EVENT_BUTTON_COLLECTION_H
+//////////////////////////////////////
+// Created by Pontus Fransson 2014  //
+//////////////////////////////////////
+
+#ifndef MISC_EVENT_BUTTON_COLLECTION_H
+#define MISC_EVENT_BUTTON_COLLECTION_H
 
 #include "../../Input/L_inputClass.h"
+
+#include "../DynamicArray.h"
 
 #include "IEventButton.h"
 #include "EventButton.h"
@@ -30,20 +36,9 @@ namespace Oyster
 			void Update(InputClass* inputObject);
 
 			template <typename Owner>
-			void AddButton(EventButton<Owner>& button)
+			void AddButton(EventButton<Owner>* button)
 			{
-				EventButton<Owner>* b = new EventButton<Owner>();
-				buttons.size(); 
-				buttons.push_back((IEventButton*)b);
-				//buttons.push_back((IEventButton*)&button);
-			}
-
-			template <typename Owner>
-			EventButton<Owner>& CreateButton()
-			{
-				EventButton<Owner> temp;
-				buttons.push_back(&temp);
-				return temp;
+				buttons.push_back(button);
 			}
 
 			EventCollectionState GetState() const;

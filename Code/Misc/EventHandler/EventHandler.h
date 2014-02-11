@@ -1,10 +1,16 @@
-#ifndef EVENT_HANDLER_H
-#define EVENT_HANDLER_H
+//////////////////////////////////////
+// Created by Pontus Fransson 2014  //
+//////////////////////////////////////
+
+#ifndef MISC_EVENT_HANDLER_H
+#define MISC_EVENT_HANDLER_H
 
 #include "../../Input/L_inputClass.h"
 
 #include "EventButtonCollection.h"
 #include "EventButton.h"
+#include "EventButtonCircle.h"
+#include "EventButtonRectangle.h"
 
 #include <vector>
 
