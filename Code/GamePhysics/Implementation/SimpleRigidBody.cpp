@@ -149,9 +149,9 @@ void SimpleRigidBody::SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::F
 	rotation[0] = rightVector.normalized();
 	rotation[2] = rightVector.cross(upVector).normalized();
 
-	this->motionState->getWorldTransform(trans);
+	trans = this->rigidBody->getWorldTransform();
 	trans.setBasis(rotation);
-	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setWorldTransform(trans);
 
 	btQuaternion quaternion;
 	quaternion = trans.getRotation();
@@ -168,9 +168,9 @@ void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math:
 	rotation[2] = forwardVector.normalized();
 	rotation[0] = forwardVector.cross(upVector).normalized();
 
-	this->motionState->getWorldTransform(trans);
+	trans = this->rigidBody->getWorldTransform();
 	trans.setBasis(rotation);
-	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setWorldTransform(trans);
 
 	btQuaternion quaternion;
 	quaternion = trans.getRotation();

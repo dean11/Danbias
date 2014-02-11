@@ -184,7 +184,7 @@ void API_Impl::UpdateWorld()
 		simpleBody->GetMotionState()->getWorldTransform(trans);
 		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
 		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
-		//simpleBody->SetUpAndRight(Float3(0,1,0), Float3(-1,0,0));
+		
 		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
 		{
 			simpleBody->CallSubscription_Move();
