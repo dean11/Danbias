@@ -32,6 +32,8 @@ namespace Oyster
 			void SetRotation(Math::Float3 eulerAngles);
 			void SetAngularFactor(Math::Float factor);
 
+			void SetGravity(Math::Float3 gravity);
+
 			void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right);
 			void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward);
 
@@ -51,6 +53,7 @@ namespace Oyster
 			void* GetCustomTag() const;
 
 			private:
+
 			btCollisionShape* collisionShape;
 			btDefaultMotionState* motionState;
 			btRigidBody* rigidBody;
@@ -61,6 +64,8 @@ namespace Oyster
 			EventAction_Move onMovement;
 
 			void *customTag;
+
+			::Oyster::Math::Float3 gravity;
 		};
 	} 
 }
