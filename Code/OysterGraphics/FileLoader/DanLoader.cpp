@@ -135,22 +135,23 @@ void Oyster::Graphics::Loading::UnloadDAN(void* data)
 	if(info->Animated)
 	{
 		//clean animation
-		delete[] info->bones;
-		for(int a = 0; a < info->AnimationCount; ++a)
+		for(auto a = info->Animations.begin(); a != info->Animations.end(); ++a)
 		{
-			for(int x = 0; x < info->Animations[a].Bones; ++x)
+			for(int x = 0; x < (*a).second.Bones; ++x)
 			{
-				delete[] info->Animations[a].Keyframes[x];
+				delete[] (*a).second.Keyframes[x];
 			}
-			delete[] info->Animations[a].Frames;
-			delete[] info->Animations[a].Keyframes;
+			delete[] (*a).second.Frames;
+			delete[] (*a).second.Keyframes;
 		}
-		delete[] info->Animations;
+		info->Animations.clear();
 	}
-	for(int i =0;i<info->Material.size();++i)
+	for(UINT i =0;i<info->Material.size();++i)
 	{
 		Core::loader.ReleaseResource(info->Material[i]);
 	}
+	if(info->BoneCount>0)
+		delete[] info->bones;
 	delete info;
 }
 
@@ -179,6 +180,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
 	modelInfo->Indexed = false;
 	modelInfo->Animated = false;
+	modelInfo->BoneCount = 0;
 	// Open file in binary mode
 	std::ifstream danFile;
 	danFile.open(filename, std::ios::binary);
@@ -349,7 +351,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 
 				Oyster::Graphics::Model::Animation* anims = new Oyster::Graphics::Model::Animation[animationHeader.numAnims];
 
-				for(int a = 0; a < animationHeader.numAnims; ++a)
+				for(UINT a = 0; a < animationHeader.numAnims; ++a)
 				{
 					//read name of animation
 					int nameLength;
@@ -362,9 +364,6 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 					name[nameLength] = 0;
 
 					wchar_t* wName = charToWChar(name);
-					anims[a].name = std::wstring(wName);
-					delete[] wName;
-					delete name;
 
 					//read nr of bones in animation
 					ReadData(&anims[a].Bones,danFile,4);
@@ -397,17 +396,18 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 							anims[a].Keyframes[b][f].bone.Parent = boneIndex;
 
 							//read bone transform
-							ReadData(&anims[a].Keyframes[b][f].bone.Transform,danFile,sizeof(Oyster::Math::Matrix));
-
+							ReadData(&anims[a].Keyframes[b][f].bone.Relative, danFile, sizeof(Math::Matrix));
 							
 							ReadData(&anims[a].Keyframes[b][f].time,danFile,sizeof(double));
 						}
 					}
-				}
-				modelInfo->AnimationCount = animationHeader.numAnims;
-				modelInfo->Animations = anims;
-				modelInfo->Animated = true;
 
+					modelInfo->Animations.insert(std::pair<std::wstring,Model::Animation>(std::wstring(wName), anims[a]));
+					delete[] wName;
+					delete name;
+				}
+				modelInfo->Animated = true;
+				delete[] anims;
 				break;
 			}
 		}

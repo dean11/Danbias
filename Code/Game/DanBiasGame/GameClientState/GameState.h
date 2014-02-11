@@ -49,7 +49,7 @@ public:
 	void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 	gameStateState LoadGame();
 	void readKeyInput(InputClass* KeyInput);
-	bool Render()override;
+	bool Render(float dt)override;
 	bool Release()override;
 
 	void Protocol(ProtocolStruct* pos)override;

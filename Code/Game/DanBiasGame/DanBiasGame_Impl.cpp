@@ -93,8 +93,9 @@ namespace DanBias
 				m_data->recieverObj->Update();
 			
 			capFrame += dt;
-			if(capFrame > 0.03)
+			//if(capFrame > 0.03)
 			{
+				Oyster::Graphics::API::Update(dt);
 				if(Update(dt) != S_OK)
 					return DanBiasClientReturn_Error;
 				if(Render(dt) != S_OK)
@@ -116,12 +117,12 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitDirect3D()
 	{
-		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
-			return E_FAIL;
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
 		p.texturePath = L"..\\Content\\Textures\\";
 		Oyster::Graphics::API::SetOptions(p);
+		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+			return E_FAIL;
 		return S_OK;
 	}
 
@@ -193,10 +194,7 @@ namespace DanBias
 
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
-		
-	
-		m_data->recieverObj->gameClientState->Render();
-
+		m_data->recieverObj->gameClientState->Render(deltaTime);
 		return S_OK;
 	}
 

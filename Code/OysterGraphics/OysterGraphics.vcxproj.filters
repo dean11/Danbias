@@ -24,9 +24,6 @@
     <ClCompile Include="Core\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Rendering\BasicRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Render\Preparations\BasicPreparations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,13 +39,19 @@
     <ClCompile Include="FileLoader\ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Resources\Deffered.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\Resources\Debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\PipelineManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLoader\DanLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DefaultRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GuiRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\Preparations\Preparations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\Rendering\Render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model\ModelInfo.h">
@@ -83,10 +83,13 @@
     <ClInclude Include="FileLoader\GeneralLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Resources\Deffered.h">
+    <ClInclude Include="Render\DefaultRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Resources\Debug.h">
+    <ClInclude Include="Render\GuiRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,15 +98,27 @@
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugPixel.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\DebugCameraVertex.hlsl" />
     <FxCompile Include="Shader\HLSL\SimpleDebug\TextureDebug.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\LightPass.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\PixelGatherData.hlsl" />
-    <FxCompile Include="Shader\HLSL\Deffered Shaders\VertexGatherData.hlsl" />
+    <FxCompile Include="Shader\Passes\Light\LightPass.hlsl" />
+    <FxCompile Include="Shader\Passes\Post\PostPass.hlsl" />
+    <FxCompile Include="Shader\Passes\Gather\GatherPixel.hlsl" />
+    <FxCompile Include="Shader\Passes\Gather\GatherVertex.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\2DVertex.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\2DPixel.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\2DGeometry.hlsl" />
+    <FxCompile Include="Shader\Passes\Blur\BlurHor.hlsl" />
+    <FxCompile Include="Shader\Passes\Blur\BlurVert.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\Text\2DTextVertex.hlsl" />
+    <FxCompile Include="Shader\Passes\2D\Text\2DTextGeometry.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
-    <None Include="Shader\HLSL\Deffered Shaders\Defines.hlsli" />
-    <None Include="Shader\HLSL\Deffered Shaders\GBufferHeader.hlsli" />
-    <None Include="Shader\HLSL\Deffered Shaders\LightCalc.hlsli" />
-    <None Include="Shader\HLSL\Deffered Shaders\PosManipulation.hlsli" />
+    <None Include="Shader\Passes\Light\Defines.hlsli" />
+    <None Include="Shader\Passes\Light\LightCalc.hlsli" />
+    <None Include="Shader\Passes\Light\PosManipulation.hlsli" />
+    <None Include="Shader\Passes\Light\SSAO.hlsli" />
+    <None Include="Shader\Passes\2D\Header.hlsli" />
+    <None Include="Shader\Passes\Gather\Header.hlsli" />
+    <None Include="Shader\Passes\Blur\BlurSharedData.hlsli" />
+    <None Include="Shader\Passes\2D\Text\Header.hlsli" />
   </ItemGroup>
 </Project>

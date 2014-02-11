@@ -18,6 +18,8 @@ namespace Oyster
 			{
 				Math::Matrix WV;
 				Math::Matrix WVP;
+				int Animated;
+				Math::Float3 Pad;
 			};
 
 			struct FinalVertex
@@ -51,11 +53,26 @@ namespace Oyster
 
 			struct AnimationData
 			{
-				Math::Float4x4 animatedData[100];
-				int Animated;
-				Math::Float3 Pad;
+				Math::Float4x4 AnimatedData[100];
 			};
 
+			struct GuiData
+			{
+				Math::Matrix Translation;
+			};
+
+			struct PostData
+			{
+				int x;
+				int y;
+			};
+
+			struct Text2D
+			{
+				float pos;
+				int offset;
+				float coff;
+			};
 		}
 	}
 }

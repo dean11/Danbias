@@ -103,7 +103,7 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	  
 	return ClientState_Same;
 }
-bool LobbyState::Render()
+bool LobbyState::Render(float dt)
 {
 
 	Oyster::Graphics::API::SetView(privData->view);
@@ -126,6 +126,7 @@ bool LobbyState::Render()
 }
 bool LobbyState::Release()
 {
+	Oyster::Graphics::API::ClearLights();
 	for (int i = 0; i < privData->modelCount; i++)
 	{
 		privData->object[i]->Release();

@@ -79,7 +79,7 @@ int C_Object::GetId() const
 }
 void C_Object::Render()
 {
-	Oyster::Graphics::API::RenderModel(*(model));
+	Oyster::Graphics::API::RenderModel(model);
 }
 void C_Object::Release()
 {
