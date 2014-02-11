@@ -48,8 +48,11 @@ namespace DanBias
 
 			virtual void Render()
 			{
-				//Render att xPos and yPos
-				//With halfWidth and halfHeight
+				if(EventButton<Owner>::Enabled())
+				{
+					//Render att xPos and yPos
+					//With halfWidth and halfHeight
+				}
 			}
 
 		protected:

@@ -8,6 +8,12 @@
 
 using namespace DanBias::Client;
 
+//Menu buttons
+#include "Buttons/ButtonCircle.h"
+#include "Buttons/ButtonRectangle.h"
+#include "../Misc/EventHandler/EventHandler.h"
+using namespace Oyster::Event;
+
 struct  LoginState::myData
 {
 	myData(){}
@@ -17,12 +23,12 @@ struct  LoginState::myData
 	int modelCount; 
 	// UI object
 	// game client* 
+
+	//Menu button collection
+	EventButtonCollection* collection;
+
 }privData;
 
-#include "Buttons\ButtonCircle.h"
-#include "Buttons\ButtonRectangle.h"
-#include "../Misc/EventHandler/EventHandler.h"
-using namespace Oyster::Event;
 
 enum TestEnum
 {
@@ -33,10 +39,6 @@ enum TestEnum
 
 LoginState::LoginState(void)
 {
-	EventButtonCollection* collection = new EventButtonCollection;
-	EventHandler::Instance().AddCollection(collection);
-
-	collection->AddButton(new ButtonRectangle<LoginState*>(L"textureName.jpg", &LoginState::ButtonCallback, this, (void*)Options, 0.0f, 0.0f, 0.0f, 0.0f));
 }
 
 void LoginState::ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e)
@@ -68,8 +70,14 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 	privData = new myData();
 	this->nwClient = nwClient;	
 	// load models
-	LoadModels(L"UImodels.txt");
+	//LoadModels(L"UImodels.txt");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
+
+	//Create menu buttons
+	privData->collection = new EventButtonCollection;
+	EventHandler::Instance().AddCollection(privData->collection);
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"textureName.jpg", &LoginState::ButtonCallback, this, (void*)Options, 0.0f, 0.0f, 0.0f, 0.0f));
+
 	return true;
 }
 bool LoginState::LoadModels(std::wstring file)
@@ -171,6 +179,9 @@ bool LoginState::Render()
 	// render effects
 
 	// render lights
+
+	//Render buttons
+	EventHandler::Instance().Render();
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
