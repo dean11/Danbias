@@ -566,6 +566,9 @@ void GameState::Protocol(ProtocolStruct* pos)
 
 void GameState::Protocol( PlayerPos* pos )
 {
+	camera.SetPosition( pos->position );
+	camera.SetAngular( pos->angularAxis );
+
 	//Float4x4 world, translate;
 
 	//world = Float4x4::identity;
@@ -581,26 +584,32 @@ void GameState::Protocol( PlayerPos* pos )
 
 void GameState::Protocol( ObjPos* pos )
 {
-	Float4x4 world;
-	for(int i = 0; i<16; i++)
-	{
-		world[i] = pos->worldPos[i];
-	}
+	//Float4x4 world;
+	//for(int i = 0; i<16; i++)
+	//{
+	//	world[i] = pos->worldPos[i];
+	//}
+
 	//printf("pos for obj %d, ",pos->object_ID );
+
 	for (unsigned int i = 0; i < dynamicObjects.Size(); i++)
 	{
 		if(dynamicObjects[i]->GetId() == pos->object_ID)
 		{
+			dynamicObjects[i]->setPos( pos->position );
+			dynamicObjects[i]->setRot( Quaternion(Float3(pos->rotation), pos->rotation[3]) );
 
-			dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
-
+			//dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
-				Float3 right =		Float3(world[0], world[1], world[2]);
-				Float3 up =			Float3(world[4], world[5], world[6]);
-				Float3 objForward = Float3(world[8], world[9], world[10]);
-				Float3 pos =		Float3(world[12], world[13], world[14]);
+				camera.SetPosition( pos->position );
+				camera.SetAngular( pos->angularAxis );
+				
+				//Float3 right =		Float3(world[0], world[1], world[2]);
+				//Float3 up =			Float3(world[4], world[5], world[6]);
+				//Float3 objForward = Float3(world[8], world[9], world[10]);
+				//Float3 pos =		Float3(world[12], world[13], world[14]);
 
 				//Float3 cameraLook = camera->GetLook();
 				//Float3 cameraUp = camera->GetUp();
@@ -616,9 +625,9 @@ void GameState::Protocol( ObjPos* pos )
 				//camera->setUp(up);
 				//camera->setLook(objForward);
 				
-				up *= 1;
-				objForward *= -2;
-				Float3 cameraPos = pos + up + objForward;
+				//up *= 1;
+				//objForward *= -2;
+				//Float3 cameraPos = pos + up + objForward;
 				//camera->SetPosition(cameraPos);
 				//camera->UpdateViewMatrix();
 				
