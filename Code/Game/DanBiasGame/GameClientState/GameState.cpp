@@ -122,7 +122,7 @@ bool GameState::LoadModels()
 		this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 	}
 
-
+	/*
 	// add crystal model 
 	modelData.position = Oyster::Math::Float3(10, 301, 0);
 	modelData.modelPath = L"crystalformation_b.dan";
@@ -174,7 +174,7 @@ bool GameState::LoadModels()
 	modelData.id = id++;
 	// load models
 	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);*/
 	return true;
 }
 bool GameState::LoadModels(std::string mapFile)
@@ -316,7 +316,7 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	camera->setLook(objForward);
 				
 	up *= 2;
-	objForward *= -3;
+	objForward *= 3;
 	Oyster::Math::Float3 cameraPos = up + pos + objForward;
 	camera->SetPosition(cameraPos);
 
@@ -566,8 +566,9 @@ void GameState::Protocol( ObjPos* pos )
 		if(dynamicObjects[i]->GetId() == pos->object_ID)
 		{
 
-			dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
-
+			
+			//dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
+			dynamicObjects[i]->setWorld(world);
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{

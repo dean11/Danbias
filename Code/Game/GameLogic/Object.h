@@ -51,8 +51,6 @@ namespace GameLogic
 
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
-		Oyster::Physics::ICustomBody::State newPhysicsState;
-		Oyster::Physics::ICustomBody::State currPhysicsState;
 
 		static const Game* gameInstance;
 		Oyster::Math::Float3 currLook;
