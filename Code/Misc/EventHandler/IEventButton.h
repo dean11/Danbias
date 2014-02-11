@@ -25,14 +25,12 @@ namespace Oyster
 		public:
 			virtual ~IEventButton(){}
 
-			virtual void Update(InputClass *input){}
+			virtual void Render() = 0;
+			virtual void Update(InputClass *input) = 0;
 
-			virtual void SendEvent(ButtonState state){}
-
-			struct ButtonEvent;
-			virtual void SetEventFunc(void (*EventFunc)( ButtonEvent e )){}
+			virtual void SendEvent(ButtonState state) = 0;
 			
-			virtual unsigned int GetID(){ return -1; }
+			virtual unsigned int GetID() = 0;
 		
 		};
 	}

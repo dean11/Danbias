@@ -34,6 +34,17 @@ void EventButtonCollection::Update(InputClass* inputObject)
 	}
 }
 
+void EventButtonCollection::Render()
+{
+	if(this->collectionState == EventCollectionState_Enabled)
+	{
+		for(int i = 0; i < (int)buttons.size(); i++)
+		{
+			buttons[i]->Render();
+		}
+	}
+}
+
 EventCollectionState EventButtonCollection::GetState() const
 {
 	return collectionState;

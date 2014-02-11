@@ -19,9 +19,43 @@ struct  LoginState::myData
 	// game client* 
 }privData;
 
+#include "Buttons\ButtonCircle.h"
+#include "Buttons\ButtonRectangle.h"
+#include "../Misc/EventHandler/EventHandler.h"
+using namespace Oyster::Event;
+
+enum TestEnum
+{
+	Create,
+	Options,
+	Exit,
+};
+
 LoginState::LoginState(void)
 {
+	EventButtonCollection* collection = new EventButtonCollection;
+	EventHandler::Instance().AddCollection(collection);
 
+	collection->AddButton(new ButtonRectangle<LoginState*>(L"textureName.jpg", &LoginState::ButtonCallback, this, (void*)Options, 0.0f, 0.0f, 0.0f, 0.0f));
+}
+
+void LoginState::ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e)
+{
+	TestEnum type = TestEnum((int)e.userData);
+
+	switch(type)
+	{
+	case Create:
+		if(e.state == ButtonState_Released)
+		{
+			//Change to create state or something similar
+		}
+		break;
+	case Options:
+		break;
+	case Exit:
+		break;
+	}
 }
 
 LoginState::~LoginState(void)

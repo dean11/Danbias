@@ -105,11 +105,37 @@ void Object::setAfterCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(collisionFuncAfter));
 }
 
-Oyster::Math::Float3 Object::GetPosition() 
-{
-	return (Oyster::Math::Float3) this->rigidBody->GetState().centerPos;
-}
+
 Oyster::Math::Float4x4 Object::GetOrientation() 
 {
-	return this->rigidBody->GetState().GetOrientation();
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return state.GetOrientation();
+}
+
+
+Oyster::Math::Float3 Object::GetPosition()
+{
+	return this->position;
+}
+Oyster::Math::Float3 Object::GetRotation()
+{
+	return this->rotation;
+}
+Oyster::Math::Float3 Object::GetScaling()
+{
+	return this->scale;
+}
+
+void Object::SetPosition(Oyster::Math::Float3 position)
+{
+	this->position = position;
+}
+void Object::SetRotation(Oyster::Math::Float3 rotation)
+{
+	this->rotation = rotation;
+}
+void Object::SetScaling(Oyster::Math::Float3 scale)
+{
+	this->scale = scale;
 }

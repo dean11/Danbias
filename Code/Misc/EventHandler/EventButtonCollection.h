@@ -27,6 +27,10 @@ namespace Oyster
 			EventCollectionState_Unknown = -1,
 		};
 
+		/********************************
+		This EventButtonCollection will handle the destruction of the buttons when they are added to the collection.
+
+		********************************/
 		class EventButtonCollection
 		{
 		public:
@@ -34,6 +38,7 @@ namespace Oyster
 			~EventButtonCollection();
 
 			void Update(InputClass* inputObject);
+			void Render();
 
 			template <typename Owner>
 			void AddButton(EventButton<Owner>* button)
@@ -47,7 +52,7 @@ namespace Oyster
 			//Clear all buttons and reset the state.
 			void Clear();
 
-		private:
+		protected:
 			std::vector<IEventButton*> buttons;
 			EventCollectionState collectionState;
 
