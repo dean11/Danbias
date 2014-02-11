@@ -88,9 +88,9 @@ const Quaternion & Camera_Basic::GetRotation() const
 	if( this->rotationIsOutOfDate )
 	{
 		// Maintain rotation resolution by keeping axis within [0, 2pi] (trigonometric methods gets faster too)
-		Float4 numerator;
-		::std::modf( this->angularAxis * (0.5f / pi), numerator.xyz );
-		this->angularAxis -= ((2.0f * pi) * numerator).xyz;
+		Float4 integer;
+		::std::modf( this->angularAxis * (0.5f / pi), integer.xyz );
+		this->angularAxis -= ((2.0f * pi) * integer).xyz;
 
 		this->rotation = Rotation( this->angularAxis );
 		this->rotationIsOutOfDate = false;

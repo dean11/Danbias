@@ -125,17 +125,17 @@ namespace std
 	}
 
 	/*******************************************************************
-	 * @param numerator of the vector vec
-	 * @return the denomiator of the vector vec.
+	 * @param integer part of the elements in vector vec
+	 * @return the fract part of the elements in vector vec.
 	 *******************************************************************/
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector3<ScalarType> modf( const ::LinearAlgebra::Vector3<ScalarType> &vec, ::LinearAlgebra::Vector3<ScalarType> &numerator )
+	inline ::LinearAlgebra::Vector3<ScalarType> modf( const ::LinearAlgebra::Vector3<ScalarType> &vec, ::LinearAlgebra::Vector3<ScalarType> &integer )
 	{
-		::LinearAlgebra::Vector3<ScalarType> denominator;
-		denominator.x = (ScalarType)modf( vec.x, &numerator.x );
-		denominator.y = (ScalarType)modf( vec.y, &numerator.y );
-		denominator.z = (ScalarType)modf( vec.z, &numerator.z );
-		return denominator;
+		::LinearAlgebra::Vector3<ScalarType> fract;
+		fract.x = (ScalarType)modf( vec.x, &integer.x );
+		fract.y = (ScalarType)modf( vec.y, &integer.y );
+		fract.z = (ScalarType)modf( vec.z, &integer.z );
+		return fract;
 	}
 
 	/*******************************************************************
