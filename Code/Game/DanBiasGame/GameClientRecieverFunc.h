@@ -9,6 +9,7 @@
 #include "GameClientState\GameClientState.h"
 #include "GameClientState\GameState.h"
 
+
 #include <Utilities.h>
 
 namespace DanBias
@@ -101,13 +102,27 @@ namespace DanBias
 				break;
 			case protocol_Gameplay_ObjectPosition:
 				{
+					// 0: reserved
+					// 1: objectID
+					// 2,3,4: position
+					// 5,6,7,8: rotation quaternion
+
+					GameLogic::Protocol_ObjectPosition data;
 
 					Client::GameClientState::ObjPos protocolData;
 					protocolData.object_ID = p[1].value.netInt;
-					for(int i = 0; i< 16; i++)
+
+					for( int i = 0; i < 3; ++i )
 					{
-						protocolData.worldPos[i] = p[i+2].value.netFloat;
+						protocolData.position[i] = p[i+2].value.netFloat;
+						protocolData.rotation[i] = p[i+5].value.netFloat;
 					}
+					protocolData.rotation[3] = p[8].value.netFloat;
+
+					//for(int i = 0; i< 16; i++)
+					//{
+					//	protocolData.worldPos[i] = p[i+2].value.netFloat;
+					//}
 
 					if(dynamic_cast<Client::GameState*>(gameClientState))
 						((Client::GameState*)gameClientState)->Protocol(&protocolData);

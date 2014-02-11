@@ -566,8 +566,8 @@ void GameState::Protocol(ProtocolStruct* pos)
 
 void GameState::Protocol( PlayerPos* pos )
 {
-	camera.SetPosition( pos->position );
-	camera.SetAngular( pos->angularAxis );
+	//camera.SetPosition( pos->position );
+	//camera.SetAngular( pos->angularAxis );
 
 	//Float4x4 world, translate;
 
@@ -604,7 +604,7 @@ void GameState::Protocol( ObjPos* pos )
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
 				camera.SetPosition( pos->position );
-				camera.SetAngular( pos->angularAxis );
+				camera.SetAngular( QuaternionToAngularAxis(Quaternion(pos->rotation, pos->rotation[3])).xyz );
 				
 				//Float3 right =		Float3(world[0], world[1], world[2]);
 				//Float3 up =			Float3(world[4], world[5], world[6]);
