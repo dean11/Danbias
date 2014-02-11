@@ -32,7 +32,7 @@ public:
 	// chat
 	// kick
 
-	bool Render();
+	bool Render(float dt);
 	bool Release();
 	void Protocol(ProtocolStruct* protocol)override;
 	void PlayerJoinProtocol(PlayerName* name);

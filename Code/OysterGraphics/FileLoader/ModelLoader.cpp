@@ -70,7 +70,7 @@ void Oyster::Graphics::Loading::UnloadOBJ(void* data)
 	{
 		SAFE_DELETE(info->Indecies);
 	}
-	for(int i =0;i<info->Material.size();++i)
+	for(UINT i =0;i<info->Material.size();++i)
 	{
 		Core::loader.ReleaseResource(info->Material[i]);
 	}
@@ -690,6 +690,7 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			SRVDesc.Texture2D.MipLevels = (autogen) ? -1 : 1;
+			//TODO calc mipmap data
 
 			hr = d3dDevice->CreateShaderResourceView( tex, &SRVDesc, textureView );
 			if ( FAILED(hr) )
@@ -697,6 +698,9 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 				tex->Release();
 				return hr;
 			}
+			//todo check calc
+			int TexSize = twidth * theight * bpp;
+			Oyster::Graphics::Core::UsedMem += TexSize;
 
 			if ( autogen )
 			{

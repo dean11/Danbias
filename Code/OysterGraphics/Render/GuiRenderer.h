@@ -1,0 +1,21 @@
+#pragma once
+
+#include "../Core/Core.h"
+
+namespace Oyster
+{
+	namespace Graphics
+	{
+		namespace Render
+		{
+			class Gui
+			{
+			public:
+				static void Begin2DRender();
+				static void Render(ID3D11ShaderResourceView* tex, Math::Float2 pos, Math::Float2 size);
+				static void Begin2DTextRender();
+				static void RenderText(std::wstring text, Math::Float2 pos, Math::Float2 size);
+			};
+		}
+	}
+}

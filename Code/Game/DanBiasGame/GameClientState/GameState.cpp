@@ -49,33 +49,33 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 }
 GameState::gameStateState GameState::LoadGame() 
 {
-	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Float3(315, 0 ,5);
-	plight.Color = Float3(0.9f,0.7f,0.2f);
-	plight.Radius = 100;
-	plight.Bright = 0.9f;
-	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Float3(10,350,5);
+ Oyster::Graphics::Definitions::Pointlight plight;
+ plight.Pos = Float3(315, 0 ,5);
+ plight.Color = Float3(0.9f,0.7f,0.2f);
+ plight.Radius = 10;
+ plight.Bright = 0.5f;
+ //Oyster::Graphics::API::AddLight(plight);
+	plight.Pos = Float3(10,800,5);
 	plight.Color = Float3(0.9f,0.7f,0.3f);
-	plight.Radius = 200;
-	plight.Bright = 0.7f;
+	plight.Radius = 300;
+	plight.Bright = 0.5f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Float3(350,350,5);
-	plight.Color = Float3(0.9f,0.7f,0.3f);
-	plight.Radius = 200;
-	plight.Bright = 0.7f;
-	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Float3(10,350,350);
-	plight.Color = Float3(0.9f,0.7f,0.3f);
-	plight.Radius = 200;
-	plight.Bright = 0.7f;
-	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Float3(10,-15,5);
-	plight.Color = Float3(0,0,1);
-	plight.Radius = 50;
-	plight.Bright = 2;
+	//plight.Pos = Float3(350,350,5);
+	//plight.Color = Float3(0.9f,0.7f,0.3f);
+	//plight.Radius = 200;
+	//plight.Bright = 0.7f;
+	//Oyster::Graphics::API::AddLight(plight);
+	//plight.Pos = Float3(10,350,350);
+	//plight.Color = Float3(0.9f,0.7f,0.3f);
+	//plight.Radius = 200;
+	//plight.Bright = 0.7f;
+	//Oyster::Graphics::API::AddLight(plight);
+	//plight.Pos = Float3(10,-15,5);
+	//plight.Color = Float3(0,0,1);
+	//plight.Radius = 50;
+	//plight.Bright = 0.5f;
 
-	Oyster::Graphics::API::AddLight(plight);
+	//Oyster::Graphics::API::AddLight(plight);
 	// use level loader
 	//LoadModels("3bana.bias");
 	// hardcoded objects
@@ -293,7 +293,7 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	obj =  new C_Player();
 	this->dynamicObjects.Push(obj);
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
-
+	
 	
 	Oyster::Math::Float3 right = Oyster::Math::Float3(world[0], world[1], world[2]);
 	Oyster::Math::Float3 up = Oyster::Math::Float3(world[4], world[5], world[6]);
@@ -357,7 +357,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 	// send key input to server. 
 	return ClientState_Same;
 }
-bool GameState::Render()
+bool GameState::Render(float dt)
 {
 	Oyster::Graphics::API::SetView(camera->View());
 
@@ -370,6 +370,11 @@ bool GameState::Render()
 	{
 		dynamicObjects[i]->Render();
 	}
+	Oyster::Graphics::API::StartTextRender();
+	std::wstring fps;
+	float f = 1/dt;
+	fps = std::to_wstring(f);
+	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.05f,0.08f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;

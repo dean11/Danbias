@@ -24,7 +24,7 @@ namespace DanBias
 			bool InitCamera(Oyster::Math::Float3 startPos);
 			ClientState Update(float deltaTime, InputClass* KeyInput);
 			
-			bool Render();
+			bool Render(float dt);
 			bool Release();
 			void Protocol(ProtocolStruct* protocol)override;
 			void PlayerJoinProtocol(PlayerName* name);

@@ -23,9 +23,11 @@ private:
 	Oyster::Math::Float3 position; 
 	Oyster::Math::Quaternion rotation; 
 	Oyster::Math::Float3 scale; 
-	Oyster::Graphics::Model::Model *model;
+	
 	int id;
 	void updateWorld();
+protected:
+	Oyster::Graphics::Model::Model *model;
 public:
 
 	virtual void Init(ModelInitData modelInit);

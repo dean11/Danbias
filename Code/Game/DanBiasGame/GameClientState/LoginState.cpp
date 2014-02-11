@@ -42,7 +42,7 @@ bool LoginState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
 	plight.Pos = Oyster::Math::Float3(0,0,5);
-	plight.Color = Oyster::Math::Float3(1,1,1);
+	plight.Color = Oyster::Math::Float3(1,0,1);
 	plight.Radius = 100;
 	plight.Bright = 1;
 	Oyster::Graphics::API::AddLight(plight);
@@ -121,7 +121,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	}
 	return ClientState_Same;
 }
-bool LoginState::Render()
+bool LoginState::Render(float dt)
 {
 
 	Oyster::Graphics::API::SetView(privData->view);
@@ -143,6 +143,7 @@ bool LoginState::Render()
 }
 bool LoginState::Release()
 {
+	Oyster::Graphics::API::ClearLights();
 	for (int i = 0; i < privData->modelCount; i++)
 	{
 		privData->object[i]->Release();
