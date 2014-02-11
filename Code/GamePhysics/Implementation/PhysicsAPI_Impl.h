@@ -26,6 +26,8 @@ namespace Oyster
 			ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 			ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 
+			void SetTimeStep(float timeStep);
+
 			void UpdateWorld();
 
 			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) );
@@ -37,6 +39,8 @@ namespace Oyster
 			btSequentialImpulseConstraintSolver* solver;
 			btDiscreteDynamicsWorld* dynamicsWorld;
 			std::vector<ICustomBody*> customBodies;
+
+			float timeStep;
 		};
 
 		namespace Default

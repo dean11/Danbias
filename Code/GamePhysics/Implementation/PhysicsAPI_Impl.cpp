@@ -24,6 +24,8 @@ API_Impl::API_Impl()
     this->dispatcher = NULL;
 	this->solver = NULL;
 	this->dynamicsWorld = NULL;
+
+	this->timeStep = 1.0f/120.0f;
 }
 
 API_Impl::~API_Impl() 
@@ -39,7 +41,7 @@ API_Impl::~API_Impl()
     delete this->broadphase;
 	this->broadphase = NULL;
 
-	for(int i = 0; i < this->customBodies.size(); i++)
+	for(unsigned int i = 0; i < this->customBodies.size(); i++)
 	{
 		delete this->customBodies[i];
 		this->customBodies[i] = NULL;
@@ -164,27 +166,33 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	return body;
 }
 
+void API_Impl::SetTimeStep(float timeStep)
+{
+	this->timeStep = timeStep;
+}
+
 void API_Impl::UpdateWorld()
 {
-	this->dynamicsWorld->stepSimulation(1.0f/60.0f, 1.0f, 1.0f/60.0f);
+	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
 
 	ICustomBody::State state;
 
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
+		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
 		btTransform trans;
-		dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetMotionState()->getWorldTransform(trans);
+		simpleBody->GetMotionState()->getWorldTransform(trans);
 		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
 		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
 		
-		if(dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->GetRigidBody()->getActivationState() == ACTIVE_TAG)
+		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
 		{
-			dynamic_cast<SimpleRigidBody*>(this->customBodies[i])->CallSubscription_Move();
+			simpleBody->CallSubscription_Move();
 		}
 	}
 
 	int numManifolds = this->dynamicsWorld->getDispatcher()->getNumManifolds();
-	for (int i=0;i<numManifolds;i++)
+	for (int i = 0; i < numManifolds; i++)
 	{
 		btPersistentManifold* contactManifold =  this->dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 		const btCollisionObject* obA = contactManifold->getBody0();
@@ -195,18 +203,6 @@ void API_Impl::UpdateWorld()
 
 		dynamic_cast<SimpleRigidBody*>(bodyA)->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
 		dynamic_cast<SimpleRigidBody*>(bodyB)->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
-
-		int numContacts = contactManifold->getNumContacts();
-		for (int j=0;j<numContacts;j++)
-		{
-			btManifoldPoint& pt = contactManifold->getContactPoint(j);
-			if (pt.getDistance()<0.f)
-			{   
-				const btVector3& ptA = pt.getPositionWorldOnA();
-				const btVector3& ptB = pt.getPositionWorldOnB();
-				const btVector3& normalOnB = pt.m_normalWorldOnB;
-			}
-		}
 	}
 
 }
@@ -257,9 +253,7 @@ namespace Oyster
 			}
 
 			void EventAction_AfterCollisionResponse( const ::Oyster::Physics::ICustomBody *proto, const ::Oyster::Physics::ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss )
-			{ /* Do nothing except returning business as usual. */
-				
-			}
+			{ /* Do nothing except returning business as usual. */ }
 
 			void EventAction_Move( const ::Oyster::Physics::ICustomBody *object )
 			{ /* Do nothing. */ }
