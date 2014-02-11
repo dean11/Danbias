@@ -96,6 +96,52 @@ namespace Oyster { namespace Math3D
 	//	return ::LinearAlgebra3D::ExtractAngularAxis( orientationMatrix );
 	//}
 
+	Float4 QuaternionToAngularAxis(Float4 quaternion)
+	{
+		Float4 axis = Float4::null;
+		Float s = sqrtf(1 - quaternion.w*quaternion.w);
+
+		axis.w = 2*acos(quaternion.w*quaternion.w);
+
+		if(1 - quaternion.w > 0.001f)
+		{
+			axis.x = quaternion.x/s;
+			axis.y = quaternion.y/s;
+			axis.z = quaternion.z/s;
+		}
+		else
+		{
+			axis.x = quaternion.x;
+			axis.y = quaternion.y;
+			axis.z = quaternion.z;
+		}
+
+		return axis;
+	}
+
+	Float4 QuaternionToAngularAxis(Quaternion quaternion)
+	{
+		Float4 axis = Float4::null;
+		Float s = sqrtf(1 - quaternion.real*quaternion.real);
+
+		axis.w = 2*acos(quaternion.real*quaternion.real);
+
+		if(1 - quaternion.real > 0.001f)
+		{
+			axis.x = quaternion.imaginary.x/s;
+			axis.y = quaternion.imaginary.y/s;
+			axis.z = quaternion.imaginary.z/s;
+		}
+		else
+		{
+			axis.x = quaternion.imaginary.x;
+			axis.y = quaternion.imaginary.y;
+			axis.z = quaternion.imaginary.z;
+		}
+
+		return axis;
+	}
+
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem )
 	{
 		return ::LinearAlgebra3D::TranslationMatrix( position, targetMem );
