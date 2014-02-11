@@ -4,13 +4,16 @@
 //WTF!? No headers included???
 #include "../DanBiasGame/Include/DanBiasGame.h"
 #include "../GameProtocols/GeneralProtocols.h"
-#include "..\GameProtocols\Protocols.h"
+#include "../GameProtocols/Protocols.h"
+#include "../Network/NetworkAPI/NetworkClient.h"
+#include "GameClientState\GameClientState.h"
+#include "GameClientState\GameState.h"
+
 #include <Utilities.h>
 
 namespace DanBias
 {
-	
-	struct GameRecieverObject	:public Oyster::Network::NetworkClient
+	struct GameRecieverObject : public Oyster::Network::NetworkClient
 	{
 		Client::GameClientState* gameClientState;
 
