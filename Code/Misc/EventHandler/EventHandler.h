@@ -9,8 +9,6 @@
 
 #include "EventButtonCollection.h"
 #include "EventButton.h"
-#include "EventButtonCircle.h"
-#include "EventButtonRectangle.h"
 
 #include <vector>
 
@@ -27,9 +25,9 @@ namespace Oyster
 			static EventHandler& Instance();
 
 			void Update(InputClass* inputObject);
+			void Render();
 
-			void AddCollection(EventButtonCollection& collection);
-			EventButtonCollection& CreateCollection();
+			void AddCollection(EventButtonCollection* collection);
 
 		private:
 			std::vector<EventButtonCollection*> collections;

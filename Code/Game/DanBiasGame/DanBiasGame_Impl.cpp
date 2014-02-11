@@ -141,6 +141,9 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
+		//Update menu buttons
+		EventHandler::Instance().Update(m_data->inputObj);
+
 		m_data->inputObj->Update();
 
 		if(m_data->serverOwner)

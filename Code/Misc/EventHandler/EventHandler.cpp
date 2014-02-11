@@ -34,14 +34,15 @@ void EventHandler::Update(InputClass* inputObject)
 	}
 }
 
-void EventHandler::AddCollection(EventButtonCollection& collection)
+void EventHandler::Render()
 {
-	collections.push_back(&collection);
+	for(int i = 0; i < (int)collections.size(); i++)
+	{
+		collections.at(i)->Render();
+	}
 }
 
-EventButtonCollection& EventHandler::CreateCollection()
+void EventHandler::AddCollection(EventButtonCollection* collection)
 {
-	EventButtonCollection* temp = new EventButtonCollection;
-	collections.push_back(temp);
-	return *temp;
+	collections.push_back(collection);
 }

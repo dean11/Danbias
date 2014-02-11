@@ -62,6 +62,7 @@ namespace Oyster
 			void SendEvent(ButtonState state);
 			
 			//Set
+			void SetEnabled(bool enable);
 			void SetUserData(void* data);
 			void SetEventFunc(EventFunc func);
 			void SetOwner(Owner owner);
@@ -206,6 +207,13 @@ namespace Oyster
 			}
 		}
 		
+		//Set if the button should be updated and collided with.
+		template <typename Owner>
+		void EventButton<Owner>::SetEnabled(bool enable)
+		{
+			this->privData.enabled = enable;
+		}
+
 		template <typename Owner>
 		void EventButton<Owner>::SetUserData(void* data)
 		{

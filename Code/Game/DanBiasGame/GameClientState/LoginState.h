@@ -5,6 +5,8 @@
 #include "OysterMath.h"
 #include "NetworkClient.h"
 #include <string>
+#include "../Misc/EventHandler/EventButton.h"
+
 namespace DanBias
 {
 	namespace Client
@@ -24,6 +26,8 @@ namespace DanBias
 			bool InitCamera(Oyster::Math::Float3 startPos);
 			ClientState Update(float deltaTime, InputClass* KeyInput);
 			
+			static void ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e);
+
 			bool Render();
 			bool Release();
 			void Protocol(ProtocolStruct* protocol)override;
