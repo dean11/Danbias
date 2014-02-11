@@ -66,6 +66,13 @@ namespace Oyster
 				int x;
 				int y;
 			};
+
+			struct Text2D
+			{
+				float pos;
+				int offset;
+				float coff;
+			};
 		}
 	}
 }

@@ -29,11 +29,10 @@ namespace Oyster
 			{
 				return API::Fail;
 			}
+			Render::Resources::Gui::Text::Font = (ID3D11ShaderResourceView*)API::CreateTexture(L"font_generic.png");
 			Render::Resources::Init();
 
 			Render::Preparations::Basic::SetViewPort();
-			Render::DefaultRenderer::cube = API::CreateModel(L"box.dan");
-			Render::DefaultRenderer::cube2 = API::CreateModel(L"box2.dan");
 			return API::Sucsess;
 		}
 
@@ -111,8 +110,7 @@ namespace Oyster
 
 		void API::Clean()
 		{
-			DeleteModel(Render::DefaultRenderer::cube);
-			DeleteModel(Render::DefaultRenderer::cube2);
+			DeleteTexture(Render::Resources::Gui::Text::Font);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();
@@ -157,12 +155,12 @@ namespace Oyster
 
 		void API::StartGuiRender()
 		{
-			Render::Rendering::Gui::BeginRender();
+			Render::Gui::Begin2DRender();
 		}
 
 		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size)
 		{
-			Render::Rendering::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size);
+			Render::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size);
 		}
 
 		API::Texture API::CreateTexture(std::wstring filename)
@@ -186,6 +184,16 @@ namespace Oyster
 		void API::Update(float dt)
 		{
 			deltaTime = dt;
+		}
+
+		void API::StartTextRender()
+		{
+			Render::Gui::Begin2DTextRender();
+		}
+
+		void API::RenderText(std::wstring text, Math::Float2 Pos, Math::Float2 Size)
+		{
+			Render::Gui::RenderText(text,Pos,Size);
 		}
 	}
 }
