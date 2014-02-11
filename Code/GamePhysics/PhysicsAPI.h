@@ -84,6 +84,8 @@ namespace Oyster
 			virtual ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 			virtual ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 
+			virtual void SetTimeStep(float timeStep) = 0;
+
 			virtual void UpdateWorld() = 0;
 
 
@@ -135,6 +137,10 @@ namespace Oyster
 			virtual void SetRotation(::Oyster::Math::Float4 quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Quaternion quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
+			virtual void SetAngularFactor(::Oyster::Math::Float factor) = 0;
+
+			virtual void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right) = 0;
+			virtual void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward) = 0;
 
 			::Oyster::Math::Float4x4 GetRotation() const;
 			::Oyster::Math::Float4x4 GetOrientation() const;

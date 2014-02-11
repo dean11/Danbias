@@ -26,10 +26,14 @@ namespace Oyster
 			void SetSubscription(EventAction_Move function);
 
 			void SetLinearVelocity(Math::Float3 velocity);
-			void SetPosition(::Oyster::Math::Float3 position);
+			void SetPosition(Math::Float3 position);
 			void SetRotation(Math::Float4 quaternion);
-			void SetRotation(::Oyster::Math::Quaternion quaternion);
+			void SetRotation(Math::Quaternion quaternion);
 			void SetRotation(Math::Float3 eulerAngles);
+			void SetAngularFactor(Math::Float factor);
+
+			void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right);
+			void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward);
 
 			Math::Float4x4 GetRotation() const;
 			Math::Float4x4 GetOrientation() const;
