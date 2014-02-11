@@ -21,6 +21,9 @@ namespace Oyster
 			void MoveToLimbo( const ICustomBody* objRef );
 			void ReleaseFromLimbo( const ICustomBody* objRef );
 
+			void SetGravityPoint(::Oyster::Math::Float3 gravityPoint);
+			void SetGravity(float gravity);
+
 			// Bullet physics
 			ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 			ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
@@ -41,6 +44,9 @@ namespace Oyster
 			std::vector<ICustomBody*> customBodies;
 
 			float timeStep;
+
+			::Oyster::Math::Float3 gravityPoint;
+			float gravity;
 		};
 
 		namespace Default

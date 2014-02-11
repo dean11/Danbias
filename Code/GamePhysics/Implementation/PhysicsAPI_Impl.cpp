@@ -26,6 +26,9 @@ API_Impl::API_Impl()
 	this->dynamicsWorld = NULL;
 
 	this->timeStep = 1.0f/120.0f;
+
+	this->gravityPoint = Float3(0.0f, 0.0f, 0.0f);
+	this->gravity = 10.0f;
 }
 
 API_Impl::~API_Impl() 
@@ -46,6 +49,16 @@ API_Impl::~API_Impl()
 		delete this->customBodies[i];
 		this->customBodies[i] = NULL;
 	}
+}
+
+void API_Impl::SetGravityPoint(::Oyster::Math::Float3 gravityPoint)
+{
+	this->gravityPoint = gravityPoint;
+}
+
+void API_Impl::SetGravity(float gravity)
+{
+	this->gravity = gravity;
 }
 
 // Bullet physics
@@ -173,6 +186,11 @@ void API_Impl::SetTimeStep(float timeStep)
 
 void API_Impl::UpdateWorld()
 {
+	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
+	{
+		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);	
+	}
+
 	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
 
 	ICustomBody::State state;
