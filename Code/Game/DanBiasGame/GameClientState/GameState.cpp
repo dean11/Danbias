@@ -122,7 +122,7 @@ bool GameState::LoadModels()
 		this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 	}
 
-
+	/*
 	// add crystal model 
 	modelData.position = Oyster::Math::Float3(10, 301, 0);
 	modelData.modelPath = L"crystalformation_b.dan";
@@ -174,7 +174,7 @@ bool GameState::LoadModels()
 	modelData.id = id++;
 	// load models
 	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);*/
 	return true;
 }
 bool GameState::LoadModels(std::string mapFile)
@@ -316,7 +316,7 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	camera->setLook(objForward);
 				
 	up *= 2;
-	objForward *= -3;
+	objForward *= 3;
 	Oyster::Math::Float3 cameraPos = up + pos + objForward;
 	camera->SetPosition(cameraPos);
 
@@ -453,14 +453,14 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	}
 
 	//send delta mouse movement 
-	//if (KeyInput->IsMousePressed())
+	if (KeyInput->IsMousePressed())
 	{
 		camera->Yaw(-KeyInput->GetYaw());
 		camera->Pitch(KeyInput->GetPitch());
 		pitch = KeyInput->GetPitch();
 		camera->UpdateViewMatrix();
 		GameLogic::Protocol_PlayerLook playerLookDir;
-		Oyster::Math::Float4 look = camera->GetLook();
+		Oyster::Math::Float4 look = camera->GetRight();
 		playerLookDir.lookDirX = look.x;
 		playerLookDir.lookDirY = look.y;
 		playerLookDir.lookDirZ = look.z;
@@ -565,9 +565,8 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		if(dynamicObjects[i]->GetId() == pos->object_ID)
 		{
-
-			dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
-
+			//dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
+			dynamicObjects[i]->setWorld(world);
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
@@ -591,10 +590,10 @@ void GameState::Protocol( ObjPos* pos )
 				//camera->setUp(up);
 				//camera->setLook(objForward);
 				
-				up *= 1;
+				up *= 2;
 				objForward *= -2;
 				Oyster::Math::Float3 cameraPos = pos + up + objForward;
-				//camera->SetPosition(cameraPos);
+				camera->SetPosition(cameraPos);
 				//camera->UpdateViewMatrix();
 				
 			}

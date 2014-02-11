@@ -5,6 +5,9 @@ void C_Object::Init(ModelInitData modelInit)
 	position = modelInit.position;
 	rotation = modelInit.rotation;
 	scale = modelInit.scale;
+	id = modelInit.id;
+	model = Oyster::Graphics::API::CreateModel(modelInit.modelPath);
+	model->Visible = modelInit.visible;
 	updateWorld();
 }
 void C_Object::updateWorld()
@@ -17,10 +20,12 @@ void C_Object::updateWorld()
 	scale.v[1].y = this->scale[1];
 	scale.v[2].z = this->scale[2];
 	world = translation * rot * scale;
+
+	model->WorldMatrix = world;
 }
 void C_Object::setWorld(Oyster::Math::Float4x4 world)
 {
-
+	model->WorldMatrix = world;
 }
 Oyster::Math::Float4x4 C_Object::getWorld() const
 {
@@ -68,7 +73,15 @@ Oyster::Math::Float3 C_Object::getScale() const
 {
 	return this->scale;
 }
-//int C_Object::GetId() const
-//{
-//	return 
-//}
+int C_Object::GetId() const
+{
+	return id;
+}
+void C_Object::Render()
+{
+	Oyster::Graphics::API::RenderModel(*(model));
+}
+void C_Object::Release()
+{
+	Oyster::Graphics::API::DeleteModel(model);
+}

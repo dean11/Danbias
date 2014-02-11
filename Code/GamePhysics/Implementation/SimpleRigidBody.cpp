@@ -134,6 +134,54 @@ void SimpleRigidBody::SetRotation(Float3 eulerAngles)
 	this->state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
 }
 
+void SimpleRigidBody::SetAngularFactor(Float factor)
+{
+	this->rigidBody->setAngularFactor(factor);
+}
+
+void SimpleRigidBody::SetGravity(Float3 gravity)
+{
+	this->rigidBody->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
+	this->gravity = gravity;
+}
+
+void SimpleRigidBody::SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right)
+{
+	btTransform trans;
+	btMatrix3x3 rotation;
+	btVector3 upVector(up.x, up.y, up.z);
+	btVector3 rightVector(right.x, right.y, right.z);
+	rotation[1] = upVector.normalized();
+	rotation[0] = rightVector.normalized();
+	rotation[2] = rightVector.cross(upVector).normalized();
+
+	trans = this->rigidBody->getWorldTransform();
+	trans.setBasis(rotation);
+	this->rigidBody->setWorldTransform(trans);
+
+	btQuaternion quaternion;
+	quaternion = trans.getRotation();
+	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+}
+
+void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward)
+{
+	btTransform trans;
+	btMatrix3x3 rotation;
+	btVector3 upVector(up.x, up.y, up.z);
+	btVector3 forwardVector(forward.x, forward.y, forward.z);
+	rotation[1] = upVector.normalized();
+	rotation[2] = forwardVector.normalized();
+	rotation[0] = forwardVector.cross(upVector).normalized();
+	trans = this->rigidBody->getWorldTransform();
+	trans.setBasis(rotation);
+	this->rigidBody->setWorldTransform(trans);
+
+	btQuaternion quaternion;
+	quaternion = trans.getRotation();
+	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+}
+
 Float4x4 SimpleRigidBody::GetRotation() const
 {
 	return this->state.GetRotation();

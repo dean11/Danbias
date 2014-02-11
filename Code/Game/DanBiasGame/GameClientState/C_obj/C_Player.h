@@ -8,17 +8,10 @@ namespace DanBias
 class C_Player : public C_DynamicObj
 {
 private:
-	struct myData;
-	myData* privData;
-
 public:
 	C_Player(void);
 	virtual ~C_Player(void);
 	void Init(ModelInitData modelInit);
-
-	void Render();
-	void Release();
-	int GetId();
 
 };};};
 #endif

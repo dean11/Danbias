@@ -8,7 +8,7 @@ Game::PlayerData::PlayerData()
 	//set some stats that are appropriate to a player
 	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,608,-5);
 	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
-	Oyster::Math::Float mass = 15;
+	Oyster::Math::Float mass = 60;
 	Oyster::Math::Float restitutionCoeff = 0.5;
 	Oyster::Math::Float frictionCoeff_Static = 0.4;
 	Oyster::Math::Float frictionCoeff_Dynamic = 0.3;
@@ -16,7 +16,7 @@ Game::PlayerData::PlayerData()
 
 	//create rigid body
 	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
-	
+	rigidBody->SetAngularFactor(0.0f);
 	//create player with this rigid body
 	this->player = new Player(rigidBody,Level::LevelCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
 	this->player->GetRigidBody()->SetCustomTag(this);
