@@ -139,6 +139,12 @@ void SimpleRigidBody::SetAngularFactor(Float factor)
 	this->rigidBody->setAngularFactor(factor);
 }
 
+void SimpleRigidBody::SetGravity(Float3 gravity)
+{
+	this->rigidBody->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
+	this->gravity = gravity;
+}
+
 void SimpleRigidBody::SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right)
 {
 	btTransform trans;
@@ -167,7 +173,6 @@ void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math:
 	rotation[1] = upVector.normalized();
 	rotation[2] = forwardVector.normalized();
 	rotation[0] = forwardVector.cross(upVector).normalized();
-
 	trans = this->rigidBody->getWorldTransform();
 	trans.setBasis(rotation);
 	this->rigidBody->setWorldTransform(trans);

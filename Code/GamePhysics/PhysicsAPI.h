@@ -139,6 +139,8 @@ namespace Oyster
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
 			virtual void SetAngularFactor(::Oyster::Math::Float factor) = 0;
 
+			virtual void SetGravity(::Oyster::Math::Float3 gravity) = 0;
+
 			virtual void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right) = 0;
 			virtual void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward) = 0;
 
