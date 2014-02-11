@@ -107,13 +107,9 @@ void Object::setAfterCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage
 
 Oyster::Math::Float3 Object::GetPosition() 
 {
-	Oyster::Physics::ICustomBody::State state; 
-	state = this->rigidBody->GetState();
-	return state.centerPos;
+	return (Oyster::Math::Float3) this->rigidBody->GetState().centerPos;
 }
 Oyster::Math::Float4x4 Object::GetOrientation() 
 {
-	Oyster::Physics::ICustomBody::State state; 
-	state = this->rigidBody->GetState();
-	return state.GetOrientation();
+	return this->rigidBody->GetState().GetOrientation();
 }

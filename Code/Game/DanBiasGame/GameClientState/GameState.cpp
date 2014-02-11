@@ -453,14 +453,14 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	}
 
 	//send delta mouse movement 
-	//if (KeyInput->IsMousePressed())
+	if (KeyInput->IsMousePressed())
 	{
 		camera->Yaw(-KeyInput->GetYaw());
 		camera->Pitch(KeyInput->GetPitch());
 		pitch = KeyInput->GetPitch();
 		camera->UpdateViewMatrix();
 		GameLogic::Protocol_PlayerLook playerLookDir;
-		Oyster::Math::Float4 look = camera->GetLook();
+		Oyster::Math::Float4 look = camera->GetRight();
 		playerLookDir.lookDirX = look.x;
 		playerLookDir.lookDirY = look.y;
 		playerLookDir.lookDirZ = look.z;

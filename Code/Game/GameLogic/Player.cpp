@@ -22,7 +22,6 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
 {
 	InitPlayer();
 }
-
 Player::Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
 	:DynamicObject(collisionFuncBefore,collisionFuncAfter,type)
 {
@@ -60,21 +59,14 @@ Player::~Player(void)
 
 void Player::BeginFrame()
 {
-	weapon->Update(0.002f); 
+	//weapon->Update(0.002f); 
 	Object::BeginFrame();
 }
 
 void Player::EndFrame()
 {
 	// snap to axis
-	Object::EndFrame();
-	// rotate 
-
-	//Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
-	//Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
-
-	//currPhysicsState.AddRotation(deltaAxis);
-	
+	Object::EndFrame();	
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -143,11 +135,12 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
-	//this->newPhysicsState.centerPos = spawnPoint;
+	this->rigidBody->SetPosition(spawnPoint);
 }
 
 void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 {
+	// right
 	Oyster::Math::Float dx = lookDir.w;
 	if(dx > 0.0f)
 	{
@@ -156,12 +149,16 @@ void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 
 	this->lookDir = lookDir.xyz;
 	this->dx =  lookDir.w;
+
+
+	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
+	this->rigidBody->SetUpAndRight(up, lookDir.xyz);
 }
 
 void Player::Jump()
 {
 	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
-	//newPhysicsState.ApplyLinearImpulse(up * MOVE_FORCE * this->gameInstance->GetFrameTime());
+	//this->rigidBody->GetState().SetLinearVelocity(up *10);
 }
 
 bool Player::IsWalking()
