@@ -496,112 +496,120 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, ClientEventArgs> e )
 	CustomNetProtocol data = e.args.data.protocol;
 	short ID = data[0].value.netShort; // fetching the id data.
 	
-	// Block irrelevant messages.
-	if( !ProtocolIsGameplay(ID) )
-		return;
-
-	switch(ID)
+	if( ProtocolIsGameplay(ID) )
 	{
-	case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectDamage:			break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectHealthStatus:		break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectPosition:
+		switch(ID)
 		{
-			GameLogic::Protocol_ObjectPosition decoded(data);
-
-			// if is this player. Remember to change camera
-			if( this->myId == decoded.object_ID )
-				camera.SetPosition( decoded.position );
-
-			int i = FindObject( this->dynamicObjects, decoded.object_ID );
-			if( i > -1 )
-				this->dynamicObjects[i]->setPos( decoded.position );
-		}
-		break;
-	case protocol_Gameplay_ObjectScale:
-		{
-			GameLogic::Protocol_ObjectScale decoded(data);
-			int i = FindObject( this->dynamicObjects, decoded.object_ID );
-			if( i > -1 )
-				this->dynamicObjects[i]->setScale( decoded.scale );
-		}
-		break;
-	case protocol_Gameplay_ObjectRotation:
-		{
-			GameLogic::Protocol_ObjectRotation decoded(data);
-			Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
-
-			// if is this player. Remember to change camera
-			if( this->myId == decoded.object_ID )
-				camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
-
-			int i = FindObject( this->dynamicObjects, decoded.object_ID );
-			if( i > -1 )
-				this->dynamicObjects[i]->setRot( rotation );
-		}
-		break;
-	case protocol_Gameplay_ObjectPositionRotation:
-		{
-			GameLogic::Protocol_ObjectPositionRotation decoded(data);
-			Float3 position = decoded.position;
-			Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
-
-			// if is this player. Remember to change camera
-			if( this->myId == decoded.object_ID )
+		case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectDamage:			break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectHealthStatus:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectPosition:
 			{
-				camera.SetPosition( position );
-				camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
-			}
+				GameLogic::Protocol_ObjectPosition decoded(data);
 
-			int i = FindObject( this->dynamicObjects, decoded.object_ID );
-			if( i > -1 )
-			{
-				this->dynamicObjects[i]->setPos( position );
-				this->dynamicObjects[i]->setRot( rotation );
+				// if is this player. Remember to change camera
+				if( this->myId == decoded.object_ID )
+					camera.SetPosition( decoded.position );
+
+				int i = FindObject( this->dynamicObjects, decoded.object_ID );
+				if( i > -1 )
+					this->dynamicObjects[i]->setPos( decoded.position );
 			}
+			break;
+		case protocol_Gameplay_ObjectScale:
+			{
+				GameLogic::Protocol_ObjectScale decoded(data);
+				int i = FindObject( this->dynamicObjects, decoded.object_ID );
+				if( i > -1 )
+					this->dynamicObjects[i]->setScale( decoded.scale );
+			}
+			break;
+		case protocol_Gameplay_ObjectRotation:
+			{
+				GameLogic::Protocol_ObjectRotation decoded(data);
+				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+
+				// if is this player. Remember to change camera
+				if( this->myId == decoded.object_ID )
+					camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
+
+				int i = FindObject( this->dynamicObjects, decoded.object_ID );
+				if( i > -1 )
+					this->dynamicObjects[i]->setRot( rotation );
+			}
+			break;
+		case protocol_Gameplay_ObjectPositionRotation:
+			{
+				GameLogic::Protocol_ObjectPositionRotation decoded(data);
+				Float3 position = decoded.position;
+				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+
+				// if is this player. Remember to change camera
+				if( this->myId == decoded.object_ID )
+				{
+					camera.SetPosition( position );
+					camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
+				}
+
+				int i = FindObject( this->dynamicObjects, decoded.object_ID );
+				if( i > -1 )
+				{
+					this->dynamicObjects[i]->setPos( position );
+					this->dynamicObjects[i]->setRot( rotation );
+				}
+			}
+			break;
+		case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectDisabled:
+			{
+				GameLogic::Protocol_ObjectDisable decoded(data);
+
+				int i = FindObject( this->dynamicObjects, decoded.objectID );
+				if( i > -1 )
+				{
+					this->dynamicObjects[i].Release();
+					this->dynamicObjects.Pop(i);
+				}
+			}
+			break;
+		case protocol_Gameplay_ObjectCreate:
+			{
+				GameLogic::Protocol_ObjectCreate decoded(data);
+				C_DynamicObj* object = new C_DynamicObj();
+
+				ModelInitData modelData;
+				{
+					modelData.position = Float3( decoded.position );
+					modelData.rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+					modelData.scale = Float3( decoded.scale );
+					modelData.visible = true;
+					modelData.id = decoded.object_ID;
+
+					::Utility::String::StringToWstring( decoded.name, modelData.modelPath );
+				}
+				object->Init(modelData);
+
+				dynamicObjects.Push(object);
+
+			}		
+			break;
+		case protocol_Gameplay_ObjectCreatePlayer:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectRespawn:			break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectDie:				break; /** @todo TODO: implement */
+		default: break;
 		}
-		break;
-	case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectDisabled:
+	}
+	else if( ProtocolIsGeneral(ID) )
+	{
+		switch( ID )
 		{
-			GameLogic::Protocol_ObjectDisable decoded(data);
-
-			int i = FindObject( this->dynamicObjects, decoded.objectID );
-			if( i > -1 )
-			{
-				this->dynamicObjects[i].Release();
-				this->dynamicObjects.Pop(i);
-			}
+			case protocol_General_Status:				break; /** @todo TODO: implement */
+			case protocol_General_Text:					break; /** @todo TODO: implement */
+		default: break;
 		}
-		break;
-	case protocol_Gameplay_ObjectCreate:
-		{
-			GameLogic::Protocol_ObjectCreate decoded(data);
-			C_DynamicObj* object = new C_DynamicObj();
-
-			ModelInitData modelData;
-			{
-				modelData.position = Float3( decoded.position );
-				modelData.rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
-				modelData.scale = Float3( decoded.scale );
-				modelData.visible = true;
-				modelData.id = decoded.object_ID;
-
-				::Utility::String::StringToWstring( decoded.name, modelData.modelPath );
-			}
-			object->Init(modelData);
-
-			dynamicObjects.Push(object);
-
-		}		
-		break;
-	case protocol_Gameplay_ObjectCreatePlayer:		break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectRespawn:			break; /** @todo TODO: implement */
-	case protocol_Gameplay_ObjectDie:				break; /** @todo TODO: implement */
-	default: break;
 	}
 }

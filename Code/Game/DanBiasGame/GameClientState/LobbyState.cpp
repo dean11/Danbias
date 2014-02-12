@@ -141,18 +141,27 @@ void LobbyState::DataRecieved( NetEvent<NetworkClient*, ClientEventArgs> e )
 	short ID = data[0].value.netShort; // fetching the id data.
 	
 	// Block irrelevant messages.
-	if( !ProtocolIsLobby(ID) )
-		return;
-
-	switch(ID)
+	if( ProtocolIsLobby(ID) )
 	{
-	case protocol_Lobby_Create:		break; /** @todo TODO: implement */
-	case protocol_Lobby_Start:		break; /** @todo TODO: implement */
-	case protocol_Lobby_Join:		break; /** @todo TODO: implement */
-	case protocol_Lobby_Login:		break; /** @todo TODO: implement */
-	case protocol_Lobby_Refresh:	break; /** @todo TODO: implement */
-	case protocol_Lobby_ClientData:	break; /** @todo TODO: implement */
-	case protocol_Lobby_GameData:	break; /** @todo TODO: implement */
-	default:						break;
+		switch(ID)
+		{
+		case protocol_Lobby_Create:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Start:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Join:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Login:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Refresh:	break; /** @todo TODO: implement */
+		case protocol_Lobby_ClientData:	break; /** @todo TODO: implement */
+		case protocol_Lobby_GameData:	break; /** @todo TODO: implement */
+		default:						break;
+		}
+	}
+	else if( ProtocolIsGeneral(ID) )
+	{
+		switch( ID )
+		{
+			case protocol_General_Status:				break; /** @todo TODO: implement */
+			case protocol_General_Text:					break; /** @todo TODO: implement */
+		default: break;
+		}
 	}
 }
