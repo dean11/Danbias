@@ -163,8 +163,8 @@ namespace Oyster
 
 					D3D11_SAMPLER_DESC sdesc;
 					sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 					sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 					sdesc.MipLODBias = 0;
 					sdesc.MaxAnisotropy =4;
