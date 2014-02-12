@@ -9,7 +9,6 @@
 #include "GameClientState\GameClientState.h"
 #include "GameClientState\GameState.h"
 
-
 #include <Utilities.h>
 
 namespace DanBias

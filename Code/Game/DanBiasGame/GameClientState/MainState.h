@@ -12,13 +12,12 @@ namespace DanBias
 		class MainState : public GameClientState
 		{
 		private:
-			Oyster::Network::NetworkClient* nwClient;
-			struct myData;
-			myData* privData;
+			struct MyData;
+			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		public:
 			MainState(void);
 			~MainState(void);
-			bool Init(Oyster::Network::NetworkClient* nwClient);
+			bool Init( Oyster::Network::NetworkClient* nwClient );
 			bool LoadModels(std::wstring file);
 			bool InitCamera(Oyster::Math::Float3 startPos);
 			ClientState Update(float deltaTime, InputClass* KeyInput);
@@ -26,7 +25,7 @@ namespace DanBias
 			bool Render();
 			bool Release();
 
-			void DataRecieved( ::Oyster::Network::NetEvent<NetworkClient*, ClientEventArgs> e );
+			void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 		};
 	}
 }

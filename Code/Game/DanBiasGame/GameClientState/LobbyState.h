@@ -34,7 +34,7 @@ namespace DanBias
 			bool Render();
 			bool Release();
 
-			void DataRecieved( ::Oyster::Network::NetEvent<NetworkClient*, ClientEventArgs> e );
+			void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 		};
 	}
 }

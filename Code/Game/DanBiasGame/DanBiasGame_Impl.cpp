@@ -5,7 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
-#include "GameClientState\LoginState.h"
+#include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
@@ -18,7 +18,9 @@
 #include "GameClientRecieverFunc.h"
 
 #include "../Misc/EventHandler/EventHandler.h"
-using namespace Oyster::Event;
+
+using namespace ::Oyster::Event;
+using namespace ::Utility::DynamicMemory;
 
 namespace DanBias
 {
@@ -29,20 +31,15 @@ namespace DanBias
 	{
 
 	public:
-		DanBiasGamePrivateData()
-		{
+		DanBiasGamePrivateData() {}
 
-		}
-		~DanBiasGamePrivateData()
-		{
-
-		}
+		~DanBiasGamePrivateData() {}
 
 	public:
 		WindowShell* window;
 		InputClass* inputObj;
 		Utility::WinTimer timer;
-		GameRecieverObject* recieverObj;
+		UniquePointer<Client::GameClientState> state;
 		bool serverOwner;
 
 	} data;
@@ -69,12 +66,12 @@ namespace DanBias
 		if( FAILED( InitInput() ) )
 			return DanBiasClientReturn_Error;
 
-		m_data->recieverObj = new GameRecieverObject;
-		m_data->serverOwner = false;
+		//m_data->serverOwner = false;
 
 		// Start in lobby state
-		m_data->recieverObj->gameClientState = new Client::LoginState();
-		if(!m_data->recieverObj->gameClientState->Init(m_data->recieverObj))
+		m_data->state = new Client::MainState();
+
+		if( !m_data->state->Init() )
 			return DanBiasClientReturn_Error;
 
 		m_data->timer.reset();

@@ -7,7 +7,7 @@
 
 namespace DanBias { namespace Client
 {
-	class GameClientState : public ::Oyster::Network::NetworkClient
+	class GameClientState
 	{
 	public:
 		enum ClientState
@@ -27,6 +27,8 @@ namespace DanBias { namespace Client
 		virtual ClientState Update(float deltaTime, InputClass* KeyInput) = 0;
 		virtual bool Render() = 0;
 		virtual bool Release() = 0;
+
+		virtual void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 	};
 } }
 #endif

@@ -5,39 +5,44 @@
 #include "C_obj/C_StaticObj.h"
 #include "C_obj/C_DynamicObj.h"
 #include <GameServerAPI.h>
+#include "NetworkClient.h"
 
-using namespace DanBias::Client;
+using namespace ::DanBias::Client;
+using namespace ::Oyster::Math3D;
+using namespace ::Oyster::Network;
+using namespace ::Utility::DynamicMemory;
 
-struct MainState::myData
+struct MainState::MyData
 {
-	myData(){}
-	Oyster::Math3D::Float4x4 view;
-	Oyster::Math3D::Float4x4 proj; 
-	C_Object* object[2]; 
+	MyData() {}
+
+	Float4x4 view;
+	Float4x4 proj; 
+	
+	UniquePointer<C_Object> object[2]; 
 	int modelCount; 
-	// UI object
-	// game client* 
-} privData;
+	NetworkClient *nwClient;
+};
 
 MainState::MainState(void) {}
 
 MainState::~MainState(void) {}
 
-bool MainState::Init(Oyster::Network::NetworkClient* nwClient)
+bool MainState::Init( NetworkClient* nwClient )
 {
-	privData = new myData();
-	this->nwClient = nwClient;	
+	this->privData = new MyData();
+
 	// load models
 	LoadModels(L"UImodels.txt");
-	InitCamera(Oyster::Math::Float3(0,0,5.4f));
+	InitCamera( Float3(0.0f, 0.0f, 5.4f) );
 	return true;
 }
 
 bool MainState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(0,0,5);
-	plight.Color = Oyster::Math::Float3(1,1,1);
+	plight.Pos = Float3(0,0,5);
+	plight.Color = Float3(1,1,1);
 	plight.Radius = 100;
 	plight.Bright = 1;
 	Oyster::Graphics::API::AddLight(plight);
@@ -48,30 +53,30 @@ bool MainState::LoadModels(std::wstring file)
 
 	ModelInitData modelData;
 
-	modelData.rotation = Oyster::Math::Quaternion::identity;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.rotation = Quaternion::identity;
+	modelData.scale =  Float3(1,1,1);
 	modelData.visible = true;
 	modelData.modelPath = L"box.dan";
 	
 
-	modelData.position = Oyster::Math::Float3(2,2,2);
+	modelData.position = Float3(2,2,2);
 	privData->object[0] = new C_StaticObj();
 	privData->object[0]->Init(modelData);
 
-	modelData.position = Oyster::Math::Float3(-2,0,-2);
+	modelData.position = Float3(-2,0,-2);
 	privData->object[1] = new C_StaticObj();
 	privData->object[1]->Init(modelData);
 	return true;
 }
 
-bool MainState::InitCamera(Oyster::Math::Float3 startPos)
+bool MainState::InitCamera(Float3 startPos)
 {
-	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
-	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
+	privData->proj = ProjectionMatrix_Perspective(pi/2,1024.0f/768.0f,.1f,1000);
+	//privData->proj = ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
 	Oyster::Graphics::API::SetProjection(privData->proj);
 
-	privData->view = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
-	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
+	privData->view = OrientationMatrix_LookAtDirection(Float3(0,0,-1),Float3(0,1,0),startPos);
+	privData->view = InverseOrientationMatrix(privData->view);
 	return true;
 }
 
@@ -93,9 +98,9 @@ GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyI
 		DanBias::GameServerAPI::ServerInitiate(desc);
 		DanBias::GameServerAPI::ServerStart();
 		// my ip
-		nwClient->Connect(15152, "127.0.0.1");
+		this->privData->nwClient->Connect(15152, "127.0.0.1");
 
-		if (!nwClient->IsConnected())
+		if (!this->privData->nwClient->IsConnected())
 		{
 			// failed to connect
 			return ClientState_Same;
@@ -106,10 +111,10 @@ GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyI
 	if( KeyInput->IsKeyPressed(DIK_J)) 
 	{
 		// game ip
-		nwClient->Connect(15152, "127.0.0.1");
+		this->privData->nwClient->Connect(15152, "127.0.0.1");
 		//nwClient->Connect(15152, "83.254.217.248");
 
-		if (!nwClient->IsConnected())
+		if (!this->privData->nwClient->IsConnected())
 		{
 			// failed to connect
 			return ClientState_Same;

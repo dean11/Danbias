@@ -135,7 +135,7 @@ bool LobbyState::Release()
 
 using namespace ::Oyster::Network;
 
-void LobbyState::DataRecieved( NetEvent<NetworkClient*, ClientEventArgs> e )
+void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 {
 	CustomNetProtocol data = e.args.data.protocol;
 	short ID = data[0].value.netShort; // fetching the id data.

@@ -7,11 +7,12 @@
 
 #include "LobbyState.h"
 #include "GameState.h"
-#include "../GameClientRecieverFunc.h"
+#include "../Network/NetworkAPI/NetworkClient.h"
 
 #include <GameServerAPI.h>
 
-using namespace DanBias::Client;
+using namespace ::DanBias::Client;
+using namespace ::Oyster::Network;
 
 struct  LanMenuState::myData
 {
@@ -21,7 +22,7 @@ struct  LanMenuState::myData
 	C_Object* object[2]; 
 	int modelCount; 
 
-	GameRecieverObject* recieverObj;
+	NetworkClient* recieverObj;
 	bool serverOwner;
 
 	// UI object

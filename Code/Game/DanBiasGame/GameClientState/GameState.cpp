@@ -491,7 +491,7 @@ int FindObject( const DynamicArray<SmartPointer<C_Object>> &collection, int id )
 	return -1;
 }
 
-void GameState::DataRecieved( NetEvent<NetworkClient*, ClientEventArgs> e )
+void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 {
 	CustomNetProtocol data = e.args.data.protocol;
 	short ID = data[0].value.netShort; // fetching the id data.

@@ -213,7 +213,7 @@
     <ClCompile Include="GameClientState\LevelLoader\ParseFunctions.cpp" />
     <ClCompile Include="GameClientState\LobbyState.cpp" />
     <ClCompile Include="GameClientState\C_Object.cpp" />
-    <ClCompile Include="GameClientState\LoginState.cpp" />
+    <ClCompile Include="GameClientState\MainState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameClientRecieverFunc.h" />
@@ -232,7 +232,7 @@
     <ClInclude Include="GameClientState\LevelLoader\Loader.h" />
     <ClInclude Include="GameClientState\LevelLoader\ObjectDefines.h" />
     <ClInclude Include="GameClientState\LevelLoader\ParseFunctions.h" />
-    <ClInclude Include="GameClientState\LoginState.h" />
+    <ClInclude Include="GameClientState\MainState.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />
     <ClInclude Include="GameClientState\C_Object.h" />
