@@ -158,9 +158,9 @@ namespace Oyster
 			Render::Gui::Begin2DRender();
 		}
 
-		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size)
+		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size, Math::Float3 color)
 		{
-			Render::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size);
+			Render::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size,color);
 		}
 
 		API::Texture API::CreateTexture(std::wstring filename)
@@ -191,9 +191,9 @@ namespace Oyster
 			Render::Gui::Begin2DTextRender();
 		}
 
-		void API::RenderText(std::wstring text, Math::Float2 Pos, Math::Float2 Size)
+		void API::RenderText(std::wstring text, Math::Float2 Pos, Math::Float2 Size, Math::Float3 color)
 		{
-			Render::Gui::RenderText(text,Pos,Size);
+			Render::Gui::RenderText(text,Pos,Size,color);
 		}
 	}
 }

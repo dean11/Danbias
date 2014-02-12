@@ -45,6 +45,7 @@ namespace Oyster
 				Buffer Resources::Gather::AnimationData = Buffer();
 				Buffer Resources::Light::LightConstantsData = Buffer();
 				Buffer Resources::Gui::Data = Buffer();
+				Buffer Resources::Gui::Color = Buffer();
 				Buffer Resources::Gui::Text::Vertex = Buffer();
 				Buffer Resources::Post::Data = Buffer();
 
@@ -117,6 +118,10 @@ namespace Oyster
 					desc.NumElements = 1;
 					desc.ElementSize = sizeof(Definitions::AnimationData);
 					Gather::AnimationData.Init(desc);
+
+					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_PS;
+					desc.ElementSize = sizeof(Math::Float3);
+					Gui::Color.Init(desc);
 
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
 					desc.NumElements = 1;
@@ -378,6 +383,7 @@ namespace Oyster
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
 					Gui::Pass.RTV.push_back(GBufferRTV[2]);
 					Gui::Pass.CBuffers.Geometry.push_back(Gui::Data);
+					Gui::Pass.CBuffers.Pixel.push_back(Gui::Color);
 
 					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
 					{
@@ -421,6 +427,7 @@ namespace Oyster
 
 					Shader::CreateInputLayout(Text2Ddesc,3, GetShader::Vertex(L"2DText") ,Gui::Text::Pass.IAStage.Layout);
 					Gui::Text::Pass.CBuffers.Geometry.push_back(Gui::Data);
+					Gui::Text::Pass.CBuffers.Pixel.push_back(Gui::Color);
 					Gui::Text::Pass.SRV.Pixel.push_back(Gui::Text::Font);
 					Gui::Text::Pass.RTV.push_back(GBufferRTV[2]);
 					Gui::Text::Pass.RenderStates.SampleCount = 1;
@@ -448,6 +455,7 @@ namespace Oyster
 					Light::LightConstantsData.~Buffer();
 					Light::PointLightsData.~Buffer();
 					Gui::Data.~Buffer();
+					Gui::Color.~Buffer();
 					Gui::Text::Vertex.~Buffer();
 					Post::Data.~Buffer();
 					SAFE_RELEASE(Light::PointLightView);

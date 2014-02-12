@@ -233,14 +233,14 @@ HRESULT Render(float deltaTime)
 	Oyster::Graphics::API::RenderModel(m2);
 	Oyster::Graphics::API::StartGuiRender();
 	Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1));
-	Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
+	//Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float3(1,0,0));
 	Oyster::Graphics::API::StartTextRender();
 	std::wstring fps;
 	float f = 1/deltaTime;
 	fps = std::to_wstring(f);
 	//Oyster::Graphics::API::RenderText(L"Lanariel",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
 	//Oyster::Graphics::API::RenderText(L"Lanariel WAS HERE",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
-	//Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
+	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float3(0,1,0));
 	Oyster::Graphics::API::EndFrame();
 
 	return S_OK;

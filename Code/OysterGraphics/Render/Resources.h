@@ -61,6 +61,7 @@ namespace Oyster
 					{
 						static Core::PipelineManager::RenderPass Pass;
 						static Core::Buffer Data;
+						static Core::Buffer Color;
 						struct Text
 						{
 							static Core::PipelineManager::RenderPass Pass;
