@@ -59,8 +59,8 @@ namespace DanBias
 	{
 
 		WindowShell::CreateConsoleWindow();
-		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
-		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
+		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1024, 768), cPOINT())))
+		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )
@@ -132,7 +132,7 @@ namespace DanBias
 	HRESULT DanBiasGame::InitInput() 
 	{
 		m_data->inputObj = new InputClass;
-		if(!m_data->inputObj->Initialize(m_data->window->GetHINSTANCE(), m_data->window->GetHWND(), m_data->window->GetHeight(), m_data->window->GetWidth()))
+		if(!m_data->inputObj->Initialize(m_data->window->GetHINSTANCE(), m_data->window->GetHWND(), m_data->window->GetWidth(), m_data->window->GetHeight()))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -206,6 +206,8 @@ namespace DanBias
 		delete m_data->recieverObj;
 		delete m_data->inputObj;
 		delete m_data;
+
+		EventHandler::Instance().Clean();
 
 		Oyster::Graphics::API::Clean();
 

@@ -389,6 +389,7 @@ namespace Oyster
 					
 					Gui::Pass.RenderStates.SampleCount = 1;
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
+					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
 
 					////---------------- Blur Pass Setup ----------------------------
 					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");

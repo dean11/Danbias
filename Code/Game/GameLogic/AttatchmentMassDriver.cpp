@@ -99,7 +99,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float3 look = owner->GetLookDir();
 	Oyster::Math::Float3 pos = owner->GetPosition();
 
-	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (20000 * dt);
+	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (200 * dt);
 	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(look, up, pos);
 
 	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/8,1,1,50); 

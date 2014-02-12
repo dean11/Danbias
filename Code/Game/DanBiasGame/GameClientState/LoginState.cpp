@@ -9,7 +9,7 @@
 using namespace DanBias::Client;
 
 //Menu buttons
-#include "Buttons/ButtonCircle.h"
+#include "Buttons/ButtonEllipse.h"
 #include "Buttons/ButtonRectangle.h"
 #include "../Misc/EventHandler/EventHandler.h"
 using namespace Oyster::Event;
@@ -27,6 +27,7 @@ struct  LoginState::myData
 	//Menu button collection
 	EventButtonCollection* collection;
 
+	int testNumber;
 }privData;
 
 
@@ -34,6 +35,8 @@ enum TestEnum
 {
 	Create,
 	Options,
+	Incr,
+	Decr,
 	Exit,
 };
 
@@ -48,14 +51,45 @@ void LoginState::ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e)
 	switch(type)
 	{
 	case Create:
-		if(e.state == ButtonState_Released)
+		/*if(e.state == ButtonState_None)
+		{
+			int a = 0;
+			std::cout << "None" << std::endl;
+		}
+		else if(e.state == ButtonState_Hover)
+		{
+			int a = 0;
+			std::cout << "Hover" << std::endl;
+		}
+		else if(e.state == ButtonState_Down)
+		{
+			int a = 0;
+			std::cout << "Down" << std::endl;
+		}
+		else if(e.state == ButtonState_Pressed)
+		{
+			int a = 0;
+			std::cout << "Pressed" << std::endl;
+		}
+		else if(e.state == ButtonState_Released)
 		{
 			//Change to create state or something similar
-		}
+			int a = 0;
+			std::cout << "Released" << std::endl;
+		}*/
 		break;
 	case Options:
 		break;
 	case Exit:
+		break;
+
+	case Incr:
+		if(e.state == ButtonState_Released)
+			e.owner->privData->testNumber++;
+		break;
+	case Decr:
+		if(e.state == ButtonState_Released)
+			e.owner->privData->testNumber--;
 		break;
 	}
 }
@@ -68,7 +102,7 @@ LoginState::~LoginState(void)
 bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
-	this->nwClient = nwClient;	
+	this->nwClient = nwClient;
 	// load models
 	//LoadModels(L"UImodels.txt");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
@@ -76,7 +110,23 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 	//Create menu buttons
 	privData->collection = new EventButtonCollection;
 	EventHandler::Instance().AddCollection(privData->collection);
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"textureName.jpg", &LoginState::ButtonCallback, this, (void*)Options, 0.0f, 0.0f, 0.0f, 0.0f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.2f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.3f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.4f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.5f, 0.1f, 0.2f));
+
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.15f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.25f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.35f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.45f, 0.05f, 0.1f, 0.1f));
+
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.5f, 0.5f, 0.3f, 0.3f));
+
+	//Incr/decr buttons
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Incr, 0.85f, 0.2f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Decr, 0.55f, 0.2f, 0.1f, 0.1f));
+
+	privData->testNumber = 0;
 
 	return true;
 }
@@ -146,6 +196,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
+		privData->collection->SetState(EventCollectionState_Disabled);
 		return ClientState_LobbyCreated;
 	}
 	// join game
@@ -159,6 +210,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
+		privData->collection->SetState(EventCollectionState_Disabled);
 		return ClientState_Lobby;
 	}
 	return ClientState_Same;
@@ -181,7 +233,15 @@ bool LoginState::Render(float dt)
 	// render lights
 
 	//Render buttons
+	Oyster::Graphics::API::StartGuiRender();
 	EventHandler::Instance().Render();
+
+	std::wstring number;
+	wchar_t temp[10];
+	_itow_s(privData->testNumber, temp, 10);
+	number = temp;
+	Oyster::Graphics::API::StartTextRender();
+	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7, 0.2), Oyster::Math::Float2(0.1, 0.1));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
@@ -195,6 +255,9 @@ bool LoginState::Release()
 		delete privData->object[i];
 		privData->object[i] = NULL;
 	}
+
+	delete privData->collection;
+	//EventHandler::Instance().DeleteCollection(privData->collection);
 
 	delete privData;  
 	privData = NULL;

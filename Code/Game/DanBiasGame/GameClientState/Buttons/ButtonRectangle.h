@@ -6,6 +6,9 @@
 #define DANBIAS_CLIENT_BUTTON_RECTANGLE_H
 
 #include "EventButtonGUI.h"
+#include <iostream>
+//Only for testing because we don't have any other input
+#include "../WindowManager/WindowShell.h"
 
 namespace DanBias
 {
@@ -16,31 +19,43 @@ namespace DanBias
 		{
 		public:
 			ButtonRectangle()
-				: EventButtonGUI(), halfWidth(0), halfHeight(0)
+				: EventButtonGUI(), width(0), height(0)
 			{}
-			ButtonRectangle(std::wstring textureName, Owner owner, float xPos, float yPos, float halfWidth, float halfHeight)
-				: EventButtonGUI(textureName, owner, xPos, yPos, halfWidth, halfHeight)
+			ButtonRectangle(std::wstring textureName, Owner owner, float xPos, float yPos, float width, float height)
+				: EventButtonGUI(textureName, owner, xPos, yPos, width, height)
 			{}
-			ButtonRectangle(std::wstring textureName, EventFunc func, float xPos, float yPos, float halfWidth, float halfHeight)
-				: EventButtonGUI(textureName, func, xPos, yPos, halfWidth, halfHeight)
+			ButtonRectangle(std::wstring textureName, EventFunc func, float xPos, float yPos, float width, float height)
+				: EventButtonGUI(textureName, func, xPos, yPos, width, height)
 			{}
-			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float halfWidth, float halfHeight)
-				: EventButtonGUI(textureName, func, owner, xPos, yPos, halfWidth, halfHeight)
+			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float width, float height)
+				: EventButtonGUI(textureName, func, owner, xPos, yPos, width, height)
 			{}
-			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float halfWidth, float halfHeight)
-				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, halfWidth, halfHeight)
+			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float width, float height)
+				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, width, height)
 			{}
-			~ButtonRectangle()
+			virtual ~ButtonRectangle()
 			{}
 
 			//Circle vs point collision
 			bool Collision(InputClass* inputObject)
 			{
-				//Should come from the InputClass
-				float xMouse = 1, yMouse = 0;
+				POINT p;
+				RECT r;
+				GetCursorPos(&p);
+				ScreenToClient(WindowShell::GetHWND(), &p);
+				GetClientRect(WindowShell::GetHWND(), &r);
 
-				if(xMouse >= xPos - halfWidth && xMouse <= xPos + halfWidth
-					&& yMouse >= yPos - halfHeight && yMouse <= yPos + halfHeight)
+				//Should come from the InputClass
+				float xMouse = (float)p.x / (float)r.right, yMouse = (float)p.y / (float)r.bottom;
+
+				float widthTemp = xPos - width * 0.5f;
+				float widthTemp2 = xPos + width * 0.5f;
+				float heightTemp = yPos - height * 0.5f;
+				float heightTemp2 = yPos + height * 0.5f;
+				//std::cout << p.x << ' ' << p.y << ' ' << widthTemp << ' ' << heightTemp << std::endl;
+
+				if(xMouse >= widthTemp && xMouse <= widthTemp2 && 
+					yMouse >= heightTemp && yMouse <= heightTemp2)
 				{
 					return true;
 				}

@@ -26,6 +26,16 @@ EventHandler::~EventHandler()
 	}
 }
 
+void EventHandler::Clean()
+{
+	int size = collections.size();
+	for(int i = 0; i < size; i++)
+	{
+		delete collections[i];
+	}
+	collections.clear();
+}
+
 void EventHandler::Update(InputClass* inputObject)
 {
 	for(int i = 0; i < (int)collections.size(); i++)
@@ -45,4 +55,17 @@ void EventHandler::Render()
 void EventHandler::AddCollection(EventButtonCollection* collection)
 {
 	collections.push_back(collection);
+}
+
+void EventHandler::DeleteCollection(EventButtonCollection* collection)
+{
+	for(int i = 0; i < collections.size(); i++)
+	{
+		if(collections.at(i) == collection)
+		{
+			delete collection;
+			collections.erase(collections.begin() + i);
+			break;
+		}
+	}
 }

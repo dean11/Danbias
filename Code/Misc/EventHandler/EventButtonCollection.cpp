@@ -3,7 +3,7 @@
 //////////////////////////////////////
 
 #include "EventButtonCollection.h"
-
+#include "EventHandler.h"
 #include "../../Input/L_inputClass.h"
 
 using namespace Oyster::Event;
@@ -15,6 +15,14 @@ EventButtonCollection::EventButtonCollection()
 
 EventButtonCollection::~EventButtonCollection()
 {
+	for(int i = 0; i < EventHandler::Instance().collections.size(); i++)
+	{
+		if(EventHandler::Instance().collections.at(i) == this)
+		{
+			EventHandler::Instance().collections.erase(EventHandler::Instance().collections.begin() + i);
+		}
+	}
+
 	int size = buttons.size();
 	for(int i = 0; i < size; i++)
 	{
