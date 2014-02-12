@@ -25,6 +25,15 @@ namespace Oyster
 
 			Cone & operator = ( const Cone &Cone );
 
+			virtual ::Utility::DynamicMemory::UniquePointer<ICollideable> Clone( ) const;
+
+			bool Intersects( const ICollideable &target ) const{return false;};
+			bool Intersects( const ICollideable &target, ::Oyster::Math::Float4 &worldPointOfContact ) const{return false;};
+			bool Contains( const ICollideable &target ) const{return false;};
+
+			::Oyster::Math::Float TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const{return 0;};
+
+
 			Oyster::Math::Float3 height;
 			Oyster::Math::Float3 position;
 			Oyster::Math::Float radius;

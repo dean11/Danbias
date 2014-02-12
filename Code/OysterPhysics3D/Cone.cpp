@@ -15,14 +15,14 @@ Cone::Cone( ) : ICollideable(Type_cone)
 	this->height = Oyster::Math::Float3(0,0,0);
 }
 
-Cone::Cone( const ::Oyster::Math::Float3 &height, const Oyster::Math::Float3 &position, const ::Oyster::Math::Float &radius )
+Cone::Cone( const ::Oyster::Math::Float3 &height, const Oyster::Math::Float3 &position, const ::Oyster::Math::Float &radius ) : ICollideable(Type_cone)
 {
 	this->radius = radius;
 	this->height = height;
 	this->position = position;
 }
 
-Cone::Cone( const ::Oyster::Math::Float4 &height, const Oyster::Math::Float4 &position, const ::Oyster::Math::Float &radius )
+Cone::Cone( const ::Oyster::Math::Float4 &height, const Oyster::Math::Float4 &position, const ::Oyster::Math::Float &radius ) : ICollideable(Type_cone)
 {
 	this->radius = radius;
 	this->height = (Oyster::Math::Float3)height;
@@ -40,5 +40,10 @@ Cone & Cone::operator = ( const Cone &cone )
 	this->height = cone.height;
 	this->position = cone.position;
 	return *this;
+}
+
+::Utility::DynamicMemory::UniquePointer<ICollideable> Cone::Clone( ) const
+{
+	return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Cone(*this) );
 }
 
