@@ -478,7 +478,7 @@ namespace GameLogic
 		{
 			/** @todo TODO: not implemented */
 		}
-		Protocol_ObjectCreate(float p[3], float r[4], int id, char *path)
+		Protocol_ObjectCreate(float p[3], float r[4], float s[3], int id, char *path)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectCreate;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
@@ -502,8 +502,9 @@ namespace GameLogic
 			object_ID = id;
 			this->name = path;
 
-			memset(this->position, 0, sizeof(float) * 3);
-			memset(this->rotationQ, 0, sizeof(float) * 4);
+			memcpy(this->position, p, sizeof(float) * 3);
+			memcpy(this->rotationQ, r, sizeof(float) * 4);
+			memcpy(this->scale, s, sizeof(float) * 3);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
