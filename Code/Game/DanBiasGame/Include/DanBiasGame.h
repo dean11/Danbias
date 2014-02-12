@@ -15,8 +15,6 @@
 #define NOMINMAX
 #include <Windows.h>
 
-
-
 namespace DanBias
 {
 	extern "C"
@@ -56,12 +54,6 @@ namespace DanBias
 			static HRESULT Update(float deltaTime);
 			static HRESULT Render(float deltaTime);
 			static HRESULT CleanUp();
-
-			static float capFrame;
-
-		private:
-			static DanBiasGamePrivateData* m_data;
-
 		};
 		
 

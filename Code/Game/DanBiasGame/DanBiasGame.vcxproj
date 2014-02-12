@@ -216,7 +216,6 @@
     <ClCompile Include="GameClientState\MainState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameClientRecieverFunc.h" />
     <ClInclude Include="GameClientState\Camera_Basic.h" />
     <ClInclude Include="GameClientState\Camera.h" />
     <ClInclude Include="GameClientState\Camera_FPS.h" />

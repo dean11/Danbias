@@ -31,4 +31,18 @@ namespace DanBias { namespace Client
 		virtual void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 	};
 } }
+
+namespace Utility { namespace DynamicMemory
+{ // template specializationto allowuse of dynamicmemory tools
+	template<>
+	inline void SafeDeleteInstance( ::DanBias::Client::GameClientState *dynamicInstance )
+	{
+		if( dynamicInstance )
+		{
+			dynamicInstance->Release();
+			delete dynamicInstance;
+		}
+	}
+} }
+
 #endif

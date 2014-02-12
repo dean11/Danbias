@@ -15,39 +15,38 @@
 #include "L_inputClass.h"
 #include "WinTimer.h"
 #include "vld.h"
-#include "GameClientRecieverFunc.h"
 
 #include "../Misc/EventHandler/EventHandler.h"
 
 using namespace ::Oyster::Event;
+using namespace Oyster::Network;
 using namespace ::Utility::DynamicMemory;
+
+void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
 
 namespace DanBias
 {
-
 #pragma region Game Data
-
 	class DanBiasGamePrivateData
 	{
-
-	public:
-		DanBiasGamePrivateData() {}
-
-		~DanBiasGamePrivateData() {}
 
 	public:
 		WindowShell* window;
 		InputClass* inputObj;
 		Utility::WinTimer timer;
 		UniquePointer<Client::GameClientState> state;
+		NetworkClient networkClient;
 		bool serverOwner;
 
+		float capFrame;
+
+		DanBiasGamePrivateData()
+		{
+			this->capFrame = 0;
+		}
 	} data;
 #pragma endregion
 
-
-	DanBiasGamePrivateData* DanBiasGame::m_data = new DanBiasGamePrivateData();
-	float DanBiasGame::capFrame = 0;
 
 	//--------------------------------------------------------------------------------------
 	// Interface API functions
@@ -56,8 +55,8 @@ namespace DanBias
 	{
 
 		WindowShell::CreateConsoleWindow();
-		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
-		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
+		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
+		if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )
@@ -66,37 +65,39 @@ namespace DanBias
 		if( FAILED( InitInput() ) )
 			return DanBiasClientReturn_Error;
 
-		//m_data->serverOwner = false;
+		data.serverOwner = false;
 
-		// Start in lobby state
-		m_data->state = new Client::MainState();
+		data.networkClient.SetMessagePump( ClientEventFunction );
 
-		if( !m_data->state->Init() )
+		// Start in main menu state
+		data.state = new Client::MainState();
+
+		if( !data.state->Init( &data.networkClient ) )
 			return DanBiasClientReturn_Error;
 
-		m_data->timer.reset();
+		data.timer.reset();
 		return DanBiasClientReturn_Sucess;
 	}
 
 	DanBiasClientReturn DanBiasGame::Run()
 	{
 		// Main message loop
-		while(m_data->window->Frame())
+		while(data.window->Frame())
 		{
-			float dt = (float)m_data->timer.getElapsedSeconds();
-			m_data->timer.reset();
+			float dt = (float)data.timer.getElapsedSeconds();
+			data.timer.reset();
 
-			if(m_data->recieverObj->IsConnected())
-				m_data->recieverObj->Update();
+			if(data.networkClient.IsConnected())
+				data.networkClient.Update();
 			
-			capFrame += dt;
-			if(capFrame > 0.03)
+			data.capFrame += dt;
+			if(data.capFrame > 0.03)
 			{
 				if(Update(dt) != S_OK)
 					return DanBiasClientReturn_Error;
 				if(Render(dt) != S_OK)
 					return DanBiasClientReturn_Error;
-				capFrame = 0; 
+				data.capFrame = 0; 
 			}
 
 		}
@@ -113,7 +114,7 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitDirect3D()
 	{
-		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
@@ -127,8 +128,8 @@ namespace DanBias
 	//-------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitInput() 
 	{
-		m_data->inputObj = new InputClass;
-		if(!m_data->inputObj->Initialize(m_data->window->GetHINSTANCE(), m_data->window->GetHWND(), m_data->window->GetHeight(), m_data->window->GetWidth()))
+		data.inputObj = new InputClass;
+		if(!data.inputObj->Initialize(data.window->GetHINSTANCE(), data.window->GetHWND(), data.window->GetHeight(), data.window->GetWidth()))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -138,30 +139,29 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
-		m_data->inputObj->Update();
+		data.inputObj->Update();
 
-		if(m_data->serverOwner)
+		if(data.serverOwner)
 		{
 			DanBias::GameServerAPI::ServerUpdate();
 		}
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-		state = m_data->recieverObj->gameClientState->Update(deltaTime, m_data->inputObj);
+
+		state = data.state->Update( deltaTime, data.inputObj );
 
 		if(state != Client::GameClientState::ClientState_Same)
 		{
 			bool stateVal = false;
-			m_data->recieverObj->gameClientState->Release();
-			delete m_data->recieverObj->gameClientState;
-			m_data->recieverObj->gameClientState = NULL;
+			data.state->Release();
 
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_LobbyCreated:
-				m_data->serverOwner = true;
+				data.serverOwner = true;
 				stateVal = true;
 			case Client::GameClientState::ClientState_Lobby:
-				m_data->recieverObj->gameClientState = new Client::LobbyState();
+				data.state = new Client::LobbyState();
 				stateVal = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
@@ -174,7 +174,7 @@ namespace DanBias
 
 			if(stateVal)
 			{
-				m_data->recieverObj->gameClientState->Init(m_data->recieverObj); // send game client
+				data.state->Init( &data.networkClient ); // send game client
 			}
 			else
 			{
@@ -187,21 +187,15 @@ namespace DanBias
 
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
-		
-	
-		m_data->recieverObj->gameClientState->Render();
+		data.state->Render();
 
 		return S_OK;
 	}
 
 	HRESULT DanBiasGame::CleanUp()
 	{
-		m_data->recieverObj->gameClientState->Release();
-		delete m_data->recieverObj->gameClientState;
-		m_data->recieverObj->Disconnect();
-		delete m_data->recieverObj;
-		delete m_data->inputObj;
-		delete m_data;
+		data.networkClient.Disconnect();
+		delete data.inputObj;
 
 		Oyster::Graphics::API::Clean();
 
@@ -211,3 +205,9 @@ namespace DanBias
 	}	
 
 } //End namespace DanBias
+
+void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+{
+	if( DanBias::data.state )
+		DanBias::data.state->DataRecieved( e );
+}
