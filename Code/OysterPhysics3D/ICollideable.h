@@ -26,7 +26,8 @@ namespace Oyster { namespace Collision3D //! Contains a collection of 3D shapes 
 			Type_box_axis_aligned,
 			Type_box,
 			Type_frustrum,
-			Type_line
+			Type_line,
+			Type_cone,
 		};
 
 		const Type type;
