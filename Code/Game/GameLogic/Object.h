@@ -18,21 +18,24 @@ namespace GameLogic
 	{
 	public:		
 		Object();
-		Object(OBJECT_TYPE type);
-		Object(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type);
-		Object(void* collisionFuncAfter, OBJECT_TYPE type);
-		Object(Oyster::Physics::ICustomBody *rigidBody, void* collisionFuncAfter, OBJECT_TYPE type);
-		Object(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
+		Object(ObjectSpecialType type);
+		Object(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type);
+		Object(void* collisionFuncAfter, ObjectSpecialType type);
+		Object(Oyster::Physics::ICustomBody *rigidBody, void* collisionFuncAfter, ObjectSpecialType type);
+		Object(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type);
 		~Object(void);
 
-		OBJECT_TYPE GetObjectType() const			override;
-		int GetID() const							override;
+		ObjectSpecialType GetObjectType() const			override;
+		int GetID() const								override;	
+		void setID(int id);
 		Oyster::Math::Float3 GetPosition()			override;
 		Oyster::Math::Quaternion GetRotation()		override;
 		Oyster::Math::Float3 GetScale()				override;
 		Oyster::Math::Float4x4 GetOrientation()		override;
 
-		void setID(int id);
+		// API overrides
+		
+
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 		void ApplyLinearImpulse(Oyster::Math::Float3 force);
@@ -45,8 +48,9 @@ namespace GameLogic
 
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 	
-	public: //HACK: This should be private when level is dynamic
-		OBJECT_TYPE type;
+
+	public: //TODO: Hax This should be private when level is dynamic
+		ObjectSpecialType type;
 		int objectID;
 
 	protected:

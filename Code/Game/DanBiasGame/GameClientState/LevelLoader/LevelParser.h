@@ -23,7 +23,7 @@ namespace GameLogic
 			LevelMetaData ParseHeader(std::string filename);
 
 		private:
-			FormatVersion formatVersion;
+			LevelLoaderInternal::FormatVersion formatVersion;
 
 		};
 	}

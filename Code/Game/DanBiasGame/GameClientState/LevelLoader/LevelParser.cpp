@@ -1,3 +1,7 @@
+/////////////////////////////////////
+// Created by Pontus Fransson 2013 //
+/////////////////////////////////////
+
 #include "LevelParser.h"
 
 #include "Loader.h"
@@ -9,7 +13,7 @@ using namespace Utility::DynamicMemory;
 
 LevelParser::LevelParser()
 {
-	formatVersion.formatVersionMajor = 1;
+	formatVersion.formatVersionMajor = 3;
 	formatVersion.formatVersionMinor = 0;
 }
 
@@ -21,6 +25,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 {
 	int bufferSize = 0;
 	int counter = 0;
+	bool loadCgf;
 
 	std::vector<SmartPointer<ObjectTypeHeader>> objects;
 
@@ -29,35 +34,117 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 	char* buffer = (char*)loader.LoadFile(filename.c_str(), bufferSize);
 
 	//Read format version
-	FormatVersion levelFormatVersion;
+	LevelLoaderInternal::FormatVersion levelFormatVersion;
 	ParseObject(&buffer[counter], &levelFormatVersion, sizeof(levelFormatVersion));
 	counter += sizeof(levelFormatVersion);
 	if(this->formatVersion != levelFormatVersion)
 	{
-		//Do something if it's not the same version
+		//Returns an empty vector, because it will most likely fail to read the level format.
+		return objects;
 	}
 
   	while(counter < bufferSize)
 	{
+		loadCgf = true;
 		//Get typeID
-		ObjectTypeHeader typeID;
+		ObjectType typeID;
 		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
-		switch((int)typeID.typeID)
+		switch((int)typeID)
 		{
 			case ObjectType_LevelMetaData:
 			{
-				LevelMetaData* header = new LevelMetaData;
-				ParseLevelMetaData(&buffer[counter], *header, counter);
+				SmartPointer<ObjectTypeHeader> header = new LevelMetaData;
+				ParseLevelMetaData(&buffer[counter], *(LevelMetaData*)header.Get(), counter);
 				objects.push_back(header);
 				break;
 			}
 
-			//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them.
+			//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them. 
+			//Unless they are changed to not be the same.
 			case ObjectType_Static: case ObjectType_Dynamic:
 			{
-				ObjectHeader* header = new ObjectHeader;
-				ParseObject(&buffer[counter], *header, counter);
-				objects.push_back(header);
+				//Get specialType.
+				ObjectSpecialType specialType;
+				ParseObject(&buffer[counter+4], &specialType, sizeof(typeID));
+
+				switch(specialType)
+				{
+					//there is no difference when parsing these specialTypes.
+					case ObjectSpecialType_CrystalShard:
+					case ObjectSpecialType_CrystalFormation:
+					case ObjectSpecialType_Spike:
+					case ObjectSpecialType_SpikeBox:
+					case ObjectSpecialType_RedExplosiveBox:
+					case ObjectSpecialType_StandarsBox:
+					case ObjectSpecialType_Stone:
+					case ObjectSpecialType_Building:
+					{
+						ObjectHeader* header = new ObjectHeader;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+						objects.push_back(header);
+
+						break;
+					}
+
+					case ObjectSpecialType_JumpPad:
+					{
+						JumpPadAttributes* header = new JumpPadAttributes;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+						//Read the spec
+						ParseObject(&buffer[counter], header->direction, 16);
+						counter += 16;
+						objects.push_back(header);
+
+						break;
+					}
+		
+					case ObjectSpecialType_Portal:
+					{
+						PortalAttributes* header = new PortalAttributes;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+						ParseObject(&buffer[counter], header->destination, 12);
+						counter += 12;
+						objects.push_back(header);
+
+						break;
+					}
+					
+					case ObjectSpecialType_World:
+					{
+						WorldAttributes* header = new WorldAttributes;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+						ParseObject(&buffer[counter], &header->worldSize, 8);
+						counter += 8;
+						objects.push_back(header);
+						break;
+					}
+
+					case ObjectSpecialType_Sky:
+					{
+						loadCgf = false; 
+						SkyAttributes* header = new SkyAttributes;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+						ParseObject(&buffer[counter], &header->skySize, 4);
+						counter += 4;
+						objects.push_back(header);
+						break;
+					}
+
+					case ObjectSpecialType_SpawnPoint:
+					{
+						loadCgf = false;
+						ObjectHeader* header = new ObjectHeader;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+					}
+
+					default:
+						//Couldn't find specialType
+						break;
+				}
 				break;
 			}
 			
@@ -68,7 +155,12 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 				//Get Light type
 				ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
 
-				switch(lightType)
+				//We only support PointLight for now.
+				BasicLight* header = new BasicLight;
+				ParseObject(&buffer[counter], header, sizeof(*header));
+				counter += sizeof(*header);
+				objects.push_back(header);
+				/*switch(lightType)
 				{
 				case LightType_PointLight:
 				{
@@ -98,7 +190,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					//Undefined LightType.
 					break;
 				}
-				break;
+				break;*/
 			}
 			default:
 				//Couldn't find typeID. FAIL!!!!!!
@@ -123,21 +215,25 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 	char* buffer = (char*)loader.LoadFile(filename.c_str(), bufferSize);
 
 	//Read format version
-	FormatVersion levelFormatVersion;
+	LevelLoaderInternal::FormatVersion levelFormatVersion;
 	ParseObject(&buffer[counter], &levelFormatVersion, sizeof(formatVersion));
 	counter += sizeof(levelFormatVersion);
 	if(this->formatVersion != levelFormatVersion)
 	{
 		//Do something if it's not the same version
+
+		//Returns an empty levelHeader with ObjectType_Unknown.
+		//Because it will not be able to read another version of the level format.
+		return levelHeader;
 	}
 
 	//Find the header in the returned string.
 	while(counter < bufferSize)
 	{
-		ObjectTypeHeader typeID;
+		ObjectType typeID;
 		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
 
-		switch(typeID.typeID)
+		switch(typeID)
 		{
 		case ObjectType_LevelMetaData:
 			ParseLevelMetaData(&buffer[counter], levelHeader, counter);
@@ -148,7 +244,19 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 		case ObjectType_Static: case ObjectType_Dynamic:
 		{
 			ObjectHeader header;
-			ParseObject(&buffer[counter], header, counter);
+			ParseObject(&buffer[counter], &header, counter);
+
+			switch(header.specialTypeID)
+			{
+			case ObjectSpecialType_JumpPad:
+				counter += sizeof(16);
+				break;
+			case ObjectSpecialType_Portal:
+				counter += sizeof(12);
+				break;
+			default:
+				break;
+			}	
 			break;
 		}
 
@@ -157,6 +265,9 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 			LightType lightType;
 			ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
 
+			//We only support pointlight for now.
+			counter += sizeof(BasicLight);
+			/*
 			switch(lightType)
 			{
 			case LightType_PointLight:
@@ -177,7 +288,7 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 			default:
 				//Undefined LightType.
 				break;
-			}
+			}*/
 		}
 
 		default:

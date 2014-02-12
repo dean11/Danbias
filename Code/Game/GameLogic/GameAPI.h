@@ -12,6 +12,7 @@
 #include "GameLogicDef.h"
 #include "GameLogicStates.h"
 #include <OysterMath.h>
+#include "LevelLoader\ObjectDefines.h"
 
 
 namespace GameLogic
@@ -66,7 +67,7 @@ namespace GameLogic
 			/** Get the type of the object
 			*	@return The OBJECT_TYPE of the object is returned
 			*/
-			virtual OBJECT_TYPE GetObjectType() const = 0;
+			virtual ObjectSpecialType GetObjectType() const = 0;
 		};
 
 		class IPlayerData :public IObjectData

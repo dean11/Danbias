@@ -87,7 +87,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	if(hasObject)
 	{
 		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (100);
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (400);
 		heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
 		
 		hasObject = false;
@@ -100,7 +100,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float lenght = 10;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
-	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (100);
+	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (400);
 
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 

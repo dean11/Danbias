@@ -6,7 +6,9 @@ using namespace GameLogic;
 Game::PlayerData::PlayerData()
 {	
 	//set some stats that are appropriate to a player
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,603,0);
+
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,400,0);
+
 	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
 	Oyster::Math::Float mass = 60;
 	Oyster::Math::Float restitutionCoeff = 0.5;
@@ -18,7 +20,8 @@ Game::PlayerData::PlayerData()
 	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
 	rigidBody->SetAngularFactor(0.0f);
 	//create player with this rigid body
-	this->player = new Player(rigidBody, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
+	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player);
+
 	this->player->GetRigidBody()->SetCustomTag(this);
 	player->EndFrame();
 }
@@ -68,7 +71,7 @@ int Game::PlayerData::GetTeamID() const
 	return this->player->GetTeamID();
 }
 
-OBJECT_TYPE Game::PlayerData::GetObjectType()	const
+ObjectSpecialType Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetObjectType();
 }
