@@ -24,14 +24,17 @@ namespace Oyster
 
 			static EventHandler& Instance();
 
+			void Clean();
+
 			void Update(InputClass* inputObject);
 			void Render();
 
 			void AddCollection(EventButtonCollection* collection);
+			void DeleteCollection(EventButtonCollection* collection);
 
 		private:
 			std::vector<EventButtonCollection*> collections;
-
+			friend class EventButtonCollection;
 		};
 	}
 }
