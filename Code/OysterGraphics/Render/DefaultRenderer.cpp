@@ -138,6 +138,10 @@ namespace Oyster
 							memcpy(data,&(pm),sizeof(pm));
 							Resources::Gather::ModelData.Unmap();
 
+							data = Render::Resources::Color.Map();
+							memcpy(data,&models[i].Tint,sizeof(Math::Float3));
+							Render::Resources::Color.Unmap(); 
+
 							if(info->Material.size())
 							{
 								Core::deviceContext->PSSetShaderResources(0,(UINT)info->Material.size(),&(info->Material[0]));

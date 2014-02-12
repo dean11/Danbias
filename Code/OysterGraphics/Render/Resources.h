@@ -30,6 +30,9 @@ namespace Oyster
 					static ID3D11UnorderedAccessView* LBufferUAV[LBufferSize];
 					static ID3D11ShaderResourceView* LBufferSRV[LBufferSize];
 
+					
+					static Core::Buffer Color;
+
 
 					struct RenderStates
 					{
@@ -61,7 +64,6 @@ namespace Oyster
 					{
 						static Core::PipelineManager::RenderPass Pass;
 						static Core::Buffer Data;
-						static Core::Buffer Color;
 						struct Text
 						{
 							static Core::PipelineManager::RenderPass Pass;

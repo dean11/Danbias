@@ -42,3 +42,8 @@ cbuffer PerModel : register(b1)
 	int Animated;
 	float3 Pad;
 }
+
+cbuffer Tint : register(b0)
+{
+	float3 Color;
+}

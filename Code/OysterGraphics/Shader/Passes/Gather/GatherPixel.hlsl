@@ -40,7 +40,7 @@ float3 perturb_normal( float3 N, float3 V, float2 texcoord )
 PixelOut main(VertexOut input)
 {
 	PixelOut output;
-	output.DiffuseGlow = Diffuse.Sample(S1, input.UV);
+	output.DiffuseGlow = Diffuse.Sample(S1, input.UV) * float4(Color, 1);
 	float3 normal = normalize(input.normal);
 
 	normal = perturb_normal( normal, normalize(-input.ViewPos), input.UV );

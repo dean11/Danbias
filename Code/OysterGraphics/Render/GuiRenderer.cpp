@@ -35,9 +35,9 @@ namespace Oyster
 				memcpy(data,&gd,sizeof(Definitions::GuiData));
 				Render::Resources::Gui::Data.Unmap();
 
-				data = Render::Resources::Gui::Color.Map();
+				data = Render::Resources::Color.Map();
 				memcpy(data,&color,sizeof(Math::Float3));
-				Render::Resources::Gui::Color.Unmap();
+				Render::Resources::Color.Unmap();
 
 
 				Core::deviceContext->Draw(1,0);
@@ -76,9 +76,9 @@ namespace Oyster
 				Render::Resources::Gui::Data.Unmap();
 				Definitions::Text2D tmpInst;
 
-				data = Render::Resources::Gui::Color.Map();
+				data = Render::Resources::Color.Map();
 				memcpy(data,&color,sizeof(Math::Float3));
-				Render::Resources::Gui::Color.Unmap();
+				Render::Resources::Color.Unmap();
 
 				void* dest = Resources::Gui::Text::Vertex.Map();
 				Definitions::Text2D* dataView = reinterpret_cast<Definitions::Text2D*>(dest);
