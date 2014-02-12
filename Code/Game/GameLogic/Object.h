@@ -25,20 +25,14 @@ namespace GameLogic
 		Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Object(void);
 
-		// API overrides
-		OBJECT_TYPE GetObjectType() const;
+		OBJECT_TYPE GetObjectType() const			override;
+		int GetID() const							override;
+		Oyster::Math::Float3 GetPosition()			override;
+		Oyster::Math::Quaternion GetRotation()		override;
+		Oyster::Math::Float3 GetScale()				override;
+		Oyster::Math::Float4x4 GetOrientation()		override;
+
 		void setID(int id);
-		int GetID() const;
-		Oyster::Math::Float4x4 GetOrientation();
-
-
-		Oyster::Math::Float3 GetPosition();
-		Oyster::Math::Float3 GetRotation();
-		Oyster::Math::Float3 GetScaling();
-
-		void SetPosition(Oyster::Math::Float3 position);
-		void SetRotation(Oyster::Math::Float3 rotation);
-		void SetScaling(Oyster::Math::Float3 scale);
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 		void ApplyLinearImpulse(Oyster::Math::Float3 force);
@@ -52,7 +46,7 @@ namespace GameLogic
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 	
-	public: //TODO: Hax This should be private when level is dynamic
+	public: //HACK: This should be private when level is dynamic
 		OBJECT_TYPE type;
 		int objectID;
 
@@ -62,11 +56,6 @@ namespace GameLogic
 		static const Game* gameInstance;
 		Oyster::Math::Float3 currLook;
 		Oyster::Math::Float3 newLook;
-
-		Oyster::Math::Float3 position;
-		Oyster::Math::Float3 rotation;
-		Oyster::Math::Float3 scale;
-
 	};
 
 }

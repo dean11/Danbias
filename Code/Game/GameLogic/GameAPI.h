@@ -36,9 +36,21 @@ namespace GameLogic
 		public:
 			/********************************************************
 			* Gets players position
-			* @param playerID: ID of the player whos position you want
+			* @return Returns the players position
 			********************************************************/
 			virtual Oyster::Math::Float3 GetPosition() = 0;
+
+			/********************************************************
+			* Gets players rotation as quaternion
+			* @return Returns a quaternion
+			********************************************************/
+			virtual Oyster::Math::Quaternion GetRotation() = 0;
+
+			/********************************************************
+			* Gets players position
+			* @return Returns the player scale
+			********************************************************/
+			virtual Oyster::Math::Float3 GetScale() = 0;
 
 			/********************************************************
 			* Gets players current orientation

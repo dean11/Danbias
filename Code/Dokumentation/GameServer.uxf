@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="12.1">
-  <zoom_level>10</zoom_level>
+<diagram program="umlet" version="12.2">
+  <zoom_level>8</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>610</x>
-      <y>340</y>
-      <w>100</w>
-      <h>30</h>
+      <x>632</x>
+      <y>344</y>
+      <w>104</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>GameLobby
 </panel_attributes>
@@ -16,137 +16,100 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>580</x>
-      <y>480</y>
-      <w>160</w>
-      <h>80</h>
+      <x>624</x>
+      <y>416</y>
+      <w>128</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>GameSession
 --
 /One instance of a game/
-/including x number of/
-/players./</panel_attributes>
+/including n players./</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>620</x>
-      <y>340</y>
-      <w>60</w>
-      <h>160</h>
+      <x>664</x>
+      <y>344</y>
+      <w>40</w>
+      <h>88</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>30;140;40;30</additional_attributes>
+    <additional_attributes>24;72;24;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>710</x>
-      <y>480</y>
-      <w>100</w>
-      <h>50</h>
+      <x>664</x>
+      <y>440</y>
+      <w>40</w>
+      <h>104</h>
     </coordinates>
     <panel_attributes>lt=&gt;&gt;&gt;&gt;-</panel_attributes>
-    <additional_attributes>80;30;30;30</additional_attributes>
+    <additional_attributes>24;88;24;24</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>600</x>
-      <y>180</y>
-      <w>120</w>
-      <h>120</h>
+      <x>40</x>
+      <y>120</y>
+      <w>368</w>
+      <h>344</h>
     </coordinates>
-    <panel_attributes>GameServer</panel_attributes>
+    <panel_attributes>GameServerAPI &lt;&lt;singleton&gt;&gt;
+--
+{innerclass
++ServerInitDesc&lt;&lt;struct&gt;&gt;
+--
+serverName :char pointer
+listenPort :int
+bool broadcast :bool
+ServerInitDesc() :void
+innerclass}
+{innerclass
++GameServerInfo&lt;&lt;struct&gt;&gt;
+--
+listenPort :unsigned int
+serverIp :const char pointer
+innerclass}
+
++static DanBiasServerReturn	ServerInitiate(const ServerInitDesc&amp; desc);
++static ServerStart() :void
++static ServerStop() :void
++static ServerUpdate() :void
++static ServerGetInfo() :GameServerInfo
++static ServerIsRunning() :bool
++static GameSetMapId( val :const int&amp; ) :void
++static GameSetMaxClients( val :const int&amp; ) :void
++static GameSetGameMode(val :const int&amp;) :void
++static GameSetGameTime(val :const int&amp;) :void
++static GameGetMapId() :int
++static GameGetMaxClients() :int
++static GameGetGameMode() :int
++static GameGetGameTime() :int
++static GameGetGameName() :const char pointer
++static GameStart() :bool</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>630</x>
-      <y>270</y>
-      <w>50</w>
-      <h>90</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;&gt;-</panel_attributes>
-    <additional_attributes>30;70;30;30</additional_attributes>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>590</x>
-      <y>100</y>
-      <w>130</w>
+      <x>384</x>
+      <y>328</y>
+      <w>264</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>&lt;&lt;wrapper&gt;&gt;
-DanBiasServerAPI</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>630</x>
-      <y>110</y>
-      <w>50</w>
-      <h>90</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;&gt;-
-</panel_attributes>
-    <additional_attributes>30;70;30;30</additional_attributes>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>1060</x>
-      <y>330</y>
-      <w>120</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>NetworkSession</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>690</x>
-      <y>220</y>
-      <w>390</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=-&lt;&lt;&lt;&lt;</panel_attributes>
-    <additional_attributes>30;30;370;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>680</x>
-      <y>320</y>
-      <w>400</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>30;30;380;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>690</x>
-      <y>340</y>
-      <w>390</w>
-      <h>160</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>30;140;40;40;370;30</additional_attributes>
+    <panel_attributes>lt=&gt;&gt;&gt;&gt;-</panel_attributes>
+    <additional_attributes>248;24;24;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Package</type>
     <coordinates>
-      <x>460</x>
-      <y>640</y>
-      <w>120</w>
-      <h>50</h>
+      <x>440</x>
+      <y>424</y>
+      <w>96</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>GameLogicAPI
 bg=blue</panel_attributes>
@@ -155,21 +118,21 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>370</x>
-      <y>530</y>
-      <w>350</w>
-      <h>290</h>
+      <x>512</x>
+      <y>424</y>
+      <w>128</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>90;150;30;270;330;240;240;30</additional_attributes>
+    <additional_attributes>24;24;112;24</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>790</x>
-      <y>500</y>
-      <w>100</w>
-      <h>30</h>
+      <x>624</x>
+      <y>528</y>
+      <w>144</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>GameClient</panel_attributes>
     <additional_attributes/>
@@ -177,21 +140,21 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>670</x>
-      <y>530</y>
-      <w>150</w>
-      <h>180</h>
+      <x>520</x>
+      <y>416</y>
+      <w>120</w>
+      <h>104</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>130;160;30;30</additional_attributes>
+    <additional_attributes>24;88;64;88;64;24;104;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Package</type>
     <coordinates>
-      <x>800</x>
-      <y>670</y>
-      <w>120</w>
-      <h>40</h>
+      <x>448</x>
+      <y>480</y>
+      <w>96</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>GameProtocols
 bg=#aaaaa</panel_attributes>
@@ -200,10 +163,10 @@ bg=#aaaaa</panel_attributes>
   <element>
     <type>com.umlet.element.Package</type>
     <coordinates>
-      <x>1040</x>
-      <y>200</y>
-      <w>160</w>
-      <h>190</h>
+      <x>720</x>
+      <y>160</y>
+      <w>152</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>NetworkAPI
 bg=#a21aff</panel_attributes>
@@ -212,56 +175,84 @@ bg=#a21aff</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1060</x>
-      <y>280</y>
-      <w>120</w>
-      <h>40</h>
+      <x>40</x>
+      <y>24</y>
+      <w>320</w>
+      <h>64</h>
     </coordinates>
-    <panel_attributes>NetworkClient</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>1060</x>
-      <y>230</y>
-      <w>120</w>
-      <h>40</h>
-    </coordinates>
-    <panel_attributes>NetworkServer</panel_attributes>
+    <panel_attributes>/*HISTORY*/
+--
+10/2-2014
+Restructured old
+--
+elementstyle=wordwrap
+bg=gray</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>690</x>
-      <y>240</y>
-      <w>390</w>
-      <h>80</h>
+      <x>720</x>
+      <y>160</y>
+      <w>40</w>
+      <h>272</h>
     </coordinates>
-    <panel_attributes>lt=-&gt;</panel_attributes>
-    <additional_attributes>30;30;200;30;200;60;370;60</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;24;256</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>690</x>
-      <y>260</y>
-      <w>390</w>
-      <h>100</h>
+      <x>704</x>
+      <y>160</y>
+      <w>40</w>
+      <h>200</h>
     </coordinates>
-    <panel_attributes>lt=-&lt;&lt;&lt;&lt;</panel_attributes>
-    <additional_attributes>30;30;180;30;180;80;370;80</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;24;184</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>860</x>
-      <y>270</y>
-      <w>380</w>
-      <h>260</h>
+      <x>384</x>
+      <y>152</y>
+      <w>352</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>lt=&gt;&gt;&gt;-</panel_attributes>
-    <additional_attributes>320;30;360;30;360;230;30;240</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>336;24;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>736</x>
+      <y>160</y>
+      <w>40</w>
+      <h>384</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;24;368</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>520</x>
+      <y>480</y>
+      <w>136</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;120;24;120;48</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>512</x>
+      <y>432</y>
+      <w>160</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>24;24;72;24;72;72;144;72;144;96</additional_attributes>
   </element>
 </diagram>

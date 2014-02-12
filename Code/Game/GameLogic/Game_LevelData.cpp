@@ -20,6 +20,14 @@ Oyster::Math::Float3 Game::LevelData::GetPosition()
 	//return this->level->GetCenter();
 	return Oyster::Math::Float3();
 }
+Oyster::Math::Quaternion Game::LevelData::GetRotation()
+{
+	return Oyster::Math::Quaternion();
+}
+Oyster::Math::Float3 Game::LevelData::GetScale()
+{
+	return Oyster::Math::Float3();
+}
 Oyster::Math::Float4x4 Game::LevelData::GetOrientation()
 {
 	//return this->level->GetOrientation();

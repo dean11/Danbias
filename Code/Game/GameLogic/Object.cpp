@@ -47,7 +47,7 @@ Object::Object(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
 {
 	this->rigidBody = rigidBody;
-	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)collisionFuncAfter);
+
 	this->type = type;
 	this->objectID = GID();
 }
@@ -55,7 +55,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefor
 Object::Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
 {
 	this->rigidBody = rigidBody;
-	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)collisionFuncAfter);
+
 	this->type = type;
 	this->objectID = GID();
 }
@@ -88,7 +88,7 @@ Oyster::Physics::ICustomBody* Object::GetRigidBody()
 
 void Object::BeginFrame()
 {
-
+	
 }
 // update physic 
 void Object::EndFrame()
@@ -105,37 +105,27 @@ void Object::setAfterCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(collisionFuncAfter));
 }
 
-
+Oyster::Math::Float3 Object::GetPosition() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return state.centerPos;
+}
+Oyster::Math::Quaternion Object::GetRotation() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return state.quaternion;
+}
+Oyster::Math::Float3 Object::GetScale() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	return Float3();
+}
 Oyster::Math::Float4x4 Object::GetOrientation() 
 {
 	Oyster::Physics::ICustomBody::State state; 
 	state = this->rigidBody->GetState();
 	return state.GetOrientation();
-}
-
-
-Oyster::Math::Float3 Object::GetPosition()
-{
-	return this->position;
-}
-Oyster::Math::Float3 Object::GetRotation()
-{
-	return this->rotation;
-}
-Oyster::Math::Float3 Object::GetScaling()
-{
-	return this->scale;
-}
-
-void Object::SetPosition(Oyster::Math::Float3 position)
-{
-	this->position = position;
-}
-void Object::SetRotation(Oyster::Math::Float3 rotation)
-{
-	this->rotation = rotation;
-}
-void Object::SetScaling(Oyster::Math::Float3 scale)
-{
-	this->scale = scale;
 }

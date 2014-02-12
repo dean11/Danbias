@@ -74,11 +74,14 @@ namespace DanBias
 	private:
 		void ParseProtocol					( Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c );
 
-		void Gameplay_PlayerMovement		( GameLogic::Protocol_PlayerMovement& p, DanBias::GameClient* c );
+		void Gameplay_PlayerMovementRight	( DanBias::GameClient* c );
+		void Gameplay_PlayerMovementLeft	( DanBias::GameClient* c );
+		void Gameplay_PlayerMovementBack	( DanBias::GameClient* c );
+		void Gameplay_PlayerMovementForth	( DanBias::GameClient* c );
+		void Gameplay_PlayerJump			( DanBias::GameClient* c );
 		void Gameplay_PlayerLookDir			( GameLogic::Protocol_PlayerLook& p, DanBias::GameClient* c );
 		void Gameplay_PlayerChangeWeapon	( GameLogic::Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c );
 		void Gameplay_PlayerShot			( GameLogic::Protocol_PlayerShot& p, DanBias::GameClient* c );
-		void Gameplay_PlayerJump			( GameLogic::Protocol_PlayerJump& p, DanBias::GameClient* c );
 		void Gameplay_ObjectPickup			( GameLogic::Protocol_ObjectPickup& p, DanBias::GameClient* c );
 		void Gameplay_ObjectDamage			( GameLogic::Protocol_ObjectDamage& p, DanBias::GameClient* c );
 		void Gameplay_ObjectPosition		( GameLogic::Protocol_ObjectPosition& p, DanBias::GameClient* c );

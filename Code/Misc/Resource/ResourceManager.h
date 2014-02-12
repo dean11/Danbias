@@ -13,6 +13,7 @@ namespace Oyster
 		typedef void* HRESOURCE;
 		typedef char HBYTE;
 		typedef HBYTE* HBYTEARRAY;
+
 		/** Typedef on a fuction required for custom unloading */
 		typedef void(*UnloadFunction)(void* loadedData);
 

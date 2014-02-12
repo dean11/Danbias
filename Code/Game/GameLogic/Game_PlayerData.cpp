@@ -6,7 +6,7 @@ using namespace GameLogic;
 Game::PlayerData::PlayerData()
 {	
 	//set some stats that are appropriate to a player
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,608,-5);
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,628,-25);
 	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
 	Oyster::Math::Float mass = 60;
 	Oyster::Math::Float restitutionCoeff = 0.5;
@@ -47,6 +47,14 @@ void Game::PlayerData::UseWeapon(const WEAPON_FIRE &usage)
 Oyster::Math::Float3 Game::PlayerData::GetPosition()
 {
 	return this->player->GetPosition();
+}
+Oyster::Math::Quaternion Game::PlayerData::GetRotation()
+{
+	return this->player->GetRotation();
+}
+Oyster::Math::Float3 Game::PlayerData::GetScale()
+{
+	return this->player->GetScale();
 }
 Oyster::Math::Float4x4 Game::PlayerData::GetOrientation()
 {

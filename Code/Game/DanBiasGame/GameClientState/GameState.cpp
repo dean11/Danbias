@@ -10,12 +10,9 @@ using namespace Oyster::Math;
 struct  GameState::myData
 {
 	myData(){}
-	//std::vector<C_Object*> object;
 	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
-	
-
 }privData;
 
 GameState::GameState(void)
@@ -24,6 +21,7 @@ GameState::GameState(void)
 	key_backward = false;
 	key_strafeRight = false;
 	key_strafeLeft = false;
+	timer = 0;
 }
 
 
@@ -49,12 +47,12 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 }
 GameState::gameStateState GameState::LoadGame() 
 {
- Oyster::Graphics::Definitions::Pointlight plight;
- plight.Pos = Float3(615, 0 ,5);
- plight.Color = Float3(0.9f,0.7f,0.2f);
- plight.Radius = 100;
- plight.Bright = 0.5f;
- Oyster::Graphics::API::AddLight(plight);
+	Oyster::Graphics::Definitions::Pointlight plight;
+	plight.Pos = Float3(615, 0 ,5);
+	plight.Color = Float3(0.9f,0.7f,0.2f);
+	plight.Radius = 100;
+	plight.Bright = 0.5f;
+	Oyster::Graphics::API::AddLight(plight);
 	plight.Pos = Float3(10,800,5);
 	plight.Color = Float3(0.9f,0.7f,0.3f);
 	plight.Radius = 300;
@@ -78,6 +76,7 @@ GameState::gameStateState GameState::LoadGame()
 	//Oyster::Graphics::API::AddLight(plight);
 	// use level loader
 	//LoadModels("3bana.bias");
+
 	// hardcoded objects
 	LoadModels();
 	Float3 startPos = Float3(0,0,20.0f);
@@ -105,7 +104,7 @@ bool GameState::LoadModels()
 	this->staticObjects.Push(new C_StaticObj());
 	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
-
+	
 	// add box model
 	modelData.position = Oyster::Math::Float3(0,0,0);
 	modelData.rotation = Oyster::Math::Quaternion::identity;
@@ -341,7 +340,12 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 		// read server data
 		// update objects
 		{
-			readKeyInput(KeyInput);
+			timer += deltaTime;
+			if(timer > 0.03)
+			{
+				readKeyInput(KeyInput);
+				timer = 0;
+			}
 			camera->UpdateViewMatrix();
 
 		}
@@ -394,20 +398,11 @@ bool GameState::Release()
 void GameState::readKeyInput(InputClass* KeyInput)
 {
 
-	bool send = false;
-	GameLogic::Protocol_PlayerMovement movePlayer;
-	movePlayer.bForward = false;
-	movePlayer.bBackward = false;
-	movePlayer.bLeft = false;
-	movePlayer.bRight = false;
-
 	if(KeyInput->IsKeyPressed(DIK_W))
 	{
-
-		if(!key_forward)
+		//if(!key_forward)
 		{
-			movePlayer.bForward = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementForward());
 			key_forward = true;
 		}
 	}
@@ -416,10 +411,9 @@ void GameState::readKeyInput(InputClass* KeyInput)
 
 	if(KeyInput->IsKeyPressed(DIK_S))
 	{
-		if(!key_backward)
+		//if(!key_backward)
 		{
-			movePlayer.bBackward = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementBackward());
 			key_backward = true;
 		}
 	}
@@ -428,10 +422,9 @@ void GameState::readKeyInput(InputClass* KeyInput)
 
 	if(KeyInput->IsKeyPressed(DIK_A))
 	{
-		if(!key_strafeLeft)
+		//if(!key_strafeLeft)
 		{
-			movePlayer.bLeft = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementLeft());
 			key_strafeLeft = true;
 		}
 	}
@@ -440,21 +433,15 @@ void GameState::readKeyInput(InputClass* KeyInput)
 
 	if(KeyInput->IsKeyPressed(DIK_D))
 	{
-		if(!key_strafeRight)
+		//if(!key_strafeRight)
 		{
-			movePlayer.bRight = true;
-			send = true;
+			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementRight());
 			key_strafeRight = true;
 		}
 	} 
 	else 
 		key_strafeRight = false;
 
-
-	if (privData->nwClient->IsConnected() && send)
-	{
-		privData->nwClient->Send(movePlayer);
-	}
 
 	//send delta mouse movement 
 	if (KeyInput->IsMousePressed())
@@ -488,6 +475,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	} 
 	else 
 		key_Shoot = false;
+
 	if(KeyInput->IsKeyPressed(DIK_X))
 	{
 		if(!key_Shoot)
@@ -502,6 +490,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	} 
 	else 
 		key_Shoot = false;
+
 	if(KeyInput->IsKeyPressed(DIK_C))
 	{
 		if(!key_Shoot)
@@ -522,9 +511,7 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	{
 		if(!key_Jump)
 		{
-			GameLogic::Protocol_PlayerJump playerJump;
-			playerJump.hasJumped = true;
-			privData->nwClient->Send(playerJump);
+			privData->nwClient->Send(GameLogic::Protocol_PlayerJump());
 			key_Jump = true;
 		}
 	}
@@ -564,42 +551,25 @@ void GameState::Protocol( ObjPos* pos )
 	{
 		world[i] = pos->worldPos[i];
 	}
-	//printf("pos for obj %d, ",pos->object_ID );
+
 	for (unsigned int i = 0; i < dynamicObjects.Size(); i++)
 	{
 		if(dynamicObjects[i]->GetId() == pos->object_ID)
 		{
-			//dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
-			dynamicObjects[i]->setWorld(world);
+			dynamicObjects[i]->setPos(Float3(world[0], world[1], world[2]));
+			dynamicObjects[i]->setRot(Quaternion(Float3(world[3], world[4], world[5]), world[6]));
+			//dynamicObjects[i]->setWorld(world);
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
-				Float3 right =		Float3(world[0], world[1], world[2]);
-				Float3 up =			Float3(world[4], world[5], world[6]);
-				Float3 objForward = Float3(world[8], world[9], world[10]);
-				Float3 pos =		Float3(world[12], world[13], world[14]);
 
-				Float3 cameraLook = camera->GetLook();
-				Float3 cameraUp = camera->GetUp();
-				
-			
-
-				/*Oyster::Math::Float3 newUp = cameraUp.Dot(up);
-				up *= newUp;
-				up.Normalize();
-				Oyster::Math::Float3 newLook = up.Cross(right);
-				newLook.Normalize();*/
-
-				//camera->setRight(right);
-				//camera->setUp(up);
-				//camera->setLook(objForward);
-				
+				Float3 pos = dynamicObjects[i]->getPos();
+				Float3 up = dynamicObjects[i]->getWorld().v[1];
+				Float3 objForward = dynamicObjects[i]->getWorld().v[2];
 				up *= 2;
 				objForward *= -2;
 				Oyster::Math::Float3 cameraPos = pos + up + objForward;
-				camera->SetPosition(cameraPos);
-				//camera->UpdateViewMatrix();
-				
+				camera->SetPosition(cameraPos);	
 			}
 		}
 	}
