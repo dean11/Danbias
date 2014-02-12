@@ -18,9 +18,15 @@ namespace Oyster
 		{
 		public:
 		
+			union
+			{
+				struct{ ::Oyster::Math::Float3 center; ::Oyster::Math::Float4 quaternion; ::Oyster::Math::Float radius;  ::Oyster::Math::Float length; };
+				char byte[sizeof(::Oyster::Math::Float3) + sizeof(::Oyster::Math::Float4) + sizeof(::Oyster::Math::Float) + sizeof(::Oyster::Math::Float)];
+			};
+
 			Cone();
-			Cone( const ::Oyster::Math::Float3 &height, const Oyster::Math::Float3 &position, const ::Oyster::Math::Float &radius );
-			Cone( const ::Oyster::Math::Float4 &height, const Oyster::Math::Float4 &position, const ::Oyster::Math::Float &radius );
+			Cone( const ::Oyster::Math::Float &height, const Oyster::Math::Float3 &position, const Oyster::Math::Float4 &quaternion, const ::Oyster::Math::Float &radius );
+			Cone( const ::Oyster::Math::Float &height, const Oyster::Math::Float4 &position, const Oyster::Math::Float4 &quaternion, const ::Oyster::Math::Float &radius );
 			virtual ~Cone( );
 
 			Cone & operator = ( const Cone &Cone );
@@ -32,11 +38,6 @@ namespace Oyster
 			bool Contains( const ICollideable &target ) const{return false;};
 
 			::Oyster::Math::Float TimeOfContact( const ICollideable &deuterStart, const ICollideable &deuterEnd ) const{return 0;};
-
-
-			Oyster::Math::Float3 height;
-			Oyster::Math::Float3 position;
-			Oyster::Math::Float radius;
 		};
 	}
 
