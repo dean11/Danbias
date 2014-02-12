@@ -23,7 +23,7 @@ EventHandler::~EventHandler()
 	for(int i = 0; i < size; i++)
 	{
 		delete collections[i];
-		collections[i] = NULL;
+		//collections[i] = NULL;
 	}
 }
 
@@ -33,7 +33,7 @@ void EventHandler::Clean()
 	for(int i = 0; i < size; i++)
 	{
 		delete collections[i];
-		collections[i] = NULL;
+		//collections[i] = NULL;
 	}
 	collections.clear();
 }
