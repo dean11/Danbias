@@ -1,6 +1,8 @@
 #include "Camera_FPS.h"
+#include "Utilities.h"
 
 using namespace ::Oyster::Math3D;
+using namespace ::Utility::Value;
 
 Camera_FPS::Camera_FPS()
 { // this->head is default set to identity uniformprojection at origo
@@ -110,7 +112,7 @@ void Camera_FPS::StrafeLeft( Float distance )
 
 void Camera_FPS::PitchUp( Float radian )
 {
-	this->pitchUp += radian;
+	this->pitchUp = Clamp( this->pitchUp + radian, -0.48f * pi, 0.48f * pi );
 	this->head.SetAngular( this->body.angularAxis + this->pitchUp * this->body.direction.v[0] );
 }
 

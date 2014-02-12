@@ -32,10 +32,13 @@ using namespace std;
 *************************************/
 typedef NetworkClient::ClientEventArgs CEA;
 
+void OnRecieve_Default(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e) {}
+
 struct NetworkClient::PrivateData : public IThreadObject
 {
 	NetworkSession *owner;
 	NetworkClient *parent;
+	ClientEventFunction OnRecieve;
 	Connection connection;
 	Translator translator;
 	OysterThread thread;
@@ -54,8 +57,8 @@ struct NetworkClient::PrivateData : public IThreadObject
 		:	ID(currID++)
 		,	parent(0)
 		,	owner(0)
+		,	OnRecieve(OnRecieve_Default)
 	{ 
-		
 		InitWinSock();
 		this->thread.Create(this, false);
 		this->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
@@ -319,6 +322,18 @@ void NetworkClient::SetOwner(NetworkSession* owner)
 	this->privateData->owner = owner;
 }
 
+void NetworkClient::SetMessagePump( NetworkClient::ClientEventFunction func )
+{
+	if( func )
+	{
+		this->privateData->OnRecieve = func;
+	}
+	else
+	{
+		this->privateData->OnRecieve = OnRecieve_Default;
+	}
+}
+
 bool NetworkClient::IsConnected()
 {
 	if(!this->privateData) return false;
@@ -335,6 +350,10 @@ void NetworkClient::DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e)
 	if(this->privateData->owner)
 	{
 		this->privateData->owner->ClientEventCallback(e);
+	}
+	else
+	{
+		this->privateData->OnRecieve( e );
 	}
 }
 

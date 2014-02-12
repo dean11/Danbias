@@ -111,6 +111,11 @@ namespace Oyster
 				/**
 				*	
 				*/
+				void SetMessagePump( ClientEventFunction func );
+
+				/**
+				*	
+				*/
 				bool IsConnected();
 				
 				/**

@@ -2,20 +2,18 @@
 #include "DllInterfaces/GFXAPI.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-#include "Camera.h"
+#include "Camera_FPS.h"
 #include <GameServerAPI.h>
 
 using namespace DanBias::Client;
-using namespace Oyster::Math;
+using namespace Oyster::Math3D;
+
 struct  GameState::myData
 {
 	myData(){}
-	//std::vector<C_Object*> object;
 	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
-	
-
 }privData;
 
 GameState::GameState(void)
@@ -26,21 +24,17 @@ GameState::GameState(void)
 	key_strafeLeft = false;
 }
 
-
 GameState::~GameState(void)
 {
-	delete this->camera;
 	delete this->privData;
 }
 bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	// load models
-	camera = new Camera;
 	privData = new myData();
 	privData->state = gameStateState_loading;
 	privData->nwClient = nwClient;	
 	privData->state = LoadGame();
-	pitch = 0;
 
 	//tELL SERver ready
 	nwClient->Send(GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready));
@@ -50,34 +44,34 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 GameState::gameStateState GameState::LoadGame() 
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(315.0f, 0.0f ,5.0f);
-	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.2f);
+	plight.Pos = Float3(315.0f, 0.0f ,5.0f);
+	plight.Color = Float3(0.9f,0.7f,0.2f);
 	plight.Radius = 100.0f;
 	plight.Bright = 0.9f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(10.0f,350.0f,5.0f);
-	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.3f);
+	plight.Pos = Float3(10.0f,350.0f,5.0f);
+	plight.Color = Float3(0.9f,0.7f,0.3f);
 	plight.Radius = 200.0f;
 	plight.Bright = 0.7f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(350.0f,350.0f,5.0f);
-	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.3f);
+	plight.Pos = Float3(350.0f,350.0f,5.0f);
+	plight.Color = Float3(0.9f,0.7f,0.3f);
 	plight.Radius = 200.0f;
 	plight.Bright = 0.7f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(10.0f,350.0f,350.0f);
-	plight.Color = Oyster::Math::Float3(0.9f,0.7f,0.3f);
+	plight.Pos = Float3(10.0f,350.0f,350.0f);
+	plight.Color = Float3(0.9f,0.7f,0.3f);
 	plight.Radius = 200.0f;
 	plight.Bright = 0.7f;
 	Oyster::Graphics::API::AddLight(plight);
-	plight.Pos = Oyster::Math::Float3(10.0f,-15.0f,5.0f);
-	plight.Color = Oyster::Math::Float3(0.0f,0.0f,1.0f);
+	plight.Pos = Float3(10.0f,-15.0f,5.0f);
+	plight.Color = Float3(0.0f,0.0f,1.0f);
 	plight.Radius = 50.0f;
 	plight.Bright = 2.0f;
 
 	Oyster::Graphics::API::AddLight(plight);
 	LoadModels();
-	InitCamera(Oyster::Math::Float3(0.0f,0.0f,20.0f));
+	InitCamera(Float3(0.0f,0.0f,20.0f));
 	// hardcoded objects
 	LoadModels();
 	Float3 startPos = Float3(0,0,20.0f);
@@ -95,9 +89,9 @@ bool GameState::LoadModels()
 	// add world model
 	ModelInitData modelData;
 
-	modelData.position = Oyster::Math::Float3(0,0,0);
-	modelData.rotation = Oyster::Math::Quaternion::identity;
-	modelData.scale =  Oyster::Math::Float3(2,2,2);
+	modelData.position = Float3(0,0,0);
+	modelData.rotation = Quaternion::identity;
+	modelData.scale =  Float3(2,2,2);
 
 	modelData.modelPath = L"world_earth.dan";
 	modelData.id = id++;
@@ -107,15 +101,15 @@ bool GameState::LoadModels()
 
 	/*
 	// add box model
-	modelData.position = Oyster::Math::Float3(0,0,0);
-	modelData.rotation = Oyster::Math::Quaternion::identity;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.position = Float3(0,0,0);
+	modelData.rotation = Quaternion::identity;
+	modelData.scale =  Float3(1,1,1);
 	modelData.modelPath = L"crate_colonists.dan";
 
 
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		modelData.position = Oyster::Math::Float3(4,320,0);
+		modelData.position = Float3(4,320,0);
 		modelData.id = id++;
 
 		this->dynamicObjects.Push(new C_DynamicObj());
@@ -124,7 +118,7 @@ bool GameState::LoadModels()
 
 	
 	// add crystal model 
-	modelData.position = Oyster::Math::Float3(10, 301, 0);
+	modelData.position = Float3(10, 301, 0);
 	modelData.modelPath = L"crystalformation_b.dan";
 	modelData.id = id++;
 	// load models
@@ -132,8 +126,8 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add house model 
-	modelData.position = Oyster::Math::Float3(-50, 290, 0);
-	//Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
+	modelData.position = Float3(-50, 290, 0);
+	//Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Float3(0 ,Utility::Value::Radian(90.0f), 0));
 
 	modelData.visible = true;
 	modelData.modelPath = L"building_corporation.dan";
@@ -144,7 +138,7 @@ bool GameState::LoadModels()
 
 
 	// add player model
-	modelData.position = Oyster::Math::Float3(0, 320, 0);
+	modelData.position = Float3(0, 320, 0);
 	modelData.modelPath = L"char_still_sizeref.dan";
 	modelData.id = id++;
 	// load models
@@ -152,7 +146,7 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add player model 2
-	modelData.position = Oyster::Math::Float3(50, 320, 0);
+	modelData.position = Float3(50, 320, 0);
 	modelData.modelPath = L"char_still_sizeref.dan";
 	modelData.id = id++;
 	// load models
@@ -160,7 +154,7 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add jumppad
-	modelData.position = Oyster::Math::Float3(4, 300.3, 0);
+	modelData.position = Float3(4, 300.3, 0);
 	modelData.modelPath = L"jumppad_round.dan";
 	modelData.id = id++;
 	// load models
@@ -168,8 +162,8 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add sky sphere
-	modelData.position = Oyster::Math::Float3(0,0,0);
-	modelData.scale =  Oyster::Math::Float3(800,800,800);
+	modelData.position = Float3(0,0,0);
+	modelData.scale =  Float3(800,800,800);
 	modelData.modelPath = L"skysphere.dan";
 	modelData.id = id++;
 	// load models
@@ -202,8 +196,8 @@ bool GameState::LoadModels(std::string mapFile)
 				modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
 				modelData.visible = true;
 				//modelData.position = ;
-				//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-				//modelData.scale =  Oyster::Math::Float3(2,2,2);
+				//modelData.rotation = Quaternion(Float3(2,2,-2), 1);
+				//modelData.scale =  Float3(2,2,2);
 				modelData.id = modelId++;
 
 				this->staticObjects.Push(new C_StaticObj());
@@ -214,8 +208,8 @@ bool GameState::LoadModels(std::string mapFile)
 			{
 				GameLogic::ObjectHeader* dynamicObjData = ((GameLogic::ObjectHeader*)obj);
 				//modelData.position = ;
-				//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-				//modelData.scale =  Oyster::Math::Float3(2,2,2);
+				//modelData.rotation = Quaternion(Float3(2,2,-2), 1);
+				//modelData.scale =  Float3(2,2,2);
 				modelData.modelPath.assign(dynamicObjData->ModelFile.begin(), dynamicObjData->ModelFile.end());
 				modelData.visible = true;
 				modelData.id = modelId++;
@@ -246,8 +240,8 @@ bool GameState::LoadModels(std::string mapFile)
 	myId += modelId++;
 	// add player model
 	//modelData.position = ;
-	//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-	//modelData.scale =  Oyster::Math::Float3(2,2,2);
+	//modelData.rotation = Quaternion(Float3(2,2,-2), 1);
+	//modelData.scale =  Float3(2,2,2);
 
 
 	modelData.visible = true;
@@ -266,17 +260,14 @@ bool GameState::LoadModels(std::string mapFile)
 }
 bool GameState::InitCamera(Float3 startPos)
 {
-	Float3 dir = Float3(0,0,1);
-	Float3 up = Float3(0,1,0);
-	Float3 pos = Float3(0, 0, 20);
-	camera->LookAt(pos, dir, up);
-	camera->SetLens(pi/4, 1024/768, 1, 1000);
-	camera->UpdateViewMatrix();
-	Oyster::Graphics::API::SetProjection(camera->Proj());
+	camera.SetHeadOffset( Float3(0.0f, 1.0f, 1.0f) );
+	camera.SetPerspectiveProjection( pi / 4.0f, 1024.0f/768.0f, 1.0f, 1000.0f );
+	camera.UpdateOrientation();
+	Oyster::Graphics::API::SetProjection(camera.GetProjectionMatrix());
 	
 	return true;
 }
-void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world)
+void GameState::InitiatePlayer(int id, std::wstring modelName, Float4x4 world)
 {
 	myId = id;
 
@@ -284,44 +275,20 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	C_Object* obj;
 	modelData.visible = true;
 	//modelData.world = world;
-	modelData.position = Oyster::Math::Float3(world[12], world[13], world[14]);
-	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0,0,0), 1);
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.position = Float3(world[12], world[13], world[14]);
+	modelData.rotation = Quaternion(Float3(0,0,0), 1);
+	modelData.scale =  Float3(1,1,1);
 	modelData.modelPath = modelName;
 	modelData.id = myId;
 	
-	obj =  new C_Player();
+	obj = new C_Player();
 	this->dynamicObjects.Push(obj);
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
-	
-	Oyster::Math::Float3 right = Oyster::Math::Float3(world[0], world[1], world[2]);
-	Oyster::Math::Float3 up = Oyster::Math::Float3(world[4], world[5], world[6]);
-	Oyster::Math::Float3 objForward = (Oyster::Math::Float3(world[8], world[9], world[10]));
-	Oyster::Math::Float3 pos = Oyster::Math::Float3(world[12], world[13], world[14]);
+	Float3 pos = Float3(world[12], world[13], world[14]);
 
-	Oyster::Math::Float3 cameraLook = camera->GetLook();
-	Oyster::Math::Float3 cameraUp = camera->GetUp();
-				
-			
-
-	/*Oyster::Math::Float3 newUp = cameraUp.Dot(up);
-	up *= newUp;
-	up.Normalize();
-	Oyster::Math::Float3 newLook = up.Cross(right);
-	newLook.Normalize();*/
-
-	camera->setRight(right);
-	camera->setUp(up);
-	camera->setLook(objForward);
-				
-	up *= 2;
-	objForward *= 3;
-	Oyster::Math::Float3 cameraPos = up + pos + objForward;
-	camera->SetPosition(cameraPos);
-
-	camera->UpdateViewMatrix();
-	
+	camera.SetPosition( pos );
+	camera.UpdateOrientation();
 }
 GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
 {
@@ -343,8 +310,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 		// update objects
 		{
 			readKeyInput(KeyInput);
-			camera->UpdateViewMatrix();
-
+			camera.UpdateOrientation();
 		}
 		break;
 	case gameStateState_end:
@@ -359,7 +325,7 @@ GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyI
 }
 bool GameState::Render()
 {
-	Oyster::Graphics::API::SetView(camera->View());
+	Oyster::Graphics::API::SetView( camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
 	for (unsigned int i = 0; i < staticObjects.Size(); i++)
@@ -389,7 +355,6 @@ bool GameState::Release()
 }
 void GameState::readKeyInput(InputClass* KeyInput)
 {
-
 	if(KeyInput->IsKeyPressed(DIK_W))
 	{
 		if(!key_forward)
@@ -438,18 +403,18 @@ void GameState::readKeyInput(InputClass* KeyInput)
 	//send delta mouse movement 
 	//if (KeyInput->IsMousePressed())
 	{
-		camera->Yaw(-KeyInput->GetYaw());
-		camera->Pitch(KeyInput->GetPitch());
-		pitch = KeyInput->GetPitch();
-		camera->UpdateViewMatrix();
+		camera.YawRight( -KeyInput->GetYaw() );
+		camera.PitchUp( KeyInput->GetPitch() );
+		camera.UpdateOrientation();
+
 		GameLogic::Protocol_PlayerLook playerLookDir;
-		Oyster::Math::Float4 look = camera->GetLook();
+		Float4 look = camera.GetLook();
 		playerLookDir.lookDirX = look.x;
 		playerLookDir.lookDirY = look.y;
 		playerLookDir.lookDirZ = look.z;
 		playerLookDir.deltaX = -KeyInput->GetYaw();
 
-		privData->nwClient->Send(playerLookDir);
+		privData->nwClient->Send( playerLookDir );
 	}
 
 	// shoot
@@ -514,112 +479,129 @@ void GameState::readKeyInput(InputClass* KeyInput)
 		privData->state = GameState::gameStateState_end;
 }
 
-void GameState::Protocol(ProtocolStruct* pos)
+using namespace ::Oyster::Network;
+using namespace ::Utility::DynamicMemory;
+
+// returns -1 if none found
+int FindObject( const DynamicArray<SmartPointer<C_Object>> &collection, int id )
 {
+	int num = collection.Size();
+	for( int i = 0; i < num; ++i ) if( id == collection[i]->GetId() )
+		return i;
+	return -1;
+}
+
+void GameState::DataRecieved( NetEvent<NetworkClient*, ClientEventArgs> e )
+{
+	CustomNetProtocol data = e.args.data.protocol;
+	short ID = data[0].value.netShort; // fetching the id data.
 	
-}
+	// Block irrelevant messages.
+	if( !ProtocolIsGameplay(ID) )
+		return;
 
-void GameState::Protocol( PlayerPos* pos )
-{
-	//Oyster::Math::Float4x4 world, translate;
-
-	//world = Oyster::Math::Float4x4::identity;
-	//translate = Oyster::Math::Float4x4::identity;
-	//translate = Oyster::Math3D::TranslationMatrix(Oyster::Math::Float3(pos->playerPos[0],pos->playerPos[1],pos->playerPos[2]));
-	//world = world * translate;
-	////privData->object[0]->setPos( world );
-	//for (unsigned int i = 0; i < dynamicObjects.Size(); i++)
-	//{
-	//	dynamicObjects[i]->Render();
-	//}
-}
-
-void GameState::Protocol( ObjPos* pos )
-{
-	Oyster::Math::Float4x4 world;
-	for(int i = 0; i<16; i++)
+	switch(ID)
 	{
-		world[i] = pos->worldPos[i];
-	}
-	//printf("pos for obj %d, ",pos->object_ID );
-	for (unsigned int i = 0; i < dynamicObjects.Size(); i++)
-	{
-		if(dynamicObjects[i]->GetId() == pos->object_ID)
+	case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectDamage:			break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectHealthStatus:		break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectPosition:
 		{
+			GameLogic::Protocol_ObjectPosition decoded(data);
 
-			
-			//dynamicObjects[i]->setPos(Float3(world[12], world[13], world[14]));
-			dynamicObjects[i]->setWorld(world);
+			// if is this player. Remember to change camera
+			if( this->myId == decoded.object_ID )
+				camera.SetPosition( decoded.position );
 
-			if(dynamicObjects[i]->GetId() == myId) // playerobj
+			int i = FindObject( this->dynamicObjects, decoded.object_ID );
+			if( i > -1 )
+				this->dynamicObjects[i]->setPos( decoded.position );
+		}
+		break;
+	case protocol_Gameplay_ObjectScale:
+		{
+			GameLogic::Protocol_ObjectScale decoded(data);
+			int i = FindObject( this->dynamicObjects, decoded.object_ID );
+			if( i > -1 )
+				this->dynamicObjects[i]->setScale( decoded.scale );
+		}
+		break;
+	case protocol_Gameplay_ObjectRotation:
+		{
+			GameLogic::Protocol_ObjectRotation decoded(data);
+			Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+
+			// if is this player. Remember to change camera
+			if( this->myId == decoded.object_ID )
+				camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
+
+			int i = FindObject( this->dynamicObjects, decoded.object_ID );
+			if( i > -1 )
+				this->dynamicObjects[i]->setRot( rotation );
+		}
+		break;
+	case protocol_Gameplay_ObjectPositionRotation:
+		{
+			GameLogic::Protocol_ObjectPositionRotation decoded(data);
+			Float3 position = decoded.position;
+			Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+
+			// if is this player. Remember to change camera
+			if( this->myId == decoded.object_ID )
 			{
-				Float3 right =		Float3(world[0], world[1], world[2]);
-				Float3 up =			Float3(world[4], world[5], world[6]);
-				Float3 objForward = Float3(world[8], world[9], world[10]);
-				Float3 pos =		Float3(world[12], world[13], world[14]);
+				camera.SetPosition( position );
+				camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
+			}
 
-				Float3 cameraLook = camera->GetLook();
-				Float3 cameraUp = camera->GetUp();
-				
-			
-
-				/*Oyster::Math::Float3 newUp = cameraUp.Dot(up);
-				up *= newUp;
-				up.Normalize();
-				Oyster::Math::Float3 newLook = up.Cross(right);
-				newLook.Normalize();*/
-
-				//camera->setRight(right);
-				//camera->setUp(up);
-				//camera->setLook(objForward);
-				
-				up *= 1;
-				objForward *= -2;
-				Oyster::Math::Float3 cameraPos = pos + up + objForward;
-				//camera->SetPosition(cameraPos);
-				//camera->UpdateViewMatrix();
-				
+			int i = FindObject( this->dynamicObjects, decoded.object_ID );
+			if( i > -1 )
+			{
+				this->dynamicObjects[i]->setPos( position );
+				this->dynamicObjects[i]->setRot( rotation );
 			}
 		}
-	}
-}
-
-void GameState::Protocol( NewObj* newObj )
-{
-
-	Oyster::Math::Float4x4 world;
-	for(int i = 0; i<16; i++)
-	{
-		world[i] = newObj->worldPos[i];
-	}
-	ModelInitData modelData;
-
-	//modelData.world = world;
-	modelData.visible = true;
-	modelData.id = newObj->object_ID;
-	//not sure if this is good parsing rom char* to wstring
-	const char* path = newObj->path;
-	modelData.modelPath = std::wstring(path, path + strlen(path));  
-	// load models
-	C_DynamicObj* player = new C_DynamicObj();
-	player->Init(modelData);
-
-	dynamicObjects.Push(player);
-
-}
-
-void DanBias::Client::GameState::Protocol( RemoveObj* obj )
-{
-	for (unsigned int i = 0; i < dynamicObjects.Size(); i++)
-	{
-		if(dynamicObjects[i]->GetId() == obj->object_ID)
+		break;
+	case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectDisabled:
 		{
-			//dynamicObjects[i]->Release();
-			dynamicObjects[i].Release();
-			//dynamicObjects.erase(privData->object.begin() + i );
-		}
-	}
-	//privData->object[obj->object_ID]->Release( );
-}
+			GameLogic::Protocol_ObjectDisable decoded(data);
 
-//void GameState::Protocol(LightPos pos);
+			int i = FindObject( this->dynamicObjects, decoded.objectID );
+			if( i > -1 )
+			{
+				this->dynamicObjects[i].Release();
+				this->dynamicObjects.Pop(i);
+			}
+		}
+		break;
+	case protocol_Gameplay_ObjectCreate:
+		{
+			GameLogic::Protocol_ObjectCreate decoded(data);
+			C_DynamicObj* object = new C_DynamicObj();
+
+			ModelInitData modelData;
+			{
+				modelData.position = Float3( decoded.position );
+				modelData.rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+				modelData.scale = Float3( decoded.scale );
+				modelData.visible = true;
+				modelData.id = decoded.object_ID;
+
+				::Utility::String::StringToWstring( decoded.name, modelData.modelPath );
+			}
+			object->Init(modelData);
+
+			dynamicObjects.Push(object);
+
+		}		
+		break;
+	case protocol_Gameplay_ObjectCreatePlayer:		break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectRespawn:			break; /** @todo TODO: implement */
+	case protocol_Gameplay_ObjectDie:				break; /** @todo TODO: implement */
+	default: break;
+	}
+}

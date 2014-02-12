@@ -192,7 +192,7 @@ namespace GameLogic
 	struct Protocol_ObjectScale :public Oyster::Network::CustomProtocolObject
 	{
 		short object_ID;
-		float position[3]; 
+		float scale[3]; 
 		
 		Protocol_ObjectScale()
 		{
@@ -204,14 +204,14 @@ namespace GameLogic
 			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
 			
 			object_ID = 0;
-			memset(&position[0], 0, sizeof(float) * 3);
+			memset(&scale[0], 0, sizeof(float) * 3);
 		}
 		Protocol_ObjectScale(Oyster::Network::CustomNetProtocol& p)
 		{
 			object_ID = p[1].value.netShort;
-			position[0] = p[2].value.netFloat;
-			position[1] = p[3].value.netFloat;
-			position[2] = p[4].value.netFloat;
+			scale[0] = p[2].value.netFloat;
+			scale[1] = p[3].value.netFloat;
+			scale[2] = p[4].value.netFloat;
 		}
 		Protocol_ObjectScale(float v[3], int id)
 		{
@@ -223,14 +223,14 @@ namespace GameLogic
 			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
 
 			object_ID = id;
-			memcpy(&position[0], &v[0], sizeof(float) * 3);
+			memcpy(&scale[0], &v[0], sizeof(float) * 3);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
-			this->protocol[2].value = position[0];
-			this->protocol[3].value = position[1];
-			this->protocol[4].value = position[2];
+			this->protocol[2].value = scale[0];
+			this->protocol[3].value = scale[1];
+			this->protocol[4].value = scale[2];
 			return protocol;		 
 		}	
 
@@ -242,7 +242,7 @@ namespace GameLogic
 	struct Protocol_ObjectRotation :public Oyster::Network::CustomProtocolObject
 	{
 		short object_ID;
-		float position[3]; 
+		float rotationQ[4]; 
 		
 		Protocol_ObjectRotation()
 		{
@@ -252,18 +252,20 @@ namespace GameLogic
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
 			
 			object_ID = 0;
-			memset(&position[0], 0, sizeof(float) * 3);
+			memset(&rotationQ[0], 0, sizeof(float) * 4);
 		}
 		Protocol_ObjectRotation(Oyster::Network::CustomNetProtocol& p)
 		{
 			object_ID = p[1].value.netShort;
-			position[0] = p[2].value.netFloat;
-			position[1] = p[3].value.netFloat;
-			position[2] = p[4].value.netFloat;
+			rotationQ[0] = p[2].value.netFloat;
+			rotationQ[1] = p[3].value.netFloat;
+			rotationQ[2] = p[4].value.netFloat;
+			rotationQ[3] = p[5].value.netFloat;
 		}
-		Protocol_ObjectRotation(float v[3], int id)
+		Protocol_ObjectRotation(float v[4], int id)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectRotation;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
@@ -271,16 +273,18 @@ namespace GameLogic
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
 
 			object_ID = id;
-			memcpy(&position[0], &v[0], sizeof(float) * 3);
+			memcpy(&rotationQ[0], &v[0], sizeof(float) * 4);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = object_ID;
-			this->protocol[2].value = position[0];
-			this->protocol[3].value = position[1];
-			this->protocol[4].value = position[2];
+			this->protocol[2].value = rotationQ[0];
+			this->protocol[3].value = rotationQ[1];
+			this->protocol[4].value = rotationQ[2];
+			this->protocol[5].value = rotationQ[3];
 			return protocol;		 
 		}	
 
@@ -292,7 +296,7 @@ namespace GameLogic
 	{
 		short object_ID;
 		float position[3]; 
-		float rotation[3]; 
+		float rotationQ[4]; 
 		
 		Protocol_ObjectPositionRotation()
 		{
@@ -307,10 +311,11 @@ namespace GameLogic
 			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
 
 			this->object_ID = 0;
 			memset(&this->position[0], 0, sizeof(float) * 3);
-			memset(&this->rotation[0], 0, sizeof(float) * 3);
+			memset(&this->rotationQ[0], 0, sizeof(float) * 4);
 		}
 		Protocol_ObjectPositionRotation(Oyster::Network::CustomNetProtocol& p)
 		{
@@ -320,11 +325,12 @@ namespace GameLogic
 			this->position[1] = p[3].value.netFloat;
 			this->position[2] = p[4].value.netFloat;
 		//ROTATION
-			this->rotation[0] = p[5].value.netFloat;
-			this->rotation[1] = p[6].value.netFloat;
-			this->rotation[2] = p[7].value.netFloat;
+			this->rotationQ[0] = p[5].value.netFloat;
+			this->rotationQ[1] = p[6].value.netFloat;
+			this->rotationQ[2] = p[7].value.netFloat;
+			this->rotationQ[3] = p[8].value.netFloat;
 		}
-		Protocol_ObjectPositionRotation(float p[3], float r[3], int id)
+		Protocol_ObjectPositionRotation(float p[3], float r[4], int id)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectPositionRotation;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
@@ -337,10 +343,11 @@ namespace GameLogic
 			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
 
 			object_ID = id;
 			memcpy(&this->position[0], &p[0], sizeof(float) * 3);
-			memcpy(&this->rotation[0], &r[0], sizeof(float) * 3);
+			memcpy(&this->rotationQ[0], &r[0], sizeof(float) * 4);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
@@ -348,9 +355,10 @@ namespace GameLogic
 			this->protocol[2].value = this->position[0];
 			this->protocol[3].value = this->position[1];
 			this->protocol[4].value = this->position[2];
-			this->protocol[5].value = this->rotation[0];
-			this->protocol[6].value = this->rotation[1];
-			this->protocol[7].value = this->rotation[2];
+			this->protocol[5].value = this->rotationQ[0];
+			this->protocol[6].value = this->rotationQ[1];
+			this->protocol[7].value = this->rotationQ[2];
+			this->protocol[8].value = this->rotationQ[3];
 			return protocol;		 
 		}	
 
@@ -437,66 +445,81 @@ namespace GameLogic
 		//ObjectType type; //ie player, box or whatever
 		int object_ID;
 		std::string name;
-		float worldMatrix[16];
+		float position[3];
+		float rotationQ[4];
+		float scale[3];
 
 		Protocol_ObjectCreate()
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectCreate;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-
+		//NAME
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray;
-			
-			for (int i = 3; i <= 18; i++)
-			{
-				this->protocol[i].type = Oyster::Network::NetAttributeType_Float;
-			}
-		}
-		Protocol_ObjectCreate(Oyster::Network::CustomNetProtocol& p)
-		{
+			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray;	
+		//POSITION	
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
+		//ROTATION
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[9].type = Oyster::Network::NetAttributeType_Float;
+		//SCALE
+			this->protocol[10].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[11].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[12].type = Oyster::Network::NetAttributeType_Float;
 
+			this->object_ID = 0;
+			memset(this->position, 0, sizeof(float) * 3);
+			memset(this->rotationQ, 0, sizeof(float) * 4);
 		}
-		Protocol_ObjectCreate(float m[16], int id, char *path)
+		Protocol_ObjectCreate( Oyster::Network::CustomNetProtocol& p )
+		{
+			/** @todo TODO: not implemented */
+		}
+		Protocol_ObjectCreate(float p[3], float r[4], int id, char *path)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectCreate;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Int;
-									
+		//NAME							
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_CharArray; 
-			
-			for (int i = 3; i <= 18; i++)
-			{
-				this->protocol[i].type = Oyster::Network::NetAttributeType_Float;
-			}
+		//POSITION	
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
+		//ROTATION
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[9].type = Oyster::Network::NetAttributeType_Float;
+		//SCALE
+			this->protocol[10].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[11].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[12].type = Oyster::Network::NetAttributeType_Float;
 
 			object_ID = id;
 			this->name = path;
-			memcpy(&worldMatrix[0], &m[0], sizeof(float)*16);
+
+			memset(this->position, 0, sizeof(float) * 3);
+			memset(this->rotationQ, 0, sizeof(float) * 4);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 
 			this->protocol[1].value = object_ID;
 			this->protocol.Set(2, name);
-			this->protocol[3].value = worldMatrix[0];
-			this->protocol[4].value = worldMatrix[1]; 
-			this->protocol[5].value	= worldMatrix[2];
-			this->protocol[6].value	= worldMatrix[3];
-			this->protocol[7].value	= worldMatrix[4];
-			this->protocol[8].value = worldMatrix[5];
-			this->protocol[9].value = worldMatrix[6];
-			this->protocol[10].value = worldMatrix[7];
-			this->protocol[11].value = worldMatrix[8];
-			this->protocol[12].value = worldMatrix[9];
-			this->protocol[13].value = worldMatrix[10];
-			this->protocol[14].value = worldMatrix[11];
-			this->protocol[15].value = worldMatrix[12];
-			this->protocol[16].value = worldMatrix[13];
-			this->protocol[17].value = worldMatrix[14];
-			this->protocol[18].value = worldMatrix[15];
-
-		
-		
+			this->protocol[3].value = this->position[0];
+			this->protocol[4].value = this->position[1];
+			this->protocol[5].value = this->position[2];
+			this->protocol[6].value = this->rotationQ[0];
+			this->protocol[7].value = this->rotationQ[1];
+			this->protocol[8].value = this->rotationQ[2];
+			this->protocol[9].value = this->rotationQ[3];
+			this->protocol[10].value = this->scale[0];
+			this->protocol[11].value = this->scale[1];
+			this->protocol[12].value = this->scale[2];
 
 			return protocol;		 
 		}							 

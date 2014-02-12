@@ -21,7 +21,7 @@ namespace DanBias
 		// receiver function for server messages 
 		// parsing protocols and sending it to the gameState
 		//void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
-		void GameRecieverObject::DataRecieved(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override
+		void GameRecieverObject::DataRecieved( Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e ) override
 		{
 			Oyster::Network::CustomNetProtocol p = e.args.data.protocol;
 			int pType = p[0].value.netInt;
@@ -79,17 +79,16 @@ namespace DanBias
 					// 2,3,4: position
 					// 5,6,7,8: rotation quaternion
 
-					GameLogic::Protocol_ObjectPosition data;
+					GameLogic::Protocol_ObjectPosition data(p);
 
 					Client::GameClientState::ObjPos protocolData;
-					protocolData.object_ID = p[1].value.netInt;
+					protocolData.object_ID = data.object_ID;
+					//protocolData.object_ID = p[1].value.netInt;
 
 					for( int i = 0; i < 3; ++i )
 					{
-						protocolData.position[i] = p[i+2].value.netFloat;
-						protocolData.rotation[i] = p[i+5].value.netFloat;
+						protocolData.position[i] = data.position[i];
 					}
-					protocolData.rotation[3] = p[8].value.netFloat;
 
 					//for(int i = 0; i< 16; i++)
 					//{
