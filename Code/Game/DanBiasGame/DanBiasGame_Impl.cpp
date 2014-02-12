@@ -19,8 +19,8 @@
 #include "../Misc/EventHandler/EventHandler.h"
 
 using namespace ::Oyster;
-using namespace Event;
-using namespace Network;
+using namespace ::Oyster::Event;
+using namespace ::Oyster::Network;
 using namespace ::Utility::DynamicMemory;
 
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
@@ -46,6 +46,7 @@ namespace DanBias
 			this->capFrame = 0;
 		}
 	} data;
+
 #pragma endregion
 
 
@@ -77,7 +78,7 @@ namespace DanBias
 			return DanBiasClientReturn_Error;
 
 		data.timer.reset();
-		return DanBiasClientReturn_Sucess;
+		return DanBiasClientReturn_Success;
 	}
 
 	DanBiasClientReturn DanBiasGame::Run()
@@ -89,7 +90,6 @@ namespace DanBias
 			data.timer.reset();
 
 			Graphics::API::Update( dt );
-			EventHandler::Instance().Update( nullptr );
 
 			if(data.networkClient.IsConnected())
 				data.networkClient.Update();
@@ -97,15 +97,20 @@ namespace DanBias
 			data.capFrame += dt;
 			if(data.capFrame > 0.03)
 			{
-				if(Update(dt) != S_OK)
-					return DanBiasClientReturn_Error;
+				switch( Update(dt) )
+				{
+				case Result_continue:	break;
+					case Result_quit:	return DanBiasClientReturn_Success;
+				case Result_error:		return DanBiasClientReturn_Error;
+				default:				break;
+				}
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
 				data.capFrame = 0; 
 			}
 
 		}
-		return DanBiasClientReturn_Sucess;
+		return DanBiasClientReturn_Success;
 	}
 
 	void DanBiasGame::Release()
@@ -143,11 +148,11 @@ namespace DanBias
 		return S_OK;
 	}
 	
-	HRESULT DanBiasGame::Update(float deltaTime)
+	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
 		data.inputObj->Update();
 
-		if(data.serverOwner)
+		if( data.serverOwner )
 		{
 			DanBias::GameServerAPI::ServerUpdate();
 		}
@@ -156,39 +161,50 @@ namespace DanBias
 
 		state = data.state->Update( deltaTime, data.inputObj );
 
-		if(state != Client::GameClientState::ClientState_Same)
+		if( state != Client::GameClientState::ClientState_Same )
 		{
-			bool stateVal = false;
+			bool stateChanged = false;
 			data.state->Release();
 
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_LobbyCreate:
-				data.serverOwner = true;
-				stateVal = true;
+				{
+					//DanBias::GameServerAPI::ServerInitiate( .. );
+					//DanBias::GameServerAPI::ServerStart();
+					//data.serverOwner = true;
+					//if( data.networkClient.Connect(15151, "127.0.0.1") )
+					//{
+					//	data.state = new Client::LobbyState();
+					//	stateChanged = true;
+					//}
+				}
+			case Client::GameClientState::ClientState_Lan:
+				data.state = new Client::LanMenuState();
+				stateChanged = true;
+				break;
 			case Client::GameClientState::ClientState_Lobby:
 				data.state = new Client::LobbyState();
-				stateVal = true;
+				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
-				
+				data.state = new Client::GameState();
+				stateChanged = true;
 				break;
+			case Client::GameClientState::ClientState_Quit:
+				data.state->Release();
+				return Result_quit;
 			default:
-				return E_FAIL;
-				break;
+				data.state->Release();
+				return Result_error;
 			}
 
-			if(stateVal)
+			if( stateChanged )
 			{
 				data.state->Init( &data.networkClient ); // send game client
-			}
-			else
-			{
-
-			}
-				 
+			}			 
 		}
-		return S_OK;
+		return Result_continue;
 	}
 
 	HRESULT DanBiasGame::Render( )
@@ -200,7 +216,9 @@ namespace DanBias
 
 	HRESULT DanBiasGame::CleanUp()
 	{
-		data.networkClient.Disconnect();
+		if( data.networkClient.IsConnected() )
+			data.networkClient.Disconnect();
+
 		delete data.inputObj;
 
 		Oyster::Event::EventHandler::Instance().Clean();

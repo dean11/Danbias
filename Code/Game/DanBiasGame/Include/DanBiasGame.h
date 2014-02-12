@@ -22,7 +22,7 @@ namespace DanBias
 		enum DanBiasClientReturn
 		{
 			DanBiasClientReturn_Error,
-			DanBiasClientReturn_Sucess,
+			DanBiasClientReturn_Success
 		};
 
 		struct DanBiasGameDesc
@@ -47,11 +47,17 @@ namespace DanBias
 			static void Release();
 
 		private:
-			
-			static HRESULT		InitDirect3D();
-			static HRESULT		InitInput();
+			enum Result
+			{
+				Result_continue,
+				Result_quit,
+				Result_error
+			};
 
-			static HRESULT Update(float deltaTime);
+			static HRESULT	InitDirect3D();
+			static HRESULT	InitInput();
+
+			static Result Update(float deltaTime);
 			static HRESULT Render();
 			static HRESULT CleanUp();
 		};

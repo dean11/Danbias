@@ -25,7 +25,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 	gameDesc.hinst = hinst;
 	gameDesc.nCmdShow = cmdShow;
 
-	if( DanBias::DanBiasGame::Initiate(gameDesc) == DanBias::DanBiasClientReturn_Sucess)
+	if( DanBias::DanBiasGame::Initiate(gameDesc) == DanBias::DanBiasClientReturn_Success )
 	{
 		DanBias::DanBiasGame::Run();
 		DanBias::DanBiasGame::Release();

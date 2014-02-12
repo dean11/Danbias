@@ -50,7 +50,15 @@ bool MainState::Init( NetworkClient* nwClient )
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
 	// create buttons
-	ButtonRectangle<GameClientState*> *button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Quit, this, 0.5f, 0.5f, 0.1f, 0.1f, true );
+	ButtonRectangle<GameClientState*> *button;
+	
+	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Create, this, 0.5f, 0.2f, 0.1f, 0.3f, true );
+	this->privData->button.AddButton( button );
+
+	button = new ButtonRectangle<GameClientState*>( L"skysphere_md.png", OnButtonInteract_Join, this, 0.5f, 0.4f, 0.1f, 0.3f, true );
+	this->privData->button.AddButton( button );
+
+	button = new ButtonRectangle<GameClientState*>( L"plane_texture_md.png", OnButtonInteract_Quit, this, 0.5f, 0.8f, 0.1f, 0.3f, true );
 	this->privData->button.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
@@ -61,45 +69,7 @@ bool MainState::Init( NetworkClient* nwClient )
 
 GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyInput)
 {
-	//// picking 
-	//// mouse events
-	//// different menus
-	//// play sounds
-	//// update animation
-	//// send data to server
-	//// check data from server
-
-	//// create game
-	//if( KeyInput->IsKeyPressed(DIK_C)) 
-	//{
-	//	DanBias::GameServerAPI::ServerInitDesc desc; 
-
-	//	DanBias::GameServerAPI::ServerInitiate(desc);
-	//	DanBias::GameServerAPI::ServerStart();
-	//	// my ip
-	//	this->privData->nwClient->Connect(15152, "127.0.0.1");
-
-	//	if (!this->privData->nwClient->IsConnected())
-	//	{
-	//		// failed to connect
-	//		return ClientState_Same;
-	//	}
-	//	return ClientState_LobbyCreated;
-	//}
-	//// join game
-	//if( KeyInput->IsKeyPressed(DIK_J)) 
-	//{
-	//	// game ip
-	//	this->privData->nwClient->Connect(15152, "127.0.0.1");
-	//	//nwClient->Connect(15152, "83.254.217.248");
-
-	//	if (!this->privData->nwClient->IsConnected())
-	//	{
-	//		// failed to connect
-	//		return ClientState_Same;
-	//	}
-	//	return ClientState_Lobby;
-	//}
+	EventHandler::Instance().Update( KeyInput );
 
 	return this->privData->nextState;
 }
@@ -118,11 +88,13 @@ bool MainState::Render()
 
 bool MainState::Release()
 {
-	Graphics::API::DeleteTexture( this->privData->background );
+	if( privData )
+	{
+		Graphics::API::DeleteTexture( this->privData->background );
 
-	privData = NULL;
-	// button collection will be autoreleased from EventHandler
-
+		privData = NULL;
+		// button collection will be autoreleased from EventHandler
+	}
 	return true;
 }
 
