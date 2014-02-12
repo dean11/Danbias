@@ -201,7 +201,7 @@ void API_Impl::UpdateWorld()
 	{
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
 		btTransform trans;
-		simpleBody->GetMotionState()->getWorldTransform(trans);
+		trans = simpleBody->GetRigidBody()->getWorldTransform();
 		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
 		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
 		
