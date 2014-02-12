@@ -176,7 +176,7 @@ HRESULT InitDirect3D()
 	m->WorldMatrix.m[2][2] = 0.00000005f;
 	m2 = Oyster::Graphics::API::CreateModel(L"char_temporary.dan");
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
-	Oyster::Graphics::API::PlayAnimation(m2, L"movement",true);
+	Oyster::Graphics::API::PlayAnimation(m2, L"movement",false);
 	
 	t = Oyster::Graphics::API::CreateTexture(L"structure_corp_mdg.png");
 	t2 = Oyster::Graphics::API::CreateTexture(L"whiteGui.png");
@@ -233,14 +233,14 @@ HRESULT Render(float deltaTime)
 	Oyster::Graphics::API::RenderModel(m2);
 	Oyster::Graphics::API::StartGuiRender();
 	Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1));
-	Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
+	//Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float3(1,0,0));
 	Oyster::Graphics::API::StartTextRender();
 	std::wstring fps;
 	float f = 1/deltaTime;
 	fps = std::to_wstring(f);
 	//Oyster::Graphics::API::RenderText(L"Lanariel",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
 	//Oyster::Graphics::API::RenderText(L"Lanariel WAS HERE",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
-	//Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
+	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float3(0,1,0));
 	Oyster::Graphics::API::EndFrame();
 
 	return S_OK;

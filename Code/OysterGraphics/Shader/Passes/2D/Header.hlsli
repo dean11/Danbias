@@ -3,9 +3,14 @@ struct Vertex2DIn
 	float2 Pos : Position;
 };
 
-cbuffer EveryObject2D : register(c0)
+cbuffer EveryObject2D : register(b0)
 {
 	float4x4 Translation;
+};
+
+cbuffer ColorData : register(b0)
+{
+	float3 Color;
 };
 
 struct Pixel2DIn

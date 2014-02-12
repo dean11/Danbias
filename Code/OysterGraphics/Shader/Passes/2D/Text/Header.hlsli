@@ -1,5 +1,5 @@
 #include "../Header.hlsli"
-cbuffer TextPerObject : register(c0)
+cbuffer TextPerObject : register(b0)
 {
 	float4x4 gWorld;
 };
