@@ -18,17 +18,11 @@ struct  LobbyState::myData
 	int modelCount; 
 	// UI object
 	// game client* 
-}privData;
+} privData;
 
-LobbyState::LobbyState(void)
-{
-		
-}
+LobbyState::LobbyState(void) {}
 
-LobbyState::~LobbyState(void)
-{
-	
-}
+LobbyState::~LobbyState(void) {}
 
 bool LobbyState::Init(Oyster::Network::NetworkClient* nwClient)
 {
@@ -39,6 +33,7 @@ bool LobbyState::Init(Oyster::Network::NetworkClient* nwClient)
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
 	return true;
 }
+
 bool LobbyState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
@@ -137,13 +132,27 @@ bool LobbyState::Release()
 	privData = NULL;
 	return true;
 }
-void LobbyState::Protocol(ProtocolStruct* protocol)
-{
-	if((PlayerName*)protocol)
-		PlayerJoinProtocol((PlayerName*)protocol);
-	
-}
-void LobbyState::PlayerJoinProtocol(PlayerName* name)
-{
 
+using namespace ::Oyster::Network;
+
+void LobbyState::DataRecieved( NetEvent<NetworkClient*, ClientEventArgs> e )
+{
+	CustomNetProtocol data = e.args.data.protocol;
+	short ID = data[0].value.netShort; // fetching the id data.
+	
+	// Block irrelevant messages.
+	if( !ProtocolIsLobby(ID) )
+		return;
+
+	switch(ID)
+	{
+	case protocol_Lobby_Create:		break; /** @todo TODO: implement */
+	case protocol_Lobby_Start:		break; /** @todo TODO: implement */
+	case protocol_Lobby_Join:		break; /** @todo TODO: implement */
+	case protocol_Lobby_Login:		break; /** @todo TODO: implement */
+	case protocol_Lobby_Refresh:	break; /** @todo TODO: implement */
+	case protocol_Lobby_ClientData:	break; /** @todo TODO: implement */
+	case protocol_Lobby_GameData:	break; /** @todo TODO: implement */
+	default:						break;
+	}
 }
