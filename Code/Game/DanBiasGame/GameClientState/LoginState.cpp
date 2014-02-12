@@ -257,7 +257,6 @@ bool LoginState::Release()
 	}
 
 	delete privData->collection;
-	//EventHandler::Instance().DeleteCollection(privData->collection);
 
 	delete privData;  
 	privData = NULL;

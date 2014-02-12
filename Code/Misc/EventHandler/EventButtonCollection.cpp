@@ -8,8 +8,8 @@
 
 using namespace Oyster::Event;
 
-EventButtonCollection::EventButtonCollection() 
-	: collectionState(EventCollectionState_Enabled)
+EventButtonCollection::EventButtonCollection(EventCollectionState state) 
+	: collectionState(state)
 {
 }
 
@@ -65,6 +65,13 @@ void EventButtonCollection::SetState(const EventCollectionState state)
 
 void EventButtonCollection::Clear()
 {
+	int size = buttons.size();
+	for(int i = 0; i < size; i++)
+	{
+		delete buttons[i];
+		buttons[i] = NULL;
+	}
 	buttons.clear();
+
 	collectionState = EventCollectionState_Enabled;
 }

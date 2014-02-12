@@ -29,11 +29,21 @@ namespace Oyster
 			void Update(InputClass* inputObject);
 			void Render();
 
+			/*Add a collection to the EventHandler will only add collections not already present in the list.
+
+			*/
 			void AddCollection(EventButtonCollection* collection);
 			void DeleteCollection(EventButtonCollection* collection);
 
 		private:
+			//Can't copy this class.
+			EventHandler(const EventHandler& obj);
+			EventHandler& operator =(const EventHandler& obj);
+
+		private:
 			std::vector<EventButtonCollection*> collections;
+
+			//EventButtonCollection is a firend so it can delete it self.
 			friend class EventButtonCollection;
 		};
 	}
