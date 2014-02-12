@@ -156,8 +156,8 @@ void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
 
 void Player::Jump()
 {
-	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
-	//this->rigidBody->GetState().SetLinearVelocity(up *10);
+	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
+	this->rigidBody->ApplyImpulse(up *2000);
 }
 
 bool Player::IsWalking()

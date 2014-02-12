@@ -50,11 +50,11 @@ bool GameState::Init(Oyster::Network::NetworkClient* nwClient)
 GameState::gameStateState GameState::LoadGame() 
 {
  Oyster::Graphics::Definitions::Pointlight plight;
- plight.Pos = Float3(315, 0 ,5);
+ plight.Pos = Float3(615, 0 ,5);
  plight.Color = Float3(0.9f,0.7f,0.2f);
- plight.Radius = 10;
+ plight.Radius = 100;
  plight.Bright = 0.5f;
- //Oyster::Graphics::API::AddLight(plight);
+ Oyster::Graphics::API::AddLight(plight);
 	plight.Pos = Float3(10,800,5);
 	plight.Color = Float3(0.9f,0.7f,0.3f);
 	plight.Radius = 300;
@@ -122,9 +122,8 @@ bool GameState::LoadModels()
 		this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 	}
 
-	/*
 	// add crystal model 
-	modelData.position = Oyster::Math::Float3(10, 301, 0);
+	modelData.position = Oyster::Math::Float3(10, 601, 0);
 	modelData.modelPath = L"crystalformation_b.dan";
 	modelData.id = id++;
 	// load models
@@ -132,19 +131,19 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add house model 
-	modelData.position = Oyster::Math::Float3(-50, 290, 0);
+	modelData.position = Oyster::Math::Float3(-50, 590, 0);
 	//Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(Oyster::Math::Float3(0 ,Utility::Value::Radian(90.0f), 0));
 
 	modelData.visible = true;
 	modelData.modelPath = L"building_corporation.dan";
 	modelData.id = id++;
 	// load models
-	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
 
 	// add player model
-	modelData.position = Oyster::Math::Float3(0, 320, 0);
+	modelData.position = Oyster::Math::Float3(0, 602, 0);
 	modelData.modelPath = L"char_still_sizeref.dan";
 	modelData.id = id++;
 	// load models
@@ -152,7 +151,7 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add player model 2
-	modelData.position = Oyster::Math::Float3(50, 320, 0);
+	modelData.position = Oyster::Math::Float3(50, 602, 0);
 	modelData.modelPath = L"char_still_sizeref.dan";
 	modelData.id = id++;
 	// load models
@@ -160,7 +159,7 @@ bool GameState::LoadModels()
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
 	// add jumppad
-	modelData.position = Oyster::Math::Float3(4, 300.3, 0);
+	modelData.position = Oyster::Math::Float3(4, 600.3, 0);
 	modelData.modelPath = L"jumppad_round.dan";
 	modelData.id = id++;
 	// load models
@@ -174,7 +173,7 @@ bool GameState::LoadModels()
 	modelData.id = id++;
 	// load models
 	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);*/
+	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 	return true;
 }
 bool GameState::LoadModels(std::string mapFile)
@@ -374,7 +373,7 @@ bool GameState::Render(float dt)
 	std::wstring fps;
 	float f = 1/dt;
 	fps = std::to_wstring(f);
-	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.05f,0.08f));
+	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.2f,0.05f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;

@@ -113,7 +113,7 @@ void Level::InitiateLevel(std::string levelPath)
 void Level::InitiateLevel(float radius)
 {
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
-	API::Instance().SetGravity(50);
+	API::Instance().SetGravity(100);
 	int idCount = 100;
 	// add level sphere
 	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
@@ -165,20 +165,20 @@ void Level::InitiateLevel(float radius)
 
 
 
-	//// add crystal
+	// add crystal
+	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 605, 0), 5, 0.5f, 0.8f, 0.6f);
 
-	//ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 605, 0), 5);
-
-	//this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
-	//rigidBody_Crystal->SetCustomTag(this->dynamicObjects[nrOfBoxex]);
-
-	//
+	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+	rigidBody_Crystal->SetCustomTag(this->dynamicObjects[nrOfBoxex]);
+	this->dynamicObjects[nrOfBoxex]->objectID = idCount++;
+	
 
 
-	//// add house
-	//ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 905, 0), 0);
-	//this->staticObjects.Push(new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC));
-	//rigidBody_House->SetCustomTag(this->staticObjects[0]);
+	// add house
+	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20, 20, 20), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(-50, 590, 0), 0, 0.5f, 0.8f, 0.6f);
+	this->staticObjects.Push(new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC));
+	rigidBody_House->SetCustomTag(this->staticObjects[0]);
+	this->staticObjects[0]->objectID = idCount++;
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)

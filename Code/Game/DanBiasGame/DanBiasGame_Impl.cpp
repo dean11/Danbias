@@ -93,12 +93,12 @@ namespace DanBias
 				m_data->recieverObj->Update();
 			
 			capFrame += dt;
-			//if(capFrame > 0.03)
+			if(capFrame > 0.03)
 			{
-				Oyster::Graphics::API::Update(dt);
-				if(Update(dt) != S_OK)
+				Oyster::Graphics::API::Update(capFrame);
+				if(Update(capFrame) != S_OK)
 					return DanBiasClientReturn_Error;
-				if(Render(dt) != S_OK)
+				if(Render(capFrame) != S_OK)
 					return DanBiasClientReturn_Error;
 				capFrame = 0; 
 			}
