@@ -11,11 +11,12 @@
 #include "Buttons\ButtonRectangle.h"
 
 using namespace ::DanBias::Client;
+using namespace ::Oyster;
 using namespace ::Oyster::Math3D;
 using namespace ::Oyster::Network;
+using namespace ::Oyster::Event;
 using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::StaticArray;
-using namespace ::Oyster::Event;
 
 struct MainState::MyData
 {
@@ -26,6 +27,7 @@ struct MainState::MyData
 	
 	UniquePointer<C_Object> object[2]; 
 	NetworkClient *nwClient;
+
 	EventButtonCollection button;
 };
 
@@ -46,38 +48,6 @@ bool MainState::Init( NetworkClient* nwClient )
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->privData->button );
 
-	// load models
-	LoadModels(L"UImodels.txt");
-	return true;
-}
-
-bool MainState::LoadModels(std::wstring file)
-{
-	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Float3(0,0,5);
-	plight.Color = Float3(1,1,1);
-	plight.Radius = 100;
-	plight.Bright = 1;
-	Oyster::Graphics::API::AddLight(plight);
-	// open file
-	// read file 
-	// init models
-
-	ModelInitData modelData;
-
-	modelData.rotation = Quaternion::identity;
-	modelData.scale =  Float3(1,1,1);
-	modelData.visible = true;
-	modelData.modelPath = L"box.dan";
-	
-
-	modelData.position = Float3(2,2,2);
-	privData->object[0] = new C_StaticObj();
-	privData->object[0]->Init(modelData);
-
-	modelData.position = Float3(-2,0,-2);
-	privData->object[1] = new C_StaticObj();
-	privData->object[1]->Init(modelData);
 	return true;
 }
 
@@ -127,17 +97,17 @@ GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyI
 
 bool MainState::Render()
 {
-	Oyster::Graphics::API::SetView(privData->view);
-	Oyster::Graphics::API::SetProjection( privData->proj);
+	Graphics::API::SetView(privData->view);
+	Graphics::API::SetProjection( privData->proj);
 
-	Oyster::Graphics::API::NewFrame();
+	Graphics::API::NewFrame();
 	// render objects
 	//for (int i = 0; i < NumElementsOf(privData->object); i++)
 	//{
 	//	privData->object[i]->Render();
 	//}
 
-	Oyster::Graphics::API::StartGuiRender();
+	Graphics::API::StartGuiRender();
 	this->privData->button.Render();
 
 
@@ -145,7 +115,7 @@ bool MainState::Render()
 
 	// render lights
 
-	Oyster::Graphics::API::EndFrame();
+	Graphics::API::EndFrame();
 	return true;
 }
 

@@ -18,7 +18,6 @@ namespace DanBias
 			MainState(void);
 			~MainState(void);
 			bool Init( Oyster::Network::NetworkClient* nwClient );
-			bool LoadModels(std::wstring file);
 			ClientState Update(float deltaTime, InputClass* KeyInput);
 			
 			bool Render();
