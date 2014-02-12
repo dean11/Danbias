@@ -262,6 +262,7 @@ void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void*
 
 	Sphere* sphere;
 	Box* box;
+	Cone* cone;
 
 	switch(collideable->type)
 	{
@@ -293,19 +294,19 @@ void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void*
 
 			break;
 
-		//case ICollideable::Type::Type_cone:
-			//cone = dynamic_cast<Cone*>(collideable);
+		case ICollideable::Type::Type_cone:
+			cone = dynamic_cast<Cone*>(collideable);
 			// Add collision shape
-			//shape = new btConeShape();
+			shape = new btConeShape(cone->radius, cone->height.GetLength());
 
 			// Add motion state
-			//state = new btDefaultMotionState(btTransform(btQuaternion(),btVector3(cone->center.x, cone->center.y, cone->center.z)));
+			state = new btDefaultMotionState(btTransform(btQuaternion(btVector3(cone->height.x, cone->height.y, cone->height.z).normalized(), 0.0f),btVector3(cone->position.x, cone->position.y, cone->position.z)));
 
 			// Add rigid body
-			//btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, state, shape);
-			//body = new btRigidBody(rigidBodyCI);
+			rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo (0, state, shape);
+			body = new btRigidBody(rigidBodyCI);
 
-			//break;
+			break;
 		default:
 			return;
 	}

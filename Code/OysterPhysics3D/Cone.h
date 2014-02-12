@@ -25,7 +25,6 @@ namespace Oyster
 
 			Cone & operator = ( const Cone &Cone );
 
-		private:
 			Oyster::Math::Float3 height;
 			Oyster::Math::Float3 position;
 			Oyster::Math::Float radius;
