@@ -40,7 +40,7 @@ bool MainState::Init( NetworkClient* nwClient )
 	this->privData = new MyData();
 
 	// create buttons
-	ButtonRectangle<GameClientState*> *button = new ButtonRectangle<GameClientState*>( L"box_tex.png", OnButtonInteract, this, 0.5f, 0.5f, 0.1f, 0.1f, true );
+	ButtonRectangle<GameClientState*> *button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract, this, 0.5f, 0.5f, 0.1f, 0.1f, true );
 	this->privData->button.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
