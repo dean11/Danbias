@@ -140,6 +140,13 @@ bool GameState::LoadModels()
 	this->staticObjects.Push(new C_StaticObj());
 	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
+	// add jumppad
+	modelData.position = Oyster::Math::Float3(4, 600.3, 0);
+	modelData.modelPath = L"jumppad_round.dan";
+	modelData.id = id++;
+	// load models
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
 	// add player model
 	modelData.position = Oyster::Math::Float3(0, 602, 0);
@@ -157,13 +164,7 @@ bool GameState::LoadModels()
 	this->dynamicObjects.Push(new C_DynamicObj());
 	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
-	// add jumppad
-	modelData.position = Oyster::Math::Float3(4, 600.3, 0);
-	modelData.modelPath = L"jumppad_round.dan";
-	modelData.id = id++;
-	// load models
-	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	
 
 	// add sky sphere
 	modelData.position = Oyster::Math::Float3(0,0,0);
