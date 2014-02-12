@@ -12,6 +12,8 @@ using namespace ::Utility::Value;
 
 API_Impl API_instance;
 
+
+
 API & API::Instance()
 {
 	return API_instance;
@@ -251,9 +253,72 @@ void API_Impl::ReleaseFromLimbo( const ICustomBody* objRef )
 	
 }
 
-void API_Impl::ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) )
+void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect)
 {
-	
+	btRigidBody* body;
+	btCollisionShape* shape;
+	btMotionState* state;
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, NULL, NULL);
+
+	Sphere* sphere;
+	Box* box;
+
+	switch(collideable->type)
+	{
+		case ICollideable::Type::Type_sphere:
+			sphere = dynamic_cast<Sphere*>(collideable);
+			// Add collision shape
+			shape = new btSphereShape(sphere->radius);
+
+			// Add motion state
+			state = new btDefaultMotionState(btTransform(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f),btVector3(sphere->center.x, sphere->center.y, sphere->center.z)));
+
+			// Add rigid body
+			rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo(0, state, shape);
+			body = new btRigidBody(rigidBodyCI);
+			
+			break;
+
+		case ICollideable::Type::Type_box:
+			box = dynamic_cast<Box*>(collideable);
+			// Add collision shape
+			shape = new btBoxShape(btVector3(box->boundingOffset.x, box->boundingOffset.y, box->boundingOffset.z));
+
+			// Add motion state
+			state = new btDefaultMotionState(btTransform(btQuaternion(0.0f, 0.0f, 0.0f, 1.0f),btVector3(box->center.x, box->center.y, box->center.z)));
+
+			// Add rigid body
+			rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo(0, state, shape);
+			body = new btRigidBody(rigidBodyCI);
+
+			break;
+
+		//case ICollideable::Type::Type_cone:
+			//cone = dynamic_cast<Cone*>(collideable);
+			// Add collision shape
+			//shape = new btConeShape();
+
+			// Add motion state
+			//state = new btDefaultMotionState(btTransform(btQuaternion(),btVector3(cone->center.x, cone->center.y, cone->center.z)));
+
+			// Add rigid body
+			//btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, state, shape);
+			//body = new btRigidBody(rigidBodyCI);
+
+			//break;
+		default:
+			return;
+	}
+	ContactSensorCallback callback(*body, effect, args);
+
+	this->dynamicsWorld->contactTest(body, callback);
+
+	delete state;
+	state = NULL;
+	delete shape;
+	shape = NULL;
+	delete body;
+	body = NULL;
 }
 
 namespace Oyster 
