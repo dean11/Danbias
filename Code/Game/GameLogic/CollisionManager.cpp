@@ -40,6 +40,10 @@ using namespace GameLogic;
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
+		case OBJECT_TYPE::OBJECT_TYPE_JUMPPAD:
+			int i = 0;
+		// JUMP
+			break;
 		}
 
 		//return Physics::ICustomBody::SubscriptMessage_none;
