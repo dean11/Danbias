@@ -83,7 +83,7 @@
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
     <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Game\GameLogic\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)OysterMath\;$(SolutionDir)GamePhysics\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;$(SolutionDir)OysterPhysics3D\;$(SolutionDir)Game\ServerDependencies;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(SolutionDir)..\External\Lib\ServerDependencies\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(SolutionDir)..\External\Lib\ServerDependencies\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -99,7 +99,7 @@
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
     <IncludePath>$(SolutionDir)..\External\Include\;$(SolutionDir)Game\GameProtocols\;$(SolutionDir)Game\GameLogic\;$(SolutionDir)Network\NetworkAPI\;$(SolutionDir)OysterMath\;$(SolutionDir)GamePhysics\;$(SolutionDir)Misc\;$(SolutionDir)WindowManager\;$(SolutionDir)OysterPhysics3D\;$(SolutionDir)Game\ServerDependencies;C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(SolutionDir)..\External\Lib\ServerDependencies\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(OutDir);$(SolutionDir)..\External\Lib\WindowManager\;C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(SolutionDir)..\External\Lib\ServerDependencies\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
