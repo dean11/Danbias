@@ -95,19 +95,22 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		heldObject = NULL;
 		return;
 	}
-	Oyster::Math::Float3 up = owner->GetOrientation().v[1];
-	Oyster::Math::Float3 look = owner->GetLookDir();
-	Oyster::Math::Float3 pos = owner->GetPosition();
+
+	Oyster::Math::Float radius = 2;
+	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
+	Oyster::Math::Float lenght = 5;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
 	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (200 * dt);
-	Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(look, up, pos);
 
-	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/8,1,1,50); 
-	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
+	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(look*5,pos,radius);
+
+	
+
 	forcePushData args;
 	args.pushForce = pushForce;
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,&args,ForcePushAction);
+	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
 }
 
 /********************************************************
@@ -126,7 +129,7 @@ void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 {
-	if(hasObject) return; //this test checks if the weapon already has something picked up, if so then it cant use this function
+	//if(hasObject) return; //this test checks if the weapon already has something picked up, if so then it cant use this function
 
 	PickUpObject(usage,dt);	//first test if there is a nearby object to pickup
 
@@ -142,19 +145,15 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	forcePushData args;
 	args.pushForce = -pushForce;
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,&args,ForcePushAction);
+	//Oyster::Physics::API::Instance().ApplyEffect(hitFrustum,&args,ForcePushAction);
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
 	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized()*5;
-	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos,20);
-	/*Oyster::Math::Float4x4 aim = Oyster::Math3D::ViewMatrix_LookAtDirection(owner->GetLookDir(), owner->GetRigidBody()->GetGravityNormal(), owner->GetPosition());
-
-	Oyster::Math::Float4x4 hitSpace = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/4,1,1,20); 
-	Oyster::Collision3D::Frustrum hitFrustum = Oyster::Collision3D::Frustrum(Oyster::Math3D::ViewProjectionMatrix(aim,hitSpace));
-*/
-
+	Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,20);
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitSphere,this,AttemptPickUp);
+
+	delete hitSphere;
 }

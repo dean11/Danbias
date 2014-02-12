@@ -23,6 +23,7 @@ EventHandler::~EventHandler()
 	for(int i = 0; i < size; i++)
 	{
 		delete collections[i];
+		collections[i] = NULL;
 	}
 }
 
@@ -32,6 +33,7 @@ void EventHandler::Clean()
 	for(int i = 0; i < size; i++)
 	{
 		delete collections[i];
+		collections[i] = NULL;
 	}
 	collections.clear();
 }
@@ -54,6 +56,12 @@ void EventHandler::Render()
 
 void EventHandler::AddCollection(EventButtonCollection* collection)
 {
+	for(int i = 0; i < collections.size(); i++)
+	{
+		//Do not add the collection if it's already in the list.
+		if(collections.at(i) == collection)
+			return;
+	}
 	collections.push_back(collection);
 }
 
@@ -64,6 +72,7 @@ void EventHandler::DeleteCollection(EventButtonCollection* collection)
 		if(collections.at(i) == collection)
 		{
 			delete collection;
+			collection = NULL;
 			collections.erase(collections.begin() + i);
 			break;
 		}

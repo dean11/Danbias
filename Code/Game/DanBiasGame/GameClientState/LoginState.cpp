@@ -26,7 +26,7 @@ struct  LoginState::myData
 
 	//Menu button collection
 	EventButtonCollection* collection;
-
+	bool createGame;
 	int testNumber;
 }privData;
 
@@ -51,7 +51,7 @@ void LoginState::ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e)
 	switch(type)
 	{
 	case Create:
-		/*if(e.state == ButtonState_None)
+		if(e.state == ButtonState_None)
 		{
 			int a = 0;
 			std::cout << "None" << std::endl;
@@ -76,7 +76,8 @@ void LoginState::ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e)
 			//Change to create state or something similar
 			int a = 0;
 			std::cout << "Released" << std::endl;
-		}*/
+			e.owner->privData->createGame = true;
+		}
 		break;
 	case Options:
 		break;
@@ -110,22 +111,23 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 	//Create menu buttons
 	privData->collection = new EventButtonCollection;
 	EventHandler::Instance().AddCollection(privData->collection);
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.2f, 0.1f, 0.2f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.3f, 0.1f, 0.2f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.4f, 0.1f, 0.2f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.5f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.2f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.3f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.4f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.5f, 0.1f, 0.1f));
 
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.15f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.25f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.35f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.45f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.15f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.25f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.35f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.45f, 0.05f, 0.1f, 0.1f));
 
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.5f, 0.5f, 0.3f, 0.3f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.5f, 0.5f, 0.3f, 0.3f));
 
 	//Incr/decr buttons
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Incr, 0.85f, 0.2f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Decr, 0.55f, 0.2f, 0.1f, 0.1f));
-
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Incr, 0.85f, 0.2f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Decr, 0.55f, 0.2f, 0.1f, 0.1f));
+	
+	privData->createGame = false;
 	privData->testNumber = 0;
 
 	return true;
@@ -182,7 +184,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	// check data from server
 
 	// create game
-	if( KeyInput->IsKeyPressed(DIK_C)) 
+	if( KeyInput->IsKeyPressed(DIK_C) || privData->createGame) 
 	{
 		DanBias::GameServerAPI::ServerInitDesc desc; 
 
@@ -218,7 +220,6 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 }
 bool LoginState::Render(float dt)
 {
-
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 
@@ -241,8 +242,9 @@ bool LoginState::Render(float dt)
 	wchar_t temp[10];
 	_itow_s(privData->testNumber, temp, 10);
 	number = temp;
+
 	Oyster::Graphics::API::StartTextRender();
-	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7, 0.2), Oyster::Math::Float2(0.1, 0.1));
+	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7f, 0.2f), Oyster::Math::Float2(0.1f, 0.1f*(1008.0f/730.0f)), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
@@ -258,7 +260,6 @@ bool LoginState::Release()
 	}
 
 	delete privData->collection;
-	//EventHandler::Instance().DeleteCollection(privData->collection);
 
 	delete privData;  
 	privData = NULL;

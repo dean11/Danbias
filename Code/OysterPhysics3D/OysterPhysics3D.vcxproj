@@ -154,6 +154,7 @@
     <ClInclude Include="BoxAxisAligned.h" />
     <ClInclude Include="FluidDrag.h" />
     <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="Cone.h" />
     <ClInclude Include="ICollideable.h" />
     <ClInclude Include="Inertia.h" />
     <ClInclude Include="Line.h" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="BoxAxisAligned.cpp" />
+    <ClCompile Include="Cone.cpp" />
     <ClCompile Include="FluidDrag.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="ICollideable.cpp" />

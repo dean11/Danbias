@@ -16,7 +16,7 @@ namespace Oyster
 				Core::PipelineManager::SetRenderPass(Render::Resources::Gui::Pass);
 			}
 
-			void Gui::Render(ID3D11ShaderResourceView* tex,Math::Float2 pos, Math::Float2 size)
+			void Gui::Render(ID3D11ShaderResourceView* tex,Math::Float2 pos, Math::Float2 size, Math::Float3 color)
 			{
 				Core::deviceContext->PSSetShaderResources(0,1,&tex);
 
@@ -34,6 +34,12 @@ namespace Oyster
 				void* data = Render::Resources::Gui::Data.Map();
 				memcpy(data,&gd,sizeof(Definitions::GuiData));
 				Render::Resources::Gui::Data.Unmap();
+
+				data = Render::Resources::Gui::Color.Map();
+				memcpy(data,&color,sizeof(Math::Float3));
+				Render::Resources::Gui::Color.Unmap();
+
+
 				Core::deviceContext->Draw(1,0);
 			}
 
@@ -43,7 +49,7 @@ namespace Oyster
 				Core::PipelineManager::SetRenderPass(Resources::Gui::Text::Pass);
 			}
 
-			void Gui::RenderText(std::wstring text, Math::Float2 pos, Math::Float2 size)
+			void Gui::RenderText(std::wstring text, Math::Float2 pos, Math::Float2 size, Math::Float3 color)
 			{
 				
 				size.x = size.x / (text.length() * TEXT_SPACING /2);
@@ -69,6 +75,10 @@ namespace Oyster
 				memcpy(data,&gd,sizeof(Definitions::GuiData));
 				Render::Resources::Gui::Data.Unmap();
 				Definitions::Text2D tmpInst;
+
+				data = Render::Resources::Gui::Color.Map();
+				memcpy(data,&color,sizeof(Math::Float3));
+				Render::Resources::Gui::Color.Unmap();
 
 				void* dest = Resources::Gui::Text::Vertex.Map();
 				Definitions::Text2D* dataView = reinterpret_cast<Definitions::Text2D*>(dest);

@@ -28,20 +28,20 @@ namespace Oyster
 		};
 
 		/********************************
-		This EventButtonCollection will handle the destruction of the buttons when they are added to the collection.
-
+		This EventButtonCollection will handle the destruction of the buttons when they are added to the collection
 		********************************/
 		class EventButtonCollection
 		{
 		public:
-			EventButtonCollection();
+			EventButtonCollection(EventCollectionState state = EventCollectionState_Enabled);
 			~EventButtonCollection();
 
 			void Update(InputClass* inputObject);
 			void Render();
 
-			template <typename Owner>
-			void AddButton(EventButton<Owner>* button)
+			/*Add a button to the collection when a button is added to the collection you are not allowed to delete it.
+			*/
+			template <typename Owner> void AddButton(EventButton<Owner>* button)
 			{
 				buttons.push_back(button);
 			}
@@ -51,6 +51,11 @@ namespace Oyster
 
 			//Clear all buttons and reset the state.
 			void Clear();
+
+		private:
+			//Can't copy
+			EventButtonCollection(const EventButtonCollection& obj);
+			EventButtonCollection& operator =(const EventButtonCollection& obj);
 
 		protected:
 			std::vector<IEventButton*> buttons;

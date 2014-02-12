@@ -12,9 +12,9 @@ namespace Oyster
 			{
 			public:
 				static void Begin2DRender();
-				static void Render(ID3D11ShaderResourceView* tex, Math::Float2 pos, Math::Float2 size);
+				static void Render(ID3D11ShaderResourceView* tex, Math::Float2 pos, Math::Float2 size, Math::Float3 tint = Math::Float3(1,1,1));
 				static void Begin2DTextRender();
-				static void RenderText(std::wstring text, Math::Float2 pos, Math::Float2 size);
+				static void RenderText(std::wstring text, Math::Float2 pos, Math::Float2 size, Math::Float3 tint = Math::Float3(1,1,1));
 			};
 		}
 	}

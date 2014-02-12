@@ -82,7 +82,7 @@ namespace Oyster
 								}
 								int b = 0;
 								Model::Animation A = *models[i].Animation.AnimationPlaying;
-								while(models[i].Animation.AnimationTime>A.duration)
+								while(models[i].Animation.AnimationTime>A.duration && models[i].Animation.LoopAnimation)
 									models[i].Animation.AnimationTime -= (float)A.duration;
 									
 								float position = models[i].Animation.AnimationTime;

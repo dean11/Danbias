@@ -57,13 +57,13 @@ namespace Oyster
 			static void StartGuiRender();
 
 			//! @brief Renders a single GUI element using the texture provided and the Pos in the center, %based system
-			static void RenderGuiElement(Texture, Math::Float2 Pos, Math::Float2 Size);
+			static void RenderGuiElement(Texture, Math::Float2 Pos, Math::Float2 Size, Math::Float3 Color = Math::Float3(1,1,1));
 
 			//! @brief Configures Renderer to process 2D Text, data will be passed in to EndFrame()
 			static void StartTextRender();
 
 			//! @brief Renders a single GUI string using the texture provided and the Pos in the center, %based system
-			static void RenderText(std::wstring, Math::Float2 Pos, Math::Float2 Size);
+			static void RenderText(std::wstring, Math::Float2 Pos, Math::Float2 Size, Math::Float3 Color = Math::Float3(1,1,1));
 
 			//! @brief Performs light calculations, post effects and presents the scene
 			static void EndFrame();

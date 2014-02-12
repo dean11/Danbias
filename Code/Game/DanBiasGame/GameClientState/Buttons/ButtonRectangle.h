@@ -21,17 +21,17 @@ namespace DanBias
 			ButtonRectangle()
 				: EventButtonGUI(), width(0), height(0)
 			{}
-			ButtonRectangle(std::wstring textureName, Owner owner, float xPos, float yPos, float width, float height)
-				: EventButtonGUI(textureName, owner, xPos, yPos, width, height)
+			ButtonRectangle(std::wstring textureName, Owner owner, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true)
+				: EventButtonGUI(textureName, owner, xPos, yPos, width, height, resizeToScreenAspectRatio)
 			{}
-			ButtonRectangle(std::wstring textureName, EventFunc func, float xPos, float yPos, float width, float height)
-				: EventButtonGUI(textureName, func, xPos, yPos, width, height)
+			ButtonRectangle(std::wstring textureName, EventFunc func, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true)
+				: EventButtonGUI(textureName, func, xPos, yPos, width, height, resizeToScreenAspectRatio)
 			{}
-			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float width, float height)
-				: EventButtonGUI(textureName, func, owner, xPos, yPos, width, height)
+			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true)
+				: EventButtonGUI(textureName, func, owner, xPos, yPos, width, height, resizeToScreenAspectRatio)
 			{}
-			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float width, float height)
-				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, width, height)
+			ButtonRectangle(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true)
+				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, width, height, resizeToScreenAspectRatio)
 			{}
 			virtual ~ButtonRectangle()
 			{}

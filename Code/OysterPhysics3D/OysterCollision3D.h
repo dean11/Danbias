@@ -17,6 +17,7 @@
 #include "Box.h"
 #include "Frustrum.h"
 #include "Line.h"
+#include "Cone.h"
 
 namespace Oyster { namespace Collision3D { namespace Utility
 {

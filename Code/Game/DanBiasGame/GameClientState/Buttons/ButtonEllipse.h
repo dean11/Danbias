@@ -21,17 +21,17 @@ namespace DanBias
 			ButtonEllipse() 
 				: EventButtonGUI(), radius(0)
 			{}
-			ButtonEllipse(std::wstring textureName, Owner owner, float xPos, float yPos, float textureWidth, float textureHeight) 
-				: EventButtonGUI(textureName, owner, xPos, yPos, textureWidth, textureHeight)
+			ButtonEllipse(std::wstring textureName, Owner owner, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
+				: EventButtonGUI(textureName, owner, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
 			{}
-			ButtonEllipse(std::wstring textureName, EventFunc func, float xPos, float yPos, float textureWidth, float textureHeight) 
-				: EventButtonGUI(textureName, func, xPos, yPos, textureWidth, textureHeight)
+			ButtonEllipse(std::wstring textureName, EventFunc func, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
+				: EventButtonGUI(textureName, func, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
 			{}
-			ButtonEllipse(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float textureWidth, float textureHeight) 
-				: EventButtonGUI(textureName, func, owner, xPos, yPos, textureWidth, textureHeight)
+			ButtonEllipse(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
+				: EventButtonGUI(textureName, func, owner, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
 			{}
-			ButtonEllipse(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float textureWidth, float textureHeight) 
-				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, textureWidth, textureHeight)
+			ButtonEllipse(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
+				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
 			{}
 			virtual ~ButtonEllipse()
 			{}
@@ -40,9 +40,9 @@ namespace DanBias
 			bool Collision(InputClass* inputObject)
 			{
 				POINT p;
+				RECT r;
 				GetCursorPos(&p);
 				ScreenToClient(WindowShell::GetHWND(), &p);
-				RECT r;
 				GetClientRect(WindowShell::GetHWND(), &r);
 
 				//Should come from the InputClass
