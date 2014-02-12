@@ -142,8 +142,19 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
+		//Get mouse pos and window size (Temporary)
+		POINT p;
+		RECT r;
+		GetCursorPos(&p);
+		ScreenToClient(WindowShell::GetHWND(), &p);
+		GetClientRect(WindowShell::GetHWND(), &r);
+
 		//Update menu buttons
-		EventHandler::Instance().Update(m_data->inputObj);
+		MouseInput mouseInput;
+		mouseInput.x = (float)p.x / (float)r.right;
+		mouseInput.y = (float)p.y / (float)r.bottom;
+		mouseInput.mouseButtonPressed = m_data->inputObj->IsMousePressed();
+		EventHandler::Instance().Update(mouseInput);
 
 		m_data->inputObj->Update();
 

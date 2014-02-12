@@ -32,13 +32,13 @@ EventButtonCollection::~EventButtonCollection()
 	}
 }
 
-void EventButtonCollection::Update(InputClass* inputObject)
+void EventButtonCollection::Update(MouseInput& input)
 {
 	if(this->collectionState == EventCollectionState_Enabled)
 	{
 		for(int i = 0; i < (int)buttons.size(); i++)
 		{
-			buttons[i]->Update(inputObject);
+			buttons[i]->Update(input);
 		}
 	}
 }

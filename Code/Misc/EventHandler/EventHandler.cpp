@@ -27,11 +27,11 @@ void EventHandler::Clean()
 	collections.clear();
 }
 
-void EventHandler::Update(InputClass* inputObject)
+void EventHandler::Update(MouseInput& input)
 {
 	for(int i = 0; i < (int)collections.size(); i++)
 	{
-		collections.at(i)->Update(inputObject);
+		collections.at(i)->Update(input);
 	}
 }
 

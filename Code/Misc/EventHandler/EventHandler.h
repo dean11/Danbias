@@ -26,7 +26,7 @@ namespace Oyster
 
 			void Clean();
 
-			void Update(InputClass* inputObject);
+			void Update(MouseInput& input);
 			void Render();
 
 			/*Add a collection to the EventHandler will only add collections not already present in the list.
