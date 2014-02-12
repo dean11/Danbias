@@ -449,15 +449,12 @@ void GameState::readKeyInput(InputClass* KeyInput)
 		camera->Yaw(-KeyInput->GetYaw());
 		camera->Pitch(KeyInput->GetPitch());
 		pitch = KeyInput->GetPitch();
-		camera->UpdateViewMatrix();
-		GameLogic::Protocol_PlayerLook playerLookDir;
-		Oyster::Math::Float4 look = camera->GetRight();
-		playerLookDir.lookDirX = look.x;
-		playerLookDir.lookDirY = look.y;
-		playerLookDir.lookDirZ = look.z;
-		playerLookDir.deltaX = -KeyInput->GetYaw();
+		camera->UpdateViewMatrix();		
+		Oyster::Math::Float3 look = camera->GetLook();
+		Oyster::Math::Float3 right = camera->GetRight();
+		GameLogic::Protocol_PlayerLook playerLook(look, right);
 
-		privData->nwClient->Send(playerLookDir);
+		privData->nwClient->Send(playerLook);
 	}
 
 	// shoot

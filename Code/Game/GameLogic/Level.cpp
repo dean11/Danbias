@@ -82,7 +82,7 @@ void Level::InitiateLevel(std::string levelPath)
 				// add rigidbody to the logical obj
 				// Object::DefaultCollisionBefore, Object::DefaultCollisionAfter for now, gamelogic will take care of this
 				// set object_type to objID 
-				this->staticObjects.Push(new StaticObject(rigidBody,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+				this->staticObjects.Push(new StaticObject(rigidBody, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
 
 				this->staticObjects[staticObjCount]->objectID = modelCount++;
 				rigidBody->SetCustomTag(this->staticObjects[staticObjCount]);
@@ -97,7 +97,7 @@ void Level::InitiateLevel(std::string levelPath)
 
 				rigidBody_Dynamic = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5, 0.5f, 0.8f, 0.6f);
 
-				this->dynamicObjects.Push(new DynamicObject(rigidBody_Dynamic,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+				this->dynamicObjects.Push(new DynamicObject(rigidBody_Dynamic, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
 				this->dynamicObjects[dynamicObjCount]->objectID = modelCount++;
 				rigidBody_Dynamic->SetCustomTag(this->dynamicObjects[dynamicObjCount]);
 			}
@@ -117,7 +117,7 @@ void Level::InitiateLevel(float radius)
 	int idCount = 100;
 	// add level sphere
 	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
-	levelObj = new StaticObject(rigidBody, LevelCollisionBefore, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
+	levelObj = new StaticObject(rigidBody, LevelCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_WORLD);
 	this->levelObj->objectID = idCount++;
 	rigidBody->SetCustomTag(levelObj);
 
@@ -130,7 +130,7 @@ void Level::InitiateLevel(float radius)
 	{
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5, 0.5f, 0.8f, 0.6f);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
 		this->dynamicObjects[i]->objectID = idCount++;
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
 	}
@@ -168,7 +168,7 @@ void Level::InitiateLevel(float radius)
 	// add crystal
 	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 605, 0), 5, 0.5f, 0.8f, 0.6f);
 
-	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
 	rigidBody_Crystal->SetCustomTag(this->dynamicObjects[nrOfBoxex]);
 	this->dynamicObjects[nrOfBoxex]->objectID = idCount++;
 	
@@ -176,7 +176,7 @@ void Level::InitiateLevel(float radius)
 
 	// add house
 	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20, 20, 20), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(-50, 590, 0), 0, 0.5f, 0.8f, 0.6f);
-	this->staticObjects.Push(new StaticObject(rigidBody_House,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC));
+	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_GENERIC));
 	rigidBody_House->SetCustomTag(this->staticObjects[0]);
 	this->staticObjects[0]->objectID = idCount++;
 }

@@ -41,7 +41,7 @@ namespace GameLogic
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;
-			void Rotate(const Oyster::Math3D::Float4 lookDir)		override;
+			void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)		override;
 
 			Player *player;
 		};

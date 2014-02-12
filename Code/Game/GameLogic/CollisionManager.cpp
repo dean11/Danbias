@@ -38,7 +38,7 @@ using namespace GameLogic;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
-			player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
+			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
 
@@ -89,28 +89,15 @@ using namespace GameLogic;
 		}
 		
 	}	
-	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_none;
-	}
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
-	}
-	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_player_collision_response;
 	}
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
-	//Oyster::Physics::ICustomBody::SubscriptMessage
-	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
-	}
-
 	Oyster::Physics::ICustomBody::SubscriptMessage CollisionManager::IgnoreCollision(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody *obj)
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;

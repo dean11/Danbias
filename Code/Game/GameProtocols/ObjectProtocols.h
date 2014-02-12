@@ -326,7 +326,7 @@ namespace GameLogic
 			this->rotation[2] = p[7].value.netFloat;
 			this->rotation[3] = p[8].value.netFloat;
 		}
-		Protocol_ObjectPositionRotation(float p[3], float r[3], int id)
+		Protocol_ObjectPositionRotation(float p[3], float r[4], int id)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectPositionRotation;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;

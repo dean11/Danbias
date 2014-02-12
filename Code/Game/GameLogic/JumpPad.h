@@ -9,7 +9,6 @@ namespace GameLogic
 		JumpPad(void);
 
 		JumpPad(Oyster::Physics::ICustomBody *rigidBody 
-			,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter)
 			,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss)
 			,OBJECT_TYPE type, Oyster::Math::Float3 pushForce);
 

@@ -76,12 +76,37 @@ namespace GameLogic
 
 	struct Protocol_PlayerLook :public Oyster::Network::CustomProtocolObject
 	{
-		float lookDirX;
-		float lookDirY;
-		float lookDirZ;
-		float deltaX;
+		// can be swapped to a quaternion later
+		float lookDir[3]; 
+		float right[3]; 
 
 		Protocol_PlayerLook()
+		{
+			this->protocol[0].value = protocol_Gameplay_PlayerLookDir;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			// LookDir
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			// Right
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
+
+			memset(&this->lookDir[0], 0, sizeof(float) * 3);
+			memset(&this->right[0], 0, sizeof(float) * 3);
+		}
+		Protocol_PlayerLook(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->lookDir[0] = p[1].value.netFloat;
+			this->lookDir[1] = p[2].value.netFloat;
+			this->lookDir[2] = p[3].value.netFloat;
+
+			this->right[0] = p[4].value.netFloat;
+			this->right[1] = p[5].value.netFloat;
+			this->right[2] = p[6].value.netFloat;
+		}
+		Protocol_PlayerLook(float l[3], float r[3])
 		{
 			this->protocol[0].value = protocol_Gameplay_PlayerLookDir;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
@@ -89,32 +114,23 @@ namespace GameLogic
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
-			
-		}
-		Protocol_PlayerLook(Oyster::Network::CustomNetProtocol& p)
-		{
-			lookDirX		= p[1].value.netFloat;
-			lookDirY		= p[2].value.netFloat;
-			lookDirZ		= p[3].value.netFloat;
-			deltaX			= p[4].value.netFloat;
-		}
-		const Protocol_PlayerLook& operator=(Oyster::Network::CustomNetProtocol& val)
-		{
-			lookDirX		= val[1].value.netFloat;
-			lookDirY		= val[2].value.netFloat;
-			lookDirZ		= val[3].value.netFloat;
-			deltaX			= val[4].value.netFloat;
 
-			return *this;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
+
+			memcpy(&this->lookDir[0], &l[0], sizeof(float) * 3);
+			memcpy(&this->right[0], &r[0], sizeof(float) * 3);
 		}
+		
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			this->protocol[1].value = lookDirX;
-			this->protocol[2].value = lookDirY;
-			this->protocol[3].value = lookDirZ;
-			this->protocol[4].value	= deltaX;
-
+			this->protocol[1].value = this->lookDir[0];
+			this->protocol[2].value = this->lookDir[1];
+			this->protocol[3].value = this->lookDir[2];
+			this->protocol[4].value = this->right[0];
+			this->protocol[5].value = this->right[1];
+			this->protocol[6].value = this->right[2];	
 
 			return protocol;
 		}

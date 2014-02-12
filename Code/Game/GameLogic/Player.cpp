@@ -7,7 +7,7 @@
 using namespace GameLogic;
 using namespace Oyster::Physics;
 const int MOVE_FORCE = 30;
-const float KEY_TIMER = 0.04f;
+const float KEY_TIMER = 0.03f;
 Player::Player()
 	:DynamicObject()
 {
@@ -23,18 +23,18 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
 {
 	InitPlayer();
 }
-Player::Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
-	:DynamicObject(collisionFuncBefore,collisionFuncAfter,type)
+Player::Player( void* collisionFuncAfter, OBJECT_TYPE type)
+	:DynamicObject(collisionFuncAfter,type)
 {
 	InitPlayer();
 }
-Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
-	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, void* collisionFuncAfter, OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFuncAfter, type)
 {
 	InitPlayer();
 }
-Player::Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
-	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
+	:DynamicObject(rigidBody, collisionFuncAfter, type)
 {
 	InitPlayer();
 }
@@ -74,7 +74,7 @@ void Player::BeginFrame()
 	Oyster::Math::Float3 moveDirection(0,0,0);
 	if (key_forward > 0.001)
 	{
-		key_forward -= gameInstance->GetFrameTime();
+		key_forward -= gameInstance->GetFrameTime(); // fixed timer 
 		forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
 	}
 	if (key_backward > 0.001)
@@ -160,19 +160,20 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 {
+	key_jump = 
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
 	this->rigidBody->SetPosition(spawnPoint);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
+void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)
 {
 	// this is the camera right vector
-	this->lookDir = lookDir.xyz;
+	this->lookDir = lookDir;
 
 	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
-	this->rigidBody->SetUpAndRight(up, lookDir.xyz);
+	this->rigidBody->SetUpAndRight(up, right);
 	this->rigidBody->SetUpAndRight(this->rigidBody->GetState().centerPos.GetNormalized(), this->rigidBody->GetState().GetOrientation().v[0].xyz.GetNormalized());
 }
 
