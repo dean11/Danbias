@@ -33,6 +33,7 @@ private:
 
 	int myId;
 	float pitch;
+	float timer; 
 	struct myData;
 	myData* privData;
 	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_StaticObj>> staticObjects;

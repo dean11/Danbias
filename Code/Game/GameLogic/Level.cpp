@@ -113,7 +113,7 @@ void Level::InitiateLevel(std::string levelPath)
 void Level::InitiateLevel(float radius)
 {
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
-	API::Instance().SetGravity(100);
+	API::Instance().SetGravity(200);
 	int idCount = 100;
 	// add level sphere
 	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);

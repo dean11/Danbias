@@ -38,6 +38,7 @@ using namespace GameLogic;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
 
