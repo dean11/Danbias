@@ -297,10 +297,10 @@ void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void*
 		case ICollideable::Type::Type_cone:
 			cone = dynamic_cast<Cone*>(collideable);
 			// Add collision shape
-			shape = new btConeShape(cone->radius, cone->height.GetLength());
+			shape = new btConeShapeZ(cone->radius, cone->length);
 
 			// Add motion state
-			state = new btDefaultMotionState(btTransform(btQuaternion(btVector3(cone->height.x, cone->height.y, cone->height.z).normalized(), 0.0f),btVector3(cone->position.x, cone->position.y, cone->position.z)));
+			state = new btDefaultMotionState(btTransform(btQuaternion(cone->quaternion.x, cone->quaternion.y, cone->quaternion.z, cone->quaternion.w),btVector3(cone->center.x, cone->center.y, cone->center.z)));
 
 			// Add rigid body
 			rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo (0, state, shape);
