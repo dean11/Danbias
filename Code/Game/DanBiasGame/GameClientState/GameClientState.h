@@ -15,9 +15,10 @@ namespace DanBias { namespace Client
 			ClientState_Login,
 			ClientState_Lobby,
 			ClientState_Lan,
-			ClientState_LobbyCreated,
+			ClientState_LobbyCreate,
 			ClientState_Game,
 			ClientState_Same,
+			ClientState_Quit
 		};
 
 	public:
@@ -27,6 +28,7 @@ namespace DanBias { namespace Client
 		virtual ClientState Update(float deltaTime, InputClass* KeyInput) = 0;
 		virtual bool Render() = 0;
 		virtual bool Release() = 0;
+		virtual void ChangeState( ClientState next ) = 0;
 
 		virtual void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 	};

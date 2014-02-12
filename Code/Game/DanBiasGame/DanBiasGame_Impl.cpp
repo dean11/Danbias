@@ -18,8 +18,9 @@
 
 #include "../Misc/EventHandler/EventHandler.h"
 
-using namespace ::Oyster::Event;
-using namespace Oyster::Network;
+using namespace ::Oyster;
+using namespace Event;
+using namespace Network;
 using namespace ::Utility::DynamicMemory;
 
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
@@ -87,7 +88,8 @@ namespace DanBias
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
-			::Oyster::Graphics::API::Update( dt );
+			Graphics::API::Update( dt );
+			EventHandler::Instance().Update( nullptr );
 
 			if(data.networkClient.IsConnected())
 				data.networkClient.Update();
@@ -161,7 +163,7 @@ namespace DanBias
 
 			switch (state)
 			{
-			case Client::GameClientState::ClientState_LobbyCreated:
+			case Client::GameClientState::ClientState_LobbyCreate:
 				data.serverOwner = true;
 				stateVal = true;
 			case Client::GameClientState::ClientState_Lobby:

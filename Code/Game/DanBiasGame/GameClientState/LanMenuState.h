@@ -17,18 +17,15 @@ namespace DanBias
 			virtual bool Init(Oyster::Network::NetworkClient* nwClient);
 			virtual ClientState Update(float deltaTime, InputClass* KeyInput);
 
-			ClientState ChangeState(InputClass* KeyInput);
-
-			bool LoadModels(std::wstring file);
-			bool InitCamera(Oyster::Math::Float3 startPos);
+			//ClientState ChangeState(InputClass* KeyInput);
 
 			virtual bool Render();
 			virtual bool Release();
+			void ChangeState( ClientState next );
 
 		private:
-			Oyster::Network::NetworkClient* nwClient;
-			struct myData;
-			myData* privData;
+			struct MyData;
+			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		};
 	}
 }

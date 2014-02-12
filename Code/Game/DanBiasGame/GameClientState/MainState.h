@@ -22,6 +22,7 @@ namespace DanBias
 			
 			bool Render();
 			bool Release();
+			void ChangeState( ClientState next );
 		};
 	}
 }

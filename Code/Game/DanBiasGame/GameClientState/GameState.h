@@ -23,6 +23,8 @@ namespace Client
 			gameStateState_end,
 		};
 	private:
+		struct MyData;
+		::Utility::DynamicMemory::UniquePointer<MyData> privData;
 
 		bool key_forward;
 		bool key_backward;
@@ -33,8 +35,7 @@ namespace Client
 		Camera_FPS camera;
 
 		int myId;
-		struct myData;
-		myData* privData;
+		
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_StaticObj>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Object>> dynamicObjects;
 		//Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Player>> playObjects;
@@ -44,13 +45,13 @@ namespace Client
 		bool Init(Oyster::Network::NetworkClient* nwClient);
 		GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
 		bool LoadModels(std::string mapFile);
-		bool LoadModels();
 		bool InitCamera(Oyster::Math::Float3 startPos) ;
 		void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 		gameStateState LoadGame();
 		void readKeyInput(InputClass* KeyInput);
 		bool Render()override;
 		bool Release()override;
+		void ChangeState( ClientState next );
 
 		void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 	};

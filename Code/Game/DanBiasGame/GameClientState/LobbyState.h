@@ -12,15 +12,12 @@ namespace DanBias
 		class LobbyState : public GameClientState
 		{
 		private:
-			Oyster::Network::NetworkClient* nwClient;
-			struct myData;
-			myData* privData;
+			struct MyData;
+			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		public:
 			LobbyState(void);
 			~LobbyState(void);
 			bool Init(Oyster::Network::NetworkClient* nwClient);
-			bool LoadModels(std::wstring file);
-			bool InitCamera(Oyster::Math::Float3 startPos);
 			ClientState Update(float deltaTime, InputClass* KeyInput);
 			// create session lobby
 			// join session lobby
@@ -33,6 +30,7 @@ namespace DanBias
 
 			bool Render();
 			bool Release();
+			void ChangeState( ClientState next );
 
 			void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 		};
