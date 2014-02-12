@@ -106,36 +106,36 @@ void SimpleRigidBody::SetLinearVelocity(Float3 velocity)
 void SimpleRigidBody::SetPosition(::Oyster::Math::Float3 position)
 {
 	btTransform trans;
-	this->motionState->getWorldTransform(trans);
+	trans = this->rigidBody->getWorldTransform();
 	trans.setOrigin(btVector3(position.x, position.y, position.z));
-	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setWorldTransform(trans);
 	this->state.centerPos = position;
 }
 
 void SimpleRigidBody::SetRotation(Float4 quaternion)
 {
 	btTransform trans;
-	this->motionState->getWorldTransform(trans);
+	trans = this->rigidBody->getWorldTransform();
 	trans.setRotation(btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
-	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setWorldTransform(trans);
 	this->state.quaternion = Quaternion(quaternion.xyz, quaternion.w);
 }
 
 void SimpleRigidBody::SetRotation(::Oyster::Math::Quaternion quaternion)
 {
 	btTransform trans;
-	this->motionState->getWorldTransform(trans);
+	trans = this->rigidBody->getWorldTransform();
 	trans.setRotation(btQuaternion(quaternion.imaginary.x, quaternion.imaginary.y, quaternion.imaginary.z, quaternion.real));
-	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setWorldTransform(trans);
 	this->state.quaternion = quaternion;
 }
 
 void SimpleRigidBody::SetRotation(Float3 eulerAngles)
 {
 	btTransform trans;
-	this->motionState->getWorldTransform(trans);
+	trans = this->rigidBody->getWorldTransform();
 	trans.setRotation(btQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z));
-	this->motionState->setWorldTransform(trans);
+	this->rigidBody->setWorldTransform(trans);
 	this->state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
 }
 
