@@ -217,6 +217,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameClientState\Camera_Basic.h" />
+    <ClInclude Include="GameClientState\Buttons\ButtonEllipse.h" />
+    <ClInclude Include="GameClientState\Buttons\EventButtonGUI.h" />
+    <ClInclude Include="GameClientState\Buttons\ButtonRectangle.h" />
     <ClInclude Include="GameClientState\Camera.h" />
     <ClInclude Include="GameClientState\Camera_FPS.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />

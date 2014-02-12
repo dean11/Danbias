@@ -16,4 +16,6 @@ C_Player::~C_Player(void)
 void C_Player::Init(ModelInitData modelInit)
 {
 	C_Object::Init(modelInit);
+	Oyster::Graphics::API::PlayAnimation(model, L"movement");
+	//Oyster::Graphics::API::Update(0.002f);
 }

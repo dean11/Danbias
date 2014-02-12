@@ -22,7 +22,7 @@ namespace DanBias
 			bool LoadModels(std::wstring file);
 			bool InitCamera(Oyster::Math::Float3 startPos);
 
-			virtual bool Render();
+			virtual bool Render(float dt);
 			virtual bool Release();
 
 		private:

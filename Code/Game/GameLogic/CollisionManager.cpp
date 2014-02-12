@@ -38,6 +38,7 @@ using namespace GameLogic;
 			break;
 		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
 
@@ -88,28 +89,15 @@ using namespace GameLogic;
 		}
 		
 	}	
-	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_none;
-	}
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
-	}
-	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_player_collision_response;
 	}
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
-	//Oyster::Physics::ICustomBody::SubscriptMessage
-	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
-	}
-
 	Oyster::Physics::ICustomBody::SubscriptMessage CollisionManager::IgnoreCollision(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody *obj)
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
@@ -123,19 +111,20 @@ using namespace GameLogic;
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void *args)
 	{
-		Oyster::Physics::ICustomBody::State state;
+		if(obj->GetState().mass == 0) return;
+
 		Object *realObj = (Object*)obj->GetCustomTag();
 
 		if(realObj->GetObjectType() == OBJECT_TYPE_PLAYER || realObj->GetObjectType() == OBJECT_TYPE_WORLD)
 			return;
 
-		state = obj->GetState();
-		//state.ApplyLinearImpulse(((forcePushData*)(args))->pushForce);
-		obj->SetState(state);
+		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
 	}
 
 	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
 	{
+		if(obj->GetState().mass == 0) return;
+
 		AttatchmentMassDriver *weapon = ((AttatchmentMassDriver*)args);
 
 		if(weapon->hasObject)

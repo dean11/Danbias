@@ -13,14 +13,13 @@ namespace Oyster
 		namespace Render
 		{
 				Definitions::Pointlight pl;
-				Model::Model* DefaultRenderer::cube = NULL;
-				Model::Model* DefaultRenderer::cube2 = NULL; 
 
-				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight Lights, int numLights)
+				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
 					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
 					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
+					Lights[1];
 
 					void* data;
 
@@ -37,7 +36,7 @@ namespace Oyster
 					Resources::Light::LightConstantsData.Unmap();
 
 					data = Resources::Light::PointLightsData.Map();
-					memcpy(data, &Lights, sizeof(Definitions::Pointlight) * numLights);
+					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
 
 					Definitions::PostData pd;
@@ -67,16 +66,10 @@ namespace Oyster
 							if(info->Animated && models[i].Animation.AnimationPlaying != NULL)
 							{
 								models[i].Animation.AnimationTime += deltaTime;
-								cube->WorldMatrix = Math::Matrix::identity;
 								////store inverse absolut transform
 								Math::Matrix SkinTransform[100];
 								Math::Matrix BoneAnimated[100];
 								Math::Matrix BoneAbsAnimated[100];
-
-								Math::Matrix Scale = Math::Matrix::identity;
-								Scale.m[0][0] = 1;
-								Scale.m[1][1] = 1;
-								Scale.m[2][2] = 2;
 
 								
 
@@ -86,14 +79,10 @@ namespace Oyster
 									SkinTransform[b] = Bone.Absolute.GetInverse();
 									BoneAnimated[b] = Bone.Relative;
 									BoneAbsAnimated[b] = Bone.Absolute;
-
-									
-									cube2->WorldMatrix = Scale;
-									cube2->WorldMatrix.v[3] = info->bones[b].Absolute.v[3];
 								}
 								int b = 0;
 								Model::Animation A = *models[i].Animation.AnimationPlaying;
-								while(models[i].Animation.AnimationTime>A.duration)
+								while(models[i].Animation.AnimationTime>A.duration && models[i].Animation.LoopAnimation)
 									models[i].Animation.AnimationTime -= (float)A.duration;
 									
 								float position = models[i].Animation.AnimationTime;
@@ -127,11 +116,6 @@ namespace Oyster
 								for(int b = 0; b < info->BoneCount; ++b)
 								{
 									BoneAbsAnimated[b] = BoneAbsAnimated[info->bones[b].Parent] * BoneAnimated[b];
-									//SkinTransform[b] = BoneAbsAnimated[b];
-									cube->WorldMatrix = Scale;
-									cube->WorldMatrix.v[3] = BoneAbsAnimated[b].v[3];
-									cube->WorldMatrix = models[i].WorldMatrix * cube->WorldMatrix;
-									DefaultRenderer::RenderScene(cube,1,View,Projection);
 								}
 
 								//write data to am
@@ -181,11 +165,11 @@ namespace Oyster
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
-					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+					//Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
+					//Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
-					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+					//Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
+					//Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 					Core::PipelineManager::SetRenderPass(Resources::Post::Pass);
 

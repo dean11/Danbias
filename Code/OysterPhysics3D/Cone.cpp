@@ -11,22 +11,36 @@ using namespace ::Oyster::Math3D;
 
 Cone::Cone( ) : ICollideable(Type_cone)
 {
+	this->center = Float3(0, 0, 0);
+	this->quaternion = Float4(0, 0, 0, 1);
 	this->radius = 1;
-	this->height = Oyster::Math::Float3(0,0,0);
+	this->length = 0;
 }
 
-Cone::Cone( const ::Oyster::Math::Float3 &height, const Oyster::Math::Float3 &position, const ::Oyster::Math::Float &radius )
+Cone & Cone::operator = ( const Cone &Cone )
 {
-	this->radius = radius;
-	this->height = height;
-	this->position = position;
+	this->center = Cone.center;
+	this->quaternion = Cone.quaternion;
+	this->radius = Cone.radius;
+	this->length = Cone.length;
+
+	return *this;
 }
 
-Cone::Cone( const ::Oyster::Math::Float4 &height, const Oyster::Math::Float4 &position, const ::Oyster::Math::Float &radius )
+Cone::Cone( const ::Oyster::Math::Float &height, const Oyster::Math::Float3 &position, const Oyster::Math::Float4 &quaternion, const ::Oyster::Math::Float &radius ) : ICollideable(Type_cone)
 {
+	this->center = position;
+	this->quaternion = quaternion;
 	this->radius = radius;
-	this->height = (Oyster::Math::Float3)height;
-	this->position = (Oyster::Math::Float3)position;
+	this->length = height;
+}
+
+Cone::Cone( const ::Oyster::Math::Float &height, const Oyster::Math::Float4 &position, const Oyster::Math::Float4 &quaternion, const ::Oyster::Math::Float &radius ) : ICollideable(Type_cone)
+{
+	this->center = position;
+	this->quaternion = quaternion;
+	this->radius = radius;
+	this->length = height;
 }
 
 Cone::~Cone( )
@@ -34,11 +48,8 @@ Cone::~Cone( )
 	
 }
 
-Cone & Cone::operator = ( const Cone &cone )
+::Utility::DynamicMemory::UniquePointer<ICollideable> Cone::Clone( ) const
 {
-	this->radius = cone.radius;
-	this->height = cone.height;
-	this->position = cone.position;
-	return *this;
+	return ::Utility::DynamicMemory::UniquePointer<ICollideable>( new Cone(*this) );
 }
 

@@ -14,6 +14,9 @@ const std::wstring PathToCSO = L"..\\Content\\Shaders\\";
 const int KernelSize = 10;
 const int SampleSpread = 16;
 
+
+const int MAX_LETTER_COUNT=60;
+
 namespace Oyster
 {
 	namespace Graphics
@@ -34,6 +37,7 @@ namespace Oyster
 				Shader::RenderPass Resources::Light::Pass;
 				Shader::RenderPass Resources::Post::Pass;
 				Shader::RenderPass Resources::Gui::Pass;
+				Shader::RenderPass Resources::Gui::Text::Pass;
 				Shader::RenderPass Resources::Blur::VertPass; //Set this pass second when doing a "fullscreen" blur
 				Shader::RenderPass Resources::Blur::HorPass;  //Set this pass first when doing a "fullscreen" blur
 
@@ -41,6 +45,8 @@ namespace Oyster
 				Buffer Resources::Gather::AnimationData = Buffer();
 				Buffer Resources::Light::LightConstantsData = Buffer();
 				Buffer Resources::Gui::Data = Buffer();
+				Buffer Resources::Gui::Color = Buffer();
+				Buffer Resources::Gui::Text::Vertex = Buffer();
 				Buffer Resources::Post::Data = Buffer();
 
 				Buffer Resources::Light::PointLightsData = Buffer();
@@ -52,6 +58,9 @@ namespace Oyster
 				ID3D11RasterizerState* Resources::RenderStates::rs = NULL;
 				ID3D11SamplerState** Resources::RenderStates::ss = new ID3D11SamplerState*[1];
 				ID3D11DepthStencilState* Resources::RenderStates::dsState = NULL;
+				ID3D11BlendState* Resources::RenderStates::bs = NULL;
+
+				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
 
 
 				Core::Init::State Resources::InitShaders()
@@ -85,6 +94,11 @@ namespace Oyster
 					Core::PipelineManager::Init(path + L"2DVertex" + end,ShaderType::Vertex, L"2D");
 					Core::PipelineManager::Init(path + L"2DGeometry" + end,ShaderType::Geometry, L"2D");
 					Core::PipelineManager::Init(path + L"2DPixel" + end,ShaderType::Pixel, L"2D");
+#ifdef _DEBUG
+					path = PathToHLSL+L"2D\\Text\\";
+#endif
+					Core::PipelineManager::Init(path + L"2DTextVertex" + end,ShaderType::Vertex, L"2DText");
+					Core::PipelineManager::Init(path + L"2DTextGeometry" + end,ShaderType::Geometry, L"2DText");
 
 					return Core::Init::State::Success;
 				}
@@ -105,6 +119,10 @@ namespace Oyster
 					desc.ElementSize = sizeof(Definitions::AnimationData);
 					Gather::AnimationData.Init(desc);
 
+					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_PS;
+					desc.ElementSize = sizeof(Math::Float3);
+					Gui::Color.Init(desc);
+
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
 					desc.NumElements = 1;
 					desc.ElementSize = sizeof(Definitions::GuiData);
@@ -121,6 +139,12 @@ namespace Oyster
 					desc.NumElements = MaxLightSize;
 					desc.Type = Buffer::STRUCTURED_BUFFER;
 					Light::PointLightsData.Init(desc);
+
+					desc.Type = Buffer::BUFFER_TYPE::VERTEX_BUFFER;
+					desc.ElementSize = sizeof(Definitions::Text2D);
+					desc.NumElements = MAX_LETTER_COUNT;
+					Gui::Text::Vertex.Init(desc);
+
 					return Core::Init::Success;
 				}
 
@@ -144,8 +168,8 @@ namespace Oyster
 
 					D3D11_SAMPLER_DESC sdesc;
 					sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 					sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 					sdesc.MipLODBias = 0;
 					sdesc.MaxAnisotropy =4;
@@ -178,6 +202,23 @@ namespace Oyster
 
 					
 					Core::device->CreateDepthStencilState(&ddesc,&RenderStates::dsState);
+
+					D3D11_BLEND_DESC bdesc;
+					bdesc.AlphaToCoverageEnable = true;
+					bdesc.IndependentBlendEnable = false;
+					bdesc.RenderTarget[0].BlendEnable = true;
+
+					bdesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+					bdesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+					bdesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+					bdesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+					bdesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+					bdesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+
+					bdesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+					Core::device->CreateBlendState(&bdesc,&RenderStates::bs);
 					return Core::Init::Success;
 				}
 
@@ -342,6 +383,7 @@ namespace Oyster
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
 					Gui::Pass.RTV.push_back(GBufferRTV[2]);
 					Gui::Pass.CBuffers.Geometry.push_back(Gui::Data);
+					Gui::Pass.CBuffers.Pixel.push_back(Gui::Color);
 
 					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
 					{
@@ -353,6 +395,7 @@ namespace Oyster
 					
 					Gui::Pass.RenderStates.SampleCount = 1;
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
+					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
 
 					////---------------- Blur Pass Setup ----------------------------
 					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
@@ -367,6 +410,29 @@ namespace Oyster
 					Blur::VertPass.SRV.Compute.push_back(Blur::BufferSRV);
 					//And the Ambient UAV is now the output texture
 					Blur::VertPass.UAV.Compute.push_back(LBufferUAV[2]);
+
+					////---------------- 2DText Pass Setup ----------------------------
+					Gui::Text::Pass.Shaders.Vertex = GetShader::Vertex(L"2DText");
+					Gui::Text::Pass.Shaders.Geometry = GetShader::Geometry(L"2DText");
+					Gui::Text::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
+
+					Gui::Text::Pass.IAStage.Topology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+
+					D3D11_INPUT_ELEMENT_DESC Text2Ddesc[] =
+					{
+						{"Position",0,		DXGI_FORMAT_R32_FLOAT,	0,	0,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+						{"Offset",0,		DXGI_FORMAT_R32_SINT,	0,	4,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+						{"CharOffset",0,	DXGI_FORMAT_R32_FLOAT,	0,	8,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+					};
+
+					Shader::CreateInputLayout(Text2Ddesc,3, GetShader::Vertex(L"2DText") ,Gui::Text::Pass.IAStage.Layout);
+					Gui::Text::Pass.CBuffers.Geometry.push_back(Gui::Data);
+					Gui::Text::Pass.CBuffers.Pixel.push_back(Gui::Color);
+					Gui::Text::Pass.SRV.Pixel.push_back(Gui::Text::Font);
+					Gui::Text::Pass.RTV.push_back(GBufferRTV[2]);
+					Gui::Text::Pass.RenderStates.SampleCount = 1;
+					Gui::Text::Pass.RenderStates.SampleState = RenderStates::ss;
+					Gui::Text::Pass.RenderStates.BlendState = RenderStates::bs;
 
 					return Core::Init::Success;
 				}
@@ -389,6 +455,8 @@ namespace Oyster
 					Light::LightConstantsData.~Buffer();
 					Light::PointLightsData.~Buffer();
 					Gui::Data.~Buffer();
+					Gui::Color.~Buffer();
+					Gui::Text::Vertex.~Buffer();
 					Post::Data.~Buffer();
 					SAFE_RELEASE(Light::PointLightView);
 					SAFE_RELEASE(Light::SSAOKernel);
@@ -425,6 +493,10 @@ namespace Oyster
 					SAFE_DELETE_ARRAY(Gather::Pass.RenderStates.SampleState);
 
 					SAFE_RELEASE(Gui::Pass.IAStage.Layout);
+
+					SAFE_RELEASE(Gui::Text::Pass.RenderStates.BlendState);
+
+					SAFE_RELEASE(Gui::Text::Pass.IAStage.Layout);
 				}
 		}
 	}

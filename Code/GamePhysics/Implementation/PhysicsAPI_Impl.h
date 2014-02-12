@@ -39,7 +39,7 @@ namespace Oyster
 					}
 					else
 					{
-						assert(colObj1->m_collisionObject == &body && "Body does not match either collision object");
+						//assert(colObj1->m_collisionObject == &body && "Body does not match either collision object");
 						pt = cp.m_localPointB;
 						this->func((ICustomBody*)(colObj0->getCollisionObject()->getUserPointer()), this->args);
 					}

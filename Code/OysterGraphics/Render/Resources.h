@@ -36,6 +36,7 @@ namespace Oyster
 						static ID3D11RasterizerState* rs;
 						static ID3D11SamplerState** ss;
 						static ID3D11DepthStencilState* dsState;
+						static ID3D11BlendState* bs;
 					};
 
 					struct Gather
@@ -60,7 +61,13 @@ namespace Oyster
 					{
 						static Core::PipelineManager::RenderPass Pass;
 						static Core::Buffer Data;
-						static Core::Buffer Vertex;
+						static Core::Buffer Color;
+						struct Text
+						{
+							static Core::PipelineManager::RenderPass Pass;
+							static Core::Buffer Vertex;
+							static ID3D11ShaderResourceView* Font;
+						};
 					};
 
 					struct Blur

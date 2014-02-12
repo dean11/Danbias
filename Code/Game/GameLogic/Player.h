@@ -18,9 +18,9 @@ namespace GameLogic
 		Player(void);
 		Player(OBJECT_TYPE type);
 		Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type);
-		Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
-		Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
-		Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
+		Player( void* collisionFuncAfter, OBJECT_TYPE type);
+		Player(Oyster::Physics::ICustomBody *rigidBody, void* collisionFuncAfter, OBJECT_TYPE type);
+		Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Player(void);
 		void InitPlayer();
 		
@@ -48,7 +48,7 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float4 lookDir);
+		void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -73,7 +73,6 @@ namespace GameLogic
 
 		void BeginFrame();
 		void EndFrame();
-		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
 
@@ -85,8 +84,13 @@ namespace GameLogic
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
-		Oyster::Math::Float3 lookDir;	//Duplicate in Object.h?
-		Oyster::Math::Float dx;			//dx of what?
+		Oyster::Math::Float3 moveDir;	
+		Oyster::Math::Float3 lookDir;
+		float key_forward;
+		float key_backward;
+		float key_strafeRight;
+		float key_strafeLeft;
+		float key_jump;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;
