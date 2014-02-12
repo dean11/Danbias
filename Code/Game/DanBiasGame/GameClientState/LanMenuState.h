@@ -24,9 +24,6 @@ namespace DanBias
 
 			virtual bool Render();
 			virtual bool Release();
-			virtual void Protocol(ProtocolStruct* protocolStruct);
-
-			void PlayerJoinProtocol(PlayerName* name);
 
 		private:
 			Oyster::Network::NetworkClient* nwClient;

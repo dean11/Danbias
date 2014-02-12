@@ -26,17 +26,11 @@ struct  LanMenuState::myData
 
 	// UI object
 	// game client* 
-}privData;
+} privData;
 
-LanMenuState::LanMenuState()
-{
+LanMenuState::LanMenuState() {}
 
-}
-
-LanMenuState::~LanMenuState()
-{
-
-}
+LanMenuState::~LanMenuState() {}
 
 bool LanMenuState::Init(Oyster::Network::NetworkClient* nwClient)
 {
@@ -203,14 +197,4 @@ bool LanMenuState::Release()
 	privData = NULL;
   
 	return true;
-}
-
-void LanMenuState::Protocol(ProtocolStruct* protocolStruct)
-{
-	if((PlayerName*)protocolStruct)
-		PlayerJoinProtocol((PlayerName*)protocolStruct);
-}
-void LanMenuState::PlayerJoinProtocol(PlayerName* name)
-{
-
 }

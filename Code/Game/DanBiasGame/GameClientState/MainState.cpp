@@ -1,4 +1,4 @@
-#include "LoginState.h"
+#include "MainState.h"
 #include "DllInterfaces/GFXAPI.h"
 #include "OysterMath.h"
 #include "C_obj/C_Player.h"
@@ -8,7 +8,7 @@
 
 using namespace DanBias::Client;
 
-struct  LoginState::myData
+struct MainState::myData
 {
 	myData(){}
 	Oyster::Math3D::Float4x4 view;
@@ -17,19 +17,13 @@ struct  LoginState::myData
 	int modelCount; 
 	// UI object
 	// game client* 
-}privData;
+} privData;
 
-LoginState::LoginState(void)
-{
+MainState::MainState(void) {}
 
-}
+MainState::~MainState(void) {}
 
-LoginState::~LoginState(void)
-{
-
-}
-
-bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
+bool MainState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
 	this->nwClient = nwClient;	
@@ -38,7 +32,8 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
 	return true;
 }
-bool LoginState::LoadModels(std::wstring file)
+
+bool MainState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
 	plight.Pos = Oyster::Math::Float3(0,0,5);
@@ -69,7 +64,7 @@ bool LoginState::LoadModels(std::wstring file)
 	return true;
 }
 
-bool LoginState::InitCamera(Oyster::Math::Float3 startPos)
+bool MainState::InitCamera(Oyster::Math::Float3 startPos)
 {
 	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
 	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
@@ -79,7 +74,8 @@ bool LoginState::InitCamera(Oyster::Math::Float3 startPos)
 	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
 }
-GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* KeyInput)
+
+GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyInput)
 {
 	// picking 
 	// mouse events
@@ -122,7 +118,8 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	}
 	return ClientState_Same;
 }
-bool LoginState::Render()
+
+bool MainState::Render()
 {
 
 	Oyster::Graphics::API::SetView(privData->view);
@@ -142,7 +139,8 @@ bool LoginState::Render()
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
-bool LoginState::Release()
+
+bool MainState::Release()
 {
 	for (int i = 0; i < privData->modelCount; i++)
 	{
@@ -155,13 +153,4 @@ bool LoginState::Release()
 	privData = NULL;
 	return true;
 }
-void LoginState::Protocol(ProtocolStruct* protocol)
-{
-	if((PlayerName*)protocol)
-		PlayerJoinProtocol((PlayerName*)protocol);
 
-}
-void LoginState::PlayerJoinProtocol(PlayerName* name)
-{
-
-}

@@ -14,7 +14,7 @@ struct  GameState::myData
 	int modelCount;
 	Oyster::Network::NetworkClient* nwClient;
 	gameStateState state;
-}privData;
+} privData;
 
 GameState::GameState(void)
 {

@@ -1,5 +1,5 @@
-#ifndef DANBIAS_CLIENT_LOGINSTATE_H
-#define DANBIAS_CLIENT_LOGINSTATE_H
+#ifndef DANBIAS_CLIENT_MAINSTATE_H
+#define DANBIAS_CLIENT_MAINSTATE_H
 
 #include "GameClientState.h"
 #include "OysterMath.h"
@@ -9,16 +9,15 @@ namespace DanBias
 {
 	namespace Client
 	{
-
-		class LoginState : public GameClientState
+		class MainState : public GameClientState
 		{
 		private:
 			Oyster::Network::NetworkClient* nwClient;
 			struct myData;
 			myData* privData;
 		public:
-			LoginState(void);
-			~LoginState(void);
+			MainState(void);
+			~MainState(void);
 			bool Init(Oyster::Network::NetworkClient* nwClient);
 			bool LoadModels(std::wstring file);
 			bool InitCamera(Oyster::Math::Float3 startPos);
@@ -26,8 +25,9 @@ namespace DanBias
 			
 			bool Render();
 			bool Release();
-			void Protocol(ProtocolStruct* protocol)override;
-			void PlayerJoinProtocol(PlayerName* name);
 
-		};};};
+			void DataRecieved( ::Oyster::Network::NetEvent<NetworkClient*, ClientEventArgs> e );
+		};
+	}
+}
 #endif // ! DANBIAS_CLIENT_LOGINSTATE_H

@@ -52,7 +52,7 @@ namespace Client
 		bool Render()override;
 		bool Release()override;
 
-		void DataRecieved(::Oyster::Network::NetEvent<NetworkClient*, ClientEventArgs> e);
+		void DataRecieved( ::Oyster::Network::NetEvent<NetworkClient*, ClientEventArgs> e );
 	};
 }
 }
