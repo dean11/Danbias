@@ -229,11 +229,11 @@ HRESULT Render(float deltaTime)
 	Oyster::Graphics::API::SetView(V);
 	Oyster::Graphics::API::NewFrame();
 
-	Oyster::Graphics::API::RenderModel(m);
+	//Oyster::Graphics::API::RenderModel(m);
 	Oyster::Graphics::API::RenderModel(m2);
 	Oyster::Graphics::API::StartGuiRender();
-	Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1));
-	Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float3(1,0,0));
+	//Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1));
+	//Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1),Oyster::Math::Float3(1,0,0));
 	Oyster::Graphics::API::StartTextRender();
 	std::wstring fps;
 	float f = 1/deltaTime;

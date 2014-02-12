@@ -45,6 +45,6 @@ PixelOut main(VertexOut input)
 
 	normal = perturb_normal( normal, normalize(-input.ViewPos), input.UV );
 
-	output.NormalSpec = float4(normal, Normal.Sample(S1,input.UV).w);
+	output.NormalSpec = float4(normal, Normal.Sample(S1, input.UV).w*255);
 	return output;
 }

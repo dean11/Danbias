@@ -24,5 +24,7 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 		output.Diffuse = float3(0,0,0);
 		output.Specular = float3(0,0,0);
 	}
+	float SpecCo = normalSpec.w < 1 ? 0.0f : 1.0f;
+	output.Specular = output.Specular * SpecCo;
 	return output;  
 }
