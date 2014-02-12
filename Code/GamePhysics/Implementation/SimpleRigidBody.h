@@ -18,6 +18,8 @@ namespace Oyster
 			State& GetState( State &targetMem ) const;
 			void SetState( const State &state );
 
+			void ApplyImpulse(Math::Float3 impulse);
+
 			void SetCollisionShape(btCollisionShape* shape);
 			void SetMotionState(btDefaultMotionState* motionState);
 			void SetRigidBody(btRigidBody* rigidBody);

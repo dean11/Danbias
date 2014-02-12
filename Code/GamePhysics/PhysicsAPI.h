@@ -134,6 +134,8 @@ namespace Oyster
 			virtual void SetSubscription(EventAction_AfterCollisionResponse function) = 0;
 			virtual void SetSubscription(EventAction_Move function) = 0;
 
+			virtual void ApplyImpulse(::Oyster::Math::Float3 impulse) = 0;
+
 			virtual void SetLinearVelocity(::Oyster::Math::Float3 velocity) = 0;
 			virtual void SetPosition(::Oyster::Math::Float3 position) = 0;
 			virtual void SetRotation(::Oyster::Math::Float4 quaternion) = 0;
