@@ -102,6 +102,8 @@ void Player::BeginFrame()
 	moveDirection = forward + back + left + right;
 	//moveDirection.Normalize();
 	rigidBody->SetLinearVelocity( MOVE_FORCE * moveDirection );
+
+	weapon->Update(0.01f);
 }
 
 void Player::EndFrame()
