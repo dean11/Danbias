@@ -61,11 +61,7 @@ using namespace GameLogic;
 
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
 	{
-		Oyster::Physics::ICustomBody::State state;
-
-		state = obj.GetState();
-		//state.ApplyLinearImpulse(force);
-		obj.SetState(state);
+		obj.ApplyImpulse(force);
 	}
 	
 
@@ -135,7 +131,7 @@ using namespace GameLogic;
 			{
 			case ObjectSpecialType_StandarsBox:
 				//move obj to limbo in physics to make sure it wont collide with anything
-				Oyster::Physics::API::Instance().MoveToLimbo(obj);
+//				Oyster::Physics::API::Instance().MoveToLimbo(obj);
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
 
