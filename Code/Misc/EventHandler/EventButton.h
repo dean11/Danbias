@@ -160,6 +160,10 @@ namespace Oyster
 								clicked = true;
 								currentState = ButtonState_Pressed;
 							}
+							else
+							{
+								currentState = ButtonState_Hover;
+							}
 							break;
 						case ButtonState_Released:
 							currentState = ButtonState_Hover;
