@@ -9,7 +9,7 @@ namespace Oyster
 		namespace Render
 		{				
 			const int TEXT_NR_LETTERS=95;
-			const float TEXT_SIZE=2.5;
+			const float TEXT_SPACING=1.8f;
 
 			void Gui::Begin2DRender()
 			{
@@ -45,37 +45,21 @@ namespace Oyster
 
 			void Gui::RenderText(std::wstring text, Math::Float2 pos, Math::Float2 size)
 			{
-				//Pos.x -= instance.sizeX/2;
-				//Pos.x += size.x;
-				//Pos.y -= instance.sizeY/2;
-				//Pos.y += size.y;
-				//Matrix m;
-				//m = Math::Matrix::identity;
-				//float width = (1.0f/(instance.sizeX/2.0f));
-				//float height = (1.0f/(instance.sizeY/2.0f));
-				//m.m41=Pos.x * width;
-				//m.m42=-Pos.y * height;
-				//m.m43=Pos.z;
-				//m.m11=width*size.x;
-				//m.m22=height*size.y;
-				//void* dest = Resources::Buffers::CBufferGs.Map();
-				//memcpy(dest,&m.GetTranspose(),64);
-				//Resources::Buffers::CBufferGs.Unmap();
-
-				//Oyster::Render::Textbox::Update(text, size.x);
-				//Oyster::Engine::PrepareForRendering::Begin2DTextRender();
-				//Oyster::Core::DeviceContext->PSSetShaderResources(0,1,&(Oyster::Render::Textbox::Texture));
-				////Should be able to be outside of the for loop. Keeping it here for now though.
-				//Oyster::Core::DeviceContext->Draw(Oyster::Render::Textbox::NumLetters, 0);
+				
+				size.x = size.x / (text.length() * TEXT_SPACING /2);
+				
 
 				pos *= 2;
 				pos -= 1;
 				pos.y *= -1;
 
+				
+				pos.x =  pos.x - (size.x  * (text.length()-1) * TEXT_SPACING /2);
+
 				Definitions::GuiData gd;
 
 				gd.Translation = Math::Matrix::identity;
-				gd.Translation.m41 = (pos.x - (size.x/2 * text.length()));
+				gd.Translation.m41 = pos.x;
 				gd.Translation.m42 = pos.y;
 				gd.Translation.m11 = size.x;
 				gd.Translation.m22 = size.y;
@@ -93,7 +77,7 @@ namespace Oyster
 				{
 					tmpInst.coff=(1.0f/TEXT_NR_LETTERS);
 					tmpInst.offset=text[i]-32;
-					tmpInst.pos=i*(size.x*2);
+					tmpInst.pos=i*(size.x * TEXT_SPACING);
 					//float tst=getCharID(_str[i]);
 					//tmpInst.offset=tst;
 					//tmpInst.charOffset.x=_pos.x-i*TEXT_SIZE;

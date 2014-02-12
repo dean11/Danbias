@@ -163,8 +163,8 @@ namespace Oyster
 
 					D3D11_SAMPLER_DESC sdesc;
 					sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 					sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 					sdesc.MipLODBias = 0;
 					sdesc.MaxAnisotropy =4;
@@ -389,6 +389,7 @@ namespace Oyster
 					
 					Gui::Pass.RenderStates.SampleCount = 1;
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
+					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
 
 					////---------------- Blur Pass Setup ----------------------------
 					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");

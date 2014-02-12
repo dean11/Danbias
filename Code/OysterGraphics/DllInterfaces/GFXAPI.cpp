@@ -50,11 +50,11 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, Lights[0], (int)Lights.size());
+				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
 			}
 			else
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, Definitions::Pointlight(), 0);
+				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0);
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace Oyster
 			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
 			m->Animation.AnimationTime=0;
 			m->Animation.LoopAnimation = looping;
-			return m->Animation.AnimationPlaying->duration;
+			return (float)m->Animation.AnimationPlaying->duration;
 		}
 
 		void API::Update(float dt)

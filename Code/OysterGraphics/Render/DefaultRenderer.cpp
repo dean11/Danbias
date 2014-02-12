@@ -14,11 +14,12 @@ namespace Oyster
 		{
 				Definitions::Pointlight pl;
 
-				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight Lights, int numLights)
+				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
 					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
 					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
+					Lights[1];
 
 					void* data;
 
@@ -35,12 +36,12 @@ namespace Oyster
 					Resources::Light::LightConstantsData.Unmap();
 
 					data = Resources::Light::PointLightsData.Map();
-					memcpy(data, &Lights, sizeof(Definitions::Pointlight) * numLights);
+					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
 
 					Definitions::PostData pd;
-					pd.x = lc.Pixels.x;
-					pd.y = lc.Pixels.y;
+					pd.x = (int)lc.Pixels.x;
+					pd.y = (int)lc.Pixels.y;
 
 					data = Resources::Post::Data.Map();
 					memcpy(data, &pd, sizeof(Definitions::PostData));
@@ -164,11 +165,11 @@ namespace Oyster
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
-					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+					//Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
+					//Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
-					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+					//Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
+					//Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 					Core::PipelineManager::SetRenderPass(Resources::Post::Pass);
 
