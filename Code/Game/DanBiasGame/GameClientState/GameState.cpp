@@ -563,8 +563,8 @@ void GameState::Protocol( ObjPos* pos )
 				Float3 pos = dynamicObjects[i]->getPos();
 				Float3 up = dynamicObjects[i]->getWorld().v[1];
 				Float3 objForward = dynamicObjects[i]->getWorld().v[2];
-				up *= 2;
-				objForward *= -2;
+				up *= 3;
+				objForward *= -4;
 				Oyster::Math::Float3 cameraPos = pos + up + objForward;
 				camera->SetPosition(cameraPos);	
 			}
