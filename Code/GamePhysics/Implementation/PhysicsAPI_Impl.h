@@ -35,13 +35,13 @@ namespace Oyster
 					if(colObj0->m_collisionObject == &body)
 					{
 						pt = cp.m_localPointA;
-						this->func((ICustomBody*)(colObj0->getCollisionObject()->getUserPointer()), this->args);
+						this->func((ICustomBody*)(colObj1->getCollisionObject()->getUserPointer()), this->args);
 					}
 					else
 					{
 						assert(colObj1->m_collisionObject == &body && "Body does not match either collision object");
 						pt = cp.m_localPointB;
-						this->func((ICustomBody*)(colObj1->getCollisionObject()->getUserPointer()), this->args);
+						this->func((ICustomBody*)(colObj0->getCollisionObject()->getUserPointer()), this->args);
 					}
 			
 					return 0;
