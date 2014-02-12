@@ -67,6 +67,11 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	this->state = state;
 }
 
+void SimpleRigidBody::ApplyImpulse(Float3 impulse)
+{
+	this->rigidBody->applyImpulse(btVector3(impulse.x, impulse.y, impulse.z), btVector3(0.0f, 0.0f, 0.0f));
+}
+
 void SimpleRigidBody::SetCollisionShape(btCollisionShape* shape)
 {
 	this->collisionShape = shape;
@@ -185,6 +190,28 @@ void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math:
 Float4x4 SimpleRigidBody::GetRotation() const
 {
 	return this->state.GetRotation();
+}
+Float4 SimpleRigidBody::GetRotationAsAngularAxis()
+{
+	Float4 axis = Float4::null;
+	Float s = sqrtf(1 - this->state.quaternion.real*this->state.quaternion.real);
+
+	axis.w = 2*acos(this->state.quaternion.real*this->state.quaternion.real);
+
+	if(1 - this->state.quaternion.real > 0.001f)
+	{
+		axis.x = this->state.quaternion.imaginary.x/s;
+		axis.y = this->state.quaternion.imaginary.y/s;
+		axis.z = this->state.quaternion.imaginary.z/s;
+	}
+	else
+	{
+		axis.x = this->state.quaternion.imaginary.x;
+		axis.y = this->state.quaternion.imaginary.y;
+		axis.z = this->state.quaternion.imaginary.z;
+	}
+
+	return axis;
 }
 
 Float4x4 SimpleRigidBody::GetOrientation() const
