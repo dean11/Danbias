@@ -3,19 +3,14 @@
 using namespace DanBias::Client;
 
 C_Player::C_Player(void)
-	:C_DynamicObj()
-{
+	:C_DynamicObj() {}
 
-}
-
-C_Player::~C_Player(void)
-{
-	 
-}
+C_Player::~C_Player(void) {}
 
 void C_Player::Init(ModelInitData modelInit)
 {
 	C_Object::Init(modelInit);
-	Oyster::Graphics::API::PlayAnimation(model, L"movement");
+
+	Oyster::Graphics::API::PlayAnimation( this->model, L"movement" );
 	//Oyster::Graphics::API::Update(0.002f);
 }

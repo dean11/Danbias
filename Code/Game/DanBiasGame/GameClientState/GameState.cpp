@@ -409,10 +409,6 @@ void GameState::readKeyInput(InputClass* KeyInput)
 
 		GameLogic::Protocol_PlayerLook playerLookDir;
 		Float4 look = camera.GetLook();
-		playerLookDir.lookDirX = look.x;
-		playerLookDir.lookDirY = look.y;
-		playerLookDir.lookDirZ = look.z;
-		playerLookDir.deltaX = -KeyInput->GetYaw();
 
 		privData->nwClient->Send( playerLookDir );
 	}

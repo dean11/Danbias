@@ -7,10 +7,15 @@
 #include <GameServerAPI.h>
 #include "NetworkClient.h"
 
+#include "EventHandler\EventHandler.h"
+#include "Buttons\ButtonRectangle.h"
+
 using namespace ::DanBias::Client;
 using namespace ::Oyster::Math3D;
 using namespace ::Oyster::Network;
 using namespace ::Utility::DynamicMemory;
+using namespace ::Utility::StaticArray;
+using namespace ::Oyster::Event;
 
 struct MainState::MyData
 {
@@ -20,9 +25,11 @@ struct MainState::MyData
 	Float4x4 proj; 
 	
 	UniquePointer<C_Object> object[2]; 
-	int modelCount; 
 	NetworkClient *nwClient;
+	EventButtonCollection button;
 };
+
+void OnButtonInteract( Oyster::Event::ButtonEvent<GameClientState*>& e );
 
 MainState::MainState(void) {}
 
@@ -31,6 +38,13 @@ MainState::~MainState(void) {}
 bool MainState::Init( NetworkClient* nwClient )
 {
 	this->privData = new MyData();
+
+	// create buttons
+	ButtonRectangle<GameClientState*> *button = new ButtonRectangle<GameClientState*>( L"box_tex.png", OnButtonInteract, this, 0.5f, 0.5f, 0.1f, 0.1f, true );
+	this->privData->button.AddButton( button );
+
+	// bind button collection to the singleton eventhandler
+	EventHandler::Instance().AddCollection( &this->privData->button );
 
 	// load models
 	LoadModels(L"UImodels.txt");
@@ -49,7 +63,6 @@ bool MainState::LoadModels(std::wstring file)
 	// open file
 	// read file 
 	// init models
-	privData->modelCount = 2;
 
 	ModelInitData modelData;
 
@@ -126,16 +139,19 @@ GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyI
 
 bool MainState::Render()
 {
-
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 
 	Oyster::Graphics::API::NewFrame();
 	// render objects
-	for (int i = 0; i < privData->modelCount; i++)
-	{
-		privData->object[i]->Render();
-	}
+	//for (int i = 0; i < NumElementsOf(privData->object); i++)
+	//{
+	//	privData->object[i]->Render();
+	//}
+
+	Oyster::Graphics::API::StartGuiRender();
+	this->privData->button.Render();
+
 
 	// render effects
 
@@ -147,15 +163,19 @@ bool MainState::Render()
 
 bool MainState::Release()
 {
-	for (int i = 0; i < privData->modelCount; i++)
+	for (int i = 0; i < NumElementsOf(privData->object); i++)
 	{
-		privData->object[i]->Release();
-		delete privData->object[i];
 		privData->object[i] = NULL;
 	}
 
-	delete privData;  
 	privData = NULL;
+	// button collection will be autoreleased from EventHandler
+
 	return true;
 }
 
+/// button actions
+void OnButtonInteract( Oyster::Event::ButtonEvent<GameClientState*>& e )
+{
+
+}

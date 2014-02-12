@@ -38,7 +38,6 @@ struct NetworkClient::PrivateData : public IThreadObject
 {
 	NetworkSession *owner;
 	NetworkClient *parent;
-	ClientEventFunction OnRecieve;
 	Connection connection;
 	Translator translator;
 	OysterThread thread;
@@ -57,7 +56,6 @@ struct NetworkClient::PrivateData : public IThreadObject
 		:	ID(currID++)
 		,	parent(0)
 		,	owner(0)
-		,	OnRecieve(OnRecieve_Default)
 	{ 
 		InitWinSock();
 		this->thread.Create(this, false);
@@ -226,7 +224,8 @@ unsigned int NetworkClient::PrivateData::currID = 0;
 *************************************/
 
 NetworkClient::NetworkClient()
-	:	privateData(0)
+	:	privateData(nullptr),
+		OnRecieve(OnRecieve_Default)
 {  }
 
 NetworkClient::~NetworkClient()
@@ -326,11 +325,11 @@ void NetworkClient::SetMessagePump( NetworkClient::ClientEventFunction func )
 {
 	if( func )
 	{
-		this->privateData->OnRecieve = func;
+		this->OnRecieve = func;
 	}
 	else
 	{
-		this->privateData->OnRecieve = OnRecieve_Default;
+		this->OnRecieve = OnRecieve_Default;
 	}
 }
 
@@ -353,7 +352,7 @@ void NetworkClient::DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e)
 	}
 	else
 	{
-		this->privateData->OnRecieve( e );
+		this->OnRecieve( e );
 	}
 }
 

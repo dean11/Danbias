@@ -98,9 +98,8 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	  
 	return ClientState_Same;
 }
-bool LobbyState::Render(float dt)
+bool LobbyState::Render( )
 {
-
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 

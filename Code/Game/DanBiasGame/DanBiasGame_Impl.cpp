@@ -87,6 +87,8 @@ namespace DanBias
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
+			::Oyster::Graphics::API::Update( dt );
+
 			if(data.networkClient.IsConnected())
 				data.networkClient.Update();
 			
@@ -95,7 +97,7 @@ namespace DanBias
 			{
 				if(Update(dt) != S_OK)
 					return DanBiasClientReturn_Error;
-				if(Render(dt) != S_OK)
+				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
 				data.capFrame = 0; 
 			}
@@ -185,7 +187,7 @@ namespace DanBias
 		return S_OK;
 	}
 
-	HRESULT DanBiasGame::Render(float deltaTime)
+	HRESULT DanBiasGame::Render( )
 	{
 		data.state->Render();
 

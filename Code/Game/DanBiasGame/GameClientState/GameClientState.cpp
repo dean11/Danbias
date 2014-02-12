@@ -11,5 +11,5 @@ GameClientState::~GameClientState(void)
 {
 }
 
-void DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+void GameClientState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 { /* do nothing */ }

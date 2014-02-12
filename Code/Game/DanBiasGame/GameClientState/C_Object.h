@@ -17,12 +17,14 @@ namespace DanBias
 
 		class C_Object
 		{
+		protected:
+			Oyster::Graphics::Model::Model *model;
 		private:
 			Oyster::Math::Float4x4 world; 
 			Oyster::Math::Float3 position; 
 			Oyster::Math::Quaternion rotation; 
 			Oyster::Math::Float3 scale; 
-			Oyster::Graphics::Model::Model *model;
+			
 			int id;
 			void updateWorld();
 		public:

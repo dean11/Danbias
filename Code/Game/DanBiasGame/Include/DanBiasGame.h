@@ -52,7 +52,7 @@ namespace DanBias
 			static HRESULT		InitInput();
 
 			static HRESULT Update(float deltaTime);
-			static HRESULT Render(float deltaTime);
+			static HRESULT Render();
 			static HRESULT CleanUp();
 		};
 		
