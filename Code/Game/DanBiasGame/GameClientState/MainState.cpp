@@ -48,7 +48,6 @@ bool MainState::Init( NetworkClient* nwClient )
 
 	// load models
 	LoadModels(L"UImodels.txt");
-	InitCamera( Float3(0.0f, 0.0f, 5.4f) );
 	return true;
 }
 
@@ -79,17 +78,6 @@ bool MainState::LoadModels(std::wstring file)
 	modelData.position = Float3(-2,0,-2);
 	privData->object[1] = new C_StaticObj();
 	privData->object[1]->Init(modelData);
-	return true;
-}
-
-bool MainState::InitCamera(Float3 startPos)
-{
-	privData->proj = ProjectionMatrix_Perspective(pi/2,1024.0f/768.0f,.1f,1000);
-	//privData->proj = ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
-	Oyster::Graphics::API::SetProjection(privData->proj);
-
-	privData->view = OrientationMatrix_LookAtDirection(Float3(0,0,-1),Float3(0,1,0),startPos);
-	privData->view = InverseOrientationMatrix(privData->view);
 	return true;
 }
 

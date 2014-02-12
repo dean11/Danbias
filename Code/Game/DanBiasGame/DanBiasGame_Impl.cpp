@@ -199,6 +199,7 @@ namespace DanBias
 		data.networkClient.Disconnect();
 		delete data.inputObj;
 
+		Oyster::Event::EventHandler::Instance().Clean();
 		Oyster::Graphics::API::Clean();
 
 		GameServerAPI::ServerStop();
