@@ -7,6 +7,7 @@
 using namespace GameLogic;
 using namespace Oyster::Physics;
 const int MOVE_FORCE = 30;
+const float KEY_TIMER = 0.04f;
 Player::Player()
 	:DynamicObject()
 {
@@ -47,6 +48,10 @@ void Player::InitPlayer()
 	this->playerState = PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float3(0,0,-1);
 	this->moveDir = Oyster::Math::Float3(0,0,0);
+	key_forward = 0;
+	key_backward = 0;
+	key_strafeRight = 0;
+	key_strafeLeft = 0;
 }
 
 Player::~Player(void)
@@ -62,6 +67,41 @@ void Player::BeginFrame()
 {
 	//weapon->Update(0.002f); 
 	Object::BeginFrame();
+	Oyster::Math::Float3 forward(0,0,0); 
+	Oyster::Math::Float3 back(0,0,0); 
+	Oyster::Math::Float3 right(0,0,0); 
+	Oyster::Math::Float3 left(0,0,0); 
+	Oyster::Math::Float3 moveDirection(0,0,0);
+	if (key_forward > 0.001)
+	{
+		key_forward -= gameInstance->GetFrameTime();
+		forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
+	}
+	if (key_backward > 0.001)
+	{
+		key_backward -= gameInstance->GetFrameTime();
+		back = -this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
+	}
+	if (key_strafeRight > 0.001)
+	{
+
+		key_strafeRight -= gameInstance->GetFrameTime();
+		Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
+		Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.Normalize();
+		right = -((up).Cross(forward).Normalize());
+		right.Normalize();
+	}
+	if (key_strafeLeft > 0.001)
+	{
+		key_strafeLeft -= gameInstance->GetFrameTime();
+		Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
+		Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.Normalize();
+		left = (up).Cross(forward).Normalize();
+		left.Normalize();
+	}
+	moveDirection = forward + back + left + right;
+	//moveDirection.Normalize();
+	rigidBody->SetLinearVelocity( MOVE_FORCE * moveDirection );
 }
 
 void Player::EndFrame()
@@ -98,37 +138,19 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
-	moveDir = forward;
-	moveDir.Normalize();
-	rigidBody->SetLinearVelocity( MOVE_FORCE * moveDir );
+	key_forward = KEY_TIMER;
 }
 void Player::MoveBackwards()
 {
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
-	moveDir = -forward;
-	moveDir.Normalize();
-	rigidBody->SetLinearVelocity( MOVE_FORCE * moveDir );
+	key_backward = KEY_TIMER;
 }
 void Player::MoveRight()
 {
-	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
-	Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.Normalize();
-	Oyster::Math::Float3 r = (up).Cross(forward).Normalize();
-	moveDir = -r;
-	moveDir.Normalize();
-	rigidBody->SetLinearVelocity( MOVE_FORCE * moveDir );
+	key_strafeRight = KEY_TIMER;
 }
 void Player::MoveLeft()
 {
-	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2].GetNormalized();
-	Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.Normalize();
-	Oyster::Math::Float3 r = (up).Cross(forward).Normalize();
-	moveDir = r;
-	moveDir.Normalize();
-	rigidBody->SetLinearVelocity( MOVE_FORCE * moveDir );
+	key_strafeLeft = KEY_TIMER;
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)

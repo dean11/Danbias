@@ -87,6 +87,10 @@ namespace GameLogic
 		PLAYER_STATE playerState;
 		Oyster::Math::Float3 moveDir;	
 		Oyster::Math::Float3 lookDir;
+		float key_forward;
+		float key_backward;
+		float key_strafeRight;
+		float key_strafeLeft;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;
