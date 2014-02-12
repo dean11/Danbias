@@ -40,10 +40,6 @@ using namespace GameLogic;
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_JUMPPAD:
-			int i = 0;
-		// JUMP
-			break;
 		}
 
 		//return Physics::ICustomBody::SubscriptMessage_none;
@@ -144,7 +140,7 @@ using namespace GameLogic;
 			{
 			case OBJECT_TYPE::OBJECT_TYPE_BOX:
 				//move obj to limbo in physics to make sure it wont collide with anything
-				Oyster::Physics::API::Instance().MoveToLimbo(obj);
+//				Oyster::Physics::API::Instance().MoveToLimbo(obj);
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
 
