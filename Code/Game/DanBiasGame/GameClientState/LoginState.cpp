@@ -110,21 +110,21 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 	//Create menu buttons
 	privData->collection = new EventButtonCollection;
 	EventHandler::Instance().AddCollection(privData->collection);
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.2f, 0.1f, 0.2f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.3f, 0.1f, 0.2f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.4f, 0.1f, 0.2f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle_", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.5f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.2f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.3f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.4f, 0.1f, 0.2f));
+	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Create, 0.2f, 0.5f, 0.1f, 0.2f));
 
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.15f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.25f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.35f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.45f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.15f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.25f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.35f, 0.05f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.45f, 0.05f, 0.1f, 0.1f));
 
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Create, 0.5f, 0.5f, 0.3f, 0.3f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.5f, 0.5f, 0.3f, 0.3f));
 
 	//Incr/decr buttons
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Incr, 0.85f, 0.2f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button_", &LoginState::ButtonCallback, this, (void*)Decr, 0.55f, 0.2f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Incr, 0.85f, 0.2f, 0.1f, 0.1f));
+	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Decr, 0.55f, 0.2f, 0.1f, 0.1f));
 
 	privData->testNumber = 0;
 
@@ -217,7 +217,6 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 }
 bool LoginState::Render(float dt)
 {
-
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 
@@ -241,7 +240,7 @@ bool LoginState::Render(float dt)
 	_itow_s(privData->testNumber, temp, 10);
 	number = temp;
 	Oyster::Graphics::API::StartTextRender();
-	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7, 0.2), Oyster::Math::Float2(0.1, 0.1));
+	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7, 0.2), Oyster::Math::Float2(0.1, 0.1), Oyster::Math::Float3(1, 0, 0));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;

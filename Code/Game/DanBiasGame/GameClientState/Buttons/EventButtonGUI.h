@@ -42,26 +42,17 @@ namespace DanBias
 			virtual ~EventButtonGUI()
 			{
 				Oyster::Graphics::API::DeleteTexture(texture);
-				Oyster::Graphics::API::DeleteTexture(texture2);
-				Oyster::Graphics::API::DeleteTexture(texture3);
 				texture = NULL;
-				texture2 = NULL;
-				texture3 = NULL;
 			}
 
 			void CreateTexture(std::wstring textureName)
 			{
-				std::wstring file = L".png";
-
 				//Create texture
-				texture = Oyster::Graphics::API::CreateTexture(textureName + std::wstring(L"none") + file);
-				texture2 = Oyster::Graphics::API::CreateTexture(textureName + std::wstring(L"highlight") + file);
-				texture3 = Oyster::Graphics::API::CreateTexture(textureName + std::wstring(L"down") + file);
+				texture = Oyster::Graphics::API::CreateTexture(textureName);
 			}
 
 			virtual void Render()
 			{
-
 				if(EventButton<Owner>::Enabled())
 				{
 					//Render att xPos and yPos
@@ -69,15 +60,15 @@ namespace DanBias
 
 					if(EventButton<Owner>::GetState() == ButtonState_None)
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height));
+						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height), Oyster::Math::Float3(1, 1, 1));
 					}
 					else if(EventButton<Owner>::GetState() == ButtonState_Hover)
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture2, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height));
+						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height), Oyster::Math::Float3(0, 1, 0));
 					}
 					else
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture3, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height));
+						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height), Oyster::Math::Float3(1, 0, 0));
 					}
 
 				}
@@ -87,8 +78,6 @@ namespace DanBias
 			float xPos, yPos;
 			float width, height;
 			Oyster::Graphics::API::Texture texture;
-			Oyster::Graphics::API::Texture texture2;
-			Oyster::Graphics::API::Texture texture3;
 
 
 		};
