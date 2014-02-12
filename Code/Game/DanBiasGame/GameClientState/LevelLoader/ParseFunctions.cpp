@@ -3,10 +3,9 @@
 //////////////////////////////////
 
 #include "ParseFunctions.h"
-#include "../../../../Misc/Packing/Packing.h"
+#include "Loader.h"
 #include <string>
 
-using namespace Oyster::Packing;
 using namespace GameLogic::LevelFileLoader;
 using namespace GameLogic;
 using namespace std;
@@ -15,18 +14,22 @@ namespace GameLogic
 {
 	namespace LevelFileLoader
 	{
+		//can parse any struct if the struct doesnt contain strings or char[]
 		void ParseObject(char* buffer, void *header, int size)
 		{
 			memcpy(header, buffer, size);
 		}
 
-		void ParseObject(char* buffer, ObjectHeader& header, int& size)
+		void ParseObject(char* buffer, ObjectHeader& header, int& size, bool loadCgf)
 		{
 			char tempName[128];
 			unsigned int tempSize = 0;
 			int start = 0;
 
 			memcpy(&header.typeID, &buffer[start], 4);
+			start += 4;
+
+			memcpy(&header.specialTypeID, &buffer[start], 4);
 			start += 4;
 
 			memcpy(&tempSize, &buffer[start], 4);
@@ -36,13 +39,29 @@ namespace GameLogic
 			header.ModelFile.assign(&tempName[0], &tempName[tempSize]);
 			start += tempSize;
 
+			//The reset of the object struct
 			//3 float[3], 1 float
 			memcpy(&header.position, &buffer[start], 40);
 			start += 40;
+			
+			//if loadCgf : Read path for bounding volume
+			if(loadCgf)
+			{
+				ParseBoundingVolume(&buffer[start], header.boundingVolume, start);
+			}
 
-			//2 float[3], 3 float, 2 uint
-			memcpy(&header.usePhysics, &buffer[start], 44);
-			start += 44;
+			//else make sure the counter counts the name so we can jump over the string in the buffer. 
+			else
+			{
+				memcpy(&tempSize, &buffer[start], 4);
+				start += 4;
+
+				memcpy(&tempName, &buffer[start], tempSize);
+
+				string fileName;
+				fileName.assign(&tempName[0], &tempName[tempSize]);
+				start += tempSize;
+			}
 
 			size += start;
 		}
@@ -106,6 +125,58 @@ namespace GameLogic
 			}
 
 			size += start;
+		}
+
+		void ParseBoundingVolume(char* buffer, LevelLoaderInternal::BoundingVolume& volume, int &size)
+		{
+			int start = 0;
+			int tempSize = 0;
+			char tempName[128];
+			
+			memcpy(&tempSize, &buffer[start], 4);
+			start += 4;
+
+			memcpy(&tempName, &buffer[start], tempSize);
+
+			string fileName;
+			fileName.assign(&tempName[0], &tempName[tempSize]);
+			start += tempSize;
+
+			size += start;
+
+			//Läs in filen.
+			int fileLength = 0;
+			Loader loader;
+			char* buf = loader.LoadFile("C:/Users/Sam/Documents/GitHub/Danbias/Bin/Content/worlds/cgf/"+ fileName, fileLength);
+
+			start = 0;
+			LevelLoaderInternal::FormatVersion version;
+			memcpy(&version, &buf[0], sizeof(version));
+			start += 4;
+
+			memcpy(&volume.geoType, &buf[start], sizeof(volume.geoType));
+			start += sizeof(volume.geoType);
+
+			switch(volume.geoType)
+			{
+			case CollisionGeometryType_Box:
+				memcpy(&volume.box, &buf[start], sizeof(volume.box));
+				start += sizeof(volume.box);
+				break;
+
+			case CollisionGeometryType_Sphere:
+				memcpy(&volume.sphere, &buf[start], sizeof(volume.sphere));
+				start += sizeof(volume.sphere);
+				break;
+
+			case CollisionGeometryType_Cylinder:
+				memcpy(&volume.cylinder, &buf[start], sizeof(volume.cylinder));
+				start += sizeof(volume.cylinder);
+				break;
+
+			default:
+				break;
+			}
 		}
 	}
 }

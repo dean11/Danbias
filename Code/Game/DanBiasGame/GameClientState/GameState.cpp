@@ -4,7 +4,9 @@
 #include "NetworkClient.h"
 #include "Camera.h"
 #include <GameServerAPI.h>
+#include "LevelLoader\ObjectDefines.h"
 
+using namespace GameLogic;
 using namespace DanBias::Client;
 using namespace Oyster::Math;
 struct  GameState::myData
@@ -78,7 +80,7 @@ GameState::gameStateState GameState::LoadGame()
 	//LoadModels("3bana.bias");
 
 	// hardcoded objects
-	LoadModels();
+	LoadModels("C:/Users/Sam/Documents/GitHub/Danbias/Bin/Content/worlds/ccc.bias");
 	Float3 startPos = Float3(0,0,20.0f);
 	InitCamera(startPos);
 	return gameStateState_playing;
@@ -199,9 +201,9 @@ bool GameState::LoadModels(std::string mapFile)
 
 				modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
 				modelData.visible = true;
-				//modelData.position = ;
-				//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-				//modelData.scale =  Oyster::Math::Float3(2,2,2);
+				modelData.position = staticObjData->position;
+				modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(staticObjData->rotation), staticObjData->rotation[3]);
+				modelData.scale =  staticObjData->scale;
 				modelData.id = modelId++;
 
 				this->staticObjects.Push(new C_StaticObj());
@@ -211,11 +213,11 @@ bool GameState::LoadModels(std::string mapFile)
 		case GameLogic::ObjectType::ObjectType_Dynamic:
 			{
 				GameLogic::ObjectHeader* dynamicObjData = ((GameLogic::ObjectHeader*)obj);
-				//modelData.position = ;
-				//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-				//modelData.scale =  Oyster::Math::Float3(2,2,2);
 				modelData.modelPath.assign(dynamicObjData->ModelFile.begin(), dynamicObjData->ModelFile.end());
 				modelData.visible = true;
+				modelData.position = dynamicObjData->position;
+				modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(dynamicObjData->rotation), dynamicObjData->rotation[3]);
+				modelData.scale = dynamicObjData->scale;
 				modelData.id = modelId++;
 
 				this->dynamicObjects.Push(new C_DynamicObj());
@@ -229,8 +231,8 @@ bool GameState::LoadModels(std::string mapFile)
 				if(lightData->lightType == GameLogic::LightType_PointLight)
 				{
 					Oyster::Graphics::Definitions::Pointlight plight;
-					plight.Pos = ((GameLogic::PointLight*)lightData)->position;
-					plight.Color = lightData->diffuseColor;
+					plight.Pos = ((GameLogic::BasicLight*)lightData)->position;
+					plight.Color = lightData->color;
 					plight.Radius = 100;
 					plight.Bright = 0.9f;
 					Oyster::Graphics::API::AddLight(plight);
@@ -559,6 +561,7 @@ void GameState::Protocol( ObjPos* pos )
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
+
 
 				Float3 pos = dynamicObjects[i]->getPos();
 				Float3 up = dynamicObjects[i]->getWorld().v[1];
