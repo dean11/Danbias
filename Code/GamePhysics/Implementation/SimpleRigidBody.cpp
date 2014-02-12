@@ -67,6 +67,11 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	this->state = state;
 }
 
+void SimpleRigidBody::ApplyImpulse(Float3 impulse)
+{
+	this->rigidBody->applyImpulse(btVector3(impulse.x, impulse.y, impulse.z), btVector3(0.0f, 0.0f, 0.0f));
+}
+
 void SimpleRigidBody::SetCollisionShape(btCollisionShape* shape)
 {
 	this->collisionShape = shape;

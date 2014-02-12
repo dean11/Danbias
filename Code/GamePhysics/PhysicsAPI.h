@@ -45,6 +45,7 @@ namespace Oyster
 			typedef Struct::Gravity Gravity;
 
 			typedef void (*EventAction_Destruction)( ::Utility::DynamicMemory::UniquePointer<ICustomBody> proto );
+			typedef void (*EventAction_ApplyEffect)(ICustomBody* collidedBody, void* args);
 
 			/** Gets the Physics instance. */
 			static API & Instance();
@@ -99,7 +100,7 @@ namespace Oyster
 			 * @param hitAction: A function that contains the effect. Parameterlist contains the custom body 
 								 the collideable hits, and the arguments sent to the function.
 			 ********************************************************/
-			virtual void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) ) = 0;
+			virtual void ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect) = 0;
 
 		protected:
 			virtual ~API() {}
@@ -133,6 +134,8 @@ namespace Oyster
 
 			virtual void SetSubscription(EventAction_AfterCollisionResponse function) = 0;
 			virtual void SetSubscription(EventAction_Move function) = 0;
+
+			virtual void ApplyImpulse(::Oyster::Math::Float3 impulse) = 0;
 
 			virtual void SetLinearVelocity(::Oyster::Math::Float3 velocity) = 0;
 			virtual void SetPosition(::Oyster::Math::Float3 position) = 0;
