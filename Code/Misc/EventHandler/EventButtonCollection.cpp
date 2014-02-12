@@ -20,6 +20,7 @@ EventButtonCollection::~EventButtonCollection()
 		if(EventHandler::Instance().collections.at(i) == this)
 		{
 			EventHandler::Instance().collections.erase(EventHandler::Instance().collections.begin() + i);
+			break;
 		}
 	}
 

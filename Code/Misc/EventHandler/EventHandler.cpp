@@ -19,22 +19,11 @@ EventHandler::EventHandler()
 
 EventHandler::~EventHandler()
 {
-	int size = collections.size();
-	for(int i = 0; i < size; i++)
-	{
-		delete collections[i];
-		collections[i] = NULL;
-	}
+	Clean();
 }
 
 void EventHandler::Clean()
 {
-	int size = collections.size();
-	for(int i = 0; i < size; i++)
-	{
-		delete collections[i];
-		collections[i] = NULL;
-	}
 	collections.clear();
 }
 
@@ -65,14 +54,12 @@ void EventHandler::AddCollection(EventButtonCollection* collection)
 	collections.push_back(collection);
 }
 
-void EventHandler::DeleteCollection(EventButtonCollection* collection)
+void EventHandler::ReleaseCollection(EventButtonCollection* collection)
 {
 	for(int i = 0; i < collections.size(); i++)
 	{
 		if(collections.at(i) == collection)
 		{
-			delete collection;
-			collection = NULL;
 			collections.erase(collections.begin() + i);
 			break;
 		}

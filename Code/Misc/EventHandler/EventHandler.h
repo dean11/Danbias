@@ -33,7 +33,8 @@ namespace Oyster
 
 			*/
 			void AddCollection(EventButtonCollection* collection);
-			void DeleteCollection(EventButtonCollection* collection);
+
+			void ReleaseCollection(EventButtonCollection* collection);
 
 		private:
 			//Can't copy this class.
@@ -43,7 +44,7 @@ namespace Oyster
 		private:
 			std::vector<EventButtonCollection*> collections;
 
-			//EventButtonCollection is a firend so it can delete it self.
+			//EventButtonCollection is a friend so it can delete it self.
 			friend class EventButtonCollection;
 		};
 	}

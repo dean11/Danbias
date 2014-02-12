@@ -44,7 +44,6 @@ namespace DanBias
 				GetCursorPos(&p);
 				ScreenToClient(WindowShell::GetHWND(), &p);
 				GetClientRect(WindowShell::GetHWND(), &r);
-
 				//Should come from the InputClass
 				float xMouse = (float)p.x / (float)r.right, yMouse = (float)p.y / (float)r.bottom;
 
