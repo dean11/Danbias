@@ -66,11 +66,7 @@ using namespace GameLogic;
 
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
 	{
-		Oyster::Physics::ICustomBody::State state;
-
-		state = obj.GetState();
-		//state.ApplyLinearImpulse(force);
-		obj.SetState(state);
+		obj.ApplyImpulse(force);
 	}
 	
 

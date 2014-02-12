@@ -181,9 +181,9 @@ void Level::InitiateLevel(float radius)
 	this->staticObjects[0]->objectID = idCount++;
 
 	// add jumppad
-	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 5, 0.5f, 0.8f, 0.6f);
+	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1, 1, 1), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 5, 0.5f, 0.8f, 0.6f);
 
-	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_JUMPPAD, Oyster::Math::Float3(0,1,0)));
+	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, JumpPad::JumpPadActivated, OBJECT_TYPE::OBJECT_TYPE_JUMPPAD, Oyster::Math::Float3(0,2000,0)));
 	rigidBody_Jumppad->SetCustomTag(this->staticObjects[1]);
 	this->staticObjects[1]->objectID = idCount++;
 }
