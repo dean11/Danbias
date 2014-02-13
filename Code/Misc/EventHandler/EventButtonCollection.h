@@ -37,7 +37,8 @@ namespace Oyster
 			~EventButtonCollection();
 
 			void Update(MouseInput& input);
-			void Render();
+			void RenderTexture();
+			void RenderText();
 
 			/*Add a button to the collection when a button is added to the collection you are not allowed to delete it.
 			*/
