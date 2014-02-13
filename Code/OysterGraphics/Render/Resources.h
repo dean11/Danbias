@@ -81,6 +81,8 @@ namespace Oyster
 						//Blur UAV and SRV
 						static ID3D11UnorderedAccessView* BufferUAV;
 						static ID3D11ShaderResourceView* BufferSRV;
+
+						static Core::Buffer Data;
 					};
 
 					struct Post
