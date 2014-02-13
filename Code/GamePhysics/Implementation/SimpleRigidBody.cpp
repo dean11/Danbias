@@ -139,6 +139,46 @@ void SimpleRigidBody::SetRotation(Float3 eulerAngles)
 	this->state.quaternion = Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w());
 }
 
+void SimpleRigidBody::SetRotation(::Oyster::Math::Float4x4 rotation)
+{
+	btTransform trans;
+	btMatrix3x3 newRotation;
+	btVector3 rightVector(rotation.v[0].x, rotation.v[0].y, rotation.v[0].z);
+	btVector3 upVector(rotation.v[1].x, rotation.v[1].y, rotation.v[1].z);
+	btVector3 forwardVector(rotation.v[2].x, rotation.v[2].y, rotation.v[2].z);
+	
+
+	newRotation[0] = rightVector;
+	newRotation[1] = upVector;
+	newRotation[2] = forwardVector;
+
+	trans = this->rigidBody->getWorldTransform();
+	trans.setBasis(newRotation);
+	this->rigidBody->setWorldTransform(trans);
+
+	btQuaternion quaternion;
+	quaternion = trans.getRotation();
+	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+}
+
+void SimpleRigidBody::SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis)
+{
+	if(angularAxis.xyz.GetMagnitude() == 0)
+	{
+		return;
+	}
+
+	btTransform trans;
+	btVector3 vector(angularAxis.x, angularAxis.y, angularAxis.z);
+	btQuaternion quaternion(vector, angularAxis.w);
+
+	trans = this->rigidBody->getWorldTransform();
+	trans.setRotation(quaternion);
+	this->rigidBody->setWorldTransform(trans);
+
+	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+}
+
 void SimpleRigidBody::SetAngularFactor(Float factor)
 {
 	this->rigidBody->setAngularFactor(factor);
@@ -177,13 +217,34 @@ void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math:
 	btVector3 forwardVector(forward.x, forward.y, forward.z);
 	rotation[1] = upVector.normalized();
 	rotation[2] = forwardVector.normalized();
-	rotation[0] = forwardVector.cross(upVector).normalized();
+	rotation[0] = upVector.cross(forwardVector).normalized();
 	trans = this->rigidBody->getWorldTransform();
 	trans.setBasis(rotation);
 	this->rigidBody->setWorldTransform(trans);
 
 	btQuaternion quaternion;
 	quaternion = trans.getRotation();
+	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+}
+
+void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
+{
+	Float3 vector = Float3(0, 1, 0).Cross(up);
+
+	if(vector == Float3::null)
+	{
+		return;
+	}
+
+	Float sine = vector.GetLength();
+	Float cosine = acos(Float3(0, 1, 0).Dot(up));
+
+	btQuaternion quaternion(btVector3(vector.x, vector.y, vector.z),cosine);
+
+	btTransform trans;
+	trans = this->rigidBody->getWorldTransform();
+	trans.setRotation(quaternion);
+	this->rigidBody->setWorldTransform(trans);
 	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
 }
 
@@ -229,6 +290,16 @@ Float4x4 SimpleRigidBody::GetView( const ::Oyster::Math::Float3 &offset ) const
 	return this->state.GetView(offset);
 }
 
+Float3 SimpleRigidBody::GetGravity() const
+{
+	return this->rigidBody->getGravity();
+}
+Float3 SimpleRigidBody::GetLinearVelocity() const
+{
+	return this->rigidBody->getLinearVelocity();
+}
+
+
 void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
 {
 	if(this->afterCollision)
@@ -266,5 +337,3 @@ void SimpleRigidBody::SetCustomTag( void *ref )
 {
 	this->customTag = ref;
 }
-
-

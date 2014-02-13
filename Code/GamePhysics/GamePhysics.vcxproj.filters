@@ -30,22 +30,10 @@
     <ClInclude Include="Implementation\SimpleRigidBody.h">
       <Filter>Header Files\Implementation</Filter>
     </ClInclude>
-    <ClInclude Include="Implementation\SphericalRigidBody.h">
-      <Filter>Header Files\Implementation</Filter>
-    </ClInclude>
-    <ClInclude Include="Implementation\Octree.h">
-      <Filter>Header Files\Implementation</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicsStructs.h">
       <Filter>Header Files\Include</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsStructs-Impl.h">
-      <Filter>Header Files\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsFormula.h">
-      <Filter>Header Files\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsFormula-Impl.h">
       <Filter>Header Files\Include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,12 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Implementation\DLLMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Implementation\SphericalRigidBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Implementation\Octree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
