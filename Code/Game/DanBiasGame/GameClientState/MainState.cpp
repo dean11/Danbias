@@ -52,13 +52,13 @@ bool MainState::Init( NetworkClient* nwClient )
 	// create buttons
 	ButtonRectangle<GameClientState*> *button;
 	
-	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Create, this, 0.5f, 0.2f, 0.1f, 0.3f, true );
+	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Create, this, 0.5f, 0.2f, 0.3f, 0.1f, true );
 	this->privData->button.AddButton( button );
 
-	button = new ButtonRectangle<GameClientState*>( L"skysphere_md.png", OnButtonInteract_Join, this, 0.5f, 0.4f, 0.1f, 0.3f, true );
+	button = new ButtonRectangle<GameClientState*>( L"skysphere_md.png", OnButtonInteract_Join, this, 0.5f, 0.4f, 0.3f, 0.1f, true );
 	this->privData->button.AddButton( button );
 
-	button = new ButtonRectangle<GameClientState*>( L"plane_texture_md.png", OnButtonInteract_Quit, this, 0.5f, 0.8f, 0.1f, 0.3f, true );
+	button = new ButtonRectangle<GameClientState*>( L"plane_texture_md.png", OnButtonInteract_Quit, this, 0.5f, 0.8f, 0.3f, 0.1f, true );
 	this->privData->button.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
