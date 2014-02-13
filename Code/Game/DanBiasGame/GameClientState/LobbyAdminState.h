@@ -1,10 +1,8 @@
-#ifndef DANBIAS_CLIENT_LOBBYSTATE_H
-#define DANBIAS_CLIENT_LOBBYSTATE_H
+#ifndef DANBIAS_CLIENT_LOBBYADMINSTATE_H
+#define DANBIAS_CLIENT_LOBBYADMINSTATE_H
 
 #include "GameClientState.h"
-#include "OysterMath.h"
 #include "NetworkClient.h"
-#include <string>
 
 // Feature wishlist:
 // create session lobby
@@ -20,11 +18,11 @@ namespace DanBias
 {
 	namespace Client
 	{		
-		class LobbyState : public GameClientState
+		class LobbyAdminState : public GameClientState
 		{
 		public:
-			LobbyState(void);
-			~LobbyState(void);
+			LobbyAdminState();
+			~LobbyAdminState();
 
 			bool Init( Oyster::Network::NetworkClient* nwClient );
 			ClientState Update( float deltaTime, InputClass* KeyInput );

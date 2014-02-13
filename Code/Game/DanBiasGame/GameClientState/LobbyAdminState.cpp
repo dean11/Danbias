@@ -1,4 +1,4 @@
-#include "LobbyState.h"
+#include "LobbyAdminState.h"
 #include "DllInterfaces/GFXAPI.h"
 #include "OysterMath.h"
 #include "C_obj/C_Player.h"
@@ -16,7 +16,7 @@ using namespace ::Oyster::Network;
 using namespace ::Oyster::Event;
 using namespace ::Oyster::Math3D;
 
-struct LobbyState::MyData
+struct LobbyAdminState::MyData
 {
 	MyData(){}
 
@@ -28,15 +28,15 @@ struct LobbyState::MyData
 
 void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<GameClientState*>& e );
 
-LobbyState::LobbyState(void) {}
+LobbyAdminState::LobbyAdminState(void) {}
 
-LobbyState::~LobbyState(void)
+LobbyAdminState::~LobbyAdminState(void)
 {
 	if( this->privData )
 		this->Release();
 }
 
-bool LobbyState::Init(NetworkClient* nwClient)
+bool LobbyAdminState::Init(NetworkClient* nwClient)
 {
 	privData = new MyData();
 
@@ -57,7 +57,7 @@ bool LobbyState::Init(NetworkClient* nwClient)
 	return true;
 }
 
-GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState LobbyAdminState::Update(float deltaTime, InputClass* KeyInput)
 {
 	// Wishlist:
 	// picking 
@@ -79,7 +79,7 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 
 	return this->privData->nextState;
 }
-bool LobbyState::Render( )
+bool LobbyAdminState::Render( )
 {
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
@@ -90,16 +90,16 @@ bool LobbyState::Render( )
 	Graphics::API::EndFrame();
 	return true;
 }
-bool LobbyState::Release()
+bool LobbyAdminState::Release()
 {
 	privData = NULL;
 	return true;
 }
 
-void LobbyState::ChangeState( ClientState next )
+void LobbyAdminState::ChangeState( ClientState next )
 {
 	if( next == GameClientState::ClientState_LobbyReady )
-	{ // Send ready signal to server lobby
+	{ // If all is ready start server
 
 	}
 	else
@@ -108,7 +108,7 @@ void LobbyState::ChangeState( ClientState next )
 
 using namespace ::Oyster::Network;
 
-void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+void LobbyAdminState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 {
 	CustomNetProtocol data = e.args.data.protocol;
 	short ID = data[0].value.netShort; // fetching the id data.

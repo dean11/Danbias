@@ -5,6 +5,7 @@
 #include "GameClientState/GameClientState.h"
 #include "GameClientState\GameState.h"
 #include "GameClientState\LobbyState.h"
+#include "GameClientState\LobbyAdminState.h"
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
 #include <Protocols.h>
@@ -169,16 +170,9 @@ namespace DanBias
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_LobbyCreate:
-				{
-					//DanBias::GameServerAPI::ServerInitiate( .. );
-					//DanBias::GameServerAPI::ServerStart();
-					//data.serverOwner = true;
-					//if( data.networkClient.Connect(15151, "127.0.0.1") )
-					//{
-					//	data.state = new Client::LobbyState();
-					//	stateChanged = true;
-					//}
-				}
+				data.state = new Client::LobbyAdminState();
+				stateChanged = true;
+				break;
 			case Client::GameClientState::ClientState_Lan:
 				data.state = new Client::LanMenuState();
 				stateChanged = true;

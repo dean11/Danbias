@@ -15,7 +15,6 @@ struct  GameState::MyData
 	MyData(){}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-
 } privData;
 
 GameState::GameState(void)
@@ -137,14 +136,19 @@ bool GameState::LoadModels(std::string mapFile)
 			{
 				GameLogic::BasicLight* lightData = ((GameLogic::BasicLight*)obj);
 
-				if(lightData->lightType == GameLogic::LightType_PointLight)
+				switch( lightData->lightType )
 				{
-					Oyster::Graphics::Definitions::Pointlight plight;
-					plight.Pos = ((GameLogic::PointLight*)lightData)->position;
-					plight.Color = lightData->diffuseColor;
-					plight.Radius = 100;
-					plight.Bright = 0.9f;
-					Oyster::Graphics::API::AddLight(plight);
+				case GameLogic::LightType_PointLight:
+					{
+						//Oyster::Graphics::Definitions::Pointlight plight;
+						//plight.Pos = ((GameLogic::PointLight*)lightData)->position;
+						//plight.Color = lightData->diffuseColor;
+						//plight.Radius = 100;
+						//plight.Bright = 0.9f;
+						//Oyster::Graphics::API::AddLight(plight);
+					}
+					break;
+				default: break;
 				}
 			}
 			break;

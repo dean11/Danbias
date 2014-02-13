@@ -69,7 +69,14 @@ bool MainState::Init( NetworkClient* nwClient )
 
 GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyInput)
 {
-	EventHandler::Instance().Update( KeyInput );
+	MouseInput mouseState;
+	{
+		mouseState.x = KeyInput->GetPitch();
+		mouseState.y = KeyInput->GetYaw();
+		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
+	}
+
+	EventHandler::Instance().Update( mouseState );
 
 	return this->privData->nextState;
 }
@@ -88,11 +95,12 @@ bool MainState::Render()
 
 bool MainState::Release()
 {
-	if( privData )
+	if( this->privData )
 	{
-		Graphics::API::DeleteTexture( this->privData->background );
+		Graphics::API::DeleteTexture( this->privData->background ); // TODO: @todo bug caught when exiting by X
+		EventHandler::Instance().ReleaseCollection( &this->privData->button );
 
-		privData = NULL;
+		this->privData = NULL;
 		// button collection will be autoreleased from EventHandler
 	}
 	return true;
@@ -102,14 +110,6 @@ void MainState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
-
-/// button actions
-
-//ButtonState_None, // onExit
-//ButtonState_Hover,
-//ButtonState_Pressed,
-//ButtonState_Down,
-//ButtonState_Released,
 
 void OnButtonInteract_Create( Oyster::Event::ButtonEvent<GameClientState*>& e )
 {
