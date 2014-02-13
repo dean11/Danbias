@@ -9,11 +9,17 @@
 #include "GameState.h"
 #include "../Network/NetworkAPI/NetworkClient.h"
 
+#include "EventHandler\EventHandler.h"
+#include "Buttons\ButtonRectangle.h"
+
 #include <GameServerAPI.h>
+#include <string>
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
 using namespace ::Oyster::Network;
+using namespace ::Oyster::Event;
+using namespace ::Oyster::Math3D;
 
 struct  LanMenuState::MyData
 {
@@ -21,101 +27,59 @@ struct  LanMenuState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-
+	Graphics::API::Texture background;
+	EventButtonCollection button;
+	::std::wstring connectIP;
+	unsigned short connectPort;
 } privData;
+
+void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<GameClientState*>& e );
 
 LanMenuState::LanMenuState() {}
 
-LanMenuState::~LanMenuState() {}
+LanMenuState::~LanMenuState()
+{
+	if( this->privData )
+		this->Release();
+}
 
 bool LanMenuState::Init(Network::NetworkClient* nwClient)
 {
-	privData = new MyData();
+	this->privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = nwClient;
+
+	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
+
+	// create buttons
+	ButtonRectangle<GameClientState*> *button;
+	
+	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Connect, this, 0.5f, 0.2f, 0.3f, 0.1f, true );
+	this->privData->button.AddButton( button );
+
+	// bind button collection to the singleton eventhandler
+	EventHandler::Instance().AddCollection( &this->privData->button );
+
+	this->privData->connectIP = L"127.0.0.1";
+	this->privData->connectPort = 15151;
 
 	return true;
 }
 
 GameClientState::ClientState LanMenuState::Update(float deltaTime, InputClass* KeyInput)
 {
-	/*ChangeState(KeyInput);
-
-	if(privData->recieverObj->IsConnected())
-		privData->recieverObj->Update();
-	KeyInput->Update();
-
-	if(privData->serverOwner)
+	MouseInput mouseState;
 	{
-		DanBias::GameServerAPI::ServerUpdate();
+		mouseState.x = KeyInput->GetPitch();
+		mouseState.y = KeyInput->GetYaw();
+		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
 
-	DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-	state = privData->recieverObj->gameClientState->Update(deltaTime, KeyInput);
+	EventHandler::Instance().Update( mouseState );
 
-	if(state != Client::GameClientState::ClientState_Same)
-	{
-		privData->recieverObj->gameClientState->Release();
-		delete privData->recieverObj->gameClientState;
-		privData->recieverObj->gameClientState = NULL;
-
-		switch (state)
-		{
-		case Client::GameClientState::ClientState_LobbyCreated:
-			privData->serverOwner = true;
-		case Client::GameClientState::ClientState_Lobby:
-			privData->recieverObj->gameClientState = new Client::LobbyState();
-			break;
-		case Client::GameClientState::ClientState_Game:
-			privData->recieverObj->gameClientState = new Client::GameState();
-			break;
-		default:
-			//return E_FAIL;
-			break;
-		}
-		privData->recieverObj->gameClientState->Init(privData->recieverObj); // send game client
-				 
-	}*/
-
-	//return ChangeState(KeyInput);
 	return this->privData->nextState;
 }
-
-//GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
-//{
-//	// create game
-//	if( KeyInput->IsKeyPressed(DIK_C)) 
-//	{
-//		DanBias::GameServerAPI::ServerInitDesc desc; 
-//
-//		DanBias::GameServerAPI::ServerInitiate(desc);
-//		DanBias::GameServerAPI::ServerStart();
-//		// my ip
-//		nwClient->Connect(15151, "127.0.0.1");
-//
-//		if (!nwClient->IsConnected())
-//		{
-//			// failed to connect
-//			return ClientState_Same;
-//		}
-//		return ClientState_Lobby;
-//	}
-//	// join game
-//	if( KeyInput->IsKeyPressed(DIK_J)) 
-//	{
-//		// game ip
-//		nwClient->Connect(15151, "194.47.150.56");
-//
-//		if (!nwClient->IsConnected())
-//		{
-//			// failed to connect
-//			return ClientState_Same;
-//		}
-//		return ClientState_Lobby;
-//	}
-//	return ClientState_Same;
-//}
 
 bool LanMenuState::Render( )
 {
@@ -123,7 +87,8 @@ bool LanMenuState::Render( )
 
 	Graphics::API::StartGuiRender();
 
-
+	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	this->privData->button.Render();
 
 	Graphics::API::EndFrame();
 	return true;
@@ -131,12 +96,32 @@ bool LanMenuState::Render( )
 
 bool LanMenuState::Release()
 {
-
 	privData = NULL;
 	return true;
 }
 
 void LanMenuState::ChangeState( ClientState next )
 {
+	switch( next )
+	{
+	case GameClientState::ClientState_Lobby:
+		// attempt to connect to lobby
+		if( !this->privData->nwClient->Connect(this->privData->connectPort, this->privData->connectIP) )
+			return;
+		break;
+	default: break;
+	}
+
 	this->privData->nextState = next;
+}
+
+void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<GameClientState*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		break;
+	default: break;
+	}
 }
