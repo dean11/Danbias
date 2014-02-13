@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "CollisionManager.h"
 #include "JumpPad.h"
+#include "Portal.h"
 
 using namespace Oyster;
 
@@ -14,6 +15,7 @@ using namespace GameLogic;
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force);
+	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target);
 
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -62,6 +64,20 @@ using namespace GameLogic;
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
 	{
 		obj.ApplyImpulse(force);
+	}
+
+	void Portal::PortalActivated(Oyster::Physics::ICustomBody *rigidBodyPortal, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		Portal *portal = (Portal*)(rigidBodyPortal->GetCustomTag());
+
+		if(obj->GetState().mass == 0) return;
+
+		Teleport(*obj,portal->portalExit);
+	}
+
+	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target)
+	{
+		obj.SetPosition(target);
 	}
 	
 

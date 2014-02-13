@@ -192,6 +192,7 @@
     <ClInclude Include="LevelLoader\LevelParser.h" />
     <ClInclude Include="LevelLoader\ParseFunctions.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Portal.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="Team.h" />
     <ClInclude Include="TeamManager.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="LevelLoader\ParseFunctions.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Portal.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Team.cpp" />
     <ClCompile Include="TeamManager.cpp" />
