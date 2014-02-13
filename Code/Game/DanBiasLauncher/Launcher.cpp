@@ -31,5 +31,5 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		DanBias::DanBiasGame::Release();
 	}
 
-	return cmdShow;
+	return 0;
 }

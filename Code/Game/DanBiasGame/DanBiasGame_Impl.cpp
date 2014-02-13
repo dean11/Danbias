@@ -221,8 +221,9 @@ namespace DanBias
 
 		delete data.inputObj;
 
-		Oyster::Event::EventHandler::Instance().Clean();
-		Oyster::Graphics::API::Clean();
+		data.state = nullptr;
+		EventHandler::Instance().Clean();
+		Graphics::API::Clean();
 
 		GameServerAPI::ServerStop();
 
