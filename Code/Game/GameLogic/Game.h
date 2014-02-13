@@ -40,8 +40,10 @@ namespace GameLogic
 			Oyster::Math::Float3 GetScale()							override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
-			OBJECT_TYPE GetObjectType()	const						override;
 			void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)		override;
+			ObjectSpecialType GetObjectType()	const						override;
+
+
 
 			Player *player;
 		};
@@ -56,7 +58,7 @@ namespace GameLogic
 			Oyster::Math::Float3 GetScale()							override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
-			OBJECT_TYPE GetObjectType()	const						override;
+			ObjectSpecialType GetObjectType()	const						override;
 			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
 			Level *level;

@@ -36,7 +36,7 @@ namespace Oyster
 			EventButtonCollection(EventCollectionState state = EventCollectionState_Enabled);
 			~EventButtonCollection();
 
-			void Update(InputClass* inputObject);
+			void Update(MouseInput& input);
 			void Render();
 
 			/*Add a button to the collection when a button is added to the collection you are not allowed to delete it.

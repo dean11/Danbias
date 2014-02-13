@@ -81,8 +81,8 @@ Game::LevelData* Game::CreateLevel()
 	if(this->level) return this->level;
 
 	this->level = new LevelData();
-	this->level->level->InitiateLevel(1000);
-	//this->level->level->InitiateLevel("3bana.bias");
+	//this->level->level->InitiateLevel(1000);
+	this->level->level->InitiateLevel("C:/Users/Sam/Documents/GitHub/Danbias/Bin/Content/worlds/ccc.bias");
 
 	return this->level;
 }

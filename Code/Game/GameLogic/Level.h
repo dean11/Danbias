@@ -9,6 +9,7 @@
 #include "StaticObject.h"
 #include "DynamicObject.h"
 #include "GameModeType.h"
+#include "JumpPad.h"
 #include "Player.h"
 #include "PhysicsAPI.h"
 #include "TeamManager.h"

@@ -24,19 +24,14 @@ using namespace GameLogic;
 
 		switch (realObj->GetObjectType())
 		{
-		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
+		case ObjectSpecialType_StandarsBox:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
-		
-		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+		case ObjectSpecialType_Player:
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
-			//return Physics::ICustomBody::SubscriptMessage_none;
-			break;
-		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+		case ObjectSpecialType_World:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
@@ -52,25 +47,21 @@ using namespace GameLogic;
 
 		switch (realObj->GetObjectType())
 		{
-		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
+		case ObjectSpecialType_Generic:
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_BOX:
+		case ObjectSpecialType_StandarsBox:
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+		case ObjectSpecialType_Player:
 			SendObjectFlying(*obj, jumpPad->pushForce);
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+		case ObjectSpecialType_World:
 			break;
 		}
 	}
 
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
 	{
-		Oyster::Physics::ICustomBody::State state;
-
-		state = obj.GetState();
-		//state.ApplyLinearImpulse(force);
-		obj.SetState(state);
+		obj.ApplyImpulse(force);
 	}
 	
 
@@ -115,7 +106,7 @@ using namespace GameLogic;
 
 		Object *realObj = (Object*)obj->GetCustomTag();
 
-		if(realObj->GetObjectType() == OBJECT_TYPE_PLAYER || realObj->GetObjectType() == OBJECT_TYPE_WORLD)
+		if(realObj->GetObjectType() == ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType_World)
 			return;
 
 		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
@@ -138,9 +129,9 @@ using namespace GameLogic;
 
 			switch(realObj->GetObjectType())
 			{
-			case OBJECT_TYPE::OBJECT_TYPE_BOX:
+			case ObjectSpecialType_StandarsBox:
 				//move obj to limbo in physics to make sure it wont collide with anything
-				Oyster::Physics::API::Instance().MoveToLimbo(obj);
+//				Oyster::Physics::API::Instance().MoveToLimbo(obj);
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
 

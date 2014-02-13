@@ -19,6 +19,14 @@ namespace Oyster
 			ButtonState_Down,
 			ButtonState_Released,
 		};
+		
+		//Takes normalized device coordinates
+		struct MouseInput
+		{
+			//Normalized device coordinates
+			float x, y;
+			bool mouseButtonPressed;
+		};
 
 		class IEventButton
 		{
@@ -26,7 +34,8 @@ namespace Oyster
 			virtual ~IEventButton(){}
 
 			virtual void Render() = 0;
-			virtual void Update(InputClass *input) = 0;
+
+			virtual void Update(MouseInput& input) = 0;
 
 			virtual void SendEvent(ButtonState state) = 0;
 			

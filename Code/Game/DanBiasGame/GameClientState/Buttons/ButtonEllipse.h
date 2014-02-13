@@ -37,16 +37,10 @@ namespace DanBias
 			{}
 
 			//Circle vs point collision
-			bool Collision(InputClass* inputObject)
+			bool Collision(Oyster::Event::MouseInput& input)
 			{
-				POINT p;
-				RECT r;
-				GetCursorPos(&p);
-				ScreenToClient(WindowShell::GetHWND(), &p);
-				GetClientRect(WindowShell::GetHWND(), &r);
-
 				//Should come from the InputClass
-				float xMouse = (float)p.x / (float)r.right, yMouse = (float)p.y / (float)r.bottom;
+				float xMouse = input.x, yMouse = input.y;
 
 				double normx = (xMouse - xPos) / width;
 				double normy = (yMouse - yPos) / height;
