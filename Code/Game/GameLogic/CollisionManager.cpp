@@ -37,6 +37,7 @@ using namespace GameLogic;
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
+			
 		}
 
 		//return Physics::ICustomBody::SubscriptMessage_none;

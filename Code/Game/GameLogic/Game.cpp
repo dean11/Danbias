@@ -82,7 +82,7 @@ Game::LevelData* Game::CreateLevel()
 
 	this->level = new LevelData();
 	//this->level->level->InitiateLevel(1000);
-	this->level->level->InitiateLevel("C:/Users/Sam/Documents/GitHub/Danbias/Bin/Content/worlds/ccc.bias");
+	this->level->level->InitiateLevel("../Content/Worlds/ccc.bias");
 
 	return this->level;
 }

@@ -7,9 +7,9 @@ Game::PlayerData::PlayerData()
 {	
 	//set some stats that are appropriate to a player
 
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,400,0);
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(50,130,0);
 
-	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
+	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,2.0f,0.5f);
 	Oyster::Math::Float mass = 60;
 	Oyster::Math::Float restitutionCoeff = 0.5;
 	Oyster::Math::Float frictionCoeff_Static = 0.4;

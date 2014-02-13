@@ -147,7 +147,7 @@ namespace GameLogic
 			//Läs in filen.
 			int fileLength = 0;
 			Loader loader;
-			char* buf = loader.LoadFile("C:/Users/Sam/Documents/GitHub/Danbias/Bin/Content/worlds/cgf/"+ fileName, fileLength);
+			char* buf = loader.LoadFile("../Content/Worlds/cgf/"+ fileName, fileLength);
 
 			start = 0;
 			LevelLoaderInternal::FormatVersion version;
