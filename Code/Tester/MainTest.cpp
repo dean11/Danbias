@@ -246,7 +246,7 @@ HRESULT Render(float deltaTime)
 	fps = std::to_wstring(f);
 	//Oyster::Graphics::API::RenderText(L"Lanariel",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
 	//Oyster::Graphics::API::RenderText(L"Lanariel WAS HERE",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
-	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float3(0,1,0));
+	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float3(0.5f,0.1f,1.0f),Oyster::Math::Float2(0.5f,0.1f), 0.08f, Oyster::Math::Float3(0,1,0));
 	Oyster::Graphics::API::EndFrame();
 
 	return S_OK;
