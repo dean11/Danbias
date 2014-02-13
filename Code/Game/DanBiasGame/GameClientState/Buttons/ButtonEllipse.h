@@ -21,17 +21,17 @@ namespace DanBias
 			ButtonEllipse() 
 				: EventButtonGUI(), radius(0)
 			{}
-			ButtonEllipse(std::wstring textureName, Owner owner, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
-				: EventButtonGUI(textureName, owner, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, owner, pos, size, resize)
 			{}
-			ButtonEllipse(std::wstring textureName, EventFunc func, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
-				: EventButtonGUI(textureName, func, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, func, pos, size, resize)
 			{}
-			ButtonEllipse(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
-				: EventButtonGUI(textureName, func, owner, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, func, owner, pos, size, resize)
 			{}
-			ButtonEllipse(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float textureWidth, float textureHeight, bool resizeToScreenAspectRatio = true) 
-				: EventButtonGUI(textureName, func, owner, userData, xPos, yPos, textureWidth, textureHeight, resizeToScreenAspectRatio)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, func, owner, userData, pos, size, resize)
 			{}
 			virtual ~ButtonEllipse()
 			{}
@@ -42,8 +42,8 @@ namespace DanBias
 				//Should come from the InputClass
 				float xMouse = input.x, yMouse = input.y;
 
-				double normx = (xMouse - xPos) / width;
-				double normy = (yMouse - yPos) / height;
+				double normx = (xMouse - pos.x) / size.x;
+				double normy = (yMouse - pos.y) / size.y;
 
 				return (normx * normx + normy * normy) < 0.25;
 			}

@@ -43,13 +43,24 @@ void EventButtonCollection::Update(MouseInput& input)
 	}
 }
 
-void EventButtonCollection::Render()
+void EventButtonCollection::RenderTexture()
 {
 	if(this->collectionState == EventCollectionState_Enabled)
 	{
 		for(int i = 0; i < (int)buttons.size(); i++)
 		{
-			buttons[i]->Render();
+			buttons[i]->RenderTexture();
+		}
+	}
+}
+
+void EventButtonCollection::RenderText()
+{
+	if(this->collectionState == EventCollectionState_Enabled)
+	{
+		for(int i = 0; i < (int)buttons.size(); i++)
+		{
+			buttons[i]->RenderText();
 		}
 	}
 }

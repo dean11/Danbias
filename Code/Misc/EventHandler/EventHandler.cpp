@@ -35,11 +35,19 @@ void EventHandler::Update(MouseInput& input)
 	}
 }
 
-void EventHandler::Render()
+void EventHandler::RenderTexture()
 {
 	for(int i = 0; i < (int)collections.size(); i++)
 	{
-		collections.at(i)->Render();
+		collections.at(i)->RenderTexture();
+	}
+}
+
+void EventHandler::RenderText()
+{
+	for(int i = 0; i < (int)collections.size(); i++)
+	{
+		collections.at(i)->RenderText();
 	}
 }
 
