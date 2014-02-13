@@ -21,6 +21,9 @@
 #include <queue>
 #include <WinSock2.h>
 
+//For conversion from wstring to string
+#include <codecvt>
+
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace Utility::DynamicMemory;
@@ -291,6 +294,17 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 
 	//Connect has failed
 	return true;
+}
+
+bool NetworkClient::Connect(unsigned short port, std::wstring serverIP)
+{
+	//Convert from wstring to string.
+	typedef std::codecvt_utf8<wchar_t> convert_typeX;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	std::string ip = converterX.to_bytes(serverIP);
+
+	return this->Connect(port, ip.c_str());
 }
 
 void NetworkClient::Disconnect()

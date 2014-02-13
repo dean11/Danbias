@@ -91,6 +91,11 @@ namespace Oyster
 				/**
 				*	
 				*/
+				bool Connect(unsigned short port, std::wstring serverIP);
+
+				/**
+				*	
+				*/
 				void Disconnect();
 
 				/**
