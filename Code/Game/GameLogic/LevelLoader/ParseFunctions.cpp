@@ -16,13 +16,13 @@ namespace GameLogic
 {
 	namespace LevelFileLoader
 	{
-		//can parse any struct without strings or char[]
+		//can parse any struct if the struct doesnt contain strings or char[]
 		void ParseObject(char* buffer, void *header, int size)
 		{
 			memcpy(header, buffer, size);
 		}
 
-		void ParseObject(char* buffer, ObjectHeader& header, int& size)
+		void ParseObject(char* buffer, ObjectHeader& header, int& size, bool loadCgf)
 		{
 			char tempName[128];
 			unsigned int tempSize = 0;
@@ -46,8 +46,24 @@ namespace GameLogic
 			memcpy(&header.position, &buffer[start], 40);
 			start += 40;
 			
-			//Read path for bounding volume
-			ParseBoundingVolume(&buffer[start], header.boundingVolume, start);
+			//if loadCgf : Read path for bounding volume
+			if(loadCgf)
+			{
+				ParseBoundingVolume(&buffer[start], header.boundingVolume, start);
+			}
+
+			//else make sure the counter counts the name so we can jump over the string in the buffer. 
+			else
+			{
+				memcpy(&tempSize, &buffer[start], 4);
+				start += 4;
+
+				memcpy(&tempName, &buffer[start], tempSize);
+
+				string fileName;
+				fileName.assign(&tempName[0], &tempName[tempSize]);
+				start += tempSize;
+			}
 
 			size += start;
 		}
@@ -133,15 +149,14 @@ namespace GameLogic
 			//Läs in filen.
 			int fileLength = 0;
 			Loader loader;
-			char* buf = loader.LoadFile("E:\\Dropbox\\Programming\\Github\\Danbias\\Bin\\Content\\Worlds\\cgf\\"+ fileName, fileLength);
+			char* buf = loader.LoadFile("C:/Users/Sam/Documents/GitHub/Danbias/Bin/Content/worlds/cgf/"+ fileName, fileLength);
 
 			start = 0;
 			LevelLoaderInternal::FormatVersion version;
 			memcpy(&version, &buf[0], sizeof(version));
-			start += 4;
+			start += 8;
 
 			memcpy(&volume.geoType, &buf[start], sizeof(volume.geoType));
-			start += sizeof(volume.geoType);
 
 			switch(volume.geoType)
 			{

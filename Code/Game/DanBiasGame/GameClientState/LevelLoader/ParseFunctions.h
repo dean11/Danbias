@@ -17,10 +17,10 @@ namespace GameLogic
 			Or the current index that is being used to parse the entire file (if it is sent by reference) this means you have to increase size with the appropiate size after you have copied.
 
 		*/
-
 		void ParseObject(char* buffer, void *header, int size);
-		void ParseObject(char* buffer, ObjectHeader& header, int& size);
+		void ParseObject(char* buffer, ObjectHeader& header, int& size , bool loadCgf);
 		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size);
+		void ParseBoundingVolume(char* buffer, LevelLoaderInternal::BoundingVolume& volume, int &size);
 	}
 }
 

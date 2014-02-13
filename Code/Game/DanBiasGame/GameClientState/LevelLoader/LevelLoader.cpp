@@ -17,7 +17,14 @@ struct LevelLoader::PrivData
 LevelLoader::LevelLoader()
 	: pData(new PrivData)
 {
-	pData->folderPath = "Standard path";
+	//standard path
+	pData->folderPath = "";
+}
+
+LevelLoader::LevelLoader(std::string folderPath)
+	: pData(new PrivData)
+{
+	pData->folderPath = folderPath;
 }
 
 LevelLoader::~LevelLoader()
@@ -26,10 +33,20 @@ LevelLoader::~LevelLoader()
 
 std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> LevelLoader::LoadLevel(std::string fileName)
 {
-	return pData->parser.Parse(fileName);
+	return pData->parser.Parse(pData->folderPath + fileName);
 }
 
 LevelMetaData LevelLoader::LoadLevelHeader(std::string fileName)
 {
-	return pData->parser.ParseHeader(fileName);
+	return pData->parser.ParseHeader(pData->folderPath + fileName);
+}
+
+std::string LevelLoader::GetFolderPath()
+{
+	return this->pData->folderPath;
+}
+
+void LevelLoader::SetFolderPath(std::string folderPath)
+{
+
 }
