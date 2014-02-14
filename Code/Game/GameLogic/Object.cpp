@@ -19,54 +19,27 @@ Object::Object()
 	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 
 	this->type = ObjectSpecialType_Unknown;
-	this->objectID = GID();
+	this->objectID = -1;
 }
 
-Object::Object(ObjectSpecialType type)
-{
-	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
-	this->type = type;
-	this->objectID = GID();
-}
-
-Object::Object(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type)
-{
-	this->rigidBody = rigidBody;
-	this->type = type;
-	this->objectID = GID();
-}
-
-Object::Object( void* collisionFuncAfter, ObjectSpecialType type)
-
-{
-	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
-	
-	this->type = type;
-	this->objectID = GID();
-}
-
-Object::Object(Oyster::Physics::ICustomBody *rigidBody, void* collisionFuncAfter, ObjectSpecialType type)
+Object::Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
 {
 	this->rigidBody = rigidBody;
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(collisionFuncAfter));
 	this->type = type;
-	this->objectID = GID();
+	this->objectID = objectID;
+	this->rigidBody->SetCustomTag(this);
 }
 
 
-Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type)
+Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
 {
 	this->rigidBody = rigidBody;
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(collisionFuncAfter));
 	this->type = type;
-	this->objectID = GID();
+	this->objectID = objectID;
+	this->rigidBody->SetCustomTag(this);
 }
-
-void Object::ApplyLinearImpulse(Oyster::Math::Float3 force)
-{
-	
-}
-
 
 Object::~Object(void)
 {

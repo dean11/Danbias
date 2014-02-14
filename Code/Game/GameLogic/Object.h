@@ -18,11 +18,9 @@ namespace GameLogic
 	{
 	public:		
 		Object();
-		Object(ObjectSpecialType type);
-		Object(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type);
-		Object(void* collisionFuncAfter, ObjectSpecialType type);
-		Object(Oyster::Physics::ICustomBody *rigidBody, void* collisionFuncAfter, ObjectSpecialType type);
-		Object(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type);
+	
+		Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID);
+		Object(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID);
 		~Object(void);
 
 		ObjectSpecialType GetObjectType() const			override;
@@ -38,7 +36,6 @@ namespace GameLogic
 
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
-		void ApplyLinearImpulse(Oyster::Math::Float3 force);
 
 		virtual void BeginFrame();
 		virtual void EndFrame();
@@ -50,8 +47,7 @@ namespace GameLogic
 	
 
 	public: //TODO: Hax This should be private when level is dynamic
-		ObjectSpecialType type;
-		int objectID;
+
 
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
@@ -59,6 +55,9 @@ namespace GameLogic
 		static const Game* gameInstance;
 		Oyster::Math::Float3 currLook;
 		Oyster::Math::Float3 newLook;
+
+		ObjectSpecialType type;
+		int objectID;
 	};
 
 }

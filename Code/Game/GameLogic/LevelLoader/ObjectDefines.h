@@ -30,7 +30,7 @@ namespace GameLogic
 		ObjectSpecialType_World,		//Always the main celestial body
 		ObjectSpecialType_Building,
 		ObjectSpecialType_Stone,
-		ObjectSpecialType_StandarsBox,
+		ObjectSpecialType_StandardBox,
 		ObjectSpecialType_RedExplosiveBox,
 		ObjectSpecialType_SpikeBox,
 		ObjectSpecialType_Spike,

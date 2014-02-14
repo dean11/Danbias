@@ -20,13 +20,14 @@ Game::PlayerData::PlayerData()
 	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
 	rigidBody->SetAngularFactor(0.0f);
 	//create player with this rigid body
-	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player);
+	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player,0,0);
 
 	this->player->GetRigidBody()->SetCustomTag(this);
 	player->EndFrame();
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
+	Oyster::Physics::ICustomBody* rigidBody;
 	this->player = new Player();
 
 }

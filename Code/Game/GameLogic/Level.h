@@ -9,7 +9,7 @@
 #include "StaticObject.h"
 #include "DynamicObject.h"
 #include "GameModeType.h"
-#include "JumpPad.h"
+
 #include "Player.h"
 #include "PhysicsAPI.h"
 #include "TeamManager.h"
@@ -76,6 +76,7 @@ namespace GameLogic
 		GameModeType gameMode;
 		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
 		StaticObject *levelObj;
+		int objID; 
 
 	};
 
