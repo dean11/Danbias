@@ -77,6 +77,7 @@ namespace GameLogic
 		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
 		StaticObject *levelObj;
 		int objID; 
+		Utility::DynamicMemory::DynamicArray<Oyster::Math::Float3> spawnPoints;
 
 	};
 

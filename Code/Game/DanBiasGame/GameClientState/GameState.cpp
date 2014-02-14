@@ -183,7 +183,10 @@ bool GameState::LoadModels(std::string mapFile)
 		case GameLogic::ObjectType::ObjectType_Static:
 			{
 				GameLogic::ObjectHeader* staticObjData = ((GameLogic::ObjectHeader*)obj);
-
+				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_Sky)
+				{
+					int i = 0; 
+				}
 				modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
 				modelData.visible = true;
 				modelData.position = staticObjData->position;
