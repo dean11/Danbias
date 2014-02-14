@@ -255,7 +255,7 @@ bool LoginState::Render(float dt)
 
 	Oyster::Graphics::API::StartTextRender();
 	EventHandler::Instance().RenderText();
-	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7f, 0.2f), Oyster::Math::Float2(0.1f, 0.1f*(1008.0f/730.0f)), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
+	//Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7f, 0.2f), Oyster::Math::Float2(0.1f, 0.1f*(1008.0f/730.0f)), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
