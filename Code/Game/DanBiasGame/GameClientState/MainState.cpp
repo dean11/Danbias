@@ -67,8 +67,6 @@ bool MainState::Init( NetworkClient* nwClient )
 	return true;
 }
 
-float mouseX, mouseY; // debug test
-
 GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyInput)
 {
 	MouseInput mouseState;
@@ -78,9 +76,6 @@ GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyI
 	}
 
 	EventHandler::Instance().Update( mouseState );
-
-	mouseX = mouseState.x; // debug test
-	mouseY = mouseState.y; // debug test
 
 	return this->privData->nextState;
 }
@@ -95,9 +90,6 @@ bool MainState::Render()
 
 	Graphics::API::StartTextRender();
 	this->privData->guiElements.RenderText();
-
-	Graphics::API::RenderText( ::std::to_wstring(mouseX), Float2(0.2f, 0.5f), Float2(0.2f, 0.05f) ); // debug test
-	Graphics::API::RenderText( ::std::to_wstring(mouseY), Float2(0.5f, 0.5f), Float2(0.2f, 0.05f) ); // debug test
 
 	Graphics::API::EndFrame();
 	return true;
