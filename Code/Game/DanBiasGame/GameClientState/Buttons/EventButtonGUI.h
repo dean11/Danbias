@@ -104,7 +104,7 @@ namespace DanBias
 			{
 				if(buttonText.size() > 0)
 				{
-					Oyster::Graphics::API::RenderText(buttonText, pos, size, size.y, textColor);
+					Oyster::Graphics::API::RenderText(buttonText, pos - Float3(size.x * 0.5f, size.y * 0.25f, 0.0f), size*2.0f, size.y * 0.5f, textColor);
 				}
 			}
 
