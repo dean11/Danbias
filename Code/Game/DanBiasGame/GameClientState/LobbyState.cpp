@@ -70,8 +70,7 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 
 	MouseInput mouseState;
 	{
-		mouseState.x = KeyInput->GetPitch();
-		mouseState.y = KeyInput->GetYaw();
+		KeyInput->GetMousePos( mouseState.x, mouseState.y );
 		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
 

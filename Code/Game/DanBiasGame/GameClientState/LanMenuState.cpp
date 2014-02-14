@@ -80,8 +80,7 @@ GameClientState::ClientState LanMenuState::Update(float deltaTime, InputClass* K
 {
 	MouseInput mouseState;
 	{
-		mouseState.x = KeyInput->GetPitch();
-		mouseState.y = KeyInput->GetYaw();
+		KeyInput->GetMousePos( mouseState.x, mouseState.y );
 		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
 
