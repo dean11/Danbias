@@ -52,6 +52,7 @@ void Player::InitPlayer()
 	key_strafeRight = 0;
 	key_strafeLeft = 0;
 
+	this->previousPosition = Oyster::Math::Float3(0,0,0);
 	this->moveDir = Oyster::Math::Float3(0,0,0);
 	this->moveSpeed = 100;
 	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
@@ -72,11 +73,33 @@ void Player::BeginFrame()
 	//weapon->Update(0.002f); 
 	Object::BeginFrame();
 	
-	if(this->moveDir != Oyster::Math::Float3::null)
+	//Oyster::Math::Float3 previousFall = this->previousMoveSpeed*-this->rigidBody->GetState().centerPos.GetNormalized();
+	//Oyster::Math::Float3 currentFall = this->rigidBody->GetLinearVelocity()*-this->rigidBody->GetState().centerPos.GetNormalized();
+
+	if(this->moveDir != Oyster::Math::Float3::null && this->playerState != PLAYER_STATE_JUMPING)
 	{
 		Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
 		Oyster::Math::Float3 lostVelocity = (this->previousMoveSpeed - velocity).GetMagnitude()*this->moveDir;
      	this->rigidBody->SetLinearVelocity(velocity + lostVelocity - this->moveDir*this->moveSpeed );
+	}
+	else
+	{
+
+		if(this->rigidBody->GetLamda() == 1.0f)
+		{
+			this->playerState = PLAYER_STATE_WALKING;
+		}
+
+		if(this->moveDir != Oyster::Math::Float3::null)
+		{
+			Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
+     		this->rigidBody->SetLinearVelocity(velocity - this->moveDir*this->moveSpeed );
+		}
+	}
+
+	if(this->rigidBody->GetLamda() == 1.0f)
+	{
+		this->playerState = PLAYER_STATE_WALKING;
 	}
 
 	this->moveDir = Oyster::Math::Float3::null;
@@ -109,9 +132,11 @@ void Player::BeginFrame()
 	if(this->moveDir != Oyster::Math::Float3::null)
 	{
      	this->moveDir.Normalize();
-		this->rigidBody->SetLinearVelocity(this->moveDir*this->moveSpeed + this->rigidBody->GetLinearVelocity());
-		this->previousMoveSpeed = this->rigidBody->GetLinearVelocity();
+		this->rigidBody->SetLinearVelocity(this->moveDir*this->moveSpeed + this->rigidBody->GetLinearVelocity());	
 	}
+
+	this->previousMoveSpeed = this->rigidBody->GetLinearVelocity();
+	this->previousPosition = this->rigidBody->GetState().centerPos;
 
 
 	this->weapon->Update(0.01f);
@@ -190,15 +215,18 @@ void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::
 	// this is the camera right vector
 	this->lookDir = lookDir;
 
-	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
-	this->rigidBody->SetUpAndRight(up, right);
+	//Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
+	//this->rigidBody->SetUpAndRight(up, right);
 }
 
 void Player::Jump()
 {
-	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
-	this->rigidBody->ApplyImpulse(up *1500);
-	this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING;
+	if(this->rigidBody->GetLamda() < 1.0f)
+	{
+		Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
+		this->rigidBody->ApplyImpulse(up *1500);
+		this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+	}
 }
 
 bool Player::IsWalking()

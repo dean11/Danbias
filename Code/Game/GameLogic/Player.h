@@ -91,6 +91,7 @@ namespace GameLogic
 		float key_jump;
 
 
+		Oyster::Math::Float3 previousPosition;
 		Oyster::Math::Float3 moveDir;
 		Oyster::Math::Float moveSpeed;
 		Oyster::Math::Float3 previousMoveSpeed;

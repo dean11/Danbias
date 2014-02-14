@@ -210,7 +210,7 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	this->customBodies.push_back(body);
 
 	state.centerPos = position;
-	state.reach = Float3(radius, height*0.5f, radius);
+	state.reach = Float3(radius, height, radius);
 	state.dynamicFrictionCoeff = 0.5f;
 	state.staticFrictionCoeff = 0.5f;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
@@ -230,7 +230,9 @@ void API_Impl::UpdateWorld()
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
-		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);	
+		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
+		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
+		simpleBody->PreStep(this->dynamicsWorld);
 	}
 
 	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
