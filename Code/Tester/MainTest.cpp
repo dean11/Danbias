@@ -170,10 +170,10 @@ HRESULT InitDirect3D()
 		return E_FAIL;
 	}
 
-	m =  Oyster::Graphics::API::CreateModel(L"crate_colonists.dan");
-	//m->WorldMatrix.m[0][0] = 50;
-	//m->WorldMatrix.m[1][1] = 50;
-	//m->WorldMatrix.m[2][2] = 0.00000005f;
+	m =  Oyster::Graphics::API::CreateModel(L"building_corporation.dan");
+	m->WorldMatrix.m[0][0] = 0.0002f;
+	m->WorldMatrix.m[1][1] = 0.0002f;
+	m->WorldMatrix.m[2][2] = 0.0002f;
 	m2 = Oyster::Graphics::API::CreateModel(L"char_temporary.dan");
 	m2->Tint = Oyster::Math::Float3(0.1f,0.1f,1);
 	m3 = Oyster::Graphics::API::CreateModel(L"char_temporary.dan");
@@ -223,7 +223,11 @@ HRESULT Update(float deltaTime)
 	m->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0) * angle,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * -angle,Oyster::Math::Float3(-4,0,0),Oyster::Math::Float3::null);
-	//Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
+	Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
+	ma.m[0][0] = 0.2f;
+	ma.m[1][1] = 0.2f;
+	ma.m[2][2] = 0.2f;
+	m->WorldMatrix = m->WorldMatrix * ma;
 	Oyster::Graphics::API::Update(deltaTime);
 	//m2->Animation.data.AnimationTime += deltaTime;// * 0.5f;
 	return S_OK;

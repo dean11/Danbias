@@ -5,12 +5,11 @@
 #include <fstream>
 #include <string>
 
-#define DANFILEVERSIONMAJOR 1
+#define DANFILEVERSIONMAJOR 2
 #define DANFILEVERSIONMINOR 1
 
 #define FILEHEADERSIZE		8
 #define VERTEXHEADERSIZE	4
-#define VERTEXSIZE			88
 
 
 
@@ -220,7 +219,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 				delete[] buffer; // ( note: may crash here.)
 
 				// Fetch all vertices
-				unsigned int bufferSize = VERTEXSIZE * vertexHeader.numVertices;
+				unsigned int bufferSize = sizeof(Vertex) * vertexHeader.numVertices;
 				buffer = new char[bufferSize];
 				danFile.read(buffer, bufferSize);
 
