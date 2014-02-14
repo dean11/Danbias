@@ -1,14 +1,31 @@
 #include "C_Object.h"
 using namespace DanBias::Client;
-void C_Object::Init(ModelInitData modelInit)
+C_Object::C_Object()
+{
+	world = Oyster::Math::Float4x4::identity; 
+	position = Oyster::Math::Float3::null; 
+	rotation = Oyster::Math::Quaternion::identity; 
+	scale = Oyster::Math::Float3::null; 
+
+	id = 0;
+	model = NULL;
+}
+C_Object::~C_Object()
+{
+
+}
+bool C_Object::Init(ModelInitData modelInit)
 {
 	position = modelInit.position;
 	rotation = modelInit.rotation;
 	scale = modelInit.scale;
 	id = modelInit.id;
 	model = Oyster::Graphics::API::CreateModel(modelInit.modelPath);
+	if(model == NULL)
+		return false;
 	model->Visible = modelInit.visible;
 	updateWorld();
+	return true;
 }
 void C_Object::updateWorld()
 {

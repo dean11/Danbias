@@ -29,8 +29,9 @@ private:
 protected:
 	Oyster::Graphics::Model::Model *model;
 public:
-
-	virtual void Init(ModelInitData modelInit);
+	C_Object();
+	virtual ~C_Object();
+	virtual bool Init(ModelInitData modelInit);
 	
 	void setWorld(Oyster::Math::Float4x4 world);
 	Oyster::Math::Float4x4 getWorld() const;

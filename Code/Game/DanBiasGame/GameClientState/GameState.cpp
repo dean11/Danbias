@@ -195,7 +195,12 @@ bool GameState::LoadModels(std::string mapFile)
 				modelData.id = modelId++;
 
 				this->staticObjects.Push(new C_StaticObj());
-				this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+				if(!this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData))
+				{
+					// the model don't exist
+					this->staticObjects.Remove(this->staticObjects.Size() -1 );
+					modelId--;
+				}
 			}
 		break;
 		case GameLogic::ObjectType::ObjectType_Dynamic:
@@ -209,7 +214,12 @@ bool GameState::LoadModels(std::string mapFile)
 				modelData.id = modelId++;
 
 				this->dynamicObjects.Push(new C_DynamicObj());
-				this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+				if(!this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData))
+				{
+					// the model don't exist
+					this->dynamicObjects.Remove(this->dynamicObjects.Size() -1 );
+					modelId--;
+				}
 			}
 			break;
 		case  GameLogic::ObjectType::ObjectType_Light:
@@ -241,40 +251,44 @@ bool GameState::LoadModels(std::string mapFile)
 	modelData.rotation = first;
 	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = myId;
+	modelData.id = modelId;
 
 	this->staticObjects.Push(new C_StaticObj());
-	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+	if(!this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData))
+	{
+		// the model don't exist
+		this->staticObjects.Remove(this->staticObjects.Size() -1 );
+		modelId--;
+	}
+	//modelData.visible = true;
+	//modelData.position = Oyster::Math::Float3(22, 127,0);
+	//modelData.rotation = second;
+	//modelData.scale =  Oyster::Math::Float3(1,1,1);
+	//modelData.modelPath = L"char_still_sizeref.dan";
+	//modelData.id = myId;
 
-	modelData.visible = true;
-	modelData.position = Oyster::Math::Float3(22, 127,0);
-	modelData.rotation = second;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
-	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = myId;
+	//this->staticObjects.Push(new C_StaticObj());
+	//this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
-	this->staticObjects.Push(new C_StaticObj());
-	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+	//modelData.visible = true;
+	//modelData.position = Oyster::Math::Float3(24, 127,0);
+	//modelData.rotation = result;
+	//modelData.scale =  Oyster::Math::Float3(1,1,1);
+	//modelData.modelPath = L"char_still_sizeref.dan";
+	//modelData.id = myId;
 
-	modelData.visible = true;
-	modelData.position = Oyster::Math::Float3(24, 127,0);
-	modelData.rotation = result;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
-	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = myId;
+	//this->staticObjects.Push(new C_StaticObj());
+	//this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
-	this->staticObjects.Push(new C_StaticObj());
-	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+	//modelData.visible = true;
+	//modelData.position = Oyster::Math::Float3(26, 127,0);
+	//modelData.rotation = total;
+	//modelData.scale =  Oyster::Math::Float3(1,1,1);
+	//modelData.modelPath = L"char_still_sizeref.dan";
+	//modelData.id = myId;
 
-	modelData.visible = true;
-	modelData.position = Oyster::Math::Float3(26, 127,0);
-	modelData.rotation = total;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
-	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = myId;
-
-	this->staticObjects.Push(new C_StaticObj());
-	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+	//this->staticObjects.Push(new C_StaticObj());
+	//this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
 	return true;
 	
@@ -302,13 +316,16 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Flo
 	modelData.position = Oyster::Math::Float3(world[12], world[13], world[14]);
 	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0,0,0), 1);
 	modelData.scale =  Oyster::Math::Float3(1,1,1);
-	modelData.modelPath = modelName;
+	modelData.modelPath = L"crate_generic.dan"; // modelName;
 	modelData.id = myId;
 	
 	obj =  new C_Player();
 	this->dynamicObjects.Push(obj);
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
-	
+	if(!this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData))
+	{
+		// the model don't exist
+		this->dynamicObjects.Remove(this->dynamicObjects.Size() -1 );
+	}
 	
 	Oyster::Math::Float3 right = Oyster::Math::Float3(world[0], world[1], world[2]);
 	Oyster::Math::Float3 up = Oyster::Math::Float3(world[4], world[5], world[6]);

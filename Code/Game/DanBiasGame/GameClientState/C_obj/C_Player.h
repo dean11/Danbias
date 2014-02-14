@@ -11,7 +11,8 @@ private:
 public:
 	C_Player(void);
 	virtual ~C_Player(void);
-	void Init(ModelInitData modelInit);
+	bool Init(ModelInitData modelInit);
+	void playAnimation(std::wstring animation, bool loop);
 
 };};};
 #endif

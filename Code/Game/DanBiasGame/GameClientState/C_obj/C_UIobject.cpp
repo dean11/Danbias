@@ -10,7 +10,7 @@ C_UIobject::C_UIobject(void)
 C_UIobject::~C_UIobject(void)
 {
 }
-void C_UIobject::Init(ModelInitData modelInit)
+bool C_UIobject::Init(ModelInitData modelInit)
 {
-	C_Object::Init(modelInit);
+	return C_Object::Init(modelInit);
 }

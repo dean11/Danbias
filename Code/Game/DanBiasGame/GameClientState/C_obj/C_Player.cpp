@@ -13,9 +13,12 @@ C_Player::~C_Player(void)
 	 
 }
 
-void C_Player::Init(ModelInitData modelInit)
+bool C_Player::Init(ModelInitData modelInit)
 {
-	C_Object::Init(modelInit);
-	Oyster::Graphics::API::PlayAnimation(model, L"movement");
-	//Oyster::Graphics::API::Update(0.002f);
+	return C_Object::Init(modelInit);
+}
+void C_Player::playAnimation(std::wstring animation, bool loop)
+{
+	if(model)
+		Oyster::Graphics::API::PlayAnimation(model, L"movement", loop);
 }

@@ -11,7 +11,7 @@ private:
 public:
 	C_StaticObj(void);
 	virtual ~C_StaticObj(void);
-	void Init(ModelInitData modelInit);
+	bool Init(ModelInitData modelInit);
 
 };};};
 #endif
