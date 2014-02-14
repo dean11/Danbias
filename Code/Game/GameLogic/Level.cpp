@@ -2,7 +2,6 @@
 #include "CollisionManager.h"
 #include "Game.h"
 #include "JumpPad.h"
-#include "CrystalFormation.h"
 #include "ExplosiveCrate.h"
 #include "Portal.h"
 using namespace GameLogic;
