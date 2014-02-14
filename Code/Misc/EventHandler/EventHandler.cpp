@@ -53,7 +53,7 @@ void EventHandler::RenderText()
 
 void EventHandler::AddCollection(EventButtonCollection* collection)
 {
-	for(int i = 0; i < collections.size(); i++)
+	for(int i = 0; i < (int)collections.size(); i++)
 	{
 		//Do not add the collection if it's already in the list.
 		if(collections.at(i) == collection)
@@ -64,7 +64,7 @@ void EventHandler::AddCollection(EventButtonCollection* collection)
 
 void EventHandler::ReleaseCollection(EventButtonCollection* collection)
 {
-	for(int i = 0; i < collections.size(); i++)
+	for(int i = 0; i < (int)collections.size(); i++)
 	{
 		if(collections.at(i) == collection)
 		{

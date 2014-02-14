@@ -16,48 +16,190 @@ Level::~Level(void)
 	delete this->levelObj;
 	this->levelObj = NULL;
 }
-void Level::parseObjectType(ObjectTypeHeader* obj)
+Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 {
-	/*switch (obj->objectTypeID)
+	Object* gameObj  =NULL;
+	switch ((ObjectSpecialType)obj->specialTypeID)
 	{
-	case skySphere: 
-		// save the skysphere to be able to rotate it 
+	case ObjectSpecialType_None: 
+		{
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
 		break;
-	case jumppad: 
-		// save direction 
+	case ObjectSpecialType_Sky: 
+		{
+			float skySize = ((SkyAttributes*)obj)->skySize; 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
 		break;
-	case portal: 
-		// save portal destination 
-		break;
-	case world: 
-		// add gravitation well here
-		// add outer limit of the world
-	case spawn: 
-		// save spawnpoint pos 
-		break;
+	case ObjectSpecialType_World: 
+		{
+			API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
+			API::Instance().SetGravity(200); // could balance gravitation with the world size
 
-	default:
+			float worldSize = ((WorldAttributes*)obj)->worldSize; 
+			float atmosphereSize = ((WorldAttributes*)obj)->atmoSphereSize; 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
 		break;
-	}*/
+	case ObjectSpecialType_Building: 
+		{
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
+	case ObjectSpecialType_Stone: 
+		{
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_StandarsBox: 
+		{
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_RedExplosiveBox: 
+		{
+			int dmg = 50; 
+			//gameObj = new ExplosiveBox(rigidBody, ObjectSpecialType_RedExplosiveBox);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	//case ObjectSpecialType_BlueExplosiveBox: 
+	//	int dmg = 70; 
+	//	gameObj = new ExplosiveBox(rigidBody, ObjectSpecialType_BlueExplosiveBox);
+	//	break;
+	case ObjectSpecialType_SpikeBox: 
+		{
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_Spike: 
+		{
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_CrystalFormation: 
+		{
+			int dmg = 50; 
+			//gameObj = new Crystal(rigidBody);
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
+		break;
+	case ObjectSpecialType_CrystalShard: 
+		{
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_JumpPad: 
+		{
+			float power = ((JumpPadAttributes*)obj)->power; 
+			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
+			//gameObj = JumpPad(rigidBody, );
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
+		break;
+	case ObjectSpecialType_Portal: 
+		{
+			Oyster::Math::Float3 destination = ((PortalAttributes*)obj)->destination; 
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_SpawnPoint: 
+		{
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
+		break;
+	case ObjectSpecialType_Player: 
+		{
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+		}
+		break;
+	case ObjectSpecialType_Generic:
+		{
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
+		break;
+	default:
+		{
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+		}
+		break;
+	}
+	return gameObj;
 }
-void Level::parsePhysicsObj(LevelLoaderInternal::BoundingVolumeBase* obj)
+
+ICustomBody* Level::InitRigidBodyCube( const ObjectHeader* obj)
 {
-	// offset physObj med modelObj
+	ICustomBody* rigidBody = NULL;
+	Oyster::Math::Float3 rigidWorldPos;
+	Oyster::Math::Float4 rigidWorldRotation;
+	float rigidBodyMass;
+	Oyster::Math::Float3 rigidBodySize;
+
+	//offset the rigidPosition from modelspace to worldspace;
+	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.box.position; 
+	//scales the position so the collision geomentry is in the right place
+	rigidWorldPos = rigidWorldPos * obj->scale;
+
+	//offset the rigidRotation from modelspace to worldspace;
+	Oyster::Math::Quaternion worldPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->rotation[0],obj->rotation[1],obj->rotation[2]), obj->rotation[3]);
+	Oyster::Math::Quaternion physicsPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->boundingVolume.sphere.rotation[0],obj->boundingVolume.sphere.rotation[1],obj->boundingVolume.sphere.rotation[2]), obj->boundingVolume.sphere.rotation[3]);
+	Oyster::Math::Quaternion rigidWorldQuaternion = worldPosQuaternion * physicsPosQuaternion; 
+
+	rigidWorldRotation = Oyster::Math::Float4(rigidWorldQuaternion); 
+
+	//mass scaled
+	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.box.mass;
+
+	//size scaled 
+	rigidBodySize = (Oyster::Math::Float3)obj->boundingVolume.box.size * (Oyster::Math::Float3)obj->scale;
+
+	//create the rigid body
+	rigidBody = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, obj->boundingVolume.box.restitutionCoeff , obj->boundingVolume.box.frictionCoeffStatic , obj->boundingVolume.box.frictionCoeffDynamic);
+	return rigidBody;
+}
+ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
+{
+	ICustomBody* rigidBody = NULL;
+	Oyster::Math::Float3 rigidWorldPos;
+	Oyster::Math::Float4 rigidWorldRotation;
+	float rigidBodyMass;
+	float rigidBodyRadius;
+
+	//offset the rigidPosition from modelspace to worldspace;
+	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.sphere.position;
+	//scales the position so the collision geomentry is in the right place
+	rigidWorldPos = rigidWorldPos * obj->scale;
+
+	//offset the rigidRotation from modelspace to worldspace;
+	Oyster::Math::Quaternion worldPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->rotation[0],obj->rotation[1],obj->rotation[2]), obj->rotation[3]);
+	Oyster::Math::Quaternion physicsPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->boundingVolume.sphere.rotation[0],obj->boundingVolume.sphere.rotation[1],obj->boundingVolume.sphere.rotation[2]), obj->boundingVolume.sphere.rotation[3]);
+	Oyster::Math::Quaternion rigidWorldQuaternion = worldPosQuaternion * physicsPosQuaternion; 
+
+	rigidWorldRotation = Oyster::Math::Float4(rigidWorldQuaternion); 
+
+
+	//mass scaled
+	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.sphere.mass;
+
+	//Radius scaled
+	//rigidBodyRadius = (staticObjData->scale[0] * staticObjData->scale[1] * staticObjData->scale[2] / 3) * staticObjData->boundingVolume.sphere.radius;
+	rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
+
+	//create the rigid body
+	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
+	return rigidBody;
 }
 void Level::InitiateLevel(std::string levelPath)
 {
 	LevelLoader ll; 
 	std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> objects; 
 	objects = ll.LoadLevel(levelPath);
+
+	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
+	API::Instance().SetGravity(200);
 	int objCount = objects.size();
-	int modelCount = 0;
-	int staticObjCount = 0;
-	int dynamicObjCount = 0;
-	Oyster::Math::Float3 rigidWorldPos;
-	Oyster::Math::Float4 rigidWorldRotation;
-	float rigidBodyMass;
-	float rigidBodyRadius;
-	Oyster::Math::Float3 rigidBodySize;
+	int modelCount = 100;
+
 	for (int i = 0; i < objCount; i++)
 	{
 		ObjectTypeHeader* obj = objects.at(i);
@@ -75,69 +217,32 @@ void Level::InitiateLevel(std::string levelPath)
 			{
 				
 				ObjectHeader* staticObjData = ((ObjectHeader*)obj);
-				//LevelLoaderInternal::BoundingVolumeBase* staticObjPhysicData = ((ObjectHeader*)obj);
 				staticObjData->ModelFile;
 
 				ICustomBody* rigidBody_Static = NULL;	
 				
-
 				// collision shape
-				// radius, rotation in world, position in world, mass, restitution, static and dynamic friction
 				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
 				{
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = (Oyster::Math::Float3)staticObjData->position + (Oyster::Math::Float3)staticObjData->boundingVolume.sphere.position;
-					//scales the position so the collision geomentry is in the right place
-					rigidWorldPos = rigidWorldPos * staticObjData->scale;
-
-					//offset the rigidRotation from modelspace to worldspace;
-					rigidWorldRotation = (Oyster::Math::Float4)staticObjData->rotation + (Oyster::Math::Float4)staticObjData->boundingVolume.sphere.rotation; 
-
-					//mass scaled
-					rigidBodyMass = staticObjData->scale[0] * staticObjData->scale[1] * staticObjData->scale[2] * staticObjData->boundingVolume.sphere.mass;
-
-					//Radius scaled
-					rigidBodyRadius = (staticObjData->scale[0] * staticObjData->scale[1] * staticObjData->scale[2] / 3) * staticObjData->boundingVolume.sphere.radius;
-
-					//create the rigid body
-					rigidBody_Static = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, staticObjData->boundingVolume.sphere.restitutionCoeff , staticObjData->boundingVolume.sphere.frictionCoeffStatic , staticObjData->boundingVolume.sphere.frictionCoeffDynamic);
+					rigidBody_Static = InitRigidBodySphere(staticObjData);
 				}
 
 				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
 				{	
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = (Oyster::Math::Float3)staticObjData->position + (Oyster::Math::Float3)staticObjData->boundingVolume.box.position; 
-					//scales the position so the collision geomentry is in the right place
-					rigidWorldPos = rigidWorldPos * staticObjData->scale;
 
-					//offset the rigidRotation from modelspace to worldspace;
-					rigidWorldRotation = (Oyster::Math::Float4)staticObjData->rotation + (Oyster::Math::Float4)staticObjData->boundingVolume.box.rotation;
-
-					//mass scaled
-					rigidBodyMass = staticObjData->scale[0] * staticObjData->scale[1] * staticObjData->scale[2] * staticObjData->boundingVolume.box.mass;
-
-					//size scaled 
-					rigidBodySize = (Oyster::Math::Float3)staticObjData->boundingVolume.box.size * (Oyster::Math::Float3)staticObjData->scale;
-
-					//create the rigid body
-					rigidBody_Static = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, staticObjData->boundingVolume.box.restitutionCoeff , staticObjData->boundingVolume.box.frictionCoeffStatic , staticObjData->boundingVolume.box.frictionCoeffDynamic);
+					rigidBody_Static = InitRigidBodySphere(staticObjData);
 				}
 
 				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
 				{
-			
+					//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
 				}
-
-
-				// add rigidbody to the logical obj
-				// Object::DefaultCollisionBefore, Object::DefaultCollisionAfter for now, gamelogic will take care of this
-				// set object_type to objID 
 
 				if(rigidBody_Static != NULL)
 				{
-					this->staticObjects.Push(new StaticObject(rigidBody_Static, Object::DefaultCollisionAfter, (ObjectSpecialType)staticObjData->specialTypeID));
-					this->staticObjects[staticObjCount]->objectID = modelCount++;
-					rigidBody_Static->SetCustomTag(this->staticObjects[staticObjCount]);
+					this->staticObjects.Push(new StaticObject(rigidBody_Static, Object::DefaultCollisionAfter, (ObjectSpecialType)staticObjData->specialTypeID, 0));
+					//this->staticObjects[staticObjCount]->objectID = modelCount++;
+
 				}
 
 			}
@@ -150,61 +255,26 @@ void Level::InitiateLevel(std::string levelPath)
 				ICustomBody* rigidBody_Dynamic = NULL;	
 
 				// collision shape
-				// radius, rotation in world, position in world, mass, restitution, static and dynamic friction
 				if(dynamicObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
 				{
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = (Oyster::Math::Float3)dynamicObjData->position + (Oyster::Math::Float3)dynamicObjData->boundingVolume.sphere.position; 
-					//scales the position so the collision geomentry is in the right place
-					rigidWorldPos = rigidWorldPos * dynamicObjData->scale;
-
-					//offset the rigidRotation from modelspace to worldspace;
-					rigidWorldRotation = (Oyster::Math::Float4)dynamicObjData->rotation + (Oyster::Math::Float4)dynamicObjData->boundingVolume.sphere.rotation;
-
-					//mass scaled
-					rigidBodyMass = dynamicObjData->scale[0] * dynamicObjData->scale[1] * dynamicObjData->scale[2] * dynamicObjData->boundingVolume.sphere.mass;
-
-					//size scaled
-					rigidBodyRadius = (dynamicObjData->scale[0] * dynamicObjData->scale[1] * dynamicObjData->scale[2] / 3) * dynamicObjData->boundingVolume.sphere.radius;
-
-					//create the rigid body
-					rigidBody_Dynamic = API::Instance().AddCollisionBox(rigidBodyRadius , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, dynamicObjData->boundingVolume.sphere.restitutionCoeff , dynamicObjData->boundingVolume.sphere.frictionCoeffStatic , dynamicObjData->boundingVolume.sphere.frictionCoeffDynamic);
+					rigidBody_Dynamic = InitRigidBodySphere(dynamicObjData);
 				}
 
 				else if(dynamicObjData->boundingVolume.geoType == CollisionGeometryType_Box)
 				{	
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = (Oyster::Math::Float3)dynamicObjData->position + (Oyster::Math::Float3)dynamicObjData->boundingVolume.box.position; 
-					//scales the position so the collision geomentry is in the right place
-					rigidWorldPos = rigidWorldPos * dynamicObjData->scale;
-
-					//offset the rigidRotation from modelspace to worldspace;
-					rigidWorldRotation = (Oyster::Math::Float4)dynamicObjData->rotation + (Oyster::Math::Float4)dynamicObjData->boundingVolume.box.rotation;
-
-					//mass scaled
-					rigidBodyMass = dynamicObjData->scale[0] * dynamicObjData->scale[1] * dynamicObjData->scale[2] * dynamicObjData->boundingVolume.box.mass;
-
-					//size scaled
-					rigidBodySize = (Oyster::Math::Float3)dynamicObjData->boundingVolume.box.size * (Oyster::Math::Float3)dynamicObjData->scale;
-
-					//create the rigid body
-					rigidBody_Dynamic = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, dynamicObjData->boundingVolume.box.restitutionCoeff , dynamicObjData->boundingVolume.box.frictionCoeffStatic , dynamicObjData->boundingVolume.box.frictionCoeffDynamic);
+					rigidBody_Dynamic = InitRigidBodyCube(dynamicObjData);
 				}
 
 				else if(dynamicObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
 				{
-			
+					//rigidBody_Dynamic = InitRigidBodyCylinder(dynamicObjData);
 				}
 
-
-				// add rigidbody to the logical obj
-				// Object::DefaultCollisionBefore, Object::DefaultCollisionAfter for now, gamelogic will take care of this
-				// set object_type to objID 
 				if(rigidBody_Dynamic != NULL)
 				{
-					this->dynamicObjects.Push(new DynamicObject(rigidBody_Dynamic , Object::DefaultCollisionAfter, (ObjectSpecialType)dynamicObjData->specialTypeID));
-					this->dynamicObjects[dynamicObjCount]->objectID = modelCount++;
-					rigidBody_Dynamic->SetCustomTag(this->dynamicObjects[dynamicObjCount]);
+
+					this->dynamicObjects.Push(new DynamicObject(rigidBody_Dynamic , Object::DefaultCollisionAfter, (ObjectSpecialType)dynamicObjData->specialTypeID, 0));
+					//this->dynamicObjects[dynamicObjCount]->objectID = modelCount++;
 				}
 
 			}
@@ -225,9 +295,9 @@ void Level::InitiateLevel(float radius)
 	// add level sphere
 	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 
-	levelObj = new StaticObject(rigidBody, LevelCollisionAfter, ObjectSpecialType_World);
+	levelObj = new StaticObject(rigidBody, LevelCollisionAfter, ObjectSpecialType_World, idCount++);
 
-	this->levelObj->objectID = idCount++;
+	//this->levelObj->objectID = idCount++;
 	rigidBody->SetCustomTag(levelObj);
 
 	
@@ -239,9 +309,9 @@ void Level::InitiateLevel(float radius)
 	{
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5, 0.5f, 0.8f, 0.6f);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultCollisionAfter, ObjectSpecialType_StandarsBox));
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
 
-		this->dynamicObjects[i]->objectID = idCount++;
+		//this->dynamicObjects[i]->objectID = idCount++;
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
 	}
 	/*offset += nrOfBoxex;
@@ -278,24 +348,24 @@ void Level::InitiateLevel(float radius)
 	// add crystal
 	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 605, 0), 5, 0.5f, 0.8f, 0.6f);
 
-	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultCollisionAfter, ObjectSpecialType_StandarsBox));
+	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
 	rigidBody_Crystal->SetCustomTag(this->dynamicObjects[nrOfBoxex]);
-	this->dynamicObjects[nrOfBoxex]->objectID = idCount++;
+	//this->dynamicObjects[nrOfBoxex]->objectID = idCount++;
 	
 
 
 	// add house
 	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20, 20, 20), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(-50, 590, 0), 0, 0.5f, 0.8f, 0.6f);
-	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, ObjectSpecialType_Generic));
+	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, ObjectSpecialType_Generic, idCount++));
 	rigidBody_House->SetCustomTag(this->staticObjects[0]);
-	this->staticObjects[0]->objectID = idCount++;
+	//this->staticObjects[0]->objectID = idCount++;
 
 	// add jumppad
 	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1, 1, 1), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 5, 0.5f, 0.8f, 0.6f);
 
-	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, JumpPad::JumpPadActivated, ObjectSpecialType_JumpPad, Oyster::Math::Float3(0,2000,0)));
+	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, ObjectSpecialType_JumpPad,idCount++ ,Oyster::Math::Float3(0,2000,0)));
 	rigidBody_Jumppad->SetCustomTag(this->staticObjects[1]);
-	this->staticObjects[1]->objectID = idCount++;
+	//this->staticObjects[1]->objectID = idCount++;
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)

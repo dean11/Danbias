@@ -14,10 +14,10 @@ AttatchmentSocket::AttatchmentSocket(void)
 
 AttatchmentSocket::~AttatchmentSocket(void)
 {
-	//if(this->attatchment)
-		//delete this->attatchment;
+	if(this->attatchment)
+		delete this->attatchment;
 
-	//this->attatchment = 0;
+	this->attatchment = 0;
 }
 
 IAttatchment* AttatchmentSocket::GetAttatchment()
