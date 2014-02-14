@@ -14,17 +14,12 @@ enum DanBiasServerReturn
 	DanBiasServerReturn_GameNotCreated,
 };
 
-public ref struct ServerInitDesc
+public value struct ServerInitDesc
 {
 	System::String^ serverName;
 	int listenPort;
 	bool broadcast;			//Not fully implemented!
-	ServerInitDesc() 
-	{
-		serverName = "Game Server";
-		listenPort = 15152;
-		broadcast = true;
-	};
+	
 };
 
 public value struct GameServerInfo
@@ -54,7 +49,7 @@ public:
 	int GameGetMaxClients();
 	int GameGetGameMode();
 	int GameGetGameTime();
-	String^ GameGetGameName();
+	System::String^ GameGetGameName();
 	bool GameStart();
 };
 
