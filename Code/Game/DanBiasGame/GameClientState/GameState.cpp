@@ -49,39 +49,7 @@ bool GameState::Init(NetworkClient* nwClient)
 
 GameState::gameStateState GameState::LoadGame() 
 {
-//	Oyster::Graphics::Definitions::Pointlight plight;
-//	plight.Pos = Float3(315.0f, 0.0f ,5.0f);
-//	plight.Color = Float3(0.9f,0.7f,0.2f);
-//	plight.Radius = 100.0f;
-//	plight.Bright = 0.9f;
-//	Oyster::Graphics::API::AddLight(plight);
-//	plight.Pos = Float3(10.0f,350.0f,5.0f);
-//	plight.Color = Float3(0.9f,0.7f,0.3f);
-//	plight.Radius = 200.0f;
-//	plight.Bright = 0.7f;
-//	Oyster::Graphics::API::AddLight(plight);
-//	plight.Pos = Float3(350.0f,350.0f,5.0f);
-//	plight.Color = Float3(0.9f,0.7f,0.3f);
-//	plight.Radius = 200.0f;
-//	plight.Bright = 0.7f;
-//	Oyster::Graphics::API::AddLight(plight);
-//	plight.Pos = Float3(10.0f,350.0f,350.0f);
-//	plight.Color = Float3(0.9f,0.7f,0.3f);
-//	plight.Radius = 200.0f;
-//	plight.Bright = 0.7f;
-//	Oyster::Graphics::API::AddLight(plight);
-//	plight.Pos = Float3(10.0f,-15.0f,5.0f);
-//	plight.Color = Float3(0.0f,0.0f,1.0f);
-//	plight.Radius = 50.0f;
-//	plight.Bright = 2.0f;
-//
-//	Oyster::Graphics::API::AddLight(plight);
-////	LoadModels();
-//	InitCamera(Float3(0.0f,0.0f,20.0f));
-//	// hardcoded objects
-////	LoadModels();
-//	Float3 startPos = Float3(0,0,20.0f);
-//	InitCamera(startPos);
+
 	return gameStateState_playing;
 }
 

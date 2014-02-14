@@ -33,7 +33,8 @@ namespace Oyster
 		public:
 			virtual ~IEventButton(){}
 
-			virtual void Render() = 0;
+			virtual void RenderTexture() = 0;
+			virtual void RenderText() = 0;
 
 			virtual void Update(MouseInput& input) = 0;
 

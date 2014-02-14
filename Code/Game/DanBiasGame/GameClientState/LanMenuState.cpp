@@ -11,6 +11,7 @@
 
 #include "EventHandler\EventHandler.h"
 #include "Buttons\ButtonRectangle.h"
+#include "Buttons\TextField.h"
 
 #include <GameServerAPI.h>
 #include <string>
@@ -28,12 +29,13 @@ struct  LanMenuState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	Graphics::API::Texture background;
-	EventButtonCollection button;
-	::std::wstring connectIP;
+	EventButtonCollection guiElements;
+
+	TextField<LanMenuState*> *connectIP;
 	unsigned short connectPort;
 } privData;
 
-void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<GameClientState*>& e );
+void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
 
 LanMenuState::LanMenuState() {}
 
@@ -52,16 +54,23 @@ bool LanMenuState::Init(Network::NetworkClient* nwClient)
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
-	// create buttons
-	ButtonRectangle<GameClientState*> *button;
+	// create guiElements
+	ButtonRectangle<LanMenuState*> *guiElements;
+	//0.5f, 0.2f, 0.3f, 0.1f,  
+	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"", Float3(1.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( guiElements );
+
+	this->privData->connectIP = new TextField<LanMenuState*>( L"earth_md.png", Float3(1.0f), this, Float3(0.1f, 0.2f, 0.5f), Float2(0.45f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->connectIP->ReserveLines( 1 );
+	(*this->privData->connectIP)[0] = L"127.0.0.1";
+	this->privData->connectIP->SetTextHeight( 0.1f );
+	this->privData->connectIP->SetLineSpacing( 0.0f );
 	
-	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Connect, this, 0.5f, 0.2f, 0.3f, 0.1f, true );
-	this->privData->button.AddButton( button );
+	this->privData->guiElements.AddButton( this->privData->connectIP );
 
-	// bind button collection to the singleton eventhandler
-	EventHandler::Instance().AddCollection( &this->privData->button );
+	// bind guiElements collection to the singleton eventhandler
+	EventHandler::Instance().AddCollection( &this->privData->guiElements );
 
-	this->privData->connectIP = L"127.0.0.1";
 	this->privData->connectPort = 15151;
 
 	return true;
@@ -88,7 +97,10 @@ bool LanMenuState::Render( )
 	Graphics::API::StartGuiRender();
 
 	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
-	this->privData->button.Render();
+	this->privData->guiElements.RenderTexture();
+
+	Graphics::API::StartTextRender();
+	this->privData->guiElements.RenderText();
 
 	Graphics::API::EndFrame();
 	return true;
@@ -106,7 +118,7 @@ void LanMenuState::ChangeState( ClientState next )
 	{
 	case GameClientState::ClientState_Lobby:
 		// attempt to connect to lobby
-		if( !this->privData->nwClient->Connect(this->privData->connectPort, this->privData->connectIP) )
+		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
 			return;
 		break;
 	default: break;
@@ -115,7 +127,7 @@ void LanMenuState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<GameClientState*>& e )
+void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 {
 	switch( e.state )
 	{
