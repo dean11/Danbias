@@ -80,7 +80,6 @@ GameState::gameStateState GameState::LoadGame()
 	LoadModels("../Content/Worlds/ccc.bias");
 
 	// hardcoded objects
-	//LoadModels();
 	Float3 startPos = Float3(0,0,20.0f);
 	InitCamera(startPos);
 	return gameStateState_playing;

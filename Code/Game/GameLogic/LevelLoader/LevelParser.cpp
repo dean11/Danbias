@@ -75,7 +75,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					case ObjectSpecialType_Spike:
 					case ObjectSpecialType_SpikeBox:
 					case ObjectSpecialType_RedExplosiveBox:
-					case ObjectSpecialType_StandarsBox:
+					case ObjectSpecialType_StandardBox:
 					case ObjectSpecialType_Stone:
 					case ObjectSpecialType_Building:
 					{

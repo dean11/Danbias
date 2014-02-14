@@ -43,6 +43,12 @@ namespace GameLogic
 		Oyster::Math::Float3 pushForce;
 	};
 
+	struct ExplosionData
+	{
+		Oyster::Math::Float3 pushForce;
+		Oyster::Math::Float3 ShreddingDamage;
+	};
+
 
 	
 };
