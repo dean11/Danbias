@@ -420,7 +420,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 
 				// if is this player. Remember to change camera
 				if( this->myId == decoded.object_ID )
-					camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
+					camera.SetAngular( AngularAxis(rotation) );
 
 				int i = FindObject( this->dynamicObjects, decoded.object_ID );
 				if( i > -1 )
@@ -437,7 +437,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				if( this->myId == decoded.object_ID )
 				{
 					camera.SetPosition( position );
-					camera.SetAngular( QuaternionToAngularAxis(rotation).xyz );
+					camera.SetAngular( AngularAxis(rotation) );
 				}
 
 				int i = FindObject( this->dynamicObjects, decoded.object_ID );

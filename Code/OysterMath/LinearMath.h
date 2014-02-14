@@ -375,7 +375,7 @@ namespace LinearAlgebra3D
 
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> AngularAxis( const ::LinearAlgebra::Quaternion<ScalarType> &rotation )
-	{
+	{ // see http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
 		ScalarType angle = ScalarType(2) * (ScalarType)::std::acos( rotation.real ),
 				   multiplier = angle / (ScalarType)::std::sqrt( ScalarType(1) - rotation.real * rotation.real );
 		return multiplier * rotation.imaginary;
