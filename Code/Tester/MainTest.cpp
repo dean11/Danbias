@@ -213,9 +213,10 @@ HRESULT InitDirect3D()
 	return S_OK;
 }
 float angle = 0;
+float z=0;
 HRESULT Update(float deltaTime)
 {
-	m->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
+	m->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(0,0,z),Oyster::Math::Float3::null);
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * -angle,Oyster::Math::Float3(-4,0,0),Oyster::Math::Float3::null);
 	Oyster::Graphics::API::Update(deltaTime);
@@ -284,6 +285,20 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 			//X +
 			case 0x58:
 				angle -= Oyster::Math::pi / 16;
+				break;
+			//A
+			case 0x41:
+				break;
+			//D
+			case 0x44:
+				break;
+			//W
+			case 0x57:
+				z-=0.5f;
+				break;
+			//S
+			case 0x53:
+				z+=0.5f;
 				break;
 
 		}

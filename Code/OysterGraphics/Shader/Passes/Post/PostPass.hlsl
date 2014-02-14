@@ -21,12 +21,6 @@ float4 SuperSample(float4 Glow, uint3 DTid)
 	index = index / Output.Length;
 	Glow = Ambient.SampleLevel(S1, index,1);
 	Glow = Glow * Glow.w*10;
-	//Line Y+1
-	//Glow += Ambient[DTid.xy/2 + uint2(1,(Output.Length.y/2)+1)] + Ambient[DTid.xy/2 + uint2(0,(Output.Length.y/2)+1)] + Ambient[DTid.xy/2 + uint2(-1,(Output.Length.y/2)+1)];
-	//Line Y-1
-	//Glow += Ambient[DTid.xy/2 + uint2(1,(Output.Length.y/2)-1)] + Ambient[DTid.xy/2 + uint2(0,(Output.Length.y/2)-1)] + Ambient[DTid.xy/2 + uint2(-1,(Output.Length.y/2)-1)];
-
-	//Glow = Glow/9;
 
 	return Glow;
 }
