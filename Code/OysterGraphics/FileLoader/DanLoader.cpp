@@ -175,7 +175,6 @@ static void ReadData(void* Destination, std::ifstream& file,  int size)
 ///
 void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 {
-	// 
 	Oyster::Graphics::Model::ModelInfo* modelInfo = new Oyster::Graphics::Model::ModelInfo();
 	modelInfo->Indexed = false;
 	modelInfo->Animated = false;
@@ -184,7 +183,10 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 	std::ifstream danFile;
 	danFile.open(filename, std::ios::binary);
 	if (!danFile.is_open())
+	{
+		delete modelInfo;
 		return NULL;
+	}
 
 	// Read file header
 	char* buffer = new char[sizeof(FileHeader)];
@@ -195,6 +197,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 	// If problem with compatability then close file and return from method
 	if (fileHeader.versionMajor != DANFILEVERSIONMAJOR)
 	{
+		delete modelInfo;
 		danFile.close();
 		return NULL;
 	}
@@ -290,7 +293,7 @@ void* Oyster::Graphics::Loading::LoadDAN(const wchar_t filename[])
 				//read normal map name length
 				ReadData(&materialHeader.normalMapPathLength,danFile,4);
 
-				//read difuse map name
+				//read normal map name
 				materialHeader.normalMapPath = new char[materialHeader.normalMapPathLength + 1];
 				ReadData(materialHeader.normalMapPath,danFile,materialHeader.normalMapPathLength);
 				materialHeader.normalMapPath[materialHeader.normalMapPathLength] = 0;
