@@ -61,7 +61,7 @@ void AttatchmentMassDriver::Update(float dt)
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
 		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
 		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
-		up *= -0.3;
+		up *= -0.3f;
 		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*5);
 
 		//state.centerPos = pos;

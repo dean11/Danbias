@@ -137,6 +137,7 @@ ICustomBody* Level::InitRigidBodyCube( const ObjectHeader* obj)
 
 	//offset the rigidPosition from modelspace to worldspace;
 	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.box.position; 
+
 	//scales the position so the collision geomentry is in the right place
 	rigidWorldPos = rigidWorldPos * obj->scale;
 
@@ -182,7 +183,7 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.sphere.mass;
 
 	//Radius scaled
-	//rigidBodyRadius = (staticObjData->scale[0] * staticObjData->scale[1] * staticObjData->scale[2] / 3) * staticObjData->boundingVolume.sphere.radius;
+	//rigidBodyRadius = (staticObjData->scale[0] + staticObjData->scale[1] + staticObjData->scale[2] / 3) * staticObjData->boundingVolume.sphere.radius;
 	rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
 
 	//create the rigid body
@@ -230,7 +231,7 @@ void Level::InitiateLevel(std::string levelPath)
 				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
 				{	
 
-					rigidBody_Static = InitRigidBodySphere(staticObjData);
+					rigidBody_Static = InitRigidBodyCube(staticObjData);
 				}
 
 				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
@@ -241,7 +242,8 @@ void Level::InitiateLevel(std::string levelPath)
 				if(rigidBody_Static != NULL)
 				{
 					// create game object
-					Object* staticGameObj = createGameObj(staticObjData, rigidBody_Static);
+					//Object* staticGameObj = createGameObj(staticObjData, rigidBody_Static);
+					Object* staticGameObj = new StaticObject(rigidBody_Static, Object::DefaultCollisionAfter, (ObjectSpecialType)staticObjData->specialTypeID); 
 					if(staticGameObj != NULL)
 					{
 						this->staticObjects.Push((StaticObject*)staticGameObj);
@@ -278,7 +280,8 @@ void Level::InitiateLevel(std::string levelPath)
 				if(rigidBody_Dynamic != NULL)
 				{
 					// create game object
-					Object* dynamicGameObj = createGameObj(dynamicObjData, rigidBody_Dynamic);
+					//Object* dynamicGameObj = createGameObj(dynamicObjData, rigidBody_Dynamic);
+					Object* dynamicGameObj =new DynamicObject(rigidBody_Dynamic, Object::DefaultCollisionAfter, (ObjectSpecialType)dynamicObjData->specialTypeID);
 					if (dynamicGameObj != NULL)
 					{
 						this->dynamicObjects.Push((DynamicObject*)dynamicGameObj);

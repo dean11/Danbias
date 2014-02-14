@@ -60,22 +60,7 @@ GameState::gameStateState GameState::LoadGame()
 	plight.Radius = 300;
 	plight.Bright = 0.5f;
 	Oyster::Graphics::API::AddLight(plight);
-	//plight.Pos = Float3(350,350,5);
-	//plight.Color = Float3(0.9f,0.7f,0.3f);
-	//plight.Radius = 200;
-	//plight.Bright = 0.7f;
-	//Oyster::Graphics::API::AddLight(plight);
-	//plight.Pos = Float3(10,350,350);
-	//plight.Color = Float3(0.9f,0.7f,0.3f);
-	//plight.Radius = 200;
-	//plight.Bright = 0.7f;
-	//Oyster::Graphics::API::AddLight(plight);
-	//plight.Pos = Float3(10,-15,5);
-	//plight.Color = Float3(0,0,1);
-	//plight.Radius = 50;
-	//plight.Bright = 0.5f;
 
-	//Oyster::Graphics::API::AddLight(plight);
 	// use level loader
 	LoadModels("../Content/Worlds/ccc.bias");
 
@@ -143,7 +128,7 @@ bool GameState::LoadModels()
 	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
 	// add jumppad
-	modelData.position = Oyster::Math::Float3(4, 600.3, 0);
+	modelData.position = Oyster::Math::Float3(4, 600.3f, 0);
 	modelData.modelPath = L"jumppad_round.dan";
 	modelData.id = id++;
 	// load models
@@ -244,24 +229,51 @@ bool GameState::LoadModels(std::string mapFile)
 			break;
 		}
 	}
-	//myId += modelId++;
-	// add player model
-	//modelData.position = ;
-	//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-	//modelData.scale =  Oyster::Math::Float3(2,2,2);
+	
+	Oyster::Math::Quaternion first = Oyster::Math::Quaternion(Float3(0.3536,0.3536,-0.146), 0.8536);
+	Oyster::Math::Quaternion second = Oyster::Math::Quaternion(Float3(0.3536,0.3536,-0.146), 0.8536);
+	Oyster::Math::Quaternion result = first * second;
+	Oyster::Math::Quaternion total = Oyster::Math::Quaternion(Float3(0.5,0.5,-0.5), 0.5);
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(20, 127,0);
+	modelData.rotation = first;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
 
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
-	//modelData.visible = true;
-	//modelData.modelPath = L"char_still_sizeref.dan";
-	//modelData.id = myId;
-	//// load models
-	//this->dynamicObjects.Push(new C_DynamicObj());
-	//this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(22, 127,0);
+	modelData.rotation = second;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
 
-	/*C_Player* obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-	*/
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(24, 127,0);
+	modelData.rotation = result;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
+
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(26, 127,0);
+	modelData.rotation = total;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
+
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
 	return true;
 	
 }

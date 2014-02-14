@@ -6,7 +6,7 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-const int MOVE_FORCE = 30;
+const float MOVE_FORCE = 30;
 const float KEY_TIMER = 0.03f;
 Player::Player()
 	:DynamicObject()
@@ -162,8 +162,7 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 }
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
-{
-	key_jump = 
+{ 
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
@@ -184,7 +183,7 @@ void Player::Jump()
 {
 	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
 	this->rigidBody->ApplyImpulse(up *1500);
-	this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING;
+	this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 }
 
 bool Player::IsWalking()

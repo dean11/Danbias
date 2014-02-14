@@ -11,9 +11,9 @@ Game::PlayerData::PlayerData()
 
 	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,2.0f,0.5f);
 	Oyster::Math::Float mass = 60;
-	Oyster::Math::Float restitutionCoeff = 0.5;
-	Oyster::Math::Float frictionCoeff_Static = 0.4;
-	Oyster::Math::Float frictionCoeff_Dynamic = 0.3;
+	Oyster::Math::Float restitutionCoeff = 0.5f;
+	Oyster::Math::Float frictionCoeff_Static = 0.4f;
+	Oyster::Math::Float frictionCoeff_Dynamic = 0.3f;
 	//sbDesc.quaternion = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
 
 	//create rigid body
@@ -28,6 +28,7 @@ Game::PlayerData::PlayerData()
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
 	this->player = new Player();
+
 }
 Game::PlayerData::~PlayerData()
 {
