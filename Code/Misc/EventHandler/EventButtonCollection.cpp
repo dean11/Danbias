@@ -15,7 +15,7 @@ EventButtonCollection::EventButtonCollection(EventCollectionState state)
 
 EventButtonCollection::~EventButtonCollection()
 {
-	for(int i = 0; i < EventHandler::Instance().collections.size(); i++)
+	for(int i = 0; i < (int)EventHandler::Instance().collections.size(); i++)
 	{
 		if(EventHandler::Instance().collections.at(i) == this)
 		{
