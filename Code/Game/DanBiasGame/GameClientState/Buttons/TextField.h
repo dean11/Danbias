@@ -78,36 +78,35 @@ namespace DanBias { namespace Client
 	{
 		::Oyster::Math::Float lineStep = this->fontHeight + this->lineSpacing;
 		::Oyster::Math::Float2 rowSize = ::Oyster::Math::Float2( this->size.x, this->fontHeight );
+		::Oyster::Math::Float3 fieldTopLeft = this->pos - Float3( this->size * 0.25f, 0.0f );
+		::Oyster::Math::Float3 topLeft = fieldTopLeft;
 
 		if( this->isBottomAligned )
 		{
-			::Oyster::Math::Float3 topLeft = this->pos;
 			topLeft.y += this->size.y - lineStep;
 
 			auto line = this->lines.rbegin();
 			for( ; line != this->lines.rend(); ++line )
 			{
-				if( topLeft.y - lineStep >= this->pos.y )
-				{
-					::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->fontHeight, this->textColor );
-					topLeft.y -= lineStep;
-				}
-				else break;
+				if( topLeft.y < fieldTopLeft.y )
+					break;
+
+				::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->fontHeight, this->textColor );
+				topLeft.y -= lineStep;				
 			}
 		}
 		else
 		{
-			::Oyster::Math::Float3 topLeft = this->pos;
+			topLeft.y += this->lineSpacing;
 
 			auto line = this->lines.begin();
 			for( ; line != this->lines.end(); ++line )
 			{
-				if( topLeft.y + lineStep < this->size.y )
-				{
-					::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->fontHeight, this->textColor );
-					topLeft.y += lineStep;
-				}
-				else break;
+				if( topLeft.y >= fieldTopLeft.y + this->size.y )
+					break;
+
+				::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->fontHeight, this->textColor );
+				topLeft.y += lineStep;				
 			}
 		}
 	}

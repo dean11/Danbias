@@ -42,7 +42,7 @@ bool GameState::Init(NetworkClient* nwClient)
 	LoadGame();
 
 	//tell server ready
-	nwClient->Send(GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready));
+	nwClient->Send( GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready) );
 
 	return true;
 }

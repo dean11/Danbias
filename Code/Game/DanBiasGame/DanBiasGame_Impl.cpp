@@ -8,6 +8,7 @@
 #include "GameClientState\LobbyAdminState.h"
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
+#include "GameClientState\NetLoadState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
 #include <GameServerAPI.h>
@@ -182,8 +183,8 @@ namespace DanBias
 
 			switch (state)
 			{
-			case Client::GameClientState::ClientState_LobbyCreate:
-				data.state = new Client::LobbyAdminState();
+			case Client::GameClientState::ClientState_Main:
+				data.state = new Client::MainState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Lan:
@@ -194,8 +195,16 @@ namespace DanBias
 				data.state = new Client::LobbyState();
 				stateChanged = true;
 				break;
+			case Client::GameClientState::ClientState_LobbyCreate:
+				data.state = new Client::LobbyAdminState();
+				stateChanged = true;
+				break;
 			case Client::GameClientState::ClientState_Game:
 				data.state = new Client::GameState();
+				stateChanged = true;
+				break;
+			case Client::GameClientState::ClientState_NetLoad:
+				data.state = new Client::NetLoadState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Quit:

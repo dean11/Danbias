@@ -102,7 +102,7 @@ void LobbyState::ChangeState( ClientState next )
 {
 	if( next == GameClientState::ClientState_LobbyReady )
 	{ // Send ready signal to server lobby
-
+		this->ChangeState( GameClientState::ClientState_NetLoad );
 	}
 	else
 		this->privData->nextState = next;

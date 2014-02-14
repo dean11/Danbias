@@ -36,6 +36,7 @@ struct  LanMenuState::MyData
 } privData;
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
+void OnButtonInteract_Exit( Oyster::Event::ButtonEvent<LanMenuState*>& e );
 
 LanMenuState::LanMenuState() {}
 
@@ -55,18 +56,21 @@ bool LanMenuState::Init(Network::NetworkClient* nwClient)
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
 	// create guiElements
-	ButtonRectangle<LanMenuState*> *guiElements;
-	
-	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Connect", Float3(1.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
-	this->privData->guiElements.AddButton( guiElements );
-
-	this->privData->connectIP = new TextField<LanMenuState*>( L"earth_md.png", Float3(1.0f), this, Float3(0.1f, 0.2f, 0.5f), Float2(0.45f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->connectIP = new TextField<LanMenuState*>( L"earth_md.png", Float3(1.0f), this, Float3(0.5f, 0.3f, 0.5f), Float2(0.8f, 0.09f), ResizeAspectRatio_None );
 	this->privData->connectIP->ReserveLines( 1 );
 	this->privData->connectIP->AppendText( L"127.0.0.1" );
-	this->privData->connectIP->SetFontHeight( 0.1f );
-	this->privData->connectIP->SetLineSpacing( 0.0f );
+	this->privData->connectIP->SetFontHeight( 0.08f );
+	this->privData->connectIP->SetLineSpacing( 0.005f );
+	this->privData->connectIP->SetTopAligned();
 	
 	this->privData->guiElements.AddButton( this->privData->connectIP );
+
+	ButtonRectangle<LanMenuState*> *guiElements;
+	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Connect", Float3(1.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
+	this->privData->guiElements.AddButton( guiElements );
+
+	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Exit", Float3(1.0f), OnButtonInteract_Exit, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
+	this->privData->guiElements.AddButton( guiElements );
 
 	// bind guiElements collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->privData->guiElements );
@@ -132,6 +136,17 @@ void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 	{
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		break;
+	default: break;
+	}
+}
+
+void OnButtonInteract_Exit( Oyster::Event::ButtonEvent<LanMenuState*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameClientState::ClientState_Main );
 		break;
 	default: break;
 	}

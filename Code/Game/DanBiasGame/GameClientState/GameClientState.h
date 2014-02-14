@@ -12,11 +12,12 @@ namespace DanBias { namespace Client
 	public:
 		enum ClientState
 		{
-			ClientState_Login,
+			ClientState_Main,
 			ClientState_Lan,
 			ClientState_Lobby,
 			ClientState_LobbyCreate,
 			ClientState_LobbyReady,
+			ClientState_NetLoad,
 			ClientState_Game,
 			ClientState_Same,
 			ClientState_Quit
