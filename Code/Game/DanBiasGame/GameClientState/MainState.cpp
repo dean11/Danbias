@@ -25,12 +25,12 @@ struct MainState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	Graphics::API::Texture background;
-	EventButtonCollection button;
+	EventButtonCollection guiElements;
 };
 
-void OnButtonInteract_Create( Oyster::Event::ButtonEvent<GameClientState*>& e );
-void OnButtonInteract_Join( Oyster::Event::ButtonEvent<GameClientState*>& e );
-void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<GameClientState*>& e );
+void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e );
+void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e );
+void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<MainState*>& e );
 
 MainState::MainState(void) {}
 
@@ -50,19 +50,19 @@ bool MainState::Init( NetworkClient* nwClient )
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
 	// create buttons
-	ButtonRectangle<GameClientState*> *button;
+	ButtonRectangle<MainState*> *button;
 	
-	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Create, this, 0.5f, 0.2f, 0.3f, 0.1f, true );
-	this->privData->button.AddButton( button );
+	button = new ButtonRectangle<MainState*>( L"earth_md.png", L"Create", Float3(1.0f), OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<GameClientState*>( L"skysphere_md.png", OnButtonInteract_Join, this, 0.5f, 0.4f, 0.3f, 0.1f, true );
-	this->privData->button.AddButton( button );
+	button = new ButtonRectangle<MainState*>( L"skysphere_md.png", L"Join", Float3(1.0f), OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<GameClientState*>( L"plane_texture_md.png", OnButtonInteract_Quit, this, 0.5f, 0.8f, 0.3f, 0.1f, true );
-	this->privData->button.AddButton( button );
+	button = new ButtonRectangle<MainState*>( L"plane_texture_md.png", L"Quit", Float3(1.0f), OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
-	EventHandler::Instance().AddCollection( &this->privData->button );
+	EventHandler::Instance().AddCollection( &this->privData->guiElements );
 
 	return true;
 }
@@ -87,7 +87,10 @@ bool MainState::Render()
 	Graphics::API::StartGuiRender();
 
 	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
-	this->privData->button.Render();
+	this->privData->guiElements.RenderTexture();
+
+	Graphics::API::StartTextRender();
+	this->privData->guiElements.RenderText();
 
 	Graphics::API::EndFrame();
 	return true;
@@ -98,7 +101,7 @@ bool MainState::Release()
 	if( this->privData )
 	{
 		Graphics::API::DeleteTexture( this->privData->background ); // TODO: @todo bug caught when exiting by X
-		EventHandler::Instance().ReleaseCollection( &this->privData->button );
+		EventHandler::Instance().ReleaseCollection( &this->privData->guiElements );
 
 		this->privData = NULL;
 		// button collection will be autoreleased from EventHandler
@@ -111,7 +114,7 @@ void MainState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void OnButtonInteract_Create( Oyster::Event::ButtonEvent<GameClientState*>& e )
+void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
@@ -122,7 +125,7 @@ void OnButtonInteract_Create( Oyster::Event::ButtonEvent<GameClientState*>& e )
 	}
 }
 
-void OnButtonInteract_Join( Oyster::Event::ButtonEvent<GameClientState*>& e )
+void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
@@ -133,7 +136,7 @@ void OnButtonInteract_Join( Oyster::Event::ButtonEvent<GameClientState*>& e )
 	}
 }
 
-void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<GameClientState*>& e )
+void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
