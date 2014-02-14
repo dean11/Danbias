@@ -10,9 +10,10 @@ namespace Oyster
 	{
 		namespace Struct
 		{
-			inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float staticFrictionCoeff, ::Oyster::Math::Float dynamicFrictionCoeff, const ::Oyster::Math::Float3 &centerPos, const ::Oyster::Math::Quaternion& quaternion)
+			inline CustomBodyState::CustomBodyState( ::Oyster::Math::Float mass, ::Oyster::Math::Float3 reach, ::Oyster::Math::Float restitutionCoeff, ::Oyster::Math::Float staticFrictionCoeff, ::Oyster::Math::Float dynamicFrictionCoeff, const ::Oyster::Math::Float3 &centerPos, const ::Oyster::Math::Quaternion& quaternion)
 			{
 				this->mass = mass;
+				this->reach = reach;
 				this->restitutionCoeff = restitutionCoeff;
 				this->staticFrictionCoeff = staticFrictionCoeff;
 				this->dynamicFrictionCoeff = dynamicFrictionCoeff;
@@ -24,6 +25,7 @@ namespace Oyster
 			{
 				this->mass = state.mass;
 				this->restitutionCoeff = state.restitutionCoeff;
+				this->reach = state.reach;
 				this->staticFrictionCoeff = state.staticFrictionCoeff;
 				this->dynamicFrictionCoeff = state.dynamicFrictionCoeff;
 				this->centerPos = state.centerPos;

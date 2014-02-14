@@ -11,7 +11,7 @@ C_DynamicObj::~C_DynamicObj(void)
 {
 	 
 }
-void C_DynamicObj::Init(ModelInitData modelInit)
+bool C_DynamicObj::Init(ModelInitData modelInit)
 {
-	C_Object::Init(modelInit);
+	return C_Object::Init(modelInit);
 }

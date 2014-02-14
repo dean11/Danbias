@@ -11,7 +11,7 @@ private:
 public:
 	C_DynamicObj(void);
 	virtual ~C_DynamicObj(void);
-	void Init(ModelInitData modelInit);
+	bool Init(ModelInitData modelInit);
 
 };};};
 #endif

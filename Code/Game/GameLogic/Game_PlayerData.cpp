@@ -22,7 +22,7 @@ Game::PlayerData::PlayerData()
 	//create player with this rigid body
 	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player,0,0);
 
-	this->player->GetRigidBody()->SetCustomTag(this);
+	//this->player->GetRigidBody()->SetCustomTag(this);
 	player->EndFrame();
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)

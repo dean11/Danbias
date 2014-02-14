@@ -59,6 +59,27 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 				break;
 			}
 
+			case ObjectType_SpawnPoint:
+			{
+				loadCgf = false;
+				ObjectHeader* header = new ObjectHeader;
+				ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+				SpawnPointAttributes* spawn = new SpawnPointAttributes;
+
+				spawn->typeID = header->typeID;
+
+				for(int i = 0; i < 3; i++)
+				{
+					spawn->position[i] = header->position[i];
+				}
+
+				delete header;
+				//objects.push_back(header);
+				objects.push_back(spawn);
+				break;
+			}
+
 			//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them. 
 			//Unless they are changed to not be the same.
 			case ObjectType_Static: case ObjectType_Dynamic:
@@ -133,13 +154,8 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 						objects.push_back(header);
 						break;
 					}
-
-					case ObjectSpecialType_SpawnPoint:
-					{
-						loadCgf = false;
-						ObjectHeader* header = new ObjectHeader;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
-					}
+					//this is a hotfix, fix so you only load the relevant data when the file is updated
+					
 
 					default:
 						//Couldn't find specialType

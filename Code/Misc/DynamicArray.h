@@ -170,7 +170,7 @@ namespace Utility
 	
 			template <typename T> void DynamicArray<T>::Remove(unsigned int index)
 			{
-				assert(index > (unsigned int) this->size);
+				assert(index < (unsigned int) this->size);
 
 				T* temp = new T[this->capacity - 1];
 		

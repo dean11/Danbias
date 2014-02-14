@@ -58,10 +58,16 @@ namespace Oyster
 			void SetCustomTag( void *ref );
 			void* GetCustomTag() const;
 
+			
+
 			// Class specific
 			void SetCollisionShape(btCollisionShape* shape);
 			void SetMotionState(btDefaultMotionState* motionState);
 			void SetRigidBody(btRigidBody* rigidBody);
+
+			void PreStep(const btCollisionWorld* collisionWorld);
+
+			float GetLamda() const;
 
 			private:
 
@@ -76,7 +82,11 @@ namespace Oyster
 
 			void *customTag;
 
-			::Oyster::Math::Float3 gravity;
+			Math::Float3 gravity;
+
+			btVector3 raySource[2];
+			btVector3 rayTarget[2];
+			btScalar rayLambda[2];
 		};
 	} 
 }
