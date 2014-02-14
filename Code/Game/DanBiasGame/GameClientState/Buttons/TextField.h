@@ -173,7 +173,7 @@ namespace DanBias { namespace Client
 		split.reserve( 10 );
 		::Utility::String::Split( split, text, L"\n", 0 );
 		auto line = split.begin();
-		for( ; line != split.end; ++line )
+		for( ; line != split.end(); ++line )
 		{
 			this->lines.push_back( (*line) );
 		}
