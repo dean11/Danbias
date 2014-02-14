@@ -184,6 +184,14 @@ void SimpleRigidBody::SetAngularFactor(Float factor)
 	this->rigidBody->setAngularFactor(factor);
 }
 
+void SimpleRigidBody::SetMass(Float mass)
+{
+	btVector3 fallInertia(0, 0, 0);
+	collisionShape->calculateLocalInertia(mass, fallInertia);
+	this->rigidBody->setMassProps(mass, fallInertia);
+	this->state.mass = mass;
+}
+
 void SimpleRigidBody::SetGravity(Float3 gravity)
 {
 	this->rigidBody->setGravity(btVector3(gravity.x, gravity.y, gravity.z));

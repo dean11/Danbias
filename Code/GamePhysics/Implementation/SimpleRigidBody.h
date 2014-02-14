@@ -29,20 +29,21 @@ namespace Oyster
 			void SetRotation(Math::Quaternion quaternion);
 			void SetRotation(Math::Float3 eulerAngles);
 			void SetRotation(::Oyster::Math::Float4x4 rotation);
-			void SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis);
+			void SetRotationAsAngularAxis(Math::Float4 angularAxis);
 			void SetAngularFactor(Math::Float factor);
+			void SetMass(Math::Float mass);
 
 			void SetGravity(Math::Float3 gravity);
 
-			void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right);
-			void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward);
-			void SetUp(::Oyster::Math::Float3 up);
+			void SetUpAndRight(Math::Float3 up, Math::Float3 right);
+			void SetUpAndForward(Math::Float3 up, Math::Float3 forward);
+			void SetUp(Math::Float3 up);
 
 			Math::Float4x4 GetRotation() const;
 			Math::Float4 GetRotationAsAngularAxis();
 			Math::Float4x4 GetOrientation() const;
 			Math::Float4x4 GetView() const;
-			Math::Float4x4 GetView( const ::Oyster::Math::Float3 &offset ) const;
+			Math::Float4x4 GetView( const Math::Float3 &offset ) const;
 
 			Math::Float3 GetGravity() const;
 			::Oyster::Math::Float3 GetLinearVelocity() const;
