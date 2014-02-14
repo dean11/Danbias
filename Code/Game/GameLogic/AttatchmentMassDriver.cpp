@@ -38,18 +38,14 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
 		ForcePush(usage,dt);
 	break;
+
 	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
-		
-		if(hasObject) 
-		{
-			//ForcePush(usage,dt);//WARNING THIS IS A CRAP TEST TO MAKE SURE YOU CAN SHOOT BOXES
-			break;
-		}
 		ForcePull(usage,dt);
-		break;
+	break;
+
 	case WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS:
 		ForceZip(usage,dt);
-		break;
+	break;
 	}
 		
 }
@@ -65,7 +61,7 @@ void AttatchmentMassDriver::Update(float dt)
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
 		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
 		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
-		up *= -0.3;
+		up *= -0.3f;
 		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*5);
 
 		//state.centerPos = pos;
@@ -117,12 +113,9 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 ********************************************************/
 void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Physics::Struct::CustomBodyState state = this->owner->GetRigidBody()->GetState();
+	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (1000);
 
-	//do something with state
-	//state.ApplyLinearImpulse(Oyster::Math::Float3(this->owner->GetLookDir()) * (500 * dt));
-
-	this->owner->GetRigidBody()->SetState(state);
+	this->owner->GetRigidBody()->ApplyImpulse(force);
 }
 
 

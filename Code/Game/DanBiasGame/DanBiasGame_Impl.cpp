@@ -142,8 +142,19 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
+		//Get mouse pos and window size (Temporary)
+		POINT p;
+		RECT r;
+		GetCursorPos(&p);
+		ScreenToClient(WindowShell::GetHWND(), &p);
+		GetClientRect(WindowShell::GetHWND(), &r);
+
 		//Update menu buttons
-		EventHandler::Instance().Update(m_data->inputObj);
+		MouseInput mouseInput;
+		mouseInput.x = (float)p.x / (float)r.right;
+		mouseInput.y = (float)p.y / (float)r.bottom;
+		mouseInput.mouseButtonPressed = m_data->inputObj->IsMousePressed();
+		EventHandler::Instance().Update(mouseInput);
 
 		m_data->inputObj->Update();
 
@@ -200,6 +211,10 @@ namespace DanBias
 
 	HRESULT DanBiasGame::CleanUp()
 	{
+		Oyster::Graphics::API::Clean();
+		EventHandler::Instance().Clean();
+		GameServerAPI::ServerStop();
+
 		m_data->recieverObj->gameClientState->Release();
 		delete m_data->recieverObj->gameClientState;
 		m_data->recieverObj->Disconnect();
@@ -207,11 +222,7 @@ namespace DanBias
 		delete m_data->inputObj;
 		delete m_data;
 
-		EventHandler::Instance().Clean();
-
-		Oyster::Graphics::API::Clean();
-
-		GameServerAPI::ServerStop();
+		
 
 		return S_OK;
 	}	

@@ -25,28 +25,26 @@ namespace GameLogic
 
 	enum ObjectSpecialType
 	{
+		ObjectSpecialType_None,
+		ObjectSpecialType_Sky,
 		ObjectSpecialType_World,		//Always the main celestial body
 		ObjectSpecialType_Building,
-		ObjectSpecialType_Damaging,
-		ObjectSpecialType_Explosive,
+		ObjectSpecialType_Stone,
+		ObjectSpecialType_StandardBox,
+		ObjectSpecialType_RedExplosiveBox,
+		ObjectSpecialType_SpikeBox,
+		ObjectSpecialType_Spike,
+		ObjectSpecialType_CrystalFormation,
+		ObjectSpecialType_CrystalShard,
 		ObjectSpecialType_JumpPad,
-		ObjectSpecialType_BoostPad,
 		ObjectSpecialType_Portal,
-		ObjectSpecialType_Sky,
+		ObjectSpecialType_SpawnPoint,
+		ObjectSpecialType_Player,
+		ObjectSpecialType_Generic,
+		
 
 		ObjectSpecialType_Count,
 		ObjectSpecialType_Unknown  = -1
-	};
-
-	enum UsePhysics
-	{
-		UsePhysics_UseFullPhysics,
-		UsePhysics_IgnoreGravity,
-		UsePhysics_IgnorePhysics,
-		UsePhysics_IgnoreCollision,
-
-		UsePhysics_Count,
-		UsePhysics_Unknown = -1
 	};
 
 	enum CollisionGeometryType

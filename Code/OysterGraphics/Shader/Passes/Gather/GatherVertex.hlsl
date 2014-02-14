@@ -14,6 +14,7 @@ VertexOut main( VertexIn input )
 	input.normal = mul(boneTrans,float4(input.normal,1)).xyz * Animated + input.normal * int(1-Animated);
 
 	output.pos = mul(WVP, float4(input.pos,1));
+	output.ViewPos = mul(WV, float4(input.pos,1));
 	output.normal = mul(WV, float4(input.normal,0)).xyz;
 	output.UV = input.UV;
 	return output;

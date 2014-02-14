@@ -19,7 +19,11 @@ Weapon::Weapon()
 Weapon::Weapon(int MaxNrOfSockets,Player *owner)
 {
 	attatchmentSockets.Resize(MaxNrOfSockets);
-	attatchmentSockets[0] = new AttatchmentSocket();
+	for(int i = 0; i < MaxNrOfSockets; i++)
+	{
+		attatchmentSockets[i] = new AttatchmentSocket();
+	}
+	
 
 	weaponState = WEAPON_STATE_IDLE;
 	currentNrOfAttatchments = 0;
@@ -38,8 +42,12 @@ Weapon::~Weapon(void)
 {
 	for (unsigned int i = 0; i < this->attatchmentSockets.Size(); i++)
 	{
-		delete this->attatchmentSockets[i];
-		this->attatchmentSockets[i] = 0;
+		if(this->attatchmentSockets[i])
+		{
+			delete this->attatchmentSockets[i];
+			this->attatchmentSockets[i] = 0;
+		}
+			
 	}
 }
 

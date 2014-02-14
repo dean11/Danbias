@@ -8,40 +8,59 @@
 #include "../Misc/EventHandler/EventButton.h"
 #include "../OysterGraphics/DllInterfaces/GFXAPI.h"
 
+
+
 namespace DanBias
 {
 	namespace Client
 	{
+		/*Dictates if the texture should be resized based on the screen aspect ratio.
+		  
+		*/
+		enum ResizeAspectRatio
+		{
+			ResizeAspectRatio_None,
+			ResizeAspectRatio_Width,
+			ResizeAspectRatio_Height,
+
+			ResizeAspectRatio_Count,
+			ResizeAspectRatio_Unknown = -1
+		};
+
+
 		template <typename Owner>
 		class EventButtonGUI : public Oyster::Event::EventButton<Owner>
 		{
 		public:
 			EventButtonGUI() 
-				: EventButton(), xPos(0), yPos(0), width(0), height(0), texture(NULL)
+				: EventButton(), pos(0, 0), size(0, 0), texture(NULL), buttonText(""), textColor(0, 0, 0)
 			{}
-			EventButtonGUI(std::wstring textureName, Owner owner, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true) 
-				: EventButton(owner), xPos(xPos), yPos(yPos), width(width), height(height), texture(NULL)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, Owner owner, Oyster::Math::Float3 pos, 
+							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButton(owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
 			{
 				CreateTexture(textureName);
-				if(resizeToScreenAspectRatio) ResizeWithAspectRatio();
+				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
-			EventButtonGUI(std::wstring textureName, EventFunc func, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true) 
-				: EventButton(func), xPos(xPos), yPos(yPos), width(width), height(height), texture(NULL)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Oyster::Math::Float3 pos, 
+							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButton(func), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
 			{
 				CreateTexture(textureName);
-				if(resizeToScreenAspectRatio) ResizeWithAspectRatio();
+				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
-			EventButtonGUI(std::wstring textureName, EventFunc func, Owner owner, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true) 
-				: EventButton(func, owner), xPos(xPos), yPos(yPos), width(width), height(height), texture(NULL)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, Oyster::Math::Float3 pos, 
+							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButton(func, owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
 			{
 				CreateTexture(textureName);
-				if(resizeToScreenAspectRatio) ResizeWithAspectRatio();
+				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
-			EventButtonGUI(std::wstring textureName, EventFunc func, Owner owner, void* userData, float xPos, float yPos, float width, float height, bool resizeToScreenAspectRatio = true) 
-				: EventButton(func, owner, userData), xPos(xPos), yPos(yPos), width(width), height(height), texture(NULL)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButton(func, owner, userData), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
 			{
 				CreateTexture(textureName);
-				if(resizeToScreenAspectRatio) ResizeWithAspectRatio();
+				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
 			virtual ~EventButtonGUI()
 			{
@@ -55,7 +74,7 @@ namespace DanBias
 				texture = Oyster::Graphics::API::CreateTexture(textureName);
 			}
 
-			virtual void Render()
+			virtual void RenderTexture()
 			{
 				if(EventButton<Owner>::Enabled())
 				{
@@ -64,32 +83,48 @@ namespace DanBias
 
 					if(EventButton<Owner>::GetState() == ButtonState_None)
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height), Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
+						//Oyster::Graphics::API::RenderGuiElement(texture, pos.xy, size, Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
 					}
 					else if(EventButton<Owner>::GetState() == ButtonState_Hover)
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height), Oyster::Math::Float3(0.0f, 1.0f, 0.0f));
+						//Oyster::Graphics::API::RenderGuiElement(texture, pos.xy, size, Oyster::Math::Float3(0.0f, 1.0f, 0.0f));
 					}
 					else
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, Oyster::Math::Float2(xPos, yPos), Oyster::Math::Float2(width, height), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
+						//Oyster::Graphics::API::RenderGuiElement(texture, pos.xy, size, Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
 					}
 
 				}
 			}
 
-			void ResizeWithAspectRatio()
+			virtual void RenderText()
+			{
+				if(buttonText.size() > 0)
+				{
+					//Oyster::Graphics::API::RenderText(buttonText, pos.xy, size, textColor);
+				}
+			}
+
+		private:
+			void ResizeWithAspectRatio(ResizeAspectRatio resize)
 			{
 				RECT r;
 				GetClientRect(WindowShell::GetHWND(), &r);
-				height *= (float)r.right/(float)r.bottom;
+
+				if(resize == ResizeAspectRatio_Height)
+					size.y *= (float)r.right/(float)r.bottom;
+				else if(resize == ResizeAspectRatio_Width)
+					size.x *= (float)r.bottom/(float)r.right;
 			}
 
 		protected:
-			float xPos, yPos;
-			float width, height;
-			Oyster::Graphics::API::Texture texture;
+			Oyster::Math::Float3 pos;
+			Oyster::Math::Float2 size;
 
+			Oyster::Graphics::API::Texture texture;
+			
+			std::wstring buttonText;
+			Oyster::Math::Float3 textColor;
 		};
 	}
 }

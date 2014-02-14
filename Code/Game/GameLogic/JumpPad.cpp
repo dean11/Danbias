@@ -8,8 +8,8 @@ JumpPad::JumpPad(void)
 {
 }
 
-JumpPad::JumpPad(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type, Oyster::Math::Float3 pushForce)
-	:StaticObject(rigidBody, collisionFuncAfter, type)
+JumpPad::JumpPad(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType  type,int objectID ,Oyster::Math::Float3 pushForce)
+	:StaticObject(rigidBody, JumpPad::JumpPadActivated, type, objectID)
 {
 	this->pushForce = pushForce;
 }

@@ -9,7 +9,7 @@
 #include "StaticObject.h"
 #include "DynamicObject.h"
 #include "GameModeType.h"
-#include "JumpPad.h"
+
 #include "Player.h"
 #include "PhysicsAPI.h"
 #include "TeamManager.h"
@@ -32,9 +32,10 @@ namespace GameLogic
 		********************************************************/
 		void InitiateLevel(std::string levelPath);
 		void InitiateLevel(float radius);
+		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
+		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);
 
-		void parseObjectType(ObjectTypeHeader* obj);
-		void parsePhysicsObj(LevelLoaderInternal::BoundingVolumeBase* obj);
+		Object* createGameObj(ObjectHeader* obj, Oyster::Physics::ICustomBody* rigidBody);
 		/********************************************************
 		* Creates a team in the level
 		* @param teamSize: The size of the team you want to create
@@ -75,6 +76,7 @@ namespace GameLogic
 		GameModeType gameMode;
 		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
 		StaticObject *levelObj;
+		int objID; 
 
 	};
 

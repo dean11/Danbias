@@ -4,7 +4,9 @@
 #include "NetworkClient.h"
 #include "Camera.h"
 #include <GameServerAPI.h>
+#include "LevelLoader\ObjectDefines.h"
 
+using namespace GameLogic;
 using namespace DanBias::Client;
 using namespace Oyster::Math;
 struct  GameState::myData
@@ -58,27 +60,11 @@ GameState::gameStateState GameState::LoadGame()
 	plight.Radius = 300;
 	plight.Bright = 0.5f;
 	Oyster::Graphics::API::AddLight(plight);
-	//plight.Pos = Float3(350,350,5);
-	//plight.Color = Float3(0.9f,0.7f,0.3f);
-	//plight.Radius = 200;
-	//plight.Bright = 0.7f;
-	//Oyster::Graphics::API::AddLight(plight);
-	//plight.Pos = Float3(10,350,350);
-	//plight.Color = Float3(0.9f,0.7f,0.3f);
-	//plight.Radius = 200;
-	//plight.Bright = 0.7f;
-	//Oyster::Graphics::API::AddLight(plight);
-	//plight.Pos = Float3(10,-15,5);
-	//plight.Color = Float3(0,0,1);
-	//plight.Radius = 50;
-	//plight.Bright = 0.5f;
 
-	//Oyster::Graphics::API::AddLight(plight);
 	// use level loader
-	//LoadModels("3bana.bias");
+	LoadModels("../Content/Worlds/ccc.bias");
 
 	// hardcoded objects
-	LoadModels();
 	Float3 startPos = Float3(0,0,20.0f);
 	InitCamera(startPos);
 	return gameStateState_playing;
@@ -141,7 +127,7 @@ bool GameState::LoadModels()
 	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
 
 	// add jumppad
-	modelData.position = Oyster::Math::Float3(4, 600.3, 0);
+	modelData.position = Oyster::Math::Float3(4, 600.3f, 0);
 	modelData.modelPath = L"jumppad_round.dan";
 	modelData.id = id++;
 	// load models
@@ -183,7 +169,7 @@ bool GameState::LoadModels(std::string mapFile)
 	objects = levelLoader.LoadLevel(mapFile);
 
 	int objCount = objects.size();
-	int modelId = 0;
+	int modelId = 100;
 	ModelInitData modelData;
 	for (int i = 0; i < objCount; i++)
 	{
@@ -200,9 +186,9 @@ bool GameState::LoadModels(std::string mapFile)
 
 				modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
 				modelData.visible = true;
-				//modelData.position = ;
-				//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-				//modelData.scale =  Oyster::Math::Float3(2,2,2);
+				modelData.position = staticObjData->position;
+				modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(staticObjData->rotation), staticObjData->rotation[3]);
+				modelData.scale =  staticObjData->scale;
 				modelData.id = modelId++;
 
 				this->staticObjects.Push(new C_StaticObj());
@@ -212,11 +198,11 @@ bool GameState::LoadModels(std::string mapFile)
 		case GameLogic::ObjectType::ObjectType_Dynamic:
 			{
 				GameLogic::ObjectHeader* dynamicObjData = ((GameLogic::ObjectHeader*)obj);
-				//modelData.position = ;
-				//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-				//modelData.scale =  Oyster::Math::Float3(2,2,2);
 				modelData.modelPath.assign(dynamicObjData->ModelFile.begin(), dynamicObjData->ModelFile.end());
 				modelData.visible = true;
+				modelData.position = dynamicObjData->position;
+				modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(dynamicObjData->rotation), dynamicObjData->rotation[3]);
+				modelData.scale = dynamicObjData->scale;
 				modelData.id = modelId++;
 
 				this->dynamicObjects.Push(new C_DynamicObj());
@@ -230,8 +216,8 @@ bool GameState::LoadModels(std::string mapFile)
 				if(lightData->lightType == GameLogic::LightType_PointLight)
 				{
 					Oyster::Graphics::Definitions::Pointlight plight;
-					plight.Pos = ((GameLogic::PointLight*)lightData)->position;
-					plight.Color = lightData->diffuseColor;
+					plight.Pos = ((GameLogic::BasicLight*)lightData)->position;
+					plight.Color = lightData->color;
 					plight.Radius = 100;
 					plight.Bright = 0.9f;
 					Oyster::Graphics::API::AddLight(plight);
@@ -242,24 +228,51 @@ bool GameState::LoadModels(std::string mapFile)
 			break;
 		}
 	}
-	myId += modelId++;
-	// add player model
-	//modelData.position = ;
-	//modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(2,2,-2), 1);
-	//modelData.scale =  Oyster::Math::Float3(2,2,2);
-
-
+	
+	Oyster::Math::Quaternion first = Oyster::Math::Quaternion(Float3(0.3536,0.3536,-0.146), 0.8536);
+	Oyster::Math::Quaternion second = Oyster::Math::Quaternion(Float3(0.3536,0.3536,-0.146), 0.8536);
+	Oyster::Math::Quaternion result = first * second;
+	Oyster::Math::Quaternion total = Oyster::Math::Quaternion(Float3(0.5,0.5,-0.5), 0.5);
 	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(20, 127,0);
+	modelData.rotation = first;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
 	modelData.modelPath = L"char_still_sizeref.dan";
 	modelData.id = myId;
-	// load models
-	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
 
-	/*C_Player* obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-	*/
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(22, 127,0);
+	modelData.rotation = second;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
+
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(24, 127,0);
+	modelData.rotation = result;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
+
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
+	modelData.visible = true;
+	modelData.position = Oyster::Math::Float3(26, 127,0);
+	modelData.rotation = total;
+	modelData.scale =  Oyster::Math::Float3(1,1,1);
+	modelData.modelPath = L"char_still_sizeref.dan";
+	modelData.id = myId;
+
+	this->staticObjects.Push(new C_StaticObj());
+	this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
+
 	return true;
 	
 }
@@ -378,7 +391,7 @@ bool GameState::Render(float dt)
 	std::wstring fps;
 	float f = 1/dt;
 	fps = std::to_wstring(f);
-	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.2f,0.05f));
+	//Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.2f,0.05f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
@@ -560,6 +573,7 @@ void GameState::Protocol( ObjPos* pos )
 
 			if(dynamicObjects[i]->GetId() == myId) // playerobj
 			{
+
 
 				Float3 pos = dynamicObjects[i]->getPos();
 				Float3 up = dynamicObjects[i]->getWorld().v[1];

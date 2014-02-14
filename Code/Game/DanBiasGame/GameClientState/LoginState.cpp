@@ -25,7 +25,7 @@ struct  LoginState::myData
 	// game client* 
 
 	//Menu button collection
-	EventButtonCollection* collection;
+	EventButtonCollection collection;
 	bool createGame;
 	int testNumber;
 }privData;
@@ -109,23 +109,33 @@ bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
 
 	//Create menu buttons
-	privData->collection = new EventButtonCollection;
-	EventHandler::Instance().AddCollection(privData->collection);
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.2f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.3f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.4f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonEllipse<LoginState*>(L"circle.png", &LoginState::ButtonCallback, this, (void*)Options, 0.2f, 0.5f, 0.1f, 0.1f));
+	EventHandler::Instance().AddCollection(&privData->collection);
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 1, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.2f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.3f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.4f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.5f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
 
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.15f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.25f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.35f, 0.05f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Options, 0.45f, 0.05f, 0.1f, 0.1f));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.15f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.25f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.35f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.45f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
 
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Create, 0.5f, 0.5f, 0.3f, 0.3f));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Create Game", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Create, Oyster::Math::Float3(0.5f, 0.5f, 0.0f), Oyster::Math::Float2(0.3f, 0.3f)));
 
-	//Incr/decr buttons
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Incr, 0.85f, 0.2f, 0.1f, 0.1f));
-	privData->collection->AddButton(new ButtonRectangle<LoginState*>(L"button.png", &LoginState::ButtonCallback, this, (void*)Decr, 0.55f, 0.2f, 0.1f, 0.1f));
+	//Incr/decr buttons	.
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Incr, Oyster::Math::Float3(0.85f, 0.2f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Decr, Oyster::Math::Float3(0.55f, 0.2f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
 	
 	privData->createGame = false;
 	privData->testNumber = 0;
@@ -198,7 +208,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
-		privData->collection->SetState(EventCollectionState_Disabled);
+		privData->collection.SetState(EventCollectionState_Disabled);
 		return ClientState_LobbyCreated;
 	}
 	// join game
@@ -213,7 +223,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
-		privData->collection->SetState(EventCollectionState_Disabled);
+		privData->collection.SetState(EventCollectionState_Disabled);
 		return ClientState_Lobby;
 	}
 	return ClientState_Same;
@@ -236,7 +246,7 @@ bool LoginState::Render(float dt)
 
 	//Render buttons
 	Oyster::Graphics::API::StartGuiRender();
-	EventHandler::Instance().Render();
+	EventHandler::Instance().RenderTexture();
 
 	std::wstring number;
 	wchar_t temp[10];
@@ -244,7 +254,8 @@ bool LoginState::Render(float dt)
 	number = temp;
 
 	Oyster::Graphics::API::StartTextRender();
-	Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7f, 0.2f), Oyster::Math::Float2(0.1f, 0.1f*(1008.0f/730.0f)), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
+	EventHandler::Instance().RenderText();
+	//Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7f, 0.2f), Oyster::Math::Float2(0.1f, 0.1f*(1008.0f/730.0f)), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
@@ -259,7 +270,7 @@ bool LoginState::Release()
 		privData->object[i] = NULL;
 	}
 
-	delete privData->collection;
+	EventHandler::Instance().ReleaseCollection(&privData->collection);
 
 	delete privData;  
 	privData = NULL;

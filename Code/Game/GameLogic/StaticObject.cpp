@@ -10,34 +10,30 @@ StaticObject::StaticObject()
 {
 	
 }
-StaticObject::StaticObject(OBJECT_TYPE type)
-	:Object(type)
-{
 
-}
-StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
-	:Object(rigidBody,type)
+StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody , void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
+	:Object(rigidBody, EventOnCollision, type, objectID)
 {
-	//this->rigidBody->SetGravity(true);
-	//this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_BeforeCollisionResponse)(CollisionManager::IgnoreCollision));
+	//use setMass(when it is made) and set the mass to 0 in order to ensure that the object is static
 }
 
-StaticObject::StaticObject( void* collisionFuncAfter, OBJECT_TYPE type)
-	:Object(collisionFuncAfter,type)
+StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
+	:Object(rigidBody, EventOnCollision, type, objectID)
 {
-	
-}
-StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody , void* collisionFuncAfter, OBJECT_TYPE type)
-	:Object(rigidBody, collisionFuncAfter, type)
-{
-	
-}
-StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
-	:Object(rigidBody, collisionFuncAfter, type)
-{
-
+	//use setMass(when it is made) and set the mass to 0 in order to ensure that the object is static
 }
 
+StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody , void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, Oyster::Math::Float extraDamageOnCollision)
+{
+	this->extraDamageOnCollision = extraDamageOnCollision;
+	//use setMass(when it is made) and set the mass to 0 in order to ensure that the object is static
+}
+
+StaticObject::StaticObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, Oyster::Math::Float extraDamageOnCollision)
+{
+	this->extraDamageOnCollision = extraDamageOnCollision;
+	//use setMass(when it is made) and set the mass to 0 in order to ensure that the object is static
+}
 StaticObject::~StaticObject(void)
 {
 

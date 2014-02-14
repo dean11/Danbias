@@ -15,11 +15,12 @@ EventButtonCollection::EventButtonCollection(EventCollectionState state)
 
 EventButtonCollection::~EventButtonCollection()
 {
-	for(int i = 0; i < EventHandler::Instance().collections.size(); i++)
+	for(int i = 0; i < (int)EventHandler::Instance().collections.size(); i++)
 	{
 		if(EventHandler::Instance().collections.at(i) == this)
 		{
 			EventHandler::Instance().collections.erase(EventHandler::Instance().collections.begin() + i);
+			break;
 		}
 	}
 
@@ -31,24 +32,35 @@ EventButtonCollection::~EventButtonCollection()
 	}
 }
 
-void EventButtonCollection::Update(InputClass* inputObject)
+void EventButtonCollection::Update(MouseInput& input)
 {
 	if(this->collectionState == EventCollectionState_Enabled)
 	{
 		for(int i = 0; i < (int)buttons.size(); i++)
 		{
-			buttons[i]->Update(inputObject);
+			buttons[i]->Update(input);
 		}
 	}
 }
 
-void EventButtonCollection::Render()
+void EventButtonCollection::RenderTexture()
 {
 	if(this->collectionState == EventCollectionState_Enabled)
 	{
 		for(int i = 0; i < (int)buttons.size(); i++)
 		{
-			buttons[i]->Render();
+			buttons[i]->RenderTexture();
+		}
+	}
+}
+
+void EventButtonCollection::RenderText()
+{
+	if(this->collectionState == EventCollectionState_Enabled)
+	{
+		for(int i = 0; i < (int)buttons.size(); i++)
+		{
+			buttons[i]->RenderText();
 		}
 	}
 }

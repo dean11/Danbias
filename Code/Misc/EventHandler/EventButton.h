@@ -46,7 +46,7 @@ namespace Oyster
 
 		private:
 			//Implement this in the inherited classes for collision against that shape.
-			virtual bool Collision(InputClass *input) = 0;
+			virtual bool Collision(MouseInput& input) = 0;
 
 		public:
 			EventButton();
@@ -56,7 +56,7 @@ namespace Oyster
 			EventButton(EventFunc func, Owner owner, void* userData);
 			virtual ~EventButton();
 
-			void Update(InputClass *input);
+			void Update(MouseInput& input);
 
 			//Send event to callback function
 			void SendEvent(ButtonState state);
@@ -135,16 +135,18 @@ namespace Oyster
 		
 		//Checks for collision and 
 		template <typename Owner>
-		void EventButton<Owner>::Update(InputClass *input)
+		void EventButton<Owner>::Update(MouseInput& input)
 		{
 			if(this->privData.enabled)
 			{
 				ButtonState currentState = ButtonState_None;
 				static bool outside = false;
 				static bool clicked = false;
+
+				//Check for collision against the button.
 				if(Collision(input))
 				{
-					if(input->IsMousePressed())
+					if(input.mouseButtonPressed)
 					{
 						//Change state when the mouse button is pressed
 						switch(this->privData.previousState)

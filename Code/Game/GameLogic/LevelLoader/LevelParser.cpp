@@ -25,6 +25,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 {
 	int bufferSize = 0;
 	int counter = 0;
+	bool loadCgf;
 
 	std::vector<SmartPointer<ObjectTypeHeader>> objects;
 
@@ -38,14 +39,13 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 	counter += sizeof(levelFormatVersion);
 	if(this->formatVersion != levelFormatVersion)
 	{
-		//Do something if it's not the same version
-
 		//Returns an empty vector, because it will most likely fail to read the level format.
 		return objects;
 	}
 
   	while(counter < bufferSize)
 	{
+		loadCgf = true;
 		//Get typeID
 		ObjectType typeID;
 		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
@@ -69,45 +69,43 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 
 				switch(specialType)
 				{
-					//These three does not have any specail variables at this time. 
-					//There for they are using the same 'parser'.
+					//there is no difference when parsing these specialTypes.
+					case ObjectSpecialType_CrystalShard:
+					case ObjectSpecialType_CrystalFormation:
+					case ObjectSpecialType_Spike:
+					case ObjectSpecialType_SpikeBox:
+					case ObjectSpecialType_RedExplosiveBox:
+					case ObjectSpecialType_StandardBox:
+					case ObjectSpecialType_Stone:
 					case ObjectSpecialType_Building:
-					case ObjectSpecialType_Damaging:
-					case ObjectSpecialType_Explosive:
 					{
 						ObjectHeader* header = new ObjectHeader;
-						ParseObject(&buffer[counter], *header, counter);
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
 						objects.push_back(header);
 
 						break;
 					}
+
 					case ObjectSpecialType_JumpPad:
 					{
 						JumpPadAttributes* header = new JumpPadAttributes;
-						ParseObject(&buffer[counter], *header, counter);
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
 
 						//Read the spec
 						ParseObject(&buffer[counter], header->direction, 16);
+						counter += 16;
 						objects.push_back(header);
 
 						break;
 					}
-					case ObjectSpecialType_BoostPad:
-					{
-						JumpPadAttributes* header = new JumpPadAttributes;
-						ParseObject(&buffer[counter], *header, counter);
-
-						ParseObject(&buffer[counter], header->direction, 16);
-						objects.push_back(header);
-
-						break;
-					}
+		
 					case ObjectSpecialType_Portal:
 					{
 						PortalAttributes* header = new PortalAttributes;
-						ParseObject(&buffer[counter], *header, counter);
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
 
 						ParseObject(&buffer[counter], header->destination, 12);
+						counter += 12;
 						objects.push_back(header);
 
 						break;
@@ -116,22 +114,33 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					case ObjectSpecialType_World:
 					{
 						WorldAttributes* header = new WorldAttributes;
-						ParseObject(&buffer[counter], *header, counter);
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
 
 						ParseObject(&buffer[counter], &header->worldSize, 8);
+						counter += 8;
 						objects.push_back(header);
 						break;
 					}
 
 					case ObjectSpecialType_Sky:
 					{
+						loadCgf = false; 
 						SkyAttributes* header = new SkyAttributes;
-						ParseObject(&buffer[counter], *header, counter);
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
 
 						ParseObject(&buffer[counter], &header->skySize, 4);
+						counter += 4;
 						objects.push_back(header);
 						break;
 					}
+
+					case ObjectSpecialType_SpawnPoint:
+					{
+						loadCgf = false;
+						ObjectHeader* header = new ObjectHeader;
+						ParseObject(&buffer[counter], *header, counter, loadCgf);
+					}
+
 					default:
 						//Couldn't find specialType
 						break;
@@ -235,14 +244,11 @@ LevelMetaData LevelParser::ParseHeader(std::string filename)
 		case ObjectType_Static: case ObjectType_Dynamic:
 		{
 			ObjectHeader header;
-			ParseObject(&buffer[counter], header, counter);
+			ParseObject(&buffer[counter], &header, counter);
 
 			switch(header.specialTypeID)
 			{
 			case ObjectSpecialType_JumpPad:
-				counter += sizeof(16);
-				break;
-			case ObjectSpecialType_BoostPad:
 				counter += sizeof(16);
 				break;
 			case ObjectSpecialType_Portal:
