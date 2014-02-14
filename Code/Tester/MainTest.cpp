@@ -171,14 +171,10 @@ HRESULT InitDirect3D()
 	}
 
 	m =  Oyster::Graphics::API::CreateModel(L"crate_colonists.dan");
-	//m->WorldMatrix.m[0][0] = 0.0002f;
-	//m->WorldMatrix.m[1][1] = 0.0002f;
-	//m->WorldMatrix.m[2][2] = 0.0002f;
 	m2 = Oyster::Graphics::API::CreateModel(L"char_orca.dan");
 	m2->Tint = Oyster::Math::Float3(0.1f,0.1f,1);
 	m3 = Oyster::Graphics::API::CreateModel(L"char_orca.dan");
-	//m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
-	Oyster::Graphics::API::PlayAnimation(m2, L"movement", true);
+	//Oyster::Graphics::API::PlayAnimation(m2, L"movement", true);
 	Oyster::Graphics::API::PlayAnimation(m3, L"movement", true);
 
 	t = Oyster::Graphics::API::CreateTexture(L"structure_corp_mdg.png");
@@ -219,17 +215,10 @@ HRESULT InitDirect3D()
 float angle = 0;
 HRESULT Update(float deltaTime)
 {
-	//angle += Oyster::Math::pi/16 * deltaTime;
 	m->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
 	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
 	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * -angle,Oyster::Math::Float3(-4,0,0),Oyster::Math::Float3::null);
-	Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
-	ma.m[0][0] = 0.2f;
-	ma.m[1][1] = 0.2f;
-	ma.m[2][2] = 0.2f;
-	//m->WorldMatrix = m->WorldMatrix * ma;
 	Oyster::Graphics::API::Update(deltaTime);
-	//m2->Animation.data.AnimationTime += deltaTime;// * 0.5f;
 	return S_OK;
 }
 
@@ -290,14 +279,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 				break;
 			//Z -
 			case 0x5A:
-				//m2->AnimationTime -= 0.1f;
-				//if(m2->AnimationTime < 0)
-					//m2->AnimationTime = 0;
 				angle += Oyster::Math::pi / 16;
 				break;
 			//X +
 			case 0x58:
-				//m2->AnimationTime += 0.1f;
 				angle -= Oyster::Math::pi / 16;
 				break;
 
