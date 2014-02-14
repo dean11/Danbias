@@ -23,8 +23,8 @@ namespace Oyster
 	{
 		namespace Render
 		{
-
-			ID3D11RenderTargetView* Resources::GBufferRTV[Resources::GBufferSize] = {0};
+				#pragma region Declare Static
+				ID3D11RenderTargetView* Resources::GBufferRTV[Resources::GBufferSize] = {0};
 				ID3D11ShaderResourceView* Resources::GBufferSRV[Resources::GBufferSize] = {0};
 
 				ID3D11UnorderedAccessView* Resources::LBufferUAV[Resources::LBufferSize] = {0};
@@ -45,9 +45,10 @@ namespace Oyster
 				Buffer Resources::Gather::AnimationData = Buffer();
 				Buffer Resources::Light::LightConstantsData = Buffer();
 				Buffer Resources::Gui::Data = Buffer();
-				Buffer Resources::Gui::Color = Buffer();
+				Buffer Resources::Color = Buffer();
 				Buffer Resources::Gui::Text::Vertex = Buffer();
 				Buffer Resources::Post::Data = Buffer();
+				Buffer Resources::Blur::Data = Buffer();
 
 				Buffer Resources::Light::PointLightsData = Buffer();
 				ID3D11ShaderResourceView* Resources::Light::PointLightView = NULL;
@@ -61,6 +62,7 @@ namespace Oyster
 				ID3D11BlendState* Resources::RenderStates::bs = NULL;
 
 				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
+#pragma endregion
 
 
 				Core::Init::State Resources::InitShaders()
@@ -121,7 +123,7 @@ namespace Oyster
 
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_PS;
 					desc.ElementSize = sizeof(Math::Float3);
-					Gui::Color.Init(desc);
+					Color.Init(desc);
 
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
 					desc.NumElements = 1;
@@ -134,6 +136,9 @@ namespace Oyster
 
 					desc.ElementSize = sizeof(Definitions::LightConstants);
 					Light::LightConstantsData.Init(desc);
+
+					desc.ElementSize = sizeof(Definitions::BlurrData);
+					Blur::Data.Init(desc);
 
 					desc.ElementSize = sizeof(Definitions::Pointlight);
 					desc.NumElements = MaxLightSize;
@@ -234,6 +239,9 @@ namespace Oyster
 					{
 						Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&LBufferSRV[i],&LBufferUAV[i]);
 					}
+
+					//Blur
+					Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&Blur::BufferSRV,&Blur::BufferUAV);
 
 					Buffer* b = &Light::PointLightsData;
 
@@ -342,6 +350,7 @@ namespace Oyster
 					Gather::Pass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 					Gather::Pass.CBuffers.Vertex.push_back(Gather::AnimationData);
 					Gather::Pass.CBuffers.Vertex.push_back(Gather::ModelData);
+					Gather::Pass.CBuffers.Pixel.push_back(Color);
 					Gather::Pass.RenderStates.Rasterizer = RenderStates::rs;
 					Gather::Pass.RenderStates.SampleCount = 1;
 					Gather::Pass.RenderStates.SampleState = RenderStates::ss;
@@ -376,6 +385,8 @@ namespace Oyster
 					}
 					Post::Pass.UAV.Compute.push_back(Core::backBufferUAV);
 					Post::Pass.CBuffers.Compute.push_back(Post::Data);
+					Post::Pass.RenderStates.SampleCount = 1;
+					Post::Pass.RenderStates.SampleState = RenderStates::ss;
 
 					////---------------- GUI Pass Setup ----------------------------
 					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
@@ -383,7 +394,7 @@ namespace Oyster
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
 					Gui::Pass.RTV.push_back(GBufferRTV[2]);
 					Gui::Pass.CBuffers.Geometry.push_back(Gui::Data);
-					Gui::Pass.CBuffers.Pixel.push_back(Gui::Color);
+					Gui::Pass.CBuffers.Pixel.push_back(Color);
 
 					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
 					{
@@ -411,6 +422,9 @@ namespace Oyster
 					//And the Ambient UAV is now the output texture
 					Blur::VertPass.UAV.Compute.push_back(LBufferUAV[2]);
 
+					Blur::HorPass.CBuffers.Compute.push_back(Blur::Data);
+					Blur::VertPass.CBuffers.Compute.push_back(Blur::Data);
+
 					////---------------- 2DText Pass Setup ----------------------------
 					Gui::Text::Pass.Shaders.Vertex = GetShader::Vertex(L"2DText");
 					Gui::Text::Pass.Shaders.Geometry = GetShader::Geometry(L"2DText");
@@ -427,7 +441,7 @@ namespace Oyster
 
 					Shader::CreateInputLayout(Text2Ddesc,3, GetShader::Vertex(L"2DText") ,Gui::Text::Pass.IAStage.Layout);
 					Gui::Text::Pass.CBuffers.Geometry.push_back(Gui::Data);
-					Gui::Text::Pass.CBuffers.Pixel.push_back(Gui::Color);
+					Gui::Text::Pass.CBuffers.Pixel.push_back(Color);
 					Gui::Text::Pass.SRV.Pixel.push_back(Gui::Text::Font);
 					Gui::Text::Pass.RTV.push_back(GBufferRTV[2]);
 					Gui::Text::Pass.RenderStates.SampleCount = 1;
@@ -455,9 +469,10 @@ namespace Oyster
 					Light::LightConstantsData.~Buffer();
 					Light::PointLightsData.~Buffer();
 					Gui::Data.~Buffer();
-					Gui::Color.~Buffer();
+					Color.~Buffer();
 					Gui::Text::Vertex.~Buffer();
 					Post::Data.~Buffer();
+					Blur::Data.~Buffer();
 					SAFE_RELEASE(Light::PointLightView);
 					SAFE_RELEASE(Light::SSAOKernel);
 					SAFE_RELEASE(Light::SSAORandom);

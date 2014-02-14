@@ -28,6 +28,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfte
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(collisionFuncAfter));
 	this->type = type;
 	this->objectID = objectID;
+	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
 }
 
@@ -38,6 +39,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICusto
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(collisionFuncAfter));
 	this->type = type;
 	this->objectID = objectID;
+	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
 }
 
@@ -103,4 +105,10 @@ Oyster::Math::Float4x4 Object::GetOrientation()
 	Oyster::Physics::ICustomBody::State state; 
 	state = this->rigidBody->GetState();
 	return state.GetOrientation();
+}
+
+
+Oyster::Math::Float Object::getExtraDamageOnCollision()
+{
+	return this->extraDamageOnCollision;
 }

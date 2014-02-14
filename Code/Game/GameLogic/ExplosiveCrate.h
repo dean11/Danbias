@@ -8,7 +8,7 @@ namespace GameLogic
 	public:
 		ExplosiveCrate(void);
 
-		ExplosiveCrate(Oyster::Physics::ICustomBody *rigidBody,ObjectSpecialType type,int objectID,Oyster::Math::Float shreddingDamage, Oyster::Math::Float3 pushForce, Oyster::Math::Float ExplosionRadius);
+		ExplosiveCrate(Oyster::Physics::ICustomBody *rigidBody,ObjectSpecialType type,int objectID,Oyster::Math::Float extraDamageOnCollision, Oyster::Math::Float pushForceMagnitude, Oyster::Math::Float ExplosionRadius);
 
 		~ExplosiveCrate(void);
 
@@ -16,9 +16,10 @@ namespace GameLogic
 		static void Explode(Oyster::Physics::ICustomBody *obj, void* args);
 
 	private:
-		Oyster::Math::Float shreddingDamage;
-		Oyster::Math::Float3 pushForce;
+		Oyster::Math::Float pushForceMagnitude;
 		Oyster::Math::Float ExplosionRadius;
 	};
+
+
 }
 #endif

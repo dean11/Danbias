@@ -2,7 +2,6 @@
 #define PHYSICS_API_IMPL_H
 
 #include "../PhysicsAPI.h"
-#include "Octree.h"
 #include <btBulletDynamicsCommon.h>
 
 namespace Oyster
@@ -64,6 +63,8 @@ namespace Oyster
 			ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 			ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 			ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
+
+			ICustomBody* AddCharacter(::Oyster::Math::Float height, ::Oyster::Math::Float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 
 			void SetTimeStep(float timeStep);
 

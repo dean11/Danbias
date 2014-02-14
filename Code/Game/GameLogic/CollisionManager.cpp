@@ -8,7 +8,6 @@
 #include "CollisionManager.h"
 #include "JumpPad.h"
 #include "Portal.h"
-#include "CrystalFormation.h"
 #include "ExplosiveCrate.h"
 
 using namespace Oyster;
@@ -47,7 +46,7 @@ using namespace GameLogic;
 			break;
 
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
-			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,((CrystalFormation*)realObj)->getShreddingDamage());
+			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->getExtraDamageOnCollision());
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
@@ -97,7 +96,6 @@ using namespace GameLogic;
 		int forceThreashHold = 200000; //how much force for the box to explode of the impact
 
 
-
 		if(kineticEnergyLoss > forceThreashHold)
 		{
 			ExplosiveCrate* crate = ((ExplosiveCrate*)rigidBodyCrate->GetCustomTag());
@@ -117,16 +115,19 @@ using namespace GameLogic;
 		Object *realObj = (Object*)obj->GetCustomTag();
 		ExplosiveCrate* ExplosionSource = ((ExplosiveCrate*)args);
 
-
+		Oyster::Math::Float3 explosionCenterPos = ExplosionSource->GetPosition();
+		Oyster::Math::Float3 hitObjectPos = obj->GetState().centerPos;
+		Oyster::Math::Float3 force = (((hitObjectPos- explosionCenterPos).GetNormalized()) * ExplosionSource->pushForceMagnitude);
+		
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
 		{
 			Player *hitPlayer = (Player*)realObj;
 			
-			hitPlayer->DamageLife(ExplosionSource->shreddingDamage);
+			hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
 			//do shredding damage
 		}
 
-		realObj->GetRigidBody()->ApplyImpulse(ExplosionSource->pushForce);
+		realObj->GetRigidBody()->ApplyImpulse(force);
 
 	}
 
