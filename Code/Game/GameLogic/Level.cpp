@@ -108,11 +108,11 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			gameObj = new Portal(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, destination);
 		}
 		break;
-	case ObjectSpecialType_SpawnPoint: 
-		{
+	//case ObjectSpecialType_SpawnPoint: 
+		//{
 			// save 
 			
-		}
+		//}
 		break;
 	case ObjectSpecialType_Player: 
 		{
