@@ -21,7 +21,7 @@ Level::~Level(void)
 }
 Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 {
-	Object* gameObj  =NULL;
+	Object* gameObj  = NULL;
 	
 	switch ((ObjectSpecialType)obj->specialTypeID)
 	{
@@ -64,8 +64,9 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
 			int dmg = 50; 
-			//gameObj = new ExplosiveBox(rigidBody, ObjectSpecialType_RedExplosiveBox);
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,objID++);
+			Oyster::Math::Float3 force(50, 50,50); 
+			int radie = 50; 
+			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID,objID++, dmg, force, radie);
 		}
 		break;
 	//case ObjectSpecialType_BlueExplosiveBox: 
@@ -98,14 +99,14 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		{
 			float power = ((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
-			//gameObj = JumpPad(rigidBody, );
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,objID++); 
+			Oyster::Math::Float3 pushForce = dir * power; 
+			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID,objID++ , pushForce);
 		}
 		break;
 	case ObjectSpecialType_Portal: 
 		{
 			Oyster::Math::Float3 destination = ((PortalAttributes*)obj)->destination; 
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,objID++);
+			gameObj = new Portal(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,objID++, destination);
 		}
 		break;
 	case ObjectSpecialType_SpawnPoint: 
