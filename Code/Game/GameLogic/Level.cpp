@@ -23,13 +23,13 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	{
 	case ObjectSpecialType_None: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	case ObjectSpecialType_Sky: 
 		{
 			float skySize = ((SkyAttributes*)obj)->skySize; 
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	case ObjectSpecialType_World: 
@@ -39,28 +39,28 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 
 			float worldSize = ((WorldAttributes*)obj)->worldSize; 
 			float atmosphereSize = ((WorldAttributes*)obj)->atmoSphereSize; 
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	case ObjectSpecialType_Building: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 	case ObjectSpecialType_Stone: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
-	case ObjectSpecialType_StandarsBox: 
+	case ObjectSpecialType_StandardBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
 			int dmg = 50; 
 			//gameObj = new ExplosiveBox(rigidBody, ObjectSpecialType_RedExplosiveBox);
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	//case ObjectSpecialType_BlueExplosiveBox: 
@@ -69,24 +69,24 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	case ObjectSpecialType_Spike: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	case ObjectSpecialType_CrystalFormation: 
 		{
 			int dmg = 50; 
 			//gameObj = new Crystal(rigidBody);
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	case ObjectSpecialType_CrystalShard: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	case ObjectSpecialType_JumpPad: 
@@ -94,33 +94,33 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			float power = ((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
 			//gameObj = JumpPad(rigidBody, );
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	case ObjectSpecialType_Portal: 
 		{
 			Oyster::Math::Float3 destination = ((PortalAttributes*)obj)->destination; 
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	case ObjectSpecialType_SpawnPoint: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	case ObjectSpecialType_Player: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0);
 		}
 		break;
 	case ObjectSpecialType_Generic:
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	default:
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,0); 
 		}
 		break;
 	}
