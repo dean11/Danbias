@@ -20,8 +20,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="L_inputClass.cpp" />
+    <ClCompile Include="Source\InputManager.cpp" />
+    <ClCompile Include="Source\Keyboard.cpp" />
+    <ClCompile Include="Source\Mouse.cpp" />
+    <ClCompile Include="Source\Win32\Win32Input.cpp" />
+    <ClCompile Include="Source\Win32\Win32Keyboard.cpp" />
+    <ClCompile Include="Source\Win32\Win32Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\Common.h" />
+    <ClInclude Include="Include\InputManager.h" />
+    <ClInclude Include="Include\InputObject.h" />
+    <ClInclude Include="Include\Keyboard.h" />
+    <ClInclude Include="Include\Mouse.h" />
+    <ClInclude Include="Include\PreReq.h" />
+    <ClInclude Include="Include\Win32\Win32Input.h" />
+    <ClInclude Include="Include\Win32\Win32Keyboard.h" />
+    <ClInclude Include="Include\Win32\Win32Mouse.h" />
     <ClInclude Include="L_inputClass.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
