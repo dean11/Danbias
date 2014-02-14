@@ -189,24 +189,59 @@ bool GameState::LoadModels(std::string mapFile)
 			break;
 		case GameLogic::ObjectType::ObjectType_Static:
 			{
+
 				GameLogic::ObjectHeader* staticObjData = ((GameLogic::ObjectHeader*)obj);
+
 				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_Sky)
 				{
-					int i = 0; 
-				}
-				modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
-				modelData.visible = true;
-				modelData.position = staticObjData->position;
-				modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(staticObjData->rotation), staticObjData->rotation[3]);
-				modelData.scale =  staticObjData->scale;
-				modelData.id = modelId++;
+					modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
+					modelData.visible = true;
+					modelData.position = Oyster::Math::Float3(0,0,0);
+					modelData.rotation = Oyster::Math::Quaternion::identity;
+					modelData.scale =  Oyster::Math::Float3(600, 600, 600);
+					modelData.id = modelId++;
 
-				this->staticObjects.Push(new C_StaticObj());
-				if(!this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData))
+					this->staticObjects.Push(new C_StaticObj());
+					if(!this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData))
+					{
+						// the model don't exist
+						this->staticObjects.Remove(this->staticObjects.Size() -1 );
+						modelId--;
+					}
+				}
+				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_World)
 				{
-					// the model don't exist
-					this->staticObjects.Remove(this->staticObjects.Size() -1 );
-					modelId--;
+					modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
+					modelData.visible = true;
+					modelData.position =  Oyster::Math::Float3(0,0,0);
+					modelData.rotation = Oyster::Math::Quaternion::identity;
+					modelData.scale =   Oyster::Math::Float3(300,300,300);
+					modelData.id = modelId++;
+
+					this->staticObjects.Push(new C_StaticObj());
+					if(!this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData))
+					{
+						// the model don't exist
+						this->staticObjects.Remove(this->staticObjects.Size() -1 );
+						modelId--;
+					}
+				}
+				else
+				{
+					modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
+					modelData.visible = true;
+					modelData.position = staticObjData->position;
+					modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(staticObjData->rotation), staticObjData->rotation[3]);
+					modelData.scale =  staticObjData->scale;
+					modelData.id = modelId++;
+
+					this->staticObjects.Push(new C_StaticObj());
+					if(!this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData))
+					{
+						// the model don't exist
+						this->staticObjects.Remove(this->staticObjects.Size() -1 );
+						modelId--;
+					}
 				}
 			}
 		break;
