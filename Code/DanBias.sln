@@ -45,6 +45,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aDanBiasGameLauncher", "Gam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Physics", "Physics", "{0D86E569-9C74-47F0-BDB2-390C0C9A084B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLIStandaloneServer", "CLIStandaloneServer\CLIStandaloneServer.vcxproj", "{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -499,6 +501,27 @@ Global
 		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.RelWithDebInfo|Win32.Build.0 = Release|Win32
 		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.RelWithDebInfo|x64.ActiveCfg = Release|x64
 		{666FEA52-975F-41CD-B224-B19AF3C0ABBA}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Debug|Win32.Build.0 = Debug|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Debug|x64.ActiveCfg = Debug|x64
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Debug|x64.Build.0 = Debug|x64
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.MinSizeRel|Mixed Platforms.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.MinSizeRel|Mixed Platforms.Build.0 = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.MinSizeRel|Win32.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.MinSizeRel|Win32.Build.0 = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.MinSizeRel|x64.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Release|Win32.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Release|Win32.Build.0 = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.Release|x64.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.RelWithDebInfo|Mixed Platforms.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.RelWithDebInfo|Mixed Platforms.Build.0 = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.RelWithDebInfo|Win32.ActiveCfg = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.RelWithDebInfo|Win32.Build.0 = Release|Win32
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB}.RelWithDebInfo|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -515,5 +538,6 @@ Global
 		{060B1890-CBF3-4808-BA99-A4776222093B} = {20720CA7-795C-45AD-A302-9383A6DD503A}
 		{143BD516-20A1-4890-A3E4-F8BFD02220E7} = {20720CA7-795C-45AD-A302-9383A6DD503A}
 		{666FEA52-975F-41CD-B224-B19AF3C0ABBA} = {20720CA7-795C-45AD-A302-9383A6DD503A}
+		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB} = {20720CA7-795C-45AD-A302-9383A6DD503A}
 	EndGlobalSection
 EndGlobal
