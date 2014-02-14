@@ -175,8 +175,15 @@ bool GameState::LoadModels(std::string mapFile)
 	{
 		GameLogic::ObjectTypeHeader* obj = objects.at(i);
 
+
 		switch (obj->typeID)
 		{
+
+		case GameLogic::ObjectType::ObjectType_SpawnPoint:
+			{
+
+				break;
+			}
 		case GameLogic::ObjectType::ObjectType_LevelMetaData:
 
 			break;

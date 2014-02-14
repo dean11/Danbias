@@ -16,6 +16,7 @@ namespace GameLogic
 		ObjectType_Static,
 		ObjectType_Dynamic,
 		ObjectType_Light,
+		ObjectType_SpawnPoint,
 		//Etc
 
 		ObjectType_NUM_OF_TYPES,
@@ -38,7 +39,6 @@ namespace GameLogic
 		ObjectSpecialType_CrystalShard,
 		ObjectSpecialType_JumpPad,
 		ObjectSpecialType_Portal,
-		ObjectSpecialType_SpawnPoint,
 		ObjectSpecialType_Player,
 		ObjectSpecialType_Generic,
 		
@@ -207,6 +207,11 @@ namespace GameLogic
 		virtual ~ObjectHeader(){}
 	};
 
+	struct SpawnPointAttributes : public ObjectTypeHeader
+	{
+		ObjectSpecialType specialTypeID;
+		float position[3];
+	};
 	/************************************
 				Special objects
 	*************************************/

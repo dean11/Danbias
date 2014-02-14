@@ -3,7 +3,6 @@
 /////////////////////////////////////
 
 #include "LevelParser.h"
-
 #include "Loader.h"
 #include "ParseFunctions.h"
 
@@ -56,6 +55,27 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 				SmartPointer<ObjectTypeHeader> header = new LevelMetaData;
 				ParseLevelMetaData(&buffer[counter], *(LevelMetaData*)header.Get(), counter);
 				objects.push_back(header);
+				break;
+			}
+
+			case ObjectType_SpawnPoint:
+			{
+				loadCgf = false;
+				ObjectHeader* header = new ObjectHeader;
+				ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+				SpawnPointAttributes* spawn = new SpawnPointAttributes;
+
+				spawn->typeID = header->typeID;
+
+				for(int i = 0; i < 3; i++)
+				{
+					spawn->position[i] = header->position[i];
+				}
+
+				delete header;
+				//objects.push_back(header);
+				objects.push_back(spawn);
 				break;
 			}
 
@@ -132,13 +152,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 						counter += 4;
 						objects.push_back(header);
 						break;
-					}
-
-					case ObjectSpecialType_SpawnPoint:
-					{
-						loadCgf = false;
-						ObjectHeader* header = new ObjectHeader;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
 					}
 
 					default:

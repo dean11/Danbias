@@ -16,6 +16,7 @@ namespace GameLogic
 		ObjectType_Static,
 		ObjectType_Dynamic,
 		ObjectType_Light,
+		ObjectType_SpawnPoint,
 		//Etc
 
 		ObjectType_NUM_OF_TYPES,
@@ -38,7 +39,6 @@ namespace GameLogic
 		ObjectSpecialType_CrystalShard,
 		ObjectSpecialType_JumpPad,
 		ObjectSpecialType_Portal,
-		ObjectSpecialType_SpawnPoint,
 		ObjectSpecialType_Player,
 		
 
@@ -206,6 +206,13 @@ namespace GameLogic
 		virtual ~ObjectHeader(){}
 	};
 
+	//inheritance from the base class because there is no use for ModelFile, Rotation and Scale
+	//so this is a special struct for just spawnpoints
+	struct SpawnPointAttributes : public ObjectTypeHeader
+	{
+		float position[3];
+	};
+
 	/************************************
 				Special objects
 	*************************************/
@@ -231,6 +238,8 @@ namespace GameLogic
 	{
 		float skySize;
 	};
+
+	
 
 	
 
