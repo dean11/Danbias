@@ -27,13 +27,14 @@
 /********* LOBBY PROTOCOLS ***************************************************************************************************/
 /***********[ 200 - 299 ]***********/
 #define protocol_LobbyMIN								200	
-#define protocol_Lobby_Create						200
-#define protocol_Lobby_Start						201
-#define protocol_Lobby_Join							202
+#define protocol_Lobby_CreateGame					200
+#define protocol_Lobby_StartGame					201
+#define protocol_Lobby_JoinGame						202
 #define protocol_Lobby_Login						203
 #define protocol_Lobby_Refresh						204
 #define protocol_Lobby_ClientData					205
 #define protocol_Lobby_GameData						206
+#define protocol_Lobby_QuerryGameType				207
 #define protocol_LobbyMAX								299
 
 

@@ -38,7 +38,7 @@ void ClientFnc()
 	gameDesc.IP = "127.0.0.1";
 	//gameDesc.IP = "194.47.150.184";
 
-	if( DanBias::DanBiasGame::Initiate(gameDesc) == DanBias::DanBiasClientReturn_Sucess)
+	if( DanBias::DanBiasGame::Initiate(gameDesc) == DanBias::DanBiasClientReturn_Success)
 	{
 		DanBias::DanBiasGame::Run();
 		DanBias::DanBiasGame::Release();

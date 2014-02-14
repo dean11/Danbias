@@ -120,14 +120,14 @@ void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEve
 	{
 		switch(ID)
 		{
-		case protocol_Lobby_Create:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Start:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Join:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Login:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Refresh:	break; /** @todo TODO: implement */
-		case protocol_Lobby_ClientData:	break; /** @todo TODO: implement */
-		case protocol_Lobby_GameData:	break; /** @todo TODO: implement */
-		default:						break;
+		case protocol_Lobby_CreateGame:		break; /** @todo TODO: implement */
+		case protocol_Lobby_StartGame:		break; /** @todo TODO: implement */
+		case protocol_Lobby_JoinGame:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Login:			break; /** @todo TODO: implement */
+		case protocol_Lobby_Refresh:		break; /** @todo TODO: implement */
+		case protocol_Lobby_ClientData:		break; /** @todo TODO: implement */
+		case protocol_Lobby_GameData:		break; /** @todo TODO: implement */
+		default:							break;
 		}
 	}
 	else if( ProtocolIsGeneral(ID) )

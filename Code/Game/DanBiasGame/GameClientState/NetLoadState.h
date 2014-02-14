@@ -26,6 +26,8 @@ namespace DanBias
 		private:
 			struct MyData;
 			::Utility::DynamicMemory::UniquePointer<MyData> privData;
+
+			void LoadGame( const ::std::string &fileName );
 		};
 	}
 }
