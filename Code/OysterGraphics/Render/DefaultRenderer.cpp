@@ -138,6 +138,10 @@ namespace Oyster
 							memcpy(data,&(pm),sizeof(pm));
 							Resources::Gather::ModelData.Unmap();
 
+							data = Render::Resources::Color.Map();
+							memcpy(data,&models[i].Tint,sizeof(Math::Float3));
+							Render::Resources::Color.Unmap(); 
+
 							if(info->Material.size())
 							{
 								Core::deviceContext->PSSetShaderResources(0,(UINT)info->Material.size(),&(info->Material[0]));
@@ -158,6 +162,46 @@ namespace Oyster
 					}				
 				}
 
+				void BlurGlow()
+				{
+					Definitions::BlurrData bd;
+					bd.BlurMask = Math::Float4(1,1,1,1);
+					bd.StopX = Core::resolution.x/2;
+					bd.StopY = Core::resolution.y;
+					bd.StartX = 0;
+					bd.StartY = Core::resolution.y/2;
+					
+					void* data = Resources::Blur::Data.Map();
+					memcpy(data,&bd,sizeof(Definitions::BlurrData));
+					Resources::Blur::Data.Unmap();
+
+					Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
+					Core::deviceContext->Dispatch((UINT)((Core::resolution.x/2 + 127U) / 128U), (UINT)(Core::resolution.y/2), 1);
+
+					Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
+					Core::deviceContext->Dispatch((UINT)(Core::resolution.x/2), (UINT)((Core::resolution.y/2 + 127U) / 128U), 1);
+				}
+
+				void BlurSSAO()
+				{
+					Definitions::BlurrData bd;
+					bd.BlurMask = Math::Float4(0,0,0,1);
+					bd.StopX = Core::resolution.x/2;
+					bd.StopY = Core::resolution.y/2;
+					bd.StartX = 0;
+					bd.StartY = 0;
+					
+					void* data = Resources::Blur::Data.Map();
+					memcpy(data,&bd,sizeof(Definitions::BlurrData));
+					Resources::Blur::Data.Unmap();
+
+					Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
+					Core::deviceContext->Dispatch((UINT)((Core::resolution.x/2 + 127U) / 128U), (UINT)(Core::resolution.y/2), 1);
+
+					Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
+					Core::deviceContext->Dispatch((UINT)(Core::resolution.x/2), (UINT)((Core::resolution.y/2 + 127U) / 128U), 1);
+				}
+
 
 				void DefaultRenderer::EndFrame()
 				{
@@ -165,11 +209,9 @@ namespace Oyster
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
-					//Core::PipelineManager::SetRenderPass(Resources::Blur::HorPass);
-					//Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+					BlurGlow();
 
-					//Core::PipelineManager::SetRenderPass(Resources::Blur::VertPass);
-					//Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
+					BlurSSAO();
 
 					Core::PipelineManager::SetRenderPass(Resources::Post::Pass);
 

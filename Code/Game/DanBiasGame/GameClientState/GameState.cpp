@@ -391,7 +391,7 @@ bool GameState::Render(float dt)
 	std::wstring fps;
 	float f = 1/dt;
 	fps = std::to_wstring(f);
-	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.2f,0.05f));
+	//Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.2f,0.05f));
 
 	Oyster::Graphics::API::EndFrame();
 	return true;

@@ -87,6 +87,7 @@ namespace Oyster
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
 			m->Animation.AnimationPlaying = NULL;
+			m->Tint = Math::Float3(1);
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -158,7 +159,7 @@ namespace Oyster
 			Render::Gui::Begin2DRender();
 		}
 
-		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size, Math::Float3 color)
+		void API::RenderGuiElement(API::Texture tex, Math::Float3 pos, Math::Float2 size, Math::Float3 color)
 		{
 			Render::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size,color);
 		}
@@ -191,9 +192,9 @@ namespace Oyster
 			Render::Gui::Begin2DTextRender();
 		}
 
-		void API::RenderText(std::wstring text, Math::Float2 Pos, Math::Float2 Size, Math::Float3 color)
+		void API::RenderText(std::wstring text, Math::Float3 Pos, Math::Float2 Size, float FontSize, Math::Float3 color)
 		{
-			Render::Gui::RenderText(text,Pos,Size,color);
+			Render::Gui::RenderText(text, Pos, Size, FontSize, color);
 		}
 	}
 }
