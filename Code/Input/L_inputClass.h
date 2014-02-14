@@ -14,8 +14,6 @@
 
 #include <dinput.h>
 
-
-
 class InputClass
 {
 private:
@@ -25,6 +23,8 @@ private:
 
 	unsigned char m_keyboardState[256];
 	DIMOUSESTATE m_mouseState;
+
+	float mousePosX, mousePosY;
 
 	bool ReadKeyboard();
 	bool ReadMouse();
@@ -40,6 +40,7 @@ public:
 	//read the mouse and keyboard and send back 
 	// delta mouse pos and if any button is pressed
 	bool Update();
+	bool Update( float mousePosX, float mousePosY );
 
 	bool IsKeyPressed(int key);
 	bool IsMousePressed();
@@ -48,6 +49,8 @@ public:
 	float GetYaw();
 	float GetPitch();
 
+	void SetMousePos( float x, float y );
+	void GetMousePos( float &x, float &y );
 };
 
 #endif

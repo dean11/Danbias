@@ -56,7 +56,7 @@ bool LanMenuState::Init(Network::NetworkClient* nwClient)
 
 	// create guiElements
 	ButtonRectangle<LanMenuState*> *guiElements;
-	//0.5f, 0.2f, 0.3f, 0.1f,  
+	
 	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Connect", Float3(1.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( guiElements );
 

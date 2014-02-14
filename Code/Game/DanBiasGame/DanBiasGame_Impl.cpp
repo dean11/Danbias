@@ -56,7 +56,6 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
 	{
-
 		WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 		if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
@@ -151,7 +150,21 @@ namespace DanBias
 	
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
-		data.inputObj->Update();
+		{ // updating mouse input
+			POINT mousePos;
+			GetCursorPos( &mousePos );
+
+			RECT windowVertex;
+			GetWindowRect( data.window->GetHWND(), &windowVertex );
+
+			float mouseNormalisedX = (float)(mousePos.x - windowVertex.left);
+			mouseNormalisedX /= (float)(windowVertex.right - windowVertex.left);
+
+			float mouseNormalisedY = (float)(mousePos.y - windowVertex.top);
+			mouseNormalisedY /= (float)(windowVertex.bottom - windowVertex.top);
+
+			data.inputObj->Update( mouseNormalisedX, mouseNormalisedY );
+		}		
 
 		if( data.serverOwner )
 		{
