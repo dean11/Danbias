@@ -73,7 +73,6 @@ namespace GameLogic
 		void EndFrame();
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
-
 	private:
 		void Jump();
 
@@ -82,7 +81,6 @@ namespace GameLogic
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
-		Oyster::Math::Float3 moveDir;	
 		Oyster::Math::Float3 lookDir;
 		float key_forward;
 		float key_backward;
@@ -90,9 +88,15 @@ namespace GameLogic
 		float key_strafeLeft;
 		float key_jump;
 
+
+		Oyster::Math::Float3 previousPosition;
+		Oyster::Math::Float3 moveDir;
+		Oyster::Math::Float moveSpeed;
+		Oyster::Math::Float3 previousMoveSpeed;
+
+
 		bool hasTakenDamage;
 		float invincibleCooldown;
-
 	};
 }
 #endif

@@ -57,7 +57,11 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_StandardBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID++);
+			int dmg = 50; 
+			Oyster::Math::Float force = 50; 
+			int radie = 10; 
+			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, dmg, force, radie);
+			//gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID++);
 		}
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
@@ -96,7 +100,7 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_JumpPad: 
 		{
-			float power = ((JumpPadAttributes*)obj)->power; 
+			float power = 500; //((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
 			Oyster::Math::Float3 pushForce = dir * power; 
 			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++ , pushForce);
@@ -354,9 +358,9 @@ void Level::InitiateLevel(float radius)
 	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, ObjectSpecialType_Generic, idCount++));
 
 	// add jumppad
+
 	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1, 1, 1), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 5, 0.5f, 0.8f, 0.6f);
 	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, ObjectSpecialType_JumpPad,idCount++ ,Oyster::Math::Float3(0,2000,0)));
-	rigidBody_Jumppad->SetCustomTag(this->staticObjects[1]);
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)

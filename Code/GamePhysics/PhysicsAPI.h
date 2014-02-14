@@ -87,6 +87,8 @@ namespace Oyster
 			virtual ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 			virtual ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 
+			virtual ICustomBody* AddCharacter(::Oyster::Math::Float height, ::Oyster::Math::Float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
+
 			virtual void SetTimeStep(float timeStep) = 0;
 
 			virtual void UpdateWorld() = 0;
@@ -142,18 +144,28 @@ namespace Oyster
 			virtual void SetRotation(::Oyster::Math::Float4 quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Quaternion quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
+			virtual void SetRotation(::Oyster::Math::Float4x4 rotation) = 0;
+			virtual void SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis) = 0;
 			virtual void SetAngularFactor(::Oyster::Math::Float factor) = 0;
+			virtual void SetMass(::Oyster::Math::Float mass) = 0;
 
 			virtual void SetGravity(::Oyster::Math::Float3 gravity) = 0;
 
 			virtual void SetUpAndRight(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 right) = 0;
 			virtual void SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math::Float3 forward) = 0;
+			virtual void SetUp(::Oyster::Math::Float3 up) = 0;
 
 			virtual ::Oyster::Math::Float4x4 GetRotation() const = 0;
 			virtual ::Oyster::Math::Float4 GetRotationAsAngularAxis() = 0;
 			virtual ::Oyster::Math::Float4x4 GetOrientation() const = 0;
 			virtual ::Oyster::Math::Float4x4 GetView() const = 0;
 			virtual ::Oyster::Math::Float4x4 GetView(const ::Oyster::Math::Float3 &offset) const = 0;
+
+			virtual ::Oyster::Math::Float3 GetGravity() const = 0;
+			virtual ::Oyster::Math::Float3 GetLinearVelocity() const = 0;
+
+			virtual void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss) = 0;
+			virtual void CallSubscription_Move() = 0;
 
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.
@@ -167,11 +179,12 @@ namespace Oyster
 			 * @param ref: Anything castable to a void pointer, the engine won't care.
 			 ********************************************************/
 			virtual void SetCustomTag( void *ref ) = 0;
+
+			virtual float GetLamda() const = 0;
 		};
 	}
 }
 
 #include "PhysicsStructs.h"
-#include "PhysicsFormula.h"
 
 #endif
