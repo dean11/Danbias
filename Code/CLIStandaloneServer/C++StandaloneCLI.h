@@ -7,12 +7,6 @@
 
 #include "..\Game\GameServer\GameServerAPI.h"
 
-using namespace System;
-using namespace System::Windows::Interop;
-using namespace System::Windows;
-using namespace System::Runtime::InteropServices;
-using namespace System::Collections::Generic;
-
 enum DanBiasServerReturn
 {
 	DanBiasServerReturn_Error,
@@ -22,7 +16,7 @@ enum DanBiasServerReturn
 
 public ref struct ServerInitDesc
 {
-	String^ serverName;
+	System::String^ serverName;
 	int listenPort;
 	bool broadcast;			//Not fully implemented!
 	ServerInitDesc() 
@@ -36,7 +30,7 @@ public ref struct ServerInitDesc
 public value struct GameServerInfo
 {
 	unsigned int listenPort;	// If set to 0, the default port 15151 will be used
-	String^ serverIp;		// This cant be mofidfied..
+	System::String^ serverIp;		// This cant be mofidfied..
 };
 
 public ref class CppStandaloneCLI

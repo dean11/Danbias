@@ -1,5 +1,8 @@
 #include "C++StandaloneCLI.h"
 
+using namespace System;
+using namespace System::Runtime::InteropServices;
+
 CppStandaloneCLI::CppStandaloneCLI()
 {
 }
