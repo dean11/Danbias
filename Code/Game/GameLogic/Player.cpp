@@ -17,20 +17,6 @@ Player::Player()
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
-	this->rigidBody = rigidBody;
-	
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,400,0);
-
-	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
-	Oyster::Math::Float mass = 60;
-	Oyster::Math::Float restitutionCoeff = 0.5;
-	Oyster::Math::Float frictionCoeff_Static = 0.4;
-	Oyster::Math::Float frictionCoeff_Dynamic = 0.3;
-
-
-	this->rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
-	this->rigidBody->SetAngularFactor(0.0f);
-
 	weapon = new Weapon(2,this);
 
 	this->life = 100;
@@ -52,20 +38,6 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
-	this->rigidBody = rigidBody;
-	
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,400,0);
-
-	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
-	Oyster::Math::Float mass = 60;
-	Oyster::Math::Float restitutionCoeff = 0.5;
-	Oyster::Math::Float frictionCoeff_Static = 0.4;
-	Oyster::Math::Float frictionCoeff_Dynamic = 0.3;
-
-
-	this->rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
-	this->rigidBody->SetAngularFactor(0.0f);
-
 	weapon = new Weapon(2,this);
 
 	this->life = 100;
@@ -81,7 +53,6 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->moveDir = Oyster::Math::Float3(0,0,0);
 	this->moveSpeed = 100;
 	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
-	
 }
 
 Player::~Player(void)

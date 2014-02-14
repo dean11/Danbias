@@ -95,9 +95,16 @@ using namespace GameLogic;
 	{
 		int forceThreashHold = 200000; //how much force for the box to explode of the impact
 
+		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
-		if(kineticEnergyLoss > forceThreashHold)
+		switch (realObj->GetObjectType())
 		{
+		case ObjectSpecialType::ObjectSpecialType_Generic:
+			break;
+		case ObjectSpecialType::ObjectSpecialType_StandardBox:
+			
+			break;
+		case ObjectSpecialType::ObjectSpecialType_Player:
 			ExplosiveCrate* crate = ((ExplosiveCrate*)rigidBodyCrate->GetCustomTag());
 
 
@@ -107,7 +114,20 @@ using namespace GameLogic;
 			Oyster::Physics::API::Instance().ApplyEffect(hitSphere,crate,Explode);
 
 			delete hitSphere;
+			break;
 		}
+		/*if(kineticEnergyLoss > forceThreashHold)
+		{
+		ExplosiveCrate* crate = ((ExplosiveCrate*)rigidBodyCrate->GetCustomTag());
+
+
+		Oyster::Math::Float3 pos = rigidBodyCrate->GetState().centerPos;
+		Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,crate->ExplosionRadius);
+
+		Oyster::Physics::API::Instance().ApplyEffect(hitSphere,crate,Explode);
+
+		delete hitSphere;
+		}*/
 	}
 	
 	void ExplosiveCrate::Explode(Oyster::Physics::ICustomBody *obj, void* args)
@@ -123,7 +143,7 @@ using namespace GameLogic;
 		{
 			Player *hitPlayer = (Player*)realObj;
 			
-			hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
+			//hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
 			//do shredding damage
 		}
 
