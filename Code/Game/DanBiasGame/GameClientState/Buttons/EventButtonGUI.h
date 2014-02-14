@@ -78,21 +78,24 @@ namespace DanBias
 			{
 				if(EventButton<Owner>::Enabled())
 				{
+					// let the using dev decide what is rendered
+					Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
+
 					//Render att xPos and yPos
 					//With width and height
 
-					if(EventButton<Owner>::GetState() == ButtonState_None)
-					{
-						//Oyster::Graphics::API::RenderGuiElement(texture, pos.xy, size, Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
-					}
-					else if(EventButton<Owner>::GetState() == ButtonState_Hover)
-					{
-						//Oyster::Graphics::API::RenderGuiElement(texture, pos.xy, size, Oyster::Math::Float3(0.0f, 1.0f, 0.0f));
-					}
-					else
-					{
-						//Oyster::Graphics::API::RenderGuiElement(texture, pos.xy, size, Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
-					}
+					//if(EventButton<Owner>::GetState() == ButtonState_None)
+					//{
+					//	Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
+					//}
+					//else if(EventButton<Owner>::GetState() == ButtonState_Hover)
+					//{
+					//	Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(0.0f, 1.0f, 0.0f));
+					//}
+					//else
+					//{
+					//	Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
+					//}
 
 				}
 			}
@@ -101,7 +104,7 @@ namespace DanBias
 			{
 				if(buttonText.size() > 0)
 				{
-					//Oyster::Graphics::API::RenderText(buttonText, pos.xy, size, textColor);
+					Oyster::Graphics::API::RenderText(buttonText, pos, size, size.y, textColor);
 				}
 			}
 

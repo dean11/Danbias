@@ -63,7 +63,7 @@ bool LanMenuState::Init(Network::NetworkClient* nwClient)
 	this->privData->connectIP = new TextField<LanMenuState*>( L"earth_md.png", Float3(1.0f), this, Float3(0.1f, 0.2f, 0.5f), Float2(0.45f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->connectIP->ReserveLines( 1 );
 	this->privData->connectIP->AppendText( L"127.0.0.1" );
-	this->privData->connectIP->SetTextHeight( 0.1f );
+	this->privData->connectIP->SetFontHeight( 0.1f );
 	this->privData->connectIP->SetLineSpacing( 0.0f );
 	
 	this->privData->guiElements.AddButton( this->privData->connectIP );
@@ -95,7 +95,7 @@ bool LanMenuState::Render( )
 
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();

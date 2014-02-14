@@ -85,7 +85,7 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
@@ -99,7 +99,7 @@ bool MainState::Release()
 {
 	if( this->privData )
 	{
-		Graphics::API::DeleteTexture( this->privData->background ); // TODO: @todo bug caught when exiting by X
+		Graphics::API::DeleteTexture( this->privData->background );
 		EventHandler::Instance().ReleaseCollection( &this->privData->guiElements );
 
 		this->privData = NULL;
