@@ -13,8 +13,6 @@ struct VertexOut
 	float4 ViewPos		: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
-	//float3 tangent		: TANGENT;
-	//float3 biTangent	: BITANGENT;
 };
 
 struct PixelOut

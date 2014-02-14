@@ -94,6 +94,8 @@ namespace Oyster
 			if(!mi || mi->Vertices->GetBufferPointer() == NULL)
 			{
 				delete m;
+				Core::loader.ReleaseResource(mi);
+				delete mi;
 				return NULL;
 			}
 
@@ -176,6 +178,8 @@ namespace Oyster
 
 		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
 		{
+			if(m==NULL)
+				return 0;
 			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
 			m->Animation.AnimationTime=0;
 			m->Animation.LoopAnimation = looping;

@@ -362,6 +362,7 @@ namespace Oyster
 			}
 			Core::deviceContext->RSSetState(se.RenderStates.Rasterizer);
 			Core::deviceContext->PSSetSamplers(0,se.RenderStates.SampleCount,se.RenderStates.SampleState);
+			Core::deviceContext->CSSetSamplers(0,se.RenderStates.SampleCount,se.RenderStates.SampleState);
 			Core::deviceContext->OMSetDepthStencilState(se.RenderStates.DepthStencil,0);
 			float test[4] = {0};
 			Core::deviceContext->OMSetBlendState(se.RenderStates.BlendState,test,-1);
