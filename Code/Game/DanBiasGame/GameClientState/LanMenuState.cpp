@@ -121,8 +121,8 @@ void LanMenuState::ChangeState( ClientState next )
 	{
 	case GameClientState::ClientState_Lobby:
 		// attempt to connect to lobby
-		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
-			return;
+		//if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
+		//	return; // TODO: temporary commented out
 		break;
 	default: break;
 	}
@@ -135,7 +135,7 @@ void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 	switch( e.state )
 	{
 	case ButtonState_Released:
-		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		e.owner->ChangeState( GameClientState::ClientState_Lobby );
 		break;
 	default: break;
 	}

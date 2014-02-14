@@ -10,9 +10,6 @@ namespace DanBias
 	{
 		class NetLoadState : public GameClientState
 		{
-		private:
-			struct MyData;
-			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		public:
 			NetLoadState( );
 			virtual ~NetLoadState( );
@@ -23,6 +20,12 @@ namespace DanBias
 			bool Render();
 			bool Release();
 			void ChangeState( ClientState next );
+
+			void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
+		
+		private:
+			struct MyData;
+			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		};
 	}
 }

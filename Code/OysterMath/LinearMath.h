@@ -373,6 +373,14 @@ namespace LinearAlgebra3D
 		return (rotation*localAxis*rotation.GetConjugate()).imaginary;
 	}
 
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Vector3<ScalarType> AngularAxis( const ::LinearAlgebra::Quaternion<ScalarType> &rotation )
+	{
+		ScalarType angle = ScalarType(2) * (ScalarType)::std::acos( rotation.real ),
+				   multiplier = angle / (ScalarType)::std::sqrt( rotation.real );
+		return multiplier * rotation.imaginary;
+	}
+
 	// All Matrix to AngularAxis conversions here is incorrect
 	//template<typename ScalarType>
 	//inline ::LinearAlgebra::Vector4<ScalarType> AngularAxis( const ::LinearAlgebra::Matrix3x3<ScalarType> &rotationMatrix )

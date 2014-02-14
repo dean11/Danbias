@@ -81,6 +81,12 @@ namespace Oyster { namespace Math2D
 
 namespace Oyster { namespace Math3D
 {
+	//! Converts a rotationQuaternion to an angularAxis
+	Float3 AngularAxis( const Quaternion &rotation )
+	{
+		return ::LinearAlgebra3D::AngularAxis( rotation );
+	}
+
 	//Float4 AngularAxis( const Float3x3 &rotationMatrix )
 	//{
 	//	return ::LinearAlgebra3D::AngularAxis( rotationMatrix );
