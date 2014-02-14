@@ -23,10 +23,10 @@ struct LobbyState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	Graphics::API::Texture background;
-	EventButtonCollection button;
+	EventButtonCollection guiElements;
 } privData;
 
-void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<GameClientState*>& e );
+void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e );
 
 LobbyState::LobbyState(void) {}
 
@@ -46,13 +46,13 @@ bool LobbyState::Init(NetworkClient* nwClient)
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
 	// create buttons
-	ButtonRectangle<GameClientState*> *button;
+	ButtonRectangle<LobbyState*> *button;
 	
-	button = new ButtonRectangle<GameClientState*>( L"earth_md.png", OnButtonInteract_Ready, this, 0.5f, 0.2f, 0.3f, 0.1f, true );
-	this->privData->button.AddButton( button );
+	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"", Float3(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
-	EventHandler::Instance().AddCollection( &this->privData->button );
+	EventHandler::Instance().AddCollection( &this->privData->guiElements );
 
 	return true;
 }
@@ -85,7 +85,10 @@ bool LobbyState::Render( )
 	Graphics::API::StartGuiRender();
 
 	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
-	this->privData->button.Render();
+	this->privData->guiElements.RenderTexture();
+
+	Graphics::API::StartTextRender();
+	this->privData->guiElements.RenderText();
 
 	Graphics::API::EndFrame();
 	return true;
@@ -139,7 +142,7 @@ void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEve
 	}
 }
 
-void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<GameClientState*>& e )
+void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e )
 {
 	switch( e.state )
 	{
