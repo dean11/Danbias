@@ -28,6 +28,11 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	key_backward = 0;
 	key_strafeRight = 0;
 	key_strafeLeft = 0;
+
+	this->previousPosition = Oyster::Math::Float3(0,0,0);
+	this->moveDir = Oyster::Math::Float3(0,0,0);
+	this->moveSpeed = 100;
+	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -101,11 +106,6 @@ void Player::BeginFrame()
 			Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
      		this->rigidBody->SetLinearVelocity(velocity - this->moveDir*this->moveSpeed );
 		}
-	}
-
-	if(this->rigidBody->GetLamda() == 1.0f)
-	{
-		this->playerState = PLAYER_STATE_WALKING;
 	}
 
 	this->moveDir = Oyster::Math::Float3::null;
@@ -226,18 +226,12 @@ void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::
 
 void Player::Jump()
 {
-<<<<<<< HEAD
 	if(this->rigidBody->GetLamda() < 1.0f)
 	{
 		Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
 		this->rigidBody->ApplyImpulse(up *1500);
 		this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 	}
-=======
-	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
-	this->rigidBody->ApplyImpulse(up *1500);
-	this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
->>>>>>> origin/GameLogic
 }
 
 bool Player::IsWalking()
