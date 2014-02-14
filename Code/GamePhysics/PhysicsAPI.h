@@ -179,6 +179,8 @@ namespace Oyster
 			 * @param ref: Anything castable to a void pointer, the engine won't care.
 			 ********************************************************/
 			virtual void SetCustomTag( void *ref ) = 0;
+
+			virtual float GetLamda() const = 0;
 		};
 	}
 }

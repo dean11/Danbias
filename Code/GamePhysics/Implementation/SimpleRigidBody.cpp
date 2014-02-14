@@ -345,3 +345,60 @@ void SimpleRigidBody::SetCustomTag( void *ref )
 {
 	this->customTag = ref;
 }
+
+
+void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
+{
+	btTransform xform;
+	this->rigidBody->getMotionState()->getWorldTransform (xform);
+	btVector3 down = -xform.getBasis()[1];
+	btVector3 forward = xform.getBasis()[2];
+	down.normalize ();
+	forward.normalize();
+
+	this->raySource[0] = xform.getOrigin();
+	this->raySource[1] = xform.getOrigin();
+
+	this->rayTarget[0] = this->raySource[0] + down * this->state.reach.y * btScalar(1.1);
+	this->rayTarget[1] = this->raySource[1] + forward * this->state.reach.y * btScalar(1.1);
+
+	class ClosestNotMe : public btCollisionWorld::ClosestRayResultCallback
+	{
+	public:
+		ClosestNotMe (btRigidBody* me) : btCollisionWorld::ClosestRayResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0))
+		{
+			m_me = me;
+		}
+
+		virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
+		{
+			if (rayResult.m_collisionObject == m_me)
+				return 1.0;
+
+			return ClosestRayResultCallback::addSingleResult (rayResult, normalInWorldSpace);
+		}
+	protected:
+		btRigidBody* m_me;
+	};
+
+	ClosestNotMe rayCallback(this->rigidBody);
+
+	int i = 0;
+	for (i = 0; i < 2; i++)
+	{
+		rayCallback.m_closestHitFraction = 1.0;
+		if((this->raySource[i] - this->rayTarget[i]).length() != 0)
+			collisionWorld->rayTest (this->raySource[i], this->rayTarget[i], rayCallback);
+		if (rayCallback.hasHit())
+		{
+			this->rayLambda[i] = rayCallback.m_closestHitFraction;
+		} else {
+			this->rayLambda[i] = 1.0;
+		}
+	}
+}
+
+float SimpleRigidBody::GetLamda() const
+{
+	return this->rayLambda[0];
+}
