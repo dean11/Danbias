@@ -10,8 +10,8 @@ Portal::Portal(void)
 }
 
 
-Portal::Portal(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type,int objectID ,Oyster::Math::Float3 portalExit)
-	:StaticObject(rigidBody, EventOnCollision, type, objectID)
+Portal::Portal(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type,int objectID ,Oyster::Math::Float3 portalExit)
+	:StaticObject(rigidBody, Portal::PortalActivated, type, objectID)
 {
 	this->portalExit = portalExit;
 }

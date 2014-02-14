@@ -176,7 +176,6 @@
     <ClInclude Include="AttatchmentMassDriver.h" />
     <ClInclude Include="AttatchmentSocket.h" />
     <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="CrystalFormation.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="ExplosiveCrate.h" />
     <ClInclude Include="Game.h" />
@@ -204,7 +203,6 @@
     <ClCompile Include="AttatchmentMassDriver.cpp" />
     <ClCompile Include="AttatchmentSocket.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="CrystalFormation.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="ExplosiveCrate.cpp" />
     <ClCompile Include="Game.cpp" />

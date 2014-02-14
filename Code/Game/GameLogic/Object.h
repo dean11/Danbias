@@ -31,6 +31,8 @@ namespace GameLogic
 		Oyster::Math::Float3 GetScale()				override;
 		Oyster::Math::Float4x4 GetOrientation()		override;
 
+		Oyster::Math::Float getExtraDamageOnCollision();
+
 		// API overrides
 		
 
@@ -58,6 +60,8 @@ namespace GameLogic
 
 		ObjectSpecialType type;
 		int objectID;
+
+		Oyster::Math::Float extraDamageOnCollision;
 	};
 
 }
