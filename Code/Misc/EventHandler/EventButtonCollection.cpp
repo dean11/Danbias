@@ -3,18 +3,27 @@
 //////////////////////////////////////
 
 #include "EventButtonCollection.h"
-
+#include "EventHandler.h"
 #include "../../Input/L_inputClass.h"
 
 using namespace Oyster::Event;
 
-EventButtonCollection::EventButtonCollection() 
-	: collectionState(EventCollectionState_Enabled)
+EventButtonCollection::EventButtonCollection(EventCollectionState state) 
+	: collectionState(state)
 {
 }
 
 EventButtonCollection::~EventButtonCollection()
 {
+	for(int i = 0; i < (int)EventHandler::Instance().collections.size(); i++)
+	{
+		if(EventHandler::Instance().collections.at(i) == this)
+		{
+			EventHandler::Instance().collections.erase(EventHandler::Instance().collections.begin() + i);
+			break;
+		}
+	}
+
 	int size = buttons.size();
 	for(int i = 0; i < size; i++)
 	{
@@ -23,13 +32,35 @@ EventButtonCollection::~EventButtonCollection()
 	}
 }
 
-void EventButtonCollection::Update(InputClass* inputObject)
+void EventButtonCollection::Update(MouseInput& input)
 {
 	if(this->collectionState == EventCollectionState_Enabled)
 	{
 		for(int i = 0; i < (int)buttons.size(); i++)
 		{
-			buttons[i]->Update(inputObject);
+			buttons[i]->Update(input);
+		}
+	}
+}
+
+void EventButtonCollection::RenderTexture()
+{
+	if(this->collectionState == EventCollectionState_Enabled)
+	{
+		for(int i = 0; i < (int)buttons.size(); i++)
+		{
+			buttons[i]->RenderTexture();
+		}
+	}
+}
+
+void EventButtonCollection::RenderText()
+{
+	if(this->collectionState == EventCollectionState_Enabled)
+	{
+		for(int i = 0; i < (int)buttons.size(); i++)
+		{
+			buttons[i]->RenderText();
 		}
 	}
 }
@@ -46,6 +77,13 @@ void EventButtonCollection::SetState(const EventCollectionState state)
 
 void EventButtonCollection::Clear()
 {
+	int size = buttons.size();
+	for(int i = 0; i < size; i++)
+	{
+		delete buttons[i];
+		buttons[i] = NULL;
+	}
 	buttons.clear();
+
 	collectionState = EventCollectionState_Enabled;
 }

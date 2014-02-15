@@ -2,7 +2,6 @@
 #define PHYSICS_API_IMPL_H
 
 #include "../PhysicsAPI.h"
-#include "Octree.h"
 #include <btBulletDynamicsCommon.h>
 
 namespace Oyster
@@ -12,6 +11,42 @@ namespace Oyster
 		class API_Impl : public API
 		{
 		public:
+			struct ContactSensorCallback : public btCollisionWorld::ContactResultCallback
+			{
+				ContactSensorCallback(btRigidBody& contactBody, EventAction_ApplyEffect effect, void* args)
+					: btCollisionWorld::ContactResultCallback(), body(contactBody), func(effect), args(args) {}
+			
+				btRigidBody& body;
+				EventAction_ApplyEffect func;
+				void* args;
+			
+				virtual bool needsCollision(btBroadphaseProxy* proxy) const
+				{
+					if(!btCollisionWorld::ContactResultCallback::needsCollision(proxy))
+						return false;
+			
+					return body.checkCollideWithOverride(static_cast<btCollisionObject*>(proxy->m_clientObject));
+				}
+			
+				virtual btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1)
+				{
+					btVector3 pt;
+					if(colObj0->m_collisionObject == &body)
+					{
+						pt = cp.m_localPointA;
+						this->func((ICustomBody*)(colObj1->getCollisionObject()->getUserPointer()), this->args);
+					}
+					else
+					{
+						//assert(colObj1->m_collisionObject == &body && "Body does not match either collision object");
+						pt = cp.m_localPointB;
+						this->func((ICustomBody*)(colObj0->getCollisionObject()->getUserPointer()), this->args);
+					}
+			
+					return 0;
+				}
+			};
+
 			API_Impl();
 			virtual ~API_Impl();
 
@@ -21,14 +56,21 @@ namespace Oyster
 			void MoveToLimbo( const ICustomBody* objRef );
 			void ReleaseFromLimbo( const ICustomBody* objRef );
 
+			void SetGravityPoint(::Oyster::Math::Float3 gravityPoint);
+			void SetGravity(float gravity);
+
 			// Bullet physics
 			ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 			ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 			ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 
+			ICustomBody* AddCharacter(::Oyster::Math::Float height, ::Oyster::Math::Float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
+
+			void SetTimeStep(float timeStep);
+
 			void UpdateWorld();
 
-			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) );
+			void ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect);
 
 		private:
 			btBroadphaseInterface* broadphase;
@@ -37,6 +79,11 @@ namespace Oyster
 			btSequentialImpulseConstraintSolver* solver;
 			btDiscreteDynamicsWorld* dynamicsWorld;
 			std::vector<ICustomBody*> customBodies;
+
+			float timeStep;
+
+			::Oyster::Math::Float3 gravityPoint;
+			float gravity;
 		};
 
 		namespace Default

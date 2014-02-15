@@ -7,13 +7,17 @@
 #include "Game.h"
 #include "CollisionManager.h"
 #include "JumpPad.h"
+#include "Portal.h"
+#include "ExplosiveCrate.h"
 
 using namespace Oyster;
 
 using namespace GameLogic;
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
+	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage);
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force);
+	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target);
 
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -24,20 +28,26 @@ using namespace GameLogic;
 
 		switch (realObj->GetObjectType())
 		{
-		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
+		case ObjectSpecialType::ObjectSpecialType_Generic:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		
-		case OBJECT_TYPE::OBJECT_TYPE_BOX:
+		case ObjectSpecialType::ObjectSpecialType_StandardBox:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+		case ObjectSpecialType::ObjectSpecialType_Player:
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+		case ObjectSpecialType::ObjectSpecialType_World:
 			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
+			break;
+
+		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
+			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->getExtraDamageOnCollision());
+			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
 
@@ -51,27 +61,75 @@ using namespace GameLogic;
 
 		switch (realObj->GetObjectType())
 		{
-		case OBJECT_TYPE::OBJECT_TYPE_GENERIC:
+		case ObjectSpecialType::ObjectSpecialType_Generic:
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_BOX:
-			break;
-		case OBJECT_TYPE::OBJECT_TYPE_PLAYER:
+		case ObjectSpecialType::ObjectSpecialType_StandardBox:
 			SendObjectFlying(*obj, jumpPad->pushForce);
 			break;
-		case OBJECT_TYPE::OBJECT_TYPE_WORLD:
+		case ObjectSpecialType::ObjectSpecialType_Player:
+			SendObjectFlying(*obj, jumpPad->pushForce);
 			break;
 		}
 	}
 
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force)
 	{
-		Oyster::Physics::ICustomBody::State state;
+		obj.ApplyImpulse(force);
+	}
 
-		state = obj.GetState();
-		//state.ApplyLinearImpulse(force);
-		obj.SetState(state);
+	void Portal::PortalActivated(Oyster::Physics::ICustomBody *rigidBodyPortal, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		Portal *portal = (Portal*)(rigidBodyPortal->GetCustomTag());
+
+		if(obj->GetState().mass == 0) return;
+
+		Teleport(*obj,portal->portalExit);
+	}
+
+	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target)
+	{
+		obj.SetPosition(target);
+	}
+
+	void ExplosiveCrate::ExplosiveCrateCollision(Oyster::Physics::ICustomBody *rigidBodyCrate, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	{
+		int forceThreashHold = 200000; //how much force for the box to explode of the impact
+
+
+		if(kineticEnergyLoss > forceThreashHold)
+		{
+			ExplosiveCrate* crate = ((ExplosiveCrate*)rigidBodyCrate->GetCustomTag());
+
+
+			Oyster::Math::Float3 pos = rigidBodyCrate->GetState().centerPos;
+			Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,crate->ExplosionRadius);
+
+			Oyster::Physics::API::Instance().ApplyEffect(hitSphere,crate,Explode);
+
+			delete hitSphere;
+		}
 	}
 	
+	void ExplosiveCrate::Explode(Oyster::Physics::ICustomBody *obj, void* args)
+	{
+		Object *realObj = (Object*)obj->GetCustomTag();
+		ExplosiveCrate* ExplosionSource = ((ExplosiveCrate*)args);
+
+		Oyster::Math::Float3 explosionCenterPos = ExplosionSource->GetPosition();
+		Oyster::Math::Float3 hitObjectPos = obj->GetState().centerPos;
+		Oyster::Math::Float3 force = (((hitObjectPos- explosionCenterPos).GetNormalized()) * ExplosionSource->pushForceMagnitude);
+		
+		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		{
+			Player *hitPlayer = (Player*)realObj;
+			
+			hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
+			//do shredding damage
+		}
+
+		realObj->GetRigidBody()->ApplyImpulse(force);
+
+	}
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
@@ -88,28 +146,29 @@ using namespace GameLogic;
 		}
 		
 	}	
-	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
+
+	
+	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage)
 	{
-		return Physics::ICustomBody::SubscriptMessage_none;
+		int damageDone = 0;
+		int forceThreashHold = 200000;
+
+		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
+		{
+			damageDone = (int)(kineticEnergyLoss * 0.10f);
+			damageDone += ExtraDamage;
+			//player.DamageLife(damageDone);
+		}
 	}
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
-	}
-	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_player_collision_response;
 	}
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
-	//Oyster::Physics::ICustomBody::SubscriptMessage
-	Oyster::Physics::ICustomBody::SubscriptMessage Level::LevelCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj)
-	{
-		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
-	}
-
 	Oyster::Physics::ICustomBody::SubscriptMessage CollisionManager::IgnoreCollision(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody *obj)
 	{
 		return Physics::ICustomBody::SubscriptMessage_ignore_collision_response;
@@ -123,19 +182,20 @@ using namespace GameLogic;
 
 	void AttatchmentMassDriver::ForcePushAction(Oyster::Physics::ICustomBody *obj, void *args)
 	{
-		Oyster::Physics::ICustomBody::State state;
+		if(obj->GetState().mass == 0) return;
+
 		Object *realObj = (Object*)obj->GetCustomTag();
 
-		if(realObj->GetObjectType() == OBJECT_TYPE_PLAYER || realObj->GetObjectType() == OBJECT_TYPE_WORLD)
+		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
-		state = obj->GetState();
-		//state.ApplyLinearImpulse(((forcePushData*)(args))->pushForce);
-		obj->SetState(state);
+		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
 	}
 
 	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
 	{
+		if(obj->GetState().mass == 0) return;
+
 		AttatchmentMassDriver *weapon = ((AttatchmentMassDriver*)args);
 
 		if(weapon->hasObject)
@@ -149,9 +209,7 @@ using namespace GameLogic;
 
 			switch(realObj->GetObjectType())
 			{
-			case OBJECT_TYPE::OBJECT_TYPE_BOX:
-				//move obj to limbo in physics to make sure it wont collide with anything
-				Oyster::Physics::API::Instance().MoveToLimbo(obj);
+			case ObjectSpecialType::ObjectSpecialType_StandardBox:
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
 

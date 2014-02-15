@@ -169,7 +169,7 @@ GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
 	return ClientState_Same;
 }
 
-bool LanMenuState::Render()
+bool LanMenuState::Render(float dt)
 {
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);

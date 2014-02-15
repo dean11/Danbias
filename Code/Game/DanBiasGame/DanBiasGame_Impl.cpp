@@ -59,8 +59,8 @@ namespace DanBias
 	{
 
 		WindowShell::CreateConsoleWindow();
-		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
-		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
+		if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1024, 768), cPOINT())))
+		//if(! m_data->window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )
@@ -95,9 +95,10 @@ namespace DanBias
 			capFrame += dt;
 			if(capFrame > 0.03)
 			{
-				if(Update(dt) != S_OK)
+				Oyster::Graphics::API::Update(capFrame);
+				if(Update(capFrame) != S_OK)
 					return DanBiasClientReturn_Error;
-				if(Render(dt) != S_OK)
+				if(Render(capFrame) != S_OK)
 					return DanBiasClientReturn_Error;
 				capFrame = 0; 
 			}
@@ -116,12 +117,12 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitDirect3D()
 	{
-		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
-			return E_FAIL;
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
 		p.texturePath = L"..\\Content\\Textures\\";
 		Oyster::Graphics::API::SetOptions(p);
+		if(Oyster::Graphics::API::Init(m_data->window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+			return E_FAIL;
 		return S_OK;
 	}
 
@@ -131,7 +132,7 @@ namespace DanBias
 	HRESULT DanBiasGame::InitInput() 
 	{
 		m_data->inputObj = new InputClass;
-		if(!m_data->inputObj->Initialize(m_data->window->GetHINSTANCE(), m_data->window->GetHWND(), m_data->window->GetHeight(), m_data->window->GetWidth()))
+		if(!m_data->inputObj->Initialize(m_data->window->GetHINSTANCE(), m_data->window->GetHWND(), m_data->window->GetWidth(), m_data->window->GetHeight()))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -141,6 +142,20 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::Update(float deltaTime)
 	{
+		//Get mouse pos and window size (Temporary)
+		POINT p;
+		RECT r;
+		GetCursorPos(&p);
+		ScreenToClient(WindowShell::GetHWND(), &p);
+		GetClientRect(WindowShell::GetHWND(), &r);
+
+		//Update menu buttons
+		MouseInput mouseInput;
+		mouseInput.x = (float)p.x / (float)r.right;
+		mouseInput.y = (float)p.y / (float)r.bottom;
+		mouseInput.mouseButtonPressed = m_data->inputObj->IsMousePressed();
+		EventHandler::Instance().Update(mouseInput);
+
 		m_data->inputObj->Update();
 
 		if(m_data->serverOwner)
@@ -190,15 +205,16 @@ namespace DanBias
 
 	HRESULT DanBiasGame::Render(float deltaTime)
 	{
-		
-	
-		m_data->recieverObj->gameClientState->Render();
-
+		m_data->recieverObj->gameClientState->Render(deltaTime);
 		return S_OK;
 	}
 
 	HRESULT DanBiasGame::CleanUp()
 	{
+		Oyster::Graphics::API::Clean();
+		EventHandler::Instance().Clean();
+		GameServerAPI::ServerStop();
+
 		m_data->recieverObj->gameClientState->Release();
 		delete m_data->recieverObj->gameClientState;
 		m_data->recieverObj->Disconnect();
@@ -206,9 +222,7 @@ namespace DanBias
 		delete m_data->inputObj;
 		delete m_data;
 
-		Oyster::Graphics::API::Clean();
-
-		GameServerAPI::ServerStop();
+		
 
 		return S_OK;
 	}	

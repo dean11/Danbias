@@ -292,7 +292,7 @@ namespace GameLogic
 	{
 		short object_ID;
 		float position[3]; 
-		float rotation[3]; 
+		float rotation[4]; 
 		
 		Protocol_ObjectPositionRotation()
 		{
@@ -307,10 +307,11 @@ namespace GameLogic
 			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
 
 			this->object_ID = 0;
 			memset(&this->position[0], 0, sizeof(float) * 3);
-			memset(&this->rotation[0], 0, sizeof(float) * 3);
+			memset(&this->rotation[0], 0, sizeof(float) * 4);
 		}
 		Protocol_ObjectPositionRotation(Oyster::Network::CustomNetProtocol& p)
 		{
@@ -323,8 +324,9 @@ namespace GameLogic
 			this->rotation[0] = p[5].value.netFloat;
 			this->rotation[1] = p[6].value.netFloat;
 			this->rotation[2] = p[7].value.netFloat;
+			this->rotation[3] = p[8].value.netFloat;
 		}
-		Protocol_ObjectPositionRotation(float p[3], float r[3], int id)
+		Protocol_ObjectPositionRotation(float p[3], float r[4], int id)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectPositionRotation;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
@@ -337,10 +339,11 @@ namespace GameLogic
 			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[7].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
 
 			object_ID = id;
 			memcpy(&this->position[0], &p[0], sizeof(float) * 3);
-			memcpy(&this->rotation[0], &r[0], sizeof(float) * 3);
+			memcpy(&this->rotation[0], &r[0], sizeof(float) * 4);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
@@ -351,6 +354,7 @@ namespace GameLogic
 			this->protocol[5].value = this->rotation[0];
 			this->protocol[6].value = this->rotation[1];
 			this->protocol[7].value = this->rotation[2];
+			this->protocol[8].value = this->rotation[3];
 			return protocol;		 
 		}	
 

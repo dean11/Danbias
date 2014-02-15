@@ -33,6 +33,7 @@ private:
 
 	int myId;
 	float pitch;
+	float timer; 
 	struct myData;
 	myData* privData;
 	Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_StaticObj>> staticObjects;
@@ -49,7 +50,7 @@ public:
 	void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
 	gameStateState LoadGame();
 	void readKeyInput(InputClass* KeyInput);
-	bool Render()override;
+	bool Render(float dt)override;
 	bool Release()override;
 
 	void Protocol(ProtocolStruct* pos)override;

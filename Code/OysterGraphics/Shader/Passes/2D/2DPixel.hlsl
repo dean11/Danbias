@@ -2,5 +2,5 @@
 
 float4 main(Pixel2DIn input) : SV_Target0
 {
-	return Material.Sample(LinearSampler,input.Uv);
+	return Material.Sample(LinearSampler,input.Uv) * float4(Color,1);
 }

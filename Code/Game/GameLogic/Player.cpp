@@ -6,47 +6,68 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-const int MOVE_FORCE = 500;
+const float MOVE_FORCE = 30;
+const float KEY_TIMER = 0.03f;
 Player::Player()
 	:DynamicObject()
 {
 
 }
-Player::Player(OBJECT_TYPE type)
-	:DynamicObject(type)
-{
-	InitPlayer();
-}
-Player::Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type)
-	:DynamicObject(rigidBody,type)
-{
-	InitPlayer();
-}
 
-Player::Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
-	:DynamicObject(collisionFuncBefore,collisionFuncAfter,type)
-{
-	InitPlayer();
-}
-Player::Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type)
-	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
-{
-	InitPlayer();
-}
-Player::Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type)
-	:DynamicObject(rigidBody, collisionFuncBefore, collisionFuncAfter, type)
-{
-	InitPlayer();
-}
-
-void Player::InitPlayer()
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
+	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
 	weapon = new Weapon(2,this);
 
 	this->life = 100;
 	this->teamID = -1;
 	this->playerState = PLAYER_STATE_IDLE;
-	lookDir = Oyster::Math::Float4(0,0,-1,0);
+	this->lookDir = Oyster::Math::Float3(0,0,-1);
+	this->moveDir = Oyster::Math::Float3(0,0,0);
+	key_forward = 0;
+	key_backward = 0;
+	key_strafeRight = 0;
+	key_strafeLeft = 0;
+
+	this->previousPosition = Oyster::Math::Float3(0,0,0);
+	this->moveDir = Oyster::Math::Float3(0,0,0);
+	this->moveSpeed = 100;
+	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
+}
+
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
+	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
+{
+	this->rigidBody = rigidBody;
+	
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,400,0);
+
+	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
+	Oyster::Math::Float mass = 60;
+	Oyster::Math::Float restitutionCoeff = 0.5;
+	Oyster::Math::Float frictionCoeff_Static = 0.4;
+	Oyster::Math::Float frictionCoeff_Dynamic = 0.3;
+
+
+	this->rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
+	this->rigidBody->SetAngularFactor(0.0f);
+
+	weapon = new Weapon(2,this);
+
+	this->life = 100;
+	this->teamID = teamID;
+	this->playerState = PLAYER_STATE_IDLE;
+	this->lookDir = Oyster::Math::Float3(0,0,-1);
+	key_forward = 0;
+	key_backward = 0;
+	key_strafeRight = 0;
+	key_strafeLeft = 0;
+
+	this->previousPosition = Oyster::Math::Float3(0,0,0);
+	this->moveDir = Oyster::Math::Float3(0,0,0);
+	this->moveSpeed = 100;
+	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
+	
 }
 
 Player::~Player(void)
@@ -60,21 +81,82 @@ Player::~Player(void)
 
 void Player::BeginFrame()
 {
-	weapon->Update(0.002f); 
+	//weapon->Update(0.002f); 
 	Object::BeginFrame();
+	
+	//Oyster::Math::Float3 previousFall = this->previousMoveSpeed*-this->rigidBody->GetState().centerPos.GetNormalized();
+	//Oyster::Math::Float3 currentFall = this->rigidBody->GetLinearVelocity()*-this->rigidBody->GetState().centerPos.GetNormalized();
+
+	if(this->moveDir != Oyster::Math::Float3::null && this->playerState != PLAYER_STATE_JUMPING)
+	{
+		Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
+		Oyster::Math::Float3 lostVelocity = (this->previousMoveSpeed - velocity).GetMagnitude()*this->moveDir;
+     	this->rigidBody->SetLinearVelocity(velocity + lostVelocity - this->moveDir*this->moveSpeed );
+	}
+	else
+	{
+
+		if(this->rigidBody->GetLamda() == 1.0f)
+		{
+			this->playerState = PLAYER_STATE_WALKING;
+		}
+
+		if(this->moveDir != Oyster::Math::Float3::null)
+		{
+			Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
+     		this->rigidBody->SetLinearVelocity(velocity - this->moveDir*this->moveSpeed );
+		}
+	}
+
+	this->moveDir = Oyster::Math::Float3::null;
+
+	if (key_forward > 0.001)
+	{
+		key_forward -= gameInstance->GetFrameTime(); // fixed timer 
+		this->moveDir += this->rigidBody->GetState().GetOrientation().v[2].GetNormalized().xyz;
+	}
+	if (key_backward > 0.001)
+	{
+		key_backward -= gameInstance->GetFrameTime();
+		this->moveDir -= this->rigidBody->GetState().GetOrientation().v[2].GetNormalized().xyz;
+	}
+	if (key_strafeRight > 0.001)
+	{
+		key_strafeRight -= gameInstance->GetFrameTime();
+		Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
+		Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos;
+		this->moveDir -= (up).Cross(forward).GetNormalized();
+	}
+	if (key_strafeLeft > 0.001)
+	{
+		key_strafeLeft -= gameInstance->GetFrameTime();
+		Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
+		Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos;
+		this->moveDir += (up).Cross(forward).GetNormalized();
+	}
+
+	if(this->moveDir != Oyster::Math::Float3::null)
+	{
+     	this->moveDir.Normalize();
+		this->rigidBody->SetLinearVelocity(this->moveDir*this->moveSpeed + this->rigidBody->GetLinearVelocity());	
+	}
+
+	this->previousMoveSpeed = this->rigidBody->GetLinearVelocity();
+	this->previousPosition = this->rigidBody->GetState().centerPos;
+
+
+	this->weapon->Update(0.01f);
 }
 
 void Player::EndFrame()
 {
 	// snap to axis
-	Object::EndFrame();
-	// rotate 
-
-	//Oyster::Math::Float3 up = currPhysicsState.GetOrientation().v[1];
-	//Oyster::Math::Float3 deltaAxis = up * (-dx * 0.02) ;
-
-	//currPhysicsState.AddRotation(deltaAxis);
+	Oyster::Math::Float4 rotation;
 	
+	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
+	
+	
+	Object::EndFrame();	
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -105,32 +187,19 @@ void Player::Move(const PLAYER_MOVEMENT &movement)
 
 void Player::MoveForward()
 {
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-	//Oyster::Math::Float3 forward = lookDir;
-	rigidBody->SetLinearVelocity( 10 * forward.GetNormalized() );
+	key_forward = KEY_TIMER;
 }
 void Player::MoveBackwards()
 {
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-	//Oyster::Math::Float3 forward = lookDir;
-	rigidBody->SetLinearVelocity( 10 * -forward.GetNormalized() );
+	key_backward = KEY_TIMER;
 }
 void Player::MoveRight()
 {
-	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-
-	//Oyster::Math::Float3 forward = lookDir;
-	Oyster::Math::Float3 r = (-this->rigidBody->GetState().centerPos.Normalize()).Cross(forward);
-	rigidBody->SetLinearVelocity(r * 10);
+	key_strafeRight = KEY_TIMER;
 }
 void Player::MoveLeft()
 {
-	//Do cross product with forward vector and negative gravity vector
-	Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-	//Oyster::Math::Float3 forward = lookDir;
-	Oyster::Math::Float3 r = (-this->rigidBody->GetState().centerPos.Normalize()).Cross(forward);
-	rigidBody->SetLinearVelocity(-r * 10);
+	key_strafeLeft = KEY_TIMER;
 }
 
 void Player::UseWeapon(const WEAPON_FIRE &usage)
@@ -139,29 +208,30 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 }
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
-{
+{ 
 	this->life = 100;
 	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 	this->lookDir = Oyster::Math::Float4(1,0,0);
-	//this->newPhysicsState.centerPos = spawnPoint;
+	this->rigidBody->SetPosition(spawnPoint);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float4 lookDir)
+void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)
 {
-	Oyster::Math::Float dx = lookDir.w;
-	if(dx > 0.0f)
-	{
-		int i =0 ;
-	}
+	// this is the camera right vector
+	this->lookDir = lookDir;
 
-	this->lookDir = lookDir.xyz;
-	this->dx =  lookDir.w;
+	//Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
+	//this->rigidBody->SetUpAndRight(up, right);
 }
 
 void Player::Jump()
 {
-	Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
-	//newPhysicsState.ApplyLinearImpulse(up * MOVE_FORCE * this->gameInstance->GetFrameTime());
+	if(this->rigidBody->GetLamda() < 1.0f)
+	{
+		Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
+		this->rigidBody->ApplyImpulse(up *1500);
+		this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+	}
 }
 
 bool Player::IsWalking()
@@ -210,4 +280,3 @@ void Player::DamageLife(int damage)
 		this->gameInstance->onDisableFnc(this, 0.0f);
 	}
 }
-

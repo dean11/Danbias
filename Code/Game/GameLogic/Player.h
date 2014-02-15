@@ -16,14 +16,12 @@ namespace GameLogic
 	{
 	public:
 		Player(void);
-		Player(OBJECT_TYPE type);
-		Player(Oyster::Physics::ICustomBody *rigidBody, OBJECT_TYPE type);
-		Player(void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
-		Player(Oyster::Physics::ICustomBody *rigidBody ,void* collisionFuncBefore, void* collisionFuncAfter, OBJECT_TYPE type);
-		Player(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
+
+		Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID);
+		Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID);
+
 		~Player(void);
-		void InitPlayer();
-		
+
 		/********************************************************
 		* Moves the player based on input
 		* @param movement: enum value on what kind of action is to be taken
@@ -48,7 +46,7 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float4 lookDir);
+		void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -73,24 +71,32 @@ namespace GameLogic
 
 		void BeginFrame();
 		void EndFrame();
-		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
-
 
 	private:
 		void Jump();
 
 	private:
-		int life;
+		Oyster::Math::Float life;
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
-		Oyster::Math::Float3 lookDir;	//Duplicate in Object.h?
-		Oyster::Math::Float dx;			//dx of what?
+		Oyster::Math::Float3 lookDir;
+		float key_forward;
+		float key_backward;
+		float key_strafeRight;
+		float key_strafeLeft;
+		float key_jump;
+
+
+		Oyster::Math::Float3 previousPosition;
+		Oyster::Math::Float3 moveDir;
+		Oyster::Math::Float moveSpeed;
+		Oyster::Math::Float3 previousMoveSpeed;
+
 
 		bool hasTakenDamage;
 		float invincibleCooldown;
-
 	};
 }
 #endif

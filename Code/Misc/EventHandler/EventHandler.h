@@ -9,8 +9,6 @@
 
 #include "EventButtonCollection.h"
 #include "EventButton.h"
-#include "EventButtonCircle.h"
-#include "EventButtonRectangle.h"
 
 #include <vector>
 
@@ -26,14 +24,29 @@ namespace Oyster
 
 			static EventHandler& Instance();
 
-			void Update(InputClass* inputObject);
+			void Clean();
 
-			void AddCollection(EventButtonCollection& collection);
-			EventButtonCollection& CreateCollection();
+			void Update(MouseInput& input);
+			void RenderTexture();
+			void RenderText();
+
+			/*Add a collection to the EventHandler will only add collections not already present in the list.
+
+			*/
+			void AddCollection(EventButtonCollection* collection);
+
+			void ReleaseCollection(EventButtonCollection* collection);
+
+		private:
+			//Can't copy this class.
+			EventHandler(const EventHandler& obj);
+			EventHandler& operator =(const EventHandler& obj);
 
 		private:
 			std::vector<EventButtonCollection*> collections;
 
+			//EventButtonCollection is a friend so it can delete it self.
+			friend class EventButtonCollection;
 		};
 	}
 }

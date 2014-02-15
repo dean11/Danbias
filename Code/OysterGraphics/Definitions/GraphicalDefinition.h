@@ -66,6 +66,22 @@ namespace Oyster
 				int x;
 				int y;
 			};
+
+			struct Text2D
+			{
+				float pos;
+				int offset;
+				float coff;
+			};
+
+			struct BlurrData
+			{
+				unsigned int StartX;
+				unsigned int StartY;
+				unsigned int StopX;
+				unsigned int StopY;
+				Math::Float4 BlurMask;
+			};
 		}
 	}
 }

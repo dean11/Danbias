@@ -12,7 +12,7 @@ struct VertexIn
 struct VertexOut
 {
 	float4 pos			: SV_POSITION;
-	//float4 ViewPos		: POSITION;
+	float4 ViewPos		: POSITION;
 	float2 UV			: TEXCOORD;
 	float3 normal		: NORMAL;
 	//float3 tangent		: TANGENT;
@@ -41,4 +41,9 @@ cbuffer PerModel : register(b1)
 	matrix WVP;
 	int Animated;
 	float3 Pad;
+}
+
+cbuffer Tint : register(b0)
+{
+	float3 Color;
 }

@@ -8,6 +8,12 @@
 
 using namespace DanBias::Client;
 
+//Menu buttons
+#include "Buttons/ButtonEllipse.h"
+#include "Buttons/ButtonRectangle.h"
+#include "../Misc/EventHandler/EventHandler.h"
+using namespace Oyster::Event;
+
 struct  LoginState::myData
 {
 	myData(){}
@@ -17,11 +23,76 @@ struct  LoginState::myData
 	int modelCount; 
 	// UI object
 	// game client* 
+
+	//Menu button collection
+	EventButtonCollection collection;
+	bool createGame;
+	int testNumber;
 }privData;
+
+
+enum TestEnum
+{
+	Create,
+	Options,
+	Incr,
+	Decr,
+	Exit,
+};
 
 LoginState::LoginState(void)
 {
+}
 
+void LoginState::ButtonCallback(Oyster::Event::ButtonEvent<LoginState*>& e)
+{
+	TestEnum type = TestEnum((int)e.userData);
+
+	switch(type)
+	{
+	case Create:
+		if(e.state == ButtonState_None)
+		{
+			int a = 0;
+			std::cout << "None" << std::endl;
+		}
+		else if(e.state == ButtonState_Hover)
+		{
+			int a = 0;
+			std::cout << "Hover" << std::endl;
+		}
+		else if(e.state == ButtonState_Down)
+		{
+			int a = 0;
+			std::cout << "Down" << std::endl;
+		}
+		else if(e.state == ButtonState_Pressed)
+		{
+			int a = 0;
+			std::cout << "Pressed" << std::endl;
+		}
+		else if(e.state == ButtonState_Released)
+		{
+			//Change to create state or something similar
+			int a = 0;
+			std::cout << "Released" << std::endl;
+			e.owner->privData->createGame = true;
+		}
+		break;
+	case Options:
+		break;
+	case Exit:
+		break;
+
+	case Incr:
+		if(e.state == ButtonState_Released)
+			e.owner->privData->testNumber++;
+		break;
+	case Decr:
+		if(e.state == ButtonState_Released)
+			e.owner->privData->testNumber--;
+		break;
+	}
 }
 
 LoginState::~LoginState(void)
@@ -32,17 +103,50 @@ LoginState::~LoginState(void)
 bool LoginState::Init(Oyster::Network::NetworkClient* nwClient)
 {
 	privData = new myData();
-	this->nwClient = nwClient;	
+	this->nwClient = nwClient;
 	// load models
-	LoadModels(L"UImodels.txt");
+	//LoadModels(L"UImodels.txt");
 	InitCamera(Oyster::Math::Float3(0,0,5.4f));
+
+	//Create menu buttons
+	EventHandler::Instance().AddCollection(&privData->collection);
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 1, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.2f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.3f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.4f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+	privData->collection.AddButton(new ButtonEllipse<LoginState*>(L"circle.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.2f, 0.5f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f), ResizeAspectRatio_Width));
+
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.15f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.25f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.35f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Options, Oyster::Math::Float3(0.45f, 0.05f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Create Game", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Create, Oyster::Math::Float3(0.5f, 0.5f, 0.0f), Oyster::Math::Float2(0.3f, 0.3f)));
+
+	//Incr/decr buttons	.
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Incr, Oyster::Math::Float3(0.85f, 0.2f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	privData->collection.AddButton(new ButtonRectangle<LoginState*>(L"button.png", L"Hej", Oyster::Math::Float3(1, 0, 0), &LoginState::ButtonCallback, this, 
+		(void*)Decr, Oyster::Math::Float3(0.55f, 0.2f, 0.0f), Oyster::Math::Float2(0.1f, 0.1f)));
+	
+	privData->createGame = false;
+	privData->testNumber = 0;
+
 	return true;
 }
 bool LoginState::LoadModels(std::wstring file)
 {
 	Oyster::Graphics::Definitions::Pointlight plight;
 	plight.Pos = Oyster::Math::Float3(0,0,5);
-	plight.Color = Oyster::Math::Float3(1,1,1);
+	plight.Color = Oyster::Math::Float3(1,0,1);
 	plight.Radius = 100;
 	plight.Bright = 1;
 	Oyster::Graphics::API::AddLight(plight);
@@ -90,7 +194,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 	// check data from server
 
 	// create game
-	if( KeyInput->IsKeyPressed(DIK_C)) 
+	if( KeyInput->IsKeyPressed(DIK_C) || privData->createGame) 
 	{
 		DanBias::GameServerAPI::ServerInitDesc desc; 
 
@@ -104,6 +208,7 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
+		privData->collection.SetState(EventCollectionState_Disabled);
 		return ClientState_LobbyCreated;
 	}
 	// join game
@@ -118,13 +223,13 @@ GameClientState::ClientState LoginState::Update(float deltaTime, InputClass* Key
 			// failed to connect
 			return ClientState_Same;
 		}
+		privData->collection.SetState(EventCollectionState_Disabled);
 		return ClientState_Lobby;
 	}
 	return ClientState_Same;
 }
-bool LoginState::Render()
+bool LoginState::Render(float dt)
 {
-
 	Oyster::Graphics::API::SetView(privData->view);
 	Oyster::Graphics::API::SetProjection( privData->proj);
 
@@ -139,17 +244,33 @@ bool LoginState::Render()
 
 	// render lights
 
+	//Render buttons
+	Oyster::Graphics::API::StartGuiRender();
+	EventHandler::Instance().RenderTexture();
+
+	std::wstring number;
+	wchar_t temp[10];
+	_itow_s(privData->testNumber, temp, 10);
+	number = temp;
+
+	Oyster::Graphics::API::StartTextRender();
+	EventHandler::Instance().RenderText();
+	//Oyster::Graphics::API::RenderText(number, Oyster::Math::Float2(0.7f, 0.2f), Oyster::Math::Float2(0.1f, 0.1f*(1008.0f/730.0f)), Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
+
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
 bool LoginState::Release()
 {
+	Oyster::Graphics::API::ClearLights();
 	for (int i = 0; i < privData->modelCount; i++)
 	{
 		privData->object[i]->Release();
 		delete privData->object[i];
 		privData->object[i] = NULL;
 	}
+
+	EventHandler::Instance().ReleaseCollection(&privData->collection);
 
 	delete privData;  
 	privData = NULL;

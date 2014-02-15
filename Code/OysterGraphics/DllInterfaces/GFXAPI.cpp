@@ -29,11 +29,10 @@ namespace Oyster
 			{
 				return API::Fail;
 			}
+			Render::Resources::Gui::Text::Font = (ID3D11ShaderResourceView*)API::CreateTexture(L"font_generic.png");
 			Render::Resources::Init();
 
 			Render::Preparations::Basic::SetViewPort();
-			Render::DefaultRenderer::cube = API::CreateModel(L"box.dan");
-			Render::DefaultRenderer::cube2 = API::CreateModel(L"box2.dan");
 			return API::Sucsess;
 		}
 
@@ -51,11 +50,11 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, Lights[0], (int)Lights.size());
+				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
 			}
 			else
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, Definitions::Pointlight(), 0);
+				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0);
 			}
 		}
 
@@ -88,6 +87,7 @@ namespace Oyster
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
 			m->Animation.AnimationPlaying = NULL;
+			m->Tint = Math::Float3(1);
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -111,8 +111,7 @@ namespace Oyster
 
 		void API::Clean()
 		{
-			DeleteModel(Render::DefaultRenderer::cube);
-			DeleteModel(Render::DefaultRenderer::cube2);
+			DeleteTexture(Render::Resources::Gui::Text::Font);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
 			Oyster::Graphics::Core::PipelineManager::Clean();
@@ -157,12 +156,12 @@ namespace Oyster
 
 		void API::StartGuiRender()
 		{
-			Render::Rendering::Gui::BeginRender();
+			Render::Gui::Begin2DRender();
 		}
 
-		void API::RenderGuiElement(API::Texture tex, Math::Float2 pos, Math::Float2 size)
+		void API::RenderGuiElement(API::Texture tex, Math::Float3 pos, Math::Float2 size, Math::Float3 color)
 		{
-			Render::Rendering::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size);
+			Render::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size,color);
 		}
 
 		API::Texture API::CreateTexture(std::wstring filename)
@@ -180,12 +179,22 @@ namespace Oyster
 			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
 			m->Animation.AnimationTime=0;
 			m->Animation.LoopAnimation = looping;
-			return m->Animation.AnimationPlaying->duration;
+			return (float)m->Animation.AnimationPlaying->duration;
 		}
 
 		void API::Update(float dt)
 		{
 			deltaTime = dt;
+		}
+
+		void API::StartTextRender()
+		{
+			Render::Gui::Begin2DTextRender();
+		}
+
+		void API::RenderText(std::wstring text, Math::Float3 Pos, Math::Float2 Size, float FontSize, Math::Float3 color)
+		{
+			Render::Gui::RenderText(text, Pos, Size, FontSize, color);
 		}
 	}
 }

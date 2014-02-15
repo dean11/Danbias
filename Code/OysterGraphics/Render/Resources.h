@@ -30,12 +30,16 @@ namespace Oyster
 					static ID3D11UnorderedAccessView* LBufferUAV[LBufferSize];
 					static ID3D11ShaderResourceView* LBufferSRV[LBufferSize];
 
+					
+					static Core::Buffer Color;
+
 
 					struct RenderStates
 					{
 						static ID3D11RasterizerState* rs;
 						static ID3D11SamplerState** ss;
 						static ID3D11DepthStencilState* dsState;
+						static ID3D11BlendState* bs;
 					};
 
 					struct Gather
@@ -60,7 +64,12 @@ namespace Oyster
 					{
 						static Core::PipelineManager::RenderPass Pass;
 						static Core::Buffer Data;
-						static Core::Buffer Vertex;
+						struct Text
+						{
+							static Core::PipelineManager::RenderPass Pass;
+							static Core::Buffer Vertex;
+							static ID3D11ShaderResourceView* Font;
+						};
 					};
 
 					struct Blur
@@ -72,6 +81,8 @@ namespace Oyster
 						//Blur UAV and SRV
 						static ID3D11UnorderedAccessView* BufferUAV;
 						static ID3D11ShaderResourceView* BufferSRV;
+
+						static Core::Buffer Data;
 					};
 
 					struct Post

@@ -9,7 +9,7 @@ namespace GameLogic
 	/************************************
 				Enums
 	*************************************/
-
+	
 	enum ObjectType
 	{
 		ObjectType_LevelMetaData,
@@ -23,31 +23,45 @@ namespace GameLogic
 		ObjectType_Unknown = -1
 	};
 
-	enum UsePhysics
+	enum ObjectSpecialType
 	{
-		UsePhysics_UseFullPhysics,
-		UsePhysics_IgnoreGravity,
-		UsePhysics_IgnorePhysics,
-		UsePhysics_IgnoreCollision,
+		ObjectSpecialType_None,
+		ObjectSpecialType_Sky,
+		ObjectSpecialType_World,		//Always the main celestial body
+		ObjectSpecialType_Building,
+		ObjectSpecialType_Stone,
+		ObjectSpecialType_StandarsBox,
+		ObjectSpecialType_RedExplosiveBox,
+		ObjectSpecialType_SpikeBox,
+		ObjectSpecialType_Spike,
+		ObjectSpecialType_CrystalFormation,
+		ObjectSpecialType_CrystalShard,
+		ObjectSpecialType_JumpPad,
+		ObjectSpecialType_Portal,
+		ObjectSpecialType_SpawnPoint,
+		ObjectSpecialType_Player,
+		
 
-		UsePhysics_Count,
-		UsePhysics_Unknown = -1
+		ObjectSpecialType_Count,
+		ObjectSpecialType_Unknown  = -1
 	};
 
 	enum CollisionGeometryType
 	{
 		CollisionGeometryType_Box,
 		CollisionGeometryType_Sphere,
+		CollisionGeometryType_Cylinder,
 
 		CollisionGeometryType_Count,
 		CollisionGeometryType_Unknown = -1
 	};
 
+	//Only supports Pointlight right now.
 	enum LightType
 	{
 		LightType_PointLight,
-		LightType_DirectionalLight,
-		LightType_SpotLight,
+		//LightType_DirectionalLight,
+		//LightType_SpotLight,
 
 		LightType_Count,
 		LightType_Unknown = -1
@@ -80,38 +94,84 @@ namespace GameLogic
 	/************************************
 				Structs
 	*************************************/
-
-	struct FormatVersion
+	namespace LevelLoaderInternal
 	{
-		unsigned int formatVersionMajor;
-		unsigned int formatVersionMinor;
-
-		bool operator ==(const FormatVersion& obj)
+		struct FormatVersion
 		{
-			return (this->formatVersionMajor != obj.formatVersionMajor && this->formatVersionMinor != obj.formatVersionMinor);
-		}
+			unsigned int formatVersionMajor;
+			unsigned int formatVersionMinor;
+			
+			FormatVersion()
+				: formatVersionMajor(0), formatVersionMinor(0)
+			{}
 
-		bool operator !=(const FormatVersion& obj)
-		{
-			return !(*this == obj);
-		}
-	};
+			FormatVersion(unsigned int major, unsigned int minor)
+				: formatVersionMajor(major), formatVersionMinor(minor)
+			{}
+
+			bool operator ==(const FormatVersion& obj)
+			{
+				return (this->formatVersionMajor == obj.formatVersionMajor && this->formatVersionMinor == obj.formatVersionMinor);
+			}
+
+			bool operator !=(const FormatVersion& obj)
+			{
+				return !(*this == obj);
+			}
+		};
+	}
 
 	struct ObjectTypeHeader
 	{
 		ObjectType typeID;
+
+		//Unless this is here the object destructor wont be called.
+		virtual ~ObjectTypeHeader(){}
 	};
 
-	struct PhysicsObject
+	namespace LevelLoaderInternal
 	{
-		UsePhysics usePhysics;
-		float mass;
-		float inertiaMagnitude[3];
-		float inertiaRotation[3];
-		float frictionCoeffStatic;
-		float frictionCoeffDynamic;
-		CollisionGeometryType geometryType;
-	};
+		const FormatVersion boundingVolumeVersion(2, 0);
+
+		struct BoundingVolumeBase
+		{
+			CollisionGeometryType geoType;
+			float position[3];
+			float rotation[4];
+			float frictionCoeffStatic;
+			float frictionCoeffDynamic;
+			float restitutionCoeff;
+			float mass;
+		};
+
+		struct BoundingVolumeBox : public BoundingVolumeBase
+		{
+			float size[3];
+		};
+
+		struct BoundingVolumeSphere : public BoundingVolumeBase
+		{
+			float radius;
+		};
+
+		struct BoundingVolumeCylinder : public BoundingVolumeBase
+		{
+			float length;
+			float radius;
+		};
+
+		struct BoundingVolume
+		{
+			CollisionGeometryType geoType;
+			union
+			{
+				LevelLoaderInternal::BoundingVolumeBox box;
+				LevelLoaderInternal::BoundingVolumeSphere sphere;
+				LevelLoaderInternal::BoundingVolumeCylinder cylinder;
+			};
+		};
+
+	}
 
 	struct LevelMetaData : public ObjectTypeHeader
 	{
@@ -123,21 +183,56 @@ namespace GameLogic
 		WorldSize worldSize;
 		std::string overviewPicturePath;
 		std::vector<GameMode> gameModesSupported;
+		
+		virtual ~LevelMetaData(){}
+
 	};
 
-	struct ObjectHeader : public ObjectTypeHeader, public PhysicsObject
+	struct ObjectHeader : public ObjectTypeHeader
 	{
+		//Special type id for special objects: portal, jumppad, exploding objects, etc.
+		ObjectSpecialType specialTypeID;
 		//Model,
 		std::string ModelFile;
 		//Position
 		float position[3];
-		//Rotation
-		float rotation[3];
-		float angle;
+		//Rotation Quaternion
+		float rotation[4];
 		//Scale
 		float scale[3];
+
+		::GameLogic::LevelLoaderInternal::BoundingVolume boundingVolume;
+
+		virtual ~ObjectHeader(){}
 	};
 
+	/************************************
+				Special objects
+	*************************************/
+
+	struct JumpPadAttributes : public ObjectHeader
+	{
+		float direction[3];
+		float power;
+	};
+
+	struct PortalAttributes : public ObjectHeader
+	{
+		float destination[3];
+	};
+
+	struct WorldAttributes : public ObjectHeader
+	{
+		float worldSize;
+		float atmoSphereSize;
+	};
+
+	struct SkyAttributes : public ObjectHeader
+	{
+		float skySize;
+	};
+
+	
 
 	/************************************
 				Lights
@@ -145,12 +240,13 @@ namespace GameLogic
 
 	struct BasicLight : public ObjectTypeHeader
 	{
-		LightType lightType;
-		float ambientColor[3];
-		float diffuseColor[3];
-		float specularColor[3];
+		LightType lightType;	//Is not used right now
+		float color[3];
+		float position[3];
+		float raduis;
+		float intensity;
 	};
-
+	/* We only support pointlight right now.
 	struct PointLight : public BasicLight
 	{
 		float position[3];
@@ -166,7 +262,7 @@ namespace GameLogic
 		float direction[3];
 		float range;
 		float attenuation[3];
-	};
+	};*/
 }
 
 #endif

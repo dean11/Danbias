@@ -46,7 +46,7 @@ namespace Oyster
 
 		private:
 			//Implement this in the inherited classes for collision against that shape.
-			virtual bool Collision(InputClass *input) = 0;
+			virtual bool Collision(MouseInput& input) = 0;
 
 		public:
 			EventButton();
@@ -54,14 +54,15 @@ namespace Oyster
 			EventButton(EventFunc func);
 			EventButton(EventFunc func, Owner owner);
 			EventButton(EventFunc func, Owner owner, void* userData);
-			~EventButton();
+			virtual ~EventButton();
 
-			void Update(InputClass *input);
+			void Update(MouseInput& input);
 
 			//Send event to callback function
 			void SendEvent(ButtonState state);
 			
 			//Set
+			void SetEnabled(bool enable);
 			void SetUserData(void* data);
 			void SetEventFunc(EventFunc func);
 			void SetOwner(Owner owner);
@@ -71,6 +72,7 @@ namespace Oyster
 			unsigned int GetID();
 			//EventFunc GetFunctionPointer();
 			Owner GetOwner();
+			ButtonState GetState();
 
 			bool operator ==(const EventButton<Owner>& obj);
 
@@ -133,27 +135,42 @@ namespace Oyster
 		
 		//Checks for collision and 
 		template <typename Owner>
-		void EventButton<Owner>::Update(InputClass *input)
+		void EventButton<Owner>::Update(MouseInput& input)
 		{
 			if(this->privData.enabled)
 			{
 				ButtonState currentState = ButtonState_None;
+				static bool outside = false;
+				static bool clicked = false;
 
+				//Check for collision against the button.
 				if(Collision(input))
 				{
-					if(input->IsMousePressed())
+					if(input.mouseButtonPressed)
 					{
 						//Change state when the mouse button is pressed
 						switch(this->privData.previousState)
 						{
 						case ButtonState_None:
+							outside = true;
 							currentState = ButtonState_Hover;
 							break;
 
 						case ButtonState_Hover:
-						case ButtonState_Released:
-							currentState = ButtonState_Pressed;
+							if(outside == false)
+							{
+								clicked = true;
+								currentState = ButtonState_Pressed;
+							}
+							else
+							{
+								currentState = ButtonState_Hover;
+							}
 							break;
+						case ButtonState_Released:
+							currentState = ButtonState_Hover;
+							break;
+							
 
 						case ButtonState_Pressed:
 						case ButtonState_Down:
@@ -165,6 +182,7 @@ namespace Oyster
 					}
 					else
 					{
+						outside = false;
 						//Change state when the mouse button is NOT pressed
 						switch(this->privData.previousState)
 						{
@@ -172,6 +190,7 @@ namespace Oyster
 						case ButtonState_Hover:
 						case ButtonState_Released:
 							currentState = ButtonState_Hover;
+							clicked = false;
 							break;
 
 						case ButtonState_Pressed:
@@ -206,6 +225,13 @@ namespace Oyster
 			}
 		}
 		
+		//Set if the button should be updated and collided with.
+		template <typename Owner>
+		void EventButton<Owner>::SetEnabled(bool enable)
+		{
+			this->privData.enabled = enable;
+		}
+
 		template <typename Owner>
 		void EventButton<Owner>::SetUserData(void* data)
 		{
@@ -247,6 +273,12 @@ namespace Oyster
 		Owner EventButton<Owner>::GetOwner()
 		{
 			return this->privData.owner;
+		}
+
+		template <typename Owner>
+		ButtonState EventButton<Owner>::GetState()
+		{
+			return this->privData.previousState;
 		}
 		
 		template <typename Owner>

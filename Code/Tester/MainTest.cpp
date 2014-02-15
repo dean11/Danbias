@@ -21,6 +21,7 @@ Oyster::Graphics::Model::Model* m				= NULL;
 Oyster::Graphics::Model::Model* m2				= NULL;
 Oyster::Graphics::Model::Model* m3				= NULL;
 Oyster::Graphics::API::Texture t				= NULL;
+Oyster::Graphics::API::Texture t2				= NULL;
 Oyster::Math::Float4x4 V;
 Oyster::Math::Float4x4 P;
 Oyster::Graphics::Definitions::Pointlight pl;
@@ -158,21 +159,30 @@ HRESULT InitDirect3D()
 {
 	HRESULT hr = S_OK;;
 
-	if(Oyster::Graphics::API::Init(g_hWnd,false,false, Oyster::Math::Float2( 1024, 768 )) == Oyster::Graphics::API::Fail)
-	{
-		return E_FAIL;
-	}
+	
 	Oyster::Graphics::API::Option o = Oyster::Graphics::API::GetOption();
 	o.modelPath = L"..\\Content\\Models\\";
 	o.texturePath = L"..\\Content\\Textures\\";
 	Oyster::Graphics::API::SetOptions(o);
 
+	if(Oyster::Graphics::API::Init(g_hWnd,false,false, Oyster::Math::Float2( 1024, 768 )) == Oyster::Graphics::API::Fail)
+	{
+		return E_FAIL;
+	}
+
 	m =  Oyster::Graphics::API::CreateModel(L"crate_colonists.dan");
-	m2 = Oyster::Graphics::API::CreateModel(L"char_fake_bin.dan");
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
-	Oyster::Graphics::API::PlayAnimation(m2, L"Bend",true);
-	
+	//m->WorldMatrix.m[0][0] = 50;
+	//m->WorldMatrix.m[1][1] = 50;
+	//m->WorldMatrix.m[2][2] = 0.00000005f;
+	m2 = Oyster::Graphics::API::CreateModel(L"char_temporary.dan");
+	m2->Tint = Oyster::Math::Float3(0.1f,0.1f,1);
+	m3 = Oyster::Graphics::API::CreateModel(L"char_temporary.dan");
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3::null,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
+	Oyster::Graphics::API::PlayAnimation(m2, L"movement", true);
+	Oyster::Graphics::API::PlayAnimation(m3, L"movement", true);
+
 	t = Oyster::Graphics::API::CreateTexture(L"structure_corp_mdg.png");
+	t2 = Oyster::Graphics::API::CreateTexture(L"whiteGui.png");
 
 	P = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1280.0f/720.0f,.1f,10000);
 	Oyster::Graphics::API::SetProjection(P);
@@ -182,9 +192,23 @@ HRESULT InitDirect3D()
 	
 
 	
-	pl.Color = Oyster::Math::Float3(1,0,1);
-	pl.Bright = 1;
-	pl.Pos = Oyster::Math::Float3(0,-20.0f,0.4f);
+	pl.Color = Oyster::Math::Float3(1,1,1);
+	pl.Bright = 0.5f;
+	pl.Pos = Oyster::Math::Float3(-20,0,0);
+	pl.Radius = 90;
+
+	Oyster::Graphics::API::AddLight(pl);
+
+	pl.Color = Oyster::Math::Float3(1,1,1);
+	pl.Bright = 0.5f;
+	pl.Pos = Oyster::Math::Float3(0,20,0);
+	pl.Radius = 90;
+
+	Oyster::Graphics::API::AddLight(pl);
+
+	pl.Color = Oyster::Math::Float3(1,1,1);
+	pl.Bright = 0.5f;
+	pl.Pos = Oyster::Math::Float3(0,0,20);
 	pl.Radius = 90;
 
 	Oyster::Graphics::API::AddLight(pl);
@@ -195,8 +219,10 @@ HRESULT InitDirect3D()
 float angle = 0;
 HRESULT Update(float deltaTime)
 {
-	angle += Oyster::Math::pi/16 * deltaTime;
-	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0)*-angle,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
+	//angle += Oyster::Math::pi/16 * deltaTime;
+	m->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(1,0,0) * angle,Oyster::Math::Float3(0,0,0),Oyster::Math::Float3::null);
+	m2->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * angle,Oyster::Math::Float3(4,0,0),Oyster::Math::Float3::null);
+	m3->WorldMatrix = Oyster::Math3D::OrientationMatrix(Oyster::Math::Float3(0,1,0) * -angle,Oyster::Math::Float3(-4,0,0),Oyster::Math::Float3::null);
 	//Oyster::Math::Matrix ma = Oyster::Math::Matrix::identity;
 	Oyster::Graphics::API::Update(deltaTime);
 	//m2->Animation.data.AnimationTime += deltaTime;// * 0.5f;
@@ -210,8 +236,17 @@ HRESULT Render(float deltaTime)
 
 	Oyster::Graphics::API::RenderModel(m);
 	Oyster::Graphics::API::RenderModel(m2);
+	Oyster::Graphics::API::RenderModel(m3);
 	Oyster::Graphics::API::StartGuiRender();
-	Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(0.2f,0.2f));
+	//Oyster::Graphics::API::RenderGuiElement(t,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1), Oyster::Math::Float3(0,0,1));
+	//Oyster::Graphics::API::RenderGuiElement(t2,Oyster::Math::Float2(0.5f,0.5f),Oyster::Math::Float2(1,1),Oyster::Math::Float3(1,0,0));
+	Oyster::Graphics::API::StartTextRender();
+	std::wstring fps;
+	float f = 1/deltaTime;
+	fps = std::to_wstring(f);
+	//Oyster::Graphics::API::RenderText(L"Lanariel",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
+	//Oyster::Graphics::API::RenderText(L"Lanariel WAS HERE",Oyster::Math::Float2(0.5f,0.1f),Oyster::Math::Float2(0.5f,0.1f));
+	Oyster::Graphics::API::RenderText(fps,Oyster::Math::Float3(0.5f,0.1f,1.0f),Oyster::Math::Float2(0.5f,0.1f), 0.08f, Oyster::Math::Float3(0,1,0));
 	Oyster::Graphics::API::EndFrame();
 
 	return S_OK;
@@ -254,10 +289,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 				//m2->AnimationTime -= 0.1f;
 				//if(m2->AnimationTime < 0)
 					//m2->AnimationTime = 0;
+				angle += Oyster::Math::pi / 16;
 				break;
 			//X +
 			case 0x58:
 				//m2->AnimationTime += 0.1f;
+				angle -= Oyster::Math::pi / 16;
 				break;
 
 		}

@@ -6,30 +6,30 @@ using namespace GameLogic;
 Game::PlayerData::PlayerData()
 {	
 	//set some stats that are appropriate to a player
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(0,628,-25);
-	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,1.0f,0.5f);
+
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(50,130,0);
+
+	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,2.0f,0.5f);
 	Oyster::Math::Float mass = 60;
-	Oyster::Math::Float restitutionCoeff = 0.5;
-	Oyster::Math::Float frictionCoeff_Static = 0.4;
-	Oyster::Math::Float frictionCoeff_Dynamic = 0.3;
+	Oyster::Math::Float restitutionCoeff = 0.5f;
+	Oyster::Math::Float frictionCoeff_Static = 0.4f;
+	Oyster::Math::Float frictionCoeff_Dynamic = 0.3f;
 	//sbDesc.quaternion = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
 
 	//create rigid body
-	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
-	
+	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCharacter(2.0f, 0.5f, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
+	rigidBody->SetAngularFactor(0.0f);
 	//create player with this rigid body
-	this->player = new Player(rigidBody,Level::LevelCollisionBefore, Player::PlayerCollision, OBJECT_TYPE::OBJECT_TYPE_PLAYER);
-	this->player->GetRigidBody()->SetCustomTag(this);
+	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player,0,0);
 
-	//Oyster::Physics::ICustomBody::State state;
-	//this->player->GetRigidBody()->GetState(state);
-	////state.SetRotation(Oyster::Math::Float3(0, Oyster::Math::pi, 0));
-	//this->player->GetRigidBody()->SetState(state);
+	this->player->GetRigidBody()->SetCustomTag(this);
 	player->EndFrame();
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
+	Oyster::Physics::ICustomBody* rigidBody;
 	this->player = new Player();
+
 }
 Game::PlayerData::~PlayerData()
 {
@@ -73,11 +73,11 @@ int Game::PlayerData::GetTeamID() const
 	return this->player->GetTeamID();
 }
 
-OBJECT_TYPE Game::PlayerData::GetObjectType()	const
+ObjectSpecialType Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetObjectType();
 }
-void Game::PlayerData::Rotate(const Oyster::Math3D::Float4 lookDir)
+void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)
 {
-	this->player->Rotate(lookDir);
+	this->player->Rotate(lookDir, right);
 }

@@ -19,29 +19,57 @@ EventHandler::EventHandler()
 
 EventHandler::~EventHandler()
 {
-	int size = collections.size();
-	for(int i = 0; i < size; i++)
-	{
-		delete collections[i];
-	}
+	Clean();
 }
 
-void EventHandler::Update(InputClass* inputObject)
+void EventHandler::Clean()
+{
+	collections.clear();
+}
+
+void EventHandler::Update(MouseInput& input)
 {
 	for(int i = 0; i < (int)collections.size(); i++)
 	{
-		collections.at(i)->Update(inputObject);
+		collections.at(i)->Update(input);
 	}
 }
 
-void EventHandler::AddCollection(EventButtonCollection& collection)
+void EventHandler::RenderTexture()
 {
-	collections.push_back(&collection);
+	for(int i = 0; i < (int)collections.size(); i++)
+	{
+		collections.at(i)->RenderTexture();
+	}
 }
 
-EventButtonCollection& EventHandler::CreateCollection()
+void EventHandler::RenderText()
 {
-	EventButtonCollection* temp = new EventButtonCollection;
-	collections.push_back(temp);
-	return *temp;
+	for(int i = 0; i < (int)collections.size(); i++)
+	{
+		collections.at(i)->RenderText();
+	}
+}
+
+void EventHandler::AddCollection(EventButtonCollection* collection)
+{
+	for(int i = 0; i < (int)collections.size(); i++)
+	{
+		//Do not add the collection if it's already in the list.
+		if(collections.at(i) == collection)
+			return;
+	}
+	collections.push_back(collection);
+}
+
+void EventHandler::ReleaseCollection(EventButtonCollection* collection)
+{
+	for(int i = 0; i < (int)collections.size(); i++)
+	{
+		if(collections.at(i) == collection)
+		{
+			collections.erase(collections.begin() + i);
+			break;
+		}
+	}
 }

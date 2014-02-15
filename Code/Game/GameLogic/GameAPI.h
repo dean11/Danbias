@@ -12,6 +12,7 @@
 #include "GameLogicDef.h"
 #include "GameLogicStates.h"
 #include <OysterMath.h>
+#include "LevelLoader\ObjectDefines.h"
 
 
 namespace GameLogic
@@ -66,7 +67,7 @@ namespace GameLogic
 			/** Get the type of the object
 			*	@return The OBJECT_TYPE of the object is returned
 			*/
-			virtual OBJECT_TYPE GetObjectType() const = 0;
+			virtual ObjectSpecialType GetObjectType() const = 0;
 		};
 
 		class IPlayerData :public IObjectData
@@ -83,7 +84,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const Oyster::Math3D::Float4 lookDir) = 0;
+			virtual void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right) = 0;
 
 			/********************************************************
 			* Uses the chosen players weapon based on input

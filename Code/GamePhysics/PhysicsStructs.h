@@ -16,6 +16,7 @@ namespace Oyster
 			public:
 				// Default constructor
 				CustomBodyState( ::Oyster::Math::Float mass						= 1.0f,
+							     ::Oyster::Math::Float3 reach					= ::Oyster::Math::Float3(0,0,0),
 								 ::Oyster::Math::Float restitutionCoeff			= 0.5f,
 								 ::Oyster::Math::Float staticFrictionCoeff		= 1.0f,
 								 ::Oyster::Math::Float dynamicFrictionCoeff		= 1.0f,
