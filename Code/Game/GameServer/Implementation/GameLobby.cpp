@@ -47,27 +47,35 @@ namespace DanBias
 	}
 	bool GameLobby::StartGameSession(  )
 	{
-		GameSession::GameDescription desc;
-			desc.maxClients = this->description.maxClients;
-			desc.gameMode = this->description.gameMode;
-			desc.gameTime = this->description.gameTime;
-			desc.mapNumber = this->description.mapNumber;
-			desc.owner = this;
-			desc.clients = this->clients;
-
-		if(desc.gameTime == 0.0f)
-			desc.gameTime = (60.0f * 10.0f); //note: Default game time length should be fetched from somewhere.
-
-		if(desc.maxClients == 0)
-			desc.maxClients = 10; //note: Default should be fetched somewhere else..
-
-		this->clients.Clear();	//Remove clients from lobby list
-		
-		if(this->gameSession.Create(desc))
+	//Check if all clients is ready
+		if(this->GetClientCount() == this->readyList.Size())
 		{
-			this->gameSession.Run();
+			GameSession::GameDescription desc;
+				desc.maxClients = this->description.maxClients;
+				desc.gameMode = this->description.gameMode;
+				desc.gameTime = this->description.gameTime;
+				desc.mapNumber = this->description.mapNumber;
+				desc.owner = this;
+				desc.clients = this->clients;
 
-			return true;
+			if(desc.gameTime == 0.0f)
+				desc.gameTime = (int)(60.0f * 10.0f); //note: Default game time length should be fetched from somewhere.
+
+			if(desc.maxClients == 0)
+				desc.maxClients = 10; //note: Default should be fetched somewhere else..
+
+			this->clients.Clear();	//Remove clients from lobby list
+		
+			if(this->gameSession.Create(desc))
+			{
+				this->gameSession.Run();
+
+				return true;
+			}
+		}
+		else
+		{
+			//?
 		}
 		return false;
 	}
@@ -77,12 +85,16 @@ namespace DanBias
 		switch (e.args.type)
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
+
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
+
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
 				e.sender->Disconnect();
+				this->readyList.Remove(e.sender);
+				this->clients.Remove(e.sender);
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	

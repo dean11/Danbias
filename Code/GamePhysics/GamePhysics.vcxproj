@@ -89,7 +89,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
     </ClCompile>
@@ -97,13 +97,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <AdditionalDependencies>$(SolutionDir)Physics/lib/debug/BulletCollision_Debug.lib;$(SolutionDir)Physics/lib/debug/BulletDynamics_Debug.lib;$(SolutionDir)Physics/lib/debug/LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
     </ClCompile>
@@ -119,7 +120,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
     </ClCompile>
@@ -137,7 +138,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
     </ClCompile>

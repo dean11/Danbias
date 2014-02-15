@@ -3,6 +3,7 @@
 
 #include "../PhysicsAPI.h"
 #include "Octree.h"
+#include <btBulletDynamicsCommon.h>
 
 namespace Oyster
 {
@@ -14,49 +15,28 @@ namespace Oyster
 			API_Impl();
 			virtual ~API_Impl();
 
-			void Init( unsigned int numObjects, unsigned int numGravityWells , const ::Oyster::Math::Float3 &worldSize );
-
-			void SetFrameTimeLength( float deltaTime );
-			void SetGravityConstant( float g );
-			void SetEpsilon( float e );
-			void SetSubscription( EventAction_Destruction functionPointer );
-
-			float GetFrameTimeLength() const;
-
-			void Update();
+			void Init();
 
 			bool IsInLimbo( const ICustomBody* objRef );
 			void MoveToLimbo( const ICustomBody* objRef );
 			void ReleaseFromLimbo( const ICustomBody* objRef );
 
-			void AddObject( ::Utility::DynamicMemory::UniquePointer<ICustomBody> handle );
-			::Utility::DynamicMemory::UniquePointer<ICustomBody> ExtractObject( const ICustomBody* objRef );
-			void DestroyObject( const ICustomBody* objRef );
+			// Bullet physics
+			ICustomBody* AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
+			ICustomBody* AddCollisionBox(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
+			ICustomBody* AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction);
 
-			void AddGravity( const API::Gravity &g );
-			void RemoveGravity( const API::Gravity &g );
+			void UpdateWorld();
 
 			void ApplyEffect( const Oyster::Collision3D::ICollideable& collideable, void* args, void(hitAction)(ICustomBody*, void*) );
 
-			//void ApplyForceAt( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos, const ::Oyster::Math::Float3 &worldF );
-
-			//void SetMomentOfInertiaTensor_KeepVelocity( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );
-			//void SetMomentOfInertiaTensor_KeepMomentum( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &localI );
-			//void SetMass_KeepVelocity( const ICustomBody* objRef, ::Oyster::Math::Float m );
-			//void SetMass_KeepMomentum( const ICustomBody* objRef, ::Oyster::Math::Float m );
-			//void SetCenter( const ICustomBody* objRef, const ::Oyster::Math::Float3 &worldPos );
-			//void SetRotation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &rotation );
-			//void SetOrientation( const ICustomBody* objRef, const ::Oyster::Math::Float4x4 &orientation );
-			//void SetSize( const ICustomBody* objRef, const ::Oyster::Math::Float3 &size );
-
-			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SimpleBodyDescription &desc ) const;
-			::Utility::DynamicMemory::UniquePointer<ICustomBody> CreateRigidBody( const SphericalBodyDescription &desc ) const;
-
 		private:
-			::Oyster::Math::Float gravityConstant, updateFrameLength, epsilon;
-			EventAction_Destruction destructionAction;
-			::std::vector<API::Gravity> gravity;
-			Octree worldScene;
+			btBroadphaseInterface* broadphase;
+			btDefaultCollisionConfiguration* collisionConfiguration;
+			btCollisionDispatcher* dispatcher;
+			btSequentialImpulseConstraintSolver* solver;
+			btDiscreteDynamicsWorld* dynamicsWorld;
+			std::vector<ICustomBody*> customBodies;
 		};
 
 		namespace Default

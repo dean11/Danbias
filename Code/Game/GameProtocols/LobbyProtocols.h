@@ -312,6 +312,34 @@ namespace GameLogic
 	//	private:
 	//		Oyster::Network::CustomNetProtocol protocol;
 	//};
+
+	struct Protocol_LobbyClientReadyState :public Oyster::Network::CustomProtocolObject
+	{
+		bool isReady;
+	
+		Protocol_LobbyClientReadyState()
+		{
+			this->protocol[0].value = protocol_Lobby_ClientReadyState;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		Protocol_LobbyClientReadyState(bool isReady)
+		{
+			this->isReady = isReady;
+		}
+		Protocol_LobbyClientReadyState(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->isReady = p[1].value.netBool;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = this->isReady;
+			return protocol;
+		}
+		
+		private:
+			Oyster::Network::CustomNetProtocol protocol;
+	};
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

@@ -9,6 +9,7 @@
 #include <PostBox\IPostBox.h>
 #include <WinTimer.h>
 #include "GameSession.h"
+#include <LinkedList.h>
 
 namespace DanBias
 {
@@ -44,6 +45,7 @@ namespace DanBias
 		void LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_Refresh:
 		void LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_GameData:
 		void LobbyMainData(GameLogic::Protocol_LobbyClientData& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_MainData:
+		void LobbyReady(GameLogic::Protocol_LobbyClientReadyState& p, Oyster::Network::NetworkClient* c);	//id = protocol_Lobby_ClientReadyState:
 
 	private:
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
@@ -52,10 +54,11 @@ namespace DanBias
 	private:
 		Utility::WinTimer timer;
 		float refreshFrequency;
-		
+		Utility::DynamicMemory::LinkedList<Oyster::Network::NetworkClient*> readyList;
 		GameSession gameSession;
 		LobbyLevelData description;
 		Utility::DynamicMemory::SmartPointer<DanBias::GameClient> sessionOwner;
+		
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H

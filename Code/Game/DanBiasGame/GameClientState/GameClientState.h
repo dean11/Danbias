@@ -35,6 +35,11 @@ public:
 	};
 	struct  KeyInput :public ProtocolStruct
 	{
+		/*
+		* key[0] = 
+		*
+		*
+		*/
 		bool key[6]; 
 	};
 	struct  PlayerPos :public ProtocolStruct

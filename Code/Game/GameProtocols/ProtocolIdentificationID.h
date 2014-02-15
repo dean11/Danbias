@@ -34,6 +34,7 @@
 #define protocol_Lobby_Refresh						204
 #define protocol_Lobby_ClientData					205
 #define protocol_Lobby_GameData						206
+#define protocol_Lobby_ClientReadyState				207
 #define protocol_LobbyMAX								299
 
 
@@ -41,17 +42,32 @@
 /********* GAMEPLAY PROTOCOLS ***************************************************************************************************/
 /***********[ 300 - 399 ]***********/
 #define protocol_GameplayMIN							300
-#define protocol_Gameplay_PlayerMovement			300
-#define protocol_Gameplay_PlayerLookDir		301
-#define protocol_Gameplay_PlayerChangeWeapon		302
-#define protocol_Gameplay_PlayerShot				303
-#define protocol_Gameplay_PlayerJump				304
-#define protocol_Gameplay_ObjectPickup				305
-#define protocol_Gameplay_ObjectDamage				306
-#define protocol_Gameplay_ObjectPosition			307
-#define protocol_Gameplay_ObjectEnabled				308
-#define protocol_Gameplay_ObjectDisabled			309
-#define protocol_Gameplay_ObjectCreate				310
+#define protocol_Gameplay_PlayerMovementRight		300
+#define protocol_Gameplay_PlayerMovementLeft		301
+#define protocol_Gameplay_PlayerMovementForward		302
+#define protocol_Gameplay_PlayerMovementBackward	303
+#define protocol_Gameplay_PlayerLookDir				304
+#define protocol_Gameplay_PlayerChangeWeapon		305
+#define protocol_Gameplay_PlayerShot				306
+#define protocol_Gameplay_PlayerJump				307
+
+#define protocol_Gameplay_ObjectPickup				350
+#define protocol_Gameplay_ObjectDamage				351
+#define protocol_Gameplay_ObjectHealthStatus		352
+#define protocol_Gameplay_ObjectPosition			353
+#define protocol_Gameplay_ObjectScale				354
+#define protocol_Gameplay_ObjectRotation			355
+#define protocol_Gameplay_ObjectPositionRotation	356
+#define protocol_Gameplay_ObjectEnabled				357
+#define protocol_Gameplay_ObjectDisabled			358
+#define protocol_Gameplay_ObjectCreate				359
+#define protocol_Gameplay_ObjectCreatePlayer		360
+#define protocol_Gameplay_ObjectJoinTeam			361
+#define protocol_Gameplay_ObjectLeaveTeam			362
+#define protocol_Gameplay_ObjectWeaponCooldown		363
+#define protocol_Gameplay_ObjectWeaponEnergy		364
+#define protocol_Gameplay_ObjectRespawn				365
+#define protocol_Gameplay_ObjectDie					366
 #define protocol_GameplayMAX							399
 
 

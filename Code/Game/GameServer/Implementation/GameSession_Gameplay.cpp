@@ -85,7 +85,7 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		float dt = (float)GameSession::gameSession->networkTimer.getElapsedSeconds();
+		//float dt = (float)GameSession::gameSession->networkTimer.getElapsedSeconds();
 		//Duh... This was causing alot of problems, it's in the wrong place...
 		//Need to figure out where to put this frame locker.
 		//We only need to send network packages when necessary, ie not 120 times per frame. 
@@ -93,64 +93,13 @@ namespace DanBias
 		//graphics update (60 fps) on the client side. To send more than this would be lost
 		//bandwidth.
 		//if( dt >= GameSession::gameSession->networkFrameTime )
-		{
-			GameSession::gameSession->networkTimer.reset();
-
-			GameLogic::IObjectData* obj = movedObject;
-			if(movedObject->GetID() == testID)	//TODO: TEST
-			{
-				float sec = (float)testTimer.getElapsedSeconds();
-				sec = 0;
-			}
-
-			int id = obj->GetID();
-			Protocol_ObjectPosition p(obj->GetOrientation(), id);
-			//if(id != 1)
+		//{
+		//	GameSession::gameSession->networkTimer.reset();
+			int id = movedObject->GetID();
+			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
+			Protocol_ObjectPositionRotation p(movedObject->GetPosition(), movedObject->GetRotation(), id);
 			GameSession::gameSession->Send(p.GetProtocol());
-
-
-			/*
-			if(dynamic_cast<GameLogic::ILevelData*>(obj))
-			{
-				obj = ((GameLogic::ILevelData*)movedObject)->GetObjectAt(0);
-				if(obj)
-				{
-					if(obj->GetObjectType() == OBJECT_TYPE_WORLD)
-					{
-						int id = obj->GetID();
-						Oyster::Math::Float4x4 world =obj->GetOrientation();
-					
-						Protocol_ObjectPosition p(world, id);
-						gameSession->Send(p.GetProtocol());
-					}
-				}
-
-				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(1);
-				if(obj)
-				{
-					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
-					{
-						int id = obj->GetID();
-						Oyster::Math::Float4x4 world = obj->GetOrientation();
-						Protocol_ObjectPosition p(world, id);
-						gameSession->Send(p.GetProtocol());
-					}
-				}
-			
-				obj =((GameLogic::ILevelData*)movedObject)->GetObjectAt(2);
-				if(obj)
-				{
-					if(obj->GetObjectType() == OBJECT_TYPE_BOX)
-					{
-						int id = obj->GetID();
-						Oyster::Math::Float4x4 world = obj->GetOrientation();
-						Protocol_ObjectPosition p(world, id);
-						GameSession::gameSession->Send(p.GetProtocol());
-					}
-				}
-			}
-			*/
-		}
+		//}
 		
 	}
 	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject, float seconds )
@@ -168,43 +117,64 @@ namespace DanBias
 
 		switch (p[0].value.netShort)
 		{
-			case protocol_Gameplay_PlayerMovement:		this->Gameplay_PlayerMovement		( Protocol_PlayerMovement		(p), c );
+			case protocol_Gameplay_PlayerMovementBackward:		this->Gameplay_PlayerMovementBack		( c );
 			break;
-			case protocol_Gameplay_PlayerLookDir:		this->Gameplay_PlayerLookDir		( Protocol_PlayerLook			(p), c );
+			case protocol_Gameplay_PlayerMovementForward:		this->Gameplay_PlayerMovementForth		( c );
 			break;
-			case protocol_Gameplay_PlayerChangeWeapon:	this->Gameplay_PlayerChangeWeapon	( Protocol_PlayerChangeWeapon	(p), c );
+			case protocol_Gameplay_PlayerMovementLeft:			this->Gameplay_PlayerMovementLeft		( c );
 			break;
-			case protocol_Gameplay_PlayerShot:			this->Gameplay_PlayerShot			( Protocol_PlayerShot			(p), c );
+			case protocol_Gameplay_PlayerMovementRight:			this->Gameplay_PlayerMovementRight		( c );
 			break;
-			case protocol_Gameplay_PlayerJump:			this->Gameplay_PlayerJump			( Protocol_PlayerJump			(p), c );
+			case protocol_Gameplay_PlayerJump:					this->Gameplay_PlayerJump				( c );
 			break;
-			case protocol_Gameplay_ObjectPickup:		this->Gameplay_ObjectPickup			( Protocol_ObjectPickup			(p), c );
+			case protocol_Gameplay_PlayerLookDir:				this->Gameplay_PlayerLookDir			( Protocol_PlayerLook			(p), c );
 			break;
-			case protocol_Gameplay_ObjectDamage:		this->Gameplay_ObjectDamage			( Protocol_ObjectDamage			(p), c );
+			case protocol_Gameplay_PlayerChangeWeapon:			this->Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon	(p), c );
 			break;
-			case protocol_Gameplay_ObjectPosition:		this->Gameplay_ObjectPosition		( Protocol_ObjectPosition		(p), c );
+			case protocol_Gameplay_PlayerShot:					this->Gameplay_PlayerShot				( Protocol_PlayerShot			(p), c );
 			break;
-			case protocol_Gameplay_ObjectEnabled:		this->Gameplay_ObjectEnabled		( Protocol_ObjectEnable			(p), c );
+		
+			case protocol_Gameplay_ObjectPickup:				this->Gameplay_ObjectPickup				( Protocol_ObjectPickup			(p), c );
 			break;
-			case protocol_Gameplay_ObjectDisabled:		this->Gameplay_ObjectDisabled		( Protocol_ObjectDisable		(p), c );
+			case protocol_Gameplay_ObjectDamage:				this->Gameplay_ObjectDamage				( Protocol_ObjectDamage			(p), c );
 			break;
-			case protocol_Gameplay_ObjectCreate:		this->Gameplay_ObjectCreate			( Protocol_ObjectCreate			(p), c );
+			case protocol_Gameplay_ObjectPosition:				this->Gameplay_ObjectPosition			( Protocol_ObjectPosition		(p), c );
 			break;
-			case protocol_General_Status:				this->General_Status				( Protocol_General_Status		(p), c );
+			case protocol_Gameplay_ObjectEnabled:				this->Gameplay_ObjectEnabled			( Protocol_ObjectEnable			(p), c );
 			break;
-			case protocol_General_Text:					this->General_Text					( Protocol_General_Text			(p), c );
+			case protocol_Gameplay_ObjectDisabled:				this->Gameplay_ObjectDisabled			( Protocol_ObjectDisable		(p), c );
+			break;
+			case protocol_Gameplay_ObjectCreate:				this->Gameplay_ObjectCreate				( Protocol_ObjectCreate			(p), c );
+			break;
+
+			case protocol_General_Status:						this->General_Status					( Protocol_General_Status		(p), c );
+			break;
+			case protocol_General_Text:							this->General_Text						( Protocol_General_Text			(p), c );
 			break;
 		}
 	}
 
-	void GameSession::Gameplay_PlayerMovement		( Protocol_PlayerMovement& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_PlayerMovementBack		( DanBias::GameClient* c )
 	{
-		if(p.bForward)		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
-		if(p.bBackward)		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
-		if(p.bLeft)			c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
-		if(p.bRight)		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_BACKWARD);
 	}
-	void GameSession::Gameplay_PlayerLookDir		( Protocol_PlayerLook& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_PlayerMovementForth		( DanBias::GameClient* c )
+	{
+		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_FORWARD);
+	}
+	void GameSession::Gameplay_PlayerMovementLeft		( DanBias::GameClient* c )
+	{
+		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_LEFT);
+	}
+	void GameSession::Gameplay_PlayerMovementRight		( DanBias::GameClient* c )
+	{
+		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_RIGHT);
+	}
+	void GameSession::Gameplay_PlayerJump				( DanBias::GameClient* c )
+	{
+		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_JUMP);
+	}
+	void GameSession::Gameplay_PlayerLookDir			( Protocol_PlayerLook& p, DanBias::GameClient* c )
 	{
 		Oyster::Math3D::Float4 lookDir; 
 		lookDir.x = p.lookDirX;
@@ -213,46 +183,44 @@ namespace DanBias
 		lookDir.w = p.deltaX;
 		c->GetPlayer()->Rotate(lookDir);
 	}
-	void GameSession::Gameplay_PlayerChangeWeapon	( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::Gameplay_PlayerShot			( Protocol_PlayerShot& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_PlayerShot				( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{ 
 		if(p.secondaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
 		if(p.primaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
 		
 		if(p.utilityPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
 	}
-	void GameSession::Gameplay_PlayerJump			( Protocol_PlayerJump& p, DanBias::GameClient* c )
-	{
-		if(p.hasJumped)		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_JUMP);
-	}
-	void GameSession::Gameplay_ObjectPickup			( Protocol_ObjectPickup& p, DanBias::GameClient* c )
+	
+	
+	void GameSession::Gameplay_ObjectPickup				( Protocol_ObjectPickup& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::Gameplay_ObjectDamage			( Protocol_ObjectDamage& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_ObjectDamage				( Protocol_ObjectDamage& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::Gameplay_ObjectPosition		( Protocol_ObjectPosition& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_ObjectPosition			( Protocol_ObjectPosition& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::Gameplay_ObjectEnabled		( Protocol_ObjectEnable& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_ObjectEnabled			( Protocol_ObjectEnable& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::Gameplay_ObjectDisabled		( Protocol_ObjectDisable& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_ObjectDisabled			( Protocol_ObjectDisable& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::Gameplay_ObjectCreate			( Protocol_ObjectCreate& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_ObjectCreate				( Protocol_ObjectCreate& p, DanBias::GameClient* c )
 	{
 
 	}
-	void GameSession::General_Status				( Protocol_General_Status& p, DanBias::GameClient* c )
+	void GameSession::General_Status					( Protocol_General_Status& p, DanBias::GameClient* c )
 	{
 		switch (p.status)
 		{
@@ -276,7 +244,7 @@ namespace DanBias
 			break;
 		}
 	}
-	void GameSession::General_Text					( Protocol_General_Text& p, DanBias::GameClient* c )
+	void GameSession::General_Text						( Protocol_General_Text& p, DanBias::GameClient* c )
 	{
 		printf("Message recieved from (%i):\t %s\n", c->GetClient()->GetID(), p.text.c_str());
 	}

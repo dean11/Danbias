@@ -36,6 +36,8 @@ namespace GameLogic
 			int GetTeamID() const									override;
 			PLAYER_STATE GetState() const							override;
 			Oyster::Math::Float3 GetPosition()						override;
+			Oyster::Math::Quaternion GetRotation()					override;
+			Oyster::Math::Float3 GetScale()							override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;
@@ -50,6 +52,8 @@ namespace GameLogic
 			LevelData();
 			~LevelData();
 			Oyster::Math::Float3 GetPosition()						override;
+			Oyster::Math::Quaternion GetRotation()					override;
+			Oyster::Math::Float3 GetScale()							override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
 			OBJECT_TYPE GetObjectType()	const						override;

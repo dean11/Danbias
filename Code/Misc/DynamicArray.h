@@ -30,6 +30,7 @@ namespace Utility
 			T& PopBack();
 			T& Pop(unsigned int index);
 
+			void Remove(T value);
 			void Remove(unsigned int index);
 			void Remove(unsigned int first, unsigned int last);
 
@@ -168,11 +169,25 @@ namespace Utility
 				return this->data[index];
 			}
 	
+			template <typename T> void DynamicArray<T>::Remove(T value)
+			{
+				T* temp = new T[this->capacity - 1];
+		
+				for (int i = 0; i < this->size; i++)
+				{
+					if(this->data[i] == value) 
+					{
+						Remove(i);
+						break;
+					}
+				}
+			}
+
 			template <typename T> void DynamicArray<T>::Remove(unsigned int index)
 			{
 				assert(index < (unsigned int) this->size);
 
-				T* temp = new T[this->capacity - 1];
+				T* temp = new T[this->capacity];
 		
 				for (int i = 0; i < this->size; i++)
 				{

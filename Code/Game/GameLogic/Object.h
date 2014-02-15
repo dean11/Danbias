@@ -25,12 +25,14 @@ namespace GameLogic
 		Object(Oyster::Physics::ICustomBody *rigidBody ,Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter), Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), OBJECT_TYPE type);
 		~Object(void);
 
-		// API overrides
-		OBJECT_TYPE GetObjectType() const;
-		int GetID() const;
-		Oyster::Math::Float3 GetPosition();
-		Oyster::Math::Float4x4 GetOrientation();
+		OBJECT_TYPE GetObjectType() const			override;
+		int GetID() const							override;
+		Oyster::Math::Float3 GetPosition()			override;
+		Oyster::Math::Quaternion GetRotation()		override;
+		Oyster::Math::Float3 GetScale()				override;
+		Oyster::Math::Float4x4 GetOrientation()		override;
 
+		void setID(int id);
 
 		Oyster::Physics::ICustomBody* GetRigidBody();
 		void ApplyLinearImpulse(Oyster::Math::Float3 force);
@@ -44,14 +46,12 @@ namespace GameLogic
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionBefore(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj);
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 	
-	public: //TODO: Hax This should be private when level is dynamic
+	public: //HACK: This should be private when level is dynamic
 		OBJECT_TYPE type;
 		int objectID;
 
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
-		Oyster::Physics::ICustomBody::State newPhysicsState;
-		Oyster::Physics::ICustomBody::State currPhysicsState;
 
 		static const Game* gameInstance;
 		Oyster::Math::Float3 currLook;

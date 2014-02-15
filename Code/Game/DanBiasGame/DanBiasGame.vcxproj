@@ -205,6 +205,10 @@
     <ClCompile Include="GameClientState\GameClientState.cpp" />
     <ClCompile Include="GameClientState\GameState.cpp" />
     <ClCompile Include="GameClientState\LanMenuState.cpp" />
+    <ClCompile Include="GameClientState\LevelLoader\LevelLoader.cpp" />
+    <ClCompile Include="GameClientState\LevelLoader\LevelParser.cpp" />
+    <ClCompile Include="GameClientState\LevelLoader\Loader.cpp" />
+    <ClCompile Include="GameClientState\LevelLoader\ParseFunctions.cpp" />
     <ClCompile Include="GameClientState\LobbyState.cpp" />
     <ClCompile Include="GameClientState\C_Object.cpp" />
     <ClCompile Include="GameClientState\LoginState.cpp" />
@@ -219,6 +223,11 @@
     <ClInclude Include="GameClientState\GameClientState.h" />
     <ClInclude Include="GameClientState\GameState.h" />
     <ClInclude Include="GameClientState\LanMenuState.h" />
+    <ClInclude Include="GameClientState\LevelLoader\LevelLoader.h" />
+    <ClInclude Include="GameClientState\LevelLoader\LevelParser.h" />
+    <ClInclude Include="GameClientState\LevelLoader\Loader.h" />
+    <ClInclude Include="GameClientState\LevelLoader\ObjectDefines.h" />
+    <ClInclude Include="GameClientState\LevelLoader\ParseFunctions.h" />
     <ClInclude Include="GameClientState\LoginState.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />

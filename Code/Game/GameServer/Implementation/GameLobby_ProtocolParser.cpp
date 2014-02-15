@@ -9,26 +9,26 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 {
 	switch (p[0].value.netShort)
 	{
-		case protocol_General_Status:	this->GeneralStatus		(Protocol_General_Status	(p), c);
+		case protocol_General_Status:			this->GeneralStatus		(Protocol_General_Status			(p), c);
 		break;
-		case protocol_General_Text:		this->GeneralText		(Protocol_General_Text		(p), c);
+		case protocol_General_Text:				this->GeneralText		(Protocol_General_Text				(p), c);
 		break;
-		//case protocol_Lobby_Create:		this->LobbyCreateGame	(Protocol_LobbyCreateGame	(p), c);
+		//case protocol_Lobby_Create:				this->LobbyCreateGame	(Protocol_LobbyCreateGame			(p), c);
 		//break;
-		case protocol_Lobby_Start:		this->LobbyStartGame	(Protocol_LobbyStartGame	(p), c);
+		case protocol_Lobby_Start:				this->LobbyStartGame	(Protocol_LobbyStartGame			(p), c);
 		break;
-		//case protocol_Lobby_Join:		this->LobbyJoin			(Protocol_LobbyJoin			(p), c);
+		//case protocol_Lobby_Join:				this->LobbyJoin			(Protocol_LobbyJoin					(p), c);
 		//break;
-		case protocol_Lobby_Login:		this->LobbyLogin		(Protocol_LobbyLogin		(p), c);
+		case protocol_Lobby_Login:				this->LobbyLogin		(Protocol_LobbyLogin				(p), c);
 		break;
-		case protocol_Lobby_Refresh:	this->LobbyRefresh		(Protocol_LobbyRefresh		(p), c);
+		case protocol_Lobby_Refresh:			this->LobbyRefresh		(Protocol_LobbyRefresh				(p), c);
 		break;
-		case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
+		case protocol_Lobby_GameData:			this->LobbyGameData		(Protocol_LobbyGameData				(p), c);
 		break;
-		case protocol_Lobby_ClientData:	this->LobbyMainData		(Protocol_LobbyClientData	(p), c);
+		case protocol_Lobby_ClientData:			this->LobbyMainData		(Protocol_LobbyClientData			(p), c);
 		break;
-		//case protocol_Lobby_GameData:	this->LobbyGameData		(Protocol_LobbyGameData		(p), c);
-		//break;
+		case protocol_Lobby_ClientReadyState:	this->LobbyReady		(Protocol_LobbyClientReadyState		(p), c);
+		break;
 	}
 }
 
@@ -98,5 +98,15 @@ void GameLobby::LobbyMainData(GameLogic::Protocol_LobbyClientData& p, Oyster::Ne
 {
 
 }
-
+void GameLobby::LobbyReady(GameLogic::Protocol_LobbyClientReadyState& p, Oyster::Network::NetworkClient* c)
+{
+	if(p.isReady)
+	{
+		this->readyList.PushBack(c);
+	}
+	else
+	{
+		this->readyList.Remove(c);
+	}
+}
 
