@@ -31,6 +31,7 @@ namespace DanBias
 		*/
 		struct GameDescription
 		{
+			int maxClients;
 			int mapNumber;
 			int gameMode;
 			int gameTime;

@@ -10,6 +10,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <Queue.h>
+#include <future>
 
 #define DELTA_TIME_20	0.05f
 #define DELTA_TIME_24	0.04166666666666666666666666666667f
@@ -63,7 +64,8 @@ namespace DanBias
 
 	/* standard initialization of some data */
 		NetworkSession::clients = desc.clients;
-		this->clients.Reserve(desc.clients.Size());
+		NetworkSession::clients.Resize((unsigned int)desc.maxClients);
+		this->clients.Resize((unsigned int)desc.maxClients);
 		this->owner = desc.owner;
 
 	/* Initiate the game instance */
@@ -76,14 +78,17 @@ namespace DanBias
 		GameLogic::IPlayerData* p = 0;
 		for (unsigned int i = 0; i < desc.clients.Size(); i++)
 		{
-			if( (p = this->gameInstance.CreatePlayer()) )
+			if(desc.clients[i])
 			{
-				desc.clients[i]->SetOwner(this);
-				this->clients.Push(new GameClient(desc.clients[i], p));
-			}
-			else
-			{
-				printf("Failed to create player (%i)\n", i);
+				if( (p = this->gameInstance.CreatePlayer()) )
+				{
+					desc.clients[i]->SetOwner(this);
+					this->clients[i] = (new GameClient(desc.clients[i], p));
+				}
+				else
+				{
+					printf("Failed to create player (%i)\n", i);
+				}
 			}
 		}
 
@@ -125,19 +130,16 @@ namespace DanBias
 	void GameSession::ThreadEntry(  )
 	{
 	//List with clients that we are waiting on..
-		DynamicArray<SmartPointer<GameClient>> readyList = this->clients;
+		DynamicArray<SmartPointer<GameClient>> readyList;// = this->clients;
 
 	//First we need to clean invalid clients, if any, and tell them to start loading game data
-		for (unsigned int i = 0; i < readyList.Size(); i++)
+		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(!readyList[i]) 
+			if(this->clients[i]) 
 			{
-				readyList.Remove(i);
-			}
-			else
-			{
+				readyList.Push(this->clients[i]);
 				Protocol_LobbyCreateGame p(readyList[i]->GetPlayer()->GetID(), "char_white.dan", readyList[i]->GetPlayer()->GetOrientation());
-				readyList[i]->GetClient()->Send(p);
+				readyList[readyList.Size() - 1]->GetClient()->Send(p);
 			}
 		}
 	
@@ -179,7 +181,8 @@ namespace DanBias
 
 	bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> client)
 	{
-		if(!this->isCreated)	return false;
+		if(!this->isCreated)									return false;
+		if(this->GetClientCount() == this->clients.Capacity())	return false;
 
 		client->SetOwner(this);
 
@@ -187,17 +190,32 @@ namespace DanBias
 		if(!player) return false;
 
 		SmartPointer<GameClient> obj = new GameClient(client, player);
-	
-		for (unsigned int i = 0; i < clients.Size(); i++)
+
+	// Send the chosen mesh name
+		Protocol_LobbyCreateGame lcg(obj->GetPlayer()->GetID(), "char_white.dan", obj->GetPlayer()->GetOrientation());
+		obj->GetClient()->Send(lcg);
+
+	// Send the player data only
+		for (unsigned int i = 0; i < this->clients.Capacity(); i++)
+		{
+			if(this->clients[i])
+			{
+				Protocol_ObjectCreate oc(this->clients[i]->GetPlayer()->GetOrientation(), this->clients[i]->GetPlayer()->GetID(), "char_white.dan");
+				this->clients[i]->GetClient()->Send(oc);
+			}
+		}
+
+		obj->GetClient()->Send(GameLogic::Protocol_LobbyStartGame(0));
+
+		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
 			if(!clients[i])
 			{
+				NetworkSession::clients[i] = client;
 				clients[i] = obj;
 				return true;
 			}
 		}
-
-		clients.Push(obj);
 			
 		return true;
 	}

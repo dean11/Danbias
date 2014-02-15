@@ -85,7 +85,7 @@ namespace DanBias
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
-		float dt = GameSession::gameSession->networkTimer.getElapsedSeconds();
+		float dt = (float)GameSession::gameSession->networkTimer.getElapsedSeconds();
 		//Duh... This was causing alot of problems, it's in the wrong place...
 		//Need to figure out where to put this frame locker.
 		//We only need to send network packages when necessary, ie not 120 times per frame. 

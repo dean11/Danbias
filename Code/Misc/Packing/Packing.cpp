@@ -167,7 +167,7 @@ namespace Oyster
 		//bool (1-bit)
 		bool Unpackb(unsigned char buffer[])
 		{
-			return *buffer;
+			return (bool)(*buffer);
 		}
 
 		//char (8-bit)
