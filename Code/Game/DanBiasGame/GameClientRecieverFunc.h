@@ -4,20 +4,23 @@
 //WTF!? No headers included???
 #include "../DanBiasGame/Include/DanBiasGame.h"
 #include "../GameProtocols/GeneralProtocols.h"
-#include "..\GameProtocols\Protocols.h"
+#include "../GameProtocols/Protocols.h"
+#include "../Network/NetworkAPI/NetworkClient.h"
+#include "GameClientState\GameClientState.h"
+#include "GameClientState\GameState.h"
+
 #include <Utilities.h>
 
 namespace DanBias
 {
-	
-	struct GameRecieverObject	:public Oyster::Network::NetworkClient
+	struct GameRecieverObject : public Oyster::Network::NetworkClient
 	{
 		Client::GameClientState* gameClientState;
 
 		// receiver function for server messages 
 		// parsing protocols and sending it to the gameState
 		//void NetworkCallback(Oyster::Network::CustomNetProtocol& p) override
-		void GameRecieverObject::DataRecieved(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override
+		void GameRecieverObject::DataRecieved( Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e ) override
 		{
 			Oyster::Network::CustomNetProtocol p = e.args.data.protocol;
 			int pType = p[0].value.netInt;
@@ -70,13 +73,26 @@ namespace DanBias
 				break;
 			case protocol_Gameplay_ObjectPosition:
 				{
+					// 0: reserved
+					// 1: objectID
+					// 2,3,4: position
+					// 5,6,7,8: rotation quaternion
+
+					GameLogic::Protocol_ObjectPosition data(p);
 
 					Client::GameClientState::ObjPos protocolData;
-					protocolData.object_ID = p[1].value.netInt;
-					for(int i = 0; i< 16; i++)
+					protocolData.object_ID = data.object_ID;
+					//protocolData.object_ID = p[1].value.netInt;
+
+					for( int i = 0; i < 3; ++i )
 					{
-						protocolData.worldPos[i] = p[i+2].value.netFloat;
+						protocolData.position[i] = data.position[i];
 					}
+
+					//for(int i = 0; i< 16; i++)
+					//{
+					//	protocolData.worldPos[i] = p[i+2].value.netFloat;
+					//}
 
 					if(dynamic_cast<Client::GameState*>(gameClientState))
 						((Client::GameState*)gameClientState)->Protocol(&protocolData);

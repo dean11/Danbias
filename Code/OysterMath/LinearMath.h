@@ -125,17 +125,17 @@ namespace std
 	}
 
 	/*******************************************************************
-	 * @param numerator of the vector vec
-	 * @return the denomiator of the vector vec.
+	 * @param integer part of the elements in vector vec
+	 * @return the fract part of the elements in vector vec.
 	 *******************************************************************/
 	template<typename ScalarType>
-	inline ::LinearAlgebra::Vector3<ScalarType> modf( const ::LinearAlgebra::Vector3<ScalarType> &vec, ::LinearAlgebra::Vector3<ScalarType> &numerator )
+	inline ::LinearAlgebra::Vector3<ScalarType> modf( const ::LinearAlgebra::Vector3<ScalarType> &vec, ::LinearAlgebra::Vector3<ScalarType> &integer )
 	{
-		::LinearAlgebra::Vector3<ScalarType> denominator;
-		denominator.x = (ScalarType)modf( vec.x, &numerator.x );
-		denominator.y = (ScalarType)modf( vec.y, &numerator.y );
-		denominator.z = (ScalarType)modf( vec.z, &numerator.z );
-		return denominator;
+		::LinearAlgebra::Vector3<ScalarType> fract;
+		fract.x = (ScalarType)modf( vec.x, &integer.x );
+		fract.y = (ScalarType)modf( vec.y, &integer.y );
+		fract.z = (ScalarType)modf( vec.z, &integer.z );
+		return fract;
 	}
 
 	/*******************************************************************
@@ -392,6 +392,25 @@ namespace LinearAlgebra3D
 	//	return ::std::asin( ::LinearAlgebra::Vector4<ScalarType>(orientationMatrix.v[1].z, orientationMatrix.v[2].x, orientationMatrix.v[0].y, 0) );
 	//}
 
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> ScalingMatrix( const ::LinearAlgebra::Vector3<ScalarType> &s )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( s.x, 0, 0, 0,
+													   0, s.y, 0, 0,
+													   0, 0, s.z, 0,
+													   0, 0, 0, 1 );
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix4x4<ScalarType> ScalingMatrix( const ::LinearAlgebra::Vector4<ScalarType> &s )
+	{
+		return ::LinearAlgebra::Matrix4x4<ScalarType>( s.x, 0, 0, 0,
+													   0, s.y, 0, 0,
+													   0, 0, s.z, 0,
+													   0, 0, 0, s.w );
+	}
+
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Matrix4x4<ScalarType> & TranslationMatrix( const ::LinearAlgebra::Vector3<ScalarType> &position, ::LinearAlgebra::Matrix4x4<ScalarType> &targetMem = ::LinearAlgebra::Matrix4x4<ScalarType>() )
 	{
@@ -449,6 +468,17 @@ namespace LinearAlgebra3D
 		{
 			return ::LinearAlgebra::Quaternion<ScalarType>::identity;
 		}
+	}
+
+	template<typename ScalarType>
+	inline ::LinearAlgebra::Matrix3x3<ScalarType> & RotationMatrix( const ::LinearAlgebra::Quaternion<ScalarType> &rotationQuaternion, ::LinearAlgebra::Matrix3x3<ScalarType> &targetMem = ::LinearAlgebra::Matrix3x3<ScalarType>() )
+	{
+		::LinearAlgebra::Quaternion<ScalarType> conjugate = rotationQuaternion.GetConjugate();
+
+		targetMem.v[0] = (rotationQuaternion * ::LinearAlgebra::Vector3<ScalarType>(1,0,0) * conjugate).imaginary;
+		targetMem.v[1] = (rotationQuaternion * ::LinearAlgebra::Vector3<ScalarType>(0,1,0) * conjugate).imaginary;
+		targetMem.v[2] = (rotationQuaternion * ::LinearAlgebra::Vector3<ScalarType>(0,0,1) * conjugate).imaginary;
+		return targetMem;
 	}
 
 	template<typename ScalarType>
@@ -790,7 +820,7 @@ namespace LinearAlgebra3D
 	{ return normalizedAxis * ( vector.Dot(normalizedAxis) ); }
 
 	template<typename ScalarType>
-	::LinearAlgebra::Vector4<ScalarType> & SnapAngularAxis( ::LinearAlgebra::Vector4<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector4<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector4<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector4<ScalarType> &targetMem = ::LinearAlgebra::Vector4<ScalarType>() )
+	::LinearAlgebra::Vector4<ScalarType> & SnapAngularAxis( const ::LinearAlgebra::Vector4<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector4<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector4<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector4<ScalarType> &targetMem = ::LinearAlgebra::Vector4<ScalarType>() )
 	{
 		::LinearAlgebra::Vector4<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis.xyz), localStartNormal.xyz), (ScalarType)0 );
 		targetMem = ::LinearAlgebra::Vector4<ScalarType>( worldStartNormal.xyz.Cross(worldEndNormal.xyz), (ScalarType)0);
@@ -799,11 +829,12 @@ namespace LinearAlgebra3D
 	}
 
 	template<typename ScalarType>
-	::LinearAlgebra::Vector3<ScalarType> & SnapAngularAxis( ::LinearAlgebra::Vector3<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector3<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector3<ScalarType> &targetMem = ::LinearAlgebra::Vector3<ScalarType>() )
+	::LinearAlgebra::Vector3<ScalarType> & SnapAngularAxis( const ::LinearAlgebra::Vector3<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector3<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector3<ScalarType> &targetMem = ::LinearAlgebra::Vector3<ScalarType>() )
 	{
-		return targetMem = SnapAngularAxis( ::LinearAlgebra::Vector4<ScalarType>(startAngularAxis, (ScalarType)0),
-											::LinearAlgebra::Vector4<ScalarType>(localStartNormal, (ScalarType)0),
-											::LinearAlgebra::Vector4<ScalarType>(worldEndNormal, (ScalarType)0) ).xyz;
+		::LinearAlgebra::Vector3<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis), localStartNormal) );
+		targetMem = worldStartNormal.Cross( worldEndNormal );
+		targetMem *= (ScalarType)::std::acos( ::Utility::Value::Clamp(worldStartNormal.Dot(worldEndNormal), (ScalarType)0, (ScalarType)1) );
+		return targetMem += startAngularAxis;
 	}
 
 	template<typename ScalarType>

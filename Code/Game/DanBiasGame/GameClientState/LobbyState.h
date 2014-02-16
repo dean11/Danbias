@@ -5,38 +5,38 @@
 #include "OysterMath.h"
 #include "NetworkClient.h"
 #include <string>
+
+// Feature wishlist:
+// create session lobby
+// join session lobby
+// set name
+// set rules
+// set map
+// ready 
+// chat
+// kick
+
 namespace DanBias
 {
 	namespace Client
-	{
-		
-class LobbyState : public GameClientState
-{
-private:
-	Oyster::Network::NetworkClient* nwClient;
-	struct myData;
-	myData* privData;
-public:
-	LobbyState(void);
-	~LobbyState(void);
-	bool Init(Oyster::Network::NetworkClient* nwClient);
-	bool LoadModels(std::wstring file);
-	bool InitCamera(Oyster::Math::Float3 startPos);
-	ClientState Update(float deltaTime, InputClass* KeyInput);
-	// create session lobby
-	// join session lobby
-	// set name
-	// set rules
-	// set map
-	// ready 
-	// chat
-	// kick
+	{		
+		class LobbyState : public GameClientState
+		{
+		public:
+			LobbyState(void);
+			~LobbyState(void);
 
-	bool Render(float dt);
-	bool Release();
-	void Protocol(ProtocolStruct* protocol)override;
-	void PlayerJoinProtocol(PlayerName* name);
-	void GameStarted(); 
+			bool Init( Oyster::Network::NetworkClient* nwClient );
+			ClientState Update( float deltaTime, InputClass* KeyInput );
+			bool Render();
+			bool Release();
+			void ChangeState( ClientState next );
+			void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
 
-};};};
+		private:
+			struct MyData;
+			::Utility::DynamicMemory::UniquePointer<MyData> privData;
+		};
+	}
+}
 #endif // ! DANBIAS_CLIENT_GAMECLIENTSTATE_H

@@ -7,210 +7,133 @@
 
 #include "LobbyState.h"
 #include "GameState.h"
-#include "../GameClientRecieverFunc.h"
+#include "../Network/NetworkAPI/NetworkClient.h"
+
+#include "EventHandler\EventHandler.h"
+#include "Buttons\ButtonRectangle.h"
+#include "Buttons\TextField.h"
 
 #include <GameServerAPI.h>
+#include <string>
 
-using namespace DanBias::Client;
+using namespace ::DanBias::Client;
+using namespace ::Oyster;
+using namespace ::Oyster::Network;
+using namespace ::Oyster::Event;
+using namespace ::Oyster::Math3D;
 
-struct  LanMenuState::myData
+struct  LanMenuState::MyData
 {
-	myData(){}
-	Oyster::Math3D::Float4x4 view;
-	Oyster::Math3D::Float4x4 proj; 
-	C_Object* object[2]; 
-	int modelCount; 
+	MyData(){}
 
-	GameRecieverObject* recieverObj;
-	bool serverOwner;
+	GameClientState::ClientState nextState;
+	NetworkClient *nwClient;
+	Graphics::API::Texture background;
+	EventButtonCollection guiElements;
 
-	// UI object
-	// game client* 
-}privData;
+	TextField<LanMenuState*> *connectIP;
+	unsigned short connectPort;
+} privData;
 
-LanMenuState::LanMenuState()
-{
+void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
 
-}
+LanMenuState::LanMenuState() {}
 
 LanMenuState::~LanMenuState()
 {
-
+	if( this->privData )
+		this->Release();
 }
 
-bool LanMenuState::Init(Oyster::Network::NetworkClient* nwClient)
+bool LanMenuState::Init(Network::NetworkClient* nwClient)
 {
-	privData = new myData();
-	this->nwClient = nwClient;	
-	// load models
-	LoadModels(L"UImodels.txt");
-	InitCamera(Oyster::Math::Float3(0,0,5.4f));
+	this->privData = new MyData();
 
-	return true;
-}
+	this->privData->nextState = GameClientState::ClientState_Same;
+	this->privData->nwClient = nwClient;
 
-bool LanMenuState::LoadModels(std::wstring file)
-{
-	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(-2,3,0);
-	plight.Color = Oyster::Math::Float3(0,1,0);
-	plight.Radius = 10;
-	plight.Bright = 1;
-	Oyster::Graphics::API::AddLight(plight);
-	// open file
-	// read file 
-	// init models
-	privData->modelCount = 2;
+	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
-	ModelInitData modelData;
+	// create guiElements
+	ButtonRectangle<LanMenuState*> *guiElements;
+	//0.5f, 0.2f, 0.3f, 0.1f,  
+	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Connect", Float3(1.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( guiElements );
 
-	modelData.position = Oyster::Math::Float3(0,0,0);
-	modelData.rotation = Oyster::Math::Quaternion::identity;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
-	modelData.visible = true;
-	modelData.modelPath = L"..\\Content\\Models\\box_2.dan";
-	// load models
-	privData->object[0] = new C_StaticObj();
-	privData->object[0]->Init(modelData);
+	this->privData->connectIP = new TextField<LanMenuState*>( L"earth_md.png", Float3(1.0f), this, Float3(0.1f, 0.2f, 0.5f), Float2(0.45f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->connectIP->ReserveLines( 1 );
+	(*this->privData->connectIP)[0] = L"127.0.0.1";
+	this->privData->connectIP->SetTextHeight( 0.1f );
+	this->privData->connectIP->SetLineSpacing( 0.0f );
+	
+	this->privData->guiElements.AddButton( this->privData->connectIP );
 
-	modelData.position = Oyster::Math::Float3(-2, -2, -2);
+	// bind guiElements collection to the singleton eventhandler
+	EventHandler::Instance().AddCollection( &this->privData->guiElements );
 
-	privData->object[1] = new C_DynamicObj();
-	privData->object[1]->Init(modelData);
-	return true;
-}
+	this->privData->connectPort = 15151;
 
-bool LanMenuState::InitCamera(Oyster::Math::Float3 startPos)
-{
-	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
-	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
-	Oyster::Graphics::API::SetProjection(privData->proj);
-
-	privData->view = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
-	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
 	return true;
 }
 
 GameClientState::ClientState LanMenuState::Update(float deltaTime, InputClass* KeyInput)
 {
-	/*ChangeState(KeyInput);
-
-	if(privData->recieverObj->IsConnected())
-		privData->recieverObj->Update();
-	KeyInput->Update();
-
-	if(privData->serverOwner)
+	MouseInput mouseState;
 	{
-		DanBias::GameServerAPI::ServerUpdate();
+		mouseState.x = KeyInput->GetPitch();
+		mouseState.y = KeyInput->GetYaw();
+		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
 
-	DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-	state = privData->recieverObj->gameClientState->Update(deltaTime, KeyInput);
+	EventHandler::Instance().Update( mouseState );
 
-	if(state != Client::GameClientState::ClientState_Same)
-	{
-		privData->recieverObj->gameClientState->Release();
-		delete privData->recieverObj->gameClientState;
-		privData->recieverObj->gameClientState = NULL;
-
-		switch (state)
-		{
-		case Client::GameClientState::ClientState_LobbyCreated:
-			privData->serverOwner = true;
-		case Client::GameClientState::ClientState_Lobby:
-			privData->recieverObj->gameClientState = new Client::LobbyState();
-			break;
-		case Client::GameClientState::ClientState_Game:
-			privData->recieverObj->gameClientState = new Client::GameState();
-			break;
-		default:
-			//return E_FAIL;
-			break;
-		}
-		privData->recieverObj->gameClientState->Init(privData->recieverObj); // send game client
-				 
-	}*/
-
-	return ChangeState(KeyInput);
+	return this->privData->nextState;
 }
 
-GameClientState::ClientState LanMenuState::ChangeState(InputClass* KeyInput)
+bool LanMenuState::Render( )
 {
-	// create game
-	if( KeyInput->IsKeyPressed(DIK_C)) 
-	{
-		DanBias::GameServerAPI::ServerInitDesc desc; 
+	Graphics::API::NewFrame();
 
-		DanBias::GameServerAPI::ServerInitiate(desc);
-		DanBias::GameServerAPI::ServerStart();
-		// my ip
-		nwClient->Connect(15151, "127.0.0.1");
+	Graphics::API::StartGuiRender();
 
-		if (!nwClient->IsConnected())
-		{
-			// failed to connect
-			return ClientState_Same;
-		}
-		return ClientState_Lobby;
-	}
-	// join game
-	if( KeyInput->IsKeyPressed(DIK_J)) 
-	{
-		// game ip
-		nwClient->Connect(15151, "194.47.150.56");
+	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	this->privData->guiElements.RenderTexture();
 
-		if (!nwClient->IsConnected())
-		{
-			// failed to connect
-			return ClientState_Same;
-		}
-		return ClientState_Lobby;
-	}
-	return ClientState_Same;
-}
+	Graphics::API::StartTextRender();
+	this->privData->guiElements.RenderText();
 
-bool LanMenuState::Render(float dt)
-{
-	Oyster::Graphics::API::SetView(privData->view);
-	Oyster::Graphics::API::SetProjection( privData->proj);
-
-
-	Oyster::Graphics::API::NewFrame();
-	// render objects
-	for (int i = 0; i < privData->modelCount; i++)
-	{
-		privData->object[i]->Render();
-	}
-
-	// render effects
-
-	// render lights
-
-	Oyster::Graphics::API::EndFrame();
+	Graphics::API::EndFrame();
 	return true;
 }
 
 bool LanMenuState::Release()
 {
-	for (int i = 0; i < privData->modelCount; i++)
-	{
-		privData->object[i]->Release();
-		delete privData->object[i];
-		privData->object[i] = NULL;
-	}
-
-	delete privData;  
 	privData = NULL;
-  
 	return true;
 }
 
-void LanMenuState::Protocol(ProtocolStruct* protocolStruct)
+void LanMenuState::ChangeState( ClientState next )
 {
-	if((PlayerName*)protocolStruct)
-		PlayerJoinProtocol((PlayerName*)protocolStruct);
-}
-void LanMenuState::PlayerJoinProtocol(PlayerName* name)
-{
+	switch( next )
+	{
+	case GameClientState::ClientState_Lobby:
+		// attempt to connect to lobby
+		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
+			return;
+		break;
+	default: break;
+	}
 
+	this->privData->nextState = next;
+}
+
+void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		break;
+	default: break;
+	}
 }

@@ -47,7 +47,7 @@ struct Translator::PrivateData
 			headerString.push_back(it->type);
 		}
 
-		message.PackShort(headerString.size(), bytes);
+		message.PackShort((short)headerString.size(), bytes);
 		size += 2;
 
 		for(int i = 0; i < (int)headerString.size(); i++)

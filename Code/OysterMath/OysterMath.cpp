@@ -167,6 +167,11 @@ namespace Oyster { namespace Math3D
 		return ::LinearAlgebra3D::Rotation( angularAxis );
 	}
 
+	Float3x3 & RotationMatrix( const Quaternion &rotationQuaternion, Float3x3 &targetMem )
+	{
+		return ::LinearAlgebra3D::RotationMatrix( rotationQuaternion, targetMem );
+	}
+
 	Float4x4 & RotationMatrix( const Quaternion &rotationQuaternion, Float4x4 &targetMem )
 	{
 		return ::LinearAlgebra3D::RotationMatrix( rotationQuaternion, targetMem );

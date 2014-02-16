@@ -84,7 +84,7 @@ namespace Oyster
 					type = p.type; 
 					if(type == NetAttributeType_CharArray && p.value.netCharPtr)
 					{
-						int len = 0;
+						size_t len = 0;
 						if((len = strlen(p.value.netCharPtr)) == 0) return;
 						len++;
 						value.netCharPtr = new char[len];
@@ -106,7 +106,7 @@ namespace Oyster
 					type = p.type; 
 					if(type == NetAttributeType_CharArray && p.value.netCharPtr)
 					{
-						int len = 0;
+						size_t len = 0;
 						if((len = strlen(p.value.netCharPtr)) == 0) return *this;
 						len++;
 						value.netCharPtr = new char[len];

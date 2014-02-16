@@ -7,81 +7,59 @@
 #include <GameServerAPI.h>
 #include <Protocols.h>
 
-using namespace DanBias::Client;
+#include "EventHandler\EventHandler.h"
+#include "Buttons\ButtonRectangle.h"
 
-struct  LobbyState::myData
-{
-	myData(){}
-	Oyster::Math3D::Float4x4 view;
-	Oyster::Math3D::Float4x4 proj; 
-	C_Object* object[2]; 
-	int modelCount; 
-	// UI object
-	// game client* 
-}privData;
+using namespace ::DanBias::Client;
+using namespace ::Oyster;
+using namespace ::Oyster::Network;
+using namespace ::Oyster::Event;
+using namespace ::Oyster::Math3D;
 
-LobbyState::LobbyState(void)
+struct LobbyState::MyData
 {
-		
-}
+	MyData(){}
+
+	GameClientState::ClientState nextState;
+	NetworkClient *nwClient;
+	Graphics::API::Texture background;
+	EventButtonCollection guiElements;
+} privData;
+
+void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e );
+
+LobbyState::LobbyState(void) {}
 
 LobbyState::~LobbyState(void)
 {
+	if( this->privData )
+		this->Release();
+}
+
+bool LobbyState::Init(NetworkClient* nwClient)
+{
+	privData = new MyData();
+
+	this->privData->nextState = GameClientState::ClientState_Same;
+	this->privData->nwClient = nwClient;
+
+	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
+
+	// create buttons
+	ButtonRectangle<LobbyState*> *button;
 	
-}
+	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"", Float3(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	this->privData->guiElements.AddButton( button );
 
-bool LobbyState::Init(Oyster::Network::NetworkClient* nwClient)
-{
-	privData = new myData();
-	this->nwClient = nwClient;
-	// load models
-	LoadModels(L"UImodels.txt");
-	InitCamera(Oyster::Math::Float3(0,0,5.4f));
-	return true;
-}
-bool LobbyState::LoadModels(std::wstring file)
-{
-	Oyster::Graphics::Definitions::Pointlight plight;
-	plight.Pos = Oyster::Math::Float3(-2,3,0);
-	plight.Color = Oyster::Math::Float3(0,1,0);
-	plight.Radius = 10;
-	plight.Bright = 1;
-	Oyster::Graphics::API::AddLight(plight);
-	// open file
-	// read file 
-	// init models
-	privData->modelCount = 2;
+	// bind button collection to the singleton eventhandler
+	EventHandler::Instance().AddCollection( &this->privData->guiElements );
 
-	ModelInitData modelData;
-
-	modelData.position = Oyster::Math::Float3(0,0,0);
-	modelData.rotation = Oyster::Math::Quaternion::identity;
-	modelData.scale =  Oyster::Math::Float3(1,1,1);
-	modelData.visible = true;
-	modelData.modelPath = L"crate_colonists.dan";
-	// load models
-	privData->object[0] = new C_StaticObj();
-	privData->object[0]->Init(modelData);
-
-	modelData.position = Oyster::Math::Float3(2,2,2);
-
-	privData->object[1] = new C_StaticObj();
-	privData->object[1]->Init(modelData);
 	return true;
 }
 
-bool LobbyState::InitCamera(Oyster::Math::Float3 startPos)
-{
-	privData->proj = Oyster::Math3D::ProjectionMatrix_Perspective(Oyster::Math::pi/2,1024.0f/768.0f,.1f,1000);
-	//privData->proj = Oyster::Math3D::ProjectionMatrix_Orthographic(1024, 768, 1, 1000);
-	Oyster::Graphics::API::SetProjection(privData->proj);
-
-	privData->view = Oyster::Math3D::OrientationMatrix_LookAtDirection(Oyster::Math::Float3(0,0,-1),Oyster::Math::Float3(0,1,0),startPos);
-	privData->view = Oyster::Math3D::InverseOrientationMatrix(privData->view);
-	return true;
-}
 GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* KeyInput)
 {
+	// Wishlist:
 	// picking 
 	// mouse events
 	// different menus
@@ -90,61 +68,87 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 	// send data to server
 	// check data from server
 
-	if(GameServerAPI::ServerIsRunning() && GameServerAPI::ServerIsRunning())	//May be a problem if server is not shut down properly after lan session.
+	MouseInput mouseState;
 	{
-		if( KeyInput->IsKeyPressed(DIK_G)) 
-		{
-			if(!DanBias::GameServerAPI::GameStart())
-			{
-				
-			}
-		}
+		mouseState.x = KeyInput->GetPitch();
+		mouseState.y = KeyInput->GetYaw();
+		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
-	  
-	return ClientState_Same;
+
+	EventHandler::Instance().Update( mouseState );
+
+	return this->privData->nextState;
 }
-bool LobbyState::Render(float dt)
+bool LobbyState::Render( )
 {
+	Graphics::API::NewFrame();
+	Graphics::API::StartGuiRender();
 
-	Oyster::Graphics::API::SetView(privData->view);
-	Oyster::Graphics::API::SetProjection( privData->proj);
+	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	this->privData->guiElements.RenderTexture();
 
+	Graphics::API::StartTextRender();
+	this->privData->guiElements.RenderText();
 
-	Oyster::Graphics::API::NewFrame();
-	// render objects
-	for (int i = 0; i < privData->modelCount; i++)
-	{
-		privData->object[i]->Render();
-	}
-
-	// render effects
-
-	// render lights
-
-	Oyster::Graphics::API::EndFrame();
+	Graphics::API::EndFrame();
 	return true;
 }
 bool LobbyState::Release()
 {
-	Oyster::Graphics::API::ClearLights();
-	for (int i = 0; i < privData->modelCount; i++)
-	{
-		privData->object[i]->Release();
-		delete privData->object[i];
-		privData->object[i] = NULL;
-	}
-
-	delete privData;  
 	privData = NULL;
 	return true;
 }
-void LobbyState::Protocol(ProtocolStruct* protocol)
-{
-	if((PlayerName*)protocol)
-		PlayerJoinProtocol((PlayerName*)protocol);
-	
-}
-void LobbyState::PlayerJoinProtocol(PlayerName* name)
-{
 
+void LobbyState::ChangeState( ClientState next )
+{
+	if( next == GameClientState::ClientState_LobbyReady )
+	{ // Send ready signal to server lobby
+
+	}
+	else
+		this->privData->nextState = next;
+}
+
+using namespace ::Oyster::Network;
+
+void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+{
+	CustomNetProtocol data = e.args.data.protocol;
+	short ID = data[0].value.netShort; // fetching the id data.
+	
+	// Block irrelevant messages.
+	if( ProtocolIsLobby(ID) )
+	{
+		switch(ID)
+		{
+		case protocol_Lobby_Create:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Start:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Join:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Login:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Refresh:	break; /** @todo TODO: implement */
+		case protocol_Lobby_ClientData:	break; /** @todo TODO: implement */
+		case protocol_Lobby_GameData:	break; /** @todo TODO: implement */
+		default:						break;
+		}
+	}
+	else if( ProtocolIsGeneral(ID) )
+	{
+		switch( ID )
+		{
+			case protocol_General_Status:				break; /** @todo TODO: implement */
+			case protocol_General_Text:					break; /** @todo TODO: implement */
+		default: break;
+		}
+	}
+}
+
+void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameClientState::ClientState_LobbyReady );
+		break;
+	default: break;
+	}
 }

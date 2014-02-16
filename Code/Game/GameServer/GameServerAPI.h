@@ -4,7 +4,7 @@
 #ifndef DANBIAS_SERVER_DANBIAS_SERVER_H
 #define DANBIAS_SERVER_DANBIAS_SERVER_H
 
-#include <vld.h>
+//#include <vld.h>
 
 #define DANBIAS_SERVER
 

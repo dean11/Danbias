@@ -171,6 +171,9 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 	Quaternion Rotation( const Float4 &angularAxis );
 
 	/** @todo TODO: add doc */
+	Float3x3 & RotationMatrix( const Quaternion &rotationQuaternion, Float3x3 &targetMem );
+
+	/** @todo TODO: add doc */
 	Float4x4 & RotationMatrix( const Quaternion &rotationQuaternion, Float4x4 &targetMem = Float4x4() );
 
 	/** @todo TODO: add doc */
@@ -334,6 +337,8 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 	using ::LinearAlgebra3D::InterpolateOrientation_UsingRigidNlerp;
 	using ::LinearAlgebra3D::InterpolateOrientation_UsingSlerp;
 	using ::LinearAlgebra3D::SnapAngularAxis;
+	using ::LinearAlgebra3D::WorldAxisOf;
+	using ::LinearAlgebra3D::ScalingMatrix;
 } }
 
 #endif

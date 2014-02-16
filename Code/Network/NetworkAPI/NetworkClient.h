@@ -116,6 +116,11 @@ namespace Oyster
 				/**
 				*	
 				*/
+				void SetMessagePump( ClientEventFunction func );
+
+				/**
+				*	
+				*/
 				bool IsConnected();
 				
 				/**
@@ -140,6 +145,7 @@ namespace Oyster
 				NetworkClient(const NetworkClient& obj);
 				NetworkClient& operator =(const NetworkClient& obj);
 
+				ClientEventFunction OnRecieve;
 				struct PrivateData;
 				PrivateData* privateData;
 			};
