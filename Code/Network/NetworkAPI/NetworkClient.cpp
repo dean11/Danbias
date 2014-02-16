@@ -1,3 +1,7 @@
+//////////////////////////////////////
+// Created by Pontus Fransson 2013  //
+// Modified by Dennis Andersen 2014 //
+//////////////////////////////////////
 #ifndef INCLUDE_WINSOCK_LIB
 #define INCLUDE_WINSOCK_LIB
 	#pragma comment(lib, "ws2_32.lib")

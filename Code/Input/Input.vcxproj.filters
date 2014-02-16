@@ -68,5 +68,8 @@
     <ClInclude Include="Include\PreReq.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

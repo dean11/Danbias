@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Common.h" />
+    <ClInclude Include="Include\Input.h" />
     <ClInclude Include="Include\InputManager.h" />
     <ClInclude Include="Include\InputObject.h" />
     <ClInclude Include="Include\Keyboard.h" />
