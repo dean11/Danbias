@@ -67,21 +67,15 @@ bool MainState::Init( NetworkClient* nwClient )
 	return true;
 }
 
-float mouseX, mouseY; // debug test
-
 GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyInput)
 {
 	MouseInput mouseState;
 	{
-		mouseState.x = KeyInput->GetPitch();
-		mouseState.y = KeyInput->GetYaw();
+		KeyInput->GetMousePos( mouseState.x, mouseState.y );
 		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
 
 	EventHandler::Instance().Update( mouseState );
-
-	mouseX = mouseState.x; // debug test
-	mouseY = mouseState.y; // debug test
 
 	return this->privData->nextState;
 }
@@ -91,14 +85,11 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
 	this->privData->guiElements.RenderText();
-
-	Graphics::API::RenderText( ::std::to_wstring(mouseX), Float2(0.2f, 0.5f), Float2(0.2f, 0.05f) ); // debug test
-	Graphics::API::RenderText( ::std::to_wstring(mouseY), Float2(0.5f, 0.5f), Float2(0.2f, 0.05f) ); // debug test
 
 	Graphics::API::EndFrame();
 	return true;
@@ -108,7 +99,7 @@ bool MainState::Release()
 {
 	if( this->privData )
 	{
-		Graphics::API::DeleteTexture( this->privData->background ); // TODO: @todo bug caught when exiting by X
+		Graphics::API::DeleteTexture( this->privData->background );
 		EventHandler::Instance().ReleaseCollection( &this->privData->guiElements );
 
 		this->privData = NULL;

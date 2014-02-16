@@ -5,6 +5,8 @@ InputClass::InputClass()
 	m_directInput	= NULL;
 	m_keyboard		= NULL;
 	m_mouse			= NULL;
+	mousePosX		= 0.0f;
+	mousePosY		= 0.0f;
 }
 
 InputClass::~InputClass()
@@ -128,6 +130,13 @@ bool InputClass::Update()
 	return true;
 }
 
+bool InputClass::Update( float mousePosX, float mousePosY )
+{
+	this->mousePosX = mousePosX;
+	this->mousePosY = mousePosY;
+	return this->Update();
+}
+
 bool InputClass::ReadKeyboard()
 {
 	HRESULT result;
@@ -197,4 +206,16 @@ bool InputClass::IsKeyPressed(int key)
 		return true;
 
 	return false;
+}
+
+void InputClass::SetMousePos( float x, float y )
+{
+	this->mousePosX = y;
+	this->mousePosY = x;
+}
+
+void InputClass::GetMousePos( float &x, float &y )
+{
+	x = this->mousePosX;
+	y = this->mousePosY;
 }

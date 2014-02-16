@@ -207,7 +207,8 @@ namespace DanBias
 		{
 			if(this->clients[i])
 			{
-				Protocol_ObjectCreate oc(this->clients[i]->GetPlayer()->GetOrientation(), this->clients[i]->GetPlayer()->GetID(), "char_white.dan");
+				IPlayerData* p = this->clients[i]->GetPlayer();
+				Protocol_ObjectCreate oc(p->GetPosition(), p->GetRotation(), p->GetScale(), p->GetID(), "char_white.dan");
 				this->clients[i]->GetClient()->Send(oc);
 			}
 		}

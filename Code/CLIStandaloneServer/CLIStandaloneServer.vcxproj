@@ -139,14 +139,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="C++StandaloneCLI.h" />
+    <ClInclude Include="StandaloneGameServerCLI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="C++StandaloneCLI.cpp" />
+    <ClCompile Include="StandaloneGameServerCLI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

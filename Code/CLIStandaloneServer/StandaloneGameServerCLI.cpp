@@ -1,17 +1,20 @@
-#include "C++StandaloneCLI.h"
+#include "StandaloneGameServerCLI.h"
+
 
 using namespace System;
+using namespace System::Windows::Interop;
+using namespace System::Windows;
 using namespace System::Runtime::InteropServices;
 
-CppStandaloneCLI::CppStandaloneCLI()
+StandaloneGameServerCLI::StandaloneGameServerCLI()
 {
 }
 
-CppStandaloneCLI::~CppStandaloneCLI()
+StandaloneGameServerCLI::~StandaloneGameServerCLI()
 {
 }
 
-DanBiasServerReturn CppStandaloneCLI::ServerInitiate(ServerInitDesc desc)
+DanBiasServerReturn StandaloneGameServerCLI::ServerInitiate(ServerInitDesc desc)
 {
 	DanBias::GameServerAPI::ServerInitDesc d;
 	//Convert from String to char*
@@ -25,22 +28,22 @@ DanBiasServerReturn CppStandaloneCLI::ServerInitiate(ServerInitDesc desc)
 	return (DanBiasServerReturn)DanBias::GameServerAPI::ServerInitiate(d);
 }
 
-void CppStandaloneCLI::ServerStart()
+void StandaloneGameServerCLI::ServerStart()
 {
 	DanBias::GameServerAPI::ServerStart();
 }
 
-void CppStandaloneCLI::ServerStop()
+void StandaloneGameServerCLI::ServerStop()
 {
 	DanBias::GameServerAPI::ServerStop();
 }
 
-void CppStandaloneCLI::ServerUpdate()
+void StandaloneGameServerCLI::ServerUpdate()
 {
 	DanBias::GameServerAPI::ServerUpdate();
 }
 
-GameServerInfo CppStandaloneCLI::ServerGetInfo()
+GameServerInfo StandaloneGameServerCLI::ServerGetInfo()
 {
 	GameServerInfo info;
 
@@ -51,57 +54,57 @@ GameServerInfo CppStandaloneCLI::ServerGetInfo()
 	return info;
 }
 
-bool CppStandaloneCLI::ServerIsRunning()
+bool StandaloneGameServerCLI::ServerIsRunning()
 {
 	return DanBias::GameServerAPI::ServerIsRunning();
 }
 
-void CppStandaloneCLI::GameSetMapId(const int val)
+void StandaloneGameServerCLI::GameSetMapId(const int val)
 {
 	DanBias::GameServerAPI::GameSetMapId(val);
 }
 
-void CppStandaloneCLI::GameSetMaxClients(const int val)
+void StandaloneGameServerCLI::GameSetMaxClients(const int val)
 {
 	DanBias::GameServerAPI::GameSetMaxClients(val);
 }
 
-void CppStandaloneCLI::GameSetGameMode(const int val)
+void StandaloneGameServerCLI::GameSetGameMode(const int val)
 {
 	DanBias::GameServerAPI::GameSetGameMode(val);
 }
 
-void CppStandaloneCLI::GameSetGameTime(const int val)
+void StandaloneGameServerCLI::GameSetGameTime(const int val)
 {
 	DanBias::GameServerAPI::GameSetGameTime(val);
 }
 
-int CppStandaloneCLI::GameGetMapId()
+int StandaloneGameServerCLI::GameGetMapId()
 {
 	return DanBias::GameServerAPI::GameGetMapId();
 }
 
-int CppStandaloneCLI::GameGetMaxClients()
+int StandaloneGameServerCLI::GameGetMaxClients()
 {
 	return DanBias::GameServerAPI::GameGetMaxClients();
 }
 
-int CppStandaloneCLI::GameGetGameMode()
+int StandaloneGameServerCLI::GameGetGameMode()
 {
 	return DanBias::GameServerAPI::GameGetGameMode();
 }
 
-int CppStandaloneCLI::GameGetGameTime()
+int StandaloneGameServerCLI::GameGetGameTime()
 {
 	return DanBias::GameServerAPI::GameGetGameTime();
 }
 
-String^ CppStandaloneCLI::GameGetGameName()
+String^ StandaloneGameServerCLI::GameGetGameName()
 {
 	return gcnew String(DanBias::GameServerAPI::GameGetGameName());
 }
 
-bool CppStandaloneCLI::GameStart()
+bool StandaloneGameServerCLI::GameStart()
 {
 	return DanBias::GameServerAPI::GameStart();
 }

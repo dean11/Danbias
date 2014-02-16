@@ -16,7 +16,13 @@ namespace StandAloneLauncher
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            //Application.Run(new Form1());
+
+
+            Form1 myf = new Form1();
+            myf.Show();
+            myf.Initiate();
+            myf.Run();
         }
     }
 }
