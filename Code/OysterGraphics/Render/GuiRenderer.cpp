@@ -91,8 +91,8 @@ namespace Oyster
 				{
 					tmpInst.coff=(1.0f/TEXT_NR_LETTERS);
 					tmpInst.offset=text[i]-32;
-					tmpInst.pos=i*(FontSize * 0.8f * TEXT_SPACING);
-					if(tmpInst.pos > size.x)
+					tmpInst.pos=i*(FontSize * 0.7f * TEXT_SPACING);
+					if(tmpInst.pos > size.x*2)
 					{
 						text = text.substr(0,i-1);
 						break;

@@ -48,7 +48,7 @@ bool LobbyState::Init(NetworkClient* nwClient)
 	// create buttons
 	ButtonRectangle<LobbyState*> *button;
 	
-	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"", Float3(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"Ready", Float3(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
@@ -70,8 +70,7 @@ GameClientState::ClientState LobbyState::Update(float deltaTime, InputClass* Key
 
 	MouseInput mouseState;
 	{
-		mouseState.x = KeyInput->GetPitch();
-		mouseState.y = KeyInput->GetYaw();
+		KeyInput->GetMousePos( mouseState.x, mouseState.y );
 		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
 	}
 
@@ -84,7 +83,7 @@ bool LobbyState::Render( )
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->background, Float2(0.5f), Float2(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
@@ -103,7 +102,7 @@ void LobbyState::ChangeState( ClientState next )
 {
 	if( next == GameClientState::ClientState_LobbyReady )
 	{ // Send ready signal to server lobby
-
+		this->ChangeState( GameClientState::ClientState_NetLoad );
 	}
 	else
 		this->privData->nextState = next;
@@ -121,14 +120,14 @@ void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEve
 	{
 		switch(ID)
 		{
-		case protocol_Lobby_Create:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Start:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Join:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Login:		break; /** @todo TODO: implement */
-		case protocol_Lobby_Refresh:	break; /** @todo TODO: implement */
-		case protocol_Lobby_ClientData:	break; /** @todo TODO: implement */
-		case protocol_Lobby_GameData:	break; /** @todo TODO: implement */
-		default:						break;
+		case protocol_Lobby_CreateGame:		break; /** @todo TODO: implement */
+		case protocol_Lobby_StartGame:		break; /** @todo TODO: implement */
+		case protocol_Lobby_JoinGame:		break; /** @todo TODO: implement */
+		case protocol_Lobby_Login:			break; /** @todo TODO: implement */
+		case protocol_Lobby_Refresh:		break; /** @todo TODO: implement */
+		case protocol_Lobby_ClientData:		break; /** @todo TODO: implement */
+		case protocol_Lobby_GameData:		break; /** @todo TODO: implement */
+		default:							break;
 		}
 	}
 	else if( ProtocolIsGeneral(ID) )

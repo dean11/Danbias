@@ -645,6 +645,7 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 		if ( SUCCEEDED(hr) && ( fmtSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN ) )
 		{
 			autogen = true;
+			autogen = false;
 		}
 	}
 

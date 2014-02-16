@@ -8,6 +8,7 @@
 #include "GameClientState\LobbyAdminState.h"
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
+#include "GameClientState\NetLoadState.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
 #include <GameServerAPI.h>
@@ -56,7 +57,6 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
 	{
-
 		WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 		if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
@@ -151,7 +151,21 @@ namespace DanBias
 	
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
-		data.inputObj->Update();
+		{ // updating mouse input
+			POINT mousePos;
+			GetCursorPos( &mousePos );
+
+			RECT windowVertex;
+			GetWindowRect( data.window->GetHWND(), &windowVertex );
+
+			float mouseNormalisedX = (float)(mousePos.x - windowVertex.left);
+			mouseNormalisedX /= (float)(windowVertex.right - windowVertex.left);
+
+			float mouseNormalisedY = (float)(mousePos.y - windowVertex.top);
+			mouseNormalisedY /= (float)(windowVertex.bottom - windowVertex.top);
+
+			data.inputObj->Update( mouseNormalisedX, mouseNormalisedY );
+		}		
 
 		if( data.serverOwner )
 		{
@@ -169,8 +183,8 @@ namespace DanBias
 
 			switch (state)
 			{
-			case Client::GameClientState::ClientState_LobbyCreate:
-				data.state = new Client::LobbyAdminState();
+			case Client::GameClientState::ClientState_Main:
+				data.state = new Client::MainState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Lan:
@@ -181,8 +195,16 @@ namespace DanBias
 				data.state = new Client::LobbyState();
 				stateChanged = true;
 				break;
+			case Client::GameClientState::ClientState_LobbyCreate:
+				data.state = new Client::LobbyAdminState();
+				stateChanged = true;
+				break;
 			case Client::GameClientState::ClientState_Game:
 				data.state = new Client::GameState();
+				stateChanged = true;
+				break;
+			case Client::GameClientState::ClientState_NetLoad:
+				data.state = new Client::NetLoadState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Quit:

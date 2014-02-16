@@ -215,6 +215,7 @@
     <ClCompile Include="GameClientState\LobbyState.cpp" />
     <ClCompile Include="GameClientState\C_Object.cpp" />
     <ClCompile Include="GameClientState\MainState.cpp" />
+    <ClCompile Include="GameClientState\NetLoadState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameClientState\Camera_Basic.h" />
@@ -237,6 +238,7 @@
     <ClInclude Include="GameClientState\LevelLoader\ParseFunctions.h" />
     <ClInclude Include="GameClientState\LobbyAdminState.h" />
     <ClInclude Include="GameClientState\MainState.h" />
+    <ClInclude Include="GameClientState\NetLoadState.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />
     <ClInclude Include="GameClientState\C_Object.h" />

@@ -5,6 +5,7 @@ namespace DanBias
 {
 	namespace Client
 	{
+
 		struct  ModelInitData
 		{
 			int id;
@@ -15,52 +16,37 @@ namespace DanBias
 			bool visible; 
 		};
 
-		class C_Object
-		{
-		protected:
-			Oyster::Graphics::Model::Model *model;
-		private:
-			Oyster::Math::Float4x4 world; 
-			Oyster::Math::Float3 position; 
-			Oyster::Math::Quaternion rotation; 
-			Oyster::Math::Float3 scale; 
-			
-			int id;
-			void updateWorld();
-		public:
-
-			virtual void Init(ModelInitData modelInit);
+class C_Object
+{
+private:
+	Oyster::Math::Float4x4 world; 
+	Oyster::Math::Float3 position; 
+	Oyster::Math::Quaternion rotation; 
+	Oyster::Math::Float3 scale; 
 	
-			void setWorld(Oyster::Math::Float4x4 world);
-			Oyster::Math::Float4x4 getWorld() const;
-			void setPos(Oyster::Math::Float3 newPos);
-			Oyster::Math::Float3  getPos() const;
-			void addPos(Oyster::Math::Float3 deltaPos);
-			void setRot(Oyster::Math::Quaternion newRot);
-			Oyster::Math::Quaternion  getRotation() const;
-			void addRot(Oyster::Math::Quaternion deltaRot);
-			void setScale(Oyster::Math::Float3 newScale);
-			void addScale(Oyster::Math::Float3 deltaScale);
-			Oyster::Math::Float3  getScale() const;
+	int id;
+	void updateWorld();
+protected:
+	Oyster::Graphics::Model::Model *model;
+public:
+	C_Object();
+	virtual ~C_Object();
+	virtual bool Init(ModelInitData modelInit);
+	
+	void setWorld(Oyster::Math::Float4x4 world);
+	Oyster::Math::Float4x4 getWorld() const;
+	void setPos(Oyster::Math::Float3 newPos);
+	Oyster::Math::Float3  getPos() const;
+	void addPos(Oyster::Math::Float3 deltaPos);
+	void setRot(Oyster::Math::Quaternion newRot);
+	Oyster::Math::Quaternion  getRotation() const;
+	void addRot(Oyster::Math::Quaternion deltaRot);
+	void setScale(Oyster::Math::Float3 newScale);
+	void addScale(Oyster::Math::Float3 deltaScale);
+	Oyster::Math::Float3  getScale() const;
 
-			virtual void Render();
-			virtual void Release();
-			virtual int GetId() const;
-		};
-	}
-}
-
-namespace Utility { namespace DynamicMemory
-{ // template specializationto allowuse of dynamicmemory tools
-	template<>
-	inline void SafeDeleteInstance( ::DanBias::Client::C_Object *dynamicInstance )
-	{
-		if( dynamicInstance )
-		{
-			dynamicInstance->Release();
-			delete dynamicInstance;
-		}
-	}
-} }
-
+	virtual void Render();
+	virtual void Release();
+	virtual int GetId() const;
+};};};
 #endif

@@ -71,7 +71,7 @@ const wchar_t* FindResourceKey(std::map<std::wstring, ResourceData*>& resources,
 {
 	for (auto i = resources.begin(); i != resources.end() ; i++)
 	{
-		if(i->second->resource == h)
+		if(i->second && i->second->resource == h)
 		{
 			return i->first.c_str();
 		}

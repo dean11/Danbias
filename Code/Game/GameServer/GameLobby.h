@@ -41,7 +41,7 @@ namespace DanBias
 		//void LobbyCreateGame(GameLogic::Protocol_LobbyCreateGame& p, Oyster::Network::NetworkClient* c);	//id = protocol_Lobby_Create:
 		void LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_Start:
 		//void LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Join:				
-		void LobbyLogin(GameLogic::Protocol_LobbyLogin& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Login:
+		void LobbyLogin(GameLogic::Protocol_LobbyJoinGame& p, Oyster::Network::NetworkClient* c);				//id = protocol_Lobby_Login:
 		void LobbyRefresh(GameLogic::Protocol_LobbyRefresh& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_Refresh:
 		void LobbyGameData(GameLogic::Protocol_LobbyGameData& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_GameData:
 		void LobbyMainData(GameLogic::Protocol_LobbyClientData& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_MainData:

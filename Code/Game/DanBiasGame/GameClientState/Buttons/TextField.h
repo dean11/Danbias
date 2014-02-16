@@ -28,7 +28,7 @@ namespace DanBias { namespace Client
 		const ::std::wstring & operator[]( unsigned int i ) const;
 			  ::std::wstring & operator[]( unsigned int i );
 
-		void SetTextHeight( ::Oyster::Math::Float h );
+		void SetFontHeight( ::Oyster::Math::Float h );
 		void SetLineSpacing( ::Oyster::Math::Float ls );
 
 		void SetBottomAligned();
@@ -46,7 +46,7 @@ namespace DanBias { namespace Client
 
 	private:
 		bool isBottomAligned;
-		::Oyster::Math::Float textHeight, lineSpacing;
+		::Oyster::Math::Float fontHeight, lineSpacing;
 		::std::vector<::std::wstring> lines;
 	};
 
@@ -56,7 +56,7 @@ namespace DanBias { namespace Client
 	TextField<Owner>::TextField()
 		: ButtonRectangle()
 	{
-		this->textHeight = 0.025f;
+		this->fontHeight = 0.025f;
 		this->lineSpacing = 0.001f;
 		this->isBottomAligned = true;
 	}
@@ -65,7 +65,7 @@ namespace DanBias { namespace Client
 	TextField<Owner>::TextField( ::std::wstring backgroundTexture, ::Oyster::Math::Float3 textColor, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize )
 		: ButtonRectangle( backgroundTexture, L"", textColor, owner, pos, size, resize )
 	{
-		this->textHeight = 0.025f;
+		this->fontHeight = 0.025f;
 		this->lineSpacing = 0.001f;
 		this->isBottomAligned = true;
 	}
@@ -76,38 +76,37 @@ namespace DanBias { namespace Client
 	template<typename Owner>
 	void TextField<Owner>::RenderText()
 	{
-		::Oyster::Math::Float lineStep = this->textHeight + this->lineSpacing;
-		::Oyster::Math::Float2 rowSize = ::Oyster::Math::Float2( this->size.x, this->textHeight );
+		::Oyster::Math::Float lineStep = this->fontHeight + this->lineSpacing;
+		::Oyster::Math::Float2 rowSize = ::Oyster::Math::Float2( this->size.x, this->fontHeight );
+		::Oyster::Math::Float3 fieldTopLeft = this->pos - Float3( this->size * 0.25f, 0.0f );
+		::Oyster::Math::Float3 topLeft = fieldTopLeft;
 
 		if( this->isBottomAligned )
 		{
-			::Oyster::Math::Float2 topLeft = this->pos;
 			topLeft.y += this->size.y - lineStep;
 
 			auto line = this->lines.rbegin();
 			for( ; line != this->lines.rend(); ++line )
 			{
-				if( topLeft.y - lineStep >= this->pos.y )
-				{
-					::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->textColor );
-					topLeft.y -= lineStep;
-				}
-				else break;
+				if( topLeft.y < fieldTopLeft.y )
+					break;
+
+				::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->fontHeight, this->textColor );
+				topLeft.y -= lineStep;				
 			}
 		}
 		else
 		{
-			::Oyster::Math::Float2 topLeft = this->pos;
+			topLeft.y += this->lineSpacing;
 
 			auto line = this->lines.begin();
 			for( ; line != this->lines.end(); ++line )
 			{
-				if( topLeft.y + lineStep < this->size.y )
-				{
-					::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->textColor );
-					topLeft.y += lineStep;
-				}
-				else break;
+				if( topLeft.y >= fieldTopLeft.y + this->size.y )
+					break;
+
+				::Oyster::Graphics::API::RenderText( (*line), topLeft, rowSize, this->fontHeight, this->textColor );
+				topLeft.y += lineStep;				
 			}
 		}
 	}
@@ -125,9 +124,9 @@ namespace DanBias { namespace Client
 	}
 
 	template<typename Owner>
-	void TextField<Owner>::SetTextHeight( ::Oyster::Math::Float h )
+	void TextField<Owner>::SetFontHeight( ::Oyster::Math::Float h )
 	{
-		this->textHeight = h;
+		this->fontHeight = h;
 	}
 
 	template<typename Owner>
@@ -173,7 +172,7 @@ namespace DanBias { namespace Client
 		split.reserve( 10 );
 		::Utility::String::Split( split, text, L"\n", 0 );
 		auto line = split.begin();
-		for( ; line != split.end; ++line )
+		for( ; line != split.end(); ++line )
 		{
 			this->lines.push_back( (*line) );
 		}

@@ -33,7 +33,7 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_Sky: 
 		{
 			float skySize = ((SkyAttributes*)obj)->skySize; 
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID++); 
+			//gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID++); 
 		}
 		break;
 	case ObjectSpecialType_World: 
@@ -96,7 +96,7 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_JumpPad: 
 		{
-			float power = ((JumpPadAttributes*)obj)->power; 
+			float power = 500; //((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
 			Oyster::Math::Float3 pushForce = dir * power; 
 			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++ , pushForce);
@@ -108,16 +108,15 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			gameObj = new Portal(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, destination);
 		}
 		break;
-	case ObjectSpecialType_SpawnPoint: 
-		{
+	//case ObjectSpecialType_SpawnPoint: 
+		//{
 			// save 
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID++); 
-		}
+			
+		//}
 		break;
 	case ObjectSpecialType_Player: 
 		{
 			// should not be read from the lvl format
-			//gameObj = new Player(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID,objID++);
 		}
 		break;
 	case ObjectSpecialType_Generic:
@@ -206,12 +205,10 @@ void Level::InitiateLevel(std::string levelPath)
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
 	API::Instance().SetGravity(200);
 	int objCount = objects.size();
-	int modelCount = 100;
 
 	for (int i = 0; i < objCount; i++)
 	{
 		ObjectTypeHeader* obj = objects.at(i);
-		int id = obj->typeID;
 		switch (obj->typeID)
 		{
 		case ObjectType::ObjectType_LevelMetaData:
@@ -223,7 +220,6 @@ void Level::InitiateLevel(std::string levelPath)
 			break;
 		case ObjectType::ObjectType_Static:
 			{
-				
 				ObjectHeader* staticObjData = ((ObjectHeader*)obj);
 				staticObjData->ModelFile;
 
@@ -237,7 +233,6 @@ void Level::InitiateLevel(std::string levelPath)
 
 				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
 				{	
-
 					rigidBody_Static = InitRigidBodyCube(staticObjData);
 				}
 
@@ -248,22 +243,13 @@ void Level::InitiateLevel(std::string levelPath)
 
 				if(rigidBody_Static != NULL)
 				{
-
 					// create game object
 					Object* staticGameObj = createGameObj(staticObjData, rigidBody_Static);
-					//Object* staticGameObj = new StaticObject(rigidBody_Static, Object::DefaultCollisionAfter, (ObjectSpecialType)staticObjData->specialTypeID); 
 					if(staticGameObj != NULL)
 					{
 						this->staticObjects.Push((StaticObject*)staticGameObj);
-						//this->staticObjects[this->staticObjects.Size()-1]->objectID = modelCount++;
-						//rigidBody_Static->SetCustomTag(this->staticObjects[this->staticObjects.Size()-1]);
 					}
-
-					//this->staticObjects.Push(new StaticObject(rigidBody_Static, Object::DefaultCollisionAfter, (ObjectSpecialType)staticObjData->specialTypeID, 0));
-					//this->staticObjects[staticObjCount]->objectID = modelCount++;
-
 				}
-
 			}
 			break;
 		case ObjectType::ObjectType_Dynamic:
@@ -293,12 +279,9 @@ void Level::InitiateLevel(std::string levelPath)
 				{
 					// create game object
 					Object* dynamicGameObj = createGameObj(dynamicObjData, rigidBody_Dynamic);
-					//Object* dynamicGameObj =new DynamicObject(rigidBody_Dynamic, Object::DefaultCollisionAfter, (ObjectSpecialType)dynamicObjData->specialTypeID);
 					if (dynamicGameObj != NULL)
 					{
 						this->dynamicObjects.Push((DynamicObject*)dynamicGameObj);
-						//this->dynamicObjects[this->dynamicObjects.Size()-1]->objectID = modelCount++;
-						//rigidBody_Dynamic->SetCustomTag(this->dynamicObjects[this->dynamicObjects.Size()-1]);
 					}
 				}
 			}
@@ -334,9 +317,6 @@ void Level::InitiateLevel(float radius)
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5, 0.5f, 0.8f, 0.6f);
 
 		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
-
-		//this->dynamicObjects[i]->objectID = idCount++;
-		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
 	}
 	/*offset += nrOfBoxex;
 	for(int i =0; i< nrOfBoxex; i ++)
@@ -365,31 +345,18 @@ void Level::InitiateLevel(float radius)
 		
 	}*/
 	
-
-
-
-
 	// add crystal
 	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 605, 0), 5, 0.5f, 0.8f, 0.6f);
-
 	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
-	rigidBody_Crystal->SetCustomTag(this->dynamicObjects[nrOfBoxex]);
-	//this->dynamicObjects[nrOfBoxex]->objectID = idCount++;
-	
-
 
 	// add house
 	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20, 20, 20), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(-50, 590, 0), 0, 0.5f, 0.8f, 0.6f);
 	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, ObjectSpecialType_Generic, idCount++));
-	rigidBody_House->SetCustomTag(this->staticObjects[0]);
-	//this->staticObjects[0]->objectID = idCount++;
 
 	// add jumppad
-	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1, 1, 1), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 0, 0.5f, 0.8f, 0.6f);
 
+	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1, 1, 1), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 5, 0.5f, 0.8f, 0.6f);
 	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, ObjectSpecialType_JumpPad,idCount++ ,Oyster::Math::Float3(0,2000,0)));
-	rigidBody_Jumppad->SetCustomTag(this->staticObjects[1]);
-	//this->staticObjects[1]->objectID = idCount++;
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)

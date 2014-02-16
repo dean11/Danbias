@@ -21,6 +21,24 @@
 
 namespace GameLogic
 {
+	struct Protocol_QuerryGameType :public Oyster::Network::CustomProtocolObject
+	{
+	public:
+		Protocol_QuerryGameType()
+		{
+			this->protocol[0].type = ::Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_QuerryGameType;
+		}
+
+		::Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			return this->protocol;
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
 	struct Protocol_LobbyCreateGame :public Oyster::Network::CustomProtocolObject
 	{
 		short clientID; // The unuiqe id reprsenting a specific client
@@ -30,7 +48,7 @@ namespace GameLogic
 		Protocol_LobbyCreateGame()
 		{
 			int c = 0;
-			this->protocol[c].value = protocol_Lobby_Create;
+			this->protocol[c].value = protocol_Lobby_CreateGame;
 			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
@@ -43,7 +61,7 @@ namespace GameLogic
 		Protocol_LobbyCreateGame(short _clientID, std::string name, float world[16])
 		{
 			int c = 0;
-			this->protocol[c].value = protocol_Lobby_Create;
+			this->protocol[c].value = protocol_Lobby_CreateGame;
 			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
@@ -92,14 +110,14 @@ namespace GameLogic
 
 		Protocol_LobbyStartGame()
 		{
-			this->protocol[0].value = protocol_Lobby_Start;
+			this->protocol[0].value = protocol_Lobby_StartGame;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			seconds = 0;
 		}
 		Protocol_LobbyStartGame(float _seconds)
 		{
-			this->protocol[0].value = protocol_Lobby_Start;
+			this->protocol[0].value = protocol_Lobby_StartGame;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 			seconds = _seconds;
@@ -119,17 +137,17 @@ namespace GameLogic
 
 	};
 
-	struct Protocol_LobbyLogin :public Oyster::Network::CustomProtocolObject
+	struct Protocol_LobbyJoinGame :public Oyster::Network::CustomProtocolObject
 	{
 		// Login stuff
-		Protocol_LobbyLogin()
+		Protocol_LobbyJoinGame()
 		{
-			this->protocol[0].value = protocol_Lobby_Join;
+			this->protocol[0].value = protocol_Lobby_JoinGame;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 		}
-		Protocol_LobbyLogin(Oyster::Network::CustomNetProtocol& p)
+		Protocol_LobbyJoinGame(Oyster::Network::CustomNetProtocol& p)
 		{
 
 		}

@@ -12,7 +12,7 @@ namespace DanBias
 		public:
 			C_UIobject(void);
 			virtual ~C_UIobject(void);
-			void Init(ModelInitData modelInit);
+			bool Init(ModelInitData modelInit);
 			void setPos(Oyster::Math::Float4x4 world);
 };};};
 #endif

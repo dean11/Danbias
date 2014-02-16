@@ -140,6 +140,9 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 {
 	using namespace ::Oyster::Math; // deliberate inheritance from ::Oyster::Math namespace
 
+	//! Converts a rotationQuaternion to an angularAxis
+	Float3 AngularAxis( const Quaternion &rotation );
+
 	//! Extracts the angularAxis from rotationMatrix
 	//Float4 AngularAxis( const Float3x3 &rotationMatrix );
 
@@ -148,12 +151,6 @@ namespace Oyster { namespace Math3D //! Oyster's native math library specialized
 
 	////! Extracts the angularAxis from orientationMatrix
 	//Float4 ExtractAngularAxis( const Float4x4 &orientationMatrix );
-
-	//! Converts a quaternion as Float4 to angular axis as Float4
-	Float4 QuaternionToAngularAxis(Float4 quaternion);
-
-	//! Converts a quaternion to angular axis as Float4
-	Float4 QuaternionToAngularAxis(Quaternion quaternion);
 
 	//! Sets and returns targetMem to a translationMatrix with position as translation. 
 	Float4x4 & TranslationMatrix( const Float3 &position, Float4x4 &targetMem = Float4x4() );
