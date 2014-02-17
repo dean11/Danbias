@@ -99,7 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -113,7 +113,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -129,7 +129,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -158,20 +158,6 @@
       <DelayLoadDLLs>GamePhysics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\GamePhysics\GamePhysics.vcxproj">
-      <Project>{104fa3e9-94d9-4e1d-a941-28a03bc8a095}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Misc\Misc.vcxproj">
-      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OysterMath\OysterMath.vcxproj">
-      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OysterPhysics3D\OysterPhysics3D.vcxproj">
-      <Project>{4285bd3f-3c6c-4670-b7af-a29afef5f6a8}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttatchmentMassDriver.h" />
     <ClInclude Include="AttatchmentSocket.h" />
@@ -223,6 +209,20 @@
     <ClCompile Include="Team.cpp" />
     <ClCompile Include="TeamManager.cpp" />
     <ClCompile Include="Weapon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Misc\OysterMath\OysterMath.vcxproj">
+      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Misc\Utilities\Utilities.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Physics\GamePhysics\GamePhysics.vcxproj">
+      <Project>{c4c76a8d-44c5-4452-9f61-39c7e01cbdb4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Physics\OysterPhysics3D\OysterPhysics3D.vcxproj">
+      <Project>{3ea5f14d-2a71-4588-a69d-87c4571c580f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

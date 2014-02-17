@@ -17,10 +17,10 @@
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
 
-#include "../../Misc/Utilities.h"
-#include "../../Misc/Thread/IThreadObject.h"
-#include "../../Misc/Thread/OysterThread.h"
-#include "../../Misc/Packing/Packing.h"
+#include "Utilities.h"
+#include "Thread/IThreadObject.h"
+#include "Thread/OysterThread.h"
+#include "Packing/Packing.h"
 
 #include <queue>
 #include <WinSock2.h>

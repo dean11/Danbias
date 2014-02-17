@@ -3,7 +3,7 @@
 //////////////////////////////////
 
 #include "ParseFunctions.h"
-#include "../../../Misc/Packing/Packing.h"
+#include "Packing/Packing.h"
 #include "Loader.h"
 #include <string>
 

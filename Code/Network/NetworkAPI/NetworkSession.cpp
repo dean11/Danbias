@@ -3,9 +3,9 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "NetworkSession.h"
-#include "..\..\Misc\Utilities.h"
-#include "..\..\Misc\DynamicArray.h"
-#include "..\..\Misc\GID.h"
+#include "Utilities.h"
+#include "DynamicArray.h"
+#include "GID.h"
 #include "CustomNetProtocol.h"
 #include <vector>
 #include <mutex>

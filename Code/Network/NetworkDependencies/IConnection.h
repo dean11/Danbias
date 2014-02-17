@@ -5,7 +5,7 @@
 // Created by Sam Svensson 2013 //
 //////////////////////////////////
 
-#include "../../Misc/Utilities.h"
+#include "Utilities.h"
 
 namespace Oyster
 {

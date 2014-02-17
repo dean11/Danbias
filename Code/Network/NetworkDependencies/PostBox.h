@@ -6,8 +6,7 @@
 /////////////////////////////////////
 
 #include "IPostBox.h"
-#include "../../Misc/Thread/OysterMutex.h"
-#include "../../Misc/ThreadSafeQueue.h"
+#include "ThreadSafeQueue.h"
 
 namespace Oyster
 {

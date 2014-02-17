@@ -5,11 +5,11 @@
 // Created by Sam Svensson 2013 //
 //////////////////////////////////
 
-#include "../../Misc/Thread/IThreadObject.h"
+#include "Thread/IThreadObject.h"
 #include "PostBox.h"
 #include "Connection.h"
-#include "../../Misc/Thread/OysterThread.h"
-#include "../../Misc/Utilities.h"
+#include "Thread/OysterThread.h"
+#include "Utilities.h"
 
 #include <mutex>
 

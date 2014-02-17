@@ -1,6 +1,6 @@
 #pragma once
 #include "../Model/ModelInfo.h"
-#include "../../OysterMath/OysterMath.h"
+#include "OysterMath.h"
 
 namespace Oyster
 {

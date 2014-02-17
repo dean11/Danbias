@@ -7,9 +7,9 @@
 
 #include "Connection.h"
 #include "IPostBox.h"
-#include "../../Misc/Thread/OysterThread.h"
-#include "../../Misc/Thread/OysterMutex.h"
-#include "../../Misc/Utilities.h"
+#include "Thread/OysterThread.h"
+#include "Thread/OysterMutex.h"
+#include "Utilities.h"
 #include <atomic>
 
 namespace Oyster

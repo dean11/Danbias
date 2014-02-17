@@ -99,7 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)OysterMath;$(SolutionDir)Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -118,7 +118,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OysterPhysic3D\Collision;..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -157,7 +157,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OysterPhysics3D;..\OysterMath;..\Misc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GFX_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -199,14 +199,6 @@
     <ClInclude Include="Render\DefaultRenderer.h" />
     <ClInclude Include="Definitions\GraphicalDefinition.h" />
     <ClInclude Include="Render\Resources.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Misc\Misc.vcxproj">
-      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OysterMath\OysterMath.vcxproj">
-      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Passes\2D\2DGeometry.hlsl">
@@ -343,6 +335,14 @@
     <None Include="Shader\Passes\Light\SSAO.hlsli" />
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
     <None Include="Shader\Passes\Blur\BlurSharedData.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Misc\OysterMath\OysterMath.vcxproj">
+      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Misc\Utilities\Utilities.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

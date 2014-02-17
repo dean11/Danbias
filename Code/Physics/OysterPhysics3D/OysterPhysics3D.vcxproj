@@ -19,31 +19,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{104FA3E9-94D9-4E1D-A941-28A03BC8A095}</ProjectGuid>
-    <RootNamespace>GamePhysics</RootNamespace>
+    <ProjectGuid>{3EA5F14D-2A71-4588-A69D-87C4571C580F}</ProjectGuid>
+    <RootNamespace>OysterPhysics3D</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -66,53 +66,49 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <AdditionalDependencies>$(SolutionDir)Physics/lib/debug/BulletCollision_Debug.lib;$(SolutionDir)Physics/lib/debug/BulletDynamics_Debug.lib;$(SolutionDir)Physics/lib/debug/LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <AdditionalDependencies>$(SolutionDir)Physics/lib/debug/BulletCollision_Debugx64.lib;$(SolutionDir)Physics/lib/debug/BulletDynamics_Debugx64.lib;$(SolutionDir)Physics/lib/debug/LinearMath_Debugx64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,17 +117,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <AdditionalDependencies>$(SolutionDir)Physics/lib/release/BulletCollision.lib;$(SolutionDir)Physics/lib/release/BulletDynamics.lib;$(SolutionDir)Physics/lib/release/LinearMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,30 +132,62 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc;$(SolutionDir)OysterMath;$(SolutionDir)OysterPhysics3D;$(SolutionDir)Physics\Bullet Source\</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDLL;PHYSICS_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ModuleDefinitionFile>
-      </ModuleDefinitionFile>
-      <AdditionalDependencies>$(SolutionDir)Physics/lib/release/BulletCollisionx64.lib;$(SolutionDir)Physics/lib/release/BulletDynamicsx64.lib;$(SolutionDir)Physics/lib/release/LinearMathx64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Implementation\PhysicsAPI_Impl.h" />
-    <ClInclude Include="Implementation\SimpleRigidBody.h" />
-    <ClInclude Include="PhysicsAPI.h" />
-    <ClInclude Include="PhysicsStructs-Impl.h" />
-    <ClInclude Include="PhysicsStructs.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="BoxAxisAligned.h" />
+    <ClInclude Include="FluidDrag.h" />
+    <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="Cone.h" />
+    <ClInclude Include="ICollideable.h" />
+    <ClInclude Include="Inertia.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="OysterCollision3D.h" />
+    <ClInclude Include="OysterPhysics3D.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="RigidBody_Inline.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Spring.h" />
+    <ClInclude Include="Universe.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Implementation\DLLMain.cpp" />
-    <ClCompile Include="Implementation\PhysicsAPI_Impl.cpp" />
-    <ClCompile Include="Implementation\SimpleRigidBody.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BoxAxisAligned.cpp" />
+    <ClCompile Include="Cone.cpp" />
+    <ClCompile Include="FluidDrag.cpp" />
+    <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="ICollideable.cpp" />
+    <ClCompile Include="Inertia.cpp" />
+    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="OysterCollision3D.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Spring.cpp" />
+    <ClCompile Include="Universe.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Misc\OysterMath\OysterMath.vcxproj">
+      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Misc\Utilities\Utilities.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

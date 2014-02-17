@@ -13,7 +13,7 @@
 #include "NetworkAPI_Preprocessor.h"
 #include "NetworkServerEventStruct.h"
 #include "NetworkClient.h"
-#include "..\Misc\Utilities.h"
+#include "Utilities.h"
 #include "DynamicArray.h"
 
 namespace Oyster

@@ -3,7 +3,7 @@
 #include "../Render/Resources.h"
 #include "../Render/DefaultRenderer.h"
 #include "../FileLoader/ObjReader.h"
-#include "../../Misc/Resource/ResourceManager.h"
+#include "Resource/ResourceManager.h"
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
 #include "../Render/GuiRenderer.h"

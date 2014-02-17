@@ -5,7 +5,7 @@
 
 #include "CustomNetProtocol.h"
 
-#include "../../Misc/Utilities.h"
+#include "Utilities.h"
 #include "../NetworkDependencies/Messages/MessageHeader.h"
 #include "../NetworkDependencies/OysterByte.h"
 #include <DynamicArray.h>

@@ -7,8 +7,7 @@
 #include "Dx11Includes.h"
 #include <sstream>
 #include "OysterMath.h"
-//#include "../Misc/Resource/ResourceManager.h"
-#include "../../Misc/Resource/ResourceManager.h"
+#include "Resource/ResourceManager.h"
 //#include <vld.h>
 
 namespace Oyster
