@@ -18,11 +18,11 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 		break;
 		//case protocol_Lobby_Create:				this->LobbyCreateGame	(Protocol_LobbyCreateGame			(p), c);
 		//break;
-		case protocol_Lobby_StartGame:	this->LobbyStartGame	(Protocol_LobbyStartGame	(p), c);
+		case protocol_Lobby_StartGame:			this->LobbyStartGame	(Protocol_LobbyStartGame	(p), c);
 		break;
 		//case protocol_Lobby_Join:				this->LobbyJoin			(Protocol_LobbyJoin					(p), c);
 		//break;
-		case protocol_Lobby_Login:		this->LobbyLogin		(Protocol_LobbyJoinGame		(p), c);
+		case protocol_Lobby_Login:				this->LobbyLogin		(Protocol_LobbyJoinGame		(p), c);
 		break;
 		case protocol_Lobby_Refresh:			this->LobbyRefresh		(Protocol_LobbyRefresh				(p), c);
 		break;
@@ -31,6 +31,8 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 		case protocol_Lobby_ClientData:			this->LobbyMainData		(Protocol_LobbyClientData			(p), c);
 		break;
 		case protocol_Lobby_ClientReadyState:	this->LobbyReady		(Protocol_LobbyClientReadyState		(p), c);
+		break;
+		case protocol_Lobby_QuerryGameType:		this->LobbyReady		(Protocol_LobbyClientReadyState		(p), c);
 		break;
 	}
 }
@@ -112,4 +114,29 @@ void GameLobby::LobbyReady(GameLogic::Protocol_LobbyClientReadyState& p, Oyster:
 		this->readyList.Remove(c);
 	}
 }
+void GameLobby::LobbyQuerryGameData(GameLogic::Protocol_QuerryGameType& p, Oyster::Network::NetworkClient* c)
+{
+	NetClient temp;
+	bool found = false;
 
+	//find client in waiting list
+	for (unsigned int i = 0; !found && i < this->clients.Size(); i++)
+	{
+		if(this->clients[i]->GetID() == c->GetID())
+		{
+			temp = this->clients[i];
+			found = true;
+		}
+	}
+
+	//Something is wrong
+	if(!found)
+	{
+		c->Disconnect();
+	}
+	else
+	{
+		//Send game data
+		this->gameSession.Attach(temp);
+	}
+}
