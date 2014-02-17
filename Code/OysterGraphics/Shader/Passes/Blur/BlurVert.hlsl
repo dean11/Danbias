@@ -28,5 +28,5 @@ void main(int3 ThreadID : SV_DispatchThreadID, int3 gThreadID : SV_GroupThreadID
 	}
 
 	outTex[ThreadID.xy + Start] = blurCol + inTex[ThreadID.xy + Start] * ( float4(1,1,1,1) - BlurMask);;
-	//outTex[ThreadID.xy] = inTex[ThreadID.xy];
+	//outTex[ThreadID.xy + Start] = inTex[ThreadID.xy+ Start];
 }
