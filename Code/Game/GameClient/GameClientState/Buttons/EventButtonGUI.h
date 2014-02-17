@@ -5,10 +5,8 @@
 #ifndef DANBIAS_CLIENT_EVENT_BUTTON_GUI_H
 #define DANBIAS_CLIENT_EVENT_BUTTON_GUI_H
 
-#include "../Misc/EventHandler/EventButton.h"
-#include "../OysterGraphics/DllInterfaces/GFXAPI.h"
-
-
+#include "EventHandler/EventButton.h"
+#include "DllInterfaces/GFXAPI.h"
 
 namespace DanBias
 {

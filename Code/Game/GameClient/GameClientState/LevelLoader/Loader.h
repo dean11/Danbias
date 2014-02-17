@@ -5,7 +5,7 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "..\Misc\Resource\OysterResource.h"
+#include "Resource\OysterResource.h"
 #include <string>
 
 namespace GameLogic

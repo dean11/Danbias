@@ -18,7 +18,7 @@
 #include "WinTimer.h"
 #include "vld.h"
 
-#include "../Misc/EventHandler/EventHandler.h"
+#include "EventHandler/EventHandler.h"
 
 #include "GameClientState\SharedStateContent.h"
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "ObjectDefines.h"
-#include "../Misc/Utilities.h"
+#include "Utilities.h"
 
 namespace GameLogic
 {
