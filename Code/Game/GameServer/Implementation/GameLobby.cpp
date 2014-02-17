@@ -15,18 +15,15 @@ namespace DanBias
 {
 	GameLobby::GameLobby()
 	{   }
-
 	GameLobby::~GameLobby()
 	{  
 		this->clients.Clear();
 	}
-
 	void GameLobby::Release()
 	{  
 		NetworkSession::CloseSession(true);
 		this->gameSession.CloseSession(true);
 	}
-
 	void GameLobby::Update()
 	{
 		this->ProcessClients();
