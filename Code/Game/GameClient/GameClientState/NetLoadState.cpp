@@ -1,9 +1,11 @@
 #include "NetLoadState.h"
 #include "NetworkClient.h"
+#include "OysterMath.h"
 #include "../Game/GameProtocols/Protocols.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
+using namespace ::Oyster::Math;
 using namespace ::Oyster::Network;
 using namespace ::GameLogic;
 
