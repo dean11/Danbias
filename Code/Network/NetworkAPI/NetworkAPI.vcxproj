@@ -184,6 +184,9 @@
     <ClInclude Include="Translator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Misc\Misc.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\NetworkDependencies\NetworkDependencies.vcxproj">
       <Project>{c5aa09d0-6594-4cd3-bd92-1d380c7b3b50}</Project>
     </ProjectReference>
