@@ -67,7 +67,7 @@ namespace Oyster
 
 			void PreStep(const btCollisionWorld* collisionWorld);
 
-			float GetLamda() const;
+			float GetLambda() const;
 
 			private:
 

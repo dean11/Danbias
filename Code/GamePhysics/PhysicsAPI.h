@@ -180,7 +180,7 @@ namespace Oyster
 			 ********************************************************/
 			virtual void SetCustomTag( void *ref ) = 0;
 
-			virtual float GetLamda() const = 0;
+			virtual float GetLambda() const = 0;
 		};
 	}
 }
