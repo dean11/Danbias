@@ -19,7 +19,8 @@ namespace DanBias { namespace Client
 	struct SharedStateContent
 	{
 	public:
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> scene;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> staticObjects;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> dynamicObjects;
 		::Oyster::Network::NetworkClient *network;
 		InputClass* input;
 	};
