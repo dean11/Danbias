@@ -43,5 +43,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	PostLight = PostLight * (1 - GUI.w);
 	Output[DTid.xy] = float4((GUI.xyz * GUI.w) + PostLight, 1);
 
-	//Output[DTid.xy] = Ambient[DTid.xy];
+	//Output[DTid.xy] = float4(Ambient[DTid.xy/2 + uint2(0,Output.Length.y*0.5f)].xyz,1);
 }
