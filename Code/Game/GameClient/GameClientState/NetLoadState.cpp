@@ -27,7 +27,7 @@ struct NetLoadState::MyData
 	bool loading;
 };
 
-inline Quaternion ArrayToQuaternion( float source[4] )
+inline Quaternion ArrayToQuaternion( const float source[4] )
 {
 	return Quaternion( Float3(source[0], source[1], source[2]), source[3] );
 }
@@ -99,6 +99,7 @@ void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientE
 	{
 		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).modelName );
 		this->ChangeState( ClientState_Game );
+		this->privData->loading = false;
 	}
 }
 
@@ -109,18 +110,20 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 	LevelLoader loader;
 	auto objects = loader.LoadLevel( fileName );
 	auto object = objects.begin();
-	ObjectHeader *oh;
+	ObjectTypeHeader *oth;
 
 	int objectID = 100; // first 100 is reserved for players. This is how the server does it.
 
 	for( ; object != objects.end(); ++object )
 	{
 		++objectID;
-		oh = (ObjectHeader*)&*object;
-		switch( oh->typeID )
+		oth = (ObjectTypeHeader*)(*object._Ptr);
+		switch( oth->typeID )
 		{
 		case ObjectType::ObjectType_Static:
 			{
+				ObjectHeader *oh = (ObjectHeader*)oth;
+
 				ModelInitData desc;
 				desc.id			= objectID;
 				StringToWstring( oh->ModelFile, desc.modelPath );
@@ -142,6 +145,8 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 			break;
 		case ObjectType::ObjectType_Dynamic:
 			{
+				ObjectHeader *oh = (ObjectHeader*)oth;
+
 				ModelInitData desc;
 				desc.id			= objectID;
 				StringToWstring( oh->ModelFile, desc.modelPath );
