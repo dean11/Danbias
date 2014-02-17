@@ -21,19 +21,19 @@ namespace DanBias
 			ButtonRectangle()
 				: EventButtonGUI(), width(0), height(0)
 			{}
-			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, Owner owner, Oyster::Math::Float3 pos, 
+			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, Owner owner, Oyster::Math::Float3 pos, 
 							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height)
 				: EventButtonGUI(textureName, buttonText, textColor, owner, pos, size, resize)
 			{}
-			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Oyster::Math::Float3 pos, 
+			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, EventFunc func, Oyster::Math::Float3 pos, 
 							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height)
 				: EventButtonGUI(textureName, buttonText, textColor, func, pos, size, resize)
 			{}
-			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, Oyster::Math::Float3 pos, 
+			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, EventFunc func, Owner owner, Oyster::Math::Float3 pos, 
 							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height)
 				: EventButtonGUI(textureName, buttonText, textColor, func, owner, pos, size, resize)
 			{}
-			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, 
+			ButtonRectangle(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, 
 							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height)
 				: EventButtonGUI(textureName, buttonText, textColor, func, owner, userData, pos, size, resize)
 			{}
