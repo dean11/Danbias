@@ -43,6 +43,7 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 
 			float worldSize = ((WorldAttributes*)obj)->worldSize; 
 			float atmosphereSize = ((WorldAttributes*)obj)->atmoSphereSize; 
+
 			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID++); 
 		}
 		break;
@@ -224,9 +225,39 @@ void Level::InitiateLevel(std::string levelPath)
 				staticObjData->ModelFile;
 
 				ICustomBody* rigidBody_Static = NULL;	
+				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_Sky)
+				{
+					
+				}
+				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_World)
+				{
 				
+					Oyster::Math::Float3 rigidWorldPos;
+					Oyster::Math::Float4 rigidWorldRotation;
+					float rigidBodyMass;
+					float rigidBodyRadius;
+
+					//offset the rigidPosition from modelspace to worldspace;
+					rigidWorldPos = Oyster::Math::Float3(0,0,0);
+					//scales the position so the collision geomentry is in the right place
+
+					//offset the rigidRotation from modelspace to worldspace;
+					
+					rigidWorldRotation = Oyster::Math::Float4(0,0,0,1); 
+
+
+					//mass scaled
+					rigidBodyMass = 100;
+
+					//Radius scaled
+					rigidBodyRadius = 150;
+
+					//create the rigid body
+					rigidBody_Static = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, 1,1,1);
+
+				}
 				// collision shape
-				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
 				{
 					rigidBody_Static = InitRigidBodySphere(staticObjData);
 				}
@@ -289,6 +320,14 @@ void Level::InitiateLevel(std::string levelPath)
 		case ObjectType::ObjectType_Light:
 			// read on client
 			break;
+		case ObjectType::ObjectType_SpawnPoint:
+			{
+				Oyster::Math::Float3 pos;
+				pos.x = ((SpawnPointAttributes*)obj)->position[0];
+				pos.y = ((SpawnPointAttributes*)obj)->position[1];
+				pos.z = ((SpawnPointAttributes*)obj)->position[2];
+				spawnPoints.Push(pos);
+			}
 		default:
 			break;
 		}
