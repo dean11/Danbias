@@ -61,8 +61,6 @@ void GameServerAPI::ServerStart()
 {
 	timer.reset();
 	server.Start();
-
-	
 }
 void GameServerAPI::ServerStop()
 {
@@ -113,8 +111,6 @@ void GameServerAPI::NotifyWhenClientConnect(ClientConnectedNotify func)
 {
 	if(!func)	clientConnectedCallback = DefaultClientConnectedNotify;
 	else		clientConnectedCallback = func;
-
-
 }
 void GameServerAPI::NotifyWhenClientDisconnect(ClientDisconnectedNotify func)
 {

@@ -476,7 +476,21 @@ namespace GameLogic
 		}
 		Protocol_ObjectCreate( Oyster::Network::CustomNetProtocol& p )
 		{
-			/** @todo TODO: not implemented */
+			this->object_ID = p[1].value.netInt;
+			this->name.assign(p[2].value.netCharPtr);
+			
+			this->position[0] = p[3].value.netFloat;
+			this->position[1] = p[4].value.netFloat;
+			this->position[2] = p[5].value.netFloat;
+
+			this->rotationQ[0] = p[6].value.netFloat;
+			this->rotationQ[1] = p[7].value.netFloat;
+			this->rotationQ[2] = p[8].value.netFloat;
+			this->rotationQ[3] = p[9].value.netFloat;
+
+			this->scale[0] = p[10].value.netFloat;
+			this->scale[1] = p[11].value.netFloat;
+			this->scale[2] = p[12].value.netFloat;
 		}
 		Protocol_ObjectCreate(float p[3], float r[4], float s[3], int id, char *path)
 		{
@@ -538,7 +552,7 @@ namespace GameLogic
 		std::string name;
 		std::string meshName;
 		float position[3];
-		float rotation[3];
+		float rotationQ[4];
 		float scale[3];
 
 		Protocol_ObjectCreatePlayer()
@@ -569,9 +583,25 @@ namespace GameLogic
 		}
 		Protocol_ObjectCreatePlayer(Oyster::Network::CustomNetProtocol& p)
 		{
+			this->object_ID = p[1].value.netInt;
+			this->teamId = this->protocol[2].value.netInt;
+			this->name.assign(p[3].value.netCharPtr);
+			this->meshName.assign(p[4].value.netCharPtr);
+			
+			this->position[0] = p[5].value.netFloat;
+			this->position[1] = p[6].value.netFloat;
+			this->position[2] = p[7].value.netFloat;
 
+			this->rotationQ[0] = p[8].value.netFloat;
+			this->rotationQ[1] = p[9].value.netFloat;
+			this->rotationQ[2] = p[10].value.netFloat;
+			this->rotationQ[3] = p[11].value.netFloat;
+
+			this->scale[0] = p[12].value.netFloat;
+			this->scale[1] = p[13].value.netFloat;
+			this->scale[2] = p[14].value.netFloat;
 		}
-		Protocol_ObjectCreatePlayer(float position[3], float rotation[3], float scale[3], int ObjectID, int teamID, std::string name, std::string meshName)
+		Protocol_ObjectCreatePlayer(float position[3], float rotation[4], float scale[3], int ObjectID, int teamID, std::string name, std::string meshName)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectCreatePlayer;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
@@ -592,17 +622,18 @@ namespace GameLogic
 			this->protocol[8].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[9].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[10].type = Oyster::Network::NetAttributeType_Float;
-		//SCALE
 			this->protocol[11].type = Oyster::Network::NetAttributeType_Float;
+		//SCALE
 			this->protocol[12].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[13].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[14].type = Oyster::Network::NetAttributeType_Float;
 
 			this->object_ID = ObjectID;
 			this->teamId = teamID;
 			this->name = name;
 			this->meshName = meshName;
 			memcpy(&this->position[0], &position[0], sizeof(float)*3);
-			memcpy(&this->rotation[0], &rotation[0], sizeof(float)*3);
+			memcpy(&this->rotationQ[0], &rotation[0], sizeof(float)*4);
 			memcpy(&this->scale[0], &scale[0], sizeof(float)*3);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
@@ -618,13 +649,14 @@ namespace GameLogic
 			this->protocol[6].value = this->position[1];
 			this->protocol[7].value = this->position[2];
 		//ROTATION
-			this->protocol[8].value  = this->rotation[0];
-			this->protocol[9].value  = this->rotation[1];
-			this->protocol[10].value = this->rotation[2];
+			this->protocol[8].value  = this->rotationQ[0];
+			this->protocol[9].value  = this->rotationQ[1];
+			this->protocol[10].value = this->rotationQ[2];
+			this->protocol[11].value = this->rotationQ[3];
 		//SCALE
-			this->protocol[11].value = this->scale[0];
-			this->protocol[12].value = this->scale[1];
-			this->protocol[13].value = this->scale[2];
+			this->protocol[12].value = this->scale[0];
+			this->protocol[13].value = this->scale[1];
+			this->protocol[14].value = this->scale[2];
 
 			return protocol;		 
 		}							 
