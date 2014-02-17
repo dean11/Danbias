@@ -16,10 +16,8 @@
 
 #include "Utilities.h"
 #include "Thread/OysterThread.h"
+#include "WinTimer.h"
 
-#ifndef _DEBUG
-#include <winsock2.h>
-#endif
 
 using namespace Oyster::Network;
 using namespace Utility::DynamicMemory;
@@ -64,6 +62,13 @@ void Broadcast()
 	}
 }
 
+struct TimeInstance
+{
+	float length;
+	float previous;
+	TimeInstance() :length(0.0f), previous(0.0f) {}
+	TimeInstance(float length, float previous) :length(length), previous(previous) {}
+};
 struct NetworkServer::PrivateData : public IThreadObject
 {
 public:
@@ -74,6 +79,8 @@ public:
 		,	isReleased(0)
 		,	isRunning(0)
 		,	port(-1)
+		,	broadcast(0)
+		,	broadcastTime(1.0f, 0.0f)
 	{  }
 	~PrivateData()
 	{  }
@@ -91,12 +98,23 @@ public:
 	bool isReleased;
 	bool isRunning;
 	int port;
+	bool broadcast;
+
+	TimeInstance broadcastTime;
+
+	Utility::WinTimer serverTimer;
 };
 
 bool NetworkServer::PrivateData::DoWork()
 {
-	//Broadcast();
-	
+	if(broadcast)	
+	{
+		if( (this->serverTimer.getElapsedSeconds() - this->broadcastTime.previous) >= this->broadcastTime.length )
+		{
+			Broadcast();
+		}
+	}
+
 	/** Check for new clients **/
 	if(postBox.IsFull())
 	{
@@ -144,11 +162,11 @@ NetworkServer::~NetworkServer()
 	}
 }
 
-NetworkServer::ServerReturnCode NetworkServer::Init(const int& port, NetworkSession const* mainSession)
+NetworkServer::ServerReturnCode NetworkServer::Init(ServerOptions& options)
 {
-	this->privateData->mainSession = const_cast<NetworkSession*>(mainSession);
+	this->privateData->mainSession = const_cast<NetworkSession*>(options.mainOptions.ownerSession);
 	//Check if it's a valid port
-	if(port == 0 || port == -1)
+	if(options.mainOptions.listenPort == 0 || options.mainOptions.listenPort == -1)
 	{
 		return NetworkServer::ServerReturnCode_Error;
 	}
@@ -163,7 +181,7 @@ NetworkServer::ServerReturnCode NetworkServer::Init(const int& port, NetworkSess
 
 	//Initiate listener
 	this->privateData->listener = new Listener(&this->privateData->postBox);
-	if(!this->privateData->listener->Init(port, false))
+	if(!this->privateData->listener->Init(options.mainOptions.listenPort, false))
 	{
 		return NetworkServer::ServerReturnCode_Error;
 	}
@@ -180,6 +198,7 @@ NetworkServer::ServerReturnCode NetworkServer::Init(const int& port, NetworkSess
 
 NetworkServer::ServerReturnCode NetworkServer::Start()
 {
+	this->privateData->serverTimer.reset();
 	//Start listener
 	if(!this->privateData->listener->Start())
 	{
@@ -234,15 +253,17 @@ int NetworkServer::Update()
 	int c = 0;
 	while(!this->privateData->clientQueue.IsEmpty())
 	{
+		SmartPointer<NetworkClient> client = this->privateData->clientQueue.Pop();
+
 		if(this->privateData->mainSession)
 		{
-			this->privateData->mainSession->ClientConnectedEvent(this->privateData->clientQueue.Pop());
+			this->privateData->mainSession->ClientConnectedEvent(client);
 			c++;
 		}
 		else
 		{
 			//Clients have nowhere to go?
-			this->privateData->clientQueue.Pop()->Disconnect();
+			client->Disconnect();
 		}
 	}
 	return c;

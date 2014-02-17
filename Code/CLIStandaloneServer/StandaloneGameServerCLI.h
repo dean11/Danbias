@@ -17,10 +17,11 @@ namespace System { namespace Windows { namespace Interop
 
 	public value struct ServerInitDesc
 	{
-		System::String^ serverName;
-		int listenPort;
-		bool broadcast;			//Not fully implemented!
-	
+		value struct MainOptions
+		{
+			System::String^ serverName;
+			int listenPort;
+		} mainOptions;
 	};
 
 	public value struct GameServerInfo
@@ -31,6 +32,9 @@ namespace System { namespace Windows { namespace Interop
 
 	public ref class StandaloneGameServerCLI
 	{
+	private:
+		static void NewClientConnected(int ID, wchar_t clientAlias[255], wchar_t clientIp[255]);
+
 	public:
 		StandaloneGameServerCLI();
 		~StandaloneGameServerCLI();
@@ -42,9 +46,9 @@ namespace System { namespace Windows { namespace Interop
 		GameServerInfo ServerGetInfo();
 		bool ServerIsRunning();
 
-		void GameSetMapId(const int val);
+		void GameSetMapName(String^ val);
 		void GameSetMaxClients(const int val);
-		void GameSetGameMode(const int val);
+		void GameSetGameMode(String^ val);
 		void GameSetGameTime(const int val);
 		int GameGetMapId();
 		int GameGetMaxClients();

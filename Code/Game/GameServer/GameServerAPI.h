@@ -4,7 +4,7 @@
 #ifndef DANBIAS_SERVER_DANBIAS_SERVER_H
 #define DANBIAS_SERVER_DANBIAS_SERVER_H
 
-//#include <vld.h>
+#include <vld.h>
 
 #define DANBIAS_SERVER
 
@@ -30,20 +30,20 @@ namespace DanBias
 		public:
 			struct ServerInitDesc
 			{
-				char* serverName;
+				const wchar_t* serverName;
 				int listenPort;
-				bool broadcast;			//Not fully implemented!
 				ServerInitDesc() 
-					: serverName("Game Server")
+					: serverName(L"Game Server")
 					, listenPort(15152)
-					, broadcast(true)
 				{};
 			};
 			struct GameServerInfo
 			{
-				unsigned int listenPort;	// If set to 0, the default port 15151 will be used
-				const char *serverIp;		// This cant be mofidfied..
+				int listenPort;
+				wchar_t serverIp[255];
 			};
+			typedef void(*ClientConnectedNotify)(int ID, wchar_t clientAlias[255], wchar_t clientIp[255]);
+			typedef void(*ClientDisconnectedNotify)(int ID);
 
 		public:
 			static DanBiasServerReturn	ServerInitiate(const ServerInitDesc& desc);
@@ -52,10 +52,12 @@ namespace DanBias
 			static void					ServerUpdate();
 			static GameServerInfo		ServerGetInfo();
 			static bool					ServerIsRunning();
+			static void					NotifyWhenClientConnect(ClientConnectedNotify func);
+			static void					NotifyWhenClientDisconnect(ClientDisconnectedNotify func);
 
-			static void					GameSetMapId(const int& val);
+			static void					GameSetMapName(const wchar_t* val);
 			static void					GameSetMaxClients(const int& val);
-			static void					GameSetGameMode(const int& val);
+			static void					GameSetGameMode(const wchar_t* val);
 			static void					GameSetGameTime(const int& val);
 			static int					GameGetMapId();
 			static int					GameGetMaxClients();

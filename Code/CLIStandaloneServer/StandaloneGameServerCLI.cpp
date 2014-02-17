@@ -1,10 +1,19 @@
 #include "StandaloneGameServerCLI.h"
+#include <string>
+#include < stdio.h >
+#include < stdlib.h >
+#include < vcclr.h >
 
 
 using namespace System;
 using namespace System::Windows::Interop;
 using namespace System::Windows;
 using namespace System::Runtime::InteropServices;
+
+void StandaloneGameServerCLI::NewClientConnected(int ID, wchar_t clientAlias[255], wchar_t clientIp[255])
+{
+
+}
 
 StandaloneGameServerCLI::StandaloneGameServerCLI()
 {
@@ -17,13 +26,12 @@ StandaloneGameServerCLI::~StandaloneGameServerCLI()
 DanBiasServerReturn StandaloneGameServerCLI::ServerInitiate(ServerInitDesc desc)
 {
 	DanBias::GameServerAPI::ServerInitDesc d;
-	//Convert from String to char*
-	IntPtr p = Marshal::StringToHGlobalAnsi(desc.serverName);
-	d.serverName = static_cast<char*>(p.ToPointer());
-	Marshal::FreeHGlobal(p);
+	pin_ptr<const wchar_t> wch = PtrToStringChars(desc.mainOptions.serverName);
+	std::wstring temp = wch;
+	d.serverName = temp.c_str();
+	d.listenPort = desc.mainOptions.listenPort;
 
-	d.listenPort = desc.listenPort;
-	d.broadcast = desc.broadcast;
+	DanBias::GameServerAPI::NotifyWhenClientConnect((DanBias::GameServerAPI::ClientConnectedNotify)StandaloneGameServerCLI::NewClientConnected);
 
 	return (DanBiasServerReturn)DanBias::GameServerAPI::ServerInitiate(d);
 }
@@ -59,9 +67,10 @@ bool StandaloneGameServerCLI::ServerIsRunning()
 	return DanBias::GameServerAPI::ServerIsRunning();
 }
 
-void StandaloneGameServerCLI::GameSetMapId(const int val)
+void StandaloneGameServerCLI::GameSetMapName(String^ value)
 {
-	DanBias::GameServerAPI::GameSetMapId(val);
+	pin_ptr<const wchar_t> wch = PtrToStringChars(value);
+	DanBias::GameServerAPI::GameSetMapName(wch);
 }
 
 void StandaloneGameServerCLI::GameSetMaxClients(const int val)
@@ -69,9 +78,10 @@ void StandaloneGameServerCLI::GameSetMaxClients(const int val)
 	DanBias::GameServerAPI::GameSetMaxClients(val);
 }
 
-void StandaloneGameServerCLI::GameSetGameMode(const int val)
+void StandaloneGameServerCLI::GameSetGameMode(String^ value)
 {
-	DanBias::GameServerAPI::GameSetGameMode(val);
+	pin_ptr<const wchar_t> wch = PtrToStringChars(value);
+	DanBias::GameServerAPI::GameSetGameMode(wch);
 }
 
 void StandaloneGameServerCLI::GameSetGameTime(const int val)

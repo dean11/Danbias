@@ -23,18 +23,31 @@ using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace Utility;
 
+void DefaultClientConnectedNotify(int ID, wchar_t clientAlias[255], wchar_t clientIp[255])
+{
+
+}
+void DefaultClientDisconnectedNotify(int ID)
+{
+
+}
 namespace
 {
-	GameLobby				lobby;
-	NetworkServer			server;
-	WinTimer				timer;
+	GameLobby									lobby;
+	NetworkServer								server;
+	WinTimer									timer;
+	GameServerAPI::ClientConnectedNotify		clientConnectedCallback = DefaultClientConnectedNotify;
+	GameServerAPI::ClientDisconnectedNotify		clientDisconnectedCallback = DefaultClientDisconnectedNotify;
 }
 
 
 
 DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 {
-	if(server.Init(desc.listenPort, &lobby) == NetworkServer::ServerReturnCode_Error)
+	ServerOptions opt;
+	opt.mainOptions.listenPort = desc.listenPort;
+	opt.mainOptions.ownerSession = &lobby;
+	if(server.Init(opt) == NetworkServer::ServerReturnCode_Error)
 	{
 		return DanBiasServerReturn_Error;
 	}
@@ -86,7 +99,9 @@ void GameServerAPI::ServerUpdate()
 GameServerAPI::GameServerInfo GameServerAPI::ServerGetInfo()
 {
 	GameServerAPI::GameServerInfo i;
-	i.serverIp = server.GetLanAddress().c_str();
+	std::wstring temp;
+	Utility::String::StringToWstring(server.GetLanAddress().c_str(), temp) ;
+	memcpy(&i.serverIp[0], temp.c_str(), sizeof(wchar_t) * (temp.length() + 1));
 	i.listenPort = server.GetPort();
 	return i;
 }
@@ -94,12 +109,24 @@ bool GameServerAPI::ServerIsRunning()
 {
 	return server.IsRunning();
 }
+void GameServerAPI::NotifyWhenClientConnect(ClientConnectedNotify func)
+{
+	if(!func)	clientConnectedCallback = DefaultClientConnectedNotify;
+	else		clientConnectedCallback = func;
 
-void		GameServerAPI::GameSetMapId(const int& val)
+
+}
+void GameServerAPI::NotifyWhenClientDisconnect(ClientDisconnectedNotify func)
+{
+	if(!func)	clientDisconnectedCallback = DefaultClientDisconnectedNotify;
+	else		clientDisconnectedCallback = func;
+}
+
+void		GameServerAPI::GameSetMapName(const wchar_t* val)
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	d.mapNumber = val;
+	//d.mapNumber = val; //TODO: implement
 	lobby.SetGameDesc(d);
 }
 void		GameServerAPI::GameSetMaxClients(const int& val)
@@ -109,11 +136,11 @@ void		GameServerAPI::GameSetMaxClients(const int& val)
 	d.maxClients = val;
 	lobby.SetGameDesc(d);
 }
-void		GameServerAPI::GameSetGameMode(const int& val)
+void		GameServerAPI::GameSetGameMode(const wchar_t* val)
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	d.gameMode = val;
+	//d.gameMode = val;	//TODO: implement
 	lobby.SetGameDesc(d);
 }
 void		GameServerAPI::GameSetGameTime(const int& val)

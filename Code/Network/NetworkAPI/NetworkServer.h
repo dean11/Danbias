@@ -18,6 +18,34 @@ namespace Oyster
 	{
 		extern "C"
 		{
+			struct ServerOptions
+			{
+				struct BroadcastOptions
+				{
+					//bool broadcast;
+					//float broadcastInterval;
+					//std::wstring subnetToBroadcast;
+					//CustomNetProtocol broadcastMessage;
+					//BroadcastOptions()
+					//{
+					//	broadcast = true;
+					//	broadcastInterval = 1.0f;
+					//	subnetToBroadcast = L"192.168.0.1";
+					//}
+				} broadcastOptions;
+
+				struct MainOptions
+				{
+					NetworkSession* ownerSession;
+					int listenPort;
+					MainOptions()
+					{
+						ownerSession = 0;
+						listenPort = 0;
+					}
+				} mainOptions;
+			};
+
 			class NET_API_EXPORT NetworkServer
 			{
 			public:
@@ -39,7 +67,7 @@ namespace Oyster
 				*	@param mainSession The main session the server will send connected clients to.
 				*	@return The server returncode
 				*/
-				ServerReturnCode Init(const int& port, NetworkSession const* mainSession);
+				ServerReturnCode Init(ServerOptions& options);
 
 				/**	Starts the server allowing clients to connect
 				*	@return The server returncode

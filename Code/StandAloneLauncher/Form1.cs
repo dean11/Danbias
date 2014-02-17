@@ -51,24 +51,51 @@ namespace StandAloneLauncher
                 this.serverName.Enabled = true;
                 this.lanBroadcast.Enabled = true;
                 this.serverToggle.Text = "Start server";
+                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server terminated!\n");
+                this.panel_commands.Visible = false;
             }
             else
             {
-                this.serverIsRunning = true;
                 ServerInitDesc desc = new ServerInitDesc();
-                desc.broadcast = this.lanBroadcast.Checked;
-                desc.listenPort = (int)this.listenPort.Value;
-                desc.serverName = this.serverName.Text;
+                //desc.mainOptions.broadcast = this.lanBroadcast.Checked;
+                desc.mainOptions.listenPort = (int)this.listenPort.Value;
+                desc.mainOptions.serverName = this.serverName.Text;
 
                 if (this.gameServer.ServerInitiate(desc) == DanBiasServerReturn.DanBiasServerReturn_Sucess)
                 {
+                    this.serverIsRunning = true;
+
+                    GameServerInfo info = this.gameServer.ServerGetInfo();
+                    this.Text = this.serverName.Text + " - " + info.serverIp;
+
                     this.listenPort.Enabled = false;
                     this.serverName.Enabled = false;
                     this.lanBroadcast.Enabled = false;
                     this.serverToggle.Text = "Stop server";
                     this.gameServer.ServerStart();
-                    this.clientInfoBox.Items.Add((Object)"Server initiated!");
+                    this.panel_commands.Visible = true;
+                    this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server initiated!\n\tListening on port " + this.listenPort.Value.ToString() + "\n\tLocal IP: " + info.serverIp + "\n");
                 }
+                else
+                {
+                    this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to initiate the server!");
+                }
+            }
+        }
+
+        private void buttonStartGame_Click(object sender, EventArgs e)
+        {
+            //this.gameServer.GameSetGameMode(this.gameModes.SelectedText);
+            this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
+            //this.gameServer.GameSetMapId(0);
+            this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
+            if (!this.gameServer.GameStart())
+            {
+                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to start the game session!\n");
+            }
+            else
+            {
+                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Game session started!\n");
             }
         }
     }

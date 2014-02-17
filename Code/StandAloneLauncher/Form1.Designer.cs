@@ -37,15 +37,29 @@
             this.panel_serverOptions = new System.Windows.Forms.Panel();
             this.panel_commands = new System.Windows.Forms.Panel();
             this.panel_clientArea = new System.Windows.Forms.Panel();
+            this.ServerInfoTextArea = new System.Windows.Forms.RichTextBox();
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.clientInfoBox = new System.Windows.Forms.ListBox();
+            this.buttonStartGame = new System.Windows.Forms.Button();
+            this.nrOfClients = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.gameModes = new System.Windows.Forms.ComboBox();
+            this.timeLimit = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.mapName = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).BeginInit();
             this.panel_serverOptions.SuspendLayout();
+            this.panel_commands.SuspendLayout();
             this.panel_clientArea.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.timeLimit)).BeginInit();
             this.SuspendLayout();
             // 
             // serverToggle
             // 
-            this.serverToggle.Location = new System.Drawing.Point(90, 81);
+            this.serverToggle.Location = new System.Drawing.Point(9, 81);
             this.serverToggle.Name = "serverToggle";
             this.serverToggle.Size = new System.Drawing.Size(75, 23);
             this.serverToggle.TabIndex = 0;
@@ -56,7 +70,7 @@
             // lanBroadcast
             // 
             this.lanBroadcast.AutoSize = true;
-            this.lanBroadcast.Location = new System.Drawing.Point(81, 58);
+            this.lanBroadcast.Location = new System.Drawing.Point(9, 58);
             this.lanBroadcast.Name = "lanBroadcast";
             this.lanBroadcast.Size = new System.Drawing.Size(95, 17);
             this.lanBroadcast.TabIndex = 1;
@@ -69,6 +83,7 @@
             this.serverName.Name = "serverName";
             this.serverName.Size = new System.Drawing.Size(95, 20);
             this.serverName.TabIndex = 3;
+            this.serverName.Text = "GameServer";
             // 
             // label_serverName
             // 
@@ -120,31 +135,172 @@
             this.panel_serverOptions.Controls.Add(this.label_serverName);
             this.panel_serverOptions.Location = new System.Drawing.Point(12, 12);
             this.panel_serverOptions.Name = "panel_serverOptions";
-            this.panel_serverOptions.Size = new System.Drawing.Size(183, 112);
+            this.panel_serverOptions.Size = new System.Drawing.Size(183, 113);
             this.panel_serverOptions.TabIndex = 6;
             // 
             // panel_commands
             // 
-            this.panel_commands.Location = new System.Drawing.Point(12, 130);
+            this.panel_commands.Controls.Add(this.mapName);
+            this.panel_commands.Controls.Add(this.timeLimit);
+            this.panel_commands.Controls.Add(this.gameModes);
+            this.panel_commands.Controls.Add(this.label3);
+            this.panel_commands.Controls.Add(this.label2);
+            this.panel_commands.Controls.Add(this.label4);
+            this.panel_commands.Controls.Add(this.label1);
+            this.panel_commands.Controls.Add(this.nrOfClients);
+            this.panel_commands.Controls.Add(this.buttonStartGame);
+            this.panel_commands.Location = new System.Drawing.Point(12, 131);
             this.panel_commands.Name = "panel_commands";
-            this.panel_commands.Size = new System.Drawing.Size(183, 231);
+            this.panel_commands.Size = new System.Drawing.Size(183, 230);
             this.panel_commands.TabIndex = 7;
+            this.panel_commands.Visible = false;
             // 
             // panel_clientArea
             // 
+            this.panel_clientArea.Controls.Add(this.ServerInfoTextArea);
+            this.panel_clientArea.Controls.Add(this.splitter1);
             this.panel_clientArea.Controls.Add(this.clientInfoBox);
             this.panel_clientArea.Location = new System.Drawing.Point(202, 12);
             this.panel_clientArea.Name = "panel_clientArea";
             this.panel_clientArea.Size = new System.Drawing.Size(303, 349);
             this.panel_clientArea.TabIndex = 8;
             // 
+            // ServerInfoTextArea
+            // 
+            this.ServerInfoTextArea.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.ServerInfoTextArea.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.ServerInfoTextArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ServerInfoTextArea.Font = new System.Drawing.Font("GulimChe", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ServerInfoTextArea.ForeColor = System.Drawing.SystemColors.Info;
+            this.ServerInfoTextArea.Location = new System.Drawing.Point(0, 152);
+            this.ServerInfoTextArea.Name = "ServerInfoTextArea";
+            this.ServerInfoTextArea.ReadOnly = true;
+            this.ServerInfoTextArea.Size = new System.Drawing.Size(303, 197);
+            this.ServerInfoTextArea.TabIndex = 1;
+            this.ServerInfoTextArea.Text = "";
+            // 
+            // splitter1
+            // 
+            this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.splitter1.Location = new System.Drawing.Point(0, 147);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(303, 5);
+            this.splitter1.TabIndex = 2;
+            this.splitter1.TabStop = false;
+            // 
             // clientInfoBox
             // 
+            this.clientInfoBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.clientInfoBox.FormattingEnabled = true;
-            this.clientInfoBox.Location = new System.Drawing.Point(3, 6);
+            this.clientInfoBox.Location = new System.Drawing.Point(0, 0);
             this.clientInfoBox.Name = "clientInfoBox";
-            this.clientInfoBox.Size = new System.Drawing.Size(297, 342);
+            this.clientInfoBox.Size = new System.Drawing.Size(303, 147);
             this.clientInfoBox.TabIndex = 0;
+            // 
+            // buttonStartGame
+            // 
+            this.buttonStartGame.Location = new System.Drawing.Point(53, 195);
+            this.buttonStartGame.Name = "buttonStartGame";
+            this.buttonStartGame.Size = new System.Drawing.Size(75, 23);
+            this.buttonStartGame.TabIndex = 6;
+            this.buttonStartGame.Text = "Start game";
+            this.buttonStartGame.UseVisualStyleBackColor = true;
+            this.buttonStartGame.Click += new System.EventHandler(this.buttonStartGame_Click);
+            // 
+            // nrOfClients
+            // 
+            this.nrOfClients.Location = new System.Drawing.Point(78, 36);
+            this.nrOfClients.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nrOfClients.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nrOfClients.Name = "nrOfClients";
+            this.nrOfClients.Size = new System.Drawing.Size(39, 20);
+            this.nrOfClients.TabIndex = 7;
+            this.nrOfClients.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 38);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Client limit";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 69);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(64, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Game mode";
+            // 
+            // gameModes
+            // 
+            this.gameModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.gameModes.FormattingEnabled = true;
+            this.gameModes.Items.AddRange(new object[] {
+            "Free-for-all",
+            "Team death-match"});
+            this.gameModes.Location = new System.Drawing.Point(78, 66);
+            this.gameModes.Name = "gameModes";
+            this.gameModes.Size = new System.Drawing.Size(99, 21);
+            this.gameModes.TabIndex = 10;
+            // 
+            // timeLimit
+            // 
+            this.timeLimit.Location = new System.Drawing.Point(109, 94);
+            this.timeLimit.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.timeLimit.Name = "timeLimit";
+            this.timeLimit.Size = new System.Drawing.Size(68, 20);
+            this.timeLimit.TabIndex = 11;
+            this.timeLimit.ThousandsSeparator = true;
+            this.timeLimit.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 96);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(95, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Time limit (minutes)";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(9, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Map name";
+            // 
+            // mapName
+            // 
+            this.mapName.Location = new System.Drawing.Point(78, 7);
+            this.mapName.Name = "mapName";
+            this.mapName.Size = new System.Drawing.Size(98, 20);
+            this.mapName.TabIndex = 12;
             // 
             // Form1
             // 
@@ -159,7 +315,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).EndInit();
             this.panel_serverOptions.ResumeLayout(false);
             this.panel_serverOptions.PerformLayout();
+            this.panel_commands.ResumeLayout(false);
+            this.panel_commands.PerformLayout();
             this.panel_clientArea.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.timeLimit)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -176,6 +336,17 @@
         private System.Windows.Forms.Panel panel_commands;
         private System.Windows.Forms.Panel panel_clientArea;
         private System.Windows.Forms.ListBox clientInfoBox;
+        private System.Windows.Forms.RichTextBox ServerInfoTextArea;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.Button buttonStartGame;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown nrOfClients;
+        private System.Windows.Forms.ComboBox gameModes;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown timeLimit;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox mapName;
     }
 }
 

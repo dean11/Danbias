@@ -48,7 +48,7 @@ namespace DanBias
 	bool GameLobby::StartGameSession(  )
 	{
 	//Check if all clients is ready
-		if(this->GetClientCount() == this->readyList.Size())
+		if(this->GetClientCount() && this->GetClientCount() == this->readyList.Size())
 		{
 			GameSession::GameDescription desc;
 				desc.maxClients = this->description.maxClients;
@@ -59,10 +59,10 @@ namespace DanBias
 				desc.clients = this->clients;
 
 			if(desc.gameTime == 0.0f)
-				desc.gameTime = (int)(60.0f * 10.0f); //note: Default game time length should be fetched from somewhere.
+				desc.gameTime = (int)(60.0f * 10.0f); //note: should be fetched from somewhere.
 
 			if(desc.maxClients == 0)
-				desc.maxClients = 10; //note: Default should be fetched somewhere else..
+				desc.maxClients = 10; //note: should be fetched somewhere else..
 
 			this->clients.Clear();	//Remove clients from lobby list
 		
