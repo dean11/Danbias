@@ -8,6 +8,7 @@
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
+#include "Utilities.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -15,6 +16,7 @@ using namespace ::Oyster::Network;
 using namespace ::Oyster::Math3D;
 using namespace ::GameLogic;
 using namespace ::Utility::DynamicMemory;
+using namespace ::Utility::String;
 
 struct  GameState::MyData
 {
@@ -39,6 +41,11 @@ struct  GameState::MyData
 	int myId;
 
 } privData;
+
+inline Quaternion ArrayToQuaternion( const float source[4] )
+{
+	return Quaternion( Float3(source[0], source[1], source[2]), source[3] );
+}
 
 GameState::GameState()
 {
@@ -75,21 +82,33 @@ bool GameState::Init( SharedStateContent &shared )
 	return true;
 }
 
-void GameState::InitiatePlayer( int id, std::wstring modelName, Float4x4 world )
+void GameState::InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer )
 {
-	this->privData->myId = id;
-
 	ModelInitData modelData;
-	modelData.visible = true;
-	modelData.position = Float3(world[12], world[13], world[14]);
-	modelData.rotation = Quaternion(Float3(0,0,0), 1);
-	modelData.scale =  Float3(1,1,1);
-	modelData.modelPath = modelName;
-	modelData.id = this->privData->myId;
-	this->privData->player.Init( modelData );
+	modelData.visible	= true;
+	modelData.position	= position;
+	modelData.rotation	= ArrayToQuaternion( rotation );
+	modelData.scale		= scale;
+	StringToWstring( modelName, modelData.modelPath );
+	modelData.id		= id;
 
-	this->privData->camera.SetPosition( this->privData->player.getPos() );
-	this->privData->camera.UpdateOrientation();
+	if( isMyPlayer )
+	{
+		if( this->privData->player.Init(modelData) )
+		{
+			this->privData->myId = id;
+			this->privData->camera.SetPosition( this->privData->player.getPos() );
+			this->privData->camera.UpdateOrientation();
+		}
+	}
+	else
+	{
+		C_DynamicObj *p = new C_DynamicObj();
+		if( p->Init(modelData) )
+		{
+			(*this->privData->dynamicObjects)[id] = p;
+		}
+	}
 }
 
 GameClientState::ClientState GameState::Update( float deltaTime )
@@ -359,7 +378,12 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 
 			}		
 			break;
-		case protocol_Gameplay_ObjectCreatePlayer:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectCreatePlayer:
+			{
+				Protocol_ObjectCreatePlayer decoded(data);
+				this->InitiatePlayer( decoded.object_ID, decoded.meshName, decoded.position, decoded.rotation, decoded.scale, decoded.owner );				
+			}
+			break;
 		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
