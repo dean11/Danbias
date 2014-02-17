@@ -5,10 +5,16 @@
 #include "Camera_FPS.h"
 #include <GameServerAPI.h>
 
+#include "C_obj/C_Player.h"
+#include "C_obj/C_DynamicObj.h"
+#include "C_obj/C_StaticObj.h"
+
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
 using namespace ::Oyster::Network;
 using namespace ::Oyster::Math3D;
+using namespace ::GameLogic;
+using namespace ::Utility::DynamicMemory;
 
 struct  GameState::MyData
 {
@@ -17,17 +23,26 @@ struct  GameState::MyData
 	NetworkClient *nwClient;
 	InputClass *input;
 
-	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> *staticObjects;
-	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> *dynamicObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
+
+	bool key_forward;
+	bool key_backward;
+	bool key_strafeRight;
+	bool key_strafeLeft;
+	bool key_Shoot;
+	bool key_Jump;
+
+	C_Player player;
+	Camera_FPS camera;
+
+	int myId;
 
 } privData;
 
 GameState::GameState()
 {
-	key_forward = false;
-	key_backward = false;
-	key_strafeRight = false;
-	key_strafeLeft = false;
+	this->privData = nullptr;
 }
 
 GameState::~GameState()
@@ -38,202 +53,69 @@ GameState::~GameState()
 
 bool GameState::Init( SharedStateContent &shared )
 {
-	// load models
-	privData = new MyData();
+	// we may assume that shared.network is properly connected
+	// and there is content in shared.dynamicObjects and shared.staticObjects
+
+	this->privData = new MyData();
+
+	this->privData->key_forward = false;
+	this->privData->key_backward = false;
+	this->privData->key_strafeRight = false;
+	this->privData->key_strafeLeft = false;
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
 	this->privData->input = shared.input;
-
-	LoadGame();
+	this->privData->staticObjects = &shared.staticObjects;
+	this->privData->dynamicObjects = &shared.dynamicObjects;
 
 	//tell server ready
-	this->privData->nwClient->Send( GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready) );
+	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 
 	return true;
 }
 
-GameState::gameStateState GameState::LoadGame() 
+void GameState::InitiatePlayer( int id, std::wstring modelName, Float4x4 world )
 {
-
-	return gameStateState_playing;
-}
-
-bool GameState::LoadModels(std::string mapFile)
-{
-	GameLogic::LevelLoader levelLoader;
-	std::vector<Utility::DynamicMemory::SmartPointer<GameLogic::ObjectTypeHeader>> objects; 
-	objects = levelLoader.LoadLevel(mapFile);
-
-	int objCount = objects.size();
-	int modelId = 0;
-	ModelInitData modelData;
-	for (int i = 0; i < objCount; i++)
-	{
-		GameLogic::ObjectTypeHeader* obj = objects.at(i);
-
-		switch (obj->typeID)
-		{
-		case GameLogic::ObjectType::ObjectType_LevelMetaData:
-
-			break;
-		case GameLogic::ObjectType::ObjectType_Static:
-			{
-				GameLogic::ObjectHeader* staticObjData = ((GameLogic::ObjectHeader*)obj);
-
-				modelData.modelPath.assign(staticObjData->ModelFile.begin(), staticObjData->ModelFile.end());
-				modelData.visible = true;
-				//modelData.position = ;
-				//modelData.rotation = Quaternion(Float3(2,2,-2), 1);
-				//modelData.scale =  Float3(2,2,2);
-				modelData.id = modelId++;
-
-				this->staticObjects.Push(new C_StaticObj());
-				this->staticObjects[this->staticObjects.Size() -1 ]->Init(modelData);
-			}
-		break;
-		case GameLogic::ObjectType::ObjectType_Dynamic:
-			{
-				GameLogic::ObjectHeader* dynamicObjData = ((GameLogic::ObjectHeader*)obj);
-				//modelData.position = ;
-				//modelData.rotation = Quaternion(Float3(2,2,-2), 1);
-				//modelData.scale =  Float3(2,2,2);
-				modelData.modelPath.assign(dynamicObjData->ModelFile.begin(), dynamicObjData->ModelFile.end());
-				modelData.visible = true;
-				modelData.id = modelId++;
-
-				this->dynamicObjects.Push(new C_DynamicObj());
-				this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
-			}
-			break;
-		case  GameLogic::ObjectType::ObjectType_Light:
-			{
-				GameLogic::BasicLight* lightData = ((GameLogic::BasicLight*)obj);
-
-				switch( lightData->lightType )
-				{
-				case GameLogic::LightType_PointLight:
-					{
-						//Oyster::Graphics::Definitions::Pointlight plight;
-						//plight.Pos = ((GameLogic::PointLight*)lightData)->position;
-						//plight.Color = lightData->diffuseColor;
-						//plight.Radius = 100;
-						//plight.Bright = 0.9f;
-						//Oyster::Graphics::API::AddLight(plight);
-					}
-					break;
-				default: break;
-				}
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	myId += modelId++;
-	// add player model
-	//modelData.position = ;
-	//modelData.rotation = Quaternion(Float3(2,2,-2), 1);
-	//modelData.scale =  Float3(2,2,2);
-
-
-	modelData.visible = true;
-	modelData.modelPath = L"char_still_sizeref.dan";
-	modelData.id = myId;
-	// load models
-	this->dynamicObjects.Push(new C_DynamicObj());
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
-
-	/*C_Player* obj =  new C_Player();
-	privData->object.push_back(obj);
-	privData->object[privData->object.size() -1 ]->Init(modelData);
-	*/
-	return true;
-	
-}
-
-bool GameState::InitCamera(Float3 startPos)
-{
-	camera.SetHeadOffset( Float3(0.0f, 1.0f, 1.0f) );
-	camera.SetPerspectiveProjection( pi / 4.0f, 1024.0f/768.0f, 1.0f, 1000.0f );
-	camera.UpdateOrientation();
-	Oyster::Graphics::API::SetProjection(camera.GetProjectionMatrix());
-	
-	return true;
-}
-
-void GameState::InitiatePlayer(int id, std::wstring modelName, Float4x4 world)
-{
-	myId = id;
+	this->privData->myId = id;
 
 	ModelInitData modelData;
-	C_Object* obj;
 	modelData.visible = true;
-	//modelData.world = world;
 	modelData.position = Float3(world[12], world[13], world[14]);
 	modelData.rotation = Quaternion(Float3(0,0,0), 1);
 	modelData.scale =  Float3(1,1,1);
 	modelData.modelPath = modelName;
-	modelData.id = myId;
-	
-	obj = new C_Player();
-	this->dynamicObjects.Push(obj);
-	this->dynamicObjects[this->dynamicObjects.Size() -1 ]->Init(modelData);
+	modelData.id = this->privData->myId;
+	this->privData->player.Init( modelData );
 
-	Float3 pos = Float3(world[12], world[13], world[14]);
-
-	camera.SetPosition( pos );
-	camera.UpdateOrientation();
+	this->privData->camera.SetPosition( this->privData->player.getPos() );
+	this->privData->camera.UpdateOrientation();
 }
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	//switch (privData->state)
-	//{
-	//case gameStateState_loading:	//Will this ever happen in this scope??
-	//	{
-	//		// load map
-	//		// wait for all players
-	//		LoadGame();
-	//		GameLogic::Protocol_General_Status gameStatus;
-	//		gameStatus.status = GameLogic::Protocol_General_Status::States_ready;
-	//		privData->nwClient->Send(gameStatus);
-	//		privData->state = gameStateState_playing;
-	//	}
-	//	break;
-	//case gameStateState_playing:
-	//	// read server data
-	//	// update objects
-	//	{
-	//		readKeyInput(KeyInput);
-	//		camera.UpdateOrientation();
-	//	}
-	//	break;
-	//case gameStateState_end:
-	//	return ClientState_Lobby;
-	//	break;
-	//default:
-	//	break;
-	//}
-	//
-	//// send key input to server. 
-	//return ClientState_Same;
-
 	return this->privData->nextState;
 }
 
 bool GameState::Render()
 {
-	Oyster::Graphics::API::SetView( camera.GetViewMatrix() );
+	Oyster::Graphics::API::SetView( this->privData->camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
-	for (unsigned int i = 0; i < staticObjects.Size(); i++)
+
+	// for debugging to be replaced with render weapon
+	this->privData->player.Render();
+
+	auto staticObject = this->privData->staticObjects->begin();
+	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 	{
-		staticObjects[i]->Render();
+		staticObject->second->Render();
 	}
-	for (unsigned int i = 0; i < dynamicObjects.Size(); i++)
+
+	auto dynamicObject = this->privData->dynamicObjects->begin();
+	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 	{
-		dynamicObjects[i]->Render();
+		dynamicObject->second->Render();
 	}
 
 	Oyster::Graphics::API::EndFrame();
@@ -242,8 +124,25 @@ bool GameState::Render()
 
 bool GameState::Release()
 {
+	if( privData )
+	{
+		auto staticObject = this->privData->staticObjects->begin();
+		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+		{
+			staticObject->second = nullptr;
+		}
 
-	privData = NULL;
+		auto dynamicObject = this->privData->dynamicObjects->begin();
+		for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
+		{
+			dynamicObject->second = nullptr;
+		}
+
+		this->privData->staticObjects->clear();
+		this->privData->dynamicObjects->clear();
+
+		privData = NULL;
+	}
 	return true;
 }
 
@@ -252,138 +151,119 @@ void GameState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void GameState::readKeyInput(InputClass* KeyInput)
+void GameState::ReadKeyInput()
 {
-	if(KeyInput->IsKeyPressed(DIK_W))
+	if( this->privData->input->IsKeyPressed(DIK_W) )
 	{
-		if(!key_forward)
+		if(!this->privData->key_forward)
 		{
-			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementForward());
-			key_forward = true;
+			this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
+			this->privData->key_forward = true;
 		}
 	}
 	else
-		key_forward = false;
+		this->privData->key_forward = false;
 
-	if(KeyInput->IsKeyPressed(DIK_S))
+	if( this->privData->input->IsKeyPressed(DIK_S) )
 	{
-		if(!key_backward)
+		if( !this->privData->key_backward )
 		{
-			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementBackward());
-			key_backward = true;
+			this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
+			this->privData->key_backward = true;
 		}
 	}
 	else 
-		key_backward = false;
+		this->privData->key_backward = false;
 
-	if(KeyInput->IsKeyPressed(DIK_A))
+	if( this->privData->input->IsKeyPressed(DIK_A) )
 	{
-		if(!key_strafeLeft)
+		if( !this->privData->key_strafeLeft )
 		{
-			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementLeft());
-			key_strafeLeft = true;
+			this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
+			this->privData->key_strafeLeft = true;
 		}
 	}
 	else 
-		key_strafeLeft = false;
+		this->privData->key_strafeLeft = false;
 
-	if(KeyInput->IsKeyPressed(DIK_D))
+	if( this->privData->input->IsKeyPressed(DIK_D) )
 	{
-		if(!key_strafeRight)
+		if( !this->privData->key_strafeRight )
 		{
-			privData->nwClient->Send(GameLogic::Protocol_PlayerMovementRight());
-			key_strafeRight = true;
+			this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
+			this->privData->key_strafeRight = true;
 		}
 	} 
 	else 
-		key_strafeRight = false;
+		this->privData->key_strafeRight = false;
 
 
 	//send delta mouse movement 
-	//if (KeyInput->IsMousePressed())
 	{
-		camera.YawRight( -KeyInput->GetYaw() );
-		camera.PitchUp( KeyInput->GetPitch() );
-		camera.UpdateOrientation();
+		this->privData->camera.YawRight( -this->privData->input->GetYaw() );
+		this->privData->camera.PitchUp( this->privData->input->GetPitch() );
+		this->privData->camera.UpdateOrientation();
 
-		GameLogic::Protocol_PlayerLook playerLookDir;
-		Float4 look = camera.GetLook();
-
-		privData->nwClient->Send( playerLookDir );
+		privData->nwClient->Send( Protocol_PlayerLook(this->privData->camera.GetLook(), this->privData->camera.GetRight()) );
 	}
 
 	// shoot
-	if(KeyInput->IsKeyPressed(DIK_Z))
+	if( this->privData->input->IsKeyPressed(DIK_Z) )
 	{
-		if(!key_Shoot)
+		if( !this->privData->key_Shoot )
 		{
-			GameLogic::Protocol_PlayerShot playerShot;
+			Protocol_PlayerShot playerShot;
 			playerShot.primaryPressed = true;
 			playerShot.secondaryPressed = false;
 			playerShot.utilityPressed = false;
-			privData->nwClient->Send(playerShot);
-			key_Shoot = true;
+			this->privData->nwClient->Send( playerShot );
+			this->privData->key_Shoot = true;
 		}
 	} 
 	else 
-		key_Shoot = false;
-	if(KeyInput->IsKeyPressed(DIK_X))
+		this->privData->key_Shoot = false;
+	if( this->privData->input->IsKeyPressed(DIK_X) )
 	{
-		if(!key_Shoot)
+		if( !this->privData->key_Shoot )
 		{
-			GameLogic::Protocol_PlayerShot playerShot;
+			Protocol_PlayerShot playerShot;
 			playerShot.primaryPressed = false;
 			playerShot.secondaryPressed = true;
 			playerShot.utilityPressed = false;
-			privData->nwClient->Send(playerShot);
-			key_Shoot = true;
+			this->privData->nwClient->Send( playerShot );
+			this->privData->key_Shoot = true;
 		}
 	} 
 	else 
-		key_Shoot = false;
-	if(KeyInput->IsKeyPressed(DIK_C))
+		this->privData->key_Shoot = false;
+	if( this->privData->input->IsKeyPressed(DIK_C) )
 	{
-		if(!key_Shoot)
+		if( !this->privData->key_Shoot )
 		{
-			GameLogic::Protocol_PlayerShot playerShot;
+			Protocol_PlayerShot playerShot;
 			playerShot.primaryPressed = false;
 			playerShot.secondaryPressed = false;
 			playerShot.utilityPressed = true;
-			privData->nwClient->Send(playerShot);
-			key_Shoot = true;
+			this->privData->nwClient->Send( playerShot );
+			this->privData->key_Shoot = true;
 		}
 	} 
 	else 
-		key_Shoot = false;
+		this->privData->key_Shoot = false;
 
 	// jump
-	if(KeyInput->IsKeyPressed(DIK_SPACE))
+	if( this->privData->input->IsKeyPressed(DIK_SPACE) )
 	{
-		if(!key_Jump)
+		if(!this->privData->key_Jump)
 		{
-			privData->nwClient->Send(GameLogic::Protocol_PlayerJump());
-			key_Jump = true;
+			this->privData->nwClient->Send( Protocol_PlayerJump() );
+			this->privData->key_Jump = true;
 		}
 	}
 	else 
-		key_Jump = false;
+		this->privData->key_Jump = false;
 
-	// send event data
-	//  
-	//if(KeyInput->IsKeyPressed(DIK_L))
-	//	privData->state = GameState::gameStateState_end;
-}
-
-using namespace ::Oyster::Network;
-using namespace ::Utility::DynamicMemory;
-
-// returns -1 if none found
-int FindObject( const DynamicArray<SmartPointer<C_Object>> &collection, int id )
-{
-	int num = collection.Size();
-	for( int i = 0; i < num; ++i ) if( id == collection[i]->GetId() )
-		return i;
-	return -1;
+	// TODO: implement sub-menu
 }
 
 void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
@@ -400,76 +280,67 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 		case protocol_Gameplay_ObjectHealthStatus:		break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectPosition:
 			{
-				GameLogic::Protocol_ObjectPosition decoded(data);
+				Protocol_ObjectPosition decoded(data);
 
 				// if is this player. Remember to change camera
-				if( this->myId == decoded.object_ID )
-					camera.SetPosition( decoded.position );
+				if( this->privData->myId == decoded.object_ID )
+					this->privData->camera.SetPosition( decoded.position );
 
-				int i = FindObject( this->dynamicObjects, decoded.object_ID );
-				if( i > -1 )
-					this->dynamicObjects[i]->setPos( decoded.position );
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setPos( decoded.position );
 			}
 			break;
 		case protocol_Gameplay_ObjectScale:
 			{
-				GameLogic::Protocol_ObjectScale decoded(data);
-				int i = FindObject( this->dynamicObjects, decoded.object_ID );
-				if( i > -1 )
-					this->dynamicObjects[i]->setScale( decoded.scale );
+				Protocol_ObjectScale decoded(data);
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setScale( decoded.scale );
 			}
 			break;
 		case protocol_Gameplay_ObjectRotation:
 			{
-				GameLogic::Protocol_ObjectRotation decoded(data);
+				Protocol_ObjectRotation decoded(data);
 				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
 
 				// if is this player. Remember to change camera
-				if( this->myId == decoded.object_ID )
-					camera.SetAngular( AngularAxis(rotation) );
+				if( this->privData->myId == decoded.object_ID )
+					this->privData->camera.SetAngular( AngularAxis(rotation) );
 
-				int i = FindObject( this->dynamicObjects, decoded.object_ID );
-				if( i > -1 )
-					this->dynamicObjects[i]->setRot( rotation );
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRot( rotation );
 			}
 			break;
 		case protocol_Gameplay_ObjectPositionRotation:
 			{
-				GameLogic::Protocol_ObjectPositionRotation decoded(data);
+				Protocol_ObjectPositionRotation decoded(data);
 				Float3 position = decoded.position;
 				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
 
 				// if is this player. Remember to change camera
-				if( this->myId == decoded.object_ID )
+				if( this->privData->myId == decoded.object_ID )
 				{
-					camera.SetPosition( position );
-					camera.SetAngular( AngularAxis(rotation) );
+					this->privData->camera.SetPosition( position );
+					this->privData->camera.SetAngular( AngularAxis(rotation) );
 				}
 
-				int i = FindObject( this->dynamicObjects, decoded.object_ID );
-				if( i > -1 )
-				{
-					this->dynamicObjects[i]->setPos( position );
-					this->dynamicObjects[i]->setRot( rotation );
-				}
+				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
+				object->setPos( position );
+				object->setRot( rotation );
 			}
 			break;
 		case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectDisabled:
 			{
-				GameLogic::Protocol_ObjectDisable decoded(data);
+				Protocol_ObjectDisable decoded(data);
 
-				int i = FindObject( this->dynamicObjects, decoded.objectID );
-				if( i > -1 )
+				auto object = this->privData->dynamicObjects->find( decoded.objectID );
+				if( object != this->privData->dynamicObjects->end() )
 				{
-					this->dynamicObjects[i].Release();
-					this->dynamicObjects.Pop(i);
+					object->second = nullptr;
+					this->privData->dynamicObjects->erase( object );
 				}
 			}
 			break;
 		case protocol_Gameplay_ObjectCreate:
 			{
-				GameLogic::Protocol_ObjectCreate decoded(data);
+				Protocol_ObjectCreate decoded(data);
 				C_DynamicObj* object = new C_DynamicObj();
 
 				ModelInitData modelData;
@@ -484,7 +355,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				}
 				object->Init(modelData);
 
-				dynamicObjects.Push(object);
+				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
 
 			}		
 			break;
