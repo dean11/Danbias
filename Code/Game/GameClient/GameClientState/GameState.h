@@ -20,7 +20,7 @@ namespace DanBias { namespace Client
 		~GameState(void);
 		bool Init( SharedStateContent &shared );
 		GameClientState::ClientState Update( float deltaTime ) override;
-		void InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3] );
+		void InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer );
 		void ReadKeyInput();
 		bool Render()override;
 		bool Release()override;
