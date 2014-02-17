@@ -22,6 +22,7 @@ struct LobbyAdminState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
+	InputClass *input;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 } privData;
@@ -36,12 +37,13 @@ LobbyAdminState::~LobbyAdminState(void)
 		this->Release();
 }
 
-bool LobbyAdminState::Init(NetworkClient* nwClient)
+bool LobbyAdminState::Init( SharedStateContent &shared )
 {
 	privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = nwClient;
+	this->privData->nwClient = shared.network;
+	this->privData->input = shared.input;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
@@ -57,7 +59,7 @@ bool LobbyAdminState::Init(NetworkClient* nwClient)
 	return true;
 }
 
-GameClientState::ClientState LobbyAdminState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState LobbyAdminState::Update( float deltaTime )
 {
 	// Wishlist:
 	// picking 
@@ -70,8 +72,8 @@ GameClientState::ClientState LobbyAdminState::Update(float deltaTime, InputClass
 
 	MouseInput mouseState;
 	{
-		KeyInput->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
+		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
+		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
 	}
 
 	EventHandler::Instance().Update( mouseState );

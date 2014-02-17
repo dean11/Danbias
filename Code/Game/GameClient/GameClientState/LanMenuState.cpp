@@ -28,6 +28,7 @@ struct  LanMenuState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
+	InputClass *input;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 
@@ -46,12 +47,13 @@ LanMenuState::~LanMenuState()
 		this->Release();
 }
 
-bool LanMenuState::Init(Network::NetworkClient* nwClient)
+bool LanMenuState::Init( SharedStateContent &shared )
 {
 	this->privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = nwClient;
+	this->privData->nwClient = shared.network;
+	this->privData->input = shared.input;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
@@ -80,12 +82,12 @@ bool LanMenuState::Init(Network::NetworkClient* nwClient)
 	return true;
 }
 
-GameClientState::ClientState LanMenuState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState LanMenuState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		KeyInput->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
+		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
+		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
 	}
 
 	EventHandler::Instance().Update( mouseState );

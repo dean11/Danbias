@@ -8,8 +8,6 @@
 #include "EventHandler/EventButton.h"
 #include "DllInterfaces/GFXAPI.h"
 
-
-
 namespace DanBias
 {
 	namespace Client

@@ -1,9 +1,11 @@
 #include "NetLoadState.h"
 #include "NetworkClient.h"
+#include "OysterMath.h"
 #include "../Game/GameProtocols/Protocols.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
+using namespace ::Oyster::Math;
 using namespace ::Oyster::Network;
 using namespace ::GameLogic;
 
@@ -13,6 +15,7 @@ struct NetLoadState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
+	Graphics::API::Texture background;
 	bool loading;
 };
 
@@ -24,28 +27,36 @@ NetLoadState::~NetLoadState(void)
 		this->Release();
 }
 
-bool NetLoadState::Init( NetworkClient* nwClient )
+bool NetLoadState::Init( SharedStateContent &shared )
 {
 	this->privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = nwClient;
+	this->privData->nwClient = shared.network;
+	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 	this->privData->loading = false;
 
 	// we may assume that nwClient is properly connected to the server
 	// signals querry to server for loading instructions
-	nwClient->Send( Protocol_QuerryGameType() );
+	this->privData->nwClient->Send( Protocol_QuerryGameType() );
 
 	return true;
 }
 
-GameClientState::ClientState NetLoadState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState NetLoadState::Update( float deltaTime )
 {
 	return this->privData->nextState;
 }
 
 bool NetLoadState::Render()
 {
+	Graphics::API::NewFrame();
+	Graphics::API::StartGuiRender();
+
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
+
+	Graphics::API::EndFrame();
+
 	return true;
 }
 
