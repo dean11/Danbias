@@ -16,6 +16,10 @@ struct  GameState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	InputClass *input;
+
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> *staticObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Object>> *dynamicObjects;
+
 } privData;
 
 GameState::GameState()
