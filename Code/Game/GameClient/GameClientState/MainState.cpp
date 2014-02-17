@@ -52,13 +52,13 @@ bool MainState::Init( NetworkClient* nwClient )
 	// create buttons
 	ButtonRectangle<MainState*> *button;
 	
-	button = new ButtonRectangle<MainState*>( L"earth_md.png", L"Create", Float3(1.0f), OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<MainState*>( L"earth_md.png", L"Create", Float4(1.0f), OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"skysphere_md.png", L"Join", Float3(1.0f), OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<MainState*>( L"skysphere_md.png", L"Join", Float4(1.0f), OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"plane_texture_md.png", L"Quit", Float3(1.0f), OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<MainState*>( L"plane_texture_md.png", L"Quit", Float4(1.0f), OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler

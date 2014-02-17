@@ -48,7 +48,7 @@ bool LobbyState::Init(NetworkClient* nwClient)
 	// create buttons
 	ButtonRectangle<LobbyState*> *button;
 	
-	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"Ready", Float3(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"Ready", Float4(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
