@@ -11,18 +11,18 @@ namespace DanBias
 	{
 		class MainState : public GameClientState
 		{
-		private:
-			struct MyData;
-			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		public:
-			MainState(void);
-			~MainState(void);
-			bool Init( Oyster::Network::NetworkClient* nwClient );
-			ClientState Update(float deltaTime, InputClass* KeyInput);
+			MainState();
+			~MainState();
+			bool Init( SharedStateContent &shared );
+			ClientState Update( float deltaTime );
 			
 			bool Render();
 			bool Release();
 			void ChangeState( ClientState next );
+		private:
+			struct MyData;
+			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		};
 	}
 }

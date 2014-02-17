@@ -23,11 +23,11 @@ namespace DanBias
 		class LobbyState : public GameClientState
 		{
 		public:
-			LobbyState(void);
-			~LobbyState(void);
+			LobbyState();
+			~LobbyState();
 
-			bool Init( Oyster::Network::NetworkClient* nwClient );
-			ClientState Update( float deltaTime, InputClass* KeyInput );
+			bool Init( SharedStateContent &shared );
+			ClientState Update( float deltaTime );
 			bool Render();
 			bool Release();
 			void ChangeState( ClientState next );

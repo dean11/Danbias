@@ -18,12 +18,15 @@
 #include "WinTimer.h"
 #include "vld.h"
 
-#include "EventHandler/EventHandler.h"
+#include "../Misc/EventHandler/EventHandler.h"
+
+#include "GameClientState\SharedStateContent.h"
 
 using namespace ::Oyster;
 using namespace ::Oyster::Event;
 using namespace ::Oyster::Network;
 using namespace ::Utility::DynamicMemory;
+using namespace ::DanBias::Client;
 
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
 
@@ -32,15 +35,17 @@ namespace DanBias
 #pragma region Game Data
 	class DanBiasGamePrivateData
 	{
-
 	public:
 		WindowShell* window;
-		InputClass* inputObj;
+		InputClass inputObj;
 		Utility::WinTimer timer;
-		UniquePointer<Client::GameClientState> state;
-		NetworkClient networkClient;
-		bool serverOwner;
 
+		UniquePointer<Client::GameClientState> state;
+		SharedStateContent sharedStateContent;
+		NetworkClient networkClient;
+
+
+		bool serverOwner;
 		float capFrame;
 
 		DanBiasGamePrivateData()
@@ -72,10 +77,13 @@ namespace DanBias
 
 		data.networkClient.SetMessagePump( ClientEventFunction );
 
+		data.sharedStateContent.network = &data.networkClient;
+		data.sharedStateContent.input	= &data.inputObj;
+
 		// Start in main menu state
 		data.state = new Client::MainState();
 
-		if( !data.state->Init( &data.networkClient ) )
+		if( !data.state->Init( data.sharedStateContent ) )
 			return DanBiasClientReturn_Error;
 
 		data.timer.reset();
@@ -140,8 +148,7 @@ namespace DanBias
 	//-------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitInput() 
 	{
-		data.inputObj = new InputClass;
-		if(!data.inputObj->Initialize(data.window->GetHINSTANCE(), data.window->GetHWND(), data.window->GetHeight(), data.window->GetWidth()))
+		if(!data.inputObj.Initialize(data.window->GetHINSTANCE(), data.window->GetHWND(), data.window->GetHeight(), data.window->GetWidth()))
 		{
 			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
 			return E_FAIL;
@@ -164,7 +171,7 @@ namespace DanBias
 			float mouseNormalisedY = (float)(mousePos.y - windowVertex.top);
 			mouseNormalisedY /= (float)(windowVertex.bottom - windowVertex.top);
 
-			data.inputObj->Update( mouseNormalisedX, mouseNormalisedY );
+			data.inputObj.Update( mouseNormalisedX, mouseNormalisedY );
 		}		
 
 		if( data.serverOwner )
@@ -174,7 +181,7 @@ namespace DanBias
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
 
-		state = data.state->Update( deltaTime, data.inputObj );
+		state = data.state->Update( deltaTime );
 
 		if( state != Client::GameClientState::ClientState_Same )
 		{
@@ -217,7 +224,7 @@ namespace DanBias
 
 			if( stateChanged )
 			{
-				data.state->Init( &data.networkClient ); // send game client
+				data.state->Init( data.sharedStateContent ); // send game client
 			}			 
 		}
 		return Result_continue;
@@ -234,8 +241,6 @@ namespace DanBias
 	{
 		if( data.networkClient.IsConnected() )
 			data.networkClient.Disconnect();
-
-		delete data.inputObj;
 
 		data.state = nullptr;
 		EventHandler::Instance().Clean();

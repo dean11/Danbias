@@ -24,6 +24,7 @@ struct MainState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
+	InputClass *input;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 };
@@ -32,20 +33,21 @@ void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e );
 void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e );
 void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<MainState*>& e );
 
-MainState::MainState(void) {}
+MainState::MainState() {}
 
-MainState::~MainState(void)
+MainState::~MainState()
 {
 	if( this->privData )
 		this->Release();
 }
 
-bool MainState::Init( NetworkClient* nwClient )
+bool MainState::Init( SharedStateContent &shared )
 {
 	this->privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = nwClient;
+	this->privData->nwClient = shared.network;
+	this->privData->input = shared.input;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
@@ -67,12 +69,12 @@ bool MainState::Init( NetworkClient* nwClient )
 	return true;
 }
 
-GameClientState::ClientState MainState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState MainState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		KeyInput->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
+		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
+		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
 	}
 
 	EventHandler::Instance().Update( mouseState );
