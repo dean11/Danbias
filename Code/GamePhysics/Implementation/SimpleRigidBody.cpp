@@ -69,7 +69,7 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 
 void SimpleRigidBody::ApplyImpulse(Float3 impulse)
 {
-	this->rigidBody->applyImpulse(btVector3(impulse.x, impulse.y, impulse.z), btVector3(0.0f, 0.0f, 0.0f));
+	this->rigidBody->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
 }
 
 void SimpleRigidBody::SetCollisionShape(btCollisionShape* shape)
@@ -350,7 +350,7 @@ void SimpleRigidBody::SetCustomTag( void *ref )
 void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 {
 	btTransform xform;
-	this->rigidBody->getMotionState()->getWorldTransform (xform);
+	xform = this->rigidBody->getWorldTransform ();
 	btVector3 down = -xform.getBasis()[1];
 	btVector3 forward = xform.getBasis()[2];
 	down.normalize ();
@@ -359,7 +359,14 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 	this->raySource[0] = xform.getOrigin();
 	this->raySource[1] = xform.getOrigin();
 
-	this->rayTarget[0] = this->raySource[0] + down * this->state.reach.y * btScalar(1.1);
+	Float angle = acos(Float3(0, 1, 0).Dot(this->state.centerPos.GetNormalized()));
+	down.setZ(-down.z());
+	down.setX(-down.x());
+	btVector3 targetPlus = down * this->state.reach.y * btScalar(1.1);
+
+	
+
+	this->rayTarget[0] = this->raySource[0] + targetPlus;
 	this->rayTarget[1] = this->raySource[1] + forward * this->state.reach.y * btScalar(1.1);
 
 	class ClosestNotMe : public btCollisionWorld::ClosestRayResultCallback
@@ -392,13 +399,15 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 		if (rayCallback.hasHit())
 		{
 			this->rayLambda[i] = rayCallback.m_closestHitFraction;
-		} else {
+		} 
+		else 
+		{
 			this->rayLambda[i] = 1.0;
 		}
 	}
 }
 
-float SimpleRigidBody::GetLamda() const
+float SimpleRigidBody::GetLambda() const
 {
 	return this->rayLambda[0];
 }

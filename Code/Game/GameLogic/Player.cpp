@@ -51,7 +51,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 
 	this->previousPosition = Oyster::Math::Float3(0,0,0);
 	this->moveDir = Oyster::Math::Float3(0,0,0);
-	this->moveSpeed = 100;
+	this->moveSpeed = 20;
 	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
 }
 
@@ -68,67 +68,87 @@ void Player::BeginFrame()
 {
 	//weapon->Update(0.002f); 
 	Object::BeginFrame();
-	
-	//Oyster::Math::Float3 previousFall = this->previousMoveSpeed*-this->rigidBody->GetState().centerPos.GetNormalized();
-	//Oyster::Math::Float3 currentFall = this->rigidBody->GetLinearVelocity()*-this->rigidBody->GetState().centerPos.GetNormalized();
 
-	if(this->moveDir != Oyster::Math::Float3::null && this->playerState != PLAYER_STATE_JUMPING)
-	{
-		Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
-		Oyster::Math::Float3 lostVelocity = (this->previousMoveSpeed - velocity).GetMagnitude()*this->moveDir;
-     	this->rigidBody->SetLinearVelocity(velocity + lostVelocity - this->moveDir*this->moveSpeed );
-	}
-	else
-	{
+	Oyster::Math::Float maxSpeed = 30;
 
-		if(this->rigidBody->GetLamda() == 1.0f)
-		{
-			this->playerState = PLAYER_STATE_WALKING;
-		}
+	Oyster::Math::Float4x4 xform;
+	xform = this->rigidBody->GetState().GetOrientation();
 
-		if(this->moveDir != Oyster::Math::Float3::null)
-		{
-			Oyster::Math::Float3 velocity = this->rigidBody->GetLinearVelocity();
-     		this->rigidBody->SetLinearVelocity(velocity - this->moveDir*this->moveSpeed );
-		}
-	}
+	/* Handle turning */
+	/*if (left)
+		m_turnAngle -= dt * m_turnVelocity;
+	if (right)
+		m_turnAngle += dt * m_turnVelocity;*/
 
-	this->moveDir = Oyster::Math::Float3::null;
+	//xform.setRotation (btQuaternion (btVector3(0.0, 1.0, 0.0), m_turnAngle));
+
+	Oyster::Math::Float3 linearVelocity = this->rigidBody->GetLinearVelocity();
+	Oyster::Math::Float speed = this->rigidBody->GetLinearVelocity().GetLength();
+
+	Oyster::Math::Float3 forwardDir = xform.v[2];
+	Oyster::Math::Float3 rightDir = xform.v[0];
+	forwardDir.Normalize();
+	rightDir.Normalize();
+	Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
+	Oyster::Math::Float walkSpeed = this->moveSpeed*0.2;
 
 	if (key_forward > 0.001)
 	{
-		key_forward -= gameInstance->GetFrameTime(); // fixed timer 
-		this->moveDir += this->rigidBody->GetState().GetOrientation().v[2].GetNormalized().xyz;
+		key_forward -= gameInstance->GetFrameTime();
+		walkDirection += forwardDir;
+		walkDirection.Normalize();
 	}
 	if (key_backward > 0.001)
 	{
 		key_backward -= gameInstance->GetFrameTime();
-		this->moveDir -= this->rigidBody->GetState().GetOrientation().v[2].GetNormalized().xyz;
+		walkDirection -= forwardDir;
+		walkDirection.Normalize();
 	}
 	if (key_strafeRight > 0.001)
 	{
 		key_strafeRight -= gameInstance->GetFrameTime();
-		Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-		Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos;
-		this->moveDir -= (up).Cross(forward).GetNormalized();
+		walkDirection -= rightDir;
+		walkDirection.Normalize();
 	}
 	if (key_strafeLeft > 0.001)
 	{
 		key_strafeLeft -= gameInstance->GetFrameTime();
-		Oyster::Math::Float3 forward = this->rigidBody->GetState().GetOrientation().v[2];
-		Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos;
-		this->moveDir += (up).Cross(forward).GetNormalized();
+		walkDirection += rightDir;
+		walkDirection.Normalize();
+		maxSpeed = 40;
 	}
+	
 
-	if(this->moveDir != Oyster::Math::Float3::null)
+	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.7f)
 	{
-     	this->moveDir.Normalize();
-		this->rigidBody->SetLinearVelocity(this->moveDir*this->moveSpeed + this->rigidBody->GetLinearVelocity());	
+		/* Dampen when on the ground and not being moved by the player */
+		linearVelocity *= 0.2;
+		this->rigidBody->SetLinearVelocity (linearVelocity);
+	} 
+	else 
+	{
+		if (speed < maxSpeed && this->rigidBody->GetLambda() < 1.0f)
+		{
+			Oyster::Math::Float3 velocity = linearVelocity + walkDirection * walkSpeed;
+			this->rigidBody->SetLinearVelocity(velocity);
+		}
+		else if(speed < maxSpeed)
+		{
+			Oyster::Math::Float3 velocity = linearVelocity + (walkDirection * walkSpeed)*0.2f;
+			this->rigidBody->SetLinearVelocity(velocity);
+		}
 	}
 
-	this->previousMoveSpeed = this->rigidBody->GetLinearVelocity();
-	this->previousPosition = this->rigidBody->GetState().centerPos;
-
+	if (key_jump > 0.001)
+	{
+		this->key_jump -= this->gameInstance->GetFrameTime();
+		if(this->rigidBody->GetLambda() < 1.0f)
+		{
+			Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
+			this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass*20);
+			this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+		}
+	}
 
 	this->weapon->Update(0.01f);
 }
@@ -211,12 +231,7 @@ void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::
 
 void Player::Jump()
 {
-	if(this->rigidBody->GetLamda() < 1.0f)
-	{
-		Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
-		this->rigidBody->ApplyImpulse(up *1500);
-		this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
-	}
+	this->key_jump = KEY_TIMER;
 }
 
 bool Player::IsWalking()
