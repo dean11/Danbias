@@ -25,8 +25,8 @@ namespace DanBias { namespace Client
 
 		GameState(void);
 		~GameState(void);
-		bool Init(Oyster::Network::NetworkClient* nwClient);
-		GameClientState::ClientState Update(float deltaTime, InputClass* KeyInput) override;
+		bool Init( SharedStateContent &shared );
+		GameClientState::ClientState Update( float deltaTime ) override;
 
 		bool LoadModels(std::string mapFile);
 		bool InitCamera(Oyster::Math::Float3 startPos) ;

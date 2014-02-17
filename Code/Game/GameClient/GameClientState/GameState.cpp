@@ -15,9 +15,10 @@ struct  GameState::MyData
 	MyData(){}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
+	InputClass *input;
 } privData;
 
-GameState::GameState(void)
+GameState::GameState()
 {
 	key_forward = false;
 	key_backward = false;
@@ -25,24 +26,25 @@ GameState::GameState(void)
 	key_strafeLeft = false;
 }
 
-GameState::~GameState(void)
+GameState::~GameState()
 {
 	if( this->privData )
 		this->Release();
 }
 
-bool GameState::Init(NetworkClient* nwClient)
+bool GameState::Init( SharedStateContent &shared )
 {
 	// load models
 	privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = nwClient;
+	this->privData->nwClient = shared.network;
+	this->privData->input = shared.input;
 
 	LoadGame();
 
 	//tell server ready
-	nwClient->Send( GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready) );
+	this->privData->nwClient->Send( GameLogic::Protocol_General_Status(GameLogic::Protocol_General_Status::States_ready) );
 
 	return true;
 }
@@ -180,7 +182,7 @@ void GameState::InitiatePlayer(int id, std::wstring modelName, Float4x4 world)
 	camera.UpdateOrientation();
 }
 
-GameClientState::ClientState GameState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState GameState::Update( float deltaTime )
 {
 	//switch (privData->state)
 	//{
