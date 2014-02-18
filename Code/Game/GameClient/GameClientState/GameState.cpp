@@ -36,7 +36,11 @@ struct  GameState::MyData
 	bool key_Shoot;
 	bool key_Jump;
 
+	// DEGUG KEYS
 	bool key_Reload_Shaders;
+	bool key_Wireframe_Toggle; 
+	bool renderWhireframe; 
+	// !DEGUG KEYS
 
 	C_Player player;
 	Camera_FPS camera;
@@ -90,7 +94,12 @@ bool GameState::Init( SharedStateContent &shared )
 	// Debugg hack
 	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
 	// end debug hack
-			
+	// DEGUG KEYS
+	this->privData->key_Reload_Shaders = false;
+	this->privData->key_Wireframe_Toggle = false;
+	this->privData->renderWhireframe = false;
+	// !DEGUG KEYS
+
 	return true;
 }
 
@@ -169,37 +178,40 @@ bool GameState::Render()
 	}
 
 	// RB DEBUG render wire frame 
-	Oyster::Graphics::API::StartRenderWireFrame();
-
-	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
-	Oyster::Math3D::Float4x4 world = translation  * scale;
-	Oyster::Graphics::API::RenderDebugCube( world );
-	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
-
-	staticObject = this->privData->staticObjects->begin();
-	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+	if(this->privData->renderWhireframe)
 	{
-		if( staticObject->second->getBRtype() == RB_Type_Cube)
-		{
-			Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
-		}
-		if( staticObject->second->getBRtype() == RB_Type_Sphere)
-		{
-			Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
-		}
-	}
+		Oyster::Graphics::API::StartRenderWireFrame();
 
-	dynamicObject = this->privData->dynamicObjects->begin();
-	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
-	{
-		if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+		Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
+		Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
+		Oyster::Math3D::Float4x4 world = translation  * scale;
+		Oyster::Graphics::API::RenderDebugCube( world );
+		Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+
+		staticObject = this->privData->staticObjects->begin();
+		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 		{
-			Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+			if( staticObject->second->getBRtype() == RB_Type_Cube)
+			{
+				Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+			}
+			if( staticObject->second->getBRtype() == RB_Type_Sphere)
+			{
+				Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+			}
 		}
-		if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+
+		dynamicObject = this->privData->dynamicObjects->begin();
+		for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 		{
-			Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+			{
+				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+			}
+			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+			{
+				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+			}
 		}
 	}
 	// !RB DEBUG 
@@ -283,21 +295,6 @@ void GameState::ReadKeyInput()
 	else 
 		this->privData->key_strafeRight = false;
 
-	if( this->privData->input->IsKeyPressed(DIK_R) )
-	{
-		if( !this->privData->key_Reload_Shaders )
-		{
-			//this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
-#ifdef _DEBUG
-			Graphics::API::ReloadShaders();
-#endif
-			this->privData->key_Reload_Shaders = true;
-		}
-	} 
-	else 
-		this->privData->key_Reload_Shaders = false;
-
-
 	//send delta mouse movement 
 	{
 		this->privData->camera.YawRight( this->privData->input->GetYaw() * 0.017f );
@@ -363,6 +360,35 @@ void GameState::ReadKeyInput()
 	else 
 		this->privData->key_Jump = false;
 
+
+	// DEGUG KEYS
+
+	// Reload shaders
+	if( this->privData->input->IsKeyPressed(DIK_R) )
+	{
+		if( !this->privData->key_Reload_Shaders )
+		{
+#ifdef _DEBUG
+			Graphics::API::ReloadShaders();
+#endif
+			this->privData->key_Reload_Shaders = true;
+		}
+	} 
+	else 
+		this->privData->key_Reload_Shaders = false;
+
+	// toggle wire frame render
+	if( this->privData->input->IsKeyPressed(DIK_T) )
+	{
+		if( !this->privData->key_Wireframe_Toggle )
+		{
+			this->privData->renderWhireframe = !this->privData->renderWhireframe;
+			this->privData->key_Wireframe_Toggle = true;
+		}
+	} 
+	else 
+		this->privData->key_Wireframe_Toggle = false;
+	// !DEGUG KEYS
 	// TODO: implement sub-menu
 }
 
@@ -387,12 +413,18 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 					this->privData->camera.SetPosition( decoded.position );
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setPos( decoded.position );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBPos ( decoded.position );  
+				// !RB DEBUG 
 			}
 			break;
 		case protocol_Gameplay_ObjectScale:
 			{
 				Protocol_ObjectScale decoded(data);
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setScale( decoded.scale );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBScale ( decoded.scale );  
+				// !RB DEBUG 
 			}
 			break;
 		case protocol_Gameplay_ObjectRotation:
@@ -405,6 +437,9 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 					this->privData->camera.SetAngular( AngularAxis(rotation) );
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRot( rotation );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBRot ( rotation );  
+				// !RB DEBUG 
 			}
 			break;
 		case protocol_Gameplay_ObjectPositionRotation:
@@ -423,6 +458,10 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
 				object->setPos( position );
 				object->setRot( rotation );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBPos ( position );  
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBRot ( rotation );  
+				// !RB DEBUG 
 			}
 			break;
 		case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
@@ -446,7 +485,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				ModelInitData modelData;
 				{
 					modelData.position = Float3( decoded.position );
-					modelData.rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+					modelData.rotation = Quaternion( Float3(decoded.position), decoded.rotationQ[3] );
 					modelData.scale = Float3( decoded.scale );
 					modelData.visible = true;
 					modelData.id = decoded.object_ID;
@@ -454,6 +493,15 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 					::Utility::String::StringToWstring( decoded.name, modelData.modelPath );
 				}
 				object->Init(modelData);
+				// RB DEBUG
+				// Is just using the model position since the rigid body data should never be sent to the client 
+				RBInitData RBData;
+				RBData.position = decoded.position;
+				RBData.rotation = ArrayToQuaternion( decoded.position );
+				RBData.scale =  Float3( decoded.scale );
+
+				this->privData->player.InitRB( RBData );
+				// !RB DEBUG 
 
 				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
 
