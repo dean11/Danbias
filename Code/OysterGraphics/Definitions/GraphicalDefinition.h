@@ -61,8 +61,7 @@ namespace Oyster
 
 			struct PostData
 			{
-				int x;
-				int y;
+				float Amb;
 			};
 
 			struct Text2D

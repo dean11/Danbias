@@ -37,7 +37,7 @@ namespace Oyster
 			};
 			typedef void* Texture;
 
-			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
+			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Option options);
 #ifdef _DEBUG
 			static State ReloadShaders();
 

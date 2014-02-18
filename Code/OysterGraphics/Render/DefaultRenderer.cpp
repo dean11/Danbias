@@ -39,14 +39,6 @@ namespace Oyster
 					data = Resources::Light::PointLightsData.Map();
 					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
-
-					Definitions::PostData pd;
-					pd.x = (int)lc.Pixels.x;
-					pd.y = (int)lc.Pixels.y;
-
-					data = Resources::Post::Data.Map();
-					memcpy(data, &pd, sizeof(Definitions::PostData));
-					Resources::Post::Data.Unmap();
 				}
 
 				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection, float deltaTime)

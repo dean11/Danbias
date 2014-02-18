@@ -136,9 +136,11 @@ namespace DanBias
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
 		p.texturePath = L"..\\Content\\Textures\\";
-		Oyster::Graphics::API::SetOptions(p);
+		p.Resolution = Oyster::Math::Float2( 1024, 768);
+		//! @todo fix proper amb value
+		p.AmbientValue = 1.0f;
 
-		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, p) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
 		return S_OK;
 	}

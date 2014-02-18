@@ -27,9 +27,11 @@ namespace Oyster
 #endif
 		}
 
-		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
+		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, API::Option o)
 		{
-			Core::resolution = resulotion;
+			Core::resolution = o.Resolution;
+			Core::modelPath = o.modelPath;
+			Core::texturePath = o.texturePath;
 
 			if(Core::Init::FullInit(Window, MSAA_Quality, Fullscreen) == Core::Init::Fail)
 			{
@@ -37,6 +39,13 @@ namespace Oyster
 			}
 			Render::Resources::Gui::Text::Font = (ID3D11ShaderResourceView*)API::CreateTexture(L"font_generic.png");
 			Render::Resources::Init();
+
+			Definitions::PostData pd;
+			pd.Amb = o.AmbientValue;
+
+			void* data = Render::Resources::Post::Data.Map();
+			memcpy(data,&pd,sizeof(Definitions::PostData));
+			Render::Resources::Post::Data.Unmap();
 
 			Render::Preparations::Basic::SetViewPort();
 #ifdef _DEBUG
@@ -102,6 +111,14 @@ namespace Oyster
 		{
 			Core::modelPath = option.modelPath;
 			Core::texturePath = option.texturePath;
+			
+			Definitions::PostData pd;
+			pd.Amb = option.AmbientValue;
+
+			void* data = Render::Resources::Post::Data.Map();
+			memcpy(data,&pd,sizeof(Definitions::PostData));
+			Render::Resources::Post::Data.Unmap();
+
 			return API::Sucsess;
 		}
 
