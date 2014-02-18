@@ -200,6 +200,7 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 bool Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
+	ll.SetFolderPath(L"..\\Content\\Worlds\\");
 	std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> objects; 
 	objects = ll.LoadLevel(levelPath);
 
