@@ -24,217 +24,243 @@ using namespace Oyster;
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace GameLogic;
+using namespace DanBias;
 
-namespace DanBias
+GameSession* GameSession::gameSession = nullptr;
+
+GameSession::GameSession()
+	:gameInstance(GameAPI::Instance())
 {
-	GameSession* GameSession::gameSession = nullptr;
+	this->owner = 0;
+	this->isCreated = false;
+	this->isRunning = false;
+	this->gameSession = this;
+	this->logicFrameTime = DELTA_TIME_20;
+	this->networkFrameTime = DELTA_TIME_20;
+	this->networkTimer.reset();
+	this->logicTimer.reset();
 
-	GameSession::GameSession()
-		:gameInstance(GameAPI::Instance())
+	memset(&this->description, 0, sizeof(GameDescription));
+}
+
+GameSession::~GameSession()
+{
+	this->worker.Terminate();
+	this->clients.Clear();
+	this->gameInstance;
+	this->owner = 0;
+	this->isCreated = false;
+	this->isRunning = false;
+}
+
+bool GameSession::Create(GameDescription& desc)
+{
+	this->description = desc;
+/* Do some error checking */
+	if(desc.clients.Size() == 0)	return false;
+	if(!desc.owner)					return false;
+	if(this->isCreated)				return false;
+
+/* standard initialization of some data */
+	NetworkSession::clients = desc.clients;
+	NetworkSession::clients.Resize((unsigned int)desc.maxClients);
+	this->clients.Resize((unsigned int)desc.maxClients);
+	this->owner = desc.owner;
+
+/* Initiate the game instance */
+	if(!this->gameInstance.Initiate())
 	{
-		this->owner = 0;
-		this->isCreated = false;
-		this->isRunning = false;
-		this->gameSession = this;
-		this->logicFrameTime = DELTA_TIME_20;
-		this->networkFrameTime = DELTA_TIME_20;
-		this->networkTimer.reset();
-		this->logicTimer.reset();
-
-		memset(&this->description, 0, sizeof(GameDescription));
+		printf("Failed to initiate the game instance\n");
 	}
 
-	GameSession::~GameSession()
+/* Create the players in the game instance */
+	GameLogic::IPlayerData* p = 0;
+	for (unsigned int i = 0; i < desc.clients.Size(); i++)
 	{
-		this->worker.Terminate();
-		this->clients.Clear();
-		this->gameInstance;
-		this->owner = 0;
-		this->isCreated = false;
-		this->isRunning = false;
-	}
-
-	bool GameSession::Create(GameDescription& desc)
-	{
-		this->description = desc;
-	/* Do some error checking */
-		if(desc.clients.Size() == 0)	return false;
-		if(!desc.owner)					return false;
-		if(this->isCreated)				return false;
-
-	/* standard initialization of some data */
-		NetworkSession::clients = desc.clients;
-		NetworkSession::clients.Resize((unsigned int)desc.maxClients);
-		this->clients.Resize((unsigned int)desc.maxClients);
-		this->owner = desc.owner;
-
-	/* Initiate the game instance */
-		if(!this->gameInstance.Initiate())
+		if(desc.clients[i])
 		{
-			printf("Failed to initiate the game instance\n");
-		}
-
-	/* Create the players in the game instance */
-		GameLogic::IPlayerData* p = 0;
-		for (unsigned int i = 0; i < desc.clients.Size(); i++)
-		{
-			if(desc.clients[i])
+			if( (p = this->gameInstance.CreatePlayer()) )
 			{
-				if( (p = this->gameInstance.CreatePlayer()) )
-				{
-					desc.clients[i]->SetOwner(this);
-					this->clients[i] = (new GameClient(desc.clients[i], p));
-				}
-				else
-				{
-					printf("Failed to create player (%i)\n", i);
-				}
+				desc.clients[i]->SetOwner(this);
+				this->clients[i] = (new GameClient(desc.clients[i], p));
+			}
+			else
+			{
+				printf("Failed to create player (%i)\n", i);
 			}
 		}
-
-	/* Create the game level */
-		if(!(this->levelData = this->gameInstance.CreateLevel()))
-		{
-			printf("Level not created!");
-			return false;
-		}
-
-	/* Set some game instance data options */
-		this->gameInstance.SetSubscription(GameSession::ObjectMove);
-		this->gameInstance.SetSubscription(GameSession::ObjectDisabled);
-		this->gameInstance.SetFPS(60);
-
-		this->description.clients.Clear();
-
-		this->isCreated = true;
-
-		/* Create the worker thread */
-		if(this->worker.Create(this, false) != OYSTER_THREAD_ERROR_SUCCESS) 
-			return false;
-
-		return this->isCreated;
 	}
 
-	void GameSession::Run()
+/* Create the game level */
+	if(!(this->levelData = this->gameInstance.CreateLevel()))
 	{
-		if(this->isRunning) return;
-
-		if(this->clients.Size() > 0)
-		{
-			this->worker.Start();
-			this->worker.SetPriority(OYSTER_THREAD_PRIORITY_1);
-			this->isRunning = true;
-		}
+		printf("Level not created!");
+		return false;
 	}
 
-	void GameSession::ThreadEntry(  )
-	{
-	//List with clients that we are waiting on..
-		DynamicArray<SmartPointer<GameClient>> readyList;// = this->clients;
+/* Set some game instance data options */
+	this->gameInstance.SetSubscription(GameSession::ObjectMove);
+	this->gameInstance.SetSubscription(GameSession::ObjectDisabled);
+	this->gameInstance.SetFPS(60);
 
-	//First we need to clean invalid clients, if any, and tell them to start loading game data
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+	this->description.clients.Clear();
+
+	this->isCreated = true;
+
+	/* Create the worker thread */
+	if(this->worker.Create(this, false) != OYSTER_THREAD_ERROR_SUCCESS) 
+		return false;
+
+	return this->isCreated;
+}
+
+void GameSession::Run()
+{
+	if(this->isRunning) return;
+
+	if(this->clients.Size() > 0)
+	{
+		this->worker.Start();
+		this->worker.SetPriority(OYSTER_THREAD_PRIORITY_1);
+		this->isRunning = true;
+	}
+}
+
+void GameSession::ThreadEntry(  )
+{
+//List with clients that we are waiting on..
+	DynamicArray<SmartPointer<GameClient>> readyList;// = this->clients;
+
+//First we need to clean invalid clients, if any, and tell them to start loading game data
+	for (unsigned int i = 0; i < this->clients.Size(); i++)
+	{
+		if(this->clients[i])
 		{
-			if(this->clients[i]) 
-			{
-				if(this->clients[i]->IsReady())
-				{
-					readyList.Push(this->clients[i]);
-					Protocol_LobbyCreateGame p(readyList[i]->GetPlayer()->GetID(), "char_white.dan", readyList[i]->GetPlayer()->GetOrientation());
-					readyList[readyList.Size() - 1]->GetClient()->Send(p);
-				}
-			}
+			readyList.Push(this->clients[i]);
+			Protocol_LobbyCreateGame p((char)1, (char)0, this->description.mapName);
+			readyList[readyList.Size() - 1]->GetClient()->Send(p);
 		}
+	}
 	
-		unsigned int readyCounter = readyList.Size();
+	unsigned int readyCounter = readyList.Size();
 
-	//Sync with clients
-		while (readyCounter != 0)
+//Sync with clients
+	while (readyCounter != 0)
+	{
+		this->ProcessClients();
+		for (unsigned int i = 0; i < readyList.Size(); i++)
 		{
-			this->ProcessClients();
-			for (unsigned int i = 0; i < readyList.Size(); i++)
+			if(readyList[i] && readyList[i]->IsReady())
 			{
-				if(readyList[i] && readyList[i]->IsReady())
+				//Need to send information about other players, to all players
+				for (unsigned int k = 0; k < this->clients.Size(); k++)
 				{
-					//Need to send information about other players, to all players
-					for (unsigned int k = 0; k < this->clients.Size(); k++)
+					if((this->clients[k] && readyList[i]) && readyList[i]->GetClient()->GetID() != this->clients[k]->GetClient()->GetID())
 					{
-						if((this->clients[k] && readyList[i]) && readyList[i]->GetClient()->GetID() != this->clients[k]->GetClient()->GetID())
-						{
-							//Protocol_ObjectCreatePlayer
-							Protocol_ObjectCreate p( this->clients[k]->GetPlayer()->GetPosition(),
-													 this->clients[k]->GetPlayer()->GetRotation(),
-													 this->clients[k]->GetPlayer()->GetScale(),
-													 this->clients[k]->GetPlayer()->GetID(), "char_white.dan"); //The model name will be custom later..
-							readyList[i]->GetClient()->Send(p);
-						}
+						IPlayerData* pl = this->clients[k]->GetPlayer();
+						Protocol_ObjectCreatePlayer p(	pl->GetPosition(), pl->GetRotation(), pl->GetScale(),
+														pl->GetID(), true, this->clients[k]->GetPlayer()->GetTeamID(),
+														/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
+						readyList[i]->GetClient()->Send(p);
 					}
-					
-					readyCounter-- ;
-					readyList[i] = 0;
 				}
+					
+				readyCounter-- ;
+				readyList[i] = 0;
 			}
-			Sleep(5); //TODO: This might not be needed here.
 		}
+		Sleep(5); //TODO: This might not be needed here.
+	}
 
+//Sync with clients before starting countdown
+
+	for (unsigned int i = 0; i < this->clients.Size(); i++)
+	{
+		if(this->clients[i])
+		{
+			this->clients[i]->GetClient()->Send(GameLogic::Protocol_LobbyStartGame(5));
+		}
+	}
+}
+
+bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> networkClient)
+{
+	if(!this->isCreated)									return false;
+	if(this->GetClientCount() == this->clients.Capacity())	return false;
+
+	networkClient->SetOwner(this);
+
+	IPlayerData* playerData = this->gameInstance.CreatePlayer();
+	if(!playerData) return false;
+
+	SmartPointer<GameClient> gameClient = new GameClient(networkClient, playerData);
+	NetworkClient* nwClient = gameClient->GetClient();
+	
+// Send the level information
+	{
+		Protocol_LobbyCreateGame lcg((char)1, (char)0, this->description.mapName);
+		nwClient->Send(lcg);
+	}
+
+// Send the player data only
+	{
+		Protocol_ObjectCreatePlayer oc(	playerData->GetPosition(), playerData->GetRotation(), playerData->GetScale(), 
+										playerData->GetID(), true, playerData->GetTeamID(), 
+										/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
+		nwClient->Send(oc);
+	}
+
+// Send information about other clients
+	{
 		for (unsigned int i = 0; i < this->clients.Size(); i++)
 		{
-			if(this->clients[i])
+			if(clients[i])
 			{
-				this->clients[i]->GetClient()->Send(GameLogic::Protocol_LobbyStartGame(5));
+				IPlayerData* temp = clients[i]->GetPlayer();
+				Protocol_ObjectCreatePlayer oc(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
+												temp->GetID(), false, temp->GetTeamID(), 
+												/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
+				nwClient->Send(oc);
 			}
 		}
 	}
 
-	bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> client)
+//TODO: Need to be able to get the current gameplay data from the logic, to sync it with the client
 	{
-		if(!this->isCreated)									return false;
-		if(this->GetClientCount() == this->clients.Capacity())	return false;
 
-		client->SetOwner(this);
+	}
 
-		IPlayerData* player = this->gameInstance.CreatePlayer();
-		if(!player) return false;
-
-		SmartPointer<GameClient> obj = new GameClient(client, player);
-
-	// Send the chosen mesh name
-		Protocol_LobbyCreateGame lcg(obj->GetPlayer()->GetID(), "char_white.dan", obj->GetPlayer()->GetOrientation());
-		obj->GetClient()->Send(lcg);
-
-	// Send the player data only
-		for (unsigned int i = 0; i < this->clients.Capacity(); i++)
-		{
-			if(this->clients[i])
-			{
-				IPlayerData* p = this->clients[i]->GetPlayer();
-				Protocol_ObjectCreate oc(p->GetPosition(), p->GetRotation(), p->GetScale(), p->GetID(), "char_white.dan");
-				//Protocol_ObjectCreatePlayer oc(p->GetPosition(), p->GetRotation(), p->GetScale(), p->GetID(), "char_white.dan");
-				this->clients[i]->GetClient()->Send(oc);
-			}
-		}
-
-		obj->GetClient()->Send(GameLogic::Protocol_LobbyStartGame(0));
-
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+// Insert the new client to the update list
+	{
+		bool added = false;
+		for (unsigned int i = 0; !added && i < this->clients.Size(); i++)
 		{
 			if(!clients[i])
 			{
-				NetworkSession::clients[i] = client;
-				clients[i] = obj;
-				return true;
+				NetworkSession::clients[i] = networkClient;
+				clients[i] = gameClient;
+				added = true;
 			}
 		}
-			
-		return true;
+		if(!added)
+		{
+			NetworkSession::clients.Push( networkClient );
+			clients.Push( gameClient );
+		}
 	}
-
-	void GameSession::CloseSession( bool dissconnectClients )
+// Send the start signal
 	{
-		this->worker.Terminate();
-		NetworkSession::CloseSession(true);
-		this->clients.Clear();
+		nwClient->Send(GameLogic::Protocol_LobbyStartGame(0));
 	}
 
-}//End namespace DanBias
+	return true;
+}
+
+void GameSession::CloseSession( bool dissconnectClients )
+{
+	this->worker.Terminate();
+	NetworkSession::CloseSession(true);
+	this->clients.Clear();
+}
+
 

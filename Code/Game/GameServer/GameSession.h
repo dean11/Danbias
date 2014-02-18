@@ -31,10 +31,10 @@ namespace DanBias
 		*/
 		struct GameDescription
 		{
-			int maxClients;
-			int mapNumber;
-			int gameMode;
-			int gameTime;
+			unsigned int maxClients;
+			std::string mapName;
+			std::string gameMode;
+			int gameTimeMinutes;
 			Oyster::Network::NetworkSession* owner;
 			Utility::DynamicMemory::DynamicArray<Oyster::Network::NetClient> clients;
 		};
@@ -61,14 +61,14 @@ namespace DanBias
 
 		//Private member functions
 	private:
-		// TODO: find out what this method does..
+		// Client event callback function
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
 		
-		//Sends a client to the owner, if obj is NULL then all clients is sent
+		//Sends a client to the owner, if param is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);
 		
 		//Derived from IThreadObject
-		void ThreadEntry() override;
+		void ThreadEntry( ) override;
 		bool DoWork	( ) override;
 
 

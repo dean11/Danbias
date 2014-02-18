@@ -56,13 +56,13 @@ bool GameLobby::StartGameSession(  )
 		GameSession::GameDescription desc;
 			desc.maxClients = this->description.maxClients;
 			desc.gameMode = this->description.gameMode;
-			desc.gameTime = this->description.gameTime;
-			desc.mapNumber = this->description.mapNumber;
+			desc.gameTimeMinutes = this->description.gameTime;
+			//desc.mapName = this->description.mapNumber;
 			desc.owner = this;
 			desc.clients = this->clients;
 
-		if(desc.gameTime == 0.0f)
-			desc.gameTime = (int)(60.0f * 10.0f); //note: should be fetched from somewhere.
+		if(desc.gameTimeMinutes == 0)
+			desc.gameTimeMinutes = 10; //note: should be fetched from somewhere.
 
 		if(desc.maxClients == 0)
 			desc.maxClients = 10; //note: should be fetched somewhere else..

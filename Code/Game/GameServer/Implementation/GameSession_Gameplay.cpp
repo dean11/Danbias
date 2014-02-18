@@ -19,11 +19,8 @@ using namespace Oyster;
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace GameLogic;
+using namespace DanBias;
 
-namespace DanBias
-{
-	Utility::WinTimer testTimer;
-	int testID = -1;
 
 	bool GameSession::DoWork(  )
 	{
@@ -246,7 +243,6 @@ namespace DanBias
 		printf("Message recieved from (%i):\t %s\n", c->GetClient()->GetID(), p.text.c_str());
 	}
 
-}//End namespace DanBias
 
 
 

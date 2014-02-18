@@ -12,51 +12,26 @@ using namespace DanBias;
 using namespace GameLogic;
 
 
-GameClient::GameClient(SmartPointer<NetworkClient> client, GameLogic::IPlayerData* player)
+GameClient::GameClient()
 {
-	this->client = client;
-	this->player = player;
+	this->player = 0;
 	isReady = false;
+	this->character = L"Unknown";
+	this->alias = L"Unknown";
+	this->secondsSinceLastResponse = 0.0f;
 }
 GameClient::~GameClient()
 {
-	this->client->Disconnect();
 	this->player = 0;
-	isReady = false;
+	this->isReady = false;
+	this->character = L"Unknown";
+	this->alias = L"Unknown";
+	this->secondsSinceLastResponse = 0.0f;
 }
 
-GameLogic::IPlayerData* GameClient::GetPlayer()
+void GameClient::SetPlayer(GameLogic::IPlayerData* player)
 {
-	return this->player;
-}
-GameLogic::IPlayerData* GameClient::ReleasePlayer()
-{
-	GameLogic::IPlayerData *temp = this->player;
-	this->player =  0;
-	return temp;
-}
-SmartPointer<Oyster::Network::NetworkClient> GameClient::GetClient()
-{
-	return this->client;
-}
-SmartPointer<Oyster::Network::NetworkClient> GameClient::ReleaseClient()
-{
-	SmartPointer<Oyster::Network::NetworkClient> temp = this->client;
-	this->client = 0;
-	return temp;
-}
-
-float GameClient::GetSinceLastResponse() const
-{
-	return this->secondsSinceLastResponse;
-}
-bool GameClient::IsReady() const
-{
-	return this->isReady;
-}
-bool GameClient::Equals(const NetworkClient* c)
-{
-	return (c->GetID() == this->client->GetID());
+	this->player = player;
 }
 void GameClient::SetReadyState(bool r)
 {
@@ -65,6 +40,14 @@ void GameClient::SetReadyState(bool r)
 void GameClient::SetSinceLastResponse(float s)
 {
 	this->secondsSinceLastResponse = s;
+}
+void GameClient::SetAlias(std::wstring alias)
+{
+	this->alias = alias;
+}
+void GameClient::SetCharacter(std::wstring character)
+{
+	this->character = character;
 }
 
 

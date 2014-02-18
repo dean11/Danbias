@@ -81,7 +81,7 @@ void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientE
 	
 	if( ID == protocol_Lobby_CreateGame && !this->privData->loading )
 	{
-		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).modelName );
+		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).mapName );
 	}
 }
 
