@@ -22,6 +22,8 @@ namespace Oyster
 #ifdef _DEBUG
 			Model::Model* cube;
 			Model::Model* sphere;
+
+			ID3D11RasterizerState* wire;
 #endif
 		}
 
@@ -42,6 +44,19 @@ namespace Oyster
 			cube = CreateModel(L"debug_cube.dan");
 			sphere = CreateModel(L"debug_sphere.dan");
 
+			D3D11_RASTERIZER_DESC desc;
+			desc.CullMode = D3D11_CULL_BACK;
+			desc.FillMode = D3D11_FILL_WIREFRAME;
+			desc.FrontCounterClockwise = false;
+			desc.DepthBias = 0;
+			desc.DepthBiasClamp = 0;
+			desc.DepthClipEnable = true;
+			desc.SlopeScaledDepthBias = 0;
+			desc.ScissorEnable = false;
+			desc.MultisampleEnable = false;
+			desc.AntialiasedLineEnable = false;
+
+			Core::device->CreateRasterizerState(&desc,&wire);
 #endif
 			return API::Sucsess;
 		}
@@ -123,6 +138,11 @@ namespace Oyster
 
 		void API::Clean()
 		{
+#ifdef _DEBUG
+			DeleteModel(cube);
+			DeleteModel(sphere);
+			SAFE_RELEASE(wire);
+#endif
 			DeleteTexture(Render::Resources::Gui::Text::Font);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
@@ -137,6 +157,7 @@ namespace Oyster
 			SAFE_RELEASE(Core::swapChain);
 			SAFE_RELEASE(Core::deviceContext);
 			SAFE_RELEASE(Core::device);
+
 		}
 
 		void API::AddLight(Definitions::Pointlight light)
@@ -158,6 +179,19 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
+			Core::deviceContext->RSSetState(wire);
+		}
+
+		void API::RenderDebugCube(Math::Matrix world)
+		{
+			cube->WorldMatrix = world;
+			Render::DefaultRenderer::RenderScene(cube,1,View,Projection);
+		}
+
+		void API::RenderDebugSphere(Math::Matrix world)
+		{
+			sphere->WorldMatrix = world;
+			Render::DefaultRenderer::RenderScene(sphere,1,View,Projection);
 		}
 #endif
 

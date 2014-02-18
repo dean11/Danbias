@@ -58,7 +58,7 @@ namespace Oyster
 						if(models[i].Visible)
 						{
 							Definitions::PerModel pm;
-							pm.WV = View * models[i].WorldMatrix;
+							pm.WV = View * models[i].WorldMatrix.GetInverse().GetTranspose();
 							pm.WVP = Projection * pm.WV;
 
 							Model::ModelInfo* info = models[i].info;
