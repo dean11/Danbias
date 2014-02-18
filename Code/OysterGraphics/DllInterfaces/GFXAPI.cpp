@@ -19,6 +19,10 @@ namespace Oyster
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
+#ifdef _DEBUG
+			Model::Model* cube;
+			Model::Model* sphere;
+#endif
 		}
 
 		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
@@ -33,6 +37,12 @@ namespace Oyster
 			Render::Resources::Init();
 
 			Render::Preparations::Basic::SetViewPort();
+#ifdef _DEBUG
+			//fix load model
+			cube = CreateModel(L"debug_cube.dan");
+			sphere = CreateModel(L"debug_sphere.dan");
+
+#endif
 			return API::Sucsess;
 		}
 
@@ -145,6 +155,10 @@ namespace Oyster
 			Render::Resources::InitShaders();
 			return State::Sucsess;
 		}
+
+		void API::StartRenderWireFrame()
+		{
+		}
 #endif
 
 		API::Option API::GetOption()
@@ -153,6 +167,7 @@ namespace Oyster
 			o.BytesUsed = Core::UsedMem;
 			o.modelPath = Core::modelPath;
 			o.texturePath = Core::texturePath;
+			o.Resolution = Core::resolution;
 			return o;
 		}
 

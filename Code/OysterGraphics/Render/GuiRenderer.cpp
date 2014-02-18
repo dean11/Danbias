@@ -9,7 +9,7 @@ namespace Oyster
 		namespace Render
 		{				
 			const int TEXT_NR_LETTERS=95;
-			const float TEXT_SPACING=1.8f;
+			const float TEXT_SPACING=2.0f;
 
 			void Gui::Begin2DRender()
 			{
@@ -20,8 +20,8 @@ namespace Oyster
 			{
 				Core::deviceContext->PSSetShaderResources(0,1,&tex);
 
-				pos *= 2;
-				pos -= 1;
+				pos.xy *= 2;
+				pos.xy -= 1;
 				pos.y *= -1;
 
 				Definitions::GuiData gd;

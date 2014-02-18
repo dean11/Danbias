@@ -27,6 +27,12 @@ namespace Oyster
 			struct Option
 			{
 				std::wstring modelPath, texturePath;
+				//between 0-1
+				float AmbientValue;
+
+				Math::Float2 Resolution;
+
+				//Bytes on the GPU
 				int BytesUsed;
 			};
 			typedef void* Texture;
@@ -34,6 +40,17 @@ namespace Oyster
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
 #ifdef _DEBUG
 			static State ReloadShaders();
+
+			//should be called after rendered normal models, before GUI or Text rendering
+			static void StartRenderWireFrame();
+
+			//Render a unit cube with the presented WorldMatrix
+			static void RenderDebugCube(Math::Matrix world);
+
+			//Render a unit Sphere with the presented WorldMatrix
+			static void RenderDebugSphere(Math::Matrix world);
+
+			static void StartRenderFullModel();
 #endif
 			
 			//! @todo Memory Leaks

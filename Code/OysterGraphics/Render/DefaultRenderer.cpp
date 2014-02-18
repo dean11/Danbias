@@ -16,7 +16,8 @@ namespace Oyster
 
 				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
-					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
+					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,0));
+					Preparations::Basic::ClearDepthStencil(Resources::Gui::depth);
 					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
 					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
 					Lights[1];
