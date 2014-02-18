@@ -112,8 +112,7 @@ void Camera_FPS::StrafeLeft( Float distance )
 
 void Camera_FPS::PitchUp( Float radian )
 {
-	//this->pitchUp = Clamp( this->pitchUp + radian, -0.48f * pi, 0.48f * pi );
-	this->pitchUp = this->pitchUp + radian; // debug hack
+	this->pitchUp = Clamp( this->pitchUp + radian, -0.48f * pi, 0.48f * pi );
 	this->head.SetAngular( this->body.angularAxis + this->pitchUp * this->body.direction.v[0] );
 }
 
