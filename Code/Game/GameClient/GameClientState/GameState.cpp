@@ -87,12 +87,6 @@ bool GameState::Init( SharedStateContent &shared )
 
 	// Debugg hack
 	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
-	Graphics::Definitions::Pointlight light;
-	light.Pos = Float3( 0,132,0);
-	light.Color = Float3( 1.0f );
-	light.Bright = 1.0f;
-	light.Radius = 1000.0f;
-	Graphics::API::AddLight( light );
 	// end debug hack
 			
 	return true;
