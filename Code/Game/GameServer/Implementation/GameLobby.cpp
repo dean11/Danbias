@@ -14,7 +14,7 @@ using namespace GameLogic;
 using namespace DanBias;
 
 GameLobby::GameLobby()
-{   }
+{  }
 GameLobby::~GameLobby()
 {  
 	this->clients.Clear();
@@ -37,16 +37,33 @@ void GameLobby::Update()
 void GameLobby::SetGameDesc(const LobbyLevelData& desc)
 {
 	this->description.gameMode = desc.gameMode;
-	this->description.gameTime = desc.gameTime;
-	this->description.mapNumber = desc.mapNumber;
+	this->description.gameName = desc.gameName;
+	this->description.mapName = desc.mapName;
+	this->description.gameTimeInMinutes = desc.gameTimeInMinutes;
 	this->description.maxClients = desc.maxClients;
+	
+	if(this->gClients.Size() > (unsigned int)desc.maxClients)
+	{
+		//Kick overflow
+		for (unsigned int i = (unsigned int)desc.maxClients - 1; i < this->gClients.Size(); i++)
+		{
+			if(this->gClients[i])
+			{
+				this->gClients[i]->GetClient()->Disconnect();
+			}
+		}
+	}
+	this->gClients.Resize((unsigned int)desc.maxClients);
+
 }
 void GameLobby::GetGameDesc(LobbyLevelData& desc)
 {
-	desc.gameMode = this->description.gameMode;
-	desc.gameTime = this->description.gameTime;		
-	desc.mapNumber = this->description.mapNumber;		
+	desc.gameTimeInMinutes = this->description.gameTimeInMinutes;		
 	desc.maxClients = this->description.maxClients;	
+	desc.mapName = this->description.mapName;		
+	desc.gameName = this->description.gameName;	
+	desc.gameMode = this->description.gameMode;
+	
 }
 bool GameLobby::StartGameSession(  )
 {
@@ -56,18 +73,18 @@ bool GameLobby::StartGameSession(  )
 		GameSession::GameDescription desc;
 			desc.maxClients = this->description.maxClients;
 			desc.gameMode = this->description.gameMode;
-			desc.gameTime = this->description.gameTime;
-			desc.mapNumber = this->description.mapNumber;
+			desc.gameTimeMinutes = this->description.gameTimeInMinutes;
+			//desc.mapName = this->description.mapNumber;
 			desc.owner = this;
-			desc.clients = this->clients;
+			desc.clients = this->gClients;
 
-		if(desc.gameTime == 0.0f)
-			desc.gameTime = (int)(60.0f * 10.0f); //note: should be fetched from somewhere.
+		if(desc.gameTimeMinutes == 0)
+			desc.gameTimeMinutes = 10; //note: should be fetched from somewhere.
 
 		if(desc.maxClients == 0)
 			desc.maxClients = 10; //note: should be fetched somewhere else..
 
-		this->clients.Clear();	//Remove clients from lobby list
+		this->gClients.Clear();	//Remove clients from lobby list
 		
 		if(this->gameSession.Create(desc))
 		{
@@ -96,8 +113,8 @@ void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::Clie
 		case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 			printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
 			e.sender->Disconnect();
-			this->readyList.Remove(e.sender);
-			this->clients.Remove(e.sender);
+			//this->readyList.Remove(e.sender);
+			//this->gClients.Remove(e.sender);
 		break;
 		case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 			printf("\t(%i : %s) - EventType_ProtocolRecieved\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
@@ -111,21 +128,30 @@ void GameLobby::ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster
 
 	if(this->gameSession)
 	{
-		Attach(client);
+		if(!this->Attach(client))
+		{
+			client->Disconnect();
+		}
 	}
 	else
 	{
-		Attach(client);
+		if(!this->Attach(client))
+		{
+			//Send message that lobby full
+			client->Disconnect();
+			return;
+		}
+
 		Protocol_LobbyClientData p1;
 		Protocol_LobbyGameData p2;
 		
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->clients[i])
+			if(this->gClients[i])
 			{
 				Protocol_LobbyClientData::PlayerData t;
-				t.id = this->clients[i]->GetID();
-				t.ip = this->clients[i]->GetIpAddress();
+				t.id = client->GetID();
+				t.ip = client->GetIpAddress();
 				t.team = 0;
 				t.name = "Dennis är kung tycker Erik!";
 				p1.list.Push(t);
@@ -139,4 +165,42 @@ void GameLobby::ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster
 		client->Send(p2.GetProtocol());
 	}
 }
+void GameLobby::ProcessClients()
+{
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
+	{
+		if(this->gClients[i])
+		{
+			this->gClients[i]->UpdateClient();
+		}
+	}
+}
+bool GameLobby::Attach(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client) 
+{
+	if(this->clientCount = this->description.maxClients) return false;
+
+	bool added = false;
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
+	{
+		if(!this->gClients[i])
+		{
+			added = true;
+			this->gClients[i] = new GameClient(client);
+		}
+	}
+
+	if(!added)
+	{
+		this->gClients.Push(new GameClient(client));
+	}
+	return true;
+}
+
+
+
+
+
+
+
+
 

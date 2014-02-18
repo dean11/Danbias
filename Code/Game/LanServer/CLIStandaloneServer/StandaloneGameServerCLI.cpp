@@ -72,26 +72,32 @@ void StandaloneGameServerCLI::GameSetMapName(String^ value)
 	pin_ptr<const wchar_t> wch = PtrToStringChars(value);
 	DanBias::GameServerAPI::GameSetMapName(wch);
 }
+void StandaloneGameServerCLI::GameSetGameMode(String^ value)
+{
+	pin_ptr<const wchar_t> wch = PtrToStringChars(value);
+	DanBias::GameServerAPI::GameSetGameMode(wch);
+}
+void StandaloneGameServerCLI::GameSetGameName(String^ value)
+{
+	pin_ptr<const wchar_t> wch = PtrToStringChars(value);
+	DanBias::GameServerAPI::GameSetGameName(wch);
+}
 
 void StandaloneGameServerCLI::GameSetMaxClients(const int val)
 {
 	DanBias::GameServerAPI::GameSetMaxClients(val);
 }
 
-void StandaloneGameServerCLI::GameSetGameMode(String^ value)
-{
-	pin_ptr<const wchar_t> wch = PtrToStringChars(value);
-	DanBias::GameServerAPI::GameSetGameMode(wch);
-}
+
 
 void StandaloneGameServerCLI::GameSetGameTime(const int val)
 {
 	DanBias::GameServerAPI::GameSetGameTime(val);
 }
 
-int StandaloneGameServerCLI::GameGetMapId()
+String^  StandaloneGameServerCLI::GameGetMapName()
 {
-	return DanBias::GameServerAPI::GameGetMapId();
+	return gcnew String( DanBias::GameServerAPI::GameGetMapName());
 }
 
 int StandaloneGameServerCLI::GameGetMaxClients()
@@ -99,9 +105,9 @@ int StandaloneGameServerCLI::GameGetMaxClients()
 	return DanBias::GameServerAPI::GameGetMaxClients();
 }
 
-int StandaloneGameServerCLI::GameGetGameMode()
+String^ StandaloneGameServerCLI::GameGetGameMode()
 {
-	return DanBias::GameServerAPI::GameGetGameMode();
+	return gcnew String( DanBias::GameServerAPI::GameGetGameMode());
 }
 
 int StandaloneGameServerCLI::GameGetGameTime()
@@ -111,7 +117,7 @@ int StandaloneGameServerCLI::GameGetGameTime()
 
 String^ StandaloneGameServerCLI::GameGetGameName()
 {
-	return gcnew String(DanBias::GameServerAPI::GameGetGameName());
+	return gcnew String( DanBias::GameServerAPI::GameGetGameName());
 }
 
 bool StandaloneGameServerCLI::GameStart()

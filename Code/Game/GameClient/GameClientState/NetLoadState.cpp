@@ -54,11 +54,8 @@ bool NetLoadState::Init( SharedStateContent &shared )
 
 	// we may assume that nwClient is properly connected to the server
 	// signals querry to server for loading instructions
-	//this->privData->nwClient->Send( Protocol_QuerryGameType() );
+	this->privData->nwClient->Send( Protocol_QuerryGameType() );
 
-	// debugg
-	this->LoadGame( "..//Content//Worlds//2ofAll_updated.bias");
-	this->ChangeState( ClientState_Game );
 	return true;
 }
 
@@ -100,7 +97,7 @@ void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientE
 	
 	if( ID == protocol_Lobby_CreateGame && !this->privData->loading )
 	{
-		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).modelName );
+		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).mapName );
 		this->ChangeState( ClientState_Game );
 		this->privData->loading = false;
 	}

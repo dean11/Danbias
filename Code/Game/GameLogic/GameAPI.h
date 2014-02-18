@@ -13,6 +13,7 @@
 #include "GameLogicStates.h"
 #include <OysterMath.h>
 #include "LevelLoader\ObjectDefines.h"
+#include "DynamicArray.h"
 
 
 namespace GameLogic
@@ -107,6 +108,7 @@ namespace GameLogic
 		public:
 			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
+			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
 	class DANBIAS_GAMELOGIC_DLL GameAPI

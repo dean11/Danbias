@@ -47,13 +47,15 @@ namespace System { namespace Windows { namespace Interop
 		bool ServerIsRunning();
 
 		void GameSetMapName(String^ val);
-		void GameSetMaxClients(const int val);
 		void GameSetGameMode(String^ val);
+		void GameSetGameName(String^ val);
+		void GameSetMaxClients(const int val);
 		void GameSetGameTime(const int val);
-		int GameGetMapId();
+
 		int GameGetMaxClients();
-		int GameGetGameMode();
 		int GameGetGameTime();
+		System::String^ GameGetMapName();
+		System::String^ GameGetGameMode();
 		System::String^ GameGetGameName();
 		bool GameStart();
 	};

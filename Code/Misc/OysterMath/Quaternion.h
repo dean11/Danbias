@@ -36,6 +36,7 @@ namespace LinearAlgebra
 		const ScalarType & operator [] ( int i ) const;
 
 		Quaternion<ScalarType> & operator  = ( const Quaternion<ScalarType> &quaternion );
+		Quaternion<ScalarType> & operator *= ( const Quaternion<ScalarType> &quaternion );
 		Quaternion<ScalarType> & operator *= ( const ScalarType &scalar );
 		Quaternion<ScalarType> & operator /= ( const ScalarType &scalar );
 		Quaternion<ScalarType> & operator += ( const Quaternion<ScalarType> &quaternion );
@@ -112,6 +113,12 @@ namespace LinearAlgebra
 		return *this;
 	}
 	
+	template<typename ScalarType>
+	Quaternion<ScalarType> & Quaternion<ScalarType>::operator *= ( const Quaternion<ScalarType> &quaternion )
+	{
+		return *this = *this * quaternion;
+	}
+
 	template<typename ScalarType>
 	Quaternion<ScalarType> & Quaternion<ScalarType>::operator *= ( const ScalarType &scalar )
 	{
