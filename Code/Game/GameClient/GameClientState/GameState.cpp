@@ -314,9 +314,16 @@ void GameState::ReadKeyInput()
 
 void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 {
+	if( e.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
+	{ // TODO: Reconnect
+		const char *breakpoint = "temp trap";
+		this->privData->nwClient->Disconnect();
+		this->ChangeState( GameClientState::ClientState_Main );
+	}
+
 	CustomNetProtocol data = e.args.data.protocol;
 	short ID = data[0].value.netShort; // fetching the id data.
-	
+
 	if( ProtocolIsGameplay(ID) )
 	{
 		switch(ID)
