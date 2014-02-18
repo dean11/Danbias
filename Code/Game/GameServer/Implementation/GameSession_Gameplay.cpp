@@ -19,11 +19,8 @@ using namespace Oyster;
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
 using namespace GameLogic;
+using namespace DanBias;
 
-namespace DanBias
-{
-	Utility::WinTimer testTimer;
-	int testID = -1;
 
 	bool GameSession::DoWork(  )
 	{
@@ -46,9 +43,9 @@ namespace DanBias
 	{
 		int temp = -1;
 		//Find the idiot
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->clients[i]->Equals(e.sender))
+			if(this->gClients[i]->Equals(e.sender))
 			{
 				temp = i;
 			}
@@ -59,7 +56,7 @@ namespace DanBias
 			this->Detach(e.sender)->Disconnect();
 			return;
 		}
-		SmartPointer<GameClient> cl = this->clients[temp];
+		SmartPointer<GameClient> cl = this->gClients[temp];
 
 		switch (e.args.type)
 		{
@@ -73,15 +70,48 @@ namespace DanBias
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				testID = 2;
-				if(cl->GetPlayer()->GetID() == testID)//TODO: TEST
-				{
-					testTimer.reset();
-				}
 				this->ParseProtocol(e.args.data.protocol, cl);
 			break;
 		}
 	}
+	void GameSession::ProcessClients()
+	{
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
+		{
+			if(this->gClients[i])
+			{
+				this->gClients[i]->UpdateClient();
+			}
+		}
+	}
+	bool GameSession::Send(Oyster::Network::CustomNetProtocol& message)
+	{
+		bool returnValue = false;
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
+		{
+			if(this->gClients[i])
+			{
+				this->gClients[i]->GetClient()->Send(message);
+				returnValue = true;
+			}
+		}
+
+		return returnValue;
+
+	}
+	bool GameSession::Send(Oyster::Network::CustomNetProtocol& protocol, int ID)
+	{
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
+		{
+			if(this->gClients[i] && this->gClients[i]->GetClient()->GetID() == ID)
+			{
+				this->gClients[i]->GetClient()->Send(protocol);
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
@@ -246,7 +276,6 @@ namespace DanBias
 		printf("Message recieved from (%i):\t %s\n", c->GetClient()->GetID(), p.text.c_str());
 	}
 
-}//End namespace DanBias
 
 
 
