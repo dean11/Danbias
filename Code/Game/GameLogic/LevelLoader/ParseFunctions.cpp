@@ -175,6 +175,17 @@ namespace GameLogic
 				start += sizeof(volume.cylinder);
 				break;
 
+			case CollisionGeometryType_TriangleMesh:
+				//Get string size
+				memcpy(&tempSize, &buf[start], sizeof(tempSize));
+				start += sizeof(tempSize);
+
+				//Get actual string
+				volume.triangleMesh.filename = new wchar_t[tempSize+1];
+				memcpy(volume.triangleMesh.filename, &buf[start], tempSize);
+				volume.triangleMesh.filename[tempSize] = '\0';
+				break;
+
 			default:
 				break;
 			}
