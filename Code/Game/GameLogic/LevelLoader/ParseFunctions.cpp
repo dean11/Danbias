@@ -119,7 +119,7 @@ namespace GameLogic
 
 			int temp;
 
-			for(int i = 0; i < tempSize; i++)
+			for(int i = 0; i < (int)tempSize; i++)
 			{
 				memcpy(&temp, &buffer[start], 4);
 				start += 4;

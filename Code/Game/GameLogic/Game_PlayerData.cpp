@@ -27,9 +27,7 @@ Game::PlayerData::PlayerData()
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
-	Oyster::Physics::ICustomBody* rigidBody;
 	this->player = new Player();
-
 }
 Game::PlayerData::~PlayerData()
 {
