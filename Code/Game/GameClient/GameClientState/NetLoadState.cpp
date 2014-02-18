@@ -90,20 +90,25 @@ void NetLoadState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	// fetching the id data.
-	short ID = e.args.data.protocol[0].value.netShort;
+	short ID = message.args.data.protocol[0].value.netShort;
 	
-	if( ID == protocol_Lobby_CreateGame && !this->privData->loading )
+	if( ID == protocol_Lobby_CreateGame )
 	{
-		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).mapName );
-		this->ChangeState( ClientState_Game );
-		this->privData->loading = false;
+		if( !this->privData->loading )
+		{
+			this->LoadGame( Protocol_LobbyCreateGame(message.args.data.protocol).mapName );
+			this->ChangeState( ClientState_Game );
+			this->privData->loading = false;
+		}
+		return GameClientState::event_processed;
 	}
 	else
 	{ // HACK: Debug trap
 		const char *breakPoint = "Being greedy.";
+		return message;
 	}
 }
 

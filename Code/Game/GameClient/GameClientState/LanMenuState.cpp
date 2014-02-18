@@ -133,16 +133,6 @@ void LanMenuState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void LanMenuState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
-{
-	if( e.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
-	{ // TODO: Reconnect
-		const char *breakpoint = "temp trap";
-		this->privData->nwClient->Disconnect();
-		this->ChangeState( GameClientState::ClientState_Same );
-	}
-}
-
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 {
 	switch( e.state )

@@ -312,20 +312,22 @@ void GameState::ReadKeyInput()
 	// TODO: implement sub-menu
 }
 
-void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
-	if( e.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
+	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
 	{ // TODO: Reconnect
 		const char *breakpoint = "temp trap";
 		this->privData->nwClient->Disconnect();
 		this->ChangeState( GameClientState::ClientState_Main );
 	}
 
-	CustomNetProtocol data = e.args.data.protocol;
-	short ID = data[0].value.netShort; // fetching the id data.
+	// fetching the id data.
+	short ID = message.args.data.protocol[0].value.netShort;
 
 	if( ProtocolIsGameplay(ID) )
 	{
+		CustomNetProtocol data = message.args.data.protocol;
+
 		switch(ID)
 		{
 		case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
@@ -341,13 +343,13 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setPos( decoded.position );
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectScale:
 			{
 				Protocol_ObjectScale decoded(data);
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setScale( decoded.scale );
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectRotation:
 			{
 				Protocol_ObjectRotation decoded(data);
@@ -359,7 +361,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRot( rotation );
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectPositionRotation:
 			{
 				Protocol_ObjectPositionRotation decoded(data);
@@ -380,7 +382,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 					object->setRot( rotation );
 				}
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectDisabled:
 			{
@@ -393,7 +395,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 					this->privData->dynamicObjects->erase( object );
 				}
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectCreate:
 			{
 				Protocol_ObjectCreate decoded(data);
@@ -414,13 +416,13 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
 
 			}		
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectCreatePlayer:
 			{
 				Protocol_ObjectCreatePlayer decoded(data);
 				this->InitiatePlayer( decoded.object_ID, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
@@ -439,4 +441,6 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 		default: break;
 		}
 	}
+
+	return message;
 }
