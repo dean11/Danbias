@@ -60,7 +60,8 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	// create guiElements
 	this->privData->connectIP = new TextField<LanMenuState*>( L"color_white.png", Float4(1.0f), Float4(0.0f), this, Float3(0.5f, 0.3f, 0.5f), Float2(0.8f, 0.09f), ResizeAspectRatio_None );
 	this->privData->connectIP->ReserveLines( 1 );
-	this->privData->connectIP->AppendText( L"127.0.0.1" );
+	//this->privData->connectIP->AppendText( L"127.0.0.1" );
+	this->privData->connectIP->AppendText( L"194.47.150.206" ); // HACK: connecting to Dennis's server
 	this->privData->connectIP->SetFontHeight( 0.08f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
 	this->privData->connectIP->SetTopAligned();
