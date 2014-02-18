@@ -99,9 +99,6 @@ namespace DanBias
 			data.timer.reset();
 
 			Graphics::API::Update( dt );
-
-			if(data.networkClient.IsConnected())
-				data.networkClient.Update();
 			
 			data.capFrame += dt;
 			if(data.capFrame > 0.03)
@@ -117,6 +114,9 @@ namespace DanBias
 					return DanBiasClientReturn_Error;
 				data.capFrame = 0; 
 			}
+
+			if(data.networkClient.IsConnected())
+				data.networkClient.Update();
 
 		}
 		return DanBiasClientReturn_Success;

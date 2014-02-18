@@ -4,13 +4,6 @@
 #include "OysterMath.h"
 #include <string>
 
-#include "Camera_FPS.h"
-#include "LevelLoader/LevelLoader.h"
-#include "C_obj/C_Player.h"
-#include "C_obj/C_DynamicObj.h"
-#include "C_obj/C_StaticObj.h"
-#include "DynamicArray.h"
-
 namespace DanBias { namespace Client
 {
 	class GameState : public GameClientState
@@ -27,13 +20,8 @@ namespace DanBias { namespace Client
 		~GameState(void);
 		bool Init( SharedStateContent &shared );
 		GameClientState::ClientState Update( float deltaTime ) override;
-
-		bool LoadModels(std::string mapFile);
-		bool InitCamera(Oyster::Math::Float3 startPos) ;
-		void InitiatePlayer(int id, std::wstring modelName, Oyster::Math::Float4x4 world);
-		gameStateState LoadGame();
-		void readKeyInput(InputClass* KeyInput);
-
+		void InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer );
+		void ReadKeyInput();
 		bool Render()override;
 		bool Release()override;
 		void ChangeState( ClientState next );
@@ -43,20 +31,6 @@ namespace DanBias { namespace Client
 	private:
 		struct MyData;
 		::Utility::DynamicMemory::UniquePointer<MyData> privData;
-
-		bool key_forward;
-		bool key_backward;
-		bool key_strafeRight;
-		bool key_strafeLeft;
-		bool key_Shoot;
-		bool key_Jump;
-		Camera_FPS camera;
-
-		int myId;
-		
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_StaticObj>> staticObjects;
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Object>> dynamicObjects;
-		//Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<C_Player>> playObjects;
 	};
 } }
 #endif

@@ -123,8 +123,8 @@ void LanMenuState::ChangeState( ClientState next )
 	{
 	case GameClientState::ClientState_Lobby:
 		// attempt to connect to lobby
-		//if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
-		//	return; // TODO: temporary commented out
+		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
+			return;
 		break;
 	default: break;
 	}
