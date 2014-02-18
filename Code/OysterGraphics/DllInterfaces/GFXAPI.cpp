@@ -59,6 +59,7 @@ namespace Oyster
 			cube = CreateModel(L"generic_cube.dan");
 			cube->Tint = Math::Float3(0.0f,0.0f,1.0f);
 			sphere = CreateModel(L"generic_sphere.dan");
+			sphere->Tint = Math::Float3(1.0f,0.5f,182/255.0f);
 
 
 			D3D11_RASTERIZER_DESC desc;
