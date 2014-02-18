@@ -17,6 +17,7 @@ using namespace ::Oyster::Math3D;
 using namespace ::GameLogic;
 using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::String;
+using namespace ::Utility::Value;
 
 struct  GameState::MyData
 {
@@ -76,9 +77,24 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 
-	//tell server ready
-	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
+	Graphics::API::Option gfxOp = Graphics::API::GetOption();
+	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
+	this->privData->camera.SetPerspectiveProjection( Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
+	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
+	//tell server ready
+	//this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
+
+	// Debugg hack
+	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
+	Graphics::Definitions::Pointlight light;
+	light.Pos = Float3( 0,132,0);
+	light.Color = Float3( 1.0f );
+	light.Bright = 1.0f;
+	light.Radius = 1000.0f;
+	Graphics::API::AddLight( light );
+	// end debug hack
+			
 	return true;
 }
 
@@ -98,6 +114,9 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
+			Float3 offset = Float3( 0.0f );
+			offset.y = this->privData->player.getScale().y + 0.5f; // debug hack +0.5f
+			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
 		}
 	}
@@ -113,6 +132,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
+	this->ReadKeyInput();
 	return this->privData->nextState;
 }
 
@@ -219,8 +239,8 @@ void GameState::ReadKeyInput()
 
 	//send delta mouse movement 
 	{
-		this->privData->camera.YawRight( -this->privData->input->GetYaw() );
-		this->privData->camera.PitchUp( this->privData->input->GetPitch() );
+		this->privData->camera.YawRight( this->privData->input->GetYaw() * 0.017f );
+		this->privData->camera.PitchDown( this->privData->input->GetPitch() * 0.017f );
 		this->privData->camera.UpdateOrientation();
 
 		privData->nwClient->Send( Protocol_PlayerLook(this->privData->camera.GetLook(), this->privData->camera.GetRight()) );
