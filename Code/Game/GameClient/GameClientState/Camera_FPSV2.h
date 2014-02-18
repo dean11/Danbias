@@ -14,6 +14,7 @@ public:
 
 	void SetHeadOffset( const ::Oyster::Math::Float3 &translation );
 	void SetPosition( const ::Oyster::Math::Float3 &translation );
+	void SetRotation( const ::Oyster::Math::Quaternion &rotation );
 	void SetAngular( const ::Oyster::Math::Float3 &axis );
 	void SetProjection( const ::Oyster::Math::Float4x4 &matrix );
 	void SetOrthographicProjection( ::Oyster::Math::Float width, ::Oyster::Math::Float height, ::Oyster::Math::Float nearClip, ::Oyster::Math::Float farClip );

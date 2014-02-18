@@ -2,7 +2,7 @@
 #include "DllInterfaces/GFXAPI.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-#include "Camera_FPS.h"
+#include "Camera_FPSV2.h"
 #include <GameServerAPI.h>
 
 #include "C_obj/C_Player.h"
@@ -39,7 +39,7 @@ struct  GameState::MyData
 	bool key_Reload_Shaders;
 
 	C_Player player;
-	Camera_FPS camera;
+	Camera_FPSV2 camera;
 
 	int myId;
 
@@ -357,7 +357,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
-					this->privData->camera.SetAngular( AngularAxis(rotation) );
+					this->privData->camera.SetRotation( rotation );
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRot( rotation );
 			}
@@ -372,7 +372,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				if( this->privData->myId == decoded.object_ID )
 				{
 					this->privData->camera.SetPosition( position );
-					this->privData->camera.SetAngular( AngularAxis(rotation) );
+					this->privData->camera.SetRotation( rotation );
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
