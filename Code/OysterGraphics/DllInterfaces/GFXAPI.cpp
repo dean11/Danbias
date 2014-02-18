@@ -24,6 +24,8 @@ namespace Oyster
 			Model::Model* sphere;
 
 			ID3D11RasterizerState* wire;
+
+			ID3D11ShaderResourceView* debugSRV;
 #endif
 		}
 
@@ -50,8 +52,14 @@ namespace Oyster
 			Render::Preparations::Basic::SetViewPort();
 #ifdef _DEBUG
 			//fix load model
-			cube = CreateModel(L"debug_cube.dan");
-			sphere = CreateModel(L"debug_sphere.dan");
+			
+			debugSRV = (ID3D11ShaderResourceView*)API::CreateTexture(L"color_white.png");
+			debugSRV = (ID3D11ShaderResourceView*)API::CreateTexture(L"color_white.png");
+
+			cube = CreateModel(L"generic_cube.dan");
+			cube->Tint = Math::Float3(0.0f,0.0f,1.0f);
+			sphere = CreateModel(L"generic_sphere.dan");
+
 
 			D3D11_RASTERIZER_DESC desc;
 			desc.CullMode = D3D11_CULL_BACK;
@@ -196,6 +204,7 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
+			Core::deviceContext->OMSetRenderTargets(Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
 			Core::deviceContext->RSSetState(wire);
 		}
 
