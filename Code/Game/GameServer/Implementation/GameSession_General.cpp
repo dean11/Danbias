@@ -199,18 +199,12 @@ bool GameSession::Join(gClient gameClient)
 
 	gameClient->SetPlayer(playerData);
 	NetworkClient* nwClient = gameClient->GetClient();
-	
-// Send the level information
-	{
-		Protocol_LobbyCreateGame lcg((char)1, (char)0, Utility::String::WStringToString(this->description.mapName, std::string()));
-		nwClient->Send(lcg);
-	}
 
 // Send the player data only
 	{
 		Protocol_ObjectCreatePlayer oc(	playerData->GetPosition(), playerData->GetRotation(), playerData->GetScale(), 
 										playerData->GetID(), true, playerData->GetTeamID(), 
-										/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
+										/*nwClient->GetAlias()*/"Unknown", /*playerData->GetMesh()*/"char_white.dan");
 		nwClient->Send(oc);
 	}
 
@@ -223,7 +217,7 @@ bool GameSession::Join(gClient gameClient)
 				IPlayerData* temp = this->gClients[i]->GetPlayer();
 				Protocol_ObjectCreatePlayer oc(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
-												/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
+												/*nwClient->GetAlias()*/"Unknown", /*playerData->GetMesh()*/"char_white.dan");
 				nwClient->Send(oc);
 			}
 		}
@@ -258,6 +252,8 @@ bool GameSession::Join(gClient gameClient)
 			}
 		}
 	}
+
+	gameClient->SetState(GameClient::ClientState_Ready);
 
 	return added;
 }

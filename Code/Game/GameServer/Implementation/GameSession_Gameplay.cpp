@@ -45,7 +45,7 @@ using namespace DanBias;
 		//Find the idiot
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i]->Equals(e.sender))
+			if(this->gClients[i] && this->gClients[i]->Equals(e.sender))
 			{
 				temp = i;
 			}
@@ -78,7 +78,7 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i])
+			if(this->gClients[i] )
 			{
 				this->gClients[i]->UpdateClient();
 			}
