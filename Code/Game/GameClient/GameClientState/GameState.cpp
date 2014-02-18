@@ -381,7 +381,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 		case protocol_Gameplay_ObjectCreatePlayer:
 			{
 				Protocol_ObjectCreatePlayer decoded(data);
-				this->InitiatePlayer( decoded.object_ID, decoded.meshName, decoded.position, decoded.rotation, decoded.scale, decoded.owner );				
+				this->InitiatePlayer( decoded.object_ID, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
 			}
 			break;
 		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
