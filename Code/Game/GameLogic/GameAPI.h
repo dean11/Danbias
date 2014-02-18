@@ -139,7 +139,7 @@ namespace GameLogic
 		/**	Creates a level 
 		*	@return Returns a ILevelData container to use for level manipulation
 		*/
-		virtual ILevelData* CreateLevel( void ) = 0;
+		virtual ILevelData* CreateLevel( const wchar_t mapName[255] ) = 0;
 
 		/** Creates a team
 		*	@return ?

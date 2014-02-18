@@ -17,10 +17,10 @@ namespace GameLogic
 			~LevelParser();
 
 			//
-			std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> Parse(std::string filename);
+			std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> Parse(std::wstring filename);
 
 			//
-			LevelMetaData ParseHeader(std::string filename);
+			LevelMetaData ParseHeader(std::wstring filename);
 
 		private:
 			LevelLoaderInternal::FormatVersion formatVersion;

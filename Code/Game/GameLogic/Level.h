@@ -30,7 +30,7 @@ namespace GameLogic
 		* Initiates a level for players to play on
 		* @param levelPath: Path to a file that contains all information on the level
 		********************************************************/
-		void InitiateLevel(std::string levelPath);
+		void InitiateLevel(std::wstring levelPath);
 		void InitiateLevel(float radius);
 		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);

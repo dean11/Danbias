@@ -197,7 +197,7 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
 	return rigidBody;
 }
-void Level::InitiateLevel(std::string levelPath)
+void Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
 	std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> objects; 
