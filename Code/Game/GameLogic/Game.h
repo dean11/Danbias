@@ -58,10 +58,10 @@ namespace GameLogic
 			Oyster::Math::Float3 GetScale()							override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
 			int GetID() const										override;
-			ObjectSpecialType GetObjectType()	const						override;
+			ObjectSpecialType GetObjectType()	const				override;
 			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
-			Utility::DynamicMemory::DynamicArray<IObjectData*> GetAllDynamicObjects() const override;
+			void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& mem) const override;
 
 			Level *level;
 		};
