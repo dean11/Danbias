@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 #include "..\GameSession.h"
 #include "..\GameClient.h"
+#include "..\GameLobby.h"
 #include <Protocols.h>
 #include <PostBox\PostBox.h>
 #include <GameLogicStates.h>
@@ -62,9 +63,16 @@ bool GameSession::Create(GameDescription& desc)
 	if(this->isCreated)				return false;
 
 /* standard initialization of some data */
-	NetworkSession::clients = desc.clients;
-	NetworkSession::clients.Resize((unsigned int)desc.maxClients);
-	this->clients.Resize((unsigned int)desc.maxClients);
+	this->gClients.Resize((unsigned int)desc.maxClients);
+	for (unsigned int i = 0; i < desc.clients.Size(); i++)
+	{
+		if(desc.clients[i])
+		{
+			this->clientCount++;
+			this->gClients[i] = desc.clients[i];
+			this->gClients[i]->SetOwner(this);
+		}
+	}
 	this->owner = desc.owner;
 
 /* Initiate the game instance */
@@ -75,14 +83,13 @@ bool GameSession::Create(GameDescription& desc)
 
 /* Create the players in the game instance */
 	GameLogic::IPlayerData* p = 0;
-	for (unsigned int i = 0; i < desc.clients.Size(); i++)
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(desc.clients[i])
+		if(this->gClients[i])
 		{
 			if( (p = this->gameInstance.CreatePlayer()) )
 			{
-				desc.clients[i]->SetOwner(this);
-				this->clients[i] = (new GameClient(desc.clients[i], p));
+				this->gClients[i]->SetPlayer(p);
 			}
 			else
 			{
@@ -129,15 +136,15 @@ void GameSession::Run()
 void GameSession::ThreadEntry(  )
 {
 //List with clients that we are waiting on..
-	DynamicArray<SmartPointer<GameClient>> readyList;// = this->clients;
+	DynamicArray<gClient> readyList;// = this->clients;
 
 //First we need to clean invalid clients, if any, and tell them to start loading game data
-	for (unsigned int i = 0; i < this->clients.Size(); i++)
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(this->clients[i])
+		if(this->gClients[i])
 		{
-			readyList.Push(this->clients[i]);
-			Protocol_LobbyCreateGame p((char)1, (char)0, this->description.mapName);
+			readyList.Push(this->gClients[i]);
+			Protocol_LobbyCreateGame p((char)1, (char)0, Utility::String::WStringToString(this->description.mapName, std::string()));
 			readyList[readyList.Size() - 1]->GetClient()->Send(p);
 		}
 	}
@@ -153,13 +160,13 @@ void GameSession::ThreadEntry(  )
 			if(readyList[i] && readyList[i]->IsReady())
 			{
 				//Need to send information about other players, to all players
-				for (unsigned int k = 0; k < this->clients.Size(); k++)
+				for (unsigned int k = 0; k < this->gClients.Size(); k++)
 				{
-					if((this->clients[k] && readyList[i]) && readyList[i]->GetClient()->GetID() != this->clients[k]->GetClient()->GetID())
+					if((this->gClients[k] && readyList[i]) && readyList[i]->GetClient()->GetID() != this->gClients[k]->GetClient()->GetID())
 					{
-						IPlayerData* pl = this->clients[k]->GetPlayer();
+						IPlayerData* pl = this->gClients[k]->GetPlayer();
 						Protocol_ObjectCreatePlayer p(	pl->GetPosition(), pl->GetRotation(), pl->GetScale(),
-														pl->GetID(), true, this->clients[k]->GetPlayer()->GetTeamID(),
+														pl->GetID(), true, this->gClients[k]->GetPlayer()->GetTeamID(),
 														/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
 						readyList[i]->GetClient()->Send(p);
 					}
@@ -173,32 +180,31 @@ void GameSession::ThreadEntry(  )
 	}
 
 //Sync with clients before starting countdown
-
-	for (unsigned int i = 0; i < this->clients.Size(); i++)
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(this->clients[i])
+		if(this->gClients[i])
 		{
-			this->clients[i]->GetClient()->Send(GameLogic::Protocol_LobbyStartGame(5));
+			this->gClients[i]->GetClient()->Send(GameLogic::Protocol_LobbyStartGame(5.0f));
 		}
 	}
 }
 
-bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> networkClient)
+bool GameSession::Join(gClient gameClient)
 {
 	if(!this->isCreated)									return false;
-	if(this->GetClientCount() == this->clients.Capacity())	return false;
+	if(this->GetClientCount() == this->gClients.Capacity())	return false;
 
-	networkClient->SetOwner(this);
+	gameClient->SetOwner(this);
 
 	IPlayerData* playerData = this->gameInstance.CreatePlayer();
 	if(!playerData) return false;
 
-	SmartPointer<GameClient> gameClient = new GameClient(networkClient, playerData);
+	gameClient->SetPlayer(playerData);
 	NetworkClient* nwClient = gameClient->GetClient();
 	
 // Send the level information
 	{
-		Protocol_LobbyCreateGame lcg((char)1, (char)0, this->description.mapName);
+		Protocol_LobbyCreateGame lcg((char)1, (char)0, Utility::String::WStringToString(this->description.mapName, std::string()));
 		nwClient->Send(lcg);
 	}
 
@@ -212,11 +218,11 @@ bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> net
 
 // Send information about other clients
 	{
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(clients[i])
+			if(this->gClients[i])
 			{
-				IPlayerData* temp = clients[i]->GetPlayer();
+				IPlayerData* temp = this->gClients[i]->GetPlayer();
 				Protocol_ObjectCreatePlayer oc(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
 												/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
@@ -227,40 +233,44 @@ bool GameSession::Attach(Utility::DynamicMemory::SmartPointer<NetworkClient> net
 
 //TODO: Need to be able to get the current gameplay data from the logic, to sync it with the client
 	{
-
+		
 	}
 
 // Insert the new client to the update list
+	bool added = false;
 	{
-		bool added = false;
-		for (unsigned int i = 0; !added && i < this->clients.Size(); i++)
+		for (unsigned int i = 0; !added && i < this->gClients.Size(); i++)
 		{
-			if(!clients[i])
+			if(!this->gClients[i])
 			{
-				NetworkSession::clients[i] = networkClient;
-				clients[i] = gameClient;
+				this->gClients[i] = gameClient;
+				// Send the start signal
+				{
+					nwClient->Send(GameLogic::Protocol_LobbyStartGame(0));
+				}
 				added = true;
+				this->clientCount++;
 			}
 		}
-		if(!added)
-		{
-			NetworkSession::clients.Push( networkClient );
-			clients.Push( gameClient );
-		}
-	}
-// Send the start signal
-	{
-		nwClient->Send(GameLogic::Protocol_LobbyStartGame(0));
 	}
 
-	return true;
+	return added;
 }
 
-void GameSession::CloseSession( bool dissconnectClients )
-{
-	this->worker.Terminate();
-	NetworkSession::CloseSession(true);
-	this->clients.Clear();
-}
+//DynamicArray<gClient> GameSession::CloseSession( bool dissconnectClients )
+//{
+//	this->worker.Terminate();
+//	//TODO: Send clients to lobby
+//
+//	//for (unsigned int i = 0; i < this->gClients.Size(); i++)
+//	//{
+//	//	if(this->gClients[i])
+//	//	{
+//	//		((GameLobby*)this->owner)-> this->gClients[i]
+//	//	}
+//	//}
+//
+//	this->gClients.Clear();
+//}
 
 

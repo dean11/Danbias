@@ -12,8 +12,9 @@ using namespace DanBias;
 using namespace GameLogic;
 
 
-GameClient::GameClient()
+GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> nwClient)
 {
+	this->client = nwClient;
 	this->player = 0;
 	isReady = false;
 	this->character = L"Unknown";
@@ -51,3 +52,25 @@ void GameClient::SetCharacter(std::wstring character)
 }
 
 
+void GameClient::SetOwner(Oyster::Network::NetworkSession* owner)
+{
+	this->client->SetOwner(owner);
+}
+void GameClient::UpdateClient()
+{
+	this->client->Update();
+}
+
+
+IPlayerData* GameClient::ReleasePlayer()
+{
+	IPlayerData* temp = this->player;
+	this->player = 0;
+	return temp;
+}
+NetClient GameClient::ReleaseClient()
+{
+	NetClient temp = this->client;
+	this->client = 0;
+	return temp;
+}

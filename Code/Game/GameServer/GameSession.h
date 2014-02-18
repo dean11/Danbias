@@ -32,11 +32,11 @@ namespace DanBias
 		struct GameDescription
 		{
 			unsigned int maxClients;
-			std::string mapName;
-			std::string gameMode;
+			std::wstring mapName;
+			std::wstring gameMode;
 			int gameTimeMinutes;
 			Oyster::Network::NetworkSession* owner;
-			Utility::DynamicMemory::DynamicArray<Oyster::Network::NetClient> clients;
+			Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
 		};
 
 	public:
@@ -52,17 +52,19 @@ namespace DanBias
 		/** Join an existing/running game session 
 		*	@param client The client to attach to the session
 		*/
-		bool Attach(Oyster::Network::NetClient client) override;
-		void CloseSession( bool dissconnectClients ) override; 
+		bool Join(gClient client);
+
+		//void CloseSession( bool dissconnectClients ) override; 
 		
 		inline bool IsCreated() const	{ return this->isCreated; }
 		inline bool IsRunning() const	{ return this->isRunning; }
-		operator bool() { return (this->isCreated && this->isCreated); }
+		operator bool() { return (this->isCreated && this->isRunning); }
 
 		//Private member functions
 	private:
 		// Client event callback function
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
+		void ProcessClients() override;
 		
 		//Sends a client to the owner, if param is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);
@@ -98,8 +100,8 @@ namespace DanBias
 
 		//Private member variables
 	private:
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> clients;
-		Utility::DynamicMemory::SmartPointer<DanBias::GameClient> sessionOwner;
+		Utility::DynamicMemory::DynamicArray<gClient> gClients;
+		gClient sessionOwner;
 		Oyster::Thread::OysterThread worker;
 		GameLogic::GameAPI& gameInstance;
 		GameLogic::ILevelData *levelData;
@@ -114,6 +116,7 @@ namespace DanBias
 
 		//TODO: Remove this uggly hax
 		static GameSession* gameSession;
+
 
 	};//End GameSession
 }//End namespace DanBias

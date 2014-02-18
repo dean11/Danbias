@@ -43,9 +43,9 @@ using namespace DanBias;
 	{
 		int temp = -1;
 		//Find the idiot
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->clients[i]->Equals(e.sender))
+			if(this->gClients[i]->Equals(e.sender))
 			{
 				temp = i;
 			}
@@ -56,7 +56,7 @@ using namespace DanBias;
 			this->Detach(e.sender)->Disconnect();
 			return;
 		}
-		SmartPointer<GameClient> cl = this->clients[temp];
+		SmartPointer<GameClient> cl = this->gClients[temp];
 
 		switch (e.args.type)
 		{
@@ -70,15 +70,21 @@ using namespace DanBias;
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				testID = 2;
-				if(cl->GetPlayer()->GetID() == testID)//TODO: TEST
-				{
-					testTimer.reset();
-				}
 				this->ParseProtocol(e.args.data.protocol, cl);
 			break;
 		}
 	}
+	void GameSession::ProcessClients()
+	{
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
+		{
+			if(this->gClients[i])
+			{
+				this->gClients[i]->UpdateClient();
+			}
+		}
+	}
+
 
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{

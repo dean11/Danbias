@@ -116,27 +116,34 @@ void GameLobby::LobbyReady(GameLogic::Protocol_LobbyClientReadyState& p, Oyster:
 }
 void GameLobby::LobbyQuerryGameData(GameLogic::Protocol_QuerryGameType& p, Oyster::Network::NetworkClient* c)
 {
-	NetClient temp;
-	bool found = false;
-
-	//find client in waiting list
-	for (unsigned int i = 0; !found && i < this->clients.Size(); i++)
+	if(this->gameSession)
 	{
-		if(this->clients[i]->GetID() == c->GetID())
+		gClient temp;
+		bool found = false;
+
+		//find client in waiting list
+		for (unsigned int i = 0; !found && i < this->clients.Size(); i++)
 		{
-			temp = this->clients[i];
-			found = true;
+			if(this->gClients[i]->GetClient()->GetID() == c->GetID())
+			{
+				temp = this->gClients[i];
+				found = true;
+			}
 		}
-	}
 
-	//Something is wrong
-	if(!found)
-	{
-		c->Disconnect();
+		//Something is wrong
+		if(!found)
+		{
+			c->Disconnect();
+		}
+		else
+		{
+			//Send game data
+			this->gameSession.Join(temp);
+		}
 	}
 	else
 	{
-		//Send game data
-		this->gameSession.Attach(temp);
+
 	}
 }

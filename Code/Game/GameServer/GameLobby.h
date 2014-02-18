@@ -15,11 +15,18 @@ namespace DanBias
 {
 	struct LobbyLevelData
 	{
-		int mapNumber;
 		int maxClients;
-		int gameMode;
-		int gameTime;
-		std::string gameName;
+		int gameTimeInMinutes;
+		std::wstring gameMode;
+		std::wstring mapName;
+		std::wstring gameName;
+		LobbyLevelData()
+			:	maxClients(10)
+			,	gameTimeInMinutes(10)
+			,	gameMode(L"unknown")
+			,	mapName(L"unknown")
+			,	gameName(L"unknown")
+		{ }
 	};
 	class GameLobby	:public Oyster::Network::NetworkSession
 	{
@@ -49,6 +56,8 @@ namespace DanBias
 	private:
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
 		void ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client) override;
+		void ProcessClients() override;
+		bool Attach(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client) override;
 
 	private:
 		//Utility::WinTimer timer;
@@ -58,7 +67,7 @@ namespace DanBias
 		GameSession gameSession;
 		LobbyLevelData description;
 		Utility::DynamicMemory::SmartPointer<DanBias::GameClient> sessionOwner;
-		
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<GameClient>> gClients;
 	};
 }//End namespace DanBias
 #endif // !DANBIASGAME_GAMELOBBY_H
