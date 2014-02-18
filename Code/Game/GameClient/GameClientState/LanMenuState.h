@@ -14,8 +14,8 @@ namespace DanBias
 			LanMenuState();
 			virtual ~LanMenuState();
 
-			virtual bool Init(Oyster::Network::NetworkClient* nwClient);
-			virtual ClientState Update(float deltaTime, InputClass* KeyInput);
+			bool Init( SharedStateContent &shared );
+			virtual ClientState Update( float deltaTime );
 
 			virtual bool Render();
 			virtual bool Release();

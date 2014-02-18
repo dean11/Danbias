@@ -34,3 +34,4 @@ Bin/DLL/
 Bin/Executable/
 Obj/
 External/
+Code/Game/GameClient/GameClient.vcxproj.user

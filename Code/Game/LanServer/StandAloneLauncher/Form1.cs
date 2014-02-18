@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Timers;
 
 namespace StandAloneLauncher
 {
@@ -20,7 +22,7 @@ namespace StandAloneLauncher
         public Form1()
         {
             InitializeComponent();
-
+            this.gameModes.SelectedIndex = 0;
             
         }
 
@@ -30,17 +32,17 @@ namespace StandAloneLauncher
 
             return true;
         }
+     
         public void Run()
         {
             while (this.Created)
             {
                 Application.DoEvents();
-
-                //Do some stuff
                 this.gameServer.ServerUpdate();
+                this.labelClientsConnected.Text = "Clients connected: " + this.gameServer.GetClientsConnectedCount().ToString();
             }
         }
-
+        
         private void button1_serverToggle_Click(object sender, EventArgs e)
         {
             if (this.serverIsRunning)
@@ -87,15 +89,24 @@ namespace StandAloneLauncher
         {
             //this.gameServer.GameSetGameMode(this.gameModes.SelectedText);
             this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
-            //this.gameServer.GameSetMapId(0);
+            this.gameServer.GameSetMapName(this.mapName.Text);
             this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
-            if (!this.gameServer.GameStart())
+
+            if (!this.gameServer.GameStart( this.forceStart.Checked ))
             {
                 this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to start the game session!\n");
             }
             else
             {
                 this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Game session started!\n");
+            }
+        }
+
+        private void FormClosingEvent(object sender, FormClosingEventArgs e)
+        {
+            if (serverIsRunning)
+            {
+                this.gameServer.ServerStop();
             }
         }
     }

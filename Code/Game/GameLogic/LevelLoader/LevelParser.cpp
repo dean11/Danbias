@@ -33,7 +33,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::wstring file
 	char* buffer = (char*)loader.LoadFile(filename.c_str(), bufferSize);
 
 	// Check if file was loaded, else return empty vector
-	if(bufferSize == 0)
+	if(!buffer)
 	{
 		return std::vector<SmartPointer<ObjectTypeHeader>>();
 	}

@@ -197,11 +197,14 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
 	return rigidBody;
 }
-void Level::InitiateLevel(std::wstring levelPath)
+bool Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
 	std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> objects; 
 	objects = ll.LoadLevel(levelPath);
+
+	if(objects.size() == 0)
+		return false;
 
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
 	API::Instance().SetGravity(200);
@@ -332,8 +335,9 @@ void Level::InitiateLevel(std::wstring levelPath)
 			break;
 		}
 	}
+	return true;
 }
-void Level::InitiateLevel(float radius)
+bool Level::InitiateLevel(float radius)
 {
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
 	API::Instance().SetGravity(200);
@@ -396,6 +400,7 @@ void Level::InitiateLevel(float radius)
 
 	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1.0f, 1.0f, 1.0f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(4.0f, 600.3f, 0.0f), 5.0f, 0.5f, 0.8f, 0.6f);
 	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, ObjectSpecialType_JumpPad,idCount++ ,Oyster::Math::Float3(0,2000,0)));
+	return true;
 }
 
 void Level::AddPlayerToTeam(Player *player, int teamID)

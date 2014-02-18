@@ -22,6 +22,7 @@ struct LobbyAdminState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
+	InputClass *input;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 } privData;
@@ -36,19 +37,20 @@ LobbyAdminState::~LobbyAdminState(void)
 		this->Release();
 }
 
-bool LobbyAdminState::Init(NetworkClient* nwClient)
+bool LobbyAdminState::Init( SharedStateContent &shared )
 {
 	privData = new MyData();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = nwClient;
+	this->privData->nwClient = shared.network;
+	this->privData->input = shared.input;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
 	// create buttons
 	ButtonRectangle<LobbyAdminState*> *button;
 	
-	button = new ButtonRectangle<LobbyAdminState*>( L"earth_md.png", L"Ready", Float3(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<LobbyAdminState*>( L"earth_md.png", L"Ready", Float4(1.0f),Float4(0.0f),Float4(0.0f),Float4(0.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
@@ -57,7 +59,7 @@ bool LobbyAdminState::Init(NetworkClient* nwClient)
 	return true;
 }
 
-GameClientState::ClientState LobbyAdminState::Update(float deltaTime, InputClass* KeyInput)
+GameClientState::ClientState LobbyAdminState::Update( float deltaTime )
 {
 	// Wishlist:
 	// picking 
@@ -70,8 +72,8 @@ GameClientState::ClientState LobbyAdminState::Update(float deltaTime, InputClass
 
 	MouseInput mouseState;
 	{
-		KeyInput->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = KeyInput->IsMousePressed();
+		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
+		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
 	}
 
 	EventHandler::Instance().Update( mouseState );
@@ -110,10 +112,10 @@ void LobbyAdminState::ChangeState( ClientState next )
 
 using namespace ::Oyster::Network;
 
-void LobbyAdminState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & LobbyAdminState::DataRecieved( const GameClientState::NetEvent &message )
 {
-	CustomNetProtocol data = e.args.data.protocol;
-	short ID = data[0].value.netShort; // fetching the id data.
+	// fetching the id data.
+	short ID = message.args.data.protocol[0].value.netShort;
 	
 	// Block irrelevant messages.
 	if( ProtocolIsLobby(ID) )
@@ -139,6 +141,7 @@ void LobbyAdminState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::Clie
 		default: break;
 		}
 	}
+	return message;
 }
 
 void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyAdminState*>& e )
