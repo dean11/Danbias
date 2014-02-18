@@ -81,7 +81,7 @@ bool GameState::Init( SharedStateContent &shared )
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Math::pi/8, aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	//tell server ready
@@ -108,7 +108,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBInitData RBData;
 	RBData.position = position;
 	RBData.rotation = ArrayToQuaternion( rotation );
-	RBData.scale =  Float3( 3 );
+	RBData.scale =  Float3( 1 );
 
 	if( isMyPlayer )
 	{
@@ -170,7 +170,7 @@ bool GameState::Render()
 
 	
 	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 2, 2, 2));
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
 	Oyster::Math3D::Float4x4 world = translation  * scale;
 	Oyster::Graphics::API::RenderDebugCube( world );
 	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
