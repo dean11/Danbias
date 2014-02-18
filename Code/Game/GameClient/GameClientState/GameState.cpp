@@ -81,7 +81,7 @@ bool GameState::Init( SharedStateContent &shared )
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Math::pi/8, aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Math::pi/2, aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	//tell server ready
@@ -109,6 +109,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBData.position = position;
 	RBData.rotation = ArrayToQuaternion( rotation );
 	RBData.scale =  Float3( 1 );
+	// !RB DEBUG 
 
 	if( isMyPlayer )
 	{
@@ -116,6 +117,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			// RB DEBUG
 			this->privData->player.InitRB( RBData );
+			// !RB DEBUG 
 
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
@@ -132,6 +134,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			// RB DEBUG
 			this->privData->player.InitRB( RBData );
+			// !RB DEBUG 
 
 			(*this->privData->dynamicObjects)[id] = p;
 		}
@@ -168,14 +171,13 @@ bool GameState::Render()
 	// RB DEBUG render wire frame 
 	Oyster::Graphics::API::StartRenderWireFrame();
 
-	
 	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
 	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
 	Oyster::Math3D::Float4x4 world = translation  * scale;
 	Oyster::Graphics::API::RenderDebugCube( world );
 	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
 
-	
+	staticObject = this->privData->staticObjects->begin();
 	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 	{
 		if( staticObject->second->getBRtype() == RB_Type_Cube)
@@ -188,7 +190,7 @@ bool GameState::Render()
 		}
 	}
 
-	
+	dynamicObject = this->privData->dynamicObjects->begin();
 	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 	{
 		if( dynamicObject->second->getBRtype() == RB_Type_Cube)
@@ -200,6 +202,8 @@ bool GameState::Render()
 			Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
 		}
 	}
+	// !RB DEBUG 
+
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }

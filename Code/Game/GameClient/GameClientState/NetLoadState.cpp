@@ -146,6 +146,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size;
+						RBData.type = RB_Type_Cube;
 						staticObject->InitRB( RBData );
 					}
 
@@ -154,8 +155,10 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius;
+						RBData.type = RB_Type_Sphere;
 						staticObject->InitRB( RBData );
 					}
+					// !RB DEBUG 
 
 					(*this->privData->staticObjects)[objectID] = staticObject;	
 				}
@@ -187,6 +190,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size;
+						RBData.type = RB_Type_Cube;
 						dynamicObject->InitRB( RBData );
 					}
 
@@ -195,8 +199,10 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius;
+						RBData.type = RB_Type_Sphere;
 						dynamicObject->InitRB( RBData );
 					}
+					// !RB DEBUG 
 
 					(*this->privData->dynamicObjects)[objectID] = dynamicObject;
 				}
