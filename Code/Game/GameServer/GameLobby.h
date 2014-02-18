@@ -38,7 +38,12 @@ namespace DanBias
 
 		void SetGameDesc(const LobbyLevelData& desc);
 		void GetGameDesc(LobbyLevelData& desc);
-		bool StartGameSession();
+		/**
+		*	If param is true, the server will start a game session regardless of clients connected.
+		*/
+		bool StartGameSession( bool forceStart );
+
+		int GetGameSessionClientCount();
 
 	private:
 		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, Oyster::Network::NetworkClient* c);

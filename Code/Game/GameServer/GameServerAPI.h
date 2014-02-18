@@ -66,8 +66,13 @@ namespace DanBias
 			static const wchar_t*		GameGetGameMode();
 			static const wchar_t*		GameGetGameName();
 			static const wchar_t*		GameGetMapName();
+			static int					GetConnectedClientCount();
 	
-			static bool					GameStart();
+			/*	Starts a game 
+			*	@param forceStart	If forceStart is true, server will start with or without clients. 
+			*	If there are clients not "ready" the will be stareted anyways.
+			*/
+			static bool					GameStart(bool forceStart);
 
 
 		};//End class DanBiasServer

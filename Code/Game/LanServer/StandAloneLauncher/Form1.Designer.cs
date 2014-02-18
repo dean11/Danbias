@@ -36,30 +36,32 @@
             this.label_listenPort = new System.Windows.Forms.Label();
             this.panel_serverOptions = new System.Windows.Forms.Panel();
             this.panel_commands = new System.Windows.Forms.Panel();
+            this.mapName = new System.Windows.Forms.TextBox();
+            this.timeLimit = new System.Windows.Forms.NumericUpDown();
+            this.gameModes = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.forceStart = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.nrOfClients = new System.Windows.Forms.NumericUpDown();
+            this.buttonStartGame = new System.Windows.Forms.Button();
             this.panel_clientArea = new System.Windows.Forms.Panel();
             this.ServerInfoTextArea = new System.Windows.Forms.RichTextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.clientInfoBox = new System.Windows.Forms.ListBox();
-            this.buttonStartGame = new System.Windows.Forms.Button();
-            this.nrOfClients = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.gameModes = new System.Windows.Forms.ComboBox();
-            this.timeLimit = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.mapName = new System.Windows.Forms.TextBox();
+            this.labelClientsConnected = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).BeginInit();
             this.panel_serverOptions.SuspendLayout();
             this.panel_commands.SuspendLayout();
-            this.panel_clientArea.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).BeginInit();
+            this.panel_clientArea.SuspendLayout();
             this.SuspendLayout();
             // 
             // serverToggle
             // 
-            this.serverToggle.Location = new System.Drawing.Point(9, 81);
+            this.serverToggle.Location = new System.Drawing.Point(9, 106);
             this.serverToggle.Name = "serverToggle";
             this.serverToggle.Size = new System.Drawing.Size(75, 23);
             this.serverToggle.TabIndex = 0;
@@ -111,7 +113,7 @@
             this.listenPort.Size = new System.Drawing.Size(95, 20);
             this.listenPort.TabIndex = 5;
             this.listenPort.Value = new decimal(new int[] {
-            2048,
+            15151,
             0,
             0,
             0});
@@ -135,7 +137,7 @@
             this.panel_serverOptions.Controls.Add(this.label_serverName);
             this.panel_serverOptions.Location = new System.Drawing.Point(12, 12);
             this.panel_serverOptions.Name = "panel_serverOptions";
-            this.panel_serverOptions.Size = new System.Drawing.Size(183, 113);
+            this.panel_serverOptions.Size = new System.Drawing.Size(183, 141);
             this.panel_serverOptions.TabIndex = 6;
             // 
             // panel_commands
@@ -144,16 +146,136 @@
             this.panel_commands.Controls.Add(this.timeLimit);
             this.panel_commands.Controls.Add(this.gameModes);
             this.panel_commands.Controls.Add(this.label3);
+            this.panel_commands.Controls.Add(this.forceStart);
             this.panel_commands.Controls.Add(this.label2);
             this.panel_commands.Controls.Add(this.label4);
+            this.panel_commands.Controls.Add(this.labelClientsConnected);
             this.panel_commands.Controls.Add(this.label1);
             this.panel_commands.Controls.Add(this.nrOfClients);
             this.panel_commands.Controls.Add(this.buttonStartGame);
-            this.panel_commands.Location = new System.Drawing.Point(12, 131);
+            this.panel_commands.Location = new System.Drawing.Point(12, 159);
             this.panel_commands.Name = "panel_commands";
-            this.panel_commands.Size = new System.Drawing.Size(183, 230);
+            this.panel_commands.Size = new System.Drawing.Size(183, 202);
             this.panel_commands.TabIndex = 7;
             this.panel_commands.Visible = false;
+            // 
+            // mapName
+            // 
+            this.mapName.Location = new System.Drawing.Point(78, 7);
+            this.mapName.Name = "mapName";
+            this.mapName.Size = new System.Drawing.Size(98, 20);
+            this.mapName.TabIndex = 12;
+            this.mapName.Text = "Unknown";
+            // 
+            // timeLimit
+            // 
+            this.timeLimit.Location = new System.Drawing.Point(109, 94);
+            this.timeLimit.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.timeLimit.Name = "timeLimit";
+            this.timeLimit.Size = new System.Drawing.Size(68, 20);
+            this.timeLimit.TabIndex = 11;
+            this.timeLimit.ThousandsSeparator = true;
+            this.timeLimit.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            // 
+            // gameModes
+            // 
+            this.gameModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.gameModes.FormattingEnabled = true;
+            this.gameModes.Items.AddRange(new object[] {
+            "Free-for-all",
+            "Team death-match"});
+            this.gameModes.Location = new System.Drawing.Point(78, 66);
+            this.gameModes.Name = "gameModes";
+            this.gameModes.Size = new System.Drawing.Size(99, 21);
+            this.gameModes.TabIndex = 10;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 96);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(95, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Time limit (minutes)";
+            // 
+            // forceStart
+            // 
+            this.forceStart.AutoSize = true;
+            this.forceStart.Checked = true;
+            this.forceStart.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.forceStart.Location = new System.Drawing.Point(12, 120);
+            this.forceStart.Name = "forceStart";
+            this.forceStart.Size = new System.Drawing.Size(115, 17);
+            this.forceStart.TabIndex = 1;
+            this.forceStart.Text = "Ignore empty lobby";
+            this.forceStart.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 69);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(64, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Game mode";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(9, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Map name";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 38);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Client limit";
+            // 
+            // nrOfClients
+            // 
+            this.nrOfClients.Location = new System.Drawing.Point(78, 36);
+            this.nrOfClients.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nrOfClients.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nrOfClients.Name = "nrOfClients";
+            this.nrOfClients.Size = new System.Drawing.Size(39, 20);
+            this.nrOfClients.TabIndex = 7;
+            this.nrOfClients.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // buttonStartGame
+            // 
+            this.buttonStartGame.Location = new System.Drawing.Point(9, 176);
+            this.buttonStartGame.Name = "buttonStartGame";
+            this.buttonStartGame.Size = new System.Drawing.Size(75, 23);
+            this.buttonStartGame.TabIndex = 6;
+            this.buttonStartGame.Text = "Start game";
+            this.buttonStartGame.UseVisualStyleBackColor = true;
+            this.buttonStartGame.Click += new System.EventHandler(this.buttonStartGame_Click);
             // 
             // panel_clientArea
             // 
@@ -197,110 +319,14 @@
             this.clientInfoBox.Size = new System.Drawing.Size(303, 147);
             this.clientInfoBox.TabIndex = 0;
             // 
-            // buttonStartGame
+            // labelClientsConnected
             // 
-            this.buttonStartGame.Location = new System.Drawing.Point(53, 195);
-            this.buttonStartGame.Name = "buttonStartGame";
-            this.buttonStartGame.Size = new System.Drawing.Size(75, 23);
-            this.buttonStartGame.TabIndex = 6;
-            this.buttonStartGame.Text = "Start game";
-            this.buttonStartGame.UseVisualStyleBackColor = true;
-            this.buttonStartGame.Click += new System.EventHandler(this.buttonStartGame_Click);
-            // 
-            // nrOfClients
-            // 
-            this.nrOfClients.Location = new System.Drawing.Point(78, 36);
-            this.nrOfClients.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nrOfClients.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.nrOfClients.Name = "nrOfClients";
-            this.nrOfClients.Size = new System.Drawing.Size(39, 20);
-            this.nrOfClients.TabIndex = 7;
-            this.nrOfClients.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 38);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 13);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Client limit";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 69);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 13);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "Game mode";
-            // 
-            // gameModes
-            // 
-            this.gameModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.gameModes.FormattingEnabled = true;
-            this.gameModes.Items.AddRange(new object[] {
-            "Free-for-all",
-            "Team death-match"});
-            this.gameModes.Location = new System.Drawing.Point(78, 66);
-            this.gameModes.Name = "gameModes";
-            this.gameModes.Size = new System.Drawing.Size(99, 21);
-            this.gameModes.TabIndex = 10;
-            // 
-            // timeLimit
-            // 
-            this.timeLimit.Location = new System.Drawing.Point(109, 94);
-            this.timeLimit.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.timeLimit.Name = "timeLimit";
-            this.timeLimit.Size = new System.Drawing.Size(68, 20);
-            this.timeLimit.TabIndex = 11;
-            this.timeLimit.ThousandsSeparator = true;
-            this.timeLimit.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 96);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Time limit (minutes)";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 15);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(57, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Map name";
-            // 
-            // mapName
-            // 
-            this.mapName.Location = new System.Drawing.Point(78, 7);
-            this.mapName.Name = "mapName";
-            this.mapName.Size = new System.Drawing.Size(98, 20);
-            this.mapName.TabIndex = 12;
+            this.labelClientsConnected.AutoSize = true;
+            this.labelClientsConnected.Location = new System.Drawing.Point(9, 149);
+            this.labelClientsConnected.Name = "labelClientsConnected";
+            this.labelClientsConnected.Size = new System.Drawing.Size(104, 13);
+            this.labelClientsConnected.TabIndex = 8;
+            this.labelClientsConnected.Text = "Clients connected: 0";
             // 
             // Form1
             // 
@@ -312,14 +338,15 @@
             this.Controls.Add(this.panel_serverOptions);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClosingEvent);
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).EndInit();
             this.panel_serverOptions.ResumeLayout(false);
             this.panel_serverOptions.PerformLayout();
             this.panel_commands.ResumeLayout(false);
             this.panel_commands.PerformLayout();
-            this.panel_clientArea.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).EndInit();
+            this.panel_clientArea.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -347,6 +374,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox mapName;
+        private System.Windows.Forms.CheckBox forceStart;
+        private System.Windows.Forms.Label labelClientsConnected;
     }
 }
 

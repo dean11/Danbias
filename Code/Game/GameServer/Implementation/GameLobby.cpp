@@ -65,39 +65,46 @@ void GameLobby::GetGameDesc(LobbyLevelData& desc)
 	desc.gameMode = this->description.gameMode;
 	
 }
-bool GameLobby::StartGameSession(  )
+bool GameLobby::StartGameSession( bool forceStart )
 {
-//Check if all clients is ready
-	if(this->GetClientCount() && this->GetClientCount() == this->readyList.Size())
+//Check if all clients is ready, in not force start
+	if(!forceStart)
 	{
-		GameSession::GameDescription desc;
-			desc.maxClients = this->description.maxClients;
-			desc.gameMode = this->description.gameMode;
-			desc.gameTimeMinutes = this->description.gameTimeInMinutes;
-			//desc.mapName = this->description.mapNumber;
-			desc.owner = this;
-			desc.clients = this->gClients;
+		if(!this->GetClientCount())
+		{ /*None connected*/ return false;}
+		else if( this->GetClientCount() != this->readyList.Size() )
+		{ /*Not enough connected*/ return false; }
+	}
 
-		if(desc.gameTimeMinutes == 0)
-			desc.gameTimeMinutes = 10; //note: should be fetched from somewhere.
+	GameSession::GameDescription desc;
+		desc.maxClients = this->description.maxClients;
+		desc.gameMode = this->description.gameMode;
+		desc.gameTimeMinutes = this->description.gameTimeInMinutes;
+		desc.mapName = this->description.mapName;
+		desc.owner = this;
+		desc.clients = this->gClients;
 
-		if(desc.maxClients == 0)
-			desc.maxClients = 10; //note: should be fetched somewhere else..
+	if(desc.gameTimeMinutes == 0)
+		desc.gameTimeMinutes = 10; //note: should be fetched from somewhere.
 
-		this->gClients.Clear();	//Remove clients from lobby list
+	if(desc.maxClients == 0)
+		desc.maxClients = 10; //note: should be fetched somewhere else..
+
+	this->gClients.Clear();	//Remove clients from lobby list
 		
-		if(this->gameSession.Create(desc))
-		{
-			this->gameSession.Run();
-
-			return true;
-		}
-	}
-	else
+	if(this->gameSession.Create(desc, forceStart))
 	{
-		//?
+		this->gameSession.Run();
+
+		return true;
 	}
+	
+	
 	return false;
+}
+int GameLobby::GetGameSessionClientCount()
+{
+	return this->gameSession.GetClientCount();
 }
 
 void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
