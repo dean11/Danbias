@@ -65,6 +65,8 @@ namespace DanBias
 		// Client event callback function
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
 		void ProcessClients() override;
+		bool Send(Oyster::Network::CustomNetProtocol& message) override;
+		bool Send(Oyster::Network::CustomNetProtocol& protocol, int ID) override;
 		
 		//Sends a client to the owner, if param is NULL then all clients is sent
 		void SendToOwner(DanBias::GameClient* obj);

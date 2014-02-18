@@ -233,7 +233,14 @@ bool GameSession::Join(gClient gameClient)
 
 //TODO: Need to be able to get the current gameplay data from the logic, to sync it with the client
 	{
-		
+		DynamicArray<IObjectData*> objects;
+		this->levelData->GetAllDynamicObjects(objects);
+		for (unsigned int i = 0; i < objects.Size(); i++)
+		{
+			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
+			Protocol_ObjectPositionRotation p(objects[i]->GetPosition(), objects[i]->GetRotation(), objects[i]->GetID());
+			GameSession::gameSession->Send(p.GetProtocol());
+		}
 	}
 
 // Insert the new client to the update list
