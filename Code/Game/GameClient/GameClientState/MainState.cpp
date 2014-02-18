@@ -49,18 +49,22 @@ bool MainState::Init( SharedStateContent &shared )
 	this->privData->nwClient = shared.network;
 	this->privData->input = shared.input;
 
-	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
+	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
 
 	// create buttons
 	ButtonRectangle<MainState*> *button;
+	Float4 TextCol = Float4(1.0f,0.0f,1.0f,1.0f);
+	Float4 BackCol = Float4(1.0f,1.0f,1.0f,0.5f);
+	Float4 HoverCol = Float4(0.0f,1.0f,0.0f,1.0f);
+	Float4 PressCol = Float4(0.0f,0.0f,1.0f,1.0f);
 	
-	button = new ButtonRectangle<MainState*>( L"earth_md.png", L"Create", Float3(1.0f), OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<MainState*>( L"color_white.png", L"Create",TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f));
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"skysphere_md.png", L"Join", Float3(1.0f), OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<MainState*>( L"color_white.png", L"Join", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.1f));
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"plane_texture_md.png", L"Quit", Float3(1.0f), OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<MainState*>( L"color_white.png", L"Quit", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.1f));
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
@@ -73,6 +77,11 @@ GameClientState::ClientState MainState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
+		bool test = this->privData->input->IsMousePressed();
+		if(test)
+		{
+			int i = 0;
+		};
 		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
 		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
 	}
@@ -87,7 +96,7 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(63.0f/255.0f,73.0f/255.0f,127.0f/255.0f,0.6f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();

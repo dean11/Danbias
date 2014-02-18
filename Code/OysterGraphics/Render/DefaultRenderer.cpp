@@ -16,7 +16,8 @@ namespace Oyster
 
 				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
 				{
-					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(1,0,0,1));
+					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,0));
+					Preparations::Basic::ClearDepthStencil(Resources::Gui::depth);
 					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
 					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
 					Lights[1];
@@ -38,14 +39,6 @@ namespace Oyster
 					data = Resources::Light::PointLightsData.Map();
 					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
-
-					Definitions::PostData pd;
-					pd.x = (int)lc.Pixels.x;
-					pd.y = (int)lc.Pixels.y;
-
-					data = Resources::Post::Data.Map();
-					memcpy(data, &pd, sizeof(Definitions::PostData));
-					Resources::Post::Data.Unmap();
 				}
 
 				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection, float deltaTime)
@@ -57,8 +50,8 @@ namespace Oyster
 						if(models[i].Visible)
 						{
 							Definitions::PerModel pm;
-							pm.WV = View * models[i].WorldMatrix;
-							pm.WVP = Projection * pm.WV;
+							pm.WV = View * models[i].WorldMatrix.GetTranspose().GetInverse();
+							pm.WVP = Projection * View * models[i].WorldMatrix;
 
 							Model::ModelInfo* info = models[i].info;
 							

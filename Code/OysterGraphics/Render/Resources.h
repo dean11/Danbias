@@ -64,6 +64,7 @@ namespace Oyster
 					{
 						static Core::PipelineManager::RenderPass Pass;
 						static Core::Buffer Data;
+						static ID3D11DepthStencilView* depth;
 						struct Text
 						{
 							static Core::PipelineManager::RenderPass Pass;

@@ -8,10 +8,8 @@ SamplerState S1 : register(s0);
 
 cbuffer Size : register(b0)
 {
-	int2 Pixels;
+	float AmbFactor;
 }
-
-#define AmbFactor 0.1f;
 
 float4 SuperSample(float4 Glow, uint3 DTid)
 {
@@ -36,7 +34,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	Glow = SuperSample(Glow,DTid);
 
 	float4 GUI;
-	uint2 index = DTid.xy/2 + uint2((uint)Pixels.x/(uint)2,0);
+	uint2 index = DTid.xy/2 + uint2((uint)Output.Length.x/(uint)2,0);
 	float3 PostLight = Amb.xyz * AmbFactor;
 	PostLight = PostLight + Light.xyz + Glow;
 	GUI = float4(Ambient[index]);

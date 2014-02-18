@@ -112,7 +112,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,7 +129,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -150,7 +150,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;GameClient_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,7 +171,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;GameClient_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

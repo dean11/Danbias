@@ -27,13 +27,30 @@ namespace Oyster
 			struct Option
 			{
 				std::wstring modelPath, texturePath;
+				//between 0-1
+				float AmbientValue;
+
+				Math::Float2 Resolution;
+
+				//Bytes on the GPU
 				int BytesUsed;
 			};
 			typedef void* Texture;
 
-			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Oyster::Math::Float2 StartResulotion);
+			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Option options);
 #ifdef _DEBUG
 			static State ReloadShaders();
+
+			//should be called after rendered normal models, before GUI or Text rendering
+			static void StartRenderWireFrame();
+
+			//Render a unit cube with the presented WorldMatrix
+			static void RenderDebugCube(Math::Matrix world);
+
+			//Render a unit Sphere with the presented WorldMatrix
+			static void RenderDebugSphere(Math::Matrix world);
+
+			static void StartRenderFullModel();
 #endif
 			
 			//! @todo Memory Leaks
@@ -57,13 +74,13 @@ namespace Oyster
 			static void StartGuiRender();
 
 			//! @brief Renders a single GUI element using the texture provided and the Pos in the center, %based system
-			static void RenderGuiElement(Texture, Math::Float3 Pos, Math::Float2 Size, Math::Float3 Color = Math::Float3(1,1,1));
+			static void RenderGuiElement(Texture, Math::Float3 Pos, Math::Float2 Size, Math::Float4 Color = Math::Float4(1,1,1,1));
 
 			//! @brief Configures Renderer to process 2D Text, data will be passed in to EndFrame()
 			static void StartTextRender();
 
 			//! @brief Renders a single GUI string using the texture provided and the Pos in the center, %based system
-			static void RenderText(std::wstring, Math::Float3 Pos, Math::Float2 Size, float FontSize, Math::Float3 Color = Math::Float3(1,1,1));
+			static void RenderText(std::wstring, Math::Float3 Pos, Math::Float2 Size, float FontSize, Math::Float4 Color = Math::Float4(1,1,1,1));
 
 			//! @brief Performs light calculations, post effects and presents the scene
 			static void EndFrame();

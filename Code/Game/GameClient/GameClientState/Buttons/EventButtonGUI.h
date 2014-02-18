@@ -30,32 +30,40 @@ namespace DanBias
 		class EventButtonGUI : public Oyster::Event::EventButton<Owner>
 		{
 		public:
-			EventButtonGUI() 
-				: EventButton(), pos(0, 0), size(0, 0), texture(NULL), buttonText(""), textColor(0, 0, 0)
-			{}
-			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, Owner owner, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButton(owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
+				: EventButton(owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), 
+				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
-			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButton(func), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				EventFunc func, Oyster::Math::Float3 pos, 
+							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
+				: EventButton(func), pos(pos), size(size), texture(NULL), buttonText(buttonText), 
+				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
-			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButton(func, owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				EventFunc func, Owner owner, Oyster::Math::Float3 pos, 
+							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
+				: EventButton(func, owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), 
+				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
-			EventButtonGUI(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float3 textColor, EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButton(func, owner, userData), pos(pos), size(size), texture(NULL), buttonText(buttonText), textColor(textColor)
+			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
+				: EventButton(func, owner, userData), pos(pos), size(size), texture(NULL), buttonText(buttonText), 
+				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
@@ -77,23 +85,23 @@ namespace DanBias
 				if(EventButton<Owner>::Enabled())
 				{
 					// let the using dev decide what is rendered
-					Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
+					//Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float4(1.0f, 1.0f, 1.0f, 1.0f));
 
 					//Render att xPos and yPos
 					//With width and height
 
-					//if(EventButton<Owner>::GetState() == ButtonState_None)
-					//{
-					//	Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(1.0f, 1.0f, 1.0f));
-					//}
-					//else if(EventButton<Owner>::GetState() == ButtonState_Hover)
-					//{
-					//	Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(0.0f, 1.0f, 0.0f));
-					//}
-					//else
-					//{
-					//	Oyster::Graphics::API::RenderGuiElement(texture, pos, size, Oyster::Math::Float3(1.0f, 0.0f, 0.0f));
-					//}
+					if(EventButton<Owner>::GetState() == ButtonState_None)
+					{
+						Oyster::Graphics::API::RenderGuiElement(texture, pos, size, backColor);
+					}
+					else if(EventButton<Owner>::GetState() == ButtonState_Hover)
+					{
+						Oyster::Graphics::API::RenderGuiElement(texture, pos, size, hoverColor);
+					}
+					else
+					{
+						Oyster::Graphics::API::RenderGuiElement(texture, pos, size, pressedColor);
+					}
 
 				}
 			}
@@ -102,7 +110,7 @@ namespace DanBias
 			{
 				if(buttonText.size() > 0)
 				{
-					Oyster::Graphics::API::RenderText(buttonText, pos - Float3(size.x * 0.5f, size.y * 0.25f, 0.0f), size*2.0f, size.y * 0.5f, textColor);
+					Oyster::Graphics::API::RenderText(buttonText, pos - Float3(size.x * 0.5f, size.y * 0.25f, -0.001f), size, size.y * 0.5f, textColor);
 				}
 			}
 
@@ -125,7 +133,11 @@ namespace DanBias
 			Oyster::Graphics::API::Texture texture;
 			
 			std::wstring buttonText;
-			Oyster::Math::Float3 textColor;
+			Oyster::Math::Float4 textColor;
+			
+			Oyster::Math::Float4 backColor;
+			Oyster::Math::Float4 hoverColor;
+			Oyster::Math::Float4 pressedColor;
 		};
 	}
 }
