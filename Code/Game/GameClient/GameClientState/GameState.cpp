@@ -108,10 +108,19 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	StringToWstring( modelName, modelData.modelPath );
 	modelData.id		= id;
 
+	// RB DEBUG
+	RBInitData RBData;
+	RBData.position = position;
+	RBData.rotation = ArrayToQuaternion( rotation );
+	RBData.scale =  Float3( 3 );
+
 	if( isMyPlayer )
 	{
 		if( this->privData->player.Init(modelData) )
 		{
+			// RB DEBUG
+			this->privData->player.InitRB( RBData );
+
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
 			Float3 offset = Float3( 0.0f );
@@ -125,6 +134,9 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		C_DynamicObj *p = new C_DynamicObj();
 		if( p->Init(modelData) )
 		{
+			// RB DEBUG
+			this->privData->player.InitRB( RBData );
+
 			(*this->privData->dynamicObjects)[id] = p;
 		}
 	}
@@ -157,6 +169,41 @@ bool GameState::Render()
 		dynamicObject->second->Render();
 	}
 
+	// RB DEBUG render wire frame 
+	Oyster::Graphics::API::StartRenderWireFrame();
+
+	
+	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 2, 2, 2));
+	Oyster::Math3D::Float4x4 world = translation  * scale;
+	Oyster::Graphics::API::RenderDebugCube( world );
+	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+
+	
+	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+	{
+		if( staticObject->second->getBRtype() == RB_Type_Cube)
+		{
+			Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+		}
+		if( staticObject->second->getBRtype() == RB_Type_Sphere)
+		{
+			Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+		}
+	}
+
+	
+	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
+	{
+		if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+		{
+			Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+		}
+		if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+		{
+			Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+		}
+	}
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }

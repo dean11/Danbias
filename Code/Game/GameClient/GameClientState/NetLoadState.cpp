@@ -134,10 +134,29 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				desc.rotation	= ArrayToQuaternion( oh->rotation );
 				desc.scale		= oh->scale;
 				desc.visible	= true; 
-					
+
 				C_StaticObj *staticObject = new C_StaticObj();
 				if( staticObject->Init( desc ) )
 				{
+
+					// RB DEBUG
+					RBInitData RBData;
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size;
+						staticObject->InitRB( RBData );
+					}
+
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius;
+						staticObject->InitRB( RBData );
+					}
+
 					(*this->privData->staticObjects)[objectID] = staticObject;	
 				}
 				else
@@ -161,6 +180,24 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				C_DynamicObj *dynamicObject = new C_DynamicObj();
 				if( dynamicObject->Init( desc ) )
 				{
+					// RB DEBUG
+					RBInitData RBData;
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size;
+						dynamicObject->InitRB( RBData );
+					}
+
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius;
+						dynamicObject->InitRB( RBData );
+					}
+
 					(*this->privData->dynamicObjects)[objectID] = dynamicObject;
 				}
 				else

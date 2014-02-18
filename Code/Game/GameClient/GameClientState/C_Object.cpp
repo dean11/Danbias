@@ -31,32 +31,27 @@ void C_Object::updateWorld()
 {
 	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->position); 
 	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->rotation);
-	//Oyster::Math3D::Float4x4 scale = Oyster::Math3D::;
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::Matrix::identity;
-	scale.v[0].x = this->scale[0];
-	scale.v[1].y = this->scale[1];
-	scale.v[2].z = this->scale[2];
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
 	world = translation * rot * scale;
 
 	model->WorldMatrix = world;
 }
-void C_Object::setWorld(Oyster::Math::Float4x4 world)
-{
-	model->WorldMatrix = world;
-}
 Oyster::Math::Float4x4 C_Object::getWorld() const
 {
+	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->position); 
+	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->rotation);
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
+	Oyster::Math3D::Float4x4 world = translation * rot * scale;
+
 	return world;
 }
 void C_Object::setPos(Oyster::Math::Float3 newPos)
 {
 	this->position = newPos;
-	updateWorld();
 }
 void C_Object::addPos(Oyster::Math::Float3 deltaPos)
 {
 	this->position += deltaPos;
-	updateWorld();
 }
 Oyster::Math::Float3 C_Object::getPos() const
 {
@@ -65,12 +60,6 @@ Oyster::Math::Float3 C_Object::getPos() const
 void C_Object::setRot(Oyster::Math::Quaternion newRot)
 {
 	this->rotation = newRot;
-	updateWorld();
-}
-void C_Object::addRot(Oyster::Math::Quaternion deltaRot)
-{
-	this->rotation += deltaRot;
-	updateWorld();
 }
 Oyster::Math::Quaternion C_Object::getRotation() const
 {
@@ -79,12 +68,10 @@ Oyster::Math::Quaternion C_Object::getRotation() const
 void C_Object::setScale(Oyster::Math::Float3 newScale)
 {
 	this->scale = newScale;
-	updateWorld();
 }
 void C_Object::addScale(Oyster::Math::Float3 deltaScale)
 {
 	this->scale += deltaScale;
-	updateWorld();
 }
 Oyster::Math::Float3 C_Object::getScale() const
 {
@@ -105,4 +92,54 @@ void C_Object::Release()
 		Oyster::Graphics::API::DeleteModel(model);
 		this->model = nullptr;
 	}
+}
+
+
+
+////////////////////////////////////////////////
+// RB DEBUG
+////////////////////////////////////////////////
+bool C_Object::InitRB(RBInitData RBInit)
+{
+	RBposition = RBInit.position;
+	RBrotation = RBInit.rotation;
+	RBscale = RBInit.scale;
+	return true;
+}
+Oyster::Math::Float4x4 C_Object::getRBWorld() const
+{
+	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->RBposition); 
+	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->RBrotation);
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->RBscale);
+	Oyster::Math3D::Float4x4 world = translation * rot * scale;
+
+	return world;
+}
+void C_Object::setRBPos(Oyster::Math::Float3 newPos)
+{
+	this->RBposition = newPos;
+}
+Oyster::Math::Float3 C_Object::getRBPos() const
+{
+	return this->RBposition;
+}
+void C_Object::setRBRot(Oyster::Math::Quaternion newRot)
+{
+	this->RBrotation = newRot;
+}
+Oyster::Math::Quaternion C_Object::getRBRotation() const
+{
+	return this->RBrotation;
+}
+void C_Object::setRBScale(Oyster::Math::Float3 newScale)
+{
+	this->RBscale = newScale;
+}
+Oyster::Math::Float3 C_Object::getRBScale() const
+{
+	return this->RBscale;
+}
+RB_Type C_Object::getBRtype()const
+{
+	return this->type;
 }
