@@ -52,6 +52,8 @@ OHRESOURCE OysterResource::LoadResource(const wchar_t* filename, ResourceType ty
 		}
 	}
 
+	if(!resourceData) return 0;
+
 	return resourceData->GetResourceHandle();
 }
 OHRESOURCE OysterResource::LoadResource(const wchar_t filename[], CustomLoadFunction loadFnc, int customId, bool force)

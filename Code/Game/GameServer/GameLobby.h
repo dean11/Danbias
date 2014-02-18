@@ -59,6 +59,9 @@ namespace DanBias
 		void LobbyQuerryGameData(GameLogic::Protocol_QuerryGameType& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_QuerryGameType:
 
 	private:
+		int FindClient(Oyster::Network::NetworkClient* c);
+
+	private:
 		void ClientEventCallback(Oyster::Network::NetEvent<Oyster::Network::NetworkClient*, Oyster::Network::NetworkClient::ClientEventArgs> e) override;
 		void ClientConnectedEvent(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client) override;
 		void ProcessClients() override;

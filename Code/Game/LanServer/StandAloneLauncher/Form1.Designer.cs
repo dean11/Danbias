@@ -43,6 +43,7 @@
             this.forceStart = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.labelClientsConnected = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.nrOfClients = new System.Windows.Forms.NumericUpDown();
             this.buttonStartGame = new System.Windows.Forms.Button();
@@ -50,13 +51,14 @@
             this.ServerInfoTextArea = new System.Windows.Forms.RichTextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.clientInfoBox = new System.Windows.Forms.ListBox();
-            this.labelClientsConnected = new System.Windows.Forms.Label();
+            this.panel_CommanArea = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).BeginInit();
             this.panel_serverOptions.SuspendLayout();
             this.panel_commands.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).BeginInit();
             this.panel_clientArea.SuspendLayout();
+            this.panel_CommanArea.SuspendLayout();
             this.SuspendLayout();
             // 
             // serverToggle
@@ -135,9 +137,10 @@
             this.panel_serverOptions.Controls.Add(this.label_listenPort);
             this.panel_serverOptions.Controls.Add(this.lanBroadcast);
             this.panel_serverOptions.Controls.Add(this.label_serverName);
-            this.panel_serverOptions.Location = new System.Drawing.Point(12, 12);
+            this.panel_serverOptions.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel_serverOptions.Location = new System.Drawing.Point(0, 0);
             this.panel_serverOptions.Name = "panel_serverOptions";
-            this.panel_serverOptions.Size = new System.Drawing.Size(183, 141);
+            this.panel_serverOptions.Size = new System.Drawing.Size(200, 141);
             this.panel_serverOptions.TabIndex = 6;
             // 
             // panel_commands
@@ -153,19 +156,19 @@
             this.panel_commands.Controls.Add(this.label1);
             this.panel_commands.Controls.Add(this.nrOfClients);
             this.panel_commands.Controls.Add(this.buttonStartGame);
-            this.panel_commands.Location = new System.Drawing.Point(12, 159);
+            this.panel_commands.Location = new System.Drawing.Point(3, 150);
             this.panel_commands.Name = "panel_commands";
-            this.panel_commands.Size = new System.Drawing.Size(183, 202);
+            this.panel_commands.Size = new System.Drawing.Size(191, 202);
             this.panel_commands.TabIndex = 7;
             this.panel_commands.Visible = false;
             // 
             // mapName
             // 
-            this.mapName.Location = new System.Drawing.Point(78, 7);
+            this.mapName.Location = new System.Drawing.Point(75, 10);
             this.mapName.Name = "mapName";
-            this.mapName.Size = new System.Drawing.Size(98, 20);
+            this.mapName.Size = new System.Drawing.Size(113, 20);
             this.mapName.TabIndex = 12;
-            this.mapName.Text = "Unknown";
+            this.mapName.Text = "2ofAll_updated.bias";
             // 
             // timeLimit
             // 
@@ -194,7 +197,7 @@
             "Team death-match"});
             this.gameModes.Location = new System.Drawing.Point(78, 66);
             this.gameModes.Name = "gameModes";
-            this.gameModes.Size = new System.Drawing.Size(99, 21);
+            this.gameModes.Size = new System.Drawing.Size(110, 21);
             this.gameModes.TabIndex = 10;
             // 
             // label3
@@ -235,6 +238,15 @@
             this.label4.Size = new System.Drawing.Size(57, 13);
             this.label4.TabIndex = 8;
             this.label4.Text = "Map name";
+            // 
+            // labelClientsConnected
+            // 
+            this.labelClientsConnected.AutoSize = true;
+            this.labelClientsConnected.Location = new System.Drawing.Point(9, 149);
+            this.labelClientsConnected.Name = "labelClientsConnected";
+            this.labelClientsConnected.Size = new System.Drawing.Size(104, 13);
+            this.labelClientsConnected.TabIndex = 8;
+            this.labelClientsConnected.Text = "Clients connected: 0";
             // 
             // label1
             // 
@@ -282,9 +294,10 @@
             this.panel_clientArea.Controls.Add(this.ServerInfoTextArea);
             this.panel_clientArea.Controls.Add(this.splitter1);
             this.panel_clientArea.Controls.Add(this.clientInfoBox);
-            this.panel_clientArea.Location = new System.Drawing.Point(202, 12);
+            this.panel_clientArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_clientArea.Location = new System.Drawing.Point(200, 0);
             this.panel_clientArea.Name = "panel_clientArea";
-            this.panel_clientArea.Size = new System.Drawing.Size(303, 349);
+            this.panel_clientArea.Size = new System.Drawing.Size(535, 616);
             this.panel_clientArea.TabIndex = 8;
             // 
             // ServerInfoTextArea
@@ -297,7 +310,7 @@
             this.ServerInfoTextArea.Location = new System.Drawing.Point(0, 152);
             this.ServerInfoTextArea.Name = "ServerInfoTextArea";
             this.ServerInfoTextArea.ReadOnly = true;
-            this.ServerInfoTextArea.Size = new System.Drawing.Size(303, 197);
+            this.ServerInfoTextArea.Size = new System.Drawing.Size(535, 464);
             this.ServerInfoTextArea.TabIndex = 1;
             this.ServerInfoTextArea.Text = "";
             // 
@@ -306,7 +319,7 @@
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.splitter1.Location = new System.Drawing.Point(0, 147);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(303, 5);
+            this.splitter1.Size = new System.Drawing.Size(535, 5);
             this.splitter1.TabIndex = 2;
             this.splitter1.TabStop = false;
             // 
@@ -316,26 +329,26 @@
             this.clientInfoBox.FormattingEnabled = true;
             this.clientInfoBox.Location = new System.Drawing.Point(0, 0);
             this.clientInfoBox.Name = "clientInfoBox";
-            this.clientInfoBox.Size = new System.Drawing.Size(303, 147);
+            this.clientInfoBox.Size = new System.Drawing.Size(535, 147);
             this.clientInfoBox.TabIndex = 0;
             // 
-            // labelClientsConnected
+            // panel_CommanArea
             // 
-            this.labelClientsConnected.AutoSize = true;
-            this.labelClientsConnected.Location = new System.Drawing.Point(9, 149);
-            this.labelClientsConnected.Name = "labelClientsConnected";
-            this.labelClientsConnected.Size = new System.Drawing.Size(104, 13);
-            this.labelClientsConnected.TabIndex = 8;
-            this.labelClientsConnected.Text = "Clients connected: 0";
+            this.panel_CommanArea.Controls.Add(this.panel_commands);
+            this.panel_CommanArea.Controls.Add(this.panel_serverOptions);
+            this.panel_CommanArea.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel_CommanArea.Location = new System.Drawing.Point(0, 0);
+            this.panel_CommanArea.Name = "panel_CommanArea";
+            this.panel_CommanArea.Size = new System.Drawing.Size(200, 616);
+            this.panel_CommanArea.TabIndex = 9;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(517, 373);
+            this.ClientSize = new System.Drawing.Size(735, 616);
             this.Controls.Add(this.panel_clientArea);
-            this.Controls.Add(this.panel_commands);
-            this.Controls.Add(this.panel_serverOptions);
+            this.Controls.Add(this.panel_CommanArea);
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClosingEvent);
@@ -347,6 +360,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.timeLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).EndInit();
             this.panel_clientArea.ResumeLayout(false);
+            this.panel_CommanArea.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -376,6 +390,7 @@
         private System.Windows.Forms.TextBox mapName;
         private System.Windows.Forms.CheckBox forceStart;
         private System.Windows.Forms.Label labelClientsConnected;
+        private System.Windows.Forms.Panel panel_CommanArea;
     }
 }
 

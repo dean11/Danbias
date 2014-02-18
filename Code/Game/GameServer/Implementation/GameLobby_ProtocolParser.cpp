@@ -40,26 +40,46 @@ void GameLobby::GeneralStatus(GameLogic::Protocol_General_Status& p, Oyster::Net
 	{
 		case Protocol_General_Status::States_ready:
 		{
-
+			int temp = FindClient(c);
+			if(temp != -1 )
+			{
+				switch (this->gClients[temp]->GetState())
+				{
+					case GameClient::ClientState_CreatingGame:
+					{
+						this->gameSession.Join(this->gClients[temp]);
+						this->gClients[temp] = 0;
+					}
+					break;
+				}
+			}
+			else
+			{
+				c->Disconnect();
+			}
 		}
+		break;
 		case Protocol_General_Status::States_idle:
 		{
 
 		}
+		break;
 		case Protocol_General_Status::States_leave:
+		break;
 		case Protocol_General_Status::States_disconected:
 		{
 			Detach(c)->Disconnect();
 		}
+		break;
 	}
 }
 void GameLobby::GeneralText(GameLogic::Protocol_General_Text& p, Oyster::Network::NetworkClient* c)
 {
-	for (unsigned int i = 0; i < this->clients.Size(); i++)
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(this->clients[i])
+		if(this->gClients[i])
 		{
-			this->clients[i]->Send(p);
+			this->gClients[i]->GetClient()->Send(p);
 		}
 	}
 	printf(p.text.c_str());
@@ -69,9 +89,9 @@ void GameLobby::LobbyStartGame(GameLogic::Protocol_LobbyStartGame& p, Oyster::Ne
 	if(this->sessionOwner->GetClient()->GetID() == c->GetID())
 	{
 		//Send countdown timer before lobby shuts down
-		for (unsigned int i = 0; i < this->clients.Size(); i++)
+		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			this->clients[i]->Send(Protocol_LobbyStartGame(3.0f));
+			this->gClients[i]->GetClient()->Send(Protocol_LobbyStartGame(3.0f));
 		}
 	}
 	else
@@ -118,32 +138,41 @@ void GameLobby::LobbyQuerryGameData(GameLogic::Protocol_QuerryGameType& p, Oyste
 {
 	if(this->gameSession)
 	{
-		gClient temp;
-		bool found = false;
-
-		//find client in waiting list
-		for (unsigned int i = 0; !found && i < this->clients.Size(); i++)
-		{
-			if(this->gClients[i]->GetClient()->GetID() == c->GetID())
-			{
-				temp = this->gClients[i];
-				found = true;
-			}
-		}
+		int temp = FindClient(c);
 
 		//Something is wrong
-		if(!found)
+		if(temp == -1)
 		{
 			c->Disconnect();
 		}
 		else
 		{
 			//Send game data
-			this->gameSession.Join(temp);
+			Protocol_LobbyCreateGame lcg((char)1, (char)0, Utility::String::WStringToString(this->description.mapName, std::string()));
+			c->Send(lcg);
+			this->gClients[temp]->SetState(GameClient::ClientState_CreatingGame);
 		}
 	}
 	else
 	{
-
+		// Nothing.-
 	}
+}
+
+
+int GameLobby::FindClient(Oyster::Network::NetworkClient* c)
+{
+	int temp = -1;
+	
+	//find client in waiting list
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
+	{
+		if(this->gClients[i]->GetClient()->GetID() == c->GetID())
+		{
+			temp = i;
+			break;
+		}
+	}
+
+	return temp;
 }

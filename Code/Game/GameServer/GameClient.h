@@ -18,6 +18,13 @@ namespace DanBias
 	class GameClient
 	{
 	public:
+		enum ClientState
+		{
+			ClientState_CreatingGame,
+			ClientState_Ready,
+		};
+
+	public:
 		GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> nwClient);
 		virtual~GameClient();
 
@@ -33,6 +40,7 @@ namespace DanBias
 		inline bool						IsReady()					const { return this->isReady; }
 		inline GameLogic::IPlayerData*	GetPlayer()					const { return this->player; }
 		Oyster::Network::NetClient		GetClient()					const { return this->client; }
+		ClientState						GetState()					const { return this->state; }
 
 
 		void SetPlayer(GameLogic::IPlayerData* player);
@@ -40,6 +48,7 @@ namespace DanBias
 		void SetAlias(std::wstring alias);
 		void SetCharacter(std::wstring character);
 		void SetSinceLastResponse(float seconds);
+		void SetState(ClientState state);
 
 		GameLogic::IPlayerData* ReleasePlayer();
 		Oyster::Network::NetClient ReleaseClient();
@@ -50,13 +59,15 @@ namespace DanBias
 
 	private:
 		GameLogic::IPlayerData* player;
-		Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client;
+		Oyster::Network::NetClient client;
 		
 		bool isReady;
 		float secondsSinceLastResponse;
 
 		std::wstring alias;
 		std::wstring character;
+
+		ClientState state;
 	};
 }//End namespace DanBias
 

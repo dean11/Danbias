@@ -17,7 +17,7 @@ GameLobby::GameLobby()
 {  }
 GameLobby::~GameLobby()
 {  
-	this->clients.Clear();
+	this->gClients.Clear();
 }
 void GameLobby::Release()
 {  
@@ -26,11 +26,11 @@ void GameLobby::Release()
 }
 void GameLobby::Update()
 {
-	for (unsigned int i = 0; i < this->clients.Size(); i++)
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(this->clients[i])
+		if(this->gClients[i])
 		{
-			this->clients[i]->Update();
+			this->gClients[i]->GetClient()->Update();
 		}
 	}
 }
@@ -119,7 +119,7 @@ void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::Clie
 		break;
 		case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 			printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", e.sender->GetID(), e.sender->GetIpAddress().c_str());	
-			e.sender->Disconnect();
+			//e.sender->Disconnect();
 			//this->readyList.Remove(e.sender);
 			//this->gClients.Remove(e.sender);
 		break;
@@ -184,7 +184,9 @@ void GameLobby::ProcessClients()
 }
 bool GameLobby::Attach(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> client) 
 {
-	if(this->clientCount = this->description.maxClients) return false;
+	if(this->clientCount == this->description.maxClients) return false;
+
+	client->SetOwner(this);
 
 	bool added = false;
 	for (unsigned int i = 0; i < this->gClients.Size(); i++)

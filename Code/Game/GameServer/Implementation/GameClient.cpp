@@ -50,6 +50,10 @@ void GameClient::SetCharacter(std::wstring character)
 {
 	this->character = character;
 }
+void GameClient::SetState(ClientState state)
+{
+	this->state = state;
+}
 
 
 void GameClient::SetOwner(Oyster::Network::NetworkSession* owner)
@@ -58,7 +62,12 @@ void GameClient::SetOwner(Oyster::Network::NetworkSession* owner)
 }
 void GameClient::UpdateClient()
 {
-	this->client->Update();
+	switch (this->state)
+	{
+		case ClientState_Ready:
+			this->client->Update();
+		break;
+	}
 }
 
 
