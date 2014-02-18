@@ -36,6 +36,8 @@ struct  GameState::MyData
 	bool key_Shoot;
 	bool key_Jump;
 
+	bool key_Reload_Shaders;
+
 	C_Player player;
 	Camera_FPS camera;
 
@@ -235,6 +237,20 @@ void GameState::ReadKeyInput()
 	} 
 	else 
 		this->privData->key_strafeRight = false;
+
+	if( this->privData->input->IsKeyPressed(DIK_R) )
+	{
+		if( !this->privData->key_Reload_Shaders )
+		{
+			//this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
+#ifdef _DEBUG
+			Graphics::API::ReloadShaders();
+#endif
+			this->privData->key_Reload_Shaders = true;
+		}
+	} 
+	else 
+		this->privData->key_Reload_Shaders = false;
 
 
 	//send delta mouse movement 

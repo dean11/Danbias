@@ -18,7 +18,7 @@ float4 SuperSample(float4 Glow, uint3 DTid)
 	index += float2(0,Output.Length.y/2);
 	index = index / Output.Length;
 	Glow = Ambient.SampleLevel(S1, index,1);
-	Glow = Glow * Glow.w*10;
+	Glow = Glow;
 
 	return Glow;
 }
@@ -28,10 +28,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 {
 	float4 Light = Diffuse[DTid.xy] + saturate(Specular[DTid.xy]);
 	float4 Amb = float4(Ambient[DTid.xy/2].xyz /* * Ambient[DTid.xy/2].w*/, 0);
-	//float4 Glow =  Ambient[DTid.xy/2 + uint2(0,Output.Length.y/2)];
 	float4 Glow =  Ambient[DTid.xy/2 + uint2(0,Output.Length.y/2)];
-	
-	Glow = SuperSample(Glow,DTid);
 
 	float4 GUI;
 	uint2 index = DTid.xy/2 + uint2((uint)Output.Length.x/(uint)2,0);
@@ -42,4 +39,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	Output[DTid.xy] = float4((GUI.xyz * GUI.w) + PostLight, 1);
 
 	//Output[DTid.xy] = float4(Ambient[DTid.xy/2 + uint2(0,Output.Length.y*0.5f)].xyz,1);
+	//Output[DTid.xy] = Ambient[DTid.xy];
 }
