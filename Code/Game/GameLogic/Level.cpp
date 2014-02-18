@@ -63,9 +63,9 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
-			int dmg = 50; 
+			Oyster::Math::Float dmg = 50; 
 			Oyster::Math::Float force = 50; 
-			int radie = 50; 
+			Oyster::Math::Float radie = 50; 
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, dmg, force, radie);
 		}
 		break;
@@ -353,7 +353,7 @@ void Level::InitiateLevel(float radius)
 	int offset = 0;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
-		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 605 + i*5, 10), 5, 0.5f, 0.8f, 0.6f);
+		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(0.0f, 605.0f + i*5.0f, 10.0f), 5.0f, 0.5f, 0.8f, 0.6f);
 
 		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
 	}
@@ -385,16 +385,16 @@ void Level::InitiateLevel(float radius)
 	}*/
 	
 	// add crystal
-	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(10, 605, 0), 5, 0.5f, 0.8f, 0.6f);
+	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(10.0f, 605.0f, 0.0f), 5.0f, 0.5f, 0.8f, 0.6f);
 	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
 
 	// add house
-	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20, 20, 20), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(-50, 590, 0), 0, 0.5f, 0.8f, 0.6f);
+	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20.0f, 20.0f, 20.0f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(-50.0f, 590.0f, 0.0f), 0.0f, 0.5f, 0.8f, 0.6f);
 	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, ObjectSpecialType_Generic, idCount++));
 
 	// add jumppad
 
-	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1, 1, 1), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(4, 600.3, 0), 5, 0.5f, 0.8f, 0.6f);
+	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1.0f, 1.0f, 1.0f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(4.0f, 600.3f, 0.0f), 5.0f, 0.5f, 0.8f, 0.6f);
 	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, ObjectSpecialType_JumpPad,idCount++ ,Oyster::Math::Float3(0,2000,0)));
 }
 
@@ -419,7 +419,7 @@ int Level::getNrOfDynamicObj()
 }
 Object* Level::GetObj( int ID) const
 {
-	for (int i = 0; i < this->dynamicObjects.Size(); i++)
+	for (int i = 0; i < (int)this->dynamicObjects.Size(); i++)
 	{
 		if(this->dynamicObjects[i]->GetID() == ID)
 			return this->dynamicObjects[i];

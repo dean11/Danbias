@@ -119,7 +119,7 @@ namespace GameLogic
 
 			int temp;
 
-			for(int i = 0; i < tempSize; i++)
+			for(int i = 0; i < (int)tempSize; i++)
 			{
 				memcpy(&temp, &buffer[start], 4);
 				start += 4;
@@ -173,6 +173,17 @@ namespace GameLogic
 			case CollisionGeometryType_Cylinder:
 				memcpy(&volume.cylinder, &buf[start], sizeof(volume.cylinder));
 				start += sizeof(volume.cylinder);
+				break;
+
+			case CollisionGeometryType_TriangleMesh:
+				//Get string size
+				memcpy(&tempSize, &buf[start], sizeof(tempSize));
+				start += sizeof(tempSize);
+
+				//Get actual string
+				volume.triangleMesh.filename = new wchar_t[tempSize+1];
+				memcpy(volume.triangleMesh.filename, &buf[start], tempSize);
+				volume.triangleMesh.filename[tempSize] = '\0';
 				break;
 
 			default:
