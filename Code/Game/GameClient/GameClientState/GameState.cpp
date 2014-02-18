@@ -36,6 +36,8 @@ struct  GameState::MyData
 	bool key_Shoot;
 	bool key_Jump;
 
+	bool key_Reload_Shaders;
+
 	C_Player player;
 	Camera_FPS camera;
 
@@ -83,11 +85,7 @@ bool GameState::Init( SharedStateContent &shared )
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	//tell server ready
-	//this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
-
-	// Debugg hack
-	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
-	// end debug hack
+	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 			
 	return true;
 }
@@ -109,7 +107,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
 			Float3 offset = Float3( 0.0f );
-			offset.y = this->privData->player.getScale().y + 0.5f; // debug hack +0.5f
+			offset.y = this->privData->player.getScale().y * 0.9f;
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
 		}
@@ -229,6 +227,20 @@ void GameState::ReadKeyInput()
 	} 
 	else 
 		this->privData->key_strafeRight = false;
+
+	if( this->privData->input->IsKeyPressed(DIK_R) )
+	{
+		if( !this->privData->key_Reload_Shaders )
+		{
+			//this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
+#ifdef _DEBUG
+			Graphics::API::ReloadShaders();
+#endif
+			this->privData->key_Reload_Shaders = true;
+		}
+	} 
+	else 
+		this->privData->key_Reload_Shaders = false;
 
 
 	//send delta mouse movement 
