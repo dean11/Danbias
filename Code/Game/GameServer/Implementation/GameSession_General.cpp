@@ -54,13 +54,13 @@ GameSession::~GameSession()
 	this->isRunning = false;
 }
 
-bool GameSession::Create(GameDescription& desc)
+bool GameSession::Create(GameDescription& desc, bool forceStart)
 {
 	this->description = desc;
 /* Do some error checking */
-	if(desc.clients.Size() == 0)	return false;
-	if(!desc.owner)					return false;
-	if(this->isCreated)				return false;
+	if(!forceStart && desc.clients.Size() == 0)	return false;
+	if(!desc.owner)								return false;
+	if(this->isCreated)							return false;
 
 /* standard initialization of some data */
 	this->gClients.Resize((unsigned int)desc.maxClients);
@@ -125,12 +125,10 @@ void GameSession::Run()
 {
 	if(this->isRunning) return;
 
-	if(this->clients.Size() > 0)
-	{
-		this->worker.Start();
-		this->worker.SetPriority(OYSTER_THREAD_PRIORITY_1);
-		this->isRunning = true;
-	}
+	this->worker.Start();
+	this->worker.SetPriority(OYSTER_THREAD_PRIORITY_1);
+	this->isRunning = true;
+	
 }
 
 void GameSession::ThreadEntry(  )

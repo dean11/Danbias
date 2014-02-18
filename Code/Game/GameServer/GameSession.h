@@ -44,7 +44,7 @@ namespace DanBias
 		virtual~GameSession();
 
 		/** Initiates and creates a game session. */
-		bool Create(GameDescription& desc);
+		bool Create(GameDescription& desc, bool forceStart);
 
 		/** Runs the game session (ie starts the game loop). */
 		void Run();
@@ -58,7 +58,7 @@ namespace DanBias
 		
 		inline bool IsCreated() const	{ return this->isCreated; }
 		inline bool IsRunning() const	{ return this->isRunning; }
-		operator bool() { return (this->isCreated && this->isRunning); }
+		operator bool()					{ return (this->isCreated && this->isRunning); }
 
 		//Private member functions
 	private:

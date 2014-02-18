@@ -184,12 +184,15 @@ const wchar_t*	GameServerAPI::GameGetGameName()
 	lobby.GetGameDesc(d);
 	return d.gameName.c_str();
 }
-
-bool			GameServerAPI::GameStart()
+int				GameServerAPI::GetConnectedClientCount()
 {
-	if(lobby.StartGameSession())
+	return lobby.GetGameSessionClientCount();
+}
+
+bool			GameServerAPI::GameStart( bool forceStart )
+{
+	if(lobby.StartGameSession( forceStart ))
 	{
-		
 		return true;
 	}
 	return false;

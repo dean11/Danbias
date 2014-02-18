@@ -120,7 +120,14 @@ String^ StandaloneGameServerCLI::GameGetGameName()
 	return gcnew String( DanBias::GameServerAPI::GameGetGameName());
 }
 
-bool StandaloneGameServerCLI::GameStart()
+bool StandaloneGameServerCLI::GameStart(bool f)
 {
-	return DanBias::GameServerAPI::GameStart();
+	return DanBias::GameServerAPI::GameStart(f);
 }
+int StandaloneGameServerCLI::GetClientsConnectedCount()
+{
+	return DanBias::GameServerAPI::GetConnectedClientCount();
+}
+
+
+

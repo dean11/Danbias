@@ -20,7 +20,7 @@ namespace StandAloneLauncher
         public Form1()
         {
             InitializeComponent();
-
+            this.gameModes.SelectedIndex = 0;
             
         }
 
@@ -38,6 +38,7 @@ namespace StandAloneLauncher
 
                 //Do some stuff
                 this.gameServer.ServerUpdate();
+                this.labelClientsConnected.Text = "Clients connected: " + this.gameServer.GetClientsConnectedCount().ToString();
             }
         }
 
@@ -89,13 +90,21 @@ namespace StandAloneLauncher
             this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
             //this.gameServer.GameSetMapId(0);
             this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
-            if (!this.gameServer.GameStart())
+            if (!this.gameServer.GameStart( this.forceStart.Checked ))
             {
                 this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to start the game session!\n");
             }
             else
             {
                 this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Game session started!\n");
+            }
+        }
+
+        private void FormClosingEvent(object sender, FormClosingEventArgs e)
+        {
+            if (serverIsRunning)
+            {
+                this.gameServer.ServerStop();
             }
         }
     }

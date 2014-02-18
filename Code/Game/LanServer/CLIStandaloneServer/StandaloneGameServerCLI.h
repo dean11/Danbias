@@ -57,7 +57,8 @@ namespace System { namespace Windows { namespace Interop
 		System::String^ GameGetMapName();
 		System::String^ GameGetGameMode();
 		System::String^ GameGetGameName();
-		bool GameStart();
+		bool GameStart( bool forceStart );
+		int GetClientsConnectedCount();
 	};
 
 } } }
