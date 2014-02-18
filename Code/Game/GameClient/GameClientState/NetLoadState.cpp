@@ -101,13 +101,17 @@ void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientE
 		this->ChangeState( ClientState_Game );
 		this->privData->loading = false;
 	}
+	else
+	{ // HACK: Debug trap
+		const char *breakPoint = "Being greedy.";
+	}
 }
 
 void NetLoadState::LoadGame( const ::std::string &fileName )
 {
 	this->privData->loading = true;
 
-	LevelLoader loader;
+	LevelLoader loader( "..\\Content\\Worlds\\" );
 	auto objects = loader.LoadLevel( fileName );
 	auto object = objects.begin();
 	ObjectTypeHeader *oth;

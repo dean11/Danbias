@@ -146,7 +146,8 @@ bool GameState::Render()
 	auto dynamicObject = this->privData->dynamicObjects->begin();
 	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 	{
-		dynamicObject->second->Render();
+		if( dynamicObject->second )
+			dynamicObject->second->Render();
 	}
 
 	Oyster::Graphics::API::EndFrame();
@@ -366,8 +367,11 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
-				object->setPos( position );
-				object->setRot( rotation );
+				if( object )
+				{
+					object->setPos( position );
+					object->setRot( rotation );
+				}
 			}
 			break;
 		case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
