@@ -61,6 +61,8 @@ namespace GameLogic
 			ObjectSpecialType GetObjectType()	const						override;
 			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
+			Utility::DynamicMemory::DynamicArray<IObjectData*> GetAllDynamicObjects() const override;
+
 			Level *level;
 		};
 

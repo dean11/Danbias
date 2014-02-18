@@ -51,3 +51,15 @@ IObjectData* Game::LevelData::GetObjectAt(int ID) const
 {	
 	return this->level->GetObj(ID);
 }
+
+Utility::DynamicMemory::DynamicArray<IObjectData*> Game::LevelData::GetAllDynamicObjects() const
+{
+	Utility::DynamicMemory::DynamicArray<IObjectData*> objects(level->dynamicObjects.Size());
+
+	for(int i = 0; i < level->dynamicObjects.Size(); i++)
+	{
+		objects[i] = level->dynamicObjects[i];
+	}
+
+	return objects;
+}
