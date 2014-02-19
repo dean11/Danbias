@@ -152,10 +152,9 @@ namespace GameLogic
 			start = 0;
 			LevelLoaderInternal::FormatVersion version;
 			memcpy(&version, &buf[0], sizeof(version));
-			start += 4;
+			start += 8;
 
 			memcpy(&volume.geoType, &buf[start], sizeof(volume.geoType));
-			start += sizeof(volume.geoType);
 
 			switch(volume.geoType)
 			{
