@@ -25,12 +25,16 @@ namespace StandAloneLauncher
         {
             InitializeComponent();
 
-            string[] maps = Directory.GetFiles("..\\Content\\Worlds\\");
 
+            string[] maps = Directory.GetFiles("..\\Content\\Worlds\\");
             for (int i = 0; i < maps.Length; i++)
             {
-                string temp = maps[i].Split('\\').Last() ;
-                this.mapName.Items.Add(temp);
+                string temp = maps[i].Split('\\').Last();
+                string type = temp.Split('.').Last();
+                if (type == "bias")
+                {
+                    this.mapName.Items.Add(temp);
+                }
             }
 
             this.gameModes.SelectedIndex = 0;
@@ -58,6 +62,19 @@ namespace StandAloneLauncher
         {
             if (this.serverIsRunning)
             {
+                if (gameIsStarted)
+                {
+                    //this.gameServer.GameStop();
+
+                    this.gameIsStarted = false;
+                    this.buttonStartGame.Text = "Start Game";
+                    this.mapName.Enabled = true;
+                    this.nrOfClients.Enabled = true;
+                    this.gameModes.Enabled = true;
+                    this.timeLimit.Enabled = true;
+                    this.forceStart.Enabled = true;
+                }
+
                 this.serverIsRunning = false;
                 this.gameServer.ServerStop();
                 this.listenPort.Enabled = true;
@@ -66,7 +83,7 @@ namespace StandAloneLauncher
                 this.serverToggle.Text = "Start server";
                 this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server terminated!\n");
                 this.panel_commands.Visible = false;
-                this.panelServerCommands.Visible = false;
+                //this.panelServerCommands.Visible = false;
             }
             else
             {
@@ -89,11 +106,11 @@ namespace StandAloneLauncher
                     this.gameServer.ServerStart();
                     this.panel_commands.Visible = true;
                     this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server initiated!\n\tListening on port " + this.listenPort.Value.ToString() + "\n\tLocal IP: " + info.serverIp + "\n");
-                    this.panelServerCommands.Visible = true;
+                    //this.panelServerCommands.Visible = true;
                 }
                 else
                 {
-                    this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to initiate the server!");
+                    this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to initiate the server!\n");
                 }
             }
         }
@@ -104,6 +121,9 @@ namespace StandAloneLauncher
             {
                 //this.gameServer.GameSetGameMode(this.gameModes.SelectedText);
                 this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
+
+
+
                 this.gameServer.GameSetMapName(this.mapName.Text);
                 this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
 
@@ -125,6 +145,8 @@ namespace StandAloneLauncher
             }
             else
             {
+                //this.gameServer.GameStop();
+
                 this.gameIsStarted = false;
                 this.buttonStartGame.Text = "Start Game";
                 this.mapName.Enabled        = true;
@@ -152,7 +174,31 @@ namespace StandAloneLauncher
             p = this.panel2;
 
             this.dataProtocolFields.RowStyles.Add(new RowStyle(SizeType.Absolute, 27));
-            
+
+        }
+
+        private void mapName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ( this.panel_commands.Visible && (this.mapName.SelectedItem.ToString() == "Set directory"))
+            {
+                FolderBrowserDialog f = new FolderBrowserDialog();
+                DialogResult r = f.ShowDialog();
+                if (r == System.Windows.Forms.DialogResult.OK)
+                {
+                    this.mapName.Items.Clear();
+                    this.mapName.Items.Add("Set directory");
+                    string[] maps = Directory.GetFiles(f.SelectedPath);
+                    for (int i = 0; i < maps.Length; i++)
+                    {
+                        string temp = maps[i].Split('\\').Last();
+                        string type = temp.Split('.').Last();
+                        if (type == "bias")
+                        {
+                            this.mapName.Items.Add(temp);
+                        }
+                    }
+                }
+            }
         }
     }
 }
