@@ -96,6 +96,8 @@ namespace GameLogic
 		Oyster::Math::Float moveSpeed;
 		Oyster::Math::Float3 previousMoveSpeed;
 
+		Oyster::Math::Float rotationUp;
+
 
 		bool hasTakenDamage;
 		float invincibleCooldown;
