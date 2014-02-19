@@ -1,50 +1,51 @@
 #ifndef DANBIAS_CLIENT_GAMECLIENTSTATE_H
 #define DANBIAS_CLIENT_GAMECLIENTSTATE_H
 
-#define NOMINMAX
-#include "SharedStateContent.h"
+#include "Utilities.h"
+#include "NetworkClient.h"
 
 namespace DanBias { namespace Client
 {
-	class GameClientState
+	class GameStateUI
 	{
 	public:
-		enum ClientState
+		enum UIState
 		{
-			ClientState_Main,
-			ClientState_Lan,
-			ClientState_Lobby,
-			ClientState_LobbyCreate,
-			ClientState_LobbyReady,
-			ClientState_NetLoad,
-			ClientState_Game,
-			ClientState_Same,
-			ClientState_Quit
+			UIState_same,
+			UIState_gaming,
+
+
+			UIState_main_menu,
+			UIState_shut_down
 		};
 
 		typedef ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> NetEvent;
 		static const NetEvent event_processed;
 
-		GameClientState();
-		virtual ~GameClientState();
-		virtual bool Init( SharedStateContent &shared ) = 0;
-		virtual ClientState Update( float deltaTime ) = 0;
-		virtual bool Render() = 0;
+		GameStateUI();
+		virtual ~GameStateUI();
+		virtual UIState Update( float deltaTime ) = 0;
+		virtual bool HaveGUIRender() const = 0;
+		virtual bool HaveTextRender() const = 0;
+		virtual void RenderGUI() const = 0;
+		virtual void RenderText() const = 0;
 		virtual bool Release() = 0;
-		virtual void ChangeState( ClientState next ) = 0;
 
 		/******************************************************************
 		 * @param message of the event
-		 * @return message or a reference to GameClientState::event_processed.
+		 * @return message or a reference to GameStateUI::event_processed.
 		 ******************************************************************/
 		virtual const NetEvent & DataRecieved( const NetEvent &message );
+
+	protected:
+		UIState nextState;
 	};
 } }
 
 namespace Utility { namespace DynamicMemory
 { // template specializationto allowuse of dynamicmemory tools
 	template<>
-	inline void SafeDeleteInstance( ::DanBias::Client::GameClientState *dynamicInstance )
+	inline void SafeDeleteInstance( ::DanBias::Client::GameStateUI *dynamicInstance )
 	{
 		if( dynamicInstance )
 		{
