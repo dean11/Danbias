@@ -211,6 +211,8 @@
     <ClCompile Include="DLLMain.cpp" />
     <ClCompile Include="GameClientState\GameClientState.cpp" />
     <ClCompile Include="GameClientState\GameState.cpp" />
+    <ClCompile Include="GameClientState\GameStateUI.cpp" />
+    <ClCompile Include="GameClientState\GamingUI.cpp" />
     <ClCompile Include="GameClientState\LanMenuState.cpp" />
     <ClCompile Include="GameClientState\LevelLoader\LevelLoader.cpp" />
     <ClCompile Include="GameClientState\LevelLoader\LevelParser.cpp" />
@@ -221,6 +223,7 @@
     <ClCompile Include="GameClientState\C_Object.cpp" />
     <ClCompile Include="GameClientState\MainState.cpp" />
     <ClCompile Include="GameClientState\NetLoadState.cpp" />
+    <ClCompile Include="GameClientState\RespawnUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameClientState\Camera_Basic.h" />
@@ -237,6 +240,8 @@
     <ClInclude Include="GameClientState\C_obj\C_UIobject.h" />
     <ClInclude Include="GameClientState\GameClientState.h" />
     <ClInclude Include="GameClientState\GameState.h" />
+    <ClInclude Include="GameClientState\GameStateUI.h" />
+    <ClInclude Include="GameClientState\GamingUI.h" />
     <ClInclude Include="GameClientState\LanMenuState.h" />
     <ClInclude Include="GameClientState\LevelLoader\LevelLoader.h" />
     <ClInclude Include="GameClientState\LevelLoader\LevelParser.h" />
@@ -246,6 +251,7 @@
     <ClInclude Include="GameClientState\LobbyAdminState.h" />
     <ClInclude Include="GameClientState\MainState.h" />
     <ClInclude Include="GameClientState\NetLoadState.h" />
+    <ClInclude Include="GameClientState\RespawnUI.h" />
     <ClInclude Include="GameClientState\SharedStateContent.h" />
     <ClInclude Include="Include\GameClient.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />
