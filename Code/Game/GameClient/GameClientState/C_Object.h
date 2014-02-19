@@ -5,11 +5,22 @@ namespace DanBias
 {
 	namespace Client
 	{
+		// RB DEBUG 
 		enum RB_Type
 		{
 			RB_Type_Cube,
-			RB_Type_Sphere
+			RB_Type_Sphere, 
+			RB_Type_None,
 		};
+		struct  RBInitData
+		{
+			Oyster::Math::Float3 position; 
+			Oyster::Math::Quaternion rotation; 
+			Oyster::Math::Float3 scale; 
+			RB_Type type;
+		};
+		// !RB DEBUG 
+
 		struct  ModelInitData
 		{
 			int id;
@@ -18,13 +29,6 @@ namespace DanBias
 			Oyster::Math::Quaternion rotation; 
 			Oyster::Math::Float3 scale; 
 			bool visible; 
-		};
-		struct  RBInitData
-		{
-			Oyster::Math::Float3 position; 
-			Oyster::Math::Quaternion rotation; 
-			Oyster::Math::Float3 scale; 
-			RB_Type type;
 		};
 
 		class C_Object
@@ -40,7 +44,8 @@ namespace DanBias
 			Oyster::Math::Quaternion RBrotation; 
 			Oyster::Math::Float3 RBscale; 
 			RB_Type type;
-	
+			// !RB DEBUG 
+
 			int id;
 		
 		protected:
@@ -71,6 +76,8 @@ namespace DanBias
 			void setRBScale(Oyster::Math::Float3 newScale);
 			Oyster::Math::Float3  getRBScale() const;
 			RB_Type getBRtype()const;
+			// !RB DEBUG 
+
 			virtual void Render();
 			virtual void Release();
 			virtual int GetId() const;

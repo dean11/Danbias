@@ -4,7 +4,7 @@
 #include "NetworkClient.h"
 #include "Camera_FPSV2.h"
 #include <GameServerAPI.h>
-
+#include "C_Light.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
@@ -28,6 +28,7 @@ struct  GameState::MyData
 
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
 	bool key_forward;
 	bool key_backward;
@@ -36,7 +37,11 @@ struct  GameState::MyData
 	bool key_Shoot;
 	bool key_Jump;
 
+	// DEGUG KEYS
 	bool key_Reload_Shaders;
+	bool key_Wireframe_Toggle; 
+	bool renderWhireframe; 
+	// !DEGUG KEYS
 
 	C_Player player;
 	Camera_FPSV2 camera;
@@ -78,15 +83,31 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->input = shared.input;
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
+	this->privData->lights = &shared.lights;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	//tell server ready
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 			
+	// Debugg hack
+	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
+	// end debug hack
+	// DEGUG KEYS
+	this->privData->key_Reload_Shaders = false;
+	this->privData->key_Wireframe_Toggle = false;
+	this->privData->renderWhireframe = false;
+	// !DEGUG KEYS
+
+	auto light = this->privData->lights->begin();
+	for( ; light != this->privData->lights->end(); ++light )
+	{
+		light->second->Render();
+	}
+
 	return true;
 }
 
@@ -104,7 +125,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBInitData RBData;
 	RBData.position = position;
 	RBData.rotation = ArrayToQuaternion( rotation );
-	RBData.scale =  Float3( 3 );
+	RBData.scale =  Float3( 1 );
+	// !RB DEBUG 
 
 	if( isMyPlayer )
 	{
@@ -112,6 +134,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			// RB DEBUG
 			this->privData->player.InitRB( RBData );
+			// !RB DEBUG 
 
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
@@ -128,6 +151,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			// RB DEBUG
 			this->privData->player.InitRB( RBData );
+			// !RB DEBUG 
 
 			(*this->privData->dynamicObjects)[id] = p;
 		}
@@ -162,41 +186,52 @@ bool GameState::Render()
 			dynamicObject->second->Render();
 	}
 
+
+	/*auto light = this->privData->lights->begin();
+	for( ; light != this->privData->lights->end(); ++light )
+	{
+	light->second->Render();
+	}*/
+
 	// RB DEBUG render wire frame 
-	Oyster::Graphics::API::StartRenderWireFrame();
-
-	
-	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 2, 2, 2));
-	Oyster::Math3D::Float4x4 world = translation  * scale;
-	Oyster::Graphics::API::RenderDebugCube( world );
-	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
-
-	
-	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+	if(this->privData->renderWhireframe)
 	{
-		if( staticObject->second->getBRtype() == RB_Type_Cube)
+		Oyster::Graphics::API::StartRenderWireFrame();
+
+		Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
+		Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
+		Oyster::Math3D::Float4x4 world = translation  * scale;
+		Oyster::Graphics::API::RenderDebugCube( world );
+		Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+
+		staticObject = this->privData->staticObjects->begin();
+		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 		{
-			Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+			if( staticObject->second->getBRtype() == RB_Type_Cube)
+			{
+				Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+			}
+			if( staticObject->second->getBRtype() == RB_Type_Sphere)
+			{
+				Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+			}
 		}
-		if( staticObject->second->getBRtype() == RB_Type_Sphere)
+
+		dynamicObject = this->privData->dynamicObjects->begin();
+		for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 		{
-			Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+			{
+				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+			}
+			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+			{
+				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+			}
 		}
 	}
+	// !RB DEBUG 
 
-	
-	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
-	{
-		if( dynamicObject->second->getBRtype() == RB_Type_Cube)
-		{
-			Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
-		}
-		if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
-		{
-			Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
-		}
-	}
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
@@ -217,8 +252,15 @@ bool GameState::Release()
 			dynamicObject->second = nullptr;
 		}
 
+		auto light = this->privData->lights->begin();
+		for( ; light != this->privData->lights->end(); ++light )
+		{
+			light->second->Render();
+		}
+
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
+		this->privData->lights->clear();
 
 		privData = NULL;
 	}
@@ -275,21 +317,6 @@ void GameState::ReadKeyInput()
 	} 
 	else 
 		this->privData->key_strafeRight = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_R) )
-	{
-		if( !this->privData->key_Reload_Shaders )
-		{
-			//this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
-#ifdef _DEBUG
-			Graphics::API::ReloadShaders();
-#endif
-			this->privData->key_Reload_Shaders = true;
-		}
-	} 
-	else 
-		this->privData->key_Reload_Shaders = false;
-
 
 	//send delta mouse movement 
 	{
@@ -356,6 +383,35 @@ void GameState::ReadKeyInput()
 	else 
 		this->privData->key_Jump = false;
 
+
+	// DEGUG KEYS
+
+	// Reload shaders
+	if( this->privData->input->IsKeyPressed(DIK_R) )
+	{
+		if( !this->privData->key_Reload_Shaders )
+		{
+#ifdef _DEBUG
+			Graphics::API::ReloadShaders();
+#endif
+			this->privData->key_Reload_Shaders = true;
+		}
+	} 
+	else 
+		this->privData->key_Reload_Shaders = false;
+
+	// toggle wire frame render
+	if( this->privData->input->IsKeyPressed(DIK_T) )
+	{
+		if( !this->privData->key_Wireframe_Toggle )
+		{
+			this->privData->renderWhireframe = !this->privData->renderWhireframe;
+			this->privData->key_Wireframe_Toggle = true;
+		}
+	} 
+	else 
+		this->privData->key_Wireframe_Toggle = false;
+	// !DEGUG KEYS
 	// TODO: implement sub-menu
 }
 
@@ -389,12 +445,18 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					this->privData->camera.SetPosition( decoded.position );
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setPos( decoded.position );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBPos ( decoded.position );  
+				// !RB DEBUG 
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectScale:
 			{
 				Protocol_ObjectScale decoded(data);
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setScale( decoded.scale );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBScale ( decoded.scale );  
+				// !RB DEBUG 
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectRotation:
@@ -407,6 +469,9 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					this->privData->camera.SetRotation( rotation );
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRot( rotation );
+				// RB DEBUG 
+				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBRot ( rotation );  
+				// !RB DEBUG 
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectPositionRotation:
@@ -425,10 +490,15 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
+
 				if( object )
 				{
 					object->setPos( position );
 					object->setRot( rotation );
+					// RB DEBUG 
+					object->setRBPos ( position );  
+					object->setRBRot ( rotation );  
+					// !RB DEBUG 
 				}
 			}
 			return GameClientState::event_processed;
@@ -453,7 +523,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				ModelInitData modelData;
 				{
 					modelData.position = Float3( decoded.position );
-					modelData.rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
+					modelData.rotation = Quaternion( Float3(decoded.position), decoded.rotationQ[3] );
 					modelData.scale = Float3( decoded.scale );
 					modelData.visible = true;
 					modelData.id = decoded.object_ID;
@@ -461,6 +531,15 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					::Utility::String::StringToWstring( decoded.name, modelData.modelPath );
 				}
 				object->Init(modelData);
+				// RB DEBUG
+				// Is just using the model position since the rigid body data should never be sent to the client 
+				RBInitData RBData;
+				RBData.position = decoded.position;
+				RBData.rotation = ArrayToQuaternion( decoded.position );
+				RBData.scale =  Float3( decoded.scale );
+
+				this->privData->player.InitRB( RBData );
+				// !RB DEBUG 
 
 				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
 

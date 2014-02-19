@@ -700,7 +700,7 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 				return hr;
 			}
 			//todo check calc
-			int TexSize = twidth * theight * bpp;
+			int TexSize = twidth * theight * (int)bpp;
 			Oyster::Graphics::Core::UsedMem += TexSize;
 
 			if ( autogen )

@@ -9,6 +9,10 @@ C_Object::C_Object()
 
 	id = 0;
 	model = NULL;
+
+	// RB DEBUG 
+	type = RB_Type_None;
+	// !RB DEBUG 
 }
 C_Object::~C_Object()
 {
@@ -104,6 +108,7 @@ bool C_Object::InitRB(RBInitData RBInit)
 	RBposition = RBInit.position;
 	RBrotation = RBInit.rotation;
 	RBscale = RBInit.scale;
+	type = RBInit.type;
 	return true;
 }
 Oyster::Math::Float4x4 C_Object::getRBWorld() const
@@ -143,3 +148,4 @@ RB_Type C_Object::getBRtype()const
 {
 	return this->type;
 }
+// !RB DEBUG 
