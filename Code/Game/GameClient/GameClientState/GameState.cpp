@@ -190,45 +190,45 @@ bool GameState::Render()
 	}*/
 
 	// RB DEBUG render wire frame 
-	if(this->privData->renderWhireframe)
-	{
-		Oyster::Graphics::API::StartRenderWireFrame();
-
-		Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-		Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
-		Oyster::Math3D::Float4x4 world = translation  * scale;
-		Oyster::Graphics::API::RenderDebugCube( world );
-		Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
-
-		staticObject = this->privData->staticObjects->begin();
-		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
-		{
-			if( staticObject->second->getBRtype() == RB_Type_Cube)
-			{
-				Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
-			}
-			if( staticObject->second->getBRtype() == RB_Type_Sphere)
-			{
-				Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
-			}
-		}
-
-		dynamicObject = this->privData->dynamicObjects->begin();
-		for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
-		{
-			if( dynamicObject->second )
-			{
-				if( dynamicObject->second->getBRtype() == RB_Type_Cube)
-				{
-					Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
-				}
-				if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
-				{
-					Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
-				}
-			}
-		}
-	}
+	//if(this->privData->renderWhireframe)
+	//{
+	//	Oyster::Graphics::API::StartRenderWireFrame();
+	//
+	//	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
+	//	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
+	//	Oyster::Math3D::Float4x4 world = translation  * scale;
+	//	Oyster::Graphics::API::RenderDebugCube( world );
+	//	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+	//
+	//	staticObject = this->privData->staticObjects->begin();
+	//	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+	//	{
+	//		if( staticObject->second->getBRtype() == RB_Type_Cube)
+	//		{
+	//			Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+	//		}
+	//		if( staticObject->second->getBRtype() == RB_Type_Sphere)
+	//		{
+	//			Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+	//		}
+	//	}
+	//
+	//	dynamicObject = this->privData->dynamicObjects->begin();
+	//	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
+	//	{
+	//		if( dynamicObject->second )
+	//		{
+	//			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+	//			{
+	//				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+	//			}
+	//			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+	//			{
+	//				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+	//			}
+	//		}
+	//	}
+	//}
 	// !RB DEBUG 
 
 	Oyster::Graphics::API::EndFrame();
@@ -480,10 +480,16 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
 				{
+					if( !Within(position.Dot(position), 2500.0f, 90000.0f) )
+					{ // HACK: bug trap
+						const char *breakPoint = "Something is wrong.";
+						//position = Float3( 0.0f, 160.0f, 0.0f );
+					}
+
 					this->privData->camera.SetPosition( position );
 					this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );
-					//this->privData->player.setRot( rotation );
+					this->privData->player.setRot( rotation );
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
