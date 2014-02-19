@@ -74,69 +74,40 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	struct Protocol_PlayerLook :public Oyster::Network::CustomProtocolObject
+	//protocol_Gameplay_PlayerLeftTurn
+	struct Protocol_PlayerLeftTurn : public ::Oyster::Network::CustomProtocolObject
 	{
-		// can be swapped to a quaternion later
-		float lookDir[3]; 
-		float right[3]; 
-
-		Protocol_PlayerLook()
+	public:
+		float deltaRadian;
+		
+		Protocol_PlayerLeftTurn()
 		{
-			this->protocol[0].value = protocol_Gameplay_PlayerLookDir;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-			// LookDir
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
-			// Right
-			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
-
-			memset(&this->lookDir[0], 0, sizeof(float) * 3);
-			memset(&this->right[0], 0, sizeof(float) * 3);
+			this->protocol[0].value = protocol_Gameplay_PlayerLeftTurn;
+			this->protocol[0].type = ::Oyster::Network::NetAttributeType_Short;
+			// deltaRadian
+			this->protocol[1].type = ::Oyster::Network::NetAttributeType_Float;
 		}
-		Protocol_PlayerLook(Oyster::Network::CustomNetProtocol& p)
-		{
-			this->lookDir[0] = p[1].value.netFloat;
-			this->lookDir[1] = p[2].value.netFloat;
-			this->lookDir[2] = p[3].value.netFloat;
 
-			this->right[0] = p[4].value.netFloat;
-			this->right[1] = p[5].value.netFloat;
-			this->right[2] = p[6].value.netFloat;
+		Protocol_PlayerLeftTurn( const ::Oyster::Network::CustomNetProtocol &p )
+		{
+			this->deltaRadian = p[1].value.netFloat;
 		}
-		Protocol_PlayerLook(float l[3], float r[3])
+
+		Protocol_PlayerLeftTurn( float deltaRadian )
 		{
-			this->protocol[0].value = protocol_Gameplay_PlayerLookDir;
-			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
-
-			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[5].type = Oyster::Network::NetAttributeType_Float;
-			this->protocol[6].type = Oyster::Network::NetAttributeType_Float;
-
-			memcpy(&this->lookDir[0], &l[0], sizeof(float) * 3);
-			memcpy(&this->right[0], &r[0], sizeof(float) * 3);
+			this->protocol[0].value = protocol_Gameplay_PlayerLeftTurn;
+			this->protocol[0].type = ::Oyster::Network::NetAttributeType_Short;
+			this->deltaRadian = deltaRadian;
 		}
 		
-		Oyster::Network::CustomNetProtocol GetProtocol() override
+		::Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			this->protocol[1].value = this->lookDir[0];
-			this->protocol[2].value = this->lookDir[1];
-			this->protocol[3].value = this->lookDir[2];
-			this->protocol[4].value = this->right[0];
-			this->protocol[5].value = this->right[1];
-			this->protocol[6].value = this->right[2];	
-
+			this->protocol[1].value = this->deltaRadian;
 			return protocol;
 		}
 
-	private:
-		Oyster::Network::CustomNetProtocol protocol;
+		private:
+		::Oyster::Network::CustomNetProtocol protocol;
 	};
 
 	struct Protocol_PlayerChangeWeapon :public Oyster::Network::CustomProtocolObject
