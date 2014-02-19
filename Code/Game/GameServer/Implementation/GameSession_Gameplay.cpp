@@ -66,10 +66,10 @@ using namespace DanBias;
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				this->Detach(e.sender);
+				//this->Detach(e.sender);
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
-				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				//printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 				this->ParseProtocol(e.args.data.protocol, cl);
 			break;
 		}
