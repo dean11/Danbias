@@ -46,7 +46,9 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right);
+		void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right);
+
+		void TurnLeft(Oyster::Math3D::Float deltaRadians);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -93,6 +95,8 @@ namespace GameLogic
 		Oyster::Math::Float3 moveDir;
 		Oyster::Math::Float moveSpeed;
 		Oyster::Math::Float3 previousMoveSpeed;
+
+		Oyster::Math::Float rotationUp;
 
 
 		bool hasTakenDamage;

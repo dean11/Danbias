@@ -35,7 +35,7 @@ namespace DanBias { namespace Client
 
 		/******************************************************************
 		 * @param message of the event
-		 * @return message or GameClientState::event_processed.
+		 * @return message or a reference to GameClientState::event_processed.
 		 ******************************************************************/
 		virtual const NetEvent & DataRecieved( const NetEvent &message );
 	};

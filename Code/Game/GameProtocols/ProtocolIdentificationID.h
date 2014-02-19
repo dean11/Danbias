@@ -47,7 +47,7 @@
 #define protocol_Gameplay_PlayerMovementLeft		301
 #define protocol_Gameplay_PlayerMovementForward		302
 #define protocol_Gameplay_PlayerMovementBackward	303
-#define protocol_Gameplay_PlayerLookDir				304
+#define protocol_Gameplay_PlayerLeftTurn			304
 #define protocol_Gameplay_PlayerChangeWeapon		305
 #define protocol_Gameplay_PlayerShot				306
 #define protocol_Gameplay_PlayerJump				307

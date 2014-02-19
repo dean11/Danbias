@@ -7,6 +7,7 @@
 #ifndef _INPUTCLASS_H_
 #define _INPUTCLASS_H_
 
+#define NOMINMAX
 #define DIRECTINPUT_VERSION 0x0800
 
 #pragma comment(lib, "dinput8.lib")

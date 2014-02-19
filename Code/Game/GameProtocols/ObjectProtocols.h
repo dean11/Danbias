@@ -561,11 +561,11 @@ namespace GameLogic
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 		//PLAYER_ID
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
 		//TEAM_ID
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
 		//OWNER
-			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
 		//PLAYER-NAME
 			this->protocol[4].type = Oyster::Network::NetAttributeType_CharArray;
 		//MESH-NAME
@@ -585,9 +585,10 @@ namespace GameLogic
 		}
 		Protocol_ObjectCreatePlayer(Oyster::Network::CustomNetProtocol& p)
 		{
-			this->object_ID = p[1].value.netInt;
-			this->teamId = this->protocol[2].value.netInt;
-			this->owner = this->protocol[3].value.netBool;
+			this->owner = p[1].value.netBool;
+			this->object_ID = p[2].value.netInt;
+			this->teamId = p[3].value.netInt;
+
 			this->name.assign(p[4].value.netCharPtr);
 			this->meshName.assign(p[5].value.netCharPtr);
 			
@@ -610,11 +611,11 @@ namespace GameLogic
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
 		//PLAYER_ID
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
 		//TEAM_ID
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
 		//OWNER
-			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
 		//PLAYER-NAME
 			this->protocol[4].type = Oyster::Network::NetAttributeType_CharArray;
 		//MESH-NAME
@@ -644,10 +645,10 @@ namespace GameLogic
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-
-			this->protocol[1].value = this->object_ID;
-			this->protocol[2].value = this->teamId;
-			this->protocol[3].value = this->owner;
+			this->protocol[1].value = this->owner;
+			this->protocol[2].value = this->object_ID;
+			this->protocol[3].value = this->teamId;
+			
 			this->protocol.Set(4, this->name);
 			this->protocol.Set(5, this->meshName);
 

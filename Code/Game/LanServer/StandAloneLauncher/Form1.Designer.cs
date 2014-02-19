@@ -210,11 +210,12 @@
             this.mapName.FormattingEnabled = true;
             this.mapName.IntegralHeight = false;
             this.mapName.Items.AddRange(new object[] {
-            "Set default"});
+            "Set directory"});
             this.mapName.Location = new System.Drawing.Point(72, 7);
             this.mapName.Name = "mapName";
             this.mapName.Size = new System.Drawing.Size(163, 21);
             this.mapName.TabIndex = 10;
+            this.mapName.SelectedIndexChanged += new System.EventHandler(this.mapName_SelectedIndexChanged);
             // 
             // gameModes
             // 
@@ -481,7 +482,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.29412F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.70588F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 118F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 112F));
             this.tableLayoutPanel1.Controls.Add(this.label6, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label7, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label8, 2, 0);
@@ -515,7 +516,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(116, 1);
+            this.label8.Location = new System.Drawing.Point(122, 1);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(34, 13);
             this.label8.TabIndex = 8;

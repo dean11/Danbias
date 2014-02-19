@@ -68,13 +68,33 @@ void Game::GetAllPlayerPositions() const
 Game::PlayerData* Game::CreatePlayer()
 {
 	// Find a free space in array or insert at end
-	
-	PlayerData *temp = new PlayerData();
-	temp->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	int insert = InsertObject(this->players, (PlayerData*)0);
+	int freeID = 0;
+	bool found = false;
 
-	int i = InsertObject(this->players, temp);
+	for(int i = 0; i < 100; i++)
+	{
+		found = true;
+		freeID = i;
 
-	return temp;
+		for(int j = 0; j < players.Size(); j++)
+		{
+			
+			if(this->players[j] && this->players[j]->GetID() == freeID)
+			{
+				found = false;
+			}
+
+			if(!found) break;
+		}
+
+		if(found) break;
+	}
+
+	this->players[insert] = new PlayerData(freeID, 0); // user constructor with objectID and teamID
+	this->players[insert]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+
+	return this->players[insert];
 }
 
 Game::LevelData* Game::CreateLevel(const wchar_t mapName[255])

@@ -23,7 +23,7 @@ using namespace GameLogic;
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		
-		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
+		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
 		switch (realObj->GetObjectType())
@@ -46,7 +46,7 @@ using namespace GameLogic;
 			break;
 
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
-			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->getExtraDamageOnCollision());
+			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->GetExtraDamageOnCollision());
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
@@ -181,7 +181,7 @@ using namespace GameLogic;
 		}
 	}
 
-	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}

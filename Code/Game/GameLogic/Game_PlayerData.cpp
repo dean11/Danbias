@@ -85,7 +85,11 @@ ObjectSpecialType Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetObjectType();
 }
-void Game::PlayerData::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)
+void Game::PlayerData::Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)
 {
 	this->player->Rotate(lookDir, right);
+}
+void Game::PlayerData::TurnLeft(Oyster::Math3D::Float deltaLeftRadians )
+{
+	this->player->TurnLeft(deltaLeftRadians);
 }

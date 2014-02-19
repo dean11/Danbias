@@ -66,10 +66,10 @@ using namespace DanBias;
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				this->Detach(e.sender);
+				//this->Detach(e.sender);
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
-				printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				//printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 				this->ParseProtocol(e.args.data.protocol, cl);
 			break;
 		}
@@ -156,7 +156,7 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_PlayerJump:					this->Gameplay_PlayerJump				( c );
 			break;
-			case protocol_Gameplay_PlayerLookDir:				this->Gameplay_PlayerLookDir			( Protocol_PlayerLook			(p), c );
+			case protocol_Gameplay_PlayerLeftTurn:				this->Gameplay_PlayerLeftTurn			( Protocol_PlayerLeftTurn		(p), c );
 			break;
 			case protocol_Gameplay_PlayerChangeWeapon:			this->Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon	(p), c );
 			break;
@@ -203,12 +203,9 @@ using namespace DanBias;
 	{
 		c->GetPlayer()->Move(GameLogic::PLAYER_MOVEMENT_JUMP);
 	}
-	void GameSession::Gameplay_PlayerLookDir			( Protocol_PlayerLook& p, DanBias::GameClient* c )
+	void GameSession::Gameplay_PlayerLeftTurn			( Protocol_PlayerLeftTurn& p, DanBias::GameClient* c )
 	{
-		Oyster::Math3D::Float3 lookDir = p.lookDir; 
-		Oyster::Math3D::Float3 right = p.right; 
-		
-		c->GetPlayer()->Rotate(lookDir, right);
+		c->GetPlayer()->TurnLeft( p.deltaRadian );
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{

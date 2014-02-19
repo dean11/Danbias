@@ -49,7 +49,16 @@ namespace LinearAlgebra
 		Quaternion<ScalarType>   operator  - ( const Quaternion<ScalarType> &quaternion ) const;
 		Quaternion<ScalarType>   operator  - ( ) const;
 
+		Quaternion<ScalarType> & Conjugate( );
+		Quaternion<ScalarType> & Normalize( );
+		Quaternion<ScalarType> & Inverse( );
+
 		Quaternion<ScalarType> GetConjugate( ) const;
+		Quaternion<ScalarType> GetNormalized( ) const;
+		Quaternion<ScalarType> GetInversed( ) const;
+		ScalarType			   GetNorm( ) const;
+		ScalarType			   GetModulus( ) const;
+
 	};
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -206,9 +215,52 @@ namespace LinearAlgebra
 	}
 
 	template<typename ScalarType>
+	inline Quaternion<ScalarType> & Quaternion<ScalarType>::Conjugate( )
+	{
+		this->imaginary = -this->imaginary;
+		return *this;
+	}
+
+	template<typename ScalarType>
+	inline Quaternion<ScalarType> & Quaternion<ScalarType>::Normalize( )
+	{
+		return *this /= this->GetModulus();
+	}
+
+	template<typename ScalarType>
+	inline Quaternion<ScalarType> & Quaternion<ScalarType>::Inverse( )
+	{
+		return this->Conjugate() /= this->GetNorm();
+	}
+
+	template<typename ScalarType>
 	inline Quaternion<ScalarType> Quaternion<ScalarType>::GetConjugate( ) const
 	{
 		return Quaternion<ScalarType>(-this->imaginary, this->real );
+	}
+
+	template<typename ScalarType>
+	inline Quaternion<ScalarType> Quaternion<ScalarType>::GetNormalized( ) const
+	{
+		return *this / this->GetModulus();
+	}
+
+	template<typename ScalarType>
+	inline Quaternion<ScalarType> Quaternion<ScalarType>::GetInversed( ) const
+	{
+		return this->GetConjugate() /= this->GetNorm();
+	}
+
+	template<typename ScalarType>
+	inline ScalarType Quaternion<ScalarType>::GetNorm( ) const
+	{
+		return this->imaginary.Dot(this->imaginary) + this->real * this->real;
+	}
+
+	template<typename ScalarType>
+	inline ScalarType Quaternion<ScalarType>::GetModulus( ) const
+	{
+		return (ScalarType)::std::sqrt( this->GetNorm() );
 	}
 }
 

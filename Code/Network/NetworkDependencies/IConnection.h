@@ -39,6 +39,9 @@ namespace Oyster
 			//(servers uses Listen instead of connect)
 			virtual int Connect( unsigned short port, const char serverName[] ) { return false; };
 
+			//Tries to connect with the same port and ip used for Connect.
+			virtual int Reconnect() = 0;
+
 			//Disconnects the client or server TODO: optimize!
 			virtual int Disconnect() = 0;
 		};

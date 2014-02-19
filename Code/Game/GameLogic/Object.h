@@ -16,47 +16,39 @@ namespace GameLogic
 
 	class Object	:public IObjectData
 	{
+	public:
+		typedef Oyster::Physics::ICustomBody::SubscriptMessage (*OnCollisionCallback)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss);
+
 	public:		
 		Object();
-	
 		Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID);
 		Object(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID);
 		~Object(void);
 
-		ObjectSpecialType GetObjectType() const			override;
-		int GetID() const								override;	
-		void setID(int id);
-		Oyster::Math::Float3 GetPosition()			override;
-		Oyster::Math::Quaternion GetRotation()		override;
-		Oyster::Math::Float3 GetScale()				override;
-		Oyster::Math::Float4x4 GetOrientation()		override;
+		inline ObjectSpecialType				GetObjectType() const	override	{ return this->type; }
+		inline int								GetID()			const	override	{ return this->objectID; }	
+		inline Oyster::Math::Float3				GetScale()				override	{ return this->scale; }
+		inline Oyster::Math::Float3				GetPosition()			override;
+		inline Oyster::Math::Quaternion			GetRotation()			override;
+		inline Oyster::Math::Float4x4			GetOrientation()		override;
+		inline Oyster::Physics::ICustomBody*	GetRigidBody()						{ return this->rigidBody; }
+		inline Oyster::Math::Float				GetExtraDamageOnCollision()			{ return this->extraDamageOnCollision; }
 
-		Oyster::Math::Float getExtraDamageOnCollision();
+		virtual void BeginFrame()	{ };
+		virtual void EndFrame()		{ };
 
-		// API overrides
-		
+		void SetOnCollision(OnCollisionCallback func);
 
-
-		Oyster::Physics::ICustomBody* GetRigidBody();
-
-		virtual void BeginFrame();
-		virtual void EndFrame();
-
-		void setBeforeCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncBefore)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter));
-		void setAfterCollisonFunc(Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss));
-
-		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
-	
-
-	public: //TODO: Hax This should be private when level is dynamic
-
+		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
 	protected:
 		Oyster::Physics::ICustomBody *rigidBody;
 
 		static const Game* gameInstance;
-		Oyster::Math::Float3 currLook;
-		Oyster::Math::Float3 newLook;
+
+		Oyster::Math::Float3 lookDirection;		//The look direction for the camera
+		Oyster::Math::Float3 forwardDirection;	//The forward direction of the rigid body
+		Oyster::Math::Float3 scale;				//The scale of both rigid body and the mesh
 
 		ObjectSpecialType type;
 		int objectID;
