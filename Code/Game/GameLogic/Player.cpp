@@ -33,6 +33,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	this->moveDir = Oyster::Math::Float3(0,0,0);
 	this->moveSpeed = 100;
 	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
+
+	this->rotationUp = 0;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -53,6 +55,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->moveDir = Oyster::Math::Float3(0,0,0);
 	this->moveSpeed = 20;
 	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
+
+	this->rotationUp = 0;
 }
 
 Player::~Player(void)
@@ -219,13 +223,18 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->rigidBody->SetPosition(spawnPoint);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)
+void Player::Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)
 {
 	// this is the camera right vector
 	this->lookDir = lookDir;
 
 	//Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
 	//this->rigidBody->SetUpAndRight(up, right);
+}
+void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
+{
+	this->rotationUp += deltaRadians;
+	this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
 }
 
 void Player::Jump()
