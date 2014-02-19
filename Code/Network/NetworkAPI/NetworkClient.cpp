@@ -105,11 +105,22 @@ struct NetworkClient::PrivateData : public IThreadObject
 
 			if(errorCode != 0 && errorCode != WSAEWOULDBLOCK)
 			{
-				CEA parg;
-				parg.type = CEA::EventType_ProtocolFailedToSend;
-				parg.data.protocol = p;
-				NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
-				this->recieveQueue.Push(e);
+				if( errorCode == WSAECONNABORTED || errorCode == WSAENOTCONN)
+				{
+					CEA parg;
+					parg.type = CEA::EventType_Disconnect;
+					parg.data.protocol = p;
+					NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
+					this->recieveQueue.Push(e);
+				}
+				else
+				{
+					CEA parg;
+					parg.type = CEA::EventType_ProtocolFailedToSend;
+					parg.data.protocol = p;
+					NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
+					this->recieveQueue.Push(e);
+				}
 			}
 		}
 
