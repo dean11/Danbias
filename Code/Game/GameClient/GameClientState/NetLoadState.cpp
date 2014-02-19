@@ -6,6 +6,7 @@
 #include "Utilities.h"
 #include "C_obj\C_StaticObj.h"
 #include "C_obj\C_DynamicObj.h"
+#include "C_Light.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -23,6 +24,7 @@ struct NetLoadState::MyData
 	Graphics::API::Texture background;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
 	bool loading;
 };
@@ -49,6 +51,7 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	this->privData->background		= Graphics::API::CreateTexture( L"grass_md.png" );
 	this->privData->dynamicObjects	= &shared.dynamicObjects;
 	this->privData->staticObjects	= &shared.staticObjects;
+	this->privData->lights			= &shared.lights;
 
 	this->privData->loading = false;
 
@@ -214,12 +217,33 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 			break;
 		case ObjectType::ObjectType_Light:
 			{
-				 /* TODO: implement light into the leveformat */
+				BasicLight *light = (BasicLight*)oth;
+				Graphics::Definitions::Pointlight pointLight; 
+
+				pointLight.Color	= light->color;
+				pointLight.Pos		= light->position;
+				pointLight.Bright	= light->intensity;
+				pointLight.Radius	= light->raduis; 
+
+				C_Light *newLight = new C_Light( pointLight, objectID );
+
+				(*this->privData->lights)[objectID] = newLight;
 			}
 			break;
 		default: break;
 		}
 	}
 
+	// DEBUG added a static light for testing
+	Graphics::Definitions::Pointlight pointLight; 
+	pointLight.Color	= Float3(1,1,0);
+	pointLight.Pos		= Float3( 0,132, 10);
+	pointLight.Bright	= 2;
+	pointLight.Radius	= 50; 
+
+	C_Light *newLight = new C_Light( pointLight, objectID );
+
+	(*this->privData->lights)[objectID] = newLight;
+	
 	this->privData->nextState = ClientState::ClientState_Game;
 }
