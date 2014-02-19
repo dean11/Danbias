@@ -220,13 +220,18 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->rigidBody->SetPosition(spawnPoint);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)
+void Player::Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)
 {
 	// this is the camera right vector
 	this->lookDir = lookDir;
 
 	//Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
 	//this->rigidBody->SetUpAndRight(up, right);
+}
+void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
+{
+	//TODO: Conver delta radians to something that phyhsics use...
+	//this->rigidBody->;
 }
 
 void Player::Jump()

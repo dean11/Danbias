@@ -31,17 +31,18 @@ namespace GameLogic
 			PlayerData(int playerID,int teamID);
 			~PlayerData();
 
-			void Move(const PLAYER_MOVEMENT &movement)				override;
-			void UseWeapon(const WEAPON_FIRE &usage)				override;
-			int GetTeamID() const									override;
-			PLAYER_STATE GetState() const							override;
-			Oyster::Math::Float3 GetPosition()						override;
-			Oyster::Math::Quaternion GetRotation()					override;
-			Oyster::Math::Float3 GetScale()							override;
-			Oyster::Math::Float4x4 GetOrientation()					override; 
-			int GetID() const										override;
-			void Rotate(const Oyster::Math3D::Float3 lookDir, const Oyster::Math3D::Float3 right)		override;
-			ObjectSpecialType GetObjectType()	const						override;
+			void Move(const PLAYER_MOVEMENT &movement)													override;
+			void UseWeapon(const WEAPON_FIRE &usage)													override;
+			int GetTeamID() const																		override;
+			PLAYER_STATE GetState() const																override;
+			Oyster::Math::Float3 GetPosition()															override;
+			Oyster::Math::Quaternion GetRotation()														override;
+			Oyster::Math::Float3 GetScale()																override;
+			Oyster::Math::Float4x4 GetOrientation()														override; 
+			int GetID() const																			override;
+			void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)		override;
+			void TurnLeft(Oyster::Math3D::Float deltaLeftRadians )										override;
+			ObjectSpecialType GetObjectType()	const													override;
 
 
 
