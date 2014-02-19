@@ -93,9 +93,6 @@ bool GameState::Init( SharedStateContent &shared )
 	//tell server ready
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 			
-	// Debugg hack
-	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
-	// end debug hack
 	// DEGUG KEYS
 	this->privData->key_Reload_Shaders = false;
 	this->privData->key_Wireframe_Toggle = false;
@@ -127,7 +124,6 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBData.rotation = ArrayToQuaternion( rotation );
 	RBData.scale =  Float3( 1 );
 	// !RB DEBUG 
-
 	if( isMyPlayer )
 	{
 		if( this->privData->player.Init(modelData) )
@@ -483,7 +479,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
 				{
-					this->privData->camera.SetPosition( position );
+					//this->privData->camera.SetPosition( position );
 					//this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );
 					//this->privData->player.setRot( rotation );

@@ -144,14 +144,6 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				desc.scale		= oh->scale;
 				desc.visible	= true; 
 
-				// HACK: untill the world is right in lvl format
-				if( oh->specialTypeID == ObjectSpecialType_World)
-				{
-					desc.position	= Float3(0,0,0); 
-					desc.rotation	= Quaternion::identity;
-					desc.scale		= Float3(300,300,300);
-				}
-
 				C_StaticObj *staticObject = new C_StaticObj();
 				if( staticObject->Init( desc ) )
 				{
@@ -248,16 +240,5 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		}
 	}
 
-	// DEBUG added a static light for testing
-	Graphics::Definitions::Pointlight pointLight; 
-	pointLight.Color	= Float3(1,1,0);
-	pointLight.Pos		= Float3( 0,132, 10);
-	pointLight.Bright	= 2;
-	pointLight.Radius	= 50; 
-
-	C_Light *newLight = new C_Light( pointLight, objectID );
-
-	(*this->privData->lights)[objectID] = newLight;
-	
 	this->privData->nextState = ClientState::ClientState_Game;
 }

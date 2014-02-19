@@ -242,34 +242,8 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 				ICustomBody* rigidBody_Static = NULL;	
 
-				// HACK: untill the world is right in lvl format
-				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_World)
-				{
-					Oyster::Math::Float3 rigidWorldPos;
-					Oyster::Math::Float4 rigidWorldRotation;
-					float rigidBodyMass;
-					float rigidBodyRadius;
-
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = Oyster::Math::Float3(0,0,0);
-					//scales the position so the collision geomentry is in the right place
-
-					//offset the rigidRotation from modelspace to worldspace;
-					
-					rigidWorldRotation = Oyster::Math::Float4(0,0,0,1); 
-
-					//mass scaled
-					rigidBodyMass = 0;
-
-					//Radius scaled
-					rigidBodyRadius = 150;
-
-					//create the rigid body
-					rigidBody_Static = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, 1,1,1);
-
-				}
 				// collision shape
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
 				{
 					rigidBody_Static = InitRigidBodySphere(staticObjData);
 				}
