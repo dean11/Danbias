@@ -319,11 +319,9 @@ void GameState::ReadKeyInput()
 
 	//send delta mouse movement 
 	{
-		this->privData->camera.YawRight( this->privData->input->GetYaw() * 0.017f );
-		this->privData->camera.PitchDown( this->privData->input->GetPitch() * 0.017f );
-		this->privData->camera.UpdateOrientation();
-
-		privData->nwClient->Send( Protocol_PlayerLook(this->privData->camera.GetLook(), this->privData->camera.GetRight()) );
+		static const float mouseSensitivity = Radian( 1.0f );
+		this->privData->camera.PitchDown( this->privData->input->GetPitch() * mouseSensitivity );
+		this->privData->nwClient->Send( Protocol_PlayerLeftTurn(this->privData->input->GetYaw() * mouseSensitivity) );
 	}
 
 	// shoot

@@ -1,9 +1,11 @@
 #include "GamingUI.h"
 #include <Protocols.h>
+#include "Utilities.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
 using namespace ::GameLogic;
+using namespace ::Utility::Value;
 
 GamingUI::GamingUI() :
 	GameStateUI()
@@ -92,11 +94,9 @@ void GamingUI::ReadKeyInput()
 
 	//send delta mouse movement 
 	{
-		this->camera->YawRight( this->input->GetYaw() * 0.017f );
-		this->camera->PitchDown( this->input->GetPitch() * 0.017f );
-		this->camera->UpdateOrientation();
-
-		this->netClient->Send( Protocol_PlayerLook(this->camera->GetLook(), this->camera->GetRight()) );
+		static const float mouseSensitivity = Radian( 1.0f );
+		this->camera->PitchDown( this->input->GetPitch() * mouseSensitivity );
+		this->netClient->Send( Protocol_PlayerLeftTurn(this->input->GetYaw() * mouseSensitivity) );
 	}
 
 	// shoot
