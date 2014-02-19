@@ -4,7 +4,7 @@
 #include "NetworkClient.h"
 #include "Camera_FPS.h"
 #include <GameServerAPI.h>
-
+#include "C_Light.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
@@ -28,6 +28,7 @@ struct  GameState::MyData
 
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
 	bool key_forward;
 	bool key_backward;
@@ -82,10 +83,11 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->input = shared.input;
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
+	this->privData->lights = &shared.lights;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Math::pi/2, aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	//tell server ready
@@ -100,6 +102,11 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->renderWhireframe = false;
 	// !DEGUG KEYS
 
+	auto light = this->privData->lights->begin();
+	for( ; light != this->privData->lights->end(); ++light )
+	{
+		light->second->Render();
+	}
 	return true;
 }
 
@@ -177,6 +184,13 @@ bool GameState::Render()
 		dynamicObject->second->Render();
 	}
 
+
+	/*auto light = this->privData->lights->begin();
+	for( ; light != this->privData->lights->end(); ++light )
+	{
+	light->second->Render();
+	}*/
+
 	// RB DEBUG render wire frame 
 	if(this->privData->renderWhireframe)
 	{
@@ -236,8 +250,15 @@ bool GameState::Release()
 			dynamicObject->second = nullptr;
 		}
 
+		auto light = this->privData->lights->begin();
+		for( ; light != this->privData->lights->end(); ++light )
+		{
+			light->second->Render();
+		}
+
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
+		this->privData->lights->clear();
 
 		privData = NULL;
 	}
