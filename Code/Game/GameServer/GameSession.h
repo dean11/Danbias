@@ -84,7 +84,7 @@ namespace DanBias
 		void Gameplay_PlayerMovementBack	( DanBias::GameClient* c );
 		void Gameplay_PlayerMovementForth	( DanBias::GameClient* c );
 		void Gameplay_PlayerJump			( DanBias::GameClient* c );
-		void Gameplay_PlayerLookDir			( GameLogic::Protocol_PlayerLook& p, DanBias::GameClient* c );
+		void Gameplay_PlayerLeftTurn		( GameLogic::Protocol_PlayerLeftTurn& p, DanBias::GameClient* c );
 		void Gameplay_PlayerChangeWeapon	( GameLogic::Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c );
 		void Gameplay_PlayerShot			( GameLogic::Protocol_PlayerShot& p, DanBias::GameClient* c );
 		void Gameplay_ObjectPickup			( GameLogic::Protocol_ObjectPickup& p, DanBias::GameClient* c );

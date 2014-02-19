@@ -30,14 +30,14 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	{
 	case ObjectSpecialType_None: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 
 		}
 		break;
 	case ObjectSpecialType_Sky: 
 		{
 			float skySize = ((SkyAttributes*)obj)->skySize; 
-			//gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			//gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	case ObjectSpecialType_World: 
@@ -48,21 +48,21 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			float worldSize = ((WorldAttributes*)obj)->worldSize; 
 			float atmosphereSize = ((WorldAttributes*)obj)->atmoSphereSize; 
 
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	case ObjectSpecialType_Building: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 	case ObjectSpecialType_Stone: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_StandardBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
@@ -79,24 +79,24 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_Spike: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_CrystalFormation: 
 		{
 			int dmg = 50; 
 			//gameObj = new Crystal(rigidBody);
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	case ObjectSpecialType_CrystalShard: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_JumpPad: 
@@ -126,12 +126,12 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_Generic:
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	default:
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultCollisionAfter, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	}
@@ -242,34 +242,8 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 				ICustomBody* rigidBody_Static = NULL;	
 
-				// HACK: untill the world is right in lvl format
-				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_World)
-				{
-					Oyster::Math::Float3 rigidWorldPos;
-					Oyster::Math::Float4 rigidWorldRotation;
-					float rigidBodyMass;
-					float rigidBodyRadius;
-
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = Oyster::Math::Float3(0,0,0);
-					//scales the position so the collision geomentry is in the right place
-
-					//offset the rigidRotation from modelspace to worldspace;
-					
-					rigidWorldRotation = Oyster::Math::Float4(0,0,0,1); 
-
-					//mass scaled
-					rigidBodyMass = 0;
-
-					//Radius scaled
-					rigidBodyRadius = 150;
-
-					//create the rigid body
-					rigidBody_Static = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, 1,1,1);
-
-				}
 				// collision shape
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
 				{
 					rigidBody_Static = InitRigidBodySphere(staticObjData);
 				}
@@ -368,14 +342,14 @@ bool Level::InitiateLevel(float radius)
 	{
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(0.0f, 605.0f + i*5.0f, 10.0f), 5.0f, 0.5f, 0.8f, 0.6f);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultOnCollision, ObjectSpecialType_StandardBox, idCount++));
 	}
 	/*offset += nrOfBoxex;
 	for(int i =0; i< nrOfBoxex; i ++)
 	{
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0,5, -605 -( i*5)), 5);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultOnCollision, OBJECT_TYPE::OBJECT_TYPE_BOX));
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);
 		
 	}
@@ -384,7 +358,7 @@ bool Level::InitiateLevel(float radius)
 	{
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(200, 620 + ( i*7), 0), 5);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultOnCollision, OBJECT_TYPE::OBJECT_TYPE_BOX));
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);	
 	}
 	offset += nrOfBoxex;
@@ -392,18 +366,18 @@ bool Level::InitiateLevel(float radius)
 	{
 		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(5, 605 + i*5, 0), 5);
 
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultCollisionAfter, OBJECT_TYPE::OBJECT_TYPE_BOX));
+		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultOnCollision, OBJECT_TYPE::OBJECT_TYPE_BOX));
 		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
 		
 	}*/
 	
 	// add crystal
 	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(10.0f, 605.0f, 0.0f), 5.0f, 0.5f, 0.8f, 0.6f);
-	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultCollisionAfter, ObjectSpecialType_StandardBox, idCount++));
+	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultOnCollision, ObjectSpecialType_StandardBox, idCount++));
 
 	// add house
 	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20.0f, 20.0f, 20.0f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(-50.0f, 590.0f, 0.0f), 0.0f, 0.5f, 0.8f, 0.6f);
-	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultCollisionAfter, ObjectSpecialType_Generic, idCount++));
+	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultOnCollision, ObjectSpecialType_Generic, idCount++));
 
 	// add jumppad
 

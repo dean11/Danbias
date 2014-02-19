@@ -6,6 +6,7 @@
 #include "Utilities.h"
 #include "C_obj\C_StaticObj.h"
 #include "C_obj\C_DynamicObj.h"
+#include "C_Light.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -23,6 +24,7 @@ struct NetLoadState::MyData
 	Graphics::API::Texture background;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
 	bool loading;
 };
@@ -49,6 +51,7 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	this->privData->background		= Graphics::API::CreateTexture( L"grass_md.png" );
 	this->privData->dynamicObjects	= &shared.dynamicObjects;
 	this->privData->staticObjects	= &shared.staticObjects;
+	this->privData->lights			= &shared.lights;
 
 	this->privData->loading = false;
 
@@ -141,17 +144,31 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				desc.scale		= oh->scale;
 				desc.visible	= true; 
 
-				// HACK: untill the world is right in lvl format
-				if( oh->specialTypeID == ObjectSpecialType_World)
-				{
-					desc.position	= Float3(0,0,0); 
-					desc.rotation	= Quaternion::identity;
-					desc.scale		= Float3(300,300,300);
-				}
-
 				C_StaticObj *staticObject = new C_StaticObj();
 				if( staticObject->Init( desc ) )
 				{
+
+					// RB DEBUG
+					RBInitData RBData;
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size;
+						RBData.type = RB_Type_Cube;
+						staticObject->InitRB( RBData );
+					}
+
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius;
+						RBData.type = RB_Type_Sphere;
+						staticObject->InitRB( RBData );
+					}
+					// !RB DEBUG 
+
 					(*this->privData->staticObjects)[objectID] = staticObject;	
 				}
 				else
@@ -175,6 +192,27 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				C_DynamicObj *dynamicObject = new C_DynamicObj();
 				if( dynamicObject->Init( desc ) )
 				{
+					// RB DEBUG
+					RBInitData RBData;
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size;
+						RBData.type = RB_Type_Cube;
+						dynamicObject->InitRB( RBData );
+					}
+
+					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
+					{
+						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
+						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius;
+						RBData.type = RB_Type_Sphere;
+						dynamicObject->InitRB( RBData );
+					}
+					// !RB DEBUG 
+
 					(*this->privData->dynamicObjects)[objectID] = dynamicObject;
 				}
 				else
@@ -185,7 +223,17 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 			break;
 		case ObjectType::ObjectType_Light:
 			{
-				 /* TODO: implement light into the leveformat */
+				BasicLight *light = (BasicLight*)oth;
+				Graphics::Definitions::Pointlight pointLight; 
+
+				pointLight.Color	= light->color;
+				pointLight.Pos		= light->position;
+				pointLight.Bright	= light->intensity;
+				pointLight.Radius	= light->raduis; 
+
+				C_Light *newLight = new C_Light( pointLight, objectID );
+
+				(*this->privData->lights)[objectID] = newLight;
 			}
 			break;
 		default: break;
