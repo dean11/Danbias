@@ -36,11 +36,15 @@ void Camera_FPSV2::SetPosition( const Float3 &translation )
 	this->body.translation = translation;
 }
 
+void Camera_FPSV2::SetRotation( const Quaternion &rotation )
+{
+	this->body.rotation = rotation;
+	this->head.SetRotation( rotation * Rotation(this->pitchUp, this->GetNormalOf(Float3::standard_unit_x) ) );
+}
+
 void Camera_FPSV2::SetAngular( const Float3 &axis )
 {
-	this->body.rotation = Rotation( axis );
-	this->head.SetRotation( this->body.rotation );
-	this->pitchUp = 0.0f;
+	this->SetRotation( Rotation(axis) );
 }
 
 void Camera_FPSV2::SetProjection( const Float4x4 &matrix )

@@ -40,12 +40,13 @@ CustomNetProtocol::CustomNetProtocol()
 {
 	this->privateData = new PrivateData();
 }
-CustomNetProtocol::CustomNetProtocol(CustomNetProtocol& o)
+CustomNetProtocol::CustomNetProtocol(const CustomNetProtocol& o)
 {
 	this->privateData = new PrivateData();
 	this->privateData->attributes = o.privateData->attributes;
 }
-const CustomNetProtocol& CustomNetProtocol::operator=(CustomNetProtocol& o)
+
+CustomNetProtocol& CustomNetProtocol::operator=(const CustomNetProtocol& o)
 {
 	if(this->privateData) 
 	{
@@ -56,11 +57,29 @@ const CustomNetProtocol& CustomNetProtocol::operator=(CustomNetProtocol& o)
 	this->privateData->attributes = o.privateData->attributes;
 	return *this;
 }
+
 CustomNetProtocol::~CustomNetProtocol()
 {
 	delete this->privateData;
 	this->privateData = 0;
 }
+
+const NetAttributeContainer& CustomNetProtocol::operator[](int ID) const
+{
+	//if(!this->privateData) this->privateData = new PrivateData();
+	if((unsigned int)ID >= this->privateData->attributes.Size())
+	{
+		NetAttributeContainer temp;
+		
+		temp.type = NetAttributeType_UNKNOWN;
+		memset(&temp.value, 0, sizeof(NetAttributeValue));
+
+		this->privateData->attributes.Push(ID, temp);
+	}
+
+	return this->privateData->attributes[ID];
+}
+
 NetAttributeContainer& CustomNetProtocol::operator[](int ID)
 {
 	//if(!this->privateData) this->privateData = new PrivateData();

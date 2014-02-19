@@ -5,6 +5,7 @@
 #include "ParseFunctions.h"
 #include "Packing/Packing.h"
 #include "Loader.h"
+#include "Utilities.h"
 #include <string>
 
 using namespace Oyster::Packing;
@@ -149,7 +150,7 @@ namespace GameLogic
 			//Läs in filen.
 			int fileLength = 0;
 			Loader loader;
-			char* buf = loader.LoadFile("../Content/Worlds/cgf/"+ fileName, fileLength);
+			char* buf = loader.LoadFile(L"../Content/Worlds/cgf/" + Utility::String::StringToWstring(fileName, wstring()), fileLength);
 
 			start = 0;
 			LevelLoaderInternal::FormatVersion version;

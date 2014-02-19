@@ -338,8 +338,8 @@ namespace Oyster
 					dTDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 					dTDesc.CPUAccessFlags=0;
 					dTDesc.MiscFlags=0;
-					dTDesc.Height = Core::resolution.y;
-					dTDesc.Width = Core::resolution.x;
+					dTDesc.Height = (UINT)Core::resolution.y;
+					dTDesc.Width = (UINT)Core::resolution.x;
 					dTDesc.SampleDesc.Count=1;
 					dTDesc.SampleDesc.Quality=0;
 
