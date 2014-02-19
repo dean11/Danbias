@@ -99,7 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -113,7 +113,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -129,7 +129,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DANBIAS_GAMELOGIC_DLL_EXPORT;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -172,12 +172,7 @@
     <ClInclude Include="IAttatchment.h" />
     <ClInclude Include="JumpPad.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="LevelLoader\LevelLoader.h" />
-    <ClInclude Include="LevelLoader\Loader.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="LevelLoader\ObjectDefines.h" />
-    <ClInclude Include="LevelLoader\LevelParser.h" />
-    <ClInclude Include="LevelLoader\ParseFunctions.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="StaticObject.h" />
@@ -198,11 +193,7 @@
     <ClCompile Include="IAttatchment.cpp" />
     <ClCompile Include="JumpPad.cpp" />
     <ClCompile Include="Level.cpp" />
-    <ClCompile Include="LevelLoader\LevelLoader.cpp" />
-    <ClCompile Include="LevelLoader\Loader.cpp" />
-    <ClCompile Include="LevelLoader\LevelParser.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="LevelLoader\ParseFunctions.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="StaticObject.cpp" />
@@ -222,6 +213,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Physics\OysterPhysics3D\OysterPhysics3D.vcxproj">
       <Project>{3ea5f14d-2a71-4588-a69d-87c4571c580f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\LevelLoader\LevelLoader.vcxproj">
+      <Project>{6391e709-d9fa-4fef-a3b9-4343db5a0c63}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
