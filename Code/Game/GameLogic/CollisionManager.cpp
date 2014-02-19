@@ -23,7 +23,7 @@ using namespace GameLogic;
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		
-		Player *player = ((Game::PlayerData*)(rigidBodyPlayer->GetCustomTag()))->player;
+		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
 		switch (realObj->GetObjectType())
