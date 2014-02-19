@@ -483,7 +483,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					this->privData->camera.SetPosition( position );
 					this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );
-					//this->privData->player.setRot( rotation );
+					this->privData->player.setRot( rotation );
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
