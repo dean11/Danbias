@@ -209,7 +209,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	//Convert from wstring to string
 	typedef std::codecvt_utf8<wchar_t> convert_typeX;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
 
 	std::string convertedLevelPath = converterX.to_bytes(levelPath);
 	objects = ll.LoadLevel(convertedLevelPath);
@@ -220,7 +220,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
 	API::Instance().SetGravity(200);
-	int objCount = objects.size();
+	int objCount = (int)objects.size();
 
 	for (int i = 0; i < objCount; i++)
 	{

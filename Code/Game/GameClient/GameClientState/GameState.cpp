@@ -89,6 +89,8 @@ bool GameState::Init( SharedStateContent &shared )
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
+	gfxOp.AmbientValue = 2.0f;
+	Graphics::API::SetOptions(gfxOp);
 
 	//tell server ready
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
@@ -104,6 +106,7 @@ bool GameState::Init( SharedStateContent &shared )
 	{
 		light->second->Render();
 	}
+
 
 	return true;
 }
@@ -237,6 +240,7 @@ bool GameState::Render()
 
 bool GameState::Release()
 {
+	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
 		auto staticObject = this->privData->staticObjects->begin();

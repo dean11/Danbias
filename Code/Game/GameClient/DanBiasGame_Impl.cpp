@@ -106,7 +106,7 @@ namespace DanBias
 			Graphics::API::Update( dt );
 			
 			data.capFrame += dt;
-			if(data.capFrame > 0.03)
+			if(data.capFrame > 0.03f)
 			{
 				switch( Update(data.capFrame) )
 				{
@@ -117,7 +117,7 @@ namespace DanBias
 				}
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
-				data.capFrame -= 0.03; 
+				data.capFrame -= 0.03f; 
 			}
 
 			if(data.networkClient.IsConnected())

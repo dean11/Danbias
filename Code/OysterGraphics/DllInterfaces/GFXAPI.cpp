@@ -205,9 +205,9 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
-			Core::deviceContext->OMSetRenderTargets(Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
 			Core::deviceContext->RSSetState(wire);
-			Core::deviceContext->OMSetRenderTargets(Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
 		}
 
 		void API::RenderDebugCube(Math::Matrix world)

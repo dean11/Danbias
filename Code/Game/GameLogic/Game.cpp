@@ -77,7 +77,7 @@ Game::PlayerData* Game::CreatePlayer()
 		found = true;
 		freeID = i;
 
-		for(int j = 0; j < players.Size(); j++)
+		for(int j = 0; j < (int)players.Size(); j++)
 		{
 			
 			if(this->players[j] && this->players[j]->GetID() == freeID)
