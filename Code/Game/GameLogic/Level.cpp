@@ -4,6 +4,10 @@
 #include "JumpPad.h"
 #include "ExplosiveCrate.h"
 #include "Portal.h"
+
+//Conversion from wstring to string
+#include <codecvt>
+
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Physics;
@@ -200,9 +204,16 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 bool Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
-	ll.SetFolderPath(L"..\\Content\\Worlds\\");
+	ll.SetFolderPath("..\\Content\\Worlds\\");
 	std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> objects; 
-	objects = ll.LoadLevel(levelPath);
+
+	//Convert from wstring to string
+	typedef std::codecvt_utf8<wchar_t> convert_typeX;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	std::string convertedLevelPath = converterX.to_bytes(levelPath);
+	objects = ll.LoadLevel(convertedLevelPath);
+
 
 	if(objects.size() == 0)
 		return false;
@@ -231,34 +242,8 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 				ICustomBody* rigidBody_Static = NULL;	
 
-				// HACK: untill the world is right in lvl format
-				if((ObjectSpecialType)staticObjData->specialTypeID == ObjectSpecialType_World)
-				{
-					Oyster::Math::Float3 rigidWorldPos;
-					Oyster::Math::Float4 rigidWorldRotation;
-					float rigidBodyMass;
-					float rigidBodyRadius;
-
-					//offset the rigidPosition from modelspace to worldspace;
-					rigidWorldPos = Oyster::Math::Float3(0,0,0);
-					//scales the position so the collision geomentry is in the right place
-
-					//offset the rigidRotation from modelspace to worldspace;
-					
-					rigidWorldRotation = Oyster::Math::Float4(0,0,0,1); 
-
-					//mass scaled
-					rigidBodyMass = 0;
-
-					//Radius scaled
-					rigidBodyRadius = 150;
-
-					//create the rigid body
-					rigidBody_Static = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, 1,1,1);
-
-				}
 				// collision shape
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
 				{
 					rigidBody_Static = InitRigidBodySphere(staticObjData);
 				}
