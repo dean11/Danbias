@@ -55,12 +55,13 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->nwClient = shared.network;
 	this->privData->input = shared.input;
 
-	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
+	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
 
 	// create guiElements
-	this->privData->connectIP = new TextField<LanMenuState*>( L"earth_md.png", Float4(1.0f), this, Float3(0.5f, 0.3f, 0.5f), Float2(0.8f, 0.09f), ResizeAspectRatio_None );
+	this->privData->connectIP = new TextField<LanMenuState*>( L"color_white.png", Float4(1.0f), Float4(0.0f), this, Float3(0.5f, 0.3f, 0.5f), Float2(0.8f, 0.09f), ResizeAspectRatio_None );
 	this->privData->connectIP->ReserveLines( 1 );
-	this->privData->connectIP->AppendText( L"127.0.0.1" );
+	//this->privData->connectIP->AppendText( L"127.0.0.1" );
+	this->privData->connectIP->AppendText( L"194.47.150.206" ); // HACK: connecting to Dennis's server
 	this->privData->connectIP->SetFontHeight( 0.08f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
 	this->privData->connectIP->SetTopAligned();
@@ -68,10 +69,10 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->guiElements.AddButton( this->privData->connectIP );
 
 	ButtonRectangle<LanMenuState*> *guiElements;
-	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Connect", Float4(1.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"color_white.png", L"Connect", Float4(1.0f),Float4(0.0f),Float4(0.0f),Float4(0.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
-	guiElements = new ButtonRectangle<LanMenuState*>( L"earth_md.png", L"Exit", Float4(1.0f), OnButtonInteract_Exit, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"color_white.png", L"Exit", Float4(1.0f),Float4(0.0f),Float4(0.0f),Float4(0.0f), OnButtonInteract_Exit, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
 	// bind guiElements collection to the singleton eventhandler

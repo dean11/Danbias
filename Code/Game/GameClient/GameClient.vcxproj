@@ -201,7 +201,9 @@
     <ClCompile Include="DanBiasGame_Impl.cpp" />
     <ClCompile Include="GameClientState\Camera_Basic.cpp" />
     <ClCompile Include="GameClientState\Camera.cpp" />
+    <ClCompile Include="GameClientState\Camera_BasicV2.cpp" />
     <ClCompile Include="GameClientState\Camera_FPS.cpp" />
+    <ClCompile Include="GameClientState\Camera_FPSV2.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_DynamicObj.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_Player.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_StaticObj.cpp" />
@@ -226,7 +228,9 @@
     <ClInclude Include="GameClientState\Buttons\EventButtonGUI.h" />
     <ClInclude Include="GameClientState\Buttons\ButtonRectangle.h" />
     <ClInclude Include="GameClientState\Camera.h" />
+    <ClInclude Include="GameClientState\Camera_BasicV2.h" />
     <ClInclude Include="GameClientState\Camera_FPS.h" />
+    <ClInclude Include="GameClientState\Camera_FPSV2.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
     <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />

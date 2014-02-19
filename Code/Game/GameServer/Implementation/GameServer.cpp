@@ -118,69 +118,81 @@ void GameServerAPI::NotifyWhenClientDisconnect(ClientDisconnectedNotify func)
 	else		clientDisconnectedCallback = func;
 }
 
-void		GameServerAPI::GameSetMapName(const wchar_t* val)
+void			GameServerAPI::GameSetMapName(const wchar_t* val)
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	//d.mapNumber = val; //TODO: implement
+	d.mapName = val;
 	lobby.SetGameDesc(d);
 }
-void		GameServerAPI::GameSetMaxClients(const int& val)
+void			GameServerAPI::GameSetGameMode(const wchar_t* val)
+{
+	LobbyLevelData d;
+	lobby.GetGameDesc(d);
+	d.gameMode = val;
+	lobby.SetGameDesc(d);
+}
+void			GameServerAPI::GameSetGameName(const wchar_t* val)
+{
+	LobbyLevelData d;
+	lobby.GetGameDesc(d);
+	d.gameName = val;
+	lobby.SetGameDesc(d);
+}
+void			GameServerAPI::GameSetMaxClients(const int& val)
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	d.maxClients = val;
 	lobby.SetGameDesc(d);
 }
-void		GameServerAPI::GameSetGameMode(const wchar_t* val)
+void			GameServerAPI::GameSetGameTime(const int& val)
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	//d.gameMode = val;	//TODO: implement
+	d.gameTimeInMinutes = val;
 	lobby.SetGameDesc(d);
 }
-void		GameServerAPI::GameSetGameTime(const int& val)
+
+const wchar_t*	GameServerAPI::GameGetMapName()
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	d.gameTime = val;
-	lobby.SetGameDesc(d);
+	return d.mapName.c_str();
 }
-int			GameServerAPI::GameGetMapId()
-{
-	LobbyLevelData d;
-	lobby.GetGameDesc(d);
-	return d.mapNumber;
-}
-int			GameServerAPI::GameGetMaxClients()
+int				GameServerAPI::GameGetMaxClients()
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.maxClients;
 }
-int			GameServerAPI::GameGetGameMode()
+const wchar_t*	GameServerAPI::GameGetGameMode()
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	return d.gameMode;
+	return d.gameMode.c_str();
 }
-int			GameServerAPI::GameGetGameTime()
+int				GameServerAPI::GameGetGameTime()
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
-	return d.gameTime;
+	return d.gameTimeInMinutes;
 }
-const char*	GameServerAPI::GameGetGameName()
+const wchar_t*	GameServerAPI::GameGetGameName()
 {
 	LobbyLevelData d;
 	lobby.GetGameDesc(d);
 	return d.gameName.c_str();
 }
-bool		GameServerAPI::GameStart()
+int				GameServerAPI::GetConnectedClientCount()
 {
-	if(lobby.StartGameSession())
+	return lobby.GetGameSessionClientCount();
+}
+
+bool			GameServerAPI::GameStart( bool forceStart )
+{
+	if(lobby.StartGameSession( forceStart ))
 	{
-		
 		return true;
 	}
 	return false;

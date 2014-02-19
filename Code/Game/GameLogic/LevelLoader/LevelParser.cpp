@@ -20,7 +20,7 @@ LevelParser::~LevelParser()
 {
 }
 
-std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filename)
+std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::wstring filename)
 {
 	int bufferSize = 0;
 	int counter = 0;
@@ -31,6 +31,12 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 	//Read entire level file.
 	Loader loader;
 	char* buffer = (char*)loader.LoadFile(filename.c_str(), bufferSize);
+
+	// Check if file was loaded, else return empty vector
+	if(!buffer)
+	{
+		return std::vector<SmartPointer<ObjectTypeHeader>>();
+	}
 
 	//Read format version
 	LevelLoaderInternal::FormatVersion levelFormatVersion;
@@ -215,7 +221,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 }
 
 //för meta information om leveln.
-LevelMetaData LevelParser::ParseHeader(std::string filename)
+LevelMetaData LevelParser::ParseHeader(std::wstring filename)
 {
 	int bufferSize = 0;
 	int counter = 0;

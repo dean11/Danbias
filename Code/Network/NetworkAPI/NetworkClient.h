@@ -133,13 +133,7 @@ namespace Oyster
 				*/
 				virtual void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
 
-				/**	! Deprecate ! 
-				*	Do not use this furthermore, instead use void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
-				*	@see DataRecieved
-				*/
-				//virtual void NetworkCallback(Oyster::Network::CustomNetProtocol& p);
-
-				virtual std::string GetIpAddress();
+				std::string GetIpAddress();
 
 			private:
 				NetworkClient(const NetworkClient& obj);

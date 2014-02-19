@@ -64,7 +64,12 @@ namespace DanBias
 	{
 		WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
-		if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC()))
+
+		WindowShell::WINDOW_INIT_DESC winDesc;
+		winDesc.windowSize.x = 1280;
+		winDesc.windowSize.y = 720;
+		
+		if(! data.window->CreateWin(winDesc) )
 			return DanBiasClientReturn_Error;
 
 		if( FAILED( InitDirect3D() ) )
@@ -136,9 +141,11 @@ namespace DanBias
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
 		p.texturePath = L"..\\Content\\Textures\\";
-		Oyster::Graphics::API::SetOptions(p);
+		p.Resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
+		//! @todo fix proper amb value
+		p.AmbientValue = 1.0f;
 
-		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, Oyster::Math::Float2( 1024, 768)) != Oyster::Graphics::API::Sucsess)
+		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, p) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
 		return S_OK;
 	}

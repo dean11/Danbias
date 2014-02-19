@@ -11,10 +11,10 @@ void main(int3 ThreadID : SV_DispatchThreadID, int3 gThreadID : SV_GroupThreadID
 	}
 	if(gThreadID.y >= N-blurRadius)
 	{
-		int y = min(ThreadID.y+blurRadius, Stop.y-1);
+		int y = min(ThreadID.y +blurRadius, Stop.y-1);
 		gCache[gThreadID.y+2*blurRadius] = inTex[int2(ThreadID.x,y) + Start];
 	}
-	gCache[gThreadID.y+blurRadius] = inTex[min(ThreadID.xy + Start, Stop.xy-1)];
+	gCache[gThreadID.y+blurRadius] = inTex[min(ThreadID.xy + Start, Stop-1)];
 
 	GroupMemoryBarrierWithGroupSync();
 
@@ -27,6 +27,6 @@ void main(int3 ThreadID : SV_DispatchThreadID, int3 gThreadID : SV_GroupThreadID
 		blurCol +=Weights[i + blurRadius] * gCache[k];
 	}
 
-	outTex[ThreadID.xy + Start] = blurCol + inTex[ThreadID.xy + Start] * ( float4(1,1,1,1) - BlurMask);;
+	outTex[min(ThreadID.xy + Start, Stop-1)] = blurCol * BlurMask + inTex[min(ThreadID.xy + Start, Stop-1)] * ( float4(1,1,1,1) - BlurMask);;
 	//outTex[ThreadID.xy + Start] = inTex[ThreadID.xy+ Start];
 }

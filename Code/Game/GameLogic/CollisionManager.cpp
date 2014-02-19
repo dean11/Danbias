@@ -170,12 +170,12 @@ using namespace GameLogic;
 	
 	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage)
 	{
-		int damageDone = 0;
-		int forceThreashHold = 200000;
+		Oyster::Math::Float damageDone = 0;
+		Oyster::Math::Float forceThreashHold = 200000;
 
 		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
 		{
-			damageDone = (int)(kineticEnergyLoss * 0.10f);
+			damageDone = (kineticEnergyLoss * 0.10f);
 			damageDone += ExtraDamage;
 			//player.DamageLife(damageDone);
 		}

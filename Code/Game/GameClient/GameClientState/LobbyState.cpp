@@ -50,7 +50,7 @@ bool LobbyState::Init( SharedStateContent &shared )
 	// create buttons
 	ButtonRectangle<LobbyState*> *button;
 	
-	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"Ready", Float4(1.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
+	button = new ButtonRectangle<LobbyState*>( L"earth_md.png", L"Ready", Float4(1.0f), Float4(0.0f), Float4(0.0f), Float4(0.0f), OnButtonInteract_Ready, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f), ResizeAspectRatio_Width );
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
@@ -112,10 +112,10 @@ void LobbyState::ChangeState( ClientState next )
 
 using namespace ::Oyster::Network;
 
-void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & LobbyState::DataRecieved( const GameClientState::NetEvent &message )
 {
-	CustomNetProtocol data = e.args.data.protocol;
-	short ID = data[0].value.netShort; // fetching the id data.
+	// fetching the id data.
+	short ID = message.args.data.protocol[0].value.netShort;
 	
 	// Block irrelevant messages.
 	if( ProtocolIsLobby(ID) )
@@ -141,6 +141,8 @@ void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEve
 		default: break;
 		}
 	}
+
+	return message;
 }
 
 void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e )
