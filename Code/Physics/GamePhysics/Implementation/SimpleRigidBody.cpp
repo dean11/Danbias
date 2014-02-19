@@ -300,11 +300,13 @@ Float4x4 SimpleRigidBody::GetView( const ::Oyster::Math::Float3 &offset ) const
 
 Float3 SimpleRigidBody::GetGravity() const
 {
-	return (Float3)this->rigidBody->getGravity();
+	btVector3 gravity = this->rigidBody->getGravity();
+	return Float3(gravity.x(), gravity.y(), gravity.z());
 }
 Float3 SimpleRigidBody::GetLinearVelocity() const
 {
-	return (Float3)this->rigidBody->getLinearVelocity();
+	btVector3 linearVelocity = this->rigidBody->getLinearVelocity();
+	return Float3(linearVelocity.x(), linearVelocity.y(), linearVelocity.z());
 }
 
 
