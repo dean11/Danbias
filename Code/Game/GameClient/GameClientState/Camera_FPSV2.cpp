@@ -38,8 +38,13 @@ void Camera_FPSV2::SetPosition( const Float3 &translation )
 
 void Camera_FPSV2::SetRotation( const Quaternion &rotation )
 {
+	if( !Within(rotation.GetNorm(), .99f, 1.01f) )
+	{ // HACK: bug trap
+		const char *breakPoint = "Caught an invalid rotation!";
+	}
+
 	this->body.rotation = rotation;
-	this->head.SetRotation( rotation * Rotation(this->pitchUp, this->GetNormalOf(Float3::standard_unit_x) ) );
+	this->head.SetRotation( rotation * Rotation(this->pitchUp, WorldAxisOf(rotation, Float3::standard_unit_x) ) );
 }
 
 void Camera_FPSV2::SetAngular( const Float3 &axis )
@@ -116,7 +121,7 @@ void Camera_FPSV2::StrafeLeft( Float distance )
 void Camera_FPSV2::PitchUp( Float radian )
 {
 	this->pitchUp = Clamp( this->pitchUp + radian, -0.48f * pi, 0.48f * pi );
-	this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, Float3::standard_unit_x) );
+//	this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, Float3::standard_unit_x) );
 }
 
 void Camera_FPSV2::PitchDown( Float radian )
