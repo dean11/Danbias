@@ -28,6 +28,7 @@ namespace Oyster
 			virtual int Disconnect();
 			virtual int Connect(ConnectionInfo info, bool blocking = false);
 			virtual int Connect(unsigned short port , const char serverName[], bool blocking = false);
+			virtual int Reconnect();
 			
 			virtual ConnectionInfo Listen();
 
@@ -47,6 +48,11 @@ namespace Oyster
 			bool stillSending;
 			bool closed;
 			std::string addr;
+
+			std::string lastConnectAddr;
+			unsigned short lastConnectPort;
+
+			bool blocking;
 		};
 	}
 }

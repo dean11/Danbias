@@ -123,6 +123,7 @@ bool Game::NewFrame()
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
+		this->onMoveFnc(this->players[i]);
 		if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
 

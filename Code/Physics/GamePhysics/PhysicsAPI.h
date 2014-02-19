@@ -89,6 +89,8 @@ namespace Oyster
 
 			virtual ICustomBody* AddCharacter(::Oyster::Math::Float height, ::Oyster::Math::Float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
 
+			virtual ICustomBody* AddTriangleMesh(const std::wstring fileName, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction) = 0;
+
 			virtual void SetTimeStep(float timeStep) = 0;
 
 			virtual void UpdateWorld() = 0;
