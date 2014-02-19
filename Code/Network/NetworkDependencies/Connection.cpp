@@ -91,14 +91,14 @@ int Connection::Reconnect()
 	if(this->socket == -1 || this->socket == 0) InitiateSocket();
 
 	struct hostent *hostEnt;
-	if((hostEnt = gethostbyname(lastConnectAddr.c_str())) == NULL)
+	if((hostEnt = gethostbyname(this->lastConnectAddr.c_str())) == NULL)
 	{
 		return WSAGetLastError();
 	}
 
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
-	server.sin_port = htons(lastConnectPort);
+	server.sin_port = htons(this->lastConnectPort);
 	server.sin_addr.s_addr = *(unsigned long*) hostEnt->h_addr;
 
 	SetBlockingMode(true);

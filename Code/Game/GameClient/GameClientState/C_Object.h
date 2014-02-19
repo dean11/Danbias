@@ -5,6 +5,21 @@ namespace DanBias
 {
 	namespace Client
 	{
+		// RB DEBUG 
+		enum RB_Type
+		{
+			RB_Type_Cube,
+			RB_Type_Sphere, 
+			RB_Type_None,
+		};
+		struct  RBInitData
+		{
+			Oyster::Math::Float3 position; 
+			Oyster::Math::Quaternion rotation; 
+			Oyster::Math::Float3 scale; 
+			RB_Type type;
+		};
+		// !RB DEBUG 
 
 		struct  ModelInitData
 		{
@@ -23,27 +38,45 @@ namespace DanBias
 			Oyster::Math::Float3 position; 
 			Oyster::Math::Quaternion rotation; 
 			Oyster::Math::Float3 scale; 
-	
+
+			// RB DEBUG
+			Oyster::Math::Float3 RBposition; 
+			Oyster::Math::Quaternion RBrotation; 
+			Oyster::Math::Float3 RBscale; 
+			RB_Type type;
+			// !RB DEBUG 
+
 			int id;
-			void updateWorld();
+		
 		protected:
 			Oyster::Graphics::Model::Model *model;
 		public:
 			C_Object();
 			virtual ~C_Object();
 			virtual bool Init(ModelInitData modelInit);
-	
-			void setWorld(Oyster::Math::Float4x4 world);
+			void updateWorld();
+			//void setWorld(Oyster::Math::Float4x4 world);
 			Oyster::Math::Float4x4 getWorld() const;
 			void setPos(Oyster::Math::Float3 newPos);
 			Oyster::Math::Float3  getPos() const;
 			void addPos(Oyster::Math::Float3 deltaPos);
 			void setRot(Oyster::Math::Quaternion newRot);
 			Oyster::Math::Quaternion  getRotation() const;
-			void addRot(Oyster::Math::Quaternion deltaRot);
 			void setScale(Oyster::Math::Float3 newScale);
 			void addScale(Oyster::Math::Float3 deltaScale);
 			Oyster::Math::Float3  getScale() const;
+
+			// RB DEBUG
+			bool InitRB(RBInitData modelInit);
+			Oyster::Math::Float4x4 getRBWorld() const;
+			void setRBPos(Oyster::Math::Float3 newPos);
+			Oyster::Math::Float3  getRBPos() const;
+			void setRBRot(Oyster::Math::Quaternion newRot);
+			Oyster::Math::Quaternion  getRBRotation() const;
+			void setRBScale(Oyster::Math::Float3 newScale);
+			Oyster::Math::Float3  getRBScale() const;
+			RB_Type getBRtype()const;
+			// !RB DEBUG 
 
 			virtual void Render();
 			virtual void Release();

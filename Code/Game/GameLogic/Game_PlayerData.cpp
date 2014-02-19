@@ -24,7 +24,7 @@ Game::PlayerData::PlayerData()
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(50,130,0);
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,180,0);
 
 	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,2.0f,0.5f);
 	Oyster::Math::Float mass = 60;

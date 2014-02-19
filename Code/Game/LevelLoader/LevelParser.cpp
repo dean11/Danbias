@@ -98,7 +98,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 						case ObjectSpecialType_Spike:
 						case ObjectSpecialType_SpikeBox:
 						case ObjectSpecialType_RedExplosiveBox:
-						case ObjectSpecialType_StandarsBox:
+						case ObjectSpecialType_StandardBox:
 						case ObjectSpecialType_Stone:
 						case ObjectSpecialType_Building:
 						{
@@ -157,8 +157,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 							break;
 						}
 						//this is a hotfix, fix so you only load the relevant data when the file is updated
-					
-
 						default:
 							//Couldn't find specialType
 							break;

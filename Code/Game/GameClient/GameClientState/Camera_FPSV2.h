@@ -50,7 +50,7 @@ public:
 		  ::Oyster::Math::Float3	   GetForward() const;
 
 private:
-	Camera_BasicV2 head;
+	mutable Camera_BasicV2 head;
 	::Oyster::Math::Float pitchUp;
 	::Oyster::Math::Float3 headOffset;
 	struct
@@ -58,6 +58,7 @@ private:
 		::Oyster::Math::Float3 translation;
 		::Oyster::Math::Quaternion rotation;
 	} body;
+	mutable bool pitchHaveChanged;
 };
 
 #endif
