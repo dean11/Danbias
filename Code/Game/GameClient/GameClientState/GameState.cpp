@@ -480,6 +480,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
 				{
+					if( !Within(position.Dot(position), 2500.0f, 90000.0f) )
+					{ // HACK: bug trap
+						const char *breakPoint = "Something is wrong.";
+						//position = Float3( 0.0f, 160.0f, 0.0f );
+					}
+
 					this->privData->camera.SetPosition( position );
 					this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );

@@ -290,9 +290,12 @@ bool NetworkClient::Connect(ConnectionInfo& socket)
 
 bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 {
-	if(this->IsConnected())	return false;
-	if(this->privateData)	return false;
-	if(!this->privateData)	this->privateData = new PrivateData();
+	//Return true if you are already connected.
+	if(this->IsConnected())
+		return true;
+
+	if(!this->privateData)
+		this->privateData = new PrivateData();
 	
 	int result = this->privateData->connection.Connect(port, serverIP, false);
 	
@@ -319,10 +322,10 @@ bool NetworkClient::Connect(unsigned short port, std::wstring serverIP)
 
 bool NetworkClient::Reconnect()
 {
+	//Return true if you are already connected.
 	if(this->IsConnected())	
-		return false;
-	//if(this->privateData)
-		//return false;
+		return true;
+
 	if(!this->privateData)	this->privateData = new PrivateData();
 
 	int result = this->privateData->connection.Reconnect();
@@ -342,11 +345,10 @@ void NetworkClient::Disconnect()
 {
 	if(!privateData) return;
 
-	privateData->thread.Terminate();
+	privateData->thread.Stop();
 	privateData->connection.Disconnect();
 	this->privateData->sendQueue.Clear();
 	this->privateData->recieveQueue.Clear();
-
 }
 
 void NetworkClient::Send(CustomProtocolObject& protocol)
