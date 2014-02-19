@@ -165,7 +165,8 @@ void GameSession::ThreadEntry(  )
 						IPlayerData* pl = this->gClients[k]->GetPlayer();
 						Protocol_ObjectCreatePlayer p(	pl->GetPosition(), pl->GetRotation(), pl->GetScale(),
 														pl->GetID(), true, this->gClients[k]->GetPlayer()->GetTeamID(),
-														/*nwClient->GetAlias()*/"", /*playerData->GetMesh()*/"char_white.dan");
+														Utility::String::WStringToString(this->gClients[k]->GetAlias(), std::string()), 
+														Utility::String::WStringToString(this->gClients[k]->GetCharacter(), std::string()));
 						readyList[i]->GetClient()->Send(p);
 					}
 				}
@@ -204,7 +205,8 @@ bool GameSession::Join(gClient gameClient)
 	{
 		Protocol_ObjectCreatePlayer oc(	playerData->GetPosition(), playerData->GetRotation(), playerData->GetScale(), 
 										playerData->GetID(), true, playerData->GetTeamID(), 
-										/*nwClient->GetAlias()*/"Unknown", /*playerData->GetMesh()*/"char_white.dan");
+										Utility::String::WStringToString(gameClient->GetAlias(), std::string()), 
+										Utility::String::WStringToString(gameClient->GetCharacter(), std::string()));
 		nwClient->Send(oc);
 	}
 
@@ -217,7 +219,8 @@ bool GameSession::Join(gClient gameClient)
 				IPlayerData* temp = this->gClients[i]->GetPlayer();
 				Protocol_ObjectCreatePlayer oc(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
-												/*nwClient->GetAlias()*/"Unknown", /*playerData->GetMesh()*/"char_white.dan");
+												Utility::String::WStringToString(this->gClients[i]->GetAlias(), std::string()), 
+												Utility::String::WStringToString(this->gClients[i]->GetCharacter(), std::string()));
 				nwClient->Send(oc);
 			}
 		}
