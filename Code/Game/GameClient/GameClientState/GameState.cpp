@@ -122,7 +122,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBInitData RBData;
 	RBData.position = position;
 	RBData.rotation = ArrayToQuaternion( rotation );
-	RBData.scale =  Float3( 1 );
+	RBData.scale =  scale;
 	// !RB DEBUG 
 	if( isMyPlayer )
 	{
@@ -216,13 +216,16 @@ bool GameState::Render()
 		dynamicObject = this->privData->dynamicObjects->begin();
 		for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 		{
-			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+			if( dynamicObject->second )
 			{
-				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
-			}
-			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
-			{
-				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+				if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+				{
+					Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+				}
+				if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+				{
+					Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+				}
 			}
 		}
 	}
@@ -479,8 +482,8 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
 				{
-					//this->privData->camera.SetPosition( position );
-					//this->privData->camera.SetRotation( rotation );
+					this->privData->camera.SetPosition( position );
+					this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );
 					//this->privData->player.setRot( rotation );
 				}
