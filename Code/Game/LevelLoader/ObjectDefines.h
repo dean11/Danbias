@@ -31,7 +31,7 @@ namespace GameLogic
 		ObjectSpecialType_World,		//Always the main celestial body
 		ObjectSpecialType_Building,
 		ObjectSpecialType_Stone,
-		ObjectSpecialType_StandarsBox,
+		ObjectSpecialType_StandardBox,
 		ObjectSpecialType_RedExplosiveBox,
 		ObjectSpecialType_SpikeBox,
 		ObjectSpecialType_Spike,
@@ -40,6 +40,7 @@ namespace GameLogic
 		ObjectSpecialType_JumpPad,
 		ObjectSpecialType_Portal,
 		ObjectSpecialType_Player,
+		ObjectSpecialType_Generic,
 		
 
 		ObjectSpecialType_Count,

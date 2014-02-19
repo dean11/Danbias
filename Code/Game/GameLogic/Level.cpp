@@ -4,6 +4,10 @@
 #include "JumpPad.h"
 #include "ExplosiveCrate.h"
 #include "Portal.h"
+
+//Conversion from wstring to string
+#include <codecvt>
+
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Physics;
@@ -200,9 +204,16 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 bool Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
-	ll.SetFolderPath(L"..\\Content\\Worlds\\");
+	ll.SetFolderPath("..\\Content\\Worlds\\");
 	std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> objects; 
-	objects = ll.LoadLevel(levelPath);
+
+	//Convert from wstring to string
+	typedef std::codecvt_utf8<wchar_t> convert_typeX;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	std::string convertedLevelPath = converterX.to_bytes(levelPath);
+	objects = ll.LoadLevel(convertedLevelPath);
+
 
 	if(objects.size() == 0)
 		return false;

@@ -2,7 +2,7 @@
 #include "NetworkClient.h"
 #include "OysterMath.h"
 #include "Protocols.h"
-#include "LevelLoader\LevelLoader.h"
+#include "LevelLoader.h"
 #include "Utilities.h"
 #include "C_obj\C_StaticObj.h"
 #include "C_obj\C_DynamicObj.h"
