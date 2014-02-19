@@ -187,7 +187,7 @@ void GameState::ReadKeyInput()
 {
 	if( this->privData->input->IsKeyPressed(DIK_W) )
 	{
-		if(!this->privData->key_forward)
+		//if(!this->privData->key_forward)
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
 			this->privData->key_forward = true;
@@ -198,7 +198,7 @@ void GameState::ReadKeyInput()
 
 	if( this->privData->input->IsKeyPressed(DIK_S) )
 	{
-		if( !this->privData->key_backward )
+		//if( !this->privData->key_backward )
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
 			this->privData->key_backward = true;
@@ -209,7 +209,7 @@ void GameState::ReadKeyInput()
 
 	if( this->privData->input->IsKeyPressed(DIK_A) )
 	{
-		if( !this->privData->key_strafeLeft )
+		//if( !this->privData->key_strafeLeft )
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
 			this->privData->key_strafeLeft = true;
@@ -220,7 +220,7 @@ void GameState::ReadKeyInput()
 
 	if( this->privData->input->IsKeyPressed(DIK_D) )
 	{
-		if( !this->privData->key_strafeRight )
+		//if( !this->privData->key_strafeRight )
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
 			this->privData->key_strafeRight = true;
@@ -372,7 +372,9 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				if( this->privData->myId == decoded.object_ID )
 				{
 					this->privData->camera.SetPosition( position );
-					this->privData->camera.SetRotation( rotation );
+					//this->privData->camera.SetRotation( rotation );
+					this->privData->player.setPos( position );
+					//this->privData->player.setRot( rotation );
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];

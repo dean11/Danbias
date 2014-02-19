@@ -11,6 +11,7 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
+using System.IO;
 
 namespace StandAloneLauncher
 {
@@ -18,12 +19,22 @@ namespace StandAloneLauncher
     {
         System.Windows.Interop.StandaloneGameServerCLI gameServer;
         bool serverIsRunning = false;
+        bool gameIsStarted = false;
 
         public Form1()
         {
             InitializeComponent();
+
+            string[] maps = Directory.GetFiles("..\\Content\\Worlds\\");
+
+            for (int i = 0; i < maps.Length; i++)
+            {
+                string temp = maps[i].Split('\\').Last() ;
+                this.mapName.Items.Add(temp);
+            }
+
             this.gameModes.SelectedIndex = 0;
-            
+            this.mapName.SelectedIndex = 0;
         }
 
         public bool Initiate()
@@ -55,6 +66,7 @@ namespace StandAloneLauncher
                 this.serverToggle.Text = "Start server";
                 this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server terminated!\n");
                 this.panel_commands.Visible = false;
+                this.panelServerCommands.Visible = false;
             }
             else
             {
@@ -77,6 +89,7 @@ namespace StandAloneLauncher
                     this.gameServer.ServerStart();
                     this.panel_commands.Visible = true;
                     this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server initiated!\n\tListening on port " + this.listenPort.Value.ToString() + "\n\tLocal IP: " + info.serverIp + "\n");
+                    this.panelServerCommands.Visible = true;
                 }
                 else
                 {
@@ -87,18 +100,38 @@ namespace StandAloneLauncher
 
         private void buttonStartGame_Click(object sender, EventArgs e)
         {
-            //this.gameServer.GameSetGameMode(this.gameModes.SelectedText);
-            this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
-            this.gameServer.GameSetMapName(this.mapName.Text);
-            this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
-
-            if (!this.gameServer.GameStart( this.forceStart.Checked ))
+            if (!gameIsStarted)
             {
-                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to start the game session!\n");
+                //this.gameServer.GameSetGameMode(this.gameModes.SelectedText);
+                this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
+                this.gameServer.GameSetMapName(this.mapName.Text);
+                this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
+
+                if (!(gameIsStarted = this.gameServer.GameStart(this.forceStart.Checked)))
+                {
+                    this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Failed to start the game session!\n");
+                }
+                else
+                {
+                    this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Game session started!\n");
+                    this.buttonStartGame.Text = "Stop Game";
+
+                    this.mapName.Enabled = false;
+                    this.nrOfClients.Enabled = false;
+                    this.gameModes.Enabled = false;
+                    this.timeLimit.Enabled = false;
+                    this.forceStart.Enabled = false;
+                }
             }
             else
             {
-                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Game session started!\n");
+                this.gameIsStarted = false;
+                this.buttonStartGame.Text = "Start Game";
+                this.mapName.Enabled        = true;
+                this.nrOfClients.Enabled    = true;
+                this.gameModes.Enabled      = true;
+                this.timeLimit.Enabled      = true;
+                this.forceStart.Enabled     = true;
             }
         }
 
@@ -108,6 +141,18 @@ namespace StandAloneLauncher
             {
                 this.gameServer.ServerStop();
             }
+        }
+
+        private void buttonAddNewDataField_Click(object sender, EventArgs e)
+        {
+            this.dataProtocolFields.RowCount++;
+            this.dataProtocolFields.SetRow(this.buttonsAtBottom, this.dataProtocolFields.RowCount - 1);
+
+            Panel p = new Panel();
+            p = this.panel2;
+
+            this.dataProtocolFields.RowStyles.Add(new RowStyle(SizeType.Absolute, 27));
+            
         }
     }
 }

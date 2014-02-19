@@ -99,7 +99,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 	}
 
 /* Create the game level */
-	if(!(this->levelData = this->gameInstance.CreateLevel()))
+	if(!(this->levelData = this->gameInstance.CreateLevel(this->description.mapName.c_str())))
 	{
 		printf("Level not created!");
 		return false;

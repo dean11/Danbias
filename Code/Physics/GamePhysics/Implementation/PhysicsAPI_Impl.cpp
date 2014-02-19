@@ -1,6 +1,9 @@
 #include "PhysicsAPI_Impl.h"
 #include "OysterPhysics3D.h"
 #include "SimpleRigidBody.h"
+#include <BulletWorldImporter\btBulletWorldImporter.h>
+
+#include <codecvt>
 
 using namespace ::Oyster;
 using namespace ::Oyster::Physics;
@@ -92,8 +95,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 
 	state.centerPos = position;
 	state.reach = Float3(radius, radius, radius);
-	state.dynamicFrictionCoeff = 0.5f;
-	state.staticFrictionCoeff = 0.5f;
+	state.dynamicFrictionCoeff = dynamicFriction;
+	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
 
@@ -131,8 +134,8 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 
 	state.centerPos = position;
 	state.reach = halfSize;
-	state.dynamicFrictionCoeff = 0.5f;
-	state.staticFrictionCoeff = 0.5f;
+	state.dynamicFrictionCoeff = dynamicFriction;
+	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
 
@@ -170,8 +173,8 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 
 	state.centerPos = position;
 	state.reach = halfSize;
-	state.dynamicFrictionCoeff = 0.5f;
-	state.staticFrictionCoeff = 0.5f;
+	state.dynamicFrictionCoeff = dynamicFriction;
+	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
 
@@ -211,8 +214,55 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 
 	state.centerPos = position;
 	state.reach = Float3(radius, height, radius);
-	state.dynamicFrictionCoeff = 0.5f;
-	state.staticFrictionCoeff = 0.5f;
+	state.dynamicFrictionCoeff = dynamicFriction;
+	state.staticFrictionCoeff = staticFriction;
+	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
+	state.mass = mass;
+
+	body->SetState(state);
+
+	return body;
+}
+
+ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
+{
+	SimpleRigidBody* body = new SimpleRigidBody;
+	SimpleRigidBody::State state;
+
+	btBulletWorldImporter bulletFile;
+
+	typedef std::codecvt_utf8<wchar_t> convert_typeX;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	std::string bulletPath = converterX.to_bytes(fileName);
+
+	// Add collision shape
+	bulletFile.loadFile(bulletPath.c_str());
+	btCollisionShape* collisionShape = bulletFile.getCollisionShapeByIndex(0);
+	body->SetCollisionShape(collisionShape);
+
+	// Add motion state
+	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w),btVector3(position.x, position.y, position.z)));
+	body->SetMotionState(motionState);
+
+	// Add rigid body
+	btVector3 fallInertia(0, 0, 0);
+	collisionShape->calculateLocalInertia(mass, fallInertia);
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
+    btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+	rigidBody->setFriction(staticFriction);
+	rigidBody->setRestitution(restitution);
+	rigidBody->setUserPointer(body);
+	body->SetRigidBody(rigidBody);
+
+	// Add rigid body to world
+	this->dynamicsWorld->addRigidBody(rigidBody);
+	this->customBodies.push_back(body);
+
+	state.centerPos = position;
+	state.reach = Float3(0, 0, 0);
+	state.dynamicFrictionCoeff = dynamicFriction;
+	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
 

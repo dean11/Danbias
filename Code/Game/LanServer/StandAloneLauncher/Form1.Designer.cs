@@ -36,7 +36,6 @@
             this.label_listenPort = new System.Windows.Forms.Label();
             this.panel_serverOptions = new System.Windows.Forms.Panel();
             this.panel_commands = new System.Windows.Forms.Panel();
-            this.mapName = new System.Windows.Forms.TextBox();
             this.timeLimit = new System.Windows.Forms.NumericUpDown();
             this.gameModes = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,6 +51,22 @@
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.clientInfoBox = new System.Windows.Forms.ListBox();
             this.panel_CommanArea = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.mapName = new System.Windows.Forms.ComboBox();
+            this.panelServerCommands = new System.Windows.Forms.Panel();
+            this.buttonExecuteSend = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.dataProtocolFields = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonAddNewDataField = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.buttonsAtBottom = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).BeginInit();
             this.panel_serverOptions.SuspendLayout();
             this.panel_commands.SuspendLayout();
@@ -59,13 +74,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).BeginInit();
             this.panel_clientArea.SuspendLayout();
             this.panel_CommanArea.SuspendLayout();
+            this.panelServerCommands.SuspendLayout();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.dataProtocolFields.SuspendLayout();
+            this.buttonsAtBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // serverToggle
             // 
-            this.serverToggle.Location = new System.Drawing.Point(9, 106);
+            this.serverToggle.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.serverToggle.Location = new System.Drawing.Point(0, 83);
             this.serverToggle.Name = "serverToggle";
-            this.serverToggle.Size = new System.Drawing.Size(75, 23);
+            this.serverToggle.Size = new System.Drawing.Size(241, 20);
             this.serverToggle.TabIndex = 0;
             this.serverToggle.Text = "Start server";
             this.serverToggle.UseVisualStyleBackColor = true;
@@ -140,46 +162,40 @@
             this.panel_serverOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel_serverOptions.Location = new System.Drawing.Point(0, 0);
             this.panel_serverOptions.Name = "panel_serverOptions";
-            this.panel_serverOptions.Size = new System.Drawing.Size(200, 141);
+            this.panel_serverOptions.Size = new System.Drawing.Size(241, 103);
             this.panel_serverOptions.TabIndex = 6;
             // 
             // panel_commands
             // 
-            this.panel_commands.Controls.Add(this.mapName);
             this.panel_commands.Controls.Add(this.timeLimit);
+            this.panel_commands.Controls.Add(this.mapName);
             this.panel_commands.Controls.Add(this.gameModes);
             this.panel_commands.Controls.Add(this.label3);
             this.panel_commands.Controls.Add(this.forceStart);
             this.panel_commands.Controls.Add(this.label2);
             this.panel_commands.Controls.Add(this.label4);
+            this.panel_commands.Controls.Add(this.label5);
             this.panel_commands.Controls.Add(this.labelClientsConnected);
             this.panel_commands.Controls.Add(this.label1);
             this.panel_commands.Controls.Add(this.nrOfClients);
             this.panel_commands.Controls.Add(this.buttonStartGame);
-            this.panel_commands.Location = new System.Drawing.Point(3, 150);
+            this.panel_commands.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel_commands.Location = new System.Drawing.Point(0, 103);
             this.panel_commands.Name = "panel_commands";
-            this.panel_commands.Size = new System.Drawing.Size(191, 202);
+            this.panel_commands.Size = new System.Drawing.Size(241, 188);
             this.panel_commands.TabIndex = 7;
             this.panel_commands.Visible = false;
             // 
-            // mapName
-            // 
-            this.mapName.Location = new System.Drawing.Point(75, 10);
-            this.mapName.Name = "mapName";
-            this.mapName.Size = new System.Drawing.Size(113, 20);
-            this.mapName.TabIndex = 12;
-            this.mapName.Text = "2ofAll_updated.bias";
-            // 
             // timeLimit
             // 
-            this.timeLimit.Location = new System.Drawing.Point(109, 94);
+            this.timeLimit.Location = new System.Drawing.Point(112, 89);
             this.timeLimit.Minimum = new decimal(new int[] {
             5,
             0,
             0,
             0});
             this.timeLimit.Name = "timeLimit";
-            this.timeLimit.Size = new System.Drawing.Size(68, 20);
+            this.timeLimit.Size = new System.Drawing.Size(123, 20);
             this.timeLimit.TabIndex = 11;
             this.timeLimit.ThousandsSeparator = true;
             this.timeLimit.Value = new decimal(new int[] {
@@ -195,9 +211,9 @@
             this.gameModes.Items.AddRange(new object[] {
             "Free-for-all",
             "Team death-match"});
-            this.gameModes.Location = new System.Drawing.Point(78, 66);
+            this.gameModes.Location = new System.Drawing.Point(77, 61);
             this.gameModes.Name = "gameModes";
-            this.gameModes.Size = new System.Drawing.Size(110, 21);
+            this.gameModes.Size = new System.Drawing.Size(158, 21);
             this.gameModes.TabIndex = 10;
             // 
             // label3
@@ -242,11 +258,11 @@
             // labelClientsConnected
             // 
             this.labelClientsConnected.AutoSize = true;
-            this.labelClientsConnected.Location = new System.Drawing.Point(9, 149);
+            this.labelClientsConnected.Location = new System.Drawing.Point(131, 147);
             this.labelClientsConnected.Name = "labelClientsConnected";
-            this.labelClientsConnected.Size = new System.Drawing.Size(104, 13);
+            this.labelClientsConnected.Size = new System.Drawing.Size(80, 13);
             this.labelClientsConnected.TabIndex = 8;
-            this.labelClientsConnected.Text = "Clients connected: 0";
+            this.labelClientsConnected.Text = "Game clients: 0";
             // 
             // label1
             // 
@@ -259,7 +275,7 @@
             // 
             // nrOfClients
             // 
-            this.nrOfClients.Location = new System.Drawing.Point(78, 36);
+            this.nrOfClients.Location = new System.Drawing.Point(72, 34);
             this.nrOfClients.Maximum = new decimal(new int[] {
             20,
             0,
@@ -271,7 +287,7 @@
             0,
             0});
             this.nrOfClients.Name = "nrOfClients";
-            this.nrOfClients.Size = new System.Drawing.Size(39, 20);
+            this.nrOfClients.Size = new System.Drawing.Size(163, 20);
             this.nrOfClients.TabIndex = 7;
             this.nrOfClients.Value = new decimal(new int[] {
             10,
@@ -281,9 +297,10 @@
             // 
             // buttonStartGame
             // 
-            this.buttonStartGame.Location = new System.Drawing.Point(9, 176);
+            this.buttonStartGame.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonStartGame.Location = new System.Drawing.Point(0, 166);
             this.buttonStartGame.Name = "buttonStartGame";
-            this.buttonStartGame.Size = new System.Drawing.Size(75, 23);
+            this.buttonStartGame.Size = new System.Drawing.Size(241, 22);
             this.buttonStartGame.TabIndex = 6;
             this.buttonStartGame.Text = "Start game";
             this.buttonStartGame.UseVisualStyleBackColor = true;
@@ -295,9 +312,9 @@
             this.panel_clientArea.Controls.Add(this.splitter1);
             this.panel_clientArea.Controls.Add(this.clientInfoBox);
             this.panel_clientArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_clientArea.Location = new System.Drawing.Point(200, 0);
+            this.panel_clientArea.Location = new System.Drawing.Point(241, 0);
             this.panel_clientArea.Name = "panel_clientArea";
-            this.panel_clientArea.Size = new System.Drawing.Size(535, 616);
+            this.panel_clientArea.Size = new System.Drawing.Size(494, 616);
             this.panel_clientArea.TabIndex = 8;
             // 
             // ServerInfoTextArea
@@ -307,19 +324,19 @@
             this.ServerInfoTextArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ServerInfoTextArea.Font = new System.Drawing.Font("GulimChe", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ServerInfoTextArea.ForeColor = System.Drawing.SystemColors.Info;
-            this.ServerInfoTextArea.Location = new System.Drawing.Point(0, 152);
+            this.ServerInfoTextArea.Location = new System.Drawing.Point(0, 269);
             this.ServerInfoTextArea.Name = "ServerInfoTextArea";
             this.ServerInfoTextArea.ReadOnly = true;
-            this.ServerInfoTextArea.Size = new System.Drawing.Size(535, 464);
+            this.ServerInfoTextArea.Size = new System.Drawing.Size(494, 347);
             this.ServerInfoTextArea.TabIndex = 1;
             this.ServerInfoTextArea.Text = "";
             // 
             // splitter1
             // 
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(0, 147);
+            this.splitter1.Location = new System.Drawing.Point(0, 264);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(535, 5);
+            this.splitter1.Size = new System.Drawing.Size(494, 5);
             this.splitter1.TabIndex = 2;
             this.splitter1.TabStop = false;
             // 
@@ -329,18 +346,220 @@
             this.clientInfoBox.FormattingEnabled = true;
             this.clientInfoBox.Location = new System.Drawing.Point(0, 0);
             this.clientInfoBox.Name = "clientInfoBox";
-            this.clientInfoBox.Size = new System.Drawing.Size(535, 147);
+            this.clientInfoBox.Size = new System.Drawing.Size(494, 264);
             this.clientInfoBox.TabIndex = 0;
             // 
             // panel_CommanArea
             // 
+            this.panel_CommanArea.Controls.Add(this.panelServerCommands);
             this.panel_CommanArea.Controls.Add(this.panel_commands);
             this.panel_CommanArea.Controls.Add(this.panel_serverOptions);
             this.panel_CommanArea.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel_CommanArea.Location = new System.Drawing.Point(0, 0);
             this.panel_CommanArea.Name = "panel_CommanArea";
-            this.panel_CommanArea.Size = new System.Drawing.Size(200, 616);
+            this.panel_CommanArea.Size = new System.Drawing.Size(241, 616);
             this.panel_CommanArea.TabIndex = 9;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(23, 147);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Lobby clients: 0";
+            // 
+            // mapName
+            // 
+            this.mapName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.mapName.FormattingEnabled = true;
+            this.mapName.IntegralHeight = false;
+            this.mapName.Items.AddRange(new object[] {
+            "Set default"});
+            this.mapName.Location = new System.Drawing.Point(72, 7);
+            this.mapName.Name = "mapName";
+            this.mapName.Size = new System.Drawing.Size(163, 21);
+            this.mapName.TabIndex = 10;
+            // 
+            // panelServerCommands
+            // 
+            this.panelServerCommands.Controls.Add(this.dataProtocolFields);
+            this.panelServerCommands.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelServerCommands.Location = new System.Drawing.Point(0, 291);
+            this.panelServerCommands.Name = "panelServerCommands";
+            this.panelServerCommands.Size = new System.Drawing.Size(241, 85);
+            this.panelServerCommands.TabIndex = 8;
+            this.panelServerCommands.Visible = false;
+            // 
+            // buttonExecuteSend
+            // 
+            this.buttonExecuteSend.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonExecuteSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonExecuteSend.Location = new System.Drawing.Point(116, 0);
+            this.buttonExecuteSend.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonExecuteSend.Name = "buttonExecuteSend";
+            this.buttonExecuteSend.Size = new System.Drawing.Size(117, 21);
+            this.buttonExecuteSend.TabIndex = 0;
+            this.buttonExecuteSend.Text = "Send";
+            this.buttonExecuteSend.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.button2);
+            this.panel2.Controls.Add(this.textBox1);
+            this.panel2.Controls.Add(this.comboBox1);
+            this.panel2.Controls.Add(this.numericUpDown1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(4, 32);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(233, 21);
+            this.panel2.TabIndex = 0;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IntegralHeight = false;
+            this.comboBox1.Items.AddRange(new object[] {
+            "netBool;",
+            "netChar;",
+            "netUChar;",
+            "netShort;",
+            "netUShort;",
+            "netInt;",
+            "netUInt;",
+            "netInt64;",
+            "netUInt64;",
+            "netFloat;",
+            "netDouble;",
+            "netCharPtr;"});
+            this.comboBox1.Location = new System.Drawing.Point(42, 0);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(78, 21);
+            this.comboBox1.TabIndex = 10;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.numericUpDown1.Location = new System.Drawing.Point(0, 0);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(42, 20);
+            this.numericUpDown1.TabIndex = 11;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.textBox1.Location = new System.Drawing.Point(120, 0);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(64, 20);
+            this.textBox1.TabIndex = 12;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.29412F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.70588F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 110F));
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label7, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label8, 2, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 27.05882F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(233, 21);
+            this.tableLayoutPanel1.TabIndex = 9;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(4, 1);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(18, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "ID";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(46, 1);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(31, 13);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "Type";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(123, 1);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(34, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Value";
+            // 
+            // dataProtocolFields
+            // 
+            this.dataProtocolFields.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.dataProtocolFields.ColumnCount = 1;
+            this.dataProtocolFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 21F));
+            this.dataProtocolFields.Controls.Add(this.panel2, 0, 1);
+            this.dataProtocolFields.Controls.Add(this.tableLayoutPanel1, 0, 0);
+            this.dataProtocolFields.Controls.Add(this.buttonsAtBottom, 0, 2);
+            this.dataProtocolFields.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataProtocolFields.Location = new System.Drawing.Point(0, 0);
+            this.dataProtocolFields.Margin = new System.Windows.Forms.Padding(0);
+            this.dataProtocolFields.Name = "dataProtocolFields";
+            this.dataProtocolFields.RowCount = 3;
+            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.dataProtocolFields.Size = new System.Drawing.Size(241, 85);
+            this.dataProtocolFields.TabIndex = 9;
+            // 
+            // buttonAddNewDataField
+            // 
+            this.buttonAddNewDataField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonAddNewDataField.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonAddNewDataField.Location = new System.Drawing.Point(0, 0);
+            this.buttonAddNewDataField.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonAddNewDataField.Name = "buttonAddNewDataField";
+            this.buttonAddNewDataField.Size = new System.Drawing.Size(116, 21);
+            this.buttonAddNewDataField.TabIndex = 1;
+            this.buttonAddNewDataField.Text = "Add field";
+            this.buttonAddNewDataField.UseVisualStyleBackColor = true;
+            this.buttonAddNewDataField.Click += new System.EventHandler(this.buttonAddNewDataField_Click);
+            // 
+            // button2
+            // 
+            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Location = new System.Drawing.Point(184, 0);
+            this.button2.Margin = new System.Windows.Forms.Padding(0);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(49, 21);
+            this.button2.TabIndex = 0;
+            this.button2.Text = "remove";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // buttonsAtBottom
+            // 
+            this.buttonsAtBottom.ColumnCount = 2;
+            this.buttonsAtBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.buttonsAtBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.buttonsAtBottom.Controls.Add(this.buttonAddNewDataField, 0, 0);
+            this.buttonsAtBottom.Controls.Add(this.buttonExecuteSend, 1, 0);
+            this.buttonsAtBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonsAtBottom.Location = new System.Drawing.Point(4, 60);
+            this.buttonsAtBottom.Name = "buttonsAtBottom";
+            this.buttonsAtBottom.RowCount = 1;
+            this.buttonsAtBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.buttonsAtBottom.Size = new System.Drawing.Size(233, 21);
+            this.buttonsAtBottom.TabIndex = 10;
             // 
             // Form1
             // 
@@ -361,6 +580,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nrOfClients)).EndInit();
             this.panel_clientArea.ResumeLayout(false);
             this.panel_CommanArea.ResumeLayout(false);
+            this.panelServerCommands.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.dataProtocolFields.ResumeLayout(false);
+            this.buttonsAtBottom.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -387,10 +614,25 @@
         private System.Windows.Forms.NumericUpDown timeLimit;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox mapName;
         private System.Windows.Forms.CheckBox forceStart;
         private System.Windows.Forms.Label labelClientsConnected;
         private System.Windows.Forms.Panel panel_CommanArea;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox mapName;
+        private System.Windows.Forms.Panel panelServerCommands;
+        private System.Windows.Forms.Button buttonExecuteSend;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.TableLayoutPanel dataProtocolFields;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button buttonAddNewDataField;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TableLayoutPanel buttonsAtBottom;
     }
 }
 

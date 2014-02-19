@@ -72,7 +72,7 @@ namespace GameLogic
 
 		void GetAllPlayerPositions() const																				override;
 		PlayerData* CreatePlayer()																						override;
-		LevelData* CreateLevel()																						override;
+		LevelData* CreateLevel(const wchar_t mapName[255] )																override;
 		void CreateTeam()																								override;
 		bool NewFrame()																									override;
 		void SetFPS( int FPS )																							override;
