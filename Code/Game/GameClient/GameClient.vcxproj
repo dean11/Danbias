@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,7 +163,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -196,6 +196,9 @@
     <ProjectReference Include="..\GameServer\GameServer.vcxproj">
       <Project>{143bd516-20a1-4890-a3e4-f8bfd02220e7}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\LevelLoader\LevelLoader.vcxproj">
+      <Project>{6391e709-d9fa-4fef-a3b9-4343db5a0c63}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DanBiasGame_Impl.cpp" />
@@ -204,6 +207,7 @@
     <ClCompile Include="GameClientState\Camera_BasicV2.cpp" />
     <ClCompile Include="GameClientState\Camera_FPS.cpp" />
     <ClCompile Include="GameClientState\Camera_FPSV2.cpp" />
+    <ClCompile Include="GameClientState\C_Light.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_DynamicObj.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_Player.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_StaticObj.cpp" />
@@ -214,10 +218,6 @@
     <ClCompile Include="GameClientState\GameStateUI.cpp" />
     <ClCompile Include="GameClientState\GamingUI.cpp" />
     <ClCompile Include="GameClientState\LanMenuState.cpp" />
-    <ClCompile Include="GameClientState\LevelLoader\LevelLoader.cpp" />
-    <ClCompile Include="GameClientState\LevelLoader\LevelParser.cpp" />
-    <ClCompile Include="GameClientState\LevelLoader\Loader.cpp" />
-    <ClCompile Include="GameClientState\LevelLoader\ParseFunctions.cpp" />
     <ClCompile Include="GameClientState\LobbyAdminState.cpp" />
     <ClCompile Include="GameClientState\LobbyState.cpp" />
     <ClCompile Include="GameClientState\C_Object.cpp" />
@@ -234,6 +234,7 @@
     <ClInclude Include="GameClientState\Camera_BasicV2.h" />
     <ClInclude Include="GameClientState\Camera_FPS.h" />
     <ClInclude Include="GameClientState\Camera_FPSV2.h" />
+    <ClInclude Include="GameClientState\C_Light.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
     <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />
@@ -243,11 +244,6 @@
     <ClInclude Include="GameClientState\GameStateUI.h" />
     <ClInclude Include="GameClientState\GamingUI.h" />
     <ClInclude Include="GameClientState\LanMenuState.h" />
-    <ClInclude Include="GameClientState\LevelLoader\LevelLoader.h" />
-    <ClInclude Include="GameClientState\LevelLoader\LevelParser.h" />
-    <ClInclude Include="GameClientState\LevelLoader\Loader.h" />
-    <ClInclude Include="GameClientState\LevelLoader\ObjectDefines.h" />
-    <ClInclude Include="GameClientState\LevelLoader\ParseFunctions.h" />
     <ClInclude Include="GameClientState\LobbyAdminState.h" />
     <ClInclude Include="GameClientState\MainState.h" />
     <ClInclude Include="GameClientState\NetLoadState.h" />

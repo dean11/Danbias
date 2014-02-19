@@ -52,7 +52,6 @@ namespace GameLogic
 		CollisionGeometryType_Box,
 		CollisionGeometryType_Sphere,
 		CollisionGeometryType_Cylinder,
-		CollisionGeometryType_TriangleMesh,
 
 		CollisionGeometryType_Count,
 		CollisionGeometryType_Unknown = -1
@@ -162,12 +161,6 @@ namespace GameLogic
 			float radius;
 		};
 
-		struct BoundingVolumeTriangleMesh : public BoundingVolumeBase
-		{
-			//Null terminated
-			wchar_t* filename;
-		};
-
 		struct BoundingVolume
 		{
 			CollisionGeometryType geoType;
@@ -176,16 +169,7 @@ namespace GameLogic
 				LevelLoaderInternal::BoundingVolumeBox box;
 				LevelLoaderInternal::BoundingVolumeSphere sphere;
 				LevelLoaderInternal::BoundingVolumeCylinder cylinder;
-				LevelLoaderInternal::BoundingVolumeTriangleMesh triangleMesh;
 			};
-
-			virtual ~BoundingVolume()
-			{
-				if(geoType == CollisionGeometryType_TriangleMesh)
-				{
-					delete[] triangleMesh.filename;
-				}
-			}
 		};
 
 	}
@@ -223,11 +207,13 @@ namespace GameLogic
 		virtual ~ObjectHeader(){}
 	};
 
+	//inheritance from the base class because there is no use for ModelFile, Rotation and Scale
+	//so this is a special struct for just spawnpoints
 	struct SpawnPointAttributes : public ObjectTypeHeader
 	{
-		ObjectSpecialType specialTypeID;
 		float position[3];
 	};
+
 	/************************************
 				Special objects
 	*************************************/
@@ -253,6 +239,8 @@ namespace GameLogic
 	{
 		float skySize;
 	};
+
+	
 
 	
 

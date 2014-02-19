@@ -14,7 +14,7 @@
 #include "PhysicsAPI.h"
 #include "TeamManager.h"
 #include "DynamicArray.h"
-#include "LevelLoader/LevelLoader.h"
+#include "LevelLoader.h"
 
 namespace GameLogic
 {

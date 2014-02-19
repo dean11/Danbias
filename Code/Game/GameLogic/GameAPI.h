@@ -12,7 +12,7 @@
 #include "GameLogicDef.h"
 #include "GameLogicStates.h"
 #include <OysterMath.h>
-#include "LevelLoader\ObjectDefines.h"
+#include "..\LevelLoader\ObjectDefines.h"
 #include "DynamicArray.h"
 
 

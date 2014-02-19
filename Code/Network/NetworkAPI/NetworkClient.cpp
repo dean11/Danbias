@@ -319,7 +319,23 @@ bool NetworkClient::Connect(unsigned short port, std::wstring serverIP)
 
 bool NetworkClient::Reconnect()
 {
-	return this->privateData->connection.Reconnect();
+	if(this->IsConnected())	
+		return false;
+	//if(this->privateData)
+		//return false;
+	if(!this->privateData)	this->privateData = new PrivateData();
+
+	int result = this->privateData->connection.Reconnect();
+
+	if(result != 0)
+	{
+		return false;
+	}
+	this->privateData->owner = 0;
+	this->privateData->parent = this;
+	this->privateData->thread.Start();
+
+	return true;
 }
 
 void NetworkClient::Disconnect()
