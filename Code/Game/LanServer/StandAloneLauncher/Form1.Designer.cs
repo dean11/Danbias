@@ -37,11 +37,13 @@
             this.panel_serverOptions = new System.Windows.Forms.Panel();
             this.panel_commands = new System.Windows.Forms.Panel();
             this.timeLimit = new System.Windows.Forms.NumericUpDown();
+            this.mapName = new System.Windows.Forms.ComboBox();
             this.gameModes = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.forceStart = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.labelClientsConnected = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.nrOfClients = new System.Windows.Forms.NumericUpDown();
@@ -51,22 +53,20 @@
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.clientInfoBox = new System.Windows.Forms.ListBox();
             this.panel_CommanArea = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
-            this.mapName = new System.Windows.Forms.ComboBox();
             this.panelServerCommands = new System.Windows.Forms.Panel();
-            this.buttonExecuteSend = new System.Windows.Forms.Button();
+            this.dataProtocolFields = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.dataProtocolFields = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonAddNewDataField = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.buttonsAtBottom = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonAddNewDataField = new System.Windows.Forms.Button();
+            this.buttonExecuteSend = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.listenPort)).BeginInit();
             this.panel_serverOptions.SuspendLayout();
             this.panel_commands.SuspendLayout();
@@ -75,10 +75,10 @@
             this.panel_clientArea.SuspendLayout();
             this.panel_CommanArea.SuspendLayout();
             this.panelServerCommands.SuspendLayout();
+            this.dataProtocolFields.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
-            this.dataProtocolFields.SuspendLayout();
             this.buttonsAtBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -204,6 +204,18 @@
             0,
             0});
             // 
+            // mapName
+            // 
+            this.mapName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.mapName.FormattingEnabled = true;
+            this.mapName.IntegralHeight = false;
+            this.mapName.Items.AddRange(new object[] {
+            "Set default"});
+            this.mapName.Location = new System.Drawing.Point(72, 7);
+            this.mapName.Name = "mapName";
+            this.mapName.Size = new System.Drawing.Size(163, 21);
+            this.mapName.TabIndex = 10;
+            // 
             // gameModes
             // 
             this.gameModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -254,6 +266,15 @@
             this.label4.Size = new System.Drawing.Size(57, 13);
             this.label4.TabIndex = 8;
             this.label4.Text = "Map name";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(23, 147);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Lobby clients: 0";
             // 
             // labelClientsConnected
             // 
@@ -360,27 +381,6 @@
             this.panel_CommanArea.Size = new System.Drawing.Size(241, 616);
             this.panel_CommanArea.TabIndex = 9;
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(23, 147);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Lobby clients: 0";
-            // 
-            // mapName
-            // 
-            this.mapName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.mapName.FormattingEnabled = true;
-            this.mapName.IntegralHeight = false;
-            this.mapName.Items.AddRange(new object[] {
-            "Set default"});
-            this.mapName.Location = new System.Drawing.Point(72, 7);
-            this.mapName.Name = "mapName";
-            this.mapName.Size = new System.Drawing.Size(163, 21);
-            this.mapName.TabIndex = 10;
-            // 
             // panelServerCommands
             // 
             this.panelServerCommands.Controls.Add(this.dataProtocolFields);
@@ -391,17 +391,24 @@
             this.panelServerCommands.TabIndex = 8;
             this.panelServerCommands.Visible = false;
             // 
-            // buttonExecuteSend
+            // dataProtocolFields
             // 
-            this.buttonExecuteSend.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonExecuteSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonExecuteSend.Location = new System.Drawing.Point(116, 0);
-            this.buttonExecuteSend.Margin = new System.Windows.Forms.Padding(0);
-            this.buttonExecuteSend.Name = "buttonExecuteSend";
-            this.buttonExecuteSend.Size = new System.Drawing.Size(117, 21);
-            this.buttonExecuteSend.TabIndex = 0;
-            this.buttonExecuteSend.Text = "Send";
-            this.buttonExecuteSend.UseVisualStyleBackColor = true;
+            this.dataProtocolFields.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.dataProtocolFields.ColumnCount = 1;
+            this.dataProtocolFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 21F));
+            this.dataProtocolFields.Controls.Add(this.panel2, 0, 1);
+            this.dataProtocolFields.Controls.Add(this.tableLayoutPanel1, 0, 0);
+            this.dataProtocolFields.Controls.Add(this.buttonsAtBottom, 0, 2);
+            this.dataProtocolFields.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataProtocolFields.Location = new System.Drawing.Point(0, 0);
+            this.dataProtocolFields.Margin = new System.Windows.Forms.Padding(0);
+            this.dataProtocolFields.Name = "dataProtocolFields";
+            this.dataProtocolFields.RowCount = 3;
+            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.dataProtocolFields.Size = new System.Drawing.Size(241, 85);
+            this.dataProtocolFields.TabIndex = 9;
             // 
             // panel2
             // 
@@ -414,6 +421,27 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(233, 21);
             this.panel2.TabIndex = 0;
+            // 
+            // button2
+            // 
+            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button2.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Location = new System.Drawing.Point(184, 0);
+            this.button2.Margin = new System.Windows.Forms.Padding(0);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(49, 21);
+            this.button2.TabIndex = 0;
+            this.button2.Text = "remove";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.textBox1.Location = new System.Drawing.Point(120, 0);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(64, 20);
+            this.textBox1.TabIndex = 12;
             // 
             // comboBox1
             // 
@@ -447,21 +475,13 @@
             this.numericUpDown1.Size = new System.Drawing.Size(42, 20);
             this.numericUpDown1.TabIndex = 11;
             // 
-            // textBox1
-            // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox1.Location = new System.Drawing.Point(120, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(64, 20);
-            this.textBox1.TabIndex = 12;
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.29412F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.70588F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 110F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 118F));
             this.tableLayoutPanel1.Controls.Add(this.label6, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label7, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label8, 2, 0);
@@ -486,7 +506,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(46, 1);
+            this.label7.Location = new System.Drawing.Point(44, 1);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(31, 13);
             this.label7.TabIndex = 8;
@@ -495,56 +515,11 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(123, 1);
+            this.label8.Location = new System.Drawing.Point(116, 1);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(34, 13);
             this.label8.TabIndex = 8;
             this.label8.Text = "Value";
-            // 
-            // dataProtocolFields
-            // 
-            this.dataProtocolFields.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.dataProtocolFields.ColumnCount = 1;
-            this.dataProtocolFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 21F));
-            this.dataProtocolFields.Controls.Add(this.panel2, 0, 1);
-            this.dataProtocolFields.Controls.Add(this.tableLayoutPanel1, 0, 0);
-            this.dataProtocolFields.Controls.Add(this.buttonsAtBottom, 0, 2);
-            this.dataProtocolFields.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataProtocolFields.Location = new System.Drawing.Point(0, 0);
-            this.dataProtocolFields.Margin = new System.Windows.Forms.Padding(0);
-            this.dataProtocolFields.Name = "dataProtocolFields";
-            this.dataProtocolFields.RowCount = 3;
-            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-            this.dataProtocolFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.dataProtocolFields.Size = new System.Drawing.Size(241, 85);
-            this.dataProtocolFields.TabIndex = 9;
-            // 
-            // buttonAddNewDataField
-            // 
-            this.buttonAddNewDataField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAddNewDataField.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonAddNewDataField.Location = new System.Drawing.Point(0, 0);
-            this.buttonAddNewDataField.Margin = new System.Windows.Forms.Padding(0);
-            this.buttonAddNewDataField.Name = "buttonAddNewDataField";
-            this.buttonAddNewDataField.Size = new System.Drawing.Size(116, 21);
-            this.buttonAddNewDataField.TabIndex = 1;
-            this.buttonAddNewDataField.Text = "Add field";
-            this.buttonAddNewDataField.UseVisualStyleBackColor = true;
-            this.buttonAddNewDataField.Click += new System.EventHandler(this.buttonAddNewDataField_Click);
-            // 
-            // button2
-            // 
-            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Location = new System.Drawing.Point(184, 0);
-            this.button2.Margin = new System.Windows.Forms.Padding(0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(49, 21);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "remove";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // buttonsAtBottom
             // 
@@ -560,6 +535,31 @@
             this.buttonsAtBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.buttonsAtBottom.Size = new System.Drawing.Size(233, 21);
             this.buttonsAtBottom.TabIndex = 10;
+            // 
+            // buttonAddNewDataField
+            // 
+            this.buttonAddNewDataField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonAddNewDataField.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonAddNewDataField.Location = new System.Drawing.Point(0, 0);
+            this.buttonAddNewDataField.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonAddNewDataField.Name = "buttonAddNewDataField";
+            this.buttonAddNewDataField.Size = new System.Drawing.Size(116, 21);
+            this.buttonAddNewDataField.TabIndex = 1;
+            this.buttonAddNewDataField.Text = "Add field";
+            this.buttonAddNewDataField.UseVisualStyleBackColor = true;
+            this.buttonAddNewDataField.Click += new System.EventHandler(this.buttonAddNewDataField_Click);
+            // 
+            // buttonExecuteSend
+            // 
+            this.buttonExecuteSend.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonExecuteSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonExecuteSend.Location = new System.Drawing.Point(116, 0);
+            this.buttonExecuteSend.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonExecuteSend.Name = "buttonExecuteSend";
+            this.buttonExecuteSend.Size = new System.Drawing.Size(117, 21);
+            this.buttonExecuteSend.TabIndex = 0;
+            this.buttonExecuteSend.Text = "Send";
+            this.buttonExecuteSend.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -581,12 +581,12 @@
             this.panel_clientArea.ResumeLayout(false);
             this.panel_CommanArea.ResumeLayout(false);
             this.panelServerCommands.ResumeLayout(false);
+            this.dataProtocolFields.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.dataProtocolFields.ResumeLayout(false);
             this.buttonsAtBottom.ResumeLayout(false);
             this.ResumeLayout(false);
 

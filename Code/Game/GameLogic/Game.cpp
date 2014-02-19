@@ -68,12 +68,13 @@ void Game::GetAllPlayerPositions() const
 Game::PlayerData* Game::CreatePlayer()
 {
 	// Find a free space in array or insert at end
-	int i = InsertObject(this->players, (PlayerData*)0);
+	
+	PlayerData *temp = new PlayerData();
+	temp->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
 
-	this->players[i] = new PlayerData();
-	this->players[i]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	int i = InsertObject(this->players, temp);
 
-	return this->players[i];
+	return temp;
 }
 
 Game::LevelData* Game::CreateLevel(const wchar_t mapName[255])
@@ -95,22 +96,15 @@ bool Game::NewFrame()
 {
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+		if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
 	API::Instance().UpdateWorld();
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-		gameInstance.onMoveFnc(this->players[i]);
+		if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
-	for (unsigned int i = 0; i < this->level->level->dynamicObjects.Size(); i++)
-	{
-		gameInstance.onMoveFnc(this->level->level->dynamicObjects[i]);
-	}
-	
-
 	return true;
 }
 
