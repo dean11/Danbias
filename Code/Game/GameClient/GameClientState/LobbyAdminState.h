@@ -29,8 +29,8 @@ namespace DanBias
 			bool Render();
 			bool Release();
 			void ChangeState( ClientState next );
-			void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
-
+			const NetEvent & DataRecieved( const NetEvent &message );
+			
 		private:
 			struct MyData;
 			::Utility::DynamicMemory::UniquePointer<MyData> privData;

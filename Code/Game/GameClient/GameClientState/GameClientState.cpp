@@ -3,9 +3,14 @@
 using namespace DanBias::Client;
 using namespace ::Oyster::Network;
 
+const GameClientState::NetEvent GameClientState::event_processed = GameClientState::NetEvent();
+
 GameClientState::GameClientState() {}
 
 GameClientState::~GameClientState() {}
 
-void GameClientState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
-{ /* do nothing */ }
+const GameClientState::NetEvent & GameClientState::DataRecieved( const GameClientState::NetEvent &message )
+{
+	/* do nothing */
+	return message;
+}

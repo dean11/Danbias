@@ -20,7 +20,7 @@ namespace GameLogic
 		/***********************************************************
 			* Lets you set the standard folderpath for the levels
 			********************************************************/
-		LevelLoader(std::string folderPath);
+		LevelLoader(std::wstring folderPath);
 		~LevelLoader();
 
 		/********************************************************
@@ -28,24 +28,24 @@ namespace GameLogic
 			* @param fileName: Path/name to the level-file that you want to load.
 			* @return: Returns all structs with objects and information about the level.
 			********************************************************/
-		std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> LoadLevel(std::string fileName);
+		std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> LoadLevel(std::wstring fileName);
 
 		/********************************************************
 			* Just for fast access for the meta information about the level.
 			* @param fileName: Path to the level-file that you want to load.
 			* @return: Returns the meta information about the level.
 			********************************************************/
-		LevelMetaData LoadLevelHeader(std::string fileName); //.
+		LevelMetaData LoadLevelHeader(std::wstring fileName); //.
 
 		/***********************************************************
 			* @return: Returns the current standard folder path
 			********************************************************/
-		std::string GetFolderPath();
+		std::wstring GetFolderPath();
 
 		/***********************************************************
 			* Sets the standard folder path
 			********************************************************/
-		void SetFolderPath(std::string folderPath);
+		void SetFolderPath(std::wstring folderPath);
 
 	private:
 		struct PrivData;

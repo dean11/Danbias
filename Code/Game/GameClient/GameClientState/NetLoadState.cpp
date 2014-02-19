@@ -54,11 +54,8 @@ bool NetLoadState::Init( SharedStateContent &shared )
 
 	// we may assume that nwClient is properly connected to the server
 	// signals querry to server for loading instructions
-	//this->privData->nwClient->Send( Protocol_QuerryGameType() );
+	this->privData->nwClient->Send( Protocol_QuerryGameType() );
 
-	// debugg
-	this->LoadGame( "..//Content//Worlds//2ofAll_updated.bias");
-	this->ChangeState( ClientState_Game );
 	return true;
 }
 
@@ -93,16 +90,25 @@ void NetLoadState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	// fetching the id data.
-	short ID = e.args.data.protocol[0].value.netShort;
+	short ID = message.args.data.protocol[0].value.netShort;
 	
-	if( ID == protocol_Lobby_CreateGame && !this->privData->loading )
+	if( ID == protocol_Lobby_CreateGame )
 	{
-		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).modelName );
-		this->ChangeState( ClientState_Game );
-		this->privData->loading = false;
+		if( !this->privData->loading )
+		{
+			this->LoadGame( Protocol_LobbyCreateGame(message.args.data.protocol).mapName );
+			this->ChangeState( ClientState_Game );
+			this->privData->loading = false;
+		}
+		return GameClientState::event_processed;
+	}
+	else
+	{ // HACK: Debug trap
+		const char *breakPoint = "Being greedy.";
+		return message;
 	}
 }
 
@@ -110,7 +116,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 {
 	this->privData->loading = true;
 
-	LevelLoader loader;
+	LevelLoader loader( "..\\Content\\Worlds\\" );
 	auto objects = loader.LoadLevel( fileName );
 	auto object = objects.begin();
 	ObjectTypeHeader *oth;
@@ -135,6 +141,17 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				desc.scale		= oh->scale;
 				desc.visible	= true; 
 
+<<<<<<< HEAD
+=======
+				// HACK: untill the world is right in lvl format
+				if( oh->specialTypeID == ObjectSpecialType_World)
+				{
+					desc.position	= Float3(0,0,0); 
+					desc.rotation	= Quaternion::identity;
+					desc.scale		= Float3(300,300,300);
+				}
+
+>>>>>>> ed6825a40888474eb1b4a803085fbe4e073812f2
 				C_StaticObj *staticObject = new C_StaticObj();
 				if( staticObject->Init( desc ) )
 				{

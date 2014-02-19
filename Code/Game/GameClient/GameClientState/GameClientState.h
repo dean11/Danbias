@@ -22,7 +22,9 @@ namespace DanBias { namespace Client
 			ClientState_Quit
 		};
 
-	public:
+		typedef ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> NetEvent;
+		static const NetEvent event_processed;
+
 		GameClientState();
 		virtual ~GameClientState();
 		virtual bool Init( SharedStateContent &shared ) = 0;
@@ -31,7 +33,11 @@ namespace DanBias { namespace Client
 		virtual bool Release() = 0;
 		virtual void ChangeState( ClientState next ) = 0;
 
-		virtual void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
+		/******************************************************************
+		 * @param message of the event
+		 * @return message or GameClientState::event_processed.
+		 ******************************************************************/
+		virtual const NetEvent & DataRecieved( const NetEvent &message );
 	};
 } }
 
