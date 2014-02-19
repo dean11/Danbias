@@ -62,6 +62,7 @@ namespace Oyster
 				ID3D11BlendState* Resources::RenderStates::bs = NULL;
 
 				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
+				ID3D11DepthStencilView* Resources::Gui::depth = NULL;
 #pragma endregion
 
 
@@ -159,7 +160,7 @@ namespace Oyster
 					D3D11_RASTERIZER_DESC rdesc;
 					rdesc.CullMode = D3D11_CULL_BACK;
 					rdesc.FillMode = D3D11_FILL_SOLID;
-					rdesc.FrontCounterClockwise = false;
+					rdesc.FrontCounterClockwise = true;
 					rdesc.DepthBias = 0;
 					rdesc.DepthBiasClamp = 0;
 					rdesc.DepthClipEnable = true;
@@ -304,6 +305,7 @@ namespace Oyster
 					ID3D11Texture1D *pTexture1;
 
 					 Core::device->CreateTexture1D( &T1desc, &sphere, &pTexture1 );
+					Core::UsedMem += T1desc.Width * 16;
 					 Core::device->CreateShaderResourceView( pTexture1, 0, &Light::SSAOKernel );
 					pTexture1->Release();
 
@@ -323,8 +325,33 @@ namespace Oyster
 					ID3D11Texture2D *pTexture2;
 
 					Core::device->CreateTexture2D( &T2desc, &rnd, &pTexture2 );
+					Core::UsedMem += T2desc.Height * T2desc.Width * 16;
 					Core::device->CreateShaderResourceView( (pTexture2), 0, &Light::SSAORandom );
 					pTexture2->Release();
+
+					//create Depth Buffer
+					D3D11_TEXTURE2D_DESC dTDesc;
+					dTDesc.MipLevels=1;
+					dTDesc.ArraySize=1;
+					dTDesc.Format = DXGI_FORMAT_D32_FLOAT;
+					dTDesc.Usage = D3D11_USAGE_DEFAULT;
+					dTDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+					dTDesc.CPUAccessFlags=0;
+					dTDesc.MiscFlags=0;
+					dTDesc.Height = (UINT)Core::resolution.y;
+					dTDesc.Width = (UINT)Core::resolution.x;
+					dTDesc.SampleDesc.Count=1;
+					dTDesc.SampleDesc.Quality=0;
+
+					ID3D11Texture2D* depthstencil;
+					Core::device->CreateTexture2D(&dTDesc,0,&depthstencil);
+					Core::UsedMem += dTDesc.Height * dTDesc.Width * 4;
+					Core::device->CreateDepthStencilView(depthstencil,NULL,&Gui::depth);
+					depthstencil->Release();
+
+					
+					D3D11_DEPTH_STENCIL_DESC dDesc;
+
 					return Core::Init::Success;
 				}
 
@@ -390,9 +417,12 @@ namespace Oyster
 					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
 					Gui::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
+
 					Gui::Pass.RTV.push_back(GBufferRTV[2]);
 					Gui::Pass.CBuffers.Geometry.push_back(Gui::Data);
 					Gui::Pass.CBuffers.Pixel.push_back(Color);
+
+					Gui::Pass.depth = Gui::depth;
 
 					D3D11_INPUT_ELEMENT_DESC indesc2D[] =
 					{
@@ -405,6 +435,7 @@ namespace Oyster
 					Gui::Pass.RenderStates.SampleCount = 1;
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
+					Gui::Pass.RenderStates.DepthStencil = RenderStates::dsState;
 
 					////---------------- Blur Pass Setup ----------------------------
 					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
@@ -442,9 +473,13 @@ namespace Oyster
 					Gui::Text::Pass.CBuffers.Pixel.push_back(Color);
 					Gui::Text::Pass.SRV.Pixel.push_back(Gui::Text::Font);
 					Gui::Text::Pass.RTV.push_back(GBufferRTV[2]);
+
+					Gui::Text::Pass.depth = Gui::depth;
+
 					Gui::Text::Pass.RenderStates.SampleCount = 1;
 					Gui::Text::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Text::Pass.RenderStates.BlendState = RenderStates::bs;
+					Gui::Text::Pass.RenderStates.DepthStencil = RenderStates::dsState;
 
 					return Core::Init::Success;
 				}
@@ -510,6 +545,8 @@ namespace Oyster
 					SAFE_RELEASE(Gui::Text::Pass.RenderStates.BlendState);
 
 					SAFE_RELEASE(Gui::Text::Pass.IAStage.Layout);
+
+					SAFE_RELEASE(Gui::depth);
 				}
 		}
 	}

@@ -9,19 +9,19 @@ namespace Oyster
 		namespace Render
 		{				
 			const int TEXT_NR_LETTERS=95;
-			const float TEXT_SPACING=1.8f;
+			const float TEXT_SPACING=2.0f;
 
 			void Gui::Begin2DRender()
 			{
 				Core::PipelineManager::SetRenderPass(Render::Resources::Gui::Pass);
 			}
 
-			void Gui::Render(ID3D11ShaderResourceView* tex,Math::Float3 pos, Math::Float2 size, Math::Float3 color)
+			void Gui::Render(ID3D11ShaderResourceView* tex,Math::Float3 pos, Math::Float2 size, Math::Float4 color)
 			{
 				Core::deviceContext->PSSetShaderResources(0,1,&tex);
 
-				pos *= 2;
-				pos -= 1;
+				pos.xy *= 2;
+				pos.xy -= 1;
 				pos.y *= -1;
 
 				Definitions::GuiData gd;
@@ -37,7 +37,7 @@ namespace Oyster
 				Render::Resources::Gui::Data.Unmap();
 
 				data = Render::Resources::Color.Map();
-				memcpy(data,&color,sizeof(Math::Float3));
+				memcpy(data,&color,sizeof(Math::Float4));
 				Render::Resources::Color.Unmap();
 
 
@@ -50,7 +50,7 @@ namespace Oyster
 				Core::PipelineManager::SetRenderPass(Resources::Gui::Text::Pass);
 			}
 
-			void Gui::RenderText(std::wstring text, Math::Float3 pos, Math::Float2 size, float FontSize, Math::Float3 color)
+			void Gui::RenderText(std::wstring text, Math::Float3 pos, Math::Float2 size, float FontSize, Math::Float4 color)
 			{
 				
 				//size.x = size.x / (text.length() * TEXT_SPACING /2);
@@ -81,7 +81,7 @@ namespace Oyster
 				Definitions::Text2D tmpInst;
 
 				data = Render::Resources::Color.Map();
-				memcpy(data,&color,sizeof(Math::Float3));
+				memcpy(data,&color,sizeof(Math::Float4));
 				Render::Resources::Color.Unmap();
 
 				void* dest = Resources::Gui::Text::Vertex.Map();

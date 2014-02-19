@@ -10,7 +10,7 @@ cbuffer EveryObject2D : register(b0)
 
 cbuffer ColorData : register(b0)
 {
-	float3 Color;
+	float4 Color;
 };
 
 struct Pixel2DIn

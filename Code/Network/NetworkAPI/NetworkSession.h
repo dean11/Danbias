@@ -98,9 +98,9 @@ namespace Oyster
 
 		protected:
 			NetClientList clients;
-
-		private:
 			int clientCount;
+			
+		private:
 			struct PrivateSessionData;
 			PrivateSessionData* data;
 		};

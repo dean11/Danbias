@@ -100,5 +100,9 @@ void C_Object::Render()
 }
 void C_Object::Release()
 {
-	Oyster::Graphics::API::DeleteModel(model);
+	if( this->model )
+	{
+		Oyster::Graphics::API::DeleteModel(model);
+		this->model = nullptr;
+	}
 }

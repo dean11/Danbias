@@ -41,61 +41,41 @@ namespace GameLogic
 
 	struct Protocol_LobbyCreateGame :public Oyster::Network::CustomProtocolObject
 	{
-		short clientID; // The unuiqe id reprsenting a specific client
-		std::string modelName;
-		float worldMatrix[16];
-
+		char majorVersion;
+		char minorVersion;
+		std::string mapName;
+		
 		Protocol_LobbyCreateGame()
 		{
-			int c = 0;
-			this->protocol[c].value = protocol_Lobby_CreateGame;
-			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
-
-			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
-			for (int i = 0; i <= 16; i++)
-			{
-				this->protocol[c++].type = Oyster::Network::NetAttributeType_Float;
-			}
-			this->protocol[c++].type = Oyster::Network::NetAttributeType_CharArray;
+			this->protocol[0].value = protocol_Lobby_CreateGame;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_CharArray;
 		}
-		Protocol_LobbyCreateGame(short _clientID, std::string name, float world[16])
+		Protocol_LobbyCreateGame(char majorVersion, char minorVersion, std::string name)
 		{
-			int c = 0;
-			this->protocol[c].value = protocol_Lobby_CreateGame;
-			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value = protocol_Lobby_CreateGame;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Char;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_CharArray;
 
-			this->protocol[c++].type = Oyster::Network::NetAttributeType_Short;
-			for (int i = 0; i <= 16; i++)
-			{
-				this->protocol[c++].type = Oyster::Network::NetAttributeType_Float;
-			}
-
-			this->protocol[c++].type = Oyster::Network::NetAttributeType_CharArray;
-
-			clientID = _clientID;
-			modelName = name;
-			memcpy(&worldMatrix[0], &world[0], sizeof(float) * 16);
+			this->majorVersion = majorVersion;
+			this->minorVersion = minorVersion;
+			this->mapName = name;
 		}
 		Protocol_LobbyCreateGame(Oyster::Network::CustomNetProtocol o)
 		{
-			int c = 1;
-			clientID = o[c++].value.netInt;
-			for (int i = 0; i <= 16; i++)
-			{
-				this->worldMatrix[i] = o[c++].value.netFloat;
-			}
-			modelName.assign(o[c++].value.netCharPtr);
+			this->majorVersion = o[1].value.netChar;
+			this->minorVersion = o[2].value.netChar;
+			this->mapName.assign(o[3].value.netCharPtr);
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			int c = 1;
-			protocol[c++].value = clientID;
-			
-			for (int i = 0; i <= 16; i++)
-			{
-				this->protocol[c++].value = this->worldMatrix[i];
-			}
-			protocol.Set(c++, this->modelName);
+			protocol[1].value = this->majorVersion;
+			protocol[2].value = this->minorVersion;
+			protocol.Set(3, this->mapName);
 			return protocol;
 		}
 		

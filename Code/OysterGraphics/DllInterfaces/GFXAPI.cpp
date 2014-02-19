@@ -19,11 +19,19 @@ namespace Oyster
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
+#ifdef _DEBUG
+			Model::Model* cube;
+			Model::Model* sphere;
+
+			ID3D11RasterizerState* wire;
+#endif
 		}
 
-		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Math::Float2 resulotion)
+		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, API::Option o)
 		{
-			Core::resolution = resulotion;
+			Core::resolution = o.Resolution;
+			Core::modelPath = o.modelPath;
+			Core::texturePath = o.texturePath;
 
 			if(Core::Init::FullInit(Window, MSAA_Quality, Fullscreen) == Core::Init::Fail)
 			{
@@ -32,7 +40,33 @@ namespace Oyster
 			Render::Resources::Gui::Text::Font = (ID3D11ShaderResourceView*)API::CreateTexture(L"font_generic.png");
 			Render::Resources::Init();
 
+			Definitions::PostData pd;
+			pd.Amb = o.AmbientValue;
+
+			void* data = Render::Resources::Post::Data.Map();
+			memcpy(data,&pd,sizeof(Definitions::PostData));
+			Render::Resources::Post::Data.Unmap();
+
 			Render::Preparations::Basic::SetViewPort();
+#ifdef _DEBUG
+			//fix load model
+			cube = CreateModel(L"debug_cube.dan");
+			sphere = CreateModel(L"debug_sphere.dan");
+
+			D3D11_RASTERIZER_DESC desc;
+			desc.CullMode = D3D11_CULL_BACK;
+			desc.FillMode = D3D11_FILL_WIREFRAME;
+			desc.FrontCounterClockwise = false;
+			desc.DepthBias = 0;
+			desc.DepthBiasClamp = 0;
+			desc.DepthClipEnable = true;
+			desc.SlopeScaledDepthBias = 0;
+			desc.ScissorEnable = false;
+			desc.MultisampleEnable = false;
+			desc.AntialiasedLineEnable = false;
+
+			Core::device->CreateRasterizerState(&desc,&wire);
+#endif
 			return API::Sucsess;
 		}
 
@@ -77,6 +111,14 @@ namespace Oyster
 		{
 			Core::modelPath = option.modelPath;
 			Core::texturePath = option.texturePath;
+			
+			Definitions::PostData pd;
+			pd.Amb = option.AmbientValue;
+
+			void* data = Render::Resources::Post::Data.Map();
+			memcpy(data,&pd,sizeof(Definitions::PostData));
+			Render::Resources::Post::Data.Unmap();
+
 			return API::Sucsess;
 		}
 
@@ -113,6 +155,11 @@ namespace Oyster
 
 		void API::Clean()
 		{
+#ifdef _DEBUG
+			DeleteModel(cube);
+			DeleteModel(sphere);
+			SAFE_RELEASE(wire);
+#endif
 			DeleteTexture(Render::Resources::Gui::Text::Font);
 			SAFE_DELETE(Core::viewPort);
 			Core::loader.Clean();
@@ -127,6 +174,7 @@ namespace Oyster
 			SAFE_RELEASE(Core::swapChain);
 			SAFE_RELEASE(Core::deviceContext);
 			SAFE_RELEASE(Core::device);
+
 		}
 
 		void API::AddLight(Definitions::Pointlight light)
@@ -145,6 +193,24 @@ namespace Oyster
 			Render::Resources::InitShaders();
 			return State::Sucsess;
 		}
+
+		void API::StartRenderWireFrame()
+		{
+			Core::deviceContext->RSSetState(wire);
+			Core::deviceContext->OMSetRenderTargets(Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+		}
+
+		void API::RenderDebugCube(Math::Matrix world)
+		{
+			cube->WorldMatrix = world;
+			Render::DefaultRenderer::RenderScene(cube,1,View,Projection);
+		}
+
+		void API::RenderDebugSphere(Math::Matrix world)
+		{
+			sphere->WorldMatrix = world;
+			Render::DefaultRenderer::RenderScene(sphere,1,View,Projection);
+		}
 #endif
 
 		API::Option API::GetOption()
@@ -153,6 +219,7 @@ namespace Oyster
 			o.BytesUsed = Core::UsedMem;
 			o.modelPath = Core::modelPath;
 			o.texturePath = Core::texturePath;
+			o.Resolution = Core::resolution;
 			return o;
 		}
 
@@ -161,7 +228,7 @@ namespace Oyster
 			Render::Gui::Begin2DRender();
 		}
 
-		void API::RenderGuiElement(API::Texture tex, Math::Float3 pos, Math::Float2 size, Math::Float3 color)
+		void API::RenderGuiElement(API::Texture tex, Math::Float3 pos, Math::Float2 size, Math::Float4 color)
 		{
 			Render::Gui::Render((ID3D11ShaderResourceView*)tex,pos,size,color);
 		}
@@ -196,7 +263,7 @@ namespace Oyster
 			Render::Gui::Begin2DTextRender();
 		}
 
-		void API::RenderText(std::wstring text, Math::Float3 Pos, Math::Float2 Size, float FontSize, Math::Float3 color)
+		void API::RenderText(std::wstring text, Math::Float3 Pos, Math::Float2 Size, float FontSize, Math::Float4 color)
 		{
 			Render::Gui::RenderText(text, Pos, Size, FontSize, color);
 		}

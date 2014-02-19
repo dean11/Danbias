@@ -68,22 +68,41 @@ void Game::GetAllPlayerPositions() const
 Game::PlayerData* Game::CreatePlayer()
 {
 	// Find a free space in array or insert at end
-	int i = InsertObject(this->players, (PlayerData*)0);
+	int insert = InsertObject(this->players, (PlayerData*)0);
+	int freeID = 0;
+	bool found = false;
 
-	this->players[i] = new PlayerData();
-	this->players[i]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+	for(int i = 0; i < 100; i++)
+	{
+		found = true;
+		freeID = i;
 
-	return this->players[i];
+		for(int j = 0; j < players.Size(); j++)
+		{
+			
+			if(this->players[j] && this->players[j]->GetID() == freeID)
+			{
+				found = false;
+			}
+
+			if(!found) break;
+		}
+
+		if(found) break;
+	}
+
+	this->players[insert] = new PlayerData(freeID, 0); // user constructor with objectID and teamID
+	this->players[insert]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
+
+	return this->players[insert];
 }
 
-Game::LevelData* Game::CreateLevel()
+Game::LevelData* Game::CreateLevel(const wchar_t mapName[255])
 {
 	if(this->level) return this->level;
 
 	this->level = new LevelData();
-	//this->level->level->InitiateLevel(1000);
-	this->level->level->InitiateLevel("../Content/Worlds/ccc.bias");
-
+	this->level->level->InitiateLevel(mapName);
 
 	return this->level;
 }
@@ -97,21 +116,15 @@ bool Game::NewFrame()
 {
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
-		if(this->players[i]->player)	this->players[i]->player->BeginFrame();
+		if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
 	API::Instance().UpdateWorld();
 
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
-		if(this->players[i]->player)	this->players[i]->player->EndFrame();
-		gameInstance.onMoveFnc(this->players[i]);
+		if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
-	for (unsigned int i = 0; i < this->level->level->dynamicObjects.Size(); i++)
-	{
-		gameInstance.onMoveFnc(this->level->level->dynamicObjects[i]);
-	}
-	
 
 	return true;
 }

@@ -111,8 +111,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Misc\Misc_$(PlatformShortName)D.lib;WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -128,8 +128,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Misc\Misc_$(PlatformShortName)D.lib;WindowManager\WindowManager_$(PlatformShortName)D.lib;OysterGraphics_$(PlatformShortName)D.lib;Input\Input_$(PlatformShortName)D.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,8 +149,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Misc\Misc_$(PlatformShortName).lib;WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;GameClient_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -170,13 +170,22 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Misc\Misc_$(PlatformShortName).lib;WindowManager\WindowManager_$(PlatformShortName).lib;OysterGraphics_$(PlatformShortName).lib;Input\Input_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;GameClient_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Misc\Input\Input.vcxproj">
+      <Project>{7e3990d2-3d94-465c-b58d-64a74b3ecf9b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Misc\OysterMath\OysterMath.vcxproj">
       <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Misc\Utilities\Utilities.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Misc\WindowManager\WindowManager.vcxproj">
+      <Project>{35aea3c0-e0a7-4e1e-88cd-514aa5a442b1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Network\NetworkAPI\NetworkAPI.vcxproj">
       <Project>{460d625f-2ac9-4559-b809-0ba89ceaedf4}</Project>
@@ -192,7 +201,9 @@
     <ClCompile Include="DanBiasGame_Impl.cpp" />
     <ClCompile Include="GameClientState\Camera_Basic.cpp" />
     <ClCompile Include="GameClientState\Camera.cpp" />
+    <ClCompile Include="GameClientState\Camera_BasicV2.cpp" />
     <ClCompile Include="GameClientState\Camera_FPS.cpp" />
+    <ClCompile Include="GameClientState\Camera_FPSV2.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_DynamicObj.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_Player.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_StaticObj.cpp" />
@@ -217,7 +228,9 @@
     <ClInclude Include="GameClientState\Buttons\EventButtonGUI.h" />
     <ClInclude Include="GameClientState\Buttons\ButtonRectangle.h" />
     <ClInclude Include="GameClientState\Camera.h" />
+    <ClInclude Include="GameClientState\Camera_BasicV2.h" />
     <ClInclude Include="GameClientState\Camera_FPS.h" />
+    <ClInclude Include="GameClientState\Camera_FPSV2.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
     <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />
@@ -233,6 +246,7 @@
     <ClInclude Include="GameClientState\LobbyAdminState.h" />
     <ClInclude Include="GameClientState\MainState.h" />
     <ClInclude Include="GameClientState\NetLoadState.h" />
+    <ClInclude Include="GameClientState\SharedStateContent.h" />
     <ClInclude Include="Include\GameClient.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />
     <ClInclude Include="GameClientState\C_Object.h" />
