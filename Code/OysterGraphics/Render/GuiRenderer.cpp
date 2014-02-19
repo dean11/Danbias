@@ -103,7 +103,7 @@ namespace Oyster
 				Resources::Gui::Text::Vertex.Unmap();
 
 					
-				Core::deviceContext->Draw(text.length(), 0);
+				Core::deviceContext->Draw((UINT)text.length(), 0);
 			}
 		}
 	}
