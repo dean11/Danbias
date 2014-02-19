@@ -108,7 +108,7 @@ namespace DanBias
 			data.capFrame += dt;
 			if(data.capFrame > 0.03)
 			{
-				switch( Update(dt) )
+				switch( Update(data.capFrame) )
 				{
 				case Result_continue:	break;
 					case Result_quit:	return DanBiasClientReturn_Success;
@@ -117,7 +117,7 @@ namespace DanBias
 				}
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
-				data.capFrame = 0; 
+				data.capFrame -= 0.03; 
 			}
 
 			if(data.networkClient.IsConnected())
@@ -143,7 +143,7 @@ namespace DanBias
 		p.texturePath = L"..\\Content\\Textures\\";
 		p.Resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
 		//! @todo fix proper amb value
-		p.AmbientValue = 1.0f;
+		p.AmbientValue = 1.3f;
 
 		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, p) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
