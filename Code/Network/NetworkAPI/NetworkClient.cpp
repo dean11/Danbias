@@ -317,6 +317,11 @@ bool NetworkClient::Connect(unsigned short port, std::wstring serverIP)
 	return this->Connect(port, ip.c_str());
 }
 
+bool NetworkClient::Reconnect()
+{
+	return this->privateData->connection.Reconnect();
+}
+
 void NetworkClient::Disconnect()
 {
 	if(!privateData) return;

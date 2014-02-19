@@ -33,184 +33,187 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 	Loader loader;
 	char* buffer = (char*)loader.LoadFile(filename.c_str(), bufferSize);
 
-	//Read format version
-	LevelLoaderInternal::FormatVersion levelFormatVersion;
-	ParseObject(&buffer[counter], &levelFormatVersion, sizeof(levelFormatVersion));
-	counter += sizeof(levelFormatVersion);
-	if(this->formatVersion != levelFormatVersion)
+	if(buffer)
 	{
-		//Returns an empty vector, because it will most likely fail to read the level format.
-		return objects;
-	}
-
-  	while(counter < bufferSize)
-	{
-		loadCgf = true;
-		//Get typeID
-		ObjectType typeID;
-		ParseObject(&buffer[counter], &typeID, sizeof(typeID));
-		switch((int)typeID)
+		//Read format version
+		LevelLoaderInternal::FormatVersion levelFormatVersion;
+		ParseObject(&buffer[counter], &levelFormatVersion, sizeof(levelFormatVersion));
+		counter += sizeof(levelFormatVersion);
+		if(this->formatVersion != levelFormatVersion)
 		{
-			case ObjectType_LevelMetaData:
+			//Returns an empty vector, because it will most likely fail to read the level format.
+			return objects;
+		}
+
+  		while(counter < bufferSize)
+		{
+			loadCgf = true;
+			//Get typeID
+			ObjectType typeID;
+			ParseObject(&buffer[counter], &typeID, sizeof(typeID));
+			switch((int)typeID)
 			{
-				SmartPointer<ObjectTypeHeader> header = new LevelMetaData;
-				ParseLevelMetaData(&buffer[counter], *(LevelMetaData*)header.Get(), counter);
-				objects.push_back(header);
-				break;
-			}
-
-			case ObjectType_SpawnPoint:
-			{
-				loadCgf = false;
-				ObjectHeader* header = new ObjectHeader;
-				ParseObject(&buffer[counter], *header, counter, loadCgf);
-
-				SpawnPointAttributes* spawn = new SpawnPointAttributes;
-
-				spawn->typeID = header->typeID;
-
-				for(int i = 0; i < 3; i++)
+				case ObjectType_LevelMetaData:
 				{
-					spawn->position[i] = header->position[i];
+					SmartPointer<ObjectTypeHeader> header = new LevelMetaData;
+					ParseLevelMetaData(&buffer[counter], *(LevelMetaData*)header.Get(), counter);
+					objects.push_back(header);
+					break;
 				}
 
-				delete header;
-				//objects.push_back(header);
-				objects.push_back(spawn);
-				break;
-			}
-
-			//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them. 
-			//Unless they are changed to not be the same.
-			case ObjectType_Static: case ObjectType_Dynamic:
-			{
-				//Get specialType.
-				ObjectSpecialType specialType;
-				ParseObject(&buffer[counter+4], &specialType, sizeof(typeID));
-
-				switch(specialType)
+				case ObjectType_SpawnPoint:
 				{
-					//there is no difference when parsing these specialTypes.
-					case ObjectSpecialType_CrystalShard:
-					case ObjectSpecialType_CrystalFormation:
-					case ObjectSpecialType_Spike:
-					case ObjectSpecialType_SpikeBox:
-					case ObjectSpecialType_RedExplosiveBox:
-					case ObjectSpecialType_StandarsBox:
-					case ObjectSpecialType_Stone:
-					case ObjectSpecialType_Building:
-					{
-						ObjectHeader* header = new ObjectHeader;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
-						objects.push_back(header);
+					loadCgf = false;
+					ObjectHeader* header = new ObjectHeader;
+					ParseObject(&buffer[counter], *header, counter, loadCgf);
 
-						break;
+					SpawnPointAttributes* spawn = new SpawnPointAttributes;
+
+					spawn->typeID = header->typeID;
+
+					for(int i = 0; i < 3; i++)
+					{
+						spawn->position[i] = header->position[i];
 					}
 
-					case ObjectSpecialType_JumpPad:
+					delete header;
+					//objects.push_back(header);
+					objects.push_back(spawn);
+					break;
+				}
+
+				//This is by design, static and dynamic is using the same converter. Do not add anything inbetween them. 
+				//Unless they are changed to not be the same.
+				case ObjectType_Static: case ObjectType_Dynamic:
+				{
+					//Get specialType.
+					ObjectSpecialType specialType;
+					ParseObject(&buffer[counter+4], &specialType, sizeof(typeID));
+
+					switch(specialType)
 					{
-						JumpPadAttributes* header = new JumpPadAttributes;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
+						//there is no difference when parsing these specialTypes.
+						case ObjectSpecialType_CrystalShard:
+						case ObjectSpecialType_CrystalFormation:
+						case ObjectSpecialType_Spike:
+						case ObjectSpecialType_SpikeBox:
+						case ObjectSpecialType_RedExplosiveBox:
+						case ObjectSpecialType_StandarsBox:
+						case ObjectSpecialType_Stone:
+						case ObjectSpecialType_Building:
+						{
+							ObjectHeader* header = new ObjectHeader;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
+							objects.push_back(header);
 
-						//Read the spec
-						ParseObject(&buffer[counter], header->direction, 16);
-						counter += 16;
-						objects.push_back(header);
+							break;
+						}
 
-						break;
-					}
+						case ObjectSpecialType_JumpPad:
+						{
+							JumpPadAttributes* header = new JumpPadAttributes;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+							//Read the spec
+							ParseObject(&buffer[counter], header->direction, 16);
+							counter += 16;
+							objects.push_back(header);
+
+							break;
+						}
 		
-					case ObjectSpecialType_Portal:
-					{
-						PortalAttributes* header = new PortalAttributes;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
+						case ObjectSpecialType_Portal:
+						{
+							PortalAttributes* header = new PortalAttributes;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
 
-						ParseObject(&buffer[counter], header->destination, 12);
-						counter += 12;
-						objects.push_back(header);
+							ParseObject(&buffer[counter], header->destination, 12);
+							counter += 12;
+							objects.push_back(header);
 
-						break;
-					}
+							break;
+						}
 					
-					case ObjectSpecialType_World:
-					{
-						WorldAttributes* header = new WorldAttributes;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
+						case ObjectSpecialType_World:
+						{
+							WorldAttributes* header = new WorldAttributes;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
 
-						ParseObject(&buffer[counter], &header->worldSize, 8);
-						counter += 8;
-						objects.push_back(header);
-						break;
-					}
+							ParseObject(&buffer[counter], &header->worldSize, 8);
+							counter += 8;
+							objects.push_back(header);
+							break;
+						}
 
-					case ObjectSpecialType_Sky:
-					{
-						loadCgf = false; 
-						SkyAttributes* header = new SkyAttributes;
-						ParseObject(&buffer[counter], *header, counter, loadCgf);
+						case ObjectSpecialType_Sky:
+						{
+							loadCgf = false; 
+							SkyAttributes* header = new SkyAttributes;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
 
-						ParseObject(&buffer[counter], &header->skySize, 4);
-						counter += 4;
-						objects.push_back(header);
-						break;
-					}
-					//this is a hotfix, fix so you only load the relevant data when the file is updated
+							ParseObject(&buffer[counter], &header->skySize, 4);
+							counter += 4;
+							objects.push_back(header);
+							break;
+						}
+						//this is a hotfix, fix so you only load the relevant data when the file is updated
 					
 
-					default:
-						//Couldn't find specialType
-						break;
+						default:
+							//Couldn't find specialType
+							break;
+					}
+					break;
 				}
-				break;
-			}
 			
-			case ObjectType_Light:
-			{
-				LightType lightType;
+				case ObjectType_Light:
+				{
+					LightType lightType;
 
-				//Get Light type
-				ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
+					//Get Light type
+					ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
 
-				//We only support PointLight for now.
-				BasicLight* header = new BasicLight;
-				ParseObject(&buffer[counter], header, sizeof(*header));
-				counter += sizeof(*header);
-				objects.push_back(header);
-				/*switch(lightType)
-				{
-				case LightType_PointLight:
-				{
-					PointLight* header = new PointLight;
+					//We only support PointLight for now.
+					BasicLight* header = new BasicLight;
 					ParseObject(&buffer[counter], header, sizeof(*header));
 					counter += sizeof(*header);
 					objects.push_back(header);
-					break;
-				}
-				case LightType_DirectionalLight:
-				{
-					DirectionalLight* header = new DirectionalLight;
-					ParseObject(&buffer[counter], header, sizeof(*header));
-					counter += sizeof(*header);
-					objects.push_back(header);
-					break;
-				}
-				case LightType_SpotLight:
-				{
-					SpotLight* header = new SpotLight;
-					ParseObject(&buffer[counter], header, sizeof(*header));
-					counter += sizeof(*header);
-					objects.push_back(header);
-					break;
+					/*switch(lightType)
+					{
+					case LightType_PointLight:
+					{
+						PointLight* header = new PointLight;
+						ParseObject(&buffer[counter], header, sizeof(*header));
+						counter += sizeof(*header);
+						objects.push_back(header);
+						break;
+					}
+					case LightType_DirectionalLight:
+					{
+						DirectionalLight* header = new DirectionalLight;
+						ParseObject(&buffer[counter], header, sizeof(*header));
+						counter += sizeof(*header);
+						objects.push_back(header);
+						break;
+					}
+					case LightType_SpotLight:
+					{
+						SpotLight* header = new SpotLight;
+						ParseObject(&buffer[counter], header, sizeof(*header));
+						counter += sizeof(*header);
+						objects.push_back(header);
+						break;
+					}
+					default:
+						//Undefined LightType.
+						break;
+					}
+					break;*/
 				}
 				default:
-					//Undefined LightType.
+					//Couldn't find typeID. FAIL!!!!!!
 					break;
-				}
-				break;*/
 			}
-			default:
-				//Couldn't find typeID. FAIL!!!!!!
-				break;
 		}
 	}
 
