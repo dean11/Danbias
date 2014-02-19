@@ -58,6 +58,9 @@ int Connection::Connect(unsigned short port , const char serverName[], bool bloc
 {
 	if(this->socket == -1 || this->socket == 0) InitiateSocket();
 
+	lastConnectPort = port;
+	lastConnectAddr = serverName;
+
 	struct hostent *hostEnt;
 	if((hostEnt = gethostbyname(serverName)) == NULL)
 	{
@@ -68,6 +71,37 @@ int Connection::Connect(unsigned short port , const char serverName[], bool bloc
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port);
 	server.sin_addr.s_addr = *(unsigned long*) hostEnt->h_addr;
+
+	if(connect(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
+	{
+		return WSAGetLastError();
+	}
+	
+	closed = false;
+	stillSending = true;
+
+	SetBlockingMode(blocking);
+
+	//connection succesfull!
+	return 0;
+}
+
+int Connection::Reconnect()
+{
+	if(this->socket == -1 || this->socket == 0) InitiateSocket();
+
+	struct hostent *hostEnt;
+	if((hostEnt = gethostbyname(lastConnectAddr.c_str())) == NULL)
+	{
+		return WSAGetLastError();
+	}
+
+	struct sockaddr_in server;
+	server.sin_family = AF_INET;
+	server.sin_port = htons(lastConnectPort);
+	server.sin_addr.s_addr = *(unsigned long*) hostEnt->h_addr;
+
+	SetBlockingMode(true);
 
 	if(connect(this->socket, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 	{
