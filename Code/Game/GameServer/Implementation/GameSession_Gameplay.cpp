@@ -61,6 +61,8 @@ using namespace DanBias;
 		switch (e.args.type)
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
+				this->gClients[temp]->GetClient()->Disconnect();
+				this->gClients[temp] = 0;
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
 			break;
@@ -128,6 +130,12 @@ using namespace DanBias;
 			int id = movedObject->GetID();
 			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
 			Protocol_ObjectPositionRotation p(movedObject->GetPosition(), movedObject->GetRotation(), id);
+
+			Oyster::Math::Float3 temp = movedObject->GetPosition();
+
+			if(temp.x < -300)
+				id = 0;
+
 			GameSession::gameSession->Send(p.GetProtocol());
 		//}	
 	}
