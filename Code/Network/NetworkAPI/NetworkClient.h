@@ -93,6 +93,11 @@ namespace Oyster
 				*/
 				bool Connect(unsigned short port, std::wstring serverIP);
 
+				/**Tries to connect with the same port and ip it earlier used for Connect.
+				*	
+				*/
+				bool Reconnect();
+
 				/**
 				*	
 				*/
@@ -133,13 +138,7 @@ namespace Oyster
 				*/
 				virtual void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
 
-				/**	! Deprecate ! 
-				*	Do not use this furthermore, instead use void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
-				*	@see DataRecieved
-				*/
-				//virtual void NetworkCallback(Oyster::Network::CustomNetProtocol& p);
-
-				virtual std::string GetIpAddress();
+				std::string GetIpAddress();
 
 			private:
 				NetworkClient(const NetworkClient& obj);

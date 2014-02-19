@@ -207,11 +207,13 @@ namespace GameLogic
 		virtual ~ObjectHeader(){}
 	};
 
+	//inheritance from the base class because there is no use for ModelFile, Rotation and Scale
+	//so this is a special struct for just spawnpoints
 	struct SpawnPointAttributes : public ObjectTypeHeader
 	{
-		ObjectSpecialType specialTypeID;
 		float position[3];
 	};
+
 	/************************************
 				Special objects
 	*************************************/
@@ -237,6 +239,8 @@ namespace GameLogic
 	{
 		float skySize;
 	};
+
+	
 
 	
 

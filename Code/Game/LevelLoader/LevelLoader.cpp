@@ -48,5 +48,5 @@ std::string LevelLoader::GetFolderPath()
 
 void LevelLoader::SetFolderPath(std::string folderPath)
 {
-
+	this->pData->folderPath = folderPath;
 }

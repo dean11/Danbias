@@ -112,10 +112,10 @@ void LobbyState::ChangeState( ClientState next )
 
 using namespace ::Oyster::Network;
 
-void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & LobbyState::DataRecieved( const GameClientState::NetEvent &message )
 {
-	CustomNetProtocol data = e.args.data.protocol;
-	short ID = data[0].value.netShort; // fetching the id data.
+	// fetching the id data.
+	short ID = message.args.data.protocol[0].value.netShort;
 	
 	// Block irrelevant messages.
 	if( ProtocolIsLobby(ID) )
@@ -141,6 +141,8 @@ void LobbyState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEve
 		default: break;
 		}
 	}
+
+	return message;
 }
 
 void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e )

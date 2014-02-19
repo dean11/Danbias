@@ -90,7 +90,7 @@ void Player::BeginFrame()
 	forwardDir.Normalize();
 	rightDir.Normalize();
 	Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
-	Oyster::Math::Float walkSpeed = this->moveSpeed*0.2;
+	Oyster::Math::Float walkSpeed = this->moveSpeed*0.2f;
 
 	if (key_forward > 0.001)
 	{
@@ -122,7 +122,7 @@ void Player::BeginFrame()
 	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.7f)
 	{
 		/* Dampen when on the ground and not being moved by the player */
-		linearVelocity *= 0.2;
+		linearVelocity *= 0.2f;
 		this->rigidBody->SetLinearVelocity (linearVelocity);
 	} 
 	else 
@@ -159,7 +159,6 @@ void Player::EndFrame()
 	Oyster::Math::Float4 rotation;
 	
 	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
-	
 	
 	Object::EndFrame();	
 }

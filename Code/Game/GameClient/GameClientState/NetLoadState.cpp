@@ -2,7 +2,7 @@
 #include "NetworkClient.h"
 #include "OysterMath.h"
 #include "Protocols.h"
-#include "LevelLoader\LevelLoader.h"
+#include "LevelLoader.h"
 #include "Utilities.h"
 #include "C_obj\C_StaticObj.h"
 #include "C_obj\C_DynamicObj.h"
@@ -57,11 +57,8 @@ bool NetLoadState::Init( SharedStateContent &shared )
 
 	// we may assume that nwClient is properly connected to the server
 	// signals querry to server for loading instructions
-	//this->privData->nwClient->Send( Protocol_QuerryGameType() );
+	this->privData->nwClient->Send( Protocol_QuerryGameType() );
 
-	// debugg
-	this->LoadGame( "..//Content//Worlds//2ofAll_updated.bias");
-	this->ChangeState( ClientState_Game );
 	return true;
 }
 
@@ -96,16 +93,25 @@ void NetLoadState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void NetLoadState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	// fetching the id data.
-	short ID = e.args.data.protocol[0].value.netShort;
+	short ID = message.args.data.protocol[0].value.netShort;
 	
-	if( ID == protocol_Lobby_CreateGame && !this->privData->loading )
+	if( ID == protocol_Lobby_CreateGame )
 	{
-		this->LoadGame( Protocol_LobbyCreateGame(e.args.data.protocol).modelName );
-		this->ChangeState( ClientState_Game );
-		this->privData->loading = false;
+		if( !this->privData->loading )
+		{
+			this->LoadGame( Protocol_LobbyCreateGame(message.args.data.protocol).mapName );
+			this->ChangeState( ClientState_Game );
+			this->privData->loading = false;
+		}
+		return GameClientState::event_processed;
+	}
+	else
+	{ // HACK: Debug trap
+		const char *breakPoint = "Being greedy.";
+		return message;
 	}
 }
 
@@ -113,7 +119,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 {
 	this->privData->loading = true;
 
-	LevelLoader loader;
+	LevelLoader loader( "..\\Content\\Worlds\\" );
 	auto objects = loader.LoadLevel( fileName );
 	auto object = objects.begin();
 	ObjectTypeHeader *oth;
@@ -234,16 +240,5 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		}
 	}
 
-	// DEBUG added a static light for testing
-	Graphics::Definitions::Pointlight pointLight; 
-	pointLight.Color	= Float3(1,1,0);
-	pointLight.Pos		= Float3( 0,132, 10);
-	pointLight.Bright	= 2;
-	pointLight.Radius	= 50; 
-
-	C_Light *newLight = new C_Light( pointLight, objectID );
-
-	(*this->privData->lights)[objectID] = newLight;
-	
 	this->privData->nextState = ClientState::ClientState_Game;
 }

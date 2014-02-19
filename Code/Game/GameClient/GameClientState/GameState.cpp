@@ -2,7 +2,7 @@
 #include "DllInterfaces/GFXAPI.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-#include "Camera_FPS.h"
+#include "Camera_FPSV2.h"
 #include <GameServerAPI.h>
 #include "C_Light.h"
 #include "C_obj/C_Player.h"
@@ -44,7 +44,7 @@ struct  GameState::MyData
 	// !DEGUG KEYS
 
 	C_Player player;
-	Camera_FPS camera;
+	Camera_FPSV2 camera;
 
 	int myId;
 
@@ -91,11 +91,8 @@ bool GameState::Init( SharedStateContent &shared )
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	//tell server ready
-	//this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
-
-	// Debugg hack
-	this->InitiatePlayer( 0, "crate_generic.dan",Float3( 0,132, 10), Quaternion::identity, Float3(1), true );	
-	// end debug hack
+	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
+			
 	// DEGUG KEYS
 	this->privData->key_Reload_Shaders = false;
 	this->privData->key_Wireframe_Toggle = false;
@@ -107,6 +104,7 @@ bool GameState::Init( SharedStateContent &shared )
 	{
 		light->second->Render();
 	}
+
 	return true;
 }
 
@@ -124,9 +122,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBInitData RBData;
 	RBData.position = position;
 	RBData.rotation = ArrayToQuaternion( rotation );
-	RBData.scale =  Float3( 1 );
+	RBData.scale =  scale;
 	// !RB DEBUG 
-
 	if( isMyPlayer )
 	{
 		if( this->privData->player.Init(modelData) )
@@ -138,7 +135,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
 			Float3 offset = Float3( 0.0f );
-			offset.y = this->privData->player.getScale().y + 0.5f; // debug hack +0.5f
+			offset.y = this->privData->player.getScale().y * 0.9f;
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
 		}
@@ -181,7 +178,8 @@ bool GameState::Render()
 	auto dynamicObject = this->privData->dynamicObjects->begin();
 	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 	{
-		dynamicObject->second->Render();
+		if( dynamicObject->second )
+			dynamicObject->second->Render();
 	}
 
 
@@ -218,13 +216,16 @@ bool GameState::Render()
 		dynamicObject = this->privData->dynamicObjects->begin();
 		for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 		{
-			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+			if( dynamicObject->second )
 			{
-				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
-			}
-			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
-			{
-				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+				if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+				{
+					Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+				}
+				if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+				{
+					Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+				}
 			}
 		}
 	}
@@ -274,7 +275,7 @@ void GameState::ReadKeyInput()
 {
 	if( this->privData->input->IsKeyPressed(DIK_W) )
 	{
-		if(!this->privData->key_forward)
+		//if(!this->privData->key_forward)
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
 			this->privData->key_forward = true;
@@ -285,7 +286,7 @@ void GameState::ReadKeyInput()
 
 	if( this->privData->input->IsKeyPressed(DIK_S) )
 	{
-		if( !this->privData->key_backward )
+		//if( !this->privData->key_backward )
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
 			this->privData->key_backward = true;
@@ -296,7 +297,7 @@ void GameState::ReadKeyInput()
 
 	if( this->privData->input->IsKeyPressed(DIK_A) )
 	{
-		if( !this->privData->key_strafeLeft )
+		//if( !this->privData->key_strafeLeft )
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
 			this->privData->key_strafeLeft = true;
@@ -307,7 +308,7 @@ void GameState::ReadKeyInput()
 
 	if( this->privData->input->IsKeyPressed(DIK_D) )
 	{
-		if( !this->privData->key_strafeRight )
+		//if( !this->privData->key_strafeRight )
 		{
 			this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
 			this->privData->key_strafeRight = true;
@@ -413,13 +414,22 @@ void GameState::ReadKeyInput()
 	// TODO: implement sub-menu
 }
 
-void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
+const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
-	CustomNetProtocol data = e.args.data.protocol;
-	short ID = data[0].value.netShort; // fetching the id data.
-	
+	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
+	{ // TODO: Reconnect
+		const char *breakpoint = "temp trap";
+		this->privData->nwClient->Disconnect();
+		this->ChangeState( GameClientState::ClientState_Main );
+	}
+
+	// fetching the id data.
+	short ID = message.args.data.protocol[0].value.netShort;
+
 	if( ProtocolIsGameplay(ID) )
 	{
+		CustomNetProtocol data = message.args.data.protocol;
+
 		switch(ID)
 		{
 		case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
@@ -438,7 +448,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBPos ( decoded.position );  
 				// !RB DEBUG 
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectScale:
 			{
 				Protocol_ObjectScale decoded(data);
@@ -447,7 +457,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBScale ( decoded.scale );  
 				// !RB DEBUG 
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectRotation:
 			{
 				Protocol_ObjectRotation decoded(data);
@@ -455,14 +465,14 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
-					this->privData->camera.SetAngular( AngularAxis(rotation) );
+					this->privData->camera.SetRotation( rotation );
 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRot( rotation );
 				// RB DEBUG 
 				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBRot ( rotation );  
 				// !RB DEBUG 
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectPositionRotation:
 			{
 				Protocol_ObjectPositionRotation decoded(data);
@@ -473,18 +483,24 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				if( this->privData->myId == decoded.object_ID )
 				{
 					this->privData->camera.SetPosition( position );
-					this->privData->camera.SetAngular( AngularAxis(rotation) );
+					this->privData->camera.SetRotation( rotation );
+					this->privData->player.setPos( position );
+					//this->privData->player.setRot( rotation );
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
-				object->setPos( position );
-				object->setRot( rotation );
-				// RB DEBUG 
-				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBPos ( position );  
-				(*this->privData->dynamicObjects)[decoded.object_ID]->setRBRot ( rotation );  
-				// !RB DEBUG 
+
+				if( object )
+				{
+					object->setPos( position );
+					object->setRot( rotation );
+					// RB DEBUG 
+					object->setRBPos ( position );  
+					object->setRBRot ( rotation );  
+					// !RB DEBUG 
+				}
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectEnabled:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectDisabled:
 			{
@@ -497,7 +513,7 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 					this->privData->dynamicObjects->erase( object );
 				}
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectCreate:
 			{
 				Protocol_ObjectCreate decoded(data);
@@ -527,13 +543,13 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
 
 			}		
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectCreatePlayer:
 			{
 				Protocol_ObjectCreatePlayer decoded(data);
 				this->InitiatePlayer( decoded.object_ID, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
 			}
-			break;
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
@@ -552,4 +568,6 @@ void GameState::DataRecieved( NetEvent<NetworkClient*, NetworkClient::ClientEven
 		default: break;
 		}
 	}
+
+	return message;
 }

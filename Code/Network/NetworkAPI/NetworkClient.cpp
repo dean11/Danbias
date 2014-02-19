@@ -96,6 +96,10 @@ struct NetworkClient::PrivateData : public IThreadObject
 			//printf("\t(%i)\n", this->sendQueue.Size());
 			OysterByte temp;
 			CustomNetProtocol p = this->sendQueue.Pop();
+
+			if(p[0].value.netShort == 304) 
+				int i = 0;
+
 			this->translator.Pack(temp, p);
 			errorCode = this->connection.Send(temp);
 
@@ -311,6 +315,27 @@ bool NetworkClient::Connect(unsigned short port, std::wstring serverIP)
 	std::string ip = converterX.to_bytes(serverIP);
 
 	return this->Connect(port, ip.c_str());
+}
+
+bool NetworkClient::Reconnect()
+{
+	if(this->IsConnected())	
+		return false;
+	//if(this->privateData)
+		//return false;
+	if(!this->privateData)	this->privateData = new PrivateData();
+
+	int result = this->privateData->connection.Reconnect();
+
+	if(result != 0)
+	{
+		return false;
+	}
+	this->privateData->owner = 0;
+	this->privateData->parent = this;
+	this->privateData->thread.Start();
+
+	return true;
 }
 
 void NetworkClient::Disconnect()

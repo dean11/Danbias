@@ -46,7 +46,7 @@ using namespace GameLogic;
 			break;
 
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
-			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->getExtraDamageOnCollision());
+			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->GetExtraDamageOnCollision());
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
@@ -170,18 +170,18 @@ using namespace GameLogic;
 	
 	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage)
 	{
-		int damageDone = 0;
-		int forceThreashHold = 200000;
+		Oyster::Math::Float damageDone = 0;
+		Oyster::Math::Float forceThreashHold = 200000;
 
 		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
 		{
-			damageDone = (int)(kineticEnergyLoss * 0.10f);
+			damageDone = (kineticEnergyLoss * 0.10f);
 			damageDone += ExtraDamage;
 			//player.DamageLife(damageDone);
 		}
 	}
 
-	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}

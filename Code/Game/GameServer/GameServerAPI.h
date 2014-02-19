@@ -55,16 +55,24 @@ namespace DanBias
 			static void					NotifyWhenClientConnect(ClientConnectedNotify func);
 			static void					NotifyWhenClientDisconnect(ClientDisconnectedNotify func);
 
-			static void					GameSetMapName(const wchar_t* val);
-			static void					GameSetMaxClients(const int& val);
-			static void					GameSetGameMode(const wchar_t* val);
 			static void					GameSetGameTime(const int& val);
-			static int					GameGetMapId();
-			static int					GameGetMaxClients();
-			static int					GameGetGameMode();
+			static void					GameSetMaxClients(const int& val);
+			static void					GameSetGameName(const wchar_t* val);
+			static void					GameSetMapName(const wchar_t* val);
+			static void					GameSetGameMode(const wchar_t* val);
+			
 			static int					GameGetGameTime();
-			static const char*			GameGetGameName();
-			static bool					GameStart();
+			static int					GameGetMaxClients();
+			static const wchar_t*		GameGetGameMode();
+			static const wchar_t*		GameGetGameName();
+			static const wchar_t*		GameGetMapName();
+			static int					GetConnectedClientCount();
+	
+			/*	Starts a game 
+			*	@param forceStart	If forceStart is true, server will start with or without clients. 
+			*	If there are clients not "ready" the will be stareted anyways.
+			*/
+			static bool					GameStart(bool forceStart);
 
 
 		};//End class DanBiasServer

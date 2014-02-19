@@ -14,7 +14,7 @@
 #include "PhysicsAPI.h"
 #include "TeamManager.h"
 #include "DynamicArray.h"
-#include "LevelLoader/LevelLoader.h"
+#include "LevelLoader.h"
 
 namespace GameLogic
 {
@@ -30,8 +30,8 @@ namespace GameLogic
 		* Initiates a level for players to play on
 		* @param levelPath: Path to a file that contains all information on the level
 		********************************************************/
-		void InitiateLevel(std::string levelPath);
-		void InitiateLevel(float radius);
+		bool InitiateLevel(std::wstring levelPath);
+		bool InitiateLevel(float radius);
 		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);
 

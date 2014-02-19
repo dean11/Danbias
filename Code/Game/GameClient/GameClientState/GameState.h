@@ -26,7 +26,7 @@ namespace DanBias { namespace Client
 		bool Release()override;
 		void ChangeState( ClientState next );
 
-		void DataRecieved( ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> e );
+		const NetEvent & DataRecieved( const NetEvent &message );
 
 	private:
 		struct MyData;
