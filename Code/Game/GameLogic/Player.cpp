@@ -160,7 +160,6 @@ void Player::EndFrame()
 	
 	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
 	
-	
 	Object::EndFrame();	
 }
 
