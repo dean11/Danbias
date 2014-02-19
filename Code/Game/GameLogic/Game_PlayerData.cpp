@@ -21,13 +21,23 @@ Game::PlayerData::PlayerData()
 	rigidBody->SetAngularFactor(0.0f);
 	//create player with this rigid body
 	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player,0,0);
-
-	//this->player->GetRigidBody()->SetCustomTag(this);
-	player->EndFrame();
 }
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
-	this->player = new Player();
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(50,130,0);
+
+	Oyster::Math::Float3 size = Oyster::Math::Float3(0.25f,2.0f,0.5f);
+	Oyster::Math::Float mass = 60;
+	Oyster::Math::Float restitutionCoeff = 0.5f;
+	Oyster::Math::Float frictionCoeff_Static = 0.4f;
+	Oyster::Math::Float frictionCoeff_Dynamic = 0.3f;
+	//sbDesc.quaternion = Oyster::Math::Float3(0, Oyster::Math::pi, 0);
+
+	//create rigid body
+	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCollisionBox(size, Oyster::Math::Float4(0, 0, 0, 1), centerPosition, mass, 0.5f, 0.8f, 0.6f );
+	rigidBody->SetAngularFactor(0.0f);
+	//create player with this rigid body
+	this->player = new Player(rigidBody, Player::PlayerCollision, ObjectSpecialType_Player,playerID,teamID);
 }
 Game::PlayerData::~PlayerData()
 {
