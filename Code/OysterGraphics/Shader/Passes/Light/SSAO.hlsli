@@ -1,7 +1,7 @@
 #include "Defines.hlsli"
 #include "PosManipulation.hlsli"
 
-static float Radius = 100;
+static float Radius = 10;
 
 float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 {
@@ -41,7 +41,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 		float sampleDepth = ViewPos.z;
 
 		//compare to depth from sample
-		float rangeCheck = (abs(pos.z - sampleDepth) < Radius) ? 1.0f : 0.0f;
+		float rangeCheck = (abs(pos.z - sampleDepth) > Radius) ? 1.0f : 0.0f;
 		occlusion += (sampleDepth <= sampled.z ? 1.0f : 0.0f) * rangeCheck;
 	}
 	occlusion /= (float)(SSAOKernel.Length.x);
