@@ -221,6 +221,26 @@ namespace Oyster
 			sphere->WorldMatrix = world;
 			Render::DefaultRenderer::RenderScene(sphere,1,View,Projection);
 		}
+#else
+		API::State API::ReloadShaders()
+		{
+
+		}
+
+		void API::StartRenderWireFrame()
+		{
+
+		}
+
+		void API::RenderDebugCube(Math::Matrix world)
+		{
+
+		}
+
+		void API::RenderDebugSphere(Math::Matrix world)
+		{
+
+		}
 #endif
 
 		API::Option API::GetOption()
