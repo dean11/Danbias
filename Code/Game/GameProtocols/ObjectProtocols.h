@@ -892,6 +892,38 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
+	//#define protocol_Gameplay_ObjectDisconnectPlayer	367
+	struct Protocol_ObjectDisconnectPlayer :public Oyster::Network::CustomProtocolObject
+	{
+		int objectID;
+
+		Protocol_ObjectDisconnectPlayer()
+		{ 
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value.netShort = protocol_Gameplay_ObjectDisconnectPlayer;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->objectID = 0;
+		}
+		Protocol_ObjectDisconnectPlayer(int objectID)
+		{ 
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value.netShort = protocol_Gameplay_ObjectDisconnectPlayer;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->objectID = objectID;
+		}
+		Protocol_ObjectDisconnectPlayer(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->objectID = p[1].value.netInt;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = this->objectID;
+			return protocol;		 
+		}
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H
