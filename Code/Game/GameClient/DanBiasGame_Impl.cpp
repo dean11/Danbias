@@ -14,7 +14,7 @@
 #include <GameServerAPI.h>
 
 #include "../WindowManager/WindowShell.h"
-#include "L_inputClass.h"
+#include "Win32\Win32Input.h"
 #include "WinTimer.h"
 #include "vld.h"
 
@@ -28,6 +28,7 @@ using namespace ::Oyster::Network;
 using namespace ::Utility::DynamicMemory;
 using namespace ::DanBias::Client;
 
+LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam );
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
 
 namespace DanBias
@@ -66,9 +67,10 @@ namespace DanBias
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x = 1280;
-		winDesc.windowSize.y = 720;
-		
+		winDesc.windowSize.x		= 1280;
+		winDesc.windowSize.y		= 720;
+		winDesc.windowProcCallback	= WindowCallBack;
+
 		if(! data.window->CreateWin(winDesc) )
 			return DanBiasClientReturn_Error;
 
@@ -260,6 +262,35 @@ namespace DanBias
 	}	
 
 } //End namespace DanBias
+
+LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam )
+{
+	PAINTSTRUCT ps;
+		HDC hdc;
+
+		switch ( message ) 
+		{
+			case WM_PAINT:
+				hdc = BeginPaint( handle, &ps );
+				EndPaint( handle, &ps );
+			break;
+
+			case WM_DESTROY:
+				PostQuitMessage( 0 );
+			break;
+
+			case WM_KEYDOWN:
+				switch( wParam )
+				{
+					case VK_ESCAPE:
+						PostQuitMessage( 0 );
+					break;
+				}
+			break;
+		}
+
+	return DefWindowProc( handle, message, wParam, lParam );
+}
 
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 {
