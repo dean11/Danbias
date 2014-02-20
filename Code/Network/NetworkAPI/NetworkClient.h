@@ -138,7 +138,20 @@ namespace Oyster
 				*/
 				virtual void DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e);
 
+				/**
+				*	
+				*/
 				std::string GetIpAddress();
+
+				/**	Dumps all activity to std::io
+				*	
+				*/
+				void OutputEventData(bool output);
+
+				/**	Dumps all activity to std::io
+				*	
+				*/
+				void SetOutputEventDataStream(FILE out);
 
 			private:
 				NetworkClient(const NetworkClient& obj);
