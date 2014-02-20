@@ -41,8 +41,8 @@ PixelOut main(VertexOut input)
 {
 	PixelOut output;
 	float4 DiffGlow = Diffuse.Sample(S1, input.UV);
-	float3 tint = Color*(1-DiffGlow) + GlowColor * DiffGlow;
-	tint = tint / 2;
+	float3 tint = Color*(1-DiffGlow.w) + GlowColor * DiffGlow.w;
+	tint =  Color*(1-DiffGlow.w) + GlowColor * DiffGlow.w;
 	output.DiffuseGlow = DiffGlow * float4(tint,1);
 
 	//NORMALIZE

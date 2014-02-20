@@ -79,99 +79,133 @@ void Player::BeginFrame()
 
 	Oyster::Math::Float maxSpeed = 30;
 
+	// Rotate player accordingly
+	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
+	Oyster::Math::Quaternion firstUp = this->rigidBody->GetState().quaternion;
+	this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
+	Oyster::Math::Quaternion secondTurn = this->rigidBody->GetState().quaternion;
+
+	this->rigidBody->SetRotation(secondTurn*firstUp);
+	
+	// Direction data
 	Oyster::Math::Float4x4 xform;
 	xform = this->rigidBody->GetState().GetOrientation();
 
-	/* Handle turning */
-	/*if (left)
-		m_turnAngle -= dt * m_turnVelocity;
-	if (right)
-		m_turnAngle += dt * m_turnVelocity;
-
-	xform.setRotation (btQuaternion (btVector3(0.0, 1.0, 0.0), m_turnAngle));*/
-
-	Oyster::Math::Float3 linearVelocity = this->rigidBody->GetLinearVelocity();
-	Oyster::Math::Float speed = this->rigidBody->GetLinearVelocity().GetLength();
-
 	Oyster::Math::Float3 forwardDir = xform.v[2];
+	Oyster::Math::Float3 upDir = xform.v[1];
 	Oyster::Math::Float3 rightDir = xform.v[0];
 	forwardDir.Normalize();
+	upDir.Normalize();
 	rightDir.Normalize();
+
+	// Previous velocities data
+	Oyster::Math::Float3 linearVelocity = this->rigidBody->GetLinearVelocity();
+	Oyster::Math::Float3 forwardVelocity = linearVelocity*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z));
+	Oyster::Math::Float forwardSpeed = (linearVelocity*forwardDir).GetLength();
+	Oyster::Math::Float3 rightVelocity = linearVelocity*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z));
+	Oyster::Math::Float rightSpeed = (linearVelocity*rightDir).GetLength();
+	Oyster::Math::Float3 upVelocity = linearVelocity*Oyster::Math::Float3(fabs(upDir.x), fabs(upDir.y), fabs(upDir.z));
+
+	// Walking data
 	Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
 	Oyster::Math::Float walkSpeed = this->moveSpeed*0.2f;
 
-	if (key_forward > 0.001)
+	// Check for input
+	if(key_forward > 0.001)
 	{
 		key_forward -= gameInstance->GetFrameTime();
 		walkDirection += forwardDir;
-		walkDirection.Normalize();
 	}
-	if (key_backward > 0.001)
+	if(key_backward > 0.001)
 	{
 		key_backward -= gameInstance->GetFrameTime();
 		walkDirection -= forwardDir;
-		walkDirection.Normalize();
 	}
-	if (key_strafeRight > 0.001)
+	if(key_strafeRight > 0.001)
 	{
 		key_strafeRight -= gameInstance->GetFrameTime();
-		walkDirection -= rightDir;
-		walkDirection.Normalize();
+		walkDirection += rightDir;
 	}
-	if (key_strafeLeft > 0.001)
+	if(key_strafeLeft > 0.001)
 	{
 		key_strafeLeft -= gameInstance->GetFrameTime();
-		walkDirection += rightDir;
-		walkDirection.Normalize();
-		maxSpeed = 40;
+		walkDirection -= rightDir;
 	}
 	
-
-	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.7f)
+	// Dampen velocity if certain keys are not pressed
+	if(key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.9f)
 	{
-		/* Dampen when on the ground and not being moved by the player */
-		linearVelocity *= 0.2f;
-		this->rigidBody->SetLinearVelocity (linearVelocity);
-	} 
-	else 
-	{
-		if (speed < maxSpeed && this->rigidBody->GetLambda() < 1.0f)
+		if(key_forward <= 0.001 && key_backward <= 0.001)
 		{
-			Oyster::Math::Float3 velocity = linearVelocity + walkDirection * walkSpeed;
-			this->rigidBody->SetLinearVelocity(velocity);
+			forwardVelocity *= Oyster::Math::Float3(0.2f*fabs(forwardDir.x), 0.2f*fabs(forwardDir.y), 0.2f*fabs(forwardDir.z));
 		}
-		else if(speed < maxSpeed)
+		if(key_strafeRight <= 0.001 && key_strafeLeft <= 0.001)
 		{
-			Oyster::Math::Float3 velocity = linearVelocity + (walkDirection * walkSpeed)*0.2f;
-			this->rigidBody->SetLinearVelocity(velocity);
+			rightVelocity *= Oyster::Math::Float3(0.2f*fabs(rightDir.x), 0.2f*fabs(rightDir.y), 0.2f*fabs(rightDir.z));
+		}
+	}
+	
+	// Walk if walkdirection is something
+	if(walkDirection != Oyster::Math::Float3::null)
+	{
+		walkDirection.Normalize();
+
+		// If on the ground, accelerate normally
+		if(this->rigidBody->GetLambda() < 0.9f)
+		{
+			if(forwardSpeed < maxSpeed)
+			{
+				forwardVelocity += walkDirection*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z)) * walkSpeed;
+			}
+			if(rightSpeed < maxSpeed)
+			{
+				rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), abs(rightDir.y), fabs(rightDir.z)) * walkSpeed;
+			}
+		}
+		// If in the air, accelerate slower
+		if(this->rigidBody->GetLambda() >= 0.9f)
+		{
+			if(forwardSpeed < maxSpeed)
+			{
+				forwardVelocity += walkDirection*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z)) * walkSpeed*0.2f;
+			}
+			if(rightSpeed < maxSpeed)
+			{
+				rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z)) * walkSpeed*0.2f;
+			}
 		}
 	}
 
-	if (key_jump > 0.001)
+	// Adjust velocities so no squaring occurs
+	forwardVelocity *= Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z));
+	rightVelocity *= Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z));
+	upVelocity *= Oyster::Math::Float3(fabs(upDir.x), fabs(upDir.y), fabs(upDir.z)); 
+
+	this->rigidBody->SetLinearVelocity(forwardVelocity+rightVelocity+upVelocity);
+
+	//Jump
+	if(key_jump > 0.001)
 	{
 		this->key_jump -= this->gameInstance->GetFrameTime();
-		if(this->rigidBody->GetLambda() < 1.0f)
+		if(this->rigidBody->GetLambda() < 0.9f)
 		{
-			Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1].GetNormalized();
+			Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
 			this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass*20);
 			this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 		}
 	}
-	Oyster::Math::Float3 pos = this->rigidBody->GetState().centerPos; 
-	if(pos  == Oyster::Math::Float3(0,0,0)) 
-		int i =0;
+
+	
+	
 
 	//this->weapon->Update(0.01f);
 }
 
 void Player::EndFrame()
 {
-	// snap to axis
-	Oyster::Math::Float4 rotation;
-	
-	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
 	
 	//Object::EndFrame();	
+
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -235,13 +269,10 @@ void Player::Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D:
 	// this is the camera right vector
 	this->lookDir = lookDir;
 
-	//Oyster::Math::Float3 up = this->rigidBody->GetState().GetOrientation().v[1];
-	//this->rigidBody->SetUpAndRight(up, right);
 }
 void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
 {
 	this->rotationUp += deltaRadians;
-	this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
 }
 
 void Player::Jump()

@@ -1,7 +1,7 @@
 #include "Defines.hlsli"
 #include "PosManipulation.hlsli"
 
-static float Radius = 10;
+static float Radius = 1;
 
 float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 {
