@@ -437,6 +437,38 @@ int ResourceManager::GetResourceId(const wchar_t c[])
 
 	return -1;
 }
+int	ResourceManager::GetResourceCount(const wchar_t filename[])
+{
+	ResourceData *t = FindResource(this->resources, filename);
+
+	if(t) return t->referenceCount;
+
+	return 0;
+}
+int	ResourceManager::GetResourceCount(const HRESOURCE& resource)
+{
+	ResourceData *t = FindResource(this->resources, resource);
+
+	if(t) return t->referenceCount;
+
+	return 0;
+}
+int	ResourceManager::GetResourceSize(const wchar_t filename[])
+{
+	ResourceData *t = FindResource(this->resources, filename);
+
+	if(t) return t->resourceSize;
+
+	return 0;
+}
+int	ResourceManager::GetResourceSize(const HRESOURCE& resource)
+{
+	ResourceData *t = FindResource(this->resources, resource);
+
+	if(t) return t->resourceSize;
+
+	return 0;
+}
 
 
 

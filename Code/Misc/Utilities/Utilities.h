@@ -44,6 +44,7 @@ namespace Utility
 				ReferenceCount()		:count(0)									{ }
 				ReferenceCount(const ReferenceCount& o)								{ count = o.count; }
 				inline const ReferenceCount& operator=(const ReferenceCount& o)		{ count = o.count;  return *this;}
+				operator int()														{ return this->count; }
 				inline void Incref()												{ this->count++; }
 				inline void Incref(int c)											{ this->count += c; }
 				inline int  Decref()												{ return --this->count;}
