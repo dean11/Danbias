@@ -190,6 +190,7 @@ bool GameState::Render()
 		if( dynamicObject->second )
 		{
 			dynamicObject->second->Render();
+
 		}
 	}
 
@@ -515,19 +516,21 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					this->privData->player.updateRBWorld();
 					// !RB DEBUG 
 				}
-
-				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
-
-				if( object )
+				else
 				{
-					object->setPos( position );
-					object->setRot( rotation );
-					object->updateWorld();
-					// RB DEBUG 
-					object->setRBPos ( position );  
-					object->setRBRot ( rotation );  
-					object->updateRBWorld();
-					// !RB DEBUG 
+					C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
+
+					if( object )
+					{
+						object->setPos( position );
+						object->setRot( rotation );
+						object->updateWorld();
+						// RB DEBUG 
+						object->setRBPos ( position );  
+						object->setRBRot ( rotation );  
+						object->updateRBWorld();
+						// !RB DEBUG 
+					}
 				}
 			}
 			return GameClientState::event_processed;
@@ -586,6 +589,18 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectRespawn:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectDie:				break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectDisconnectPlayer:
+			{
+				//Removes 
+				Protocol_ObjectDisconnectPlayer decoded(data);
+				auto object = this->privData->dynamicObjects->find( decoded.objectID );
+				if( object != this->privData->dynamicObjects->end() )
+				{
+					object->second = nullptr;
+					this->privData->dynamicObjects->erase( object );
+				}
+			}
+			return GameClientState::event_processed;
 		default: break;
 		}
 	}
