@@ -328,7 +328,7 @@ void GameState::ReadKeyInput()
 		static const float mouseSensitivity = Radian( 1.0f );
 		this->privData->camera.PitchDown( this->privData->input->GetPitch() * mouseSensitivity );
 		float yaw = this->privData->input->GetYaw();
-		if( yaw != 0.0f )
+		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
 		{
 			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
 		}
