@@ -106,6 +106,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	args.pushForce = pushForce;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
+
+	if(hitCone) delete hitCone;
 }
 
 /********************************************************
@@ -141,6 +143,8 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	args.pushForce = -pushForce;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
+
+	if(hitCone) delete hitCone;
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
@@ -150,5 +154,5 @@ void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitSphere,this,AttemptPickUp);
 
-	delete hitSphere;
+	if(hitSphere) delete hitSphere;
 }
