@@ -217,11 +217,18 @@ bool GameSession::Join(gClient gameClient)
 			if(this->gClients[i])
 			{
 				IPlayerData* temp = this->gClients[i]->GetPlayer();
-				Protocol_ObjectCreatePlayer oc(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
+				Protocol_ObjectCreatePlayer p1(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
 												Utility::String::WStringToString(this->gClients[i]->GetAlias(), std::string()), 
 												Utility::String::WStringToString(this->gClients[i]->GetCharacter(), std::string()));
-				nwClient->Send(oc);
+				nwClient->Send(p1);
+
+				temp = playerData;
+				Protocol_ObjectCreatePlayer p2(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
+												temp->GetID(), false, temp->GetTeamID(), 
+												Utility::String::WStringToString(gameClient->GetAlias(), std::string()), 
+												Utility::String::WStringToString(gameClient->GetCharacter(), std::string()));
+				this->gClients[i]->GetClient()->Send(p2);
 			}
 		}
 	}
