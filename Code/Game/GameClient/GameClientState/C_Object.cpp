@@ -103,6 +103,26 @@ void C_Object::Release()
 	}
 }
 
+Oyster::Math::Float3 C_Object::GetTint()
+{
+	return model->Tint;
+}
+
+Oyster::Math::Float3 C_Object::GetGlowTint()
+{
+	return model->GlowTint;
+}
+
+void C_Object::SetTint(Oyster::Math::Float3 tint)
+{
+	model->Tint = tint;
+}
+
+void C_Object::SetGlowTint(Oyster::Math::Float3 tint)
+{
+	model->GlowTint = tint;
+}
+
 
 
 ////////////////////////////////////////////////
