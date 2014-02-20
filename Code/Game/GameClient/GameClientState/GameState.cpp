@@ -89,7 +89,7 @@ bool GameState::Init( SharedStateContent &shared )
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
-	gfxOp.AmbientValue = 2.0f;
+	gfxOp.AmbientValue = 1.0f;
 	Graphics::API::SetOptions(gfxOp);
 
 	//tell server ready
@@ -489,7 +489,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					if( !Within(position.Dot(position), 2500.0f, 90000.0f) )
 					{ // HACK: bug trap
 						const char *breakPoint = "Something is wrong.";
-						//position = Float3( 0.0f, 160.0f, 0.0f );
+						position = Float3( 0.0f, 160.0f, 0.0f );
 					}
 
 					this->privData->camera.SetPosition( position );
