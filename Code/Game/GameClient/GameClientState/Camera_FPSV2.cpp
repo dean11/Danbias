@@ -136,11 +136,6 @@ void Camera_FPSV2::StrafeLeft( Float distance )
 
 void Camera_FPSV2::PitchUp( Float radian )
 {
-	if( radian >= 0.5f )
-	{ // HACK: debugging
-		const char *breakPoint = "";
-	}
-
 	this->pitchUp = Clamp( this->pitchUp + radian, -0.48f * pi, 0.48f * pi );
 	this->pitchHaveChanged = true;
 }
