@@ -42,4 +42,7 @@ cbuffer PerModel : register(b1)
 cbuffer Tint : register(b0)
 {
 	float3 Color;
+	float PAD;
+	float3 GlowColor;
+	float PAD2;
 }

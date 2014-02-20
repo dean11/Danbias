@@ -5,7 +5,7 @@ C_Object::C_Object()
 	world = Oyster::Math::Float4x4::identity; 
 	position = Oyster::Math::Float3::null; 
 	rotation = Oyster::Math::Quaternion::identity; 
-	scale = Oyster::Math::Float3::null; 
+	scale = Oyster::Math::Float3(1); 
 
 	id = 0;
 	model = NULL;
@@ -89,7 +89,10 @@ int C_Object::GetId() const
 }
 void C_Object::Render()
 {
-	Oyster::Graphics::API::RenderModel(model);
+	if( this->model )
+	{
+		Oyster::Graphics::API::RenderModel(model);
+	}
 }
 void C_Object::Release()
 {
@@ -98,6 +101,26 @@ void C_Object::Release()
 		Oyster::Graphics::API::DeleteModel(model);
 		this->model = nullptr;
 	}
+}
+
+Oyster::Math::Float3 C_Object::GetTint()
+{
+	return model->Tint;
+}
+
+Oyster::Math::Float3 C_Object::GetGlowTint()
+{
+	return model->GlowTint;
+}
+
+void C_Object::SetTint(Oyster::Math::Float3 tint)
+{
+	model->Tint = tint;
+}
+
+void C_Object::SetGlowTint(Oyster::Math::Float3 tint)
+{
+	model->GlowTint = tint;
 }
 
 
@@ -113,14 +136,16 @@ bool C_Object::InitRB(RBInitData RBInit)
 	type = RBInit.type;
 	return true;
 }
+void C_Object::updateRBWorld()
+{
+	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->position); 
+	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->rotation);
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
+	RBworld = translation * rot * scale;
+}
 Oyster::Math::Float4x4 C_Object::getRBWorld() const
 {
-	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->RBposition); 
-	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->RBrotation);
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->RBscale);
-	Oyster::Math3D::Float4x4 world = translation * rot * scale;
-
-	return world;
+	return RBworld;
 }
 void C_Object::setRBPos(Oyster::Math::Float3 newPos)
 {

@@ -136,8 +136,15 @@ namespace Oyster
 							memcpy(data,&(pm),sizeof(pm));
 							Resources::Gather::ModelData.Unmap();
 
+							Definitions::TintData td;
+							td.GlowTint = models[i].GlowTint;
+							td.Tint = models[i].Tint;
+							td.PAD = 0;
+							td.PAD2 = 0;
+							int s = sizeof(Definitions::TintData);
+
 							data = Render::Resources::Color.Map();
-							memcpy(data,&models[i].Tint,sizeof(Math::Float3));
+							memcpy(data,&td,sizeof(Definitions::TintData));
 							Render::Resources::Color.Unmap(); 
 
 							if(info->Material.size())

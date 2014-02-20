@@ -139,6 +139,7 @@ namespace Oyster
 			m->Visible = true;
 			m->Animation.AnimationPlaying = NULL;
 			m->Tint = Math::Float3(1);
+			m->GlowTint = Math::Float3(1);
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -224,7 +225,7 @@ namespace Oyster
 #else
 		API::State API::ReloadShaders()
 		{
-
+			return API::State::Sucsess;
 		}
 
 		void API::StartRenderWireFrame()
