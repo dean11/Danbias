@@ -142,8 +142,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			offset.y = this->privData->player.getScale().y * 5.0f;
-			offset.z = this->privData->player.getScale().z * -5.0f;
+			//offset.y = this->privData->player.getScale().y * 5.0f;
+			//offset.z = this->privData->player.getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
