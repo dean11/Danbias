@@ -30,22 +30,13 @@ bool Win32Mouse::IsBtnDown(Enum::SAMI btn)
 
 	return this->buttons[btn].isDown;
 }
-int Win32Mouse::GetWheelDelta()
-{
-	return this->wheelDelta;
-}
-Struct::SAIPoint2D Win32Mouse::GetPixelPosition(Struct::SAIPoint2D targetMem)
-{
-	targetMem = this->pixelPos;
-	return targetMem;
-}
 
 void Win32Mouse::ProccessMouseData (bool isUp, Enum::SAMI btn, int delta, Struct::SAIPoint2D velocity, unsigned int makeCode)
 {
 	if(velocity.Length() != 0)
 	{
-		this->pixelPos.x += velocity.x;
-		this->pixelPos.y += velocity.y;
+		this->pixelPos.x += this->deltaPos.x = velocity.x;
+		this->pixelPos.y += this->deltaPos.y = velocity.y;
 
 		for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
 		{

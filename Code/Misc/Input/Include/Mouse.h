@@ -66,12 +66,14 @@ namespace Input
 		};
 	
 	public:
-		virtual bool				IsBtnUp(Enum::SAMI key) = 0;
-		virtual bool				IsBtnDown(Enum::SAMI key) = 0;
-		virtual int					GetWheelDelta() = 0;
-		virtual Struct::SAIPoint2D	GetPixelPosition(Struct::SAIPoint2D targetMem = Struct::SAIPoint2D()) = 0;
-
+		virtual bool				 IsBtnUp(Enum::SAMI key) = 0;
+		virtual bool				 IsBtnDown(Enum::SAMI key) = 0;
+		
 	public:
+		int					 GetWheelDelta() const;
+		Struct::SAIPoint2D & GetPixelPosition( Struct::SAIPoint2D &targetMem = Struct::SAIPoint2D() ) const;
+		Struct::SAIPoint2D & GetDeltaPosition( Struct::SAIPoint2D &targetMem = Struct::SAIPoint2D() ) const;
+
 		void AddOnMousePressCallback( Typedefs::OnMousePressCallback func);
 		void AddOnMouseDownCallback( Typedefs::OnMouseDownCallback func );
 		void AddOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func );
@@ -135,7 +137,7 @@ namespace Input
 	protected:
 		std::vector<MouseEvent*>	mouseSubscribers;
 		MouseCallbackList*			callbackList;
-		Struct::SAIPoint2D			pixelPos;
+		Struct::SAIPoint2D			pixelPos, deltaPos;
 		bool						isCurorLocked;
 		int							wheelDelta;
 	};
