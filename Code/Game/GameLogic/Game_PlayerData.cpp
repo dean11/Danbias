@@ -5,7 +5,7 @@ using namespace GameLogic;
 
 Game::PlayerData::PlayerData()
 {	
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,250,0);
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,180,0);
 	Oyster::Math::Float height = 2.0f;
 	Oyster::Math::Float radius = 0.5f;
 	Oyster::Math::Float mass = 40;
@@ -24,7 +24,7 @@ Game::PlayerData::PlayerData()
 Game::PlayerData::PlayerData(int playerID,int teamID)
 {
 
-	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,250,0);
+	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,180,0);
 	Oyster::Math::Float height = 2.0f;
 	Oyster::Math::Float radius = 0.5f;
 	Oyster::Math::Float mass = 40;

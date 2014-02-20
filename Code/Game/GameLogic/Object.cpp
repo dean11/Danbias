@@ -30,6 +30,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfte
 	this->objectID = objectID;
 	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
+	this->scale = Float3(1.0f, 1.0f, 1.0f);
 }
 
 
@@ -41,6 +42,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICusto
 	this->objectID = objectID;
 	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
+	this->scale = Float3(1.0f, 1.0f, 1.0f);
 }
 
 Object::~Object(void)
