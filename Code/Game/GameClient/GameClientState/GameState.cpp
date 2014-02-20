@@ -182,7 +182,9 @@ bool GameState::Render()
 	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 	{
 		if( dynamicObject->second )
+		{
 			dynamicObject->second->Render();
+		}
 	}
 
 

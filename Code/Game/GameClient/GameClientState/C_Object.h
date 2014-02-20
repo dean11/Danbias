@@ -66,6 +66,13 @@ namespace DanBias
 			void addScale(Oyster::Math::Float3 deltaScale);
 			Oyster::Math::Float3  getScale() const;
 
+			Oyster::Math::Float3 GetTint();
+			Oyster::Math::Float3 GetGlowTint();
+
+			void SetTint(Oyster::Math::Float3);
+			void SetGlowTint(Oyster::Math::Float3);
+
+
 			// RB DEBUG
 			bool InitRB(RBInitData modelInit);
 			Oyster::Math::Float4x4 getRBWorld() const;
