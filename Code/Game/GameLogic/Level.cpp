@@ -4,6 +4,7 @@
 #include "JumpPad.h"
 #include "ExplosiveCrate.h"
 #include "Portal.h"
+#include <Resource\OResource.h>
 
 //Conversion from wstring to string
 #include <codecvt>
@@ -22,7 +23,7 @@ Level::~Level(void)
 	delete this->levelObj;
 	this->levelObj = NULL;
 }
-Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
+Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 {
 	Object* gameObj  = NULL;
 	
@@ -55,6 +56,7 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		{
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
+		break;
 	case ObjectSpecialType_Stone: 
 		{
 			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
@@ -261,7 +263,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				if(rigidBody_Static != NULL)
 				{
 					// create game object
-					Object* staticGameObj = createGameObj(staticObjData, rigidBody_Static);
+					Object* staticGameObj = CreateGameObj(staticObjData, rigidBody_Static);
 					if(staticGameObj != NULL)
 					{
 						this->staticObjects.Push((StaticObject*)staticGameObj);
@@ -295,7 +297,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				if(rigidBody_Dynamic != NULL)
 				{
 					// create game object
-					Object* dynamicGameObj = createGameObj(dynamicObjData, rigidBody_Dynamic);
+					Object* dynamicGameObj = CreateGameObj(dynamicObjData, rigidBody_Dynamic);
 					if (dynamicGameObj != NULL)
 					{
 						this->dynamicObjects.Push((DynamicObject*)dynamicGameObj);

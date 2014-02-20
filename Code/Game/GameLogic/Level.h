@@ -35,7 +35,7 @@ namespace GameLogic
 		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);
 
-		Object* createGameObj(ObjectHeader* obj, Oyster::Physics::ICustomBody* rigidBody);
+		Object* CreateGameObj(ObjectHeader* obj, Oyster::Physics::ICustomBody* rigidBody);
 		/********************************************************
 		* Creates a team in the level
 		* @param teamSize: The size of the team you want to create

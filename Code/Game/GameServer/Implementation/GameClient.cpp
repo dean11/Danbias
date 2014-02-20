@@ -14,6 +14,8 @@ using namespace GameLogic;
 
 GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::NetworkClient> nwClient)
 {
+	this->isInvalid = false;
+	this->failedPackagesCount = 0;
 	this->client = nwClient;
 	this->player = 0;
 	isReady = false;
@@ -23,6 +25,7 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 }
 GameClient::~GameClient()
 {
+	this->client = 0;
 	this->player = 0;
 	this->isReady = false;
 	this->character = L"crate_colonists.dan";
@@ -55,6 +58,22 @@ void GameClient::SetState(ClientState state)
 	this->state = state;
 }
 
+void GameClient::Invalidate()
+{
+	this->isInvalid = true;
+	this->isReady = false;
+	this->state = ClientState_Invalid;
+	this->client->Disconnect();
+}
+int GameClient::IncrementFailedProtocol()
+{
+	this->failedPackagesCount++;
+	return this->failedPackagesCount;
+}
+void GameClient::ResetFailedProtocolCount()
+{
+	this->failedPackagesCount = 0;
+}
 
 void GameClient::SetOwner(Oyster::Network::NetworkSession* owner)
 {

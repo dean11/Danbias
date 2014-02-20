@@ -61,14 +61,15 @@ using namespace DanBias;
 		switch (e.args.type)
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
-				this->gClients[temp]->GetClient()->Disconnect();
-				this->gClients[temp] = 0;
+				//printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				this->gClients[temp]->Invalidate();
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
-				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				//this->Detach(e.sender);
+				//printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
+					this->gClients[temp]->Invalidate();
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				//printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	

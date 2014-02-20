@@ -48,6 +48,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 	Connection connection;
 	Translator translator;
 	OysterThread thread;
+	bool outputEvent;
 
 	OysterByte recieveBuffer;
 
@@ -63,6 +64,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		:	ID(currID++)
 		,	parent(0)
 		,	owner(0)
+		,	outputEvent(1)
 	{ 
 		InitWinSock();
 		this->thread.Create(this, false);
@@ -97,9 +99,6 @@ struct NetworkClient::PrivateData : public IThreadObject
 			OysterByte temp;
 			CustomNetProtocol p = this->sendQueue.Pop();
 
-			if(p[0].value.netShort == 304) 
-				int i = 0;
-
 			this->translator.Pack(temp, p);
 			errorCode = this->connection.Send(temp);
 
@@ -112,6 +111,11 @@ struct NetworkClient::PrivateData : public IThreadObject
 					parg.data.protocol = p;
 					NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
 					this->recieveQueue.Push(e);
+					
+					if(this->outputEvent)
+					{
+						printf("\t(ID: %i | IP: %s | Protocol: %i) - EventType_Disconnect && EventType_ProtocolFailedToSend \n", this->ID, this->connection.GetIpAddress().c_str(), p[0].value.netShort);	
+					}
 				}
 				else
 				{
@@ -120,7 +124,17 @@ struct NetworkClient::PrivateData : public IThreadObject
 					parg.data.protocol = p;
 					NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
 					this->recieveQueue.Push(e);
+
+					if(this->outputEvent)
+					{
+						printf("\t(ID: %i | IP: %s | Protocol: %i) - EventType_ProtocolFailedToSend\n", this->ID, this->connection.GetIpAddress().c_str(), p[0].value.netShort);	
+					}
 				}
+			}
+
+			if(this->outputEvent)
+			{
+				printf("\t(ID: %i | IP: %s | Protocol: %i) Message sent!\n", this->ID, this->connection.GetIpAddress().c_str(), p[0].value.netShort);	
 			}
 		}
 
@@ -236,6 +250,18 @@ struct NetworkClient::PrivateData : public IThreadObject
 			e.args.type = parg.type;
 			
 			this->recieveQueue.Push(e);
+
+			if(this->outputEvent)
+			{
+				printf("\t(ID: %i | IP: %s | Protocol: %i) Message recieved!\n", this->ID, this->connection.GetIpAddress().c_str(), protocol[0].value.netShort);	
+			}
+		}
+		else
+		{
+			if(this->outputEvent)
+			{
+				printf("\t(ID: %i | IP: %s) Failed to unpack CustomNetProtocol!\n", this->ID, this->connection.GetIpAddress().c_str());	
+			}
 		}
 	}
 };
@@ -277,7 +303,6 @@ void NetworkClient::Update()
 		NetEvent<NetworkClient*, ClientEventArgs> temp = this->privateData->recieveQueue.Pop();
 
 		this->DataRecieved(temp);
-
 	}
 }
 
@@ -412,10 +437,11 @@ void NetworkClient::DataRecieved(NetEvent<NetworkClient*, ClientEventArgs> e)
 	}
 }
 
-//void NetworkClient::NetworkCallback(Oyster::Network::CustomNetProtocol& p)
-//{}
-
 std::string NetworkClient::GetIpAddress()
 {
 	return this->privateData->connection.GetIpAddress();
+}
+void NetworkClient::OutputEventData(bool output)
+{
+	this->privateData->outputEvent;
 }

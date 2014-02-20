@@ -22,6 +22,7 @@ namespace DanBias
 		{
 			ClientState_CreatingGame,
 			ClientState_Ready,
+			ClientState_Invalid,
 		};
 
 	public:
@@ -41,6 +42,7 @@ namespace DanBias
 		inline GameLogic::IPlayerData*	GetPlayer()					const { return this->player; }
 		Oyster::Network::NetClient		GetClient()					const { return this->client; }
 		ClientState						GetState()					const { return this->state; }
+		int								GetFailedProtocolCount()	const { return this->failedPackagesCount; }
 
 
 		void SetPlayer(GameLogic::IPlayerData* player);
@@ -53,6 +55,10 @@ namespace DanBias
 		GameLogic::IPlayerData* ReleasePlayer();
 		Oyster::Network::NetClient ReleaseClient();
 
+		void Invalidate();
+		int IncrementFailedProtocol();
+		void ResetFailedProtocolCount();
+
 		//NetworkSpecific
 		void SetOwner(Oyster::Network::NetworkSession* owner);
 		void UpdateClient();
@@ -62,7 +68,9 @@ namespace DanBias
 		Oyster::Network::NetClient client;
 		
 		bool isReady;
+		bool isInvalid;
 		float secondsSinceLastResponse;
+		int failedPackagesCount;
 
 		std::wstring alias;
 		std::wstring character;
