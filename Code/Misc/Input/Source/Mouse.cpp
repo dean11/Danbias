@@ -81,11 +81,31 @@ Mouse::Mouse()
 	,	wheelDelta(0)
 	,	isCurorLocked(0)
 	,	pixelPos()
+	,	deltaPos()
 {
 }
 Mouse::~Mouse()
 {
 
+}
+
+int Mouse::GetWheelDelta() const
+{
+	return this->wheelDelta;
+}
+
+SAIPoint2D & Mouse::GetPixelPosition( Struct::SAIPoint2D &targetMem ) const
+{
+	targetMem.x = this->pixelPos.x;
+	targetMem.y = this->pixelPos.y;
+	return targetMem;
+}
+
+SAIPoint2D & Mouse::GetDeltaPosition( Struct::SAIPoint2D &targetMem ) const
+{
+	targetMem.x = this->deltaPos.x;
+	targetMem.y = this->deltaPos.y;
+	return targetMem;
 }
 
 void Mouse::AddOnMousePressCallback( Typedefs::OnMousePressCallback func)
