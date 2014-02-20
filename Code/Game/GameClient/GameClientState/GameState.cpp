@@ -508,9 +508,11 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					object->setPos( position );
 					object->setRot( rotation );
+					object->updateWorld();
 					// RB DEBUG 
 					object->setRBPos ( position );  
 					object->setRBRot ( rotation );  
+					object->updateRBWorld();
 					// !RB DEBUG 
 				}
 			}

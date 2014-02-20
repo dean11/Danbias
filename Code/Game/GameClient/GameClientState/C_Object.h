@@ -40,6 +40,7 @@ namespace DanBias
 			Oyster::Math::Float3 scale; 
 
 			// RB DEBUG
+			Oyster::Math::Float4x4 RBworld; 
 			Oyster::Math::Float3 RBposition; 
 			Oyster::Math::Quaternion RBrotation; 
 			Oyster::Math::Float3 RBscale; 
@@ -67,6 +68,7 @@ namespace DanBias
 			Oyster::Math::Float3  getScale() const;
 
 			// RB DEBUG
+			void updateRBWorld();
 			bool InitRB(RBInitData modelInit);
 			Oyster::Math::Float4x4 getRBWorld() const;
 			void setRBPos(Oyster::Math::Float3 newPos);
