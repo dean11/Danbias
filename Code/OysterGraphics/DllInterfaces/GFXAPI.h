@@ -30,6 +30,9 @@ namespace Oyster
 				//between 0-1
 				float AmbientValue;
 
+				Math::Float3 GlobalTint;
+				Math::Float3 GlobalGlowTint;
+
 				Math::Float2 Resolution;
 
 				//Bytes on the GPU

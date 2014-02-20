@@ -123,6 +123,8 @@ namespace Oyster
 			
 			Definitions::PostData pd;
 			pd.Amb = option.AmbientValue;
+			pd.Tint = option.GlobalTint;
+			pd.GlowTint = option.GlobalGlowTint;
 
 			void* data = Render::Resources::Post::Data.Map();
 			memcpy(data,&pd,sizeof(Definitions::PostData));

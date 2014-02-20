@@ -89,7 +89,9 @@ bool GameState::Init( SharedStateContent &shared )
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
-	gfxOp.AmbientValue = 1.0f;
+	gfxOp.AmbientValue = 0.5f;
+	gfxOp.GlobalGlowTint = Math::Float3(2,1,1);
+	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);
 
 	//tell server ready
