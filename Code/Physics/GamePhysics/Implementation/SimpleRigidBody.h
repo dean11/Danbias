@@ -69,6 +69,9 @@ namespace Oyster
 
 			float GetLambda() const;
 
+			void MoveToLimbo();
+			void ReleaseFromLimbo();
+
 			private:
 
 			btCollisionShape* collisionShape;
