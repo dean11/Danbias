@@ -17,10 +17,12 @@ namespace Input
 		void Activate();
 		void Deactivate();
 
-		void SetTargetText( ::std::wstring *field );
+		void BindTextTarget( ::std::wstring *field );
+		void ReleaseTextTarget();
 
 	protected:
-		::std::wstring *targetText;
+		::std::wstring *textTarget;
+		::std::wstring::size_type writePos;
 
 		ApplicationKeyboard();
 		~ApplicationKeyboard();

@@ -16,10 +16,7 @@ namespace Input
 		Win32ApplicationKeyboard();
 		~Win32ApplicationKeyboard();
 
-		LRESULT CALLBACK WindowCallback( HWND h, UINT m, WPARAM w, LPARAM l );
-
-	private:
-
+		void CaptureText( UINT msg, WPARAM param );
 	};
 }
 

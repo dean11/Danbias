@@ -8,6 +8,7 @@
 #include "..\InputManager.h"
 #include "Win32Keyboard.h"
 #include "Win32Mouse.h"
+#include "Win32ApplicationKeyboard.h"
 #include <vector>
 #include <Windows.h>
 #include <map>
