@@ -43,8 +43,8 @@ namespace GameLogic
 			void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)		override;
 			void TurnLeft(Oyster::Math3D::Float deltaLeftRadians )										override;
 			ObjectSpecialType GetObjectType()	const													override;
-
-
+			void Inactivate()																			override;
+			void Release()																				override;
 
 			Player *player;
 		};

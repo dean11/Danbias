@@ -214,7 +214,7 @@ bool GameSession::Join(gClient gameClient)
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i])
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				IPlayerData* temp = this->gClients[i]->GetPlayer();
 				Protocol_ObjectCreatePlayer p1(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 

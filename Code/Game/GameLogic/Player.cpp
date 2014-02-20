@@ -293,6 +293,11 @@ bool Player::IsIdle()
 	return (this->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
 }
 
+void Player::Inactivate()
+{
+	//this->
+}
+
 Oyster::Math::Float3 Player::GetPosition() const
 {
 	return (Oyster::Math::Float3) this->rigidBody->GetState().centerPos;
