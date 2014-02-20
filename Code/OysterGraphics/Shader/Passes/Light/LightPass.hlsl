@@ -39,10 +39,16 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID )
 		DiffBase += DiffuseGlow[DTid.xy + uint2(0,1)];
 		DiffBase += DiffuseGlow[DTid.xy + uint2(1,1)];
 		DiffBase = DiffBase / 4;
+		
+		float4 DepthBase = DepthTexture[DTid.xy];
+		DepthBase = DepthTexture[DTid.xy + uint2(1,0)];
+		DepthBase = DepthTexture[DTid.xy + uint2(0,1)];
+		DepthBase = DepthTexture[DTid.xy + uint2(1,1)];
+		DepthBase = DepthBase /4;
 		Ambient[DTid.xy/2] = float4(DiffBase.xyz, AmbValue);
 		Ambient[DTid.xy/2 + float2(Pixels.x/2, 0)] = GUI[DTid.xy];
-		Ambient[DTid.xy/2 + float2(0, Pixels.y/2)] = float4(DiffBase.xyz * DiffBase.w,1);
-		Ambient[DTid.xy/2 + Pixels/2] = float4(NormalSpec[DTid.xy].xyz,1);
+		Ambient[DTid.xy/2 + float2(0, Pixels.y/2)] = float4(DiffBase.xyz * DiffBase.w * 10 /* * (2-DepthBase) */,1);
+		Ambient[DTid.xy/2 + Pixels/2] = float4(NormalSpec[DTid.xy].xyz * float3(1,1,-1),1);
 	}
 
 }

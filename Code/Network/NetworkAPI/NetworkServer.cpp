@@ -58,7 +58,7 @@ void Broadcast()
 		addr.append(buff);
 		dest.sin_addr.s_addr = inet_addr( addr.c_str() );
 		// send the pkt
-		int ret = sendto( s, pkt, pkt_length, 0, (sockaddr *)&dest, sizeof(dest) );
+		int ret = sendto( s, pkt, pkt_length, 0, (sockaddr *)&dest, (int)sizeof(dest) );
 	}
 }
 

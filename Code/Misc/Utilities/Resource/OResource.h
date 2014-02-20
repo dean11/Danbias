@@ -40,15 +40,15 @@ namespace Oyster
 			}
 			inline unsigned int			GetResourceSize()					const	
 			{ 
-				return this->resourceSize; 
+				return (unsigned int)this->resourceSize; 
 			}
 			inline unsigned int			GetResourceElementSize()			const	
 			{ 
-				return this->resourceElementSize; 
+				return (unsigned int)this->resourceElementSize; 
 			}
 			inline unsigned int			GetResourceID()						const	
 			{ 
-				return this->resourceID; 
+				return (unsigned int)this->resourceID; 
 			}
 			inline void					SetResourceID(int id)				
 			{ 
