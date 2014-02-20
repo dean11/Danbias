@@ -79,9 +79,10 @@ GameClientState::ClientState MainState::Update( float deltaTime )
 	{
 		bool test = this->privData->input->IsMousePressed();
 		if(test)
-		{
+		{ // HACK: debug trap still in use?
 			int i = 0;
 		};
+
 		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
 		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
 	}
