@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input\Include;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input\Include;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input\Include;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,7 +163,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input\Include;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
