@@ -34,6 +34,11 @@ namespace DanBias { namespace Client
 		::Utility::DynamicMemory::UniquePointer<MyData> privData;
 		GameStateUI *currGameUI, *gameUI, *respawnUI; 
 
+		// DEGUG KEYS
+		bool key_Reload_Shaders;
+		bool key_Wireframe_Toggle; 
+		bool renderWhireframe; 
+		// !DEGUG KEYS
 	};
 } }
 #endif

@@ -32,19 +32,6 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
-	bool key_forward;
-	bool key_backward;
-	bool key_strafeRight;
-	bool key_strafeLeft;
-	bool key_Shoot;
-	bool key_Jump;
-
-	// DEGUG KEYS
-	bool key_Reload_Shaders;
-	bool key_Wireframe_Toggle; 
-	bool renderWhireframe; 
-	// !DEGUG KEYS
-
 	C_Player player;
 	Camera_FPSV2 camera;
 
@@ -75,11 +62,6 @@ bool GameState::Init( SharedStateContent &shared )
 
 	this->privData = new MyData();
 
-	this->privData->key_forward = false;
-	this->privData->key_backward = false;
-	this->privData->key_strafeRight = false;
-	this->privData->key_strafeLeft = false;
-
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
 	this->privData->input = shared.input;
@@ -100,9 +82,9 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 			
 	// DEGUG KEYS
-	this->privData->key_Reload_Shaders = false;
-	this->privData->key_Wireframe_Toggle = false;
-	this->privData->renderWhireframe = false;
+	this->key_Reload_Shaders = false;
+	this->key_Wireframe_Toggle = false;
+	this->renderWhireframe = false;
 	// !DEGUG KEYS
 
 	auto light = this->privData->lights->begin();
@@ -189,6 +171,9 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	default:
 		break;
 	} 
+	// DEBUG keybindings
+	ReadKeyInput();
+
 	return this->privData->nextState;
 }
 
@@ -219,7 +204,7 @@ bool GameState::Render()
 
 #ifdef _DEBUG
 	//RB DEBUG render wire frame 
-		if(this->privData->renderWhireframe)
+		if(this->renderWhireframe)
 		{
 			Oyster::Graphics::API::StartRenderWireFrame();
 
@@ -322,7 +307,36 @@ void GameState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
+void GameState::ReadKeyInput()
+{
+	// DEGUG KEYS
 
+	// Reload shaders
+	if( this->privData->input->IsKeyPressed(DIK_R) )
+	{
+		if( !this->key_Reload_Shaders )
+		{
+#ifdef _DEBUG
+			Oyster::Graphics::API::ReloadShaders();
+#endif
+			this->key_Reload_Shaders = true;
+		}
+	} 
+	else 
+		this->key_Reload_Shaders = false;
+
+	// toggle wire frame render
+	if( this->privData->input->IsKeyPressed(DIK_T) )
+	{
+		if( !this->key_Wireframe_Toggle )
+		{
+			this->renderWhireframe = !this->renderWhireframe;
+			this->key_Wireframe_Toggle = true;
+		}
+	} 
+	else 
+		this->key_Wireframe_Toggle = false;
+}
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )

@@ -163,35 +163,6 @@ void GamingUI::ReadKeyInput()
 	else 
 		this->key_Jump = false;
 
-
-	// DEGUG KEYS
-
-	// Reload shaders
-	if( this->input->IsKeyPressed(DIK_R) )
-	{
-		if( !this->key_Reload_Shaders )
-		{
-#ifdef _DEBUG
-			Oyster::Graphics::API::ReloadShaders();
-#endif
-			this->key_Reload_Shaders = true;
-		}
-	} 
-	else 
-		this->key_Reload_Shaders = false;
-
-	// toggle wire frame render
-	if( this->input->IsKeyPressed(DIK_T) )
-	{
-		if( !this->key_Wireframe_Toggle )
-		{
-			this->renderWhireframe = !this->renderWhireframe;
-			this->key_Wireframe_Toggle = true;
-		}
-	} 
-	else 
-		this->key_Wireframe_Toggle = false;
-
 	if( this->input->IsKeyPressed(DIK_ESCAPE) )
 	{
 		this->nextState = GameStateUI::UIState_shut_down;

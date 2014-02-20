@@ -37,13 +37,6 @@ namespace DanBias { namespace Client
 		bool key_Shoot;
 		bool key_Jump;
 
-		// DEGUG KEYS
-		bool key_Reload_Shaders;
-		bool key_Wireframe_Toggle; 
-		bool renderWhireframe; 
-		// !DEGUG KEYS
-
-
 		GamingUI();
 		void ReadKeyInput();
 	};
