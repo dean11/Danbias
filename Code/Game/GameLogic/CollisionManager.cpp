@@ -25,8 +25,10 @@ using namespace GameLogic;
 		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
 
-		if(!realObj)	return;
-		if(!player)		return;
+		if(!realObj)	
+			return;
+		if(!player)		
+			return;
 
 		switch (realObj->GetObjectType())
 		{
