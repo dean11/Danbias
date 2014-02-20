@@ -50,7 +50,12 @@ namespace Oyster
 						if(models[i].Visible)
 						{
 							Definitions::PerModel pm;
-							pm.WV = View * models[i].WorldMatrix.GetTranspose().GetInverse();
+							Math::Float3x3 normalTransform;
+							normalTransform = Math::Float3x3(models[i].WorldMatrix.v[0].xyz, models[i].WorldMatrix.v[1].xyz, models[i].WorldMatrix.v[2].xyz);
+							normalTransform.Transpose().Invert();
+							Math::Matrix m = Math::Matrix(Math::Vector4(normalTransform.v[0],0.0f), Math::Vector4(normalTransform.v[1],0.0f), Math::Vector4(normalTransform.v[2],0.0f), Math::Vector4(0.0f));
+							pm.WV = View * m;
+							//pm.WV = models[i].WorldMatrix.GetTranspose().GetInverse();
 							pm.WVP = Projection * View * models[i].WorldMatrix;
 
 							Model::ModelInfo* info = models[i].info;
@@ -159,10 +164,10 @@ namespace Oyster
 				{
 					Definitions::BlurrData bd;
 					bd.BlurMask = Math::Float4(1,1,1,1);
-					bd.StopX = Core::resolution.x/2;
-					bd.StopY = Core::resolution.y;
+					bd.StopX = (UINT)Core::resolution.x/2;
+					bd.StopY = (UINT)Core::resolution.y;
 					bd.StartX = 0;
-					bd.StartY = Core::resolution.y/2;
+					bd.StartY = (UINT)Core::resolution.y/2;
 					
 					void* data = Resources::Blur::Data.Map();
 					memcpy(data,&bd,sizeof(Definitions::BlurrData));
@@ -179,8 +184,8 @@ namespace Oyster
 				{
 					Definitions::BlurrData bd;
 					bd.BlurMask = Math::Float4(0,0,0,1);
-					bd.StopX = Core::resolution.x/2;
-					bd.StopY = Core::resolution.y/2;
+					bd.StopX = (UINT)Core::resolution.x/2;
+					bd.StopY = (UINT)Core::resolution.y/2;
 					bd.StartX = 0;
 					bd.StartY = 0;
 					

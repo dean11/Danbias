@@ -349,9 +349,6 @@ namespace Oyster
 					Core::device->CreateDepthStencilView(depthstencil,NULL,&Gui::depth);
 					depthstencil->Release();
 
-					
-					D3D11_DEPTH_STENCIL_DESC dDesc;
-
 					return Core::Init::Success;
 				}
 

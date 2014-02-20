@@ -146,7 +146,7 @@ namespace Oyster
 					return NULL;
 				}
 #endif
-				Core::UsedMem += data.size;
+				Core::UsedMem += (int)data.size;
 				return Core::PipelineManager::CreateShader(data, Core::PipelineManager::ShaderType(type));
 			}
 		}

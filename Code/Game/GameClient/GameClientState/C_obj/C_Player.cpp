@@ -20,5 +20,5 @@ bool C_Player::Init(ModelInitData modelInit)
 void C_Player::playAnimation(std::wstring animation, bool loop)
 {
 	if(model)
-		Oyster::Graphics::API::PlayAnimation(model, L"movement", loop);
+		Oyster::Graphics::API::PlayAnimation(model, animation, loop);
 }
