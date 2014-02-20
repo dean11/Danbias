@@ -300,6 +300,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 					Object* dynamicGameObj = CreateGameObj(dynamicObjData, rigidBody_Dynamic);
 					if (dynamicGameObj != NULL)
 					{
+						dynamicGameObj->GetRigidBody()->SetSubscription(Level::PhysicsOnMoveLevel);
 						this->dynamicObjects.Push((DynamicObject*)dynamicGameObj);
 					}
 				}
