@@ -5,17 +5,28 @@
 #define INPUT_APPLICATION_KEBOARD_H
 
 #include "InputObject.h"
-#include <vector>
+#include <string>
 
 namespace Input
 {
-	class AplicationKeyboard : public InputObject
+	class ApplicationKeyboard : public InputObject
 	{
 	public:
+		bool IsActive() const;
+
+		void Activate();
+		void Deactivate();
+
+		void SetTargetText( ::std::wstring *field );
 
 	protected:
-		AplicationKeyboard();
-		~AplicationKeyboard();
+		::std::wstring *targetText;
+
+		ApplicationKeyboard();
+		~ApplicationKeyboard();
+
+	private:
+		bool active;
 	};
 }
 
