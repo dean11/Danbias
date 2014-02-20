@@ -28,7 +28,8 @@ struct  LanMenuState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
+	::Input::Mouse *mouseInput;
+	::Input::ApplicationKeyboard *keyboardInput;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 
@@ -53,7 +54,9 @@ bool LanMenuState::Init( SharedStateContent &shared )
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
+	this->privData->keyboardInput = shared.keyboardDevice_application;
+	this->privData->keyboardInput->Activate();
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
 
@@ -80,6 +83,9 @@ bool LanMenuState::Init( SharedStateContent &shared )
 
 	this->privData->connectPort = 15151;
 
+	this->privData->keyboardInput->BindTextTarget( &(*this->privData->connectIP)[0] );
+	this->privData->keyboardInput->Activate();
+
 	return true;
 }
 
@@ -87,10 +93,13 @@ GameClientState::ClientState LanMenuState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
-	}
+		::Input::Struct::SAIPoint2D pos;
+		this->privData->mouseInput->GetPixelPosition( pos );
 
+		mouseState.x = pos.x;
+		mouseState.y = pos.y;
+		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+	}
 	EventHandler::Instance().Update( mouseState );
 
 	return this->privData->nextState;

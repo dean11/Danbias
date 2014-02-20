@@ -22,7 +22,7 @@ struct LobbyState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
+	::Input::Mouse *mouseInput;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 } privData;
@@ -43,7 +43,7 @@ bool LobbyState::Init( SharedStateContent &shared )
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
 
@@ -61,21 +61,15 @@ bool LobbyState::Init( SharedStateContent &shared )
 
 GameClientState::ClientState LobbyState::Update( float deltaTime )
 {
-	// Wishlist:
-	// picking 
-	// mouse events
-	// different menus
-	// play sounds
-	// update animation
-	// send data to server
-	// check data from server
-
 	MouseInput mouseState;
 	{
-		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
-	}
+		::Input::Struct::SAIPoint2D pos;
+		this->privData->mouseInput->GetPixelPosition( pos );
 
+		mouseState.x = pos.x;
+		mouseState.y = pos.y;
+		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+	}
 	EventHandler::Instance().Update( mouseState );
 
 	return this->privData->nextState;

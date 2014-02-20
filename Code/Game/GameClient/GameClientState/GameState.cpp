@@ -24,7 +24,9 @@ struct  GameState::MyData
 	MyData(){}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
+	::Input::Mouse *mouseInput;
+	::Input::Keyboard *keyboardInput_raw;
+	::Input::ApplicationKeyboard *keyboardInput_app;
 
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
@@ -80,10 +82,14 @@ bool GameState::Init( SharedStateContent &shared )
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
+	this->privData->keyboardInput_raw = shared.keyboardDevice_raw;
+	this->privData->keyboardInput_app = shared.keyboardDevice_application;
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
+
+	this->privData->keyboardInput_app->Deactivate();
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
@@ -285,29 +291,19 @@ void GameState::ChangeState( ClientState next )
 
 void GameState::ReadKeyInput()
 {
-	if( this->privData->input->IsKeyPressed(DIK_W) )
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_W) )
 	{
-		//if(!this->privData->key_forward)
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
-			this->privData->key_forward = true;
-		}
+		this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
+		this->privData->key_forward = true;
 	}
-	else
-		this->privData->key_forward = false;
 
-	if( this->privData->input->IsKeyPressed(DIK_S) )
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_S) )
 	{
-		//if( !this->privData->key_backward )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
-			this->privData->key_backward = true;
-		}
+		this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
+		this->privData->key_backward = true;
 	}
-	else 
-		this->privData->key_backward = false;
 
-	if( this->privData->input->IsKeyPressed(DIK_A) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_A) )
 	{
 		//if( !this->privData->key_strafeLeft )
 		{
@@ -318,7 +314,7 @@ void GameState::ReadKeyInput()
 	else 
 		this->privData->key_strafeLeft = false;
 
-	if( this->privData->input->IsKeyPressed(DIK_D) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_D) )
 	{
 		//if( !this->privData->key_strafeRight )
 		{
@@ -332,8 +328,8 @@ void GameState::ReadKeyInput()
 	//send delta mouse movement 
 	{
 		static const float mouseSensitivity = Radian( 1.0f );
-		this->privData->camera.PitchDown( this->privData->input->GetPitch() * mouseSensitivity );
-		float yaw = this->privData->input->GetYaw();
+		this->privData->camera.PitchDown( this->privData->mouseInput->GetPitch() * mouseSensitivity );
+		float yaw = this->privData->mouseInput->GetYaw();
 		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
 		{
 			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
@@ -341,7 +337,7 @@ void GameState::ReadKeyInput()
 	}
 
 	// shoot
-	if( this->privData->input->IsKeyPressed(DIK_Z) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_Z) )
 	{
 		if( !this->privData->key_Shoot )
 		{
@@ -355,7 +351,7 @@ void GameState::ReadKeyInput()
 	} 
 	else 
 		this->privData->key_Shoot = false;
-	if( this->privData->input->IsKeyPressed(DIK_X) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_X) )
 	{
 		if( !this->privData->key_Shoot )
 		{
@@ -369,7 +365,7 @@ void GameState::ReadKeyInput()
 	} 
 	else 
 		this->privData->key_Shoot = false;
-	if( this->privData->input->IsKeyPressed(DIK_C) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_C) )
 	{
 		if( !this->privData->key_Shoot )
 		{
@@ -385,7 +381,7 @@ void GameState::ReadKeyInput()
 		this->privData->key_Shoot = false;
 
 	// jump
-	if( this->privData->input->IsKeyPressed(DIK_SPACE) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_SPACE) )
 	{
 		if(!this->privData->key_Jump)
 		{
@@ -400,7 +396,7 @@ void GameState::ReadKeyInput()
 	// DEGUG KEYS
 
 	// Reload shaders
-	if( this->privData->input->IsKeyPressed(DIK_R) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_R) )
 	{
 		if( !this->privData->key_Reload_Shaders )
 		{
@@ -414,7 +410,7 @@ void GameState::ReadKeyInput()
 		this->privData->key_Reload_Shaders = false;
 
 	// toggle wire frame render
-	if( this->privData->input->IsKeyPressed(DIK_T) )
+	if( this->privData->mouseInput->IsKeyPressed(DIK_T) )
 	{
 		if( !this->privData->key_Wireframe_Toggle )
 		{

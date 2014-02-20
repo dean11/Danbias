@@ -12,6 +12,8 @@ namespace Input
 	class ApplicationKeyboard : public InputObject
 	{
 	public:
+		virtual ~ApplicationKeyboard();
+
 		bool IsActive() const;
 
 		void Activate();
@@ -25,7 +27,6 @@ namespace Input
 		::std::wstring::size_type writePos;
 
 		ApplicationKeyboard();
-		~ApplicationKeyboard();
 
 	private:
 		bool active;

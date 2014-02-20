@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "InputObject.h"
 #include "Keyboard.h"
+#include "ApplicationKeyboard.h"
 #include "Mouse.h"
 
 #endif // !INPUT_INPUT_H

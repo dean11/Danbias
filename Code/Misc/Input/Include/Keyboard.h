@@ -151,6 +151,8 @@ namespace Input
 		};
 
 	public: /* Manual check functions */
+		virtual ~Keyboard();
+
 		virtual bool IsKeyUp (Enum::SAKI key) = 0;
 		virtual bool IsKeyDown (Enum::SAKI key) = 0;
 		virtual const wchar_t* GetAsText(Enum::SAKI key) = 0;
@@ -170,7 +172,6 @@ namespace Input
 
 	protected:
 		Keyboard();
-		~Keyboard();
 
 	protected:
 		struct KeyboardCallbackList

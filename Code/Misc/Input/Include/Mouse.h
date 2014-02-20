@@ -66,6 +66,8 @@ namespace Input
 		};
 	
 	public:
+		virtual ~Mouse();
+
 		virtual bool				IsBtnUp(Enum::SAMI key) = 0;
 		virtual bool				IsBtnDown(Enum::SAMI key) = 0;
 		virtual int					GetWheelDelta() = 0;
@@ -93,7 +95,6 @@ namespace Input
 
 	protected:
 		Mouse();
-		~Mouse();
 
 	protected:
 		struct MouseCallbackList
