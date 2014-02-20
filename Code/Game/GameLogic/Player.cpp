@@ -127,7 +127,7 @@ void Player::BeginFrame()
 	}
 	
 
-	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 ) //&& this->rigidBody->GetLambda() < 0.7f)
+	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.7f)
 	{
 		/* Dampen when on the ground and not being moved by the player */
 		linearVelocity *= 0.2f;
