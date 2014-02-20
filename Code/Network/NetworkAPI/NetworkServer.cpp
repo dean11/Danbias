@@ -83,7 +83,13 @@ public:
 		,	broadcastTime(1.0f, 0.0f)
 	{  }
 	~PrivateData()
-	{  }
+	{
+		if(listener)
+		{
+			delete listener;
+			listener = NULL;
+		}
+	}
 
 	bool DoWork();
 
