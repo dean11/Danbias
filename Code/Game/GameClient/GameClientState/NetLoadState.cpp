@@ -152,7 +152,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 					RBInitData RBData;
 					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
 					{
-						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
+						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size * 2;
 						RBData.type = RB_Type_Cube;
@@ -161,7 +161,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 
 					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
 					{
-						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
+						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius * 2;
 						RBData.type = RB_Type_Sphere;
@@ -196,7 +196,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 					RBInitData RBData;
 					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
 					{
-						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.box.position;
+						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size * 2;
 						RBData.type = RB_Type_Cube;
@@ -205,7 +205,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 
 					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
 					{
-						RBData.position = (Float3)oh->position + (Float3)oh->boundingVolume.sphere.position;
+						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
 						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
 						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius * 2;
 						RBData.type = RB_Type_Sphere;

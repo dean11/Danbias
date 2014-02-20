@@ -16,8 +16,10 @@ C_Object::C_Object()
 }
 C_Object::~C_Object()
 {
-
+	if( this->model )
+		this->Release();
 }
+
 bool C_Object::Init(ModelInitData modelInit)
 {
 	position = modelInit.position;
