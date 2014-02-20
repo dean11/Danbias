@@ -22,9 +22,13 @@ using namespace GameLogic;
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
-		
 		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
 		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
+
+		if(!realObj)	
+			return;
+		if(!player)		
+			return;
 
 		switch (realObj->GetObjectType())
 		{

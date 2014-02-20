@@ -7,9 +7,6 @@
 
 #include "EventButtonGUI.h"
 
-//Only for testing because we don't have any other input
-#include "../WindowManager/WindowShell.h"
-
 namespace DanBias
 {
 	namespace Client
@@ -18,24 +15,25 @@ namespace DanBias
 		class ButtonEllipse : public EventButtonGUI<Owner>
 		{
 		public:
-			ButtonEllipse() 
-				: EventButtonGUI(), radius(0)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, backColor, hoverColor, pressedColor, owner, pos, size, resize)
 			{}
-			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, Owner owner, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButtonGUI(textureName, buttonText, textColor, owner, pos, size, resize)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				EventFunc func, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, backColor, hoverColor, pressedColor, func, pos, size, resize)
 			{}
-			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, EventFunc func, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButtonGUI(textureName, buttonText, textColor, func, pos, size, resize)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				EventFunc func, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, backColor, hoverColor, pressedColor, func, owner, pos, size, resize)
 			{}
-			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, EventFunc func, Owner owner, Oyster::Math::Float3 pos,
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButtonGUI(textureName, buttonText, textColor, func, owner, pos, size, resize)
-			{}
-			ButtonEllipse(std::wstring textureName, std::wstring buttonText, Oyster::Math::Float4 textColor, EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
-				: EventButtonGUI(textureName, buttonText, textColor, func, owner, userData, pos, size, resize)
+			ButtonEllipse(std::wstring textureName, std::wstring buttonText, 
+				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
+				EventFunc func, Owner owner, void* userData, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height) 
+				: EventButtonGUI(textureName, buttonText, textColor, backColor, hoverColor, pressedColor, func, owner, userData, pos, size, resize)
 			{}
 			virtual ~ButtonEllipse()
 			{}
@@ -43,7 +41,6 @@ namespace DanBias
 			//Circle vs point collision
 			bool Collision(Oyster::Event::MouseInput& input)
 			{
-				//Should come from the InputClass
 				float xMouse = input.x, yMouse = input.y;
 
 				double normx = (xMouse - pos.x) / size.x;

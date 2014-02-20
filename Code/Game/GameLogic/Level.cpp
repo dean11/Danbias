@@ -4,6 +4,7 @@
 #include "JumpPad.h"
 #include "ExplosiveCrate.h"
 #include "Portal.h"
+#include <Resource\OResource.h>
 
 //Conversion from wstring to string
 #include <codecvt>
@@ -22,7 +23,7 @@ Level::~Level(void)
 	delete this->levelObj;
 	this->levelObj = NULL;
 }
-Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
+Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 {
 	Object* gameObj  = NULL;
 	
@@ -55,6 +56,7 @@ Object* Level::createGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		{
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
+		break;
 	case ObjectSpecialType_Stone: 
 		{
 			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
@@ -194,8 +196,8 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.sphere.mass;
 
 	//Radius scaled
-	//rigidBodyRadius = (staticObjData->scale[0] + staticObjData->scale[1] + staticObjData->scale[2] / 3) * staticObjData->boundingVolume.sphere.radius;
-	rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
+	rigidBodyRadius = (obj->scale[0]) * obj->boundingVolume.sphere.radius;
+	//rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
 
 	//create the rigid body
 	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
@@ -209,7 +211,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	//Convert from wstring to string
 	typedef std::codecvt_utf8<wchar_t> convert_typeX;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
 
 	std::string convertedLevelPath = converterX.to_bytes(levelPath);
 	objects = ll.LoadLevel(convertedLevelPath);
@@ -220,7 +222,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
 	API::Instance().SetGravity(200);
-	int objCount = objects.size();
+	int objCount = (int)objects.size();
 
 	for (int i = 0; i < objCount; i++)
 	{
@@ -261,7 +263,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				if(rigidBody_Static != NULL)
 				{
 					// create game object
-					Object* staticGameObj = createGameObj(staticObjData, rigidBody_Static);
+					Object* staticGameObj = CreateGameObj(staticObjData, rigidBody_Static);
 					if(staticGameObj != NULL)
 					{
 						this->staticObjects.Push((StaticObject*)staticGameObj);
@@ -295,7 +297,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				if(rigidBody_Dynamic != NULL)
 				{
 					// create game object
-					Object* dynamicGameObj = createGameObj(dynamicObjData, rigidBody_Dynamic);
+					Object* dynamicGameObj = CreateGameObj(dynamicObjData, rigidBody_Dynamic);
 					if (dynamicGameObj != NULL)
 					{
 						this->dynamicObjects.Push((DynamicObject*)dynamicGameObj);

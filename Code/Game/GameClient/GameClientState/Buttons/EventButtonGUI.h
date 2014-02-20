@@ -7,6 +7,7 @@
 
 #include "EventHandler/EventButton.h"
 #include "DllInterfaces/GFXAPI.h"
+#include "../WindowManager/WindowShell.h"
 
 namespace DanBias
 {
@@ -37,26 +38,27 @@ namespace DanBias
 				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
+				this->resizedSize = size;
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
 			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
 				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
-				EventFunc func, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
+				EventFunc func, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
 				: EventButton(func), pos(pos), size(size), texture(NULL), buttonText(buttonText), 
 				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
+				this->resizedSize = size;
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
 			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
 				Oyster::Math::Float4 textColor, Oyster::Math::Float4 backColor, Oyster::Math::Float4 hoverColor, Oyster::Math::Float4 pressedColor,
-				EventFunc func, Owner owner, Oyster::Math::Float3 pos, 
-							Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
+				EventFunc func, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_None) 
 				: EventButton(func, owner), pos(pos), size(size), texture(NULL), buttonText(buttonText), 
 				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
+				this->resizedSize = size;
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
 			EventButtonGUI(std::wstring textureName, std::wstring buttonText, 
@@ -66,6 +68,7 @@ namespace DanBias
 				textColor(textColor), backColor(backColor), hoverColor(hoverColor), pressedColor(pressedColor)
 			{
 				CreateTexture(textureName);
+				this->resizedSize = size;
 				if(resize != ResizeAspectRatio_None) ResizeWithAspectRatio(resize);
 			}
 			virtual ~EventButtonGUI()
@@ -92,15 +95,15 @@ namespace DanBias
 
 					if(EventButton<Owner>::GetState() == ButtonState_None)
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, pos, size, backColor);
+						Oyster::Graphics::API::RenderGuiElement(texture, pos, resizedSize, backColor);
 					}
 					else if(EventButton<Owner>::GetState() == ButtonState_Hover)
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, pos, size, hoverColor);
+						Oyster::Graphics::API::RenderGuiElement(texture, pos, resizedSize, hoverColor);
 					}
 					else
 					{
-						Oyster::Graphics::API::RenderGuiElement(texture, pos, size, pressedColor);
+						Oyster::Graphics::API::RenderGuiElement(texture, pos, resizedSize, pressedColor);
 					}
 
 				}
@@ -121,14 +124,17 @@ namespace DanBias
 				GetClientRect(WindowShell::GetHWND(), &r);
 
 				if(resize == ResizeAspectRatio_Height)
-					size.y *= (float)r.right/(float)r.bottom;
+					resizedSize.y = size.y * ((float)r.right/(float)r.bottom);
 				else if(resize == ResizeAspectRatio_Width)
-					size.x *= (float)r.bottom/(float)r.right;
+					resizedSize.x = size.x * ((float)r.bottom/(float)r.right);
 			}
 
 		protected:
 			Oyster::Math::Float3 pos;
 			Oyster::Math::Float2 size;
+
+			//The new calculated resize, it's only used for the button not the text right now.
+			Oyster::Math::Float2 resizedSize;
 
 			Oyster::Graphics::API::Texture texture;
 			

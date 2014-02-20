@@ -61,15 +61,16 @@ using namespace DanBias;
 		switch (e.args.type)
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
+				printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				this->gClients[temp]->Invalidate();
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
-				printf("\t(%i : %s) - EventType_ProtocolFailedToSend\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				//this->Detach(e.sender);
+				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
+					this->gClients[temp]->Invalidate();
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
-				//printf("\t(%i : %s) - EventType_ProtocolRecieved\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 				this->ParseProtocol(e.args.data.protocol, cl);
 			break;
 		}
@@ -128,6 +129,12 @@ using namespace DanBias;
 			int id = movedObject->GetID();
 			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
 			Protocol_ObjectPositionRotation p(movedObject->GetPosition(), movedObject->GetRotation(), id);
+
+			Oyster::Math::Float3 temp = movedObject->GetPosition();
+
+			if(temp.x < -300)
+				id = 0;
+
 			GameSession::gameSession->Send(p.GetProtocol());
 		//}	
 	}

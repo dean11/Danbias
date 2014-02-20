@@ -4,6 +4,12 @@
 using namespace ::Oyster::Math3D;
 using namespace ::Utility::Value;
 
+inline Quaternion Transform( const Quaternion &transformer, const Quaternion &transformee )
+{
+//	return transformer * transformee;
+	return transformee * transformer;
+}
+
 Camera_FPSV2::Camera_FPSV2()
 { // this->head is default set to identity uniformprojection at origo
 	this->pitchUp = 0.0f;
@@ -46,7 +52,7 @@ void Camera_FPSV2::SetRotation( const Quaternion &rotation )
 	}
 
 	this->body.rotation = rotation;
-	this->head.SetRotation( rotation * Rotation(this->pitchUp, WorldAxisOf(rotation, Float3::standard_unit_x) ) );
+	this->head.SetRotation( Transform(rotation, Rotation(this->pitchUp, WorldAxisOf(rotation, Float3::standard_unit_x))) );
 	this->pitchHaveChanged = false;
 }
 
@@ -74,7 +80,7 @@ void Camera_FPSV2::UpdateOrientation()
 {
 	if( this->pitchHaveChanged )
 	{
-		this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x) ) );
+		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
 		this->pitchHaveChanged = false;
 	}
 
@@ -87,7 +93,7 @@ void Camera_FPSV2::UpdateOrientation()
 void Camera_FPSV2::SnapUpToNormal( const Float3 &normal )
 {
 	this->body.rotation = Rotation( SnapAngularAxis(AngularAxis(this->body.rotation), WorldAxisOf(this->body.rotation, Float3::standard_unit_y), normal) );
-	this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x) ) );
+	this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
 	this->pitchHaveChanged = false;
 }
 
@@ -164,7 +170,7 @@ Float4x4 & Camera_FPSV2::GetViewMatrix( Float4x4 &targetMem ) const
 {
 	if( this->pitchHaveChanged )
 	{
-		this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x) ) );
+		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
 		this->pitchHaveChanged = false;
 	}
 
@@ -180,7 +186,7 @@ Float4x4 & Camera_FPSV2::GetViewsProjMatrix( Float4x4 &targetMem ) const
 {
 	if( this->pitchHaveChanged )
 	{
-		this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x) ) );
+		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
 		this->pitchHaveChanged = false;
 	}
 
@@ -191,7 +197,7 @@ Float3 Camera_FPSV2::GetNormalOf( const Float3 &axis ) const
 {
 	if( this->pitchHaveChanged )
 	{
-		this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x) ) );
+		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
 		this->pitchHaveChanged = false;
 	}
 
@@ -212,7 +218,7 @@ Float3 Camera_FPSV2::GetLook() const
 {
 	if( this->pitchHaveChanged )
 	{
-		this->head.SetRotation( this->body.rotation * Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x) ) );
+		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
 		this->pitchHaveChanged = false;
 	}
 

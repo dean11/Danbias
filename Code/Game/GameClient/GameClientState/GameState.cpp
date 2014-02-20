@@ -89,6 +89,8 @@ bool GameState::Init( SharedStateContent &shared )
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
+	gfxOp.AmbientValue = 1.0f;
+	Graphics::API::SetOptions(gfxOp);
 
 	//tell server ready
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
@@ -104,6 +106,7 @@ bool GameState::Init( SharedStateContent &shared )
 	{
 		light->second->Render();
 	}
+
 
 	return true;
 }
@@ -189,47 +192,49 @@ bool GameState::Render()
 	light->second->Render();
 	}*/
 
-	// RB DEBUG render wire frame 
-	//if(this->privData->renderWhireframe)
-	//{
-	//	Oyster::Graphics::API::StartRenderWireFrame();
-	//
-	//	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-	//	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
-	//	Oyster::Math3D::Float4x4 world = translation  * scale;
-	//	Oyster::Graphics::API::RenderDebugCube( world );
-	//	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
-	//
-	//	staticObject = this->privData->staticObjects->begin();
-	//	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
-	//	{
-	//		if( staticObject->second->getBRtype() == RB_Type_Cube)
-	//		{
-	//			Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
-	//		}
-	//		if( staticObject->second->getBRtype() == RB_Type_Sphere)
-	//		{
-	//			Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
-	//		}
-	//	}
-	//
-	//	dynamicObject = this->privData->dynamicObjects->begin();
-	//	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
-	//	{
-	//		if( dynamicObject->second )
-	//		{
-	//			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
-	//			{
-	//				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
-	//			}
-	//			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
-	//			{
-	//				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
-	//			}
-	//		}
-	//	}
-	//}
-	// !RB DEBUG 
+#ifdef _DEBUG
+	//RB DEBUG render wire frame 
+		if(this->privData->renderWhireframe)
+		{
+			Oyster::Graphics::API::StartRenderWireFrame();
+
+			Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
+			Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
+			Oyster::Math3D::Float4x4 world = translation  * scale;
+			Oyster::Graphics::API::RenderDebugCube( world );
+			Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+
+			staticObject = this->privData->staticObjects->begin();
+			for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+			{
+				if( staticObject->second->getBRtype() == RB_Type_Cube)
+				{
+					Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+				}
+				if( staticObject->second->getBRtype() == RB_Type_Sphere)
+				{
+					Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+				}
+			}
+
+			dynamicObject = this->privData->dynamicObjects->begin();
+			for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
+			{
+				if( dynamicObject->second )
+				{
+					if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+					{
+						Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+					}
+					if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+					{
+						Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+					}
+				}
+			}
+		}
+		//!RB DEBUG 
+#endif
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
@@ -237,6 +242,7 @@ bool GameState::Render()
 
 bool GameState::Release()
 {
+	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
 		auto staticObject = this->privData->staticObjects->begin();
@@ -480,6 +486,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				// if is this player. Remember to change camera
 				if( this->privData->myId == decoded.object_ID )
 				{
+					if( !Within(position.Dot(position), 2500.0f, 90000.0f) )
+					{ // HACK: bug trap
+						const char *breakPoint = "Something is wrong.";
+						position = Float3( 0.0f, 160.0f, 0.0f );
+					}
+
 					this->privData->camera.SetPosition( position );
 					this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );

@@ -47,6 +47,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Misc\Utilities
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LevelLoader", "Game\LevelLoader\LevelLoader.vcxproj", "{6391E709-D9FA-4FEF-A3B9-4343DB5A0C63}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServerDebugEnvironment", "Game\LanServer\GameServerDebugEnvironment\GameServerDebugEnvironment.vcxproj", "{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -715,6 +717,40 @@ Global
 		{6391E709-D9FA-4FEF-A3B9-4343DB5A0C63}.RelWithDebInfo|x64.ActiveCfg = Release|Win32
 		{6391E709-D9FA-4FEF-A3B9-4343DB5A0C63}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
 		{6391E709-D9FA-4FEF-A3B9-4343DB5A0C63}.RelWithDebInfo|x86.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|Win32.Build.0 = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|x64.ActiveCfg = Debug|x64
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|x64.Build.0 = Debug|x64
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|x86.ActiveCfg = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Debug|x86.Build.0 = Debug|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|Any CPU.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|Mixed Platforms.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|Mixed Platforms.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|Win32.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|Win32.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|x64.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|x86.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.MinSizeRel|x86.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|Any CPU.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|Win32.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|Win32.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|x64.ActiveCfg = Release|x64
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|x64.Build.0 = Release|x64
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|x86.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.Release|x86.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|Any CPU.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|Mixed Platforms.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|Mixed Platforms.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|Win32.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|Win32.Build.0 = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|x64.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -737,5 +773,6 @@ Global
 		{2EC4DDED-8F75-4C86-A10B-E1E8EB29F3EE} = {1322B12B-5E37-448A-AAAF-F637460DCB23}
 		{604A12A7-07BF-4482-BDF3-7101C811F121} = {C83A6FAD-E71F-4B1E-9D63-E93E61DDC012}
 		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB} = {C83A6FAD-E71F-4B1E-9D63-E93E61DDC012}
+		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE} = {C83A6FAD-E71F-4B1E-9D63-E93E61DDC012}
 	EndGlobalSection
 EndGlobal

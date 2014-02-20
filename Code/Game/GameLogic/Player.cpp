@@ -27,6 +27,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	key_backward = 0;
 	key_strafeRight = 0;
 	key_strafeLeft = 0;
+	key_jump = 0;
+	invincibleCooldown = 0;
 
 	this->previousPosition = Oyster::Math::Float3(0,0,0);
 
@@ -50,6 +52,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	key_backward = 0;
 	key_strafeRight = 0;
 	key_strafeLeft = 0;
+	key_jump = 0;
+	invincibleCooldown = 0;
 
 	this->previousPosition = Oyster::Math::Float3(0,0,0);
 	this->moveDir = Oyster::Math::Float3(0,0,0);
@@ -71,7 +75,7 @@ Player::~Player(void)
 void Player::BeginFrame()
 {
 	//weapon->Update(0.002f); 
-	Object::BeginFrame();
+	//Object::BeginFrame();
 
 	Oyster::Math::Float maxSpeed = 30;
 
@@ -82,9 +86,9 @@ void Player::BeginFrame()
 	/*if (left)
 		m_turnAngle -= dt * m_turnVelocity;
 	if (right)
-		m_turnAngle += dt * m_turnVelocity;*/
+		m_turnAngle += dt * m_turnVelocity;
 
-	//xform.setRotation (btQuaternion (btVector3(0.0, 1.0, 0.0), m_turnAngle));
+	xform.setRotation (btQuaternion (btVector3(0.0, 1.0, 0.0), m_turnAngle));*/
 
 	Oyster::Math::Float3 linearVelocity = this->rigidBody->GetLinearVelocity();
 	Oyster::Math::Float speed = this->rigidBody->GetLinearVelocity().GetLength();
@@ -123,7 +127,7 @@ void Player::BeginFrame()
 	}
 	
 
-	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.7f)
+	if (key_forward <= 0.001 && key_backward <= 0.001 && key_strafeRight <= 0.001 && key_strafeLeft <= 0.001 && key_jump <= 0.001 ) //&& this->rigidBody->GetLambda() < 0.7f)
 	{
 		/* Dampen when on the ground and not being moved by the player */
 		linearVelocity *= 0.2f;
@@ -153,8 +157,11 @@ void Player::BeginFrame()
 			this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 		}
 	}
+	Oyster::Math::Float3 pos = this->rigidBody->GetState().centerPos; 
+	if(pos  == Oyster::Math::Float3(0,0,0)) 
+		int i =0;
 
-	this->weapon->Update(0.01f);
+	//this->weapon->Update(0.01f);
 }
 
 void Player::EndFrame()
@@ -164,7 +171,7 @@ void Player::EndFrame()
 	
 	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
 	
-	Object::EndFrame();	
+	//Object::EndFrame();	
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
