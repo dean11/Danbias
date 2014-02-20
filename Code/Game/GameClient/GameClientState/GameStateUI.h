@@ -1,5 +1,5 @@
-#ifndef DANBIAS_CLIENT_GAMECLIENTSTATE_H
-#define DANBIAS_CLIENT_GAMECLIENTSTATE_H
+#ifndef DANBIAS_CLIENT_GAMESTATEUI_H
+#define DANBIAS_CLIENT_GAMESTATEUI_H
 
 #include "Utilities.h"
 #include "NetworkClient.h"

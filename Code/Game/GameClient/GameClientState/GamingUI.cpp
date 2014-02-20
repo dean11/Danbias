@@ -6,6 +6,7 @@ using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
 using namespace ::GameLogic;
 using namespace ::Utility::Value;
+using namespace ::Oyster::Math;
 
 GamingUI::GamingUI() :
 	GameStateUI()
@@ -14,6 +15,8 @@ GamingUI::GamingUI() :
 	this->input = nullptr;
 	this->netClient = nullptr;
 	this->camera = nullptr;
+	this->plane	= nullptr;
+	this->text	= nullptr;
 }
 
 GamingUI::GamingUI( InputClass *input, NetworkClient *connection, Camera_FPSV2 *camera ) :
@@ -25,35 +28,49 @@ GamingUI::GamingUI( InputClass *input, NetworkClient *connection, Camera_FPSV2 *
 }
 
 GamingUI::~GamingUI() { /* Do nothing */ }
+bool GamingUI::Init()
+{
+	// add textures and text
+	this->plane	=  new Plane_UI(L"box_tex.png", Float3(0.5f, 0.0f, 0.5f), Float2(0.3f, 0.1f));
+	this->text	=  new Text_UI(L"hej", Float3(0.5f,0.0f,0.1f), Float2(0.1f,0.1f));
 
+	return true; 
+}
 GameStateUI::UIState GamingUI::Update( float deltaTime )
 {
+	ReadKeyInput();
 	return this->nextState;
 }
 
 bool GamingUI::HaveGUIRender() const
 {
-	return false; // TODO: change to true when we want UI elements like a crosshair
+	return true; 
 }
 
 bool GamingUI::HaveTextRender() const
 {
-	return false; // TODO: change to true when we want UI elements like a chat window
+	return true; 
 }
 
 void GamingUI::RenderGUI() const
 {
-	// TODO: Render crosshairs and such here. Don't forget to adjust GamingUI::HaveGUIRender
+	Oyster::Graphics::API::StartGuiRender();
+	this->plane->RenderTexture();
 }
 
 void GamingUI::RenderText() const
 {
-	// TODO: Render chattext and such here. Don't forget to adjust GamingUI::HaveGUIRender
+	Oyster::Graphics::API::StartTextRender();
+	this->text->RenderText();
 }
 
 bool GamingUI::Release()
 {
 	// TODO: Release UI components here.
+	if(this->plane) 
+		delete this->plane;
+	if(this->text)
+		delete this->text;
 	return true;
 }
 
@@ -79,75 +96,107 @@ void GamingUI::ReadKeyInput()
 		this->netClient->Send( Protocol_PlayerMovementRight() );
 	}
 
-//	if( this->input->IsKeyPressed(DIK_R) )
-//	{
-//		if( !this->key_Reload_Shaders )
-//		{
-//#ifdef _DEBUG
-//			Graphics::API::ReloadShaders();
-//#endif
-//			this->key_Reload_Shaders = true;
-//		}
-//	} 
-//	else 
-//		this->key_Reload_Shaders = false;
-
-	//send delta mouse movement 
+//send delta mouse movement 
 	{
 		static const float mouseSensitivity = Radian( 1.0f );
 		this->camera->PitchDown( this->input->GetPitch() * mouseSensitivity );
-		this->netClient->Send( Protocol_PlayerLeftTurn(this->input->GetYaw() * mouseSensitivity) );
+		float yaw = this->input->GetYaw();
+		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
+		{
+			this->netClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
+		}
 	}
 
 	// shoot
-	//if( this->input->IsKeyPressed(DIK_Z) )
-	//{
-	//	if( !this->key_Shoot )
-	//	{
-	//		Protocol_PlayerShot playerShot;
-	//		playerShot.primaryPressed = true;
-	//		playerShot.secondaryPressed = false;
-	//		playerShot.utilityPressed = false;
-	//		this->netClient->Send( playerShot );
-	//		this->key_Shoot = true;
-	//	}
-	//} 
-	//else 
-	//	this->key_Shoot = false;
-
-	//if( this->input->IsKeyPressed(DIK_X) )
-	//{
-	//	if( !this->key_Shoot )
-	//	{
-	//		Protocol_PlayerShot playerShot;
-	//		playerShot.primaryPressed = false;
-	//		playerShot.secondaryPressed = true;
-	//		playerShot.utilityPressed = false;
-	//		this->netClient->Send( playerShot );
-	//		this->key_Shoot = true;
-	//	}
-	//} 
-	//else 
-	//	this->key_Shoot = false;
-
-	//if( this->input->IsKeyPressed(DIK_C) )
-	//{
-	//	if( !this->key_Shoot )
-	//	{
-	//		Protocol_PlayerShot playerShot;
-	//		playerShot.primaryPressed = false;
-	//		playerShot.secondaryPressed = false;
-	//		playerShot.utilityPressed = true;
-	//		this->netClient->Send( playerShot );
-	//		this->key_Shoot = true;
-	//	}
-	//} 
-	//else 
-	//	this->key_Shoot = false;
+	if( this->input->IsKeyPressed(DIK_Z) )
+	{
+		if( !this->key_Shoot )
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = true;
+			playerShot.secondaryPressed = false;
+			playerShot.utilityPressed = false;
+			this->netClient->Send( playerShot );
+			this->key_Shoot = true;
+		}
+	} 
+	else 
+		this->key_Shoot = false;
+	if( this->input->IsKeyPressed(DIK_X) )
+	{
+		if( !this->key_Shoot )
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = false;
+			playerShot.secondaryPressed = true;
+			playerShot.utilityPressed = false;
+			this->netClient->Send( playerShot );
+			this->key_Shoot = true;
+		}
+	} 
+	else 
+		this->key_Shoot = false;
+	if( this->input->IsKeyPressed(DIK_C) )
+	{
+		if( !this->key_Shoot )
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = false;
+			playerShot.secondaryPressed = false;
+			playerShot.utilityPressed = true;
+			this->netClient->Send( playerShot );
+			this->key_Shoot = true;
+		}
+	} 
+	else 
+		this->key_Shoot = false;
 
 	// jump
 	if( this->input->IsKeyPressed(DIK_SPACE) )
 	{
-		this->netClient->Send( Protocol_PlayerJump() );
+		if(!this->key_Jump)
+		{
+			this->netClient->Send( Protocol_PlayerJump() );
+			this->key_Jump = true;
+		}
 	}
+	else 
+		this->key_Jump = false;
+
+
+	// DEGUG KEYS
+
+	// Reload shaders
+	if( this->input->IsKeyPressed(DIK_R) )
+	{
+		if( !this->key_Reload_Shaders )
+		{
+#ifdef _DEBUG
+			Oyster::Graphics::API::ReloadShaders();
+#endif
+			this->key_Reload_Shaders = true;
+		}
+	} 
+	else 
+		this->key_Reload_Shaders = false;
+
+	// toggle wire frame render
+	if( this->input->IsKeyPressed(DIK_T) )
+	{
+		if( !this->key_Wireframe_Toggle )
+		{
+			this->renderWhireframe = !this->renderWhireframe;
+			this->key_Wireframe_Toggle = true;
+		}
+	} 
+	else 
+		this->key_Wireframe_Toggle = false;
+
+	if( this->input->IsKeyPressed(DIK_ESCAPE) )
+	{
+		this->nextState = GameStateUI::UIState_shut_down;
+	} 
+	// !DEGUG KEYS
+	// TODO: implement sub-menu
 }
+

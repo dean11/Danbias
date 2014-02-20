@@ -3,6 +3,7 @@
 #include "GameClientState.h"
 #include "OysterMath.h"
 #include <string>
+#include "GameStateUI.h"
 
 namespace DanBias { namespace Client
 {
@@ -31,6 +32,8 @@ namespace DanBias { namespace Client
 	private:
 		struct MyData;
 		::Utility::DynamicMemory::UniquePointer<MyData> privData;
+		GameStateUI *currGameUI, *gameUI, *respawnUI; 
+
 	};
 } }
 #endif
