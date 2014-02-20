@@ -196,8 +196,8 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.sphere.mass;
 
 	//Radius scaled
-	//rigidBodyRadius = (staticObjData->scale[0] + staticObjData->scale[1] + staticObjData->scale[2] / 3) * staticObjData->boundingVolume.sphere.radius;
-	rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
+	rigidBodyRadius = (obj->scale[0]) * obj->boundingVolume.sphere.radius;
+	//rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
 
 	//create the rigid body
 	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
