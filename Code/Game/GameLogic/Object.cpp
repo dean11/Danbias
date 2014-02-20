@@ -30,6 +30,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfte
 	this->objectID = objectID;
 	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
+	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Move)((Game*)&Game::Instance())->onMoveFnc);
 }
 
 
@@ -41,6 +42,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICusto
 	this->objectID = objectID;
 	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
+	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_Move)((Game*)&Game::Instance())->onMoveFnc);
 }
 
 Object::~Object(void)
