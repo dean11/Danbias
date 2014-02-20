@@ -89,7 +89,9 @@ bool GameState::Init( SharedStateContent &shared )
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
-	gfxOp.AmbientValue = 1.0f;
+	gfxOp.AmbientValue = 0.5f;
+	gfxOp.GlobalGlowTint = Math::Float3(2,1,1);
+	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);
 
 	//tell server ready
@@ -126,6 +128,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBData.position = position;
 	RBData.rotation = ArrayToQuaternion( rotation );
 	RBData.scale =  scale;
+	RBData.type = RB_Type_Cube;
 	// !RB DEBUG 
 	if( isMyPlayer )
 	{
@@ -138,7 +141,10 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
 			Float3 offset = Float3( 0.0f );
-			offset.y = this->privData->player.getScale().y * 0.9f;
+			// DEBUG position of camera so we can see the player model
+			//offset.y = this->privData->player.getScale().y * 5.0f;
+			//offset.z = this->privData->player.getScale().z * -5.0f;
+			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
 		}
@@ -182,7 +188,9 @@ bool GameState::Render()
 	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
 	{
 		if( dynamicObject->second )
+		{
 			dynamicObject->second->Render();
+		}
 	}
 
 
@@ -327,7 +335,11 @@ void GameState::ReadKeyInput()
 	{
 		static const float mouseSensitivity = Radian( 1.0f );
 		this->privData->camera.PitchDown( this->privData->input->GetPitch() * mouseSensitivity );
-		this->privData->nwClient->Send( Protocol_PlayerLeftTurn(this->privData->input->GetYaw() * mouseSensitivity) );
+		float yaw = this->privData->input->GetYaw();
+		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
+		{
+			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
+		}
 	}
 
 	// shoot
@@ -496,6 +508,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					this->privData->camera.SetRotation( rotation );
 					this->privData->player.setPos( position );
 					this->privData->player.setRot( rotation );
+					this->privData->player.updateWorld();
+					// RB DEBUG 
+					this->privData->player.setRBPos ( position );  
+					this->privData->player.setRBRot ( rotation );  
+					this->privData->player.updateRBWorld();
+					// !RB DEBUG 
 				}
 
 				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
@@ -504,9 +522,11 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					object->setPos( position );
 					object->setRot( rotation );
+					object->updateWorld();
 					// RB DEBUG 
 					object->setRBPos ( position );  
 					object->setRBRot ( rotation );  
+					object->updateRBWorld();
 					// !RB DEBUG 
 				}
 			}

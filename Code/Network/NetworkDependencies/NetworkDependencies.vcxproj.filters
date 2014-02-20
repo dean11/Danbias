@@ -9,6 +9,7 @@
     <ClCompile Include="OysterByte.cpp" />
     <ClCompile Include="ThreadedClient.cpp" />
     <ClCompile Include="WinsockFunctions.cpp" />
+    <ClCompile Include="ConnectionUDP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
@@ -25,5 +26,6 @@
     <ClInclude Include="Protocols.h" />
     <ClInclude Include="ThreadedClient.h" />
     <ClInclude Include="WinsockFunctions.h" />
+    <ClInclude Include="ConnectionUDP.h" />
   </ItemGroup>
 </Project>

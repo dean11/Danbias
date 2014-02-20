@@ -40,7 +40,10 @@ float3 perturb_normal( float3 N, float3 V, float2 texcoord )
 PixelOut main(VertexOut input)
 {
 	PixelOut output;
-	output.DiffuseGlow = Diffuse.Sample(S1, input.UV) * float4(Color, 1);
+	float4 DiffGlow = Diffuse.Sample(S1, input.UV);
+	float3 tint = Color*(1-DiffGlow.w) + GlowColor * DiffGlow.w;
+	tint =  Color*(1-DiffGlow.w) + GlowColor * DiffGlow.w;
+	output.DiffuseGlow = DiffGlow * float4(tint,1);
 
 	//NORMALIZE
 	float3x3 CoTangentFrame = cotangent_frame(input.normal, normalize(input.ViewPos), input.UV);

@@ -62,6 +62,9 @@ namespace Oyster
 			struct PostData
 			{
 				float Amb;
+				Math::Float3 Tint;
+				Math::Float3 GlowTint;
+				float PAD;
 			};
 
 			struct Text2D
@@ -78,6 +81,14 @@ namespace Oyster
 				unsigned int StopX;
 				unsigned int StopY;
 				Math::Float4 BlurMask;
+			};
+
+			struct TintData
+			{
+				Math::Float3 Tint;
+				Math::Float PAD;
+				Math::Float3 GlowTint;
+				Math::Float PAD2;
 			};
 		}
 	}

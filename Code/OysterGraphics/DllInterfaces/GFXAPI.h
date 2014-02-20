@@ -30,6 +30,9 @@ namespace Oyster
 				//between 0-1
 				float AmbientValue;
 
+				Math::Float3 GlobalTint;
+				Math::Float3 GlobalGlowTint;
+
 				Math::Float2 Resolution;
 
 				//Bytes on the GPU
@@ -38,7 +41,7 @@ namespace Oyster
 			typedef void* Texture;
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Option options);
-#ifdef _DEBUG
+
 			static State ReloadShaders();
 
 			//should be called after rendered normal models, before GUI or Text rendering
@@ -51,7 +54,6 @@ namespace Oyster
 			static void RenderDebugSphere(Math::Matrix world);
 
 			static void StartRenderFullModel();
-#endif
 			
 			//! @todo Memory Leaks
 

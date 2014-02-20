@@ -157,6 +157,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size * 2;
 						RBData.type = RB_Type_Cube;
 						staticObject->InitRB( RBData );
+						staticObject->updateRBWorld();
 					}
 
 					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
@@ -166,6 +167,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius * 2;
 						RBData.type = RB_Type_Sphere;
 						staticObject->InitRB( RBData );
+						staticObject->updateRBWorld();
 					}
 					// !RB DEBUG 
 

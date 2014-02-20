@@ -24,6 +24,7 @@ namespace Oyster
 				ModelInfo* info;
 				Oyster::Math::Float4x4 WorldMatrix;
 				Oyster::Math::Float3 Tint;
+				Oyster::Math::Float3 GlowTint;
 				bool Visible;
 				AnimationData Animation;
 			};
