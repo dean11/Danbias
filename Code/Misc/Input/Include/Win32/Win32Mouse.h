@@ -17,8 +17,6 @@ namespace Input
 
 		bool IsBtnUp(Enum::SAMI key) override;
 		bool IsBtnDown(Enum::SAMI key) override;
-		int GetWheelDelta()  override;
-		Struct::SAIPoint2D GetPixelPosition(Struct::SAIPoint2D targetMem = Struct::SAIPoint2D())  override;
 
 		void ProccessMouseData (bool isDown, Enum::SAMI btn, int delta, Struct::SAIPoint2D velocity, unsigned int makeCode);
 
