@@ -10,6 +10,8 @@
 
 using namespace DanBias;
 
+
+
 int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdShow)
 {
 	if(SetDllDirectory(L"..\\DLL") == FALSE)

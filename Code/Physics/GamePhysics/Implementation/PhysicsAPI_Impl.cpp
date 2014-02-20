@@ -283,6 +283,11 @@ void API_Impl::UpdateWorld()
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
 		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
 		simpleBody->PreStep(this->dynamicsWorld);
+
+		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
+		{
+			this->customBodies[i]->CallSubscription_Move();
+		}	
 	}
 
 	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
@@ -295,12 +300,7 @@ void API_Impl::UpdateWorld()
 		btTransform trans;
 		trans = simpleBody->GetRigidBody()->getWorldTransform();
 		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
-		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
-
-		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
-		{
-			this->customBodies[i]->CallSubscription_Move();
-		}		
+		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));		
 	}
 
 	int numManifolds = this->dynamicsWorld->getDispatcher()->getNumManifolds();

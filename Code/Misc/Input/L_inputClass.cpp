@@ -189,7 +189,7 @@ float InputClass::GetPitch( )
 float InputClass::GetYaw( )
 {
 	float dX = (static_cast<float>( m_mouseState.lX)/5);
-	return -dX;
+	return dX;
 }
 
 bool InputClass::IsMousePressed()

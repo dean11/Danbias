@@ -79,6 +79,14 @@ namespace Oyster
 				unsigned int StopY;
 				Math::Float4 BlurMask;
 			};
+
+			struct TintData
+			{
+				Math::Float3 Tint;
+				Math::Float PAD;
+				Math::Float3 GlowTint;
+				Math::Float PAD2;
+			};
 		}
 	}
 }

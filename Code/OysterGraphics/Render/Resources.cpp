@@ -123,7 +123,7 @@ namespace Oyster
 					Gather::AnimationData.Init(desc);
 
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_PS;
-					desc.ElementSize = sizeof(Math::Float3);
+					desc.ElementSize = sizeof(Definitions::TintData);
 					Color.Init(desc);
 
 					desc.Type = Buffer::BUFFER_TYPE::CONSTANT_BUFFER_GS;
@@ -176,7 +176,7 @@ namespace Oyster
 					sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
 					sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 					sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-					sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+					sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 					sdesc.MipLODBias = 0;
 					sdesc.MaxAnisotropy =4;
 					sdesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;

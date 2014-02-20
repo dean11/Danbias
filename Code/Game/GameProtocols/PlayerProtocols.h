@@ -97,6 +97,8 @@ namespace GameLogic
 		{
 			this->protocol[0].value = protocol_Gameplay_PlayerLeftTurn;
 			this->protocol[0].type = ::Oyster::Network::NetAttributeType_Short;
+			// deltaRadian
+			this->protocol[1].type = ::Oyster::Network::NetAttributeType_Float;
 			this->deltaRadian = deltaRadian;
 		}
 		
