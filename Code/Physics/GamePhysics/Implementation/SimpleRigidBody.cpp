@@ -413,3 +413,13 @@ float SimpleRigidBody::GetLambda() const
 {
 	return this->rayLambda[0];
 }
+
+void SimpleRigidBody::MoveToLimbo()
+{
+	this->rigidBody->setCollisionFlags(this->rigidBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+}
+
+void SimpleRigidBody::ReleaseFromLimbo()
+{
+	this->rigidBody->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+}
