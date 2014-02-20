@@ -166,6 +166,7 @@ namespace DanBias
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
 		{ // updating mouse input
+		  // TODO: Is obosolete when Dennis's input system is wired in
 			POINT mousePos;
 			GetCursorPos( &mousePos );
 
@@ -179,7 +180,7 @@ namespace DanBias
 			mouseNormalisedY /= (float)(windowVertex.bottom - windowVertex.top);
 
 			data.inputObj.Update( mouseNormalisedX, mouseNormalisedY );
-		}		
+		}
 
 		if( data.serverOwner )
 		{

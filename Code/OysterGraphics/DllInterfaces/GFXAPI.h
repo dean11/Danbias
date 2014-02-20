@@ -38,7 +38,7 @@ namespace Oyster
 			typedef void* Texture;
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Option options);
-#ifdef _DEBUG
+
 			static State ReloadShaders();
 
 			//should be called after rendered normal models, before GUI or Text rendering
@@ -51,7 +51,6 @@ namespace Oyster
 			static void RenderDebugSphere(Math::Matrix world);
 
 			static void StartRenderFullModel();
-#endif
 			
 			//! @todo Memory Leaks
 

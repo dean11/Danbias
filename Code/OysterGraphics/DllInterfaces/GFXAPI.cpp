@@ -224,7 +224,7 @@ namespace Oyster
 #else
 		API::State API::ReloadShaders()
 		{
-
+			return API::State::Sucsess;
 		}
 
 		void API::StartRenderWireFrame()
