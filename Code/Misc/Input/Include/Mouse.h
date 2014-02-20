@@ -47,7 +47,7 @@ namespace Input
 		typedef void(*OnMousePressCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseDownCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseReleaseCallback)(Enum::SAMI btn, Mouse* sender);
-		typedef void(*OnMouseMoveCallback)(Struct::SAIPoint2D, Mouse* sender);
+		typedef void(*OnMouseMoveCallback)(Struct::SAIPointInt2D, Mouse* sender);
 		typedef void(*OnMouseScrollCallback)(int delta, Mouse* sender);
 	}
 	//-----------------------------------------------------------------------------------------------------------------------------
@@ -61,15 +61,16 @@ namespace Input
 			virtual void OnMousePress	( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseDown	( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseRelease	( Enum::SAMI key, Mouse* sender )							{ }
-			virtual void OnMouseMove	( Struct::SAIPoint2D coordinate, Mouse* sender )			{ }
+			virtual void OnMouseMove	( Struct::SAIPointInt2D coordinate, Mouse* sender )			{ }
 			virtual void OnMouseScroll	( int delta, Mouse* sender )								{ }
 		};
 	
 	public:
-		virtual bool				IsBtnUp(Enum::SAMI key) = 0;
-		virtual bool				IsBtnDown(Enum::SAMI key) = 0;
-		virtual int					GetWheelDelta() = 0;
-		virtual Struct::SAIPoint2D	GetPixelPosition(Struct::SAIPoint2D targetMem = Struct::SAIPoint2D()) = 0;
+		virtual bool					IsBtnUp(Enum::SAMI key) = 0;
+		virtual bool					IsBtnDown(Enum::SAMI key) = 0;
+		virtual int						GetWheelDelta() = 0;
+		virtual Struct::SAIPointInt2D	GetPixelPosition(Struct::SAIPointInt2D targetMem = Struct::SAIPointInt2D()) = 0;
+		virtual Struct::SAIPointFloat2D	GetNormalizedPosition(Struct::SAIPointFloat2D targetMem = Struct::SAIPointFloat2D()) = 0;
 
 	public:
 		void AddOnMousePressCallback( Typedefs::OnMousePressCallback func);
@@ -135,7 +136,8 @@ namespace Input
 	protected:
 		std::vector<MouseEvent*>	mouseSubscribers;
 		MouseCallbackList*			callbackList;
-		Struct::SAIPoint2D			pixelPos;
+		Struct::SAIPointInt2D		pixelPos;
+		Struct::SAIPointFloat2D		normalPos;
 		bool						isCurorLocked;
 		int							wheelDelta;
 	};

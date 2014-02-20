@@ -81,6 +81,7 @@ Mouse::Mouse()
 	,	wheelDelta(0)
 	,	isCurorLocked(0)
 	,	pixelPos()
+	,	normalPos()
 {
 }
 Mouse::~Mouse()
@@ -149,6 +150,8 @@ void Mouse::SetPixelPos(int x, int y)
 {
 	this->pixelPos.x = x;
 	this->pixelPos.y = y;
+
+	// TODO: Update normalized position
 }
 void Mouse::ToggleCursor(bool toggler)
 {

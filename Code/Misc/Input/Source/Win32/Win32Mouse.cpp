@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "..\..\Include\Win32\Win32Mouse.h"
+#include "..\..\Include\Win32\Win32Input.h"
 
 using namespace Input;
 using namespace Input::Enum;
@@ -11,6 +11,7 @@ using namespace Input::Typedefs;
 
 Win32Mouse::Win32Mouse()
 {
+	memset(&this->device, 0, sizeof(RAWINPUTDEVICE));
 	memset(&this->buttons[0], 0, sizeof(Buttons) * MAXBUTTONS);
 }
 Win32Mouse::~Win32Mouse()
@@ -34,13 +35,29 @@ int Win32Mouse::GetWheelDelta()
 {
 	return this->wheelDelta;
 }
-Struct::SAIPoint2D Win32Mouse::GetPixelPosition(Struct::SAIPoint2D targetMem)
+Struct::SAIPointInt2D Win32Mouse::GetPixelPosition(Struct::SAIPointInt2D targetMem)
 {
 	targetMem = this->pixelPos;
 	return targetMem;
 }
+Struct::SAIPointFloat2D	Win32Mouse::GetNormalizedPosition(Struct::SAIPointFloat2D targetMem)
+{
+	POINT mousePos;
+	GetCursorPos( &mousePos );
+	
+	RECT windowVertex;
+	GetWindowRect( this->device.hwndTarget, &windowVertex );
+	
+	this->normalPos.x = (float)(mousePos.x - windowVertex.left);
+	this->normalPos.x /= (float)(windowVertex.right - windowVertex.left);
+	
+	this->normalPos.y = (float)(mousePos.y - windowVertex.top);
+	this->normalPos.y /= (float)(windowVertex.bottom - windowVertex.top);
 
-void Win32Mouse::ProccessMouseData (bool isUp, Enum::SAMI btn, int delta, Struct::SAIPoint2D velocity, unsigned int makeCode)
+	return targetMem;
+}
+
+void Win32Mouse::ProccessMouseData (bool isUp, Enum::SAMI btn, int delta, Struct::SAIPointInt2D velocity, unsigned int makeCode)
 {
 	if(velocity.Length() != 0)
 	{
@@ -138,4 +155,30 @@ void Win32Mouse::ProccessMouseData (bool isUp, Enum::SAMI btn, int delta, Struct
 			}
 		}
 	}
+
+
 }
+
+bool Win32Mouse::Create(HWND target)
+{
+	this->device.usUsagePage = 0x01;
+	this->device.hwndTarget = target;
+	this->device.usUsage = Input::RawInput_Usage_mouse;
+	this->device.dwFlags = RIDEV_NOLEGACY | RIDEV_CAPTUREMOUSE;
+
+	if(RegisterRawInputDevices(&this->device, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
+	{
+		return true;
+	}
+
+	memset(&this->device, 0, sizeof(RAWINPUTDEVICE));
+	
+	return false;
+}
+
+
+
+
+
+
+

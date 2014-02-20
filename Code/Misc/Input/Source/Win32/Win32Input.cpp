@@ -556,7 +556,7 @@ void MapKey(RAWKEYBOARD& rawKB, bool& out_isUp, SAKI& out_key, unsigned int& sCo
 	rawKB.MakeCode = scanCode;
 	sCode = scanCode;
 }
-void MapButton(RAWMOUSE& rawMouse, bool &isUp, Enum::SAMI& btn, int& delta, Struct::SAIPoint2D& vel, unsigned int& mcode)
+void MapButton(RAWMOUSE& rawMouse, bool &isUp, Enum::SAMI& btn, int& delta, Struct::SAIPointInt2D& vel, unsigned int& mcode)
 {
 	if(rawMouse.lLastX != 0 || rawMouse.lLastY != 0)
 	{
@@ -647,7 +647,7 @@ void Win32Input::RawInputParser(HWND h, LPARAM l)
 				bool isUp = true;
 				Enum::SAMI btn = Enum::SAMI_Unknown;
 				int delta = 0;
-				Struct::SAIPoint2D vel;
+				Struct::SAIPointInt2D vel;
 				unsigned int mcode = 0;
 				MapButton(raw->data.mouse, isUp, btn, delta, vel, mcode);
 
@@ -759,20 +759,15 @@ InputObject* Win32Input::CreateDevice(const SAIType inputType, Typedefs::WindowH
 
 		case SAIType_Mouse:
 		{
-			rid.usUsage = RawInput_Usage_mouse;
-			rid.dwFlags = RIDEV_NOLEGACY | RIDEV_CAPTUREMOUSE;
-			if(RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
+			Win32Mouse* obj = new Win32Mouse();
+			if(!obj->Create(this->targetHwin))
 			{
-				int i = 0;
-				val = (InputObject*)1;
-				Win32Mouse* obj = new Win32Mouse();
-				this->mouse.push_back(obj);
-				val = obj;
-			}
-			else
-			{
+				delete obj;
 				return 0;
 			}
+
+			this->mouse.push_back(obj);
+			val = obj;
 		}
 		break;
 	}
