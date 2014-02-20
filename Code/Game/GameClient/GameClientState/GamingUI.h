@@ -4,6 +4,8 @@
 #include "GameStateUI.h"
 #include "Input.h"
 #include "Camera_FPSV2.h"
+#include "Buttons\Text_UI.h"
+#include "Buttons\Plane_UI.h"
 
 namespace DanBias { namespace Client
 {
@@ -12,6 +14,7 @@ namespace DanBias { namespace Client
 	public:
 		GamingUI( ::Input::Mouse *mouseInput, ::Input::Keyboard *keyboardInput, ::Oyster::Network::NetworkClient *connection, Camera_FPSV2 *camera );
 		virtual ~GamingUI();
+		bool Init();
 
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
@@ -25,6 +28,15 @@ namespace DanBias { namespace Client
 		::Input::Keyboard *keyboardInput;
 		::Oyster::Network::NetworkClient *netClient;
 		Camera_FPSV2 *camera;
+		Text_UI* text;
+		Plane_UI* plane;
+
+		bool key_forward;
+		bool key_backward;
+		bool key_strafeRight;
+		bool key_strafeLeft;
+		bool key_Shoot;
+		bool key_Jump;
 
 		GamingUI();
 		void ReadKeyInput();

@@ -56,8 +56,8 @@ namespace Oyster
 				//size.x = size.x / (text.length() * TEXT_SPACING /2);
 				
 
-				pos *= 2;
-				pos -= 1;
+				pos.xy *= 2;
+				pos.xy -= 1;
 				pos.y *= -1;
 
 				

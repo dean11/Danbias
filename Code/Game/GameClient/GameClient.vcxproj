@@ -226,6 +226,8 @@
     <ClCompile Include="GameClientState\RespawnUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameClientState\Buttons\Plane_UI.h" />
+    <ClInclude Include="GameClientState\Buttons\Text_UI.h" />
     <ClInclude Include="GameClientState\Camera_Basic.h" />
     <ClInclude Include="GameClientState\Buttons\ButtonEllipse.h" />
     <ClInclude Include="GameClientState\Buttons\EventButtonGUI.h" />

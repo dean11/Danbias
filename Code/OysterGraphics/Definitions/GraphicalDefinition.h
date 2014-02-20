@@ -62,6 +62,9 @@ namespace Oyster
 			struct PostData
 			{
 				float Amb;
+				Math::Float3 Tint;
+				Math::Float3 GlowTint;
+				float PAD;
 			};
 
 			struct Text2D

@@ -9,6 +9,8 @@ SamplerState S1 : register(s0);
 cbuffer Size : register(b0)
 {
 	float AmbFactor;
+	float3 Color;
+	float3 GlowColor;
 }
 
 [numthreads(16, 16, 1)]
@@ -26,9 +28,10 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	SSAO = SSAO / 16;
 
 	float4 Light = Diffuse[DTid.xy] + saturate(Specular[DTid.xy]);
-	float3 Amb =  Ambient[DTid.xy/2].xyz  * SSAO;
+	float3 Amb =  Ambient[DTid.xy/2].xyz  * SSAO * Color;
 	
-	float3 Glow =  Ambient[DTid.xy/2 + uint2(0,Output.Length.y/2)].xyz;
+	float4 Glow =  Ambient[DTid.xy/2 + uint2(0,Output.Length.y/2)];
+	Glow = float4(Glow.xyz * GlowColor, 1);
 
 	float4 GUI;
 	uint2 index = DTid.xy/2 + uint2((uint)Output.Length.x/(uint)2,0);
@@ -40,4 +43,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
 
 	//Output[DTid.xy] = float4(Ambient[DTid.xy/2 + uint2(Output.Length*0.5f)].xyz,1);
 	//Output[DTid.xy] = SSAO * float4(1,1,1,1);
+	//Output[DTid.xy] = Ambient[DTid.xy];
 }
