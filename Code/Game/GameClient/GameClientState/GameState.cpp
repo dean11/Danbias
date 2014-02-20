@@ -189,47 +189,49 @@ bool GameState::Render()
 	light->second->Render();
 	}*/
 
-	// RB DEBUG render wire frame 
-	//if(this->privData->renderWhireframe)
-	//{
-	//	Oyster::Graphics::API::StartRenderWireFrame();
-	//
-	//	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-	//	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
-	//	Oyster::Math3D::Float4x4 world = translation  * scale;
-	//	Oyster::Graphics::API::RenderDebugCube( world );
-	//	Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
-	//
-	//	staticObject = this->privData->staticObjects->begin();
-	//	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
-	//	{
-	//		if( staticObject->second->getBRtype() == RB_Type_Cube)
-	//		{
-	//			Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
-	//		}
-	//		if( staticObject->second->getBRtype() == RB_Type_Sphere)
-	//		{
-	//			Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
-	//		}
-	//	}
-	//
-	//	dynamicObject = this->privData->dynamicObjects->begin();
-	//	for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
-	//	{
-	//		if( dynamicObject->second )
-	//		{
-	//			if( dynamicObject->second->getBRtype() == RB_Type_Cube)
-	//			{
-	//				Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
-	//			}
-	//			if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
-	//			{
-	//				Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
-	//			}
-	//		}
-	//	}
-	//}
-	// !RB DEBUG 
+#ifdef _DEBUG
+	//RB DEBUG render wire frame 
+		if(this->privData->renderWhireframe)
+		{
+			Oyster::Graphics::API::StartRenderWireFrame();
+
+			Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
+			Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
+			Oyster::Math3D::Float4x4 world = translation  * scale;
+			Oyster::Graphics::API::RenderDebugCube( world );
+			Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+
+			staticObject = this->privData->staticObjects->begin();
+			for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
+			{
+				if( staticObject->second->getBRtype() == RB_Type_Cube)
+				{
+					Oyster::Graphics::API::RenderDebugCube( staticObject->second->getRBWorld());
+				}
+				if( staticObject->second->getBRtype() == RB_Type_Sphere)
+				{
+					Oyster::Graphics::API::RenderDebugSphere( staticObject->second->getRBWorld());
+				}
+			}
+
+			dynamicObject = this->privData->dynamicObjects->begin();
+			for( ; dynamicObject != this->privData->dynamicObjects->end(); ++dynamicObject )
+			{
+				if( dynamicObject->second )
+				{
+					if( dynamicObject->second->getBRtype() == RB_Type_Cube)
+					{
+						Oyster::Graphics::API::RenderDebugCube( dynamicObject->second->getRBWorld());
+					}
+					if( dynamicObject->second->getBRtype() == RB_Type_Sphere)
+					{
+						Oyster::Graphics::API::RenderDebugSphere( dynamicObject->second->getRBWorld());
+					}
+				}
+			}
+		}
+		//!RB DEBUG 
+#endif
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
