@@ -4,6 +4,7 @@
 
 #include "LevelLoader.h"
 #include "LevelParser.h"
+#include <Resource\OysterResource.h>
 
 using namespace GameLogic;
 using namespace GameLogic::LevelFileLoader;
@@ -29,6 +30,7 @@ LevelLoader::LevelLoader(std::string folderPath)
 
 LevelLoader::~LevelLoader()
 {
+	Oyster::Resource::OysterResource::Clean();
 }
 
 std::vector<Utility::DynamicMemory::SmartPointer<ObjectTypeHeader>> LevelLoader::LoadLevel(std::string fileName)

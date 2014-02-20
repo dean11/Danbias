@@ -125,7 +125,6 @@ bool Game::NewFrame()
 	{
 		if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();
 	}
-
 	return true;
 }
 
