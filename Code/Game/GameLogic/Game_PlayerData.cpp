@@ -94,3 +94,11 @@ void Game::PlayerData::TurnLeft(Oyster::Math3D::Float deltaLeftRadians )
 {
 	this->player->TurnLeft(deltaLeftRadians);
 }
+void Game::PlayerData::Inactivate()
+{
+	this->player->Inactivate();
+}
+void Game::PlayerData::Release()
+{
+	this->player->ReleaseDynamicObject();
+}
