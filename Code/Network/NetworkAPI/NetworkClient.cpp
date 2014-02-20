@@ -64,7 +64,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		:	ID(currID++)
 		,	parent(0)
 		,	owner(0)
-		,	outputEvent(1)
+		,	outputEvent(0)
 	{ 
 		InitWinSock();
 		this->thread.Create(this, false);
