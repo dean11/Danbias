@@ -6,20 +6,23 @@ using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
 using namespace ::GameLogic;
 using namespace ::Utility::Value;
+using namespace ::Input;
 
 GamingUI::GamingUI() :
 	GameStateUI()
 {
 	/* Should never be called! */
-	this->input = nullptr;
+	this->mouseInput = nullptr;
+	this->keyboardInput = nullptr;
 	this->netClient = nullptr;
 	this->camera = nullptr;
 }
 
-GamingUI::GamingUI( InputClass *input, NetworkClient *connection, Camera_FPSV2 *camera ) :
+GamingUI::GamingUI( Mouse *mouseInput, Keyboard *keyboardInput, NetworkClient *connection, Camera_FPSV2 *camera ) :
 	GameStateUI()
 {
-	this->input = input;
+	this->mouseInput = mouseInput;
+	this->keyboardInput = keyboardInput;
 	this->netClient = connection;
 	this->camera = camera;
 }

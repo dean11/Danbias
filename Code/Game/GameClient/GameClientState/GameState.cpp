@@ -292,117 +292,88 @@ void GameState::ChangeState( ClientState next )
 void GameState::ReadKeyInput()
 {
 	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_W) )
-	{
+	{ // move forward
 		this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
 		this->privData->key_forward = true;
 	}
 
 	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_S) )
-	{
+	{ // move backward
 		this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
 		this->privData->key_backward = true;
 	}
 
-	if( this->privData->mouseInput->IsKeyPressed(DIK_A) )
-	{
-		//if( !this->privData->key_strafeLeft )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
-			this->privData->key_strafeLeft = true;
-		}
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_A) )
+	{ // strafe left
+		this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
+		this->privData->key_strafeLeft = true;
 	}
-	else 
-		this->privData->key_strafeLeft = false;
 
-	if( this->privData->mouseInput->IsKeyPressed(DIK_D) )
-	{
-		//if( !this->privData->key_strafeRight )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
-			this->privData->key_strafeRight = true;
-		}
-	} 
-	else 
-		this->privData->key_strafeRight = false;
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_D) )
+	{ // strafe right
+		this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
+		this->privData->key_strafeRight = true;
+	}
+
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_Space) )
+	{ // jump
+		this->privData->nwClient->Send( Protocol_PlayerJump() );
+		this->privData->key_Jump = true;
+	}
 
 	//send delta mouse movement 
 	{
 		static const float mouseSensitivity = Radian( 1.0f );
-		this->privData->camera.PitchDown( this->privData->mouseInput->GetPitch() * mouseSensitivity );
-		float yaw = this->privData->mouseInput->GetYaw();
-		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
+		::Input::Struct::SAIPoint2D deltaPos;
+		this->privData->mouseInput->GetDeltaPosition( deltaPos );
+
+		this->privData->camera.PitchDown( deltaPos.y * mouseSensitivity );;
+		//if( deltaPos.x != 0.0f ) //This made the camera reset to a specific rotation. Why?
 		{
-			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
+			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(deltaPos.x * mouseSensitivity) );
 		}
 	}
 
 	// shoot
-	if( this->privData->mouseInput->IsKeyPressed(DIK_Z) )
+	if( this->privData->mouseInput->IsBtnDown(::Input::Enum::SAMI_MouseLeftBtn) )
 	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = true;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = false;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-	if( this->privData->mouseInput->IsKeyPressed(DIK_X) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = true;
-			playerShot.utilityPressed = false;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-	if( this->privData->mouseInput->IsKeyPressed(DIK_C) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = true;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-
-	// jump
-	if( this->privData->mouseInput->IsKeyPressed(DIK_SPACE) )
-	{
-		if(!this->privData->key_Jump)
-		{
-			this->privData->nwClient->Send( Protocol_PlayerJump() );
-			this->privData->key_Jump = true;
-		}
+		Protocol_PlayerShot playerShot;
+		playerShot.primaryPressed = true;
+		playerShot.secondaryPressed = false;
+		playerShot.utilityPressed = false;
+		this->privData->nwClient->Send( playerShot );
+		this->privData->key_Shoot = true;
 	}
-	else 
-		this->privData->key_Jump = false;
+	else if( this->privData->mouseInput->IsBtnDown(::Input::Enum::SAMI_MouseRightBtn) )
+	{
+		Protocol_PlayerShot playerShot;
+		playerShot.primaryPressed = false;
+		playerShot.secondaryPressed = true;
+		playerShot.utilityPressed = false;
+		this->privData->nwClient->Send( playerShot );
+		this->privData->key_Shoot = true;
+	}
+	else if( this->privData->mouseInput->IsBtnDown(::Input::Enum::SAMI_MouseMiddleBtn) )
+	{
+		Protocol_PlayerShot playerShot;
+		playerShot.primaryPressed = false;
+		playerShot.secondaryPressed = false;
+		playerShot.utilityPressed = true;
+		this->privData->nwClient->Send( playerShot );
+		this->privData->key_Shoot = true;
+	} 
 
-
-	// DEGUG KEYS
+	
+#ifdef _DEBUG // DEGUG KEYS
 
 	// Reload shaders
-	if( this->privData->mouseInput->IsKeyPressed(DIK_R) )
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_R) )
 	{
 		if( !this->privData->key_Reload_Shaders )
 		{
-#ifdef _DEBUG
+
 			Graphics::API::ReloadShaders();
-#endif
+
 			this->privData->key_Reload_Shaders = true;
 		}
 	} 
@@ -410,7 +381,7 @@ void GameState::ReadKeyInput()
 		this->privData->key_Reload_Shaders = false;
 
 	// toggle wire frame render
-	if( this->privData->mouseInput->IsKeyPressed(DIK_T) )
+	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_T) )
 	{
 		if( !this->privData->key_Wireframe_Toggle )
 		{
@@ -420,8 +391,8 @@ void GameState::ReadKeyInput()
 	} 
 	else 
 		this->privData->key_Wireframe_Toggle = false;
-	// !DEGUG KEYS
-	// TODO: implement sub-menu
+
+#endif // !DEGUG KEYS
 }
 
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )

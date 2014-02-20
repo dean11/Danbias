@@ -2,7 +2,7 @@
 #define DANBIAS_CLIENT_GAMING_UI_H
 
 #include "GameStateUI.h"
-#include "L_inputClass.h"
+#include "Input.h"
 #include "Camera_FPSV2.h"
 
 namespace DanBias { namespace Client
@@ -10,7 +10,7 @@ namespace DanBias { namespace Client
 	class GamingUI : public GameStateUI
 	{
 	public:
-		GamingUI( InputClass *input, ::Oyster::Network::NetworkClient *connection, Camera_FPSV2 *camera );
+		GamingUI( ::Input::Mouse *mouseInput, ::Input::Keyboard *keyboardInput, ::Oyster::Network::NetworkClient *connection, Camera_FPSV2 *camera );
 		virtual ~GamingUI();
 
 		UIState Update( float deltaTime );
@@ -21,7 +21,8 @@ namespace DanBias { namespace Client
 		bool Release();
 
 	private:
-		InputClass *input;
+		::Input::Mouse *mouseInput;
+		::Input::Keyboard *keyboardInput;
 		::Oyster::Network::NetworkClient *netClient;
 		Camera_FPSV2 *camera;
 
