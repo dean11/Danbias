@@ -63,6 +63,8 @@ namespace Oyster
 
 				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
 				ID3D11DepthStencilView* Resources::Gui::depth = NULL;
+
+				std::map<Model::ModelInfo*, Resources::ModelDataWrapper*> Resources::RenderData = std::map<Model::ModelInfo*, Resources::ModelDataWrapper*>();
 #pragma endregion
 
 

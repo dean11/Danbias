@@ -813,39 +813,48 @@ namespace GameLogic
 	//#define protocol_Gameplay_ObjectRespawn			365
 	struct Protocol_ObjectRespawn :public Oyster::Network::CustomProtocolObject
 	{
+		int objectID;
 		float position[3];
 
 		Protocol_ObjectRespawn()
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_Gameplay_ObjectRespawn;
-
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			// ID
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			// POSITION 
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->objectID = 0;
 			memset(&this->position[0], 0, sizeof(float) * 3);
 		}
-		Protocol_ObjectRespawn(float position[3])
+		Protocol_ObjectRespawn(int id, float position[3])
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_Gameplay_ObjectRespawn;
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			// ID
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			// POSITION 
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
-			
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			this->objectID = id;
 			memcpy(&this->position[0], &position[0], sizeof(float) * 3);
 		}
 		Protocol_ObjectRespawn(Oyster::Network::CustomNetProtocol& p)
 		{
-			this->position[0] = p[1].value.netFloat;
-			this->position[1] = p[2].value.netFloat;
-			this->position[2] = p[3].value.netFloat;
+			this->objectID = p[1].value.netInt;
+			this->position[0] = p[2].value.netFloat;
+			this->position[1] = p[3].value.netFloat;
+			this->position[2] = p[4].value.netFloat;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			this->protocol[1].value = this->position[0];
-			this->protocol[2].value = this->position[1];
-			this->protocol[3].value = this->position[2];
+			this->protocol[1].value = this->objectID;
+			this->protocol[2].value = this->position[0];
+			this->protocol[3].value = this->position[1];
+			this->protocol[4].value = this->position[2];
 			return protocol;		 
 		}
 
