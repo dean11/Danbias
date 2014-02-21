@@ -20,37 +20,50 @@ using namespace GameLogic;
 	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target);
 
 	//Physics::ICustomBody::SubscriptMessage
-	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	void Player::PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
-		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
+		Object *realObjA = ((Object*)(objA->GetCustomTag()));
+		Player *player;
+		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
 
-		if(!realObj)	
+		if(!realObjA)	
 			return;
-		if(!player)		
+		if(!realObjB)		
 			return;
 
-		switch (realObj->GetObjectType())
+		//check who is player and who is the object
+		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		{
+			player = (Player*)realObjA;
+		}
+		else
+		{
+			player = (Player*)realObjB;
+			realObjB = realObjA;
+		}
+
+
+		switch (realObjB->GetObjectType())
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		
 		case ObjectSpecialType::ObjectSpecialType_StandardBox:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_World:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
-			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->GetExtraDamageOnCollision());
+			PlayerVLethalObject(*player,*realObjB, kineticEnergyLoss,realObjB->GetExtraDamageOnCollision());
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
@@ -160,6 +173,9 @@ using namespace GameLogic;
 		//Collision between a player and a general static or dynamic object
 		//use kinetic energyloss of the collision in order too determin how much damage to take
 		//use as part of the damage algorithm
+		//Oyster::Math::Float3 prevVel = obj.GetRigidBody()->GetState().prev
+
+
 		int damageDone = 0;
 		int forceThreashHold = 200000;
 
@@ -236,6 +252,7 @@ using namespace GameLogic;
 			case ObjectSpecialType::ObjectSpecialType_StandardBox:
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
+				
 
 				break;
 			}

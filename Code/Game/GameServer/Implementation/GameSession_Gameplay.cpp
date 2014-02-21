@@ -230,6 +230,7 @@ using namespace DanBias;
 	void GameSession::Gameplay_PlayerLeftTurn			( Protocol_PlayerLeftTurn& p, DanBias::GameClient* c )
 	{
 		c->GetPlayer()->TurnLeft( p.deltaRadian );
+		c->GetPlayer()->SetLookDir(p.lookdir);
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
