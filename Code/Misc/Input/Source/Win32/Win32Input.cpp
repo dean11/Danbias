@@ -196,6 +196,10 @@ InputObject* Win32Input::CreateDevice(const SAIType inputType, Typedefs::WindowH
 			}
 		}
 		break;
+
+		//case SAIType_ApplicationKeyboard:
+		//	//val = new Win32ApplicationKeyboard();
+		//	break;
 	}
 
 	return val;
