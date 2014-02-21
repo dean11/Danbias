@@ -241,7 +241,7 @@ bool GameSession::Join(gClient gameClient)
 		{
 			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
 			Protocol_ObjectPositionRotation p(objects[i]->GetPosition(), objects[i]->GetRotation(), objects[i]->GetID());
-			GameSession::gameSession->Send(p.GetProtocol());
+			nwClient->Send(p.GetProtocol());
 		}
 	}
 
