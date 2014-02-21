@@ -133,9 +133,9 @@ namespace Input
 	//-----------------------------------------------------------------------------------------------------------------------------
 	namespace Typedefs
 	{
-		typedef void(*OnKeyPressCallback)(Enum::SAKI key, const wchar_t[40], Keyboard* sender);
-		typedef void(*OnKeyDownCallback)(Enum::SAKI key, const wchar_t[40], Keyboard* sender);
-		typedef void(*OnKeyReleaseCallback)(Enum::SAKI key, const wchar_t[40], Keyboard* sender);
+		typedef void(*OnKeyPressCallback)(Enum::SAKI key, const wchar_t[16], Keyboard* sender);
+		typedef void(*OnKeyDownCallback)(Enum::SAKI key, const wchar_t[16], Keyboard* sender);
+		typedef void(*OnKeyReleaseCallback)(Enum::SAKI key, const wchar_t[16], Keyboard* sender);
 	}
 	//-----------------------------------------------------------------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ namespace Input
 
 		virtual bool IsKeyUp (Enum::SAKI key) = 0;
 		virtual bool IsKeyDown (Enum::SAKI key) = 0;
-		virtual const wchar_t* GetAsText(Enum::SAKI key) = 0;
+		virtual wchar_t* GetAsText(Enum::SAKI key) = 0;
 
 	public: /* global subscribe callback functions */
 		void AddOnKeyPressCallback (Typedefs::OnKeyPressCallback func);
@@ -166,48 +166,35 @@ namespace Input
 		void RemoveOnKeyDownCallback (Typedefs::OnKeyDownCallback func);
 		void RemoveOnKeyReleaseCallback (Typedefs::OnKeyReleaseCallback func);
 
+	public: /* From InputObject */
+		virtual void Activate () override	{ this->active = true; }
+		virtual void Deactivate () override	{ this->active = false; }
+		virtual bool IsActive() override	{ return this->active; }
+
 	public:
 		void operator+= (KeyboardEvent* object);
 		void operator-= (KeyboardEvent* object);
 
+		void BindTextTarget( ::std::wstring *field );
+		void ReleaseTextTarget();
+
+	public:
+		struct KeyboardCallbackList;
+
 	protected:
 		Keyboard();
 
-	protected:
-		struct KeyboardCallbackList
-		{
-			enum CallbackDataType
-			{
-				CallbackDataType_OnPress,
-				CallbackDataType_OnDown,
-				CallbackDataType_OnRelease
-			} type;
-			union CallbackData
-			{
-				Typedefs::OnKeyPressCallback		keyPressCallback;
-				Typedefs::OnKeyDownCallback		keyDownCallback;
-				Typedefs::OnKeyReleaseCallback	keyReleaseCallback;
-
-				CallbackData (){ memset(this, 0, sizeof(CallbackData)); }
-				CallbackData (Typedefs::OnKeyPressCallback o){ keyPressCallback = o; }
-				bool operator ==(CallbackData o){ return o.keyDownCallback == keyDownCallback; }
-				bool operator ==(Typedefs::OnKeyPressCallback o ){ return o == keyPressCallback; }
-				operator bool(){ return this->keyDownCallback != 0; }
-			} function;
-			KeyboardCallbackList *next;
-			KeyboardCallbackList(CallbackData func, CallbackDataType t) :function(func), next(0), type(t) { }
-		};
-
-	protected:
-		void ClearList(KeyboardCallbackList* first);
-		void AddToList(Keyboard::KeyboardCallbackList* first, KeyboardCallbackList::CallbackData data, KeyboardCallbackList::CallbackDataType type);
-		void RemoveFromList(KeyboardCallbackList* first, KeyboardCallbackList::CallbackData data);
-		bool ExistsInList(KeyboardCallbackList* first, KeyboardCallbackList::CallbackData data);
-		bool ExistsInList(std::vector<KeyboardEvent*>& list, KeyboardEvent* data);
+	protected: /* Internal event proc */
+		void InternalOnKeyPress(Enum::SAKI key, wchar_t text[16]);
+		void InternalOnKeyDown(Enum::SAKI key, wchar_t text[16]);
+		void InternalOnKeyRelease(Enum::SAKI key, wchar_t text[16]);
 
 	protected:
 		std::vector<KeyboardEvent*>		keyEventSubscrivers;
 		KeyboardCallbackList*			callbackList;
+		::std::wstring*					textTarget;
+		::std::wstring::size_type		writePos;
+		bool							active;
 	};
 }
 

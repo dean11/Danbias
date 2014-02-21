@@ -21,7 +21,7 @@ namespace Input
 		{
 			SAIType_Keyboard,
 			SAIType_Mouse,
-			SAIType_ApplicationKeyboard,
+			//SAIType_ApplicationKeyboard,
 			SAIType_futureExample1,
 			SAIType_futureExample2,
 			SAIType_futureExample3,

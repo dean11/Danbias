@@ -5,6 +5,7 @@
 #define INPUT_KEYBOARD_H
 
 #include "..\Keyboard.h"
+#define NOMINMAX
 #include <Windows.h>
 
 namespace Input
@@ -17,17 +18,20 @@ namespace Input
 
 		bool IsKeyUp (Enum::SAKI key) override;
 		bool IsKeyDown (Enum::SAKI key) override;
-		const wchar_t* GetAsText(Enum::SAKI key) override;
+		wchar_t* GetAsText(Enum::SAKI key) override;
 
-		void ProccessKeyboardData (bool isUp, Enum::SAKI key, unsigned int makeCode, bool isE0);
+		void ProccessKeyboardData (RAWKEYBOARD keyboard);
 
 	private:
+		void MapKey(RAWKEYBOARD& rawKB, Enum::SAKI& out_key, bool& isE0);
+		
 		struct Keys
 		{
 			bool isE0;
 			bool isDown;
 			unsigned int makecode;
 		};
+
 		static const int MAXKEYS = 256;
 		Keys keys[MAXKEYS];
 	};

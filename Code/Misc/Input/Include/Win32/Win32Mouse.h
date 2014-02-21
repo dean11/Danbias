@@ -18,7 +18,7 @@ namespace Input
 		bool IsBtnUp(Enum::SAMI key) override;
 		bool IsBtnDown(Enum::SAMI key) override;
 
-		void ProccessMouseData (bool isDown, Enum::SAMI btn, int delta, Struct::SAIPoint2D velocity, unsigned int makeCode);
+		void ProccessMouseData (RAWMOUSE mouse);
 
 	private:
 		struct Buttons

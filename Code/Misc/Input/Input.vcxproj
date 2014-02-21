@@ -20,17 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="L_inputClass.cpp" />
-    <ClCompile Include="Source\ApplicationKeyboard.cpp" />
     <ClCompile Include="Source\InputManager.cpp" />
     <ClCompile Include="Source\Keyboard.cpp" />
     <ClCompile Include="Source\Mouse.cpp" />
-    <ClCompile Include="Source\Win32\Win32ApplicationKeyboard.cpp" />
     <ClCompile Include="Source\Win32\Win32Input.cpp" />
     <ClCompile Include="Source\Win32\Win32Keyboard.cpp" />
     <ClCompile Include="Source\Win32\Win32Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\ApplicationKeyboard.h" />
     <ClInclude Include="Include\Common.h" />
     <ClInclude Include="Include\Input.h" />
     <ClInclude Include="Include\InputManager.h" />
@@ -38,16 +35,10 @@
     <ClInclude Include="Include\Keyboard.h" />
     <ClInclude Include="Include\Mouse.h" />
     <ClInclude Include="Include\PreReq.h" />
-    <ClInclude Include="Include\Win32\Win32ApplicationKeyboard.h" />
     <ClInclude Include="Include\Win32\Win32Input.h" />
     <ClInclude Include="Include\Win32\Win32Keyboard.h" />
     <ClInclude Include="Include\Win32\Win32Mouse.h" />
     <ClInclude Include="L_inputClass.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utilities\Utilities.vcxproj">
-      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7E3990D2-3D94-465C-B58D-64A74B3ECF9B}</ProjectGuid>
@@ -136,7 +127,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -149,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -164,7 +155,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
