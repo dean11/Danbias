@@ -56,19 +56,14 @@ void AttatchmentMassDriver::Update(float dt)
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
-		//Oyster::Physics::ICustomBody::State state;
-		//state = heldObject->GetState();
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
 		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
 		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
 		up *= -0.3f;
-		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*5);
-
-		//state.centerPos = pos;
+		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*2);
 		heldObject->SetPosition(pos);
 		heldObject->SetLinearVelocity(Oyster::Math::Float3::null);
 
-		//heldObject->SetState(state);
 	}
 }
 
@@ -149,7 +144,7 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized()*5;
+	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized()*2;
 	Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,10);
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitSphere,this,AttemptPickUp);
