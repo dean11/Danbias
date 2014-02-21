@@ -165,7 +165,7 @@ void Mouse::InternalOnBtnRelease(Enum::SAMI btn)
 		w = w->next;
 	}
 }
-void Mouse::InternalOnMove(Struct::SAIPoint2D cord)
+void Mouse::InternalOnMove(Struct::SAIPointInt2D cord)
 {
 	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
 	{
@@ -199,23 +199,6 @@ void Mouse::InternalOnScroll(int delta)
 }
 
 
-
-int Mouse::GetWheelDelta() const
-{
-	return this->wheelDelta;
-}
-SAIPoint2D & Mouse::GetPixelPosition( Struct::SAIPoint2D &targetMem ) const
-{
-	targetMem.x = this->pixelPos.x;
-	targetMem.y = this->pixelPos.y;
-	return targetMem;
-}
-SAIPoint2D & Mouse::GetDeltaPosition( Struct::SAIPoint2D &targetMem ) const
-{
-	targetMem.x = this->deltaPos.x;
-	targetMem.y = this->deltaPos.y;
-	return targetMem;
-}
 
 void Mouse::AddOnMousePressCallback( Typedefs::OnMousePressCallback func)
 {

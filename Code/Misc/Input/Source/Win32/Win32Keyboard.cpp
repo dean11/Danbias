@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "..\..\Include\Win32\Win32Keyboard.h"
+#include "..\..\Include\Win32\Win32Input.h"
 #include <algorithm>
 
 #pragma warning ( disable : 4172 )
@@ -10,8 +10,12 @@ using namespace Input::Enum;
 using namespace std;
 
 
-Win32Keyboard::Win32Keyboard()
+Win32Keyboard::Win32Keyboard(HWND target)
 {
+	this->device.usUsagePage = 0x01;
+	this->device.hwndTarget = target;
+	this->device.usUsage = RawInput_Usage_keyboard;
+	this->device.dwFlags = RIDEV_NOLEGACY;
 	memset(&this->keys[0], 0, sizeof(Win32Keyboard::Keys) * MAXKEYS);
 }
 Win32Keyboard::~Win32Keyboard()
@@ -37,6 +41,43 @@ wchar_t* Win32Keyboard::GetAsText(Enum::SAKI key)
 	GetKeyNameTextW((LONG)temp, buff, 16);
 	return buff;
 }
+void Win32Keyboard::SetInputOptionType(Enum::InputOptionType options)
+{
+	if(! IsInputOptionSuported(options) )	return;
+	if(this->inputMode == options)			return;
+
+	this->inputMode = options;
+	switch (options)
+	{
+		case Input::Enum::InputOptionType_RawInput:
+		{
+			if(!Create())
+				printf("Warning! Could not create the specific device");
+		}
+		break;
+		case Input::Enum::InputOptionType_PlatformDefault:
+		{
+			RAWINPUTDEVICE d;
+			d.usUsagePage = 0x01;
+			d.hwndTarget = 0;
+			d.usUsage = RawInput_Usage_keyboard;
+			d.dwFlags = RIDEV_REMOVE;
+
+			RegisterRawInputDevices(&d, 1, sizeof(RAWINPUTDEVICE));
+		}
+		break;
+	}
+}
+bool Win32Keyboard::IsInputOptionSuported(Enum::InputOptionType options) const
+{
+	switch (options)
+	{
+		case Input::Enum::InputOptionType_RawInput:			return true;
+		case Input::Enum::InputOptionType_PlatformDefault:	return true;
+	}
+	return false;
+}
+
 void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 {
 	if(!this->active)
@@ -638,6 +679,15 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
 		case 0xDF://VK_OEM_8	
 		break;
 	}
+}
+bool Win32Keyboard::Create()
+{
+	if(RegisterRawInputDevices(&this->device, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 

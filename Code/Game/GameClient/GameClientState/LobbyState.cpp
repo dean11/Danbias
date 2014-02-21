@@ -63,7 +63,7 @@ GameClientState::ClientState LobbyState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		::Input::Struct::SAIPoint2D pos;
+		::Input::Struct::SAIPointInt2D pos;
 		this->privData->mouseInput->GetPixelPosition( pos );
 
 		mouseState.x = pos.x;

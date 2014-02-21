@@ -156,6 +156,8 @@ namespace Input
 		virtual bool IsKeyUp (Enum::SAKI key) = 0;
 		virtual bool IsKeyDown (Enum::SAKI key) = 0;
 		virtual wchar_t* GetAsText(Enum::SAKI key) = 0;
+		virtual void SetInputOptionType(Enum::InputOptionType options) override = 0;
+		virtual bool IsInputOptionSuported(Enum::InputOptionType options) const override = 0;
 
 	public: /* global subscribe callback functions */
 		void AddOnKeyPressCallback (Typedefs::OnKeyPressCallback func);
@@ -195,6 +197,7 @@ namespace Input
 		::std::wstring*					textTarget;
 		::std::wstring::size_type		writePos;
 		bool							active;
+		Enum::InputOptionType			inputMode;
 	};
 }
 

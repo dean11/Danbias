@@ -57,7 +57,6 @@ namespace Input
 		std::vector<Win32Mouse*> mouse;
 
 		bool enabled;
-		bool exclusive;
 		HWND targetHwin;
 
 	private:

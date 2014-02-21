@@ -47,7 +47,7 @@ namespace Input
 		typedef void(*OnMousePressCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseDownCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseReleaseCallback)(Enum::SAMI btn, Mouse* sender);
-		typedef void(*OnMouseMoveCallback)(Struct::SAIPoint2D cord, Mouse* sender);
+		typedef void(*OnMouseMoveCallback)(Struct::SAIPointInt2D cord, Mouse* sender);
 		typedef void(*OnMouseScrollCallback)(int delta, Mouse* sender);
 	}
 	//-----------------------------------------------------------------------------------------------------------------------------
@@ -62,21 +62,22 @@ namespace Input
 			virtual void OnMousePress	( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseDown	( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseRelease	( Enum::SAMI key, Mouse* sender )							{ }
-			virtual void OnMouseMove	( Struct::SAIPoint2D coordinate, Mouse* sender )			{ }
+			virtual void OnMouseMove	( Struct::SAIPointInt2D coordinate, Mouse* sender )			{ }
 			virtual void OnMouseScroll	( int delta, Mouse* sender )								{ }
 		};
 	
 	public: /* Manual check functions */
-		virtual ~Mouse();
+		virtual bool						IsBtnUp(Enum::SAMI key) const = 0;
+		virtual bool						IsBtnDown(Enum::SAMI key) const = 0;
+		virtual int							GetWheelDelta() const = 0;
+		virtual Struct::SAIPointInt2D&		GetPixelPosition(Struct::SAIPointInt2D& targetMem = Struct::SAIPointInt2D()) const = 0;
+		virtual Struct::SAIPointFloat2D&	GetNormalizedPosition(Struct::SAIPointFloat2D& targetMem = Struct::SAIPointFloat2D()) const = 0;
+		virtual Struct::SAIPointFloat2D&	GetDeltaPosition(Struct::SAIPointFloat2D& targetMem = Struct::SAIPointFloat2D()) const = 0;
+		virtual void SetInputOptionType(Enum::InputOptionType options) override = 0;
+		virtual bool IsInputOptionSuported(Enum::InputOptionType options) const override = 0;
 
-		virtual bool				 IsBtnUp(Enum::SAMI key) = 0;
-		virtual bool				 IsBtnDown(Enum::SAMI key) = 0;
 		
 	public: /* global subscribe callback functions */
-		int					 GetWheelDelta() const;
-		Struct::SAIPoint2D & GetPixelPosition( Struct::SAIPoint2D &targetMem = Struct::SAIPoint2D() ) const;
-		Struct::SAIPoint2D & GetDeltaPosition( Struct::SAIPoint2D &targetMem = Struct::SAIPoint2D() ) const;
-
 		void AddOnMousePressCallback( Typedefs::OnMousePressCallback func);
 		void AddOnMouseDownCallback( Typedefs::OnMouseDownCallback func );
 		void AddOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func );
@@ -106,21 +107,25 @@ namespace Input
 
 	protected:
 		Mouse();
+		virtual ~Mouse();
 
 	protected:
 		void InternalOnBtnPress(Enum::SAMI key);
 		void InternalOnBtnDown(Enum::SAMI key);
 		void InternalOnBtnRelease(Enum::SAMI key);
-		void InternalOnMove(Struct::SAIPoint2D cord);
+		void InternalOnMove(Struct::SAIPointInt2D cord);
 		void InternalOnScroll(int delta);
 
 	protected:
 		std::vector<MouseEvent*>	mouseSubscribers;
 		MouseCallbackList*			callbackList;
-		Struct::SAIPoint2D			pixelPos, deltaPos;
+		Struct::SAIPointInt2D		pixelPos;
+		Struct::SAIPointFloat2D		normalPos;
+		Struct::SAIPointFloat2D		deltaPos;
 		bool						isCurorLocked;
 		int							wheelDelta;
-		bool							active;
+		bool						active;
+		Enum::InputOptionType		inputMode;
 	};
 }
 
