@@ -218,13 +218,16 @@ bool GameState::Render()
 			playerObject = this->privData->players.begin();
 			for( ; playerObject != this->privData->players.end(); ++playerObject )
 			{
-				if( playerObject->second->getBRtype() == RB_Type_Cube)
+				if(playerObject->second)
 				{
-					Oyster::Graphics::API::RenderDebugCube( playerObject->second->getRBWorld());
-				}
-				if( playerObject->second->getBRtype() == RB_Type_Sphere)
-				{
-					Oyster::Graphics::API::RenderDebugSphere( playerObject->second->getRBWorld());
+					if( playerObject->second->getBRtype() == RB_Type_Cube)
+					{
+						Oyster::Graphics::API::RenderDebugCube( playerObject->second->getRBWorld());
+					}
+					if( playerObject->second->getBRtype() == RB_Type_Sphere)
+					{
+						Oyster::Graphics::API::RenderDebugSphere( playerObject->second->getRBWorld());
+					}
 				}
 			}
 

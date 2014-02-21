@@ -164,8 +164,8 @@ using namespace GameLogic;
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
 		{
 			Player *hitPlayer = (Player*)realObj;
-			//hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
-			hitPlayer->GetRigidBody()->ApplyImpulse(force);
+			hitPlayer->DamageLife(ExplosionSource->extraDamageOnCollision);
+			//hitPlayer->GetRigidBody()->ApplyImpulse(force);
 			//do shredding damage
 		}
 

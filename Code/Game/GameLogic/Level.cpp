@@ -69,7 +69,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
-			Oyster::Math::Float dmg = 50; 
+			Oyster::Math::Float dmg = 90; 
 			Oyster::Math::Float force = 500; 
 			Oyster::Math::Float radie = 3; 
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, dmg, force, radie);
