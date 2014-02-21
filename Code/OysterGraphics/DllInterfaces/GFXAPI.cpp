@@ -155,8 +155,6 @@ namespace Oyster
 			m->GlowTint = Math::Float3(1);
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
-			Core::loader
-
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
 			if(!mi || mi->Vertices->GetBufferPointer() == NULL)
 			{
@@ -164,6 +162,15 @@ namespace Oyster
 				Core::loader.ReleaseResource(mi);
 				delete mi;
 				return NULL;
+			}
+
+			if(Core::loader.GetResourceCount(m->info) == 1)
+			{
+				Render::Resources::RenderData[m->info] = new Render::Resources::ModelDataWrapper();
+			}
+			else
+			{
+				Render::Resources::RenderData[m->info]->Models++;
 			}
 
 			return m;
