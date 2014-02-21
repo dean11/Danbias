@@ -21,6 +21,7 @@ namespace Input
 		{
 			SAIType_Keyboard,
 			SAIType_Mouse,
+			SAIType_ApplicationKeyboard,
 			SAIType_futureExample1,
 			SAIType_futureExample2,
 			SAIType_futureExample3,
@@ -36,21 +37,13 @@ namespace Input
 	/*********************************************************************/
 	namespace Struct
 	{
-		struct SAIPointInt2D
+		struct SAIPoint2D
 		{
 			int x;
 			int y;
-			SAIPointInt2D() :x(0), y(0) { }
-			SAIPointInt2D(int _x, int _y) :x(_x), y(_y) { }
+			SAIPoint2D() :x(0), y(0) { }
+			SAIPoint2D(int _x, int _y) :x(_x), y(_y) { }
 			int Length() { return (abs(x) + abs(y)); }
-		};
-		struct SAIPointFloat2D
-		{
-			float x;
-			float y;
-			SAIPointFloat2D() :x(0.0f), y(0.0f) { }
-			SAIPointFloat2D(float _x, float _y) :x(_x), y(_y) { }
-			float Length() { return (fabs(x) + fabs(y)); }
 		};
 
 		struct InputData;

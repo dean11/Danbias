@@ -13,8 +13,9 @@ namespace Input
 	public:
 		inline Enum::SAIType Type() { return type; }
 
-		virtual inline void Enable () { isEnabled = true; };
-		virtual inline void Disable () { isEnabled = false;  };
+		virtual void Activate () = 0;
+		virtual void Deactivate () = 0;
+		virtual bool IsActive() = 0;
 	
 	protected:
 		InputObject(Enum::SAIType type) { this->type = type; }
@@ -22,9 +23,6 @@ namespace Input
 	
 	private:
 		Enum::SAIType type;
-
-	protected:
-		bool isEnabled;
 	};
 }
 

@@ -253,6 +253,7 @@
     <ClInclude Include="GameClientState\LobbyState.h" />
     <ClInclude Include="GameClientState\C_Object.h" />
     <ClInclude Include="GameClientState\Buttons\TextField.h" />
+    <ClInclude Include="Win32Input.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
