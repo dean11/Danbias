@@ -207,8 +207,7 @@ bool GameState::Render()
 		}
 	}
 
-#ifdef _DEBUG
-	//RB DEBUG render wire frame 
+#ifdef _DEBUG //RB DEBUG render wire frame 
 		if(this->renderWhireframe)
 		{
 			Oyster::Graphics::API::StartRenderWireFrame();
@@ -248,8 +247,7 @@ bool GameState::Render()
 				}
 			}
 		}
-		//!RB DEBUG 
-#endif
+#endif //!RB DEBUG 
 
 	Oyster::Graphics::API::StartGuiRender();
 	// render gui elemnts
@@ -372,7 +370,7 @@ void GameState::ReadKeyInput()
 #endif // !DEGUG KEYS
 
 	// toggle wire frame render
-	if( this->privData->input->IsKeyPressed(DIK_TAB) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		if( !this->key_showStats )
 		{
