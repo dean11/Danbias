@@ -22,7 +22,15 @@ namespace GameLogic
 
 		~DynamicObject(void);
 
+		void ReleaseDynamicObject();
+		bool IsReleased();
+		bool IsActive();
+		void Inactivate();
+		void Activate();
+
 	private:
+		bool isActive;
+		bool isReleased;
 
 	};
 
