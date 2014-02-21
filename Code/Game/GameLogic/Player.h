@@ -46,7 +46,7 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right);
+		void SetLookDir(const Oyster::Math3D::Float3& lookDir);
 
 		void TurnLeft(Oyster::Math3D::Float deltaRadians);
 
@@ -56,12 +56,14 @@ namespace GameLogic
 		* @param rigidBodyPlayer: physics object of the player
 		* @param obj: physics object for the object that collided with the player
 		********************************************************/
-		static void PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+		static void PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss);
 
 		
 		bool IsWalking();
 		bool IsJumping();
 		bool IsIdle();
+
+		void Inactivate();
 
 		Oyster::Math::Float3 GetPosition() const;
 		Oyster::Math::Float3 GetLookDir() const;

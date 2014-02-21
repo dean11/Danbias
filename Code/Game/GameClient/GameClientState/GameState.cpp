@@ -581,7 +581,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectDisconnectPlayer:
 			{
-				//Removes 
+				//Remove the disconnected player
 				Protocol_ObjectDisconnectPlayer decoded(data);
 				auto object = this->privData->dynamicObjects->find( decoded.objectID );
 				if( object != this->privData->dynamicObjects->end() )

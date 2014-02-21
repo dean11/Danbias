@@ -85,7 +85,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right) = 0;
+			virtual void SetLookDir(const Oyster::Math3D::Float3& lookDir) = 0;
 
 			/** Relative rotation around given axis
 			*	@param leftRadians: The relative amount of radians to turn
@@ -106,6 +106,9 @@ namespace GameLogic
 			* @return The current player state
 			********************************************************/
 			virtual PLAYER_STATE GetState() const = 0;
+
+			virtual void Inactivate() = 0;
+			virtual void Release() = 0;
 		};
 
 		class ILevelData :public IObjectData

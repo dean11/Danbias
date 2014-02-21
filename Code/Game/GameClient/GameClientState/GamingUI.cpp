@@ -105,7 +105,7 @@ void GamingUI::ReadKeyInput()
 		float yaw = this->input->GetYaw();
 		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
 		{
-			this->netClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
+			this->netClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity,camera->GetLook()) );
 		}
 	}
 
