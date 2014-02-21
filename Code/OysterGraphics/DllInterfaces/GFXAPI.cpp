@@ -19,6 +19,7 @@ namespace Oyster
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
+			int MostModel;
 #ifdef _DEBUG
 			Model::Model* cube;
 			Model::Model* sphere;
@@ -133,6 +134,16 @@ namespace Oyster
 			return API::Sucsess;
 		}
 
+		void API::BeginLoadingModels()
+		{
+		}
+
+		void API::EndLoadingModels()
+		{
+			//TODO finalize instance buffers and create rendering map;
+			
+		}
+
 		//returns null for invalid filenames
 		Model::Model* API::CreateModel(std::wstring filename)
 		{
@@ -143,6 +154,8 @@ namespace Oyster
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
+
+			Core::loader
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
 			if(!mi || mi->Vertices->GetBufferPointer() == NULL)

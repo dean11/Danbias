@@ -42,6 +42,10 @@ namespace Oyster
 
 			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Option options);
 
+			static void BeginLoadingModels();
+
+			static void EndLoadingModels();
+
 			static State ReloadShaders();
 
 			//should be called after rendered normal models, before GUI or Text rendering
