@@ -224,6 +224,7 @@
     <ClCompile Include="GameClientState\MainState.cpp" />
     <ClCompile Include="GameClientState\NetLoadState.cpp" />
     <ClCompile Include="GameClientState\RespawnUI.cpp" />
+    <ClCompile Include="GameClientState\StatsUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameClientState\Buttons\Plane_UI.h" />
@@ -251,6 +252,7 @@
     <ClInclude Include="GameClientState\NetLoadState.h" />
     <ClInclude Include="GameClientState\RespawnUI.h" />
     <ClInclude Include="GameClientState\SharedStateContent.h" />
+    <ClInclude Include="GameClientState\StatsUI.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="Include\GameClient.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />

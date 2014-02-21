@@ -22,12 +22,15 @@ namespace DanBias { namespace Client
 		void RenderGUI() const;
 		void RenderText() const;
 		bool Release();
+		void SetHPtext( std::wstring hp );
 
 	private:
 		::Input::Mouse *mouseInput;
 		::Input::Keyboard *keyboardInput;
 		::Oyster::Network::NetworkClient *netClient;
 		Camera_FPSV2 *camera;
+
+		// TODO add multiple UI elements
 		Text_UI* text;
 		Plane_UI* plane;
 
