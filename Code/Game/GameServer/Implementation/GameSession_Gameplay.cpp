@@ -150,7 +150,18 @@ using namespace DanBias;
 	{
 		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID(), seconds).GetProtocol());
 	}
-
+	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDamage(movedObject->GetID(), hp).GetProtocol());
+	}
+	void GameSession::ObjectRespawned( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectRespawn(movedObject->GetID(), spawnPos).GetProtocol());
+	}
+	void GameSession::ObjectDead( GameLogic::IObjectData* movedObject, float seconds )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDie(movedObject->GetID(), seconds).GetProtocol());
+	}
 //*****************************************************//
 //****************** Protocol methods *****************//
 //******************************************************************************************************************//

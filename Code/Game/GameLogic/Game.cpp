@@ -43,6 +43,9 @@ Game::Game(void)
 	:	initiated(false)
 	,	onMoveFnc(0)
 	,	onDisableFnc(0)
+	,	onDamageTakenFnc(0)
+	,   onRespawnFnc(0)
+	,	onDeadFnc(0)
 	,	frameTime(1.0f/120.0f)
 {}
 
@@ -156,7 +159,18 @@ void Game::SetSubscription(GameEvent::ObjectMovedFunction functionPointer)
 void Game::SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)
 {
 	this->onDisableFnc = functionPointer;
-
+}
+void Game::SetHpSubscription(GameEvent::ObjectHpFunction functionPointer)
+{
+	this->onDamageTakenFnc = functionPointer;
+}
+void Game::SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer)
+{
+	this->onRespawnFnc = functionPointer;
+}
+void Game::SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)
+{
+	this->onDeadFnc = functionPointer;
 }
 
 bool Game::Initiate()

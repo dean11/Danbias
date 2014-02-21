@@ -27,6 +27,9 @@ namespace GameLogic
 	{
 		typedef void(*ObjectMovedFunction)(IObjectData* object);	// Callback method that recieves and object
 		typedef void(*ObjectDisabledFunction)(IObjectData* object, float seconds);	// Callback method that recieves and object
+		typedef void(*ObjectHpFunction)(IObjectData* object, float hp);	// Callback method that sends obj HP
+		typedef void(*ObjectRespawnedFunction)(IObjectData* object, Oyster::Math::Float3 spawnPos );	// Callback method that sends spawnPos
+		typedef void(*ObjectDeadFunction)(IObjectData* object, float seconds);	// Callback method that sends death timer
 		//etc...
 	};
 
@@ -178,6 +181,9 @@ namespace GameLogic
 		*	@param 
 		*/
 		virtual void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
+		virtual void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer) = 0;
+		virtual void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer) = 0;
+		virtual void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) = 0;
 
 	};	
 }

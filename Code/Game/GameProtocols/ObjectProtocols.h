@@ -75,13 +75,15 @@ namespace GameLogic
 		}
 		Protocol_ObjectDamage(Oyster::Network::CustomNetProtocol& p)
 		{
-
+			this->object_ID = p[1].value.netInt; 
+			this->healthLost = p[2].value.netFloat; 
 		}
 		Protocol_ObjectDamage(int id, float hp)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectDamage;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-									
+					
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			
 			object_ID = id;

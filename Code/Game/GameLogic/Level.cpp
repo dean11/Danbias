@@ -422,5 +422,5 @@ void Level::PhysicsOnMoveLevel(const ICustomBody *object)
 	// function call from physics update when object was moved
 	Object* temp = (Object*)object->GetCustomTag();
 	((Game*)&Game::Instance())->onMoveFnc(temp);
-	
 }
+

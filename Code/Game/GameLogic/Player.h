@@ -100,6 +100,8 @@ namespace GameLogic
 
 		Oyster::Math::Float rotationUp;
 
+		float deathTime;
+		float deathTimeLeft;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;

@@ -99,7 +99,10 @@ namespace DanBias
 		//Callback method recieving from gamelogic
 		static void ObjectMove				( GameLogic::IObjectData* movedObject );
 		static void ObjectDisabled			( GameLogic::IObjectData* movedObject, float seconds );
-
+		static void ObjectDamaged			( GameLogic::IObjectData* movedObject, float hp );
+		static void ObjectRespawned			( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos );
+		static void ObjectDead				( GameLogic::IObjectData* movedObject, float seconds );
+	
 		//Private member variables
 	private:
 		Utility::DynamicMemory::DynamicArray<gClient> gClients;
