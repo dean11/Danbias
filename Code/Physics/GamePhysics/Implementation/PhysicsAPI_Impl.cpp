@@ -288,7 +288,7 @@ void API_Impl::UpdateWorld()
 		{
 			this->customBodies[i]->CallSubscription_Move();
 		}
-		simpleBody->SetPreviousVelocity(simpleBody->GetState().previousVelocity);
+		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
 	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
