@@ -36,8 +36,8 @@ GameSession::GameSession()
 	this->isCreated = false;
 	this->isRunning = false;
 	this->gameSession = this;
-	this->logicFrameTime = DELTA_TIME_20;
-	this->networkFrameTime = DELTA_TIME_20;
+	this->logicFrameTime = DELTA_TIME_120;
+	this->networkFrameTime = DELTA_TIME_120;
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 
