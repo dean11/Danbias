@@ -90,7 +90,7 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] )
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				this->gClients[i]->UpdateClient();
 			}
@@ -101,7 +101,7 @@ using namespace DanBias;
 		bool returnValue = false;
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i])
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				this->gClients[i]->GetClient()->Send(message);
 				returnValue = true;
@@ -115,7 +115,7 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] && this->gClients[i]->GetClient()->GetID() == ID)
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid() && this->gClients[i]->GetClient()->GetID() == ID)
 			{
 				this->gClients[i]->GetClient()->Send(protocol);
 				return true;
