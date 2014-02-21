@@ -20,7 +20,6 @@
 #include "EventHandler/EventHandler.h"
 
 #include "GameClientState/SharedStateContent.h"
-#include "Win32/Win32ApplicationKeyboard.h"
 #include "Utilities.h"
 
 using namespace ::Oyster;
@@ -46,27 +45,23 @@ namespace DanBias
 		NetworkClient networkClient;
 
 		SharedStateContent sharedStateContent;
-		::Input::Win32ApplicationKeyboard *keyboardDevice_application;
 
 		bool serverOwner;
 		float capFrame;
 
 		DanBiasGamePrivateData()
 		{
-			this->sharedStateContent.network					= nullptr;
-			this->sharedStateContent.mouseDevice				= nullptr;
-			this->sharedStateContent.keyboardDevice_raw			= nullptr;
-			this->sharedStateContent.keyboardDevice_application	= 
-			this->keyboardDevice_application					= new ::Input::Win32ApplicationKeyboard();
-			this->serverOwner									= false;
-			this->capFrame										= 0;
+			this->sharedStateContent.network		= nullptr;
+			this->sharedStateContent.mouseDevice	= nullptr;
+			this->sharedStateContent.keyboardDevice	= nullptr;
+			this->serverOwner						= false;
+			this->capFrame							= 0;
 		}
 
 		~DanBiasGamePrivateData()
 		{
 			SafeDeleteInstance( this->sharedStateContent.mouseDevice );
-			SafeDeleteInstance( this->sharedStateContent.keyboardDevice_raw );
-			SafeDeleteInstance( this->sharedStateContent.keyboardDevice_application );
+			SafeDeleteInstance( this->sharedStateContent.keyboardDevice );
 		}
 	} data;
 }
@@ -177,16 +172,14 @@ namespace DanBias
 			MessageBox( 0, L"Could not initialize the mouseDevice.", L"Error", MB_OK );
 			return E_FAIL;
 		}
-		data.sharedStateContent.mouseDevice->Disable();
 		
-		data.sharedStateContent.keyboardDevice_raw = dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
-		if( !data.sharedStateContent.keyboardDevice_raw )
+		data.sharedStateContent.keyboardDevice= dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
+		if( !data.sharedStateContent.keyboardDevice )
 		{
 			MessageBox( 0, L"Could not initialize the raw keyboard device.", L"Error", MB_OK );
 			return E_FAIL;
 		}
 
-		data.keyboardDevice_application->Disable();
 		return S_OK;
 	}
 	
@@ -275,25 +268,12 @@ namespace DanBias
 
 LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam )
 {
-	//PAINTSTRUCT ps;
-	//HDC hdc;
-
 	switch ( message ) 
 	{
-		//case WM_PAINT:
-		//	hdc = BeginPaint( handle, &ps );
-		//	EndPaint( handle, &ps );
-		//break;
-
 		case WM_DESTROY:
 			PostQuitMessage( 0 );
 		break;
-		default:
-			if( DanBias::data.keyboardDevice_application->IsActive() )
-			{
-				DanBias::data.keyboardDevice_application->CaptureText( message, wParam );
-			}
-			break;
+		default: break;
 	}
 
 	return DefWindowProc( handle, message, wParam, lParam );

@@ -28,8 +28,7 @@ namespace DanBias { namespace Client
 		::Oyster::Network::NetworkClient *network;
 
 		::Input::Mouse *mouseDevice;
-		::Input::Keyboard *keyboardDevice_raw;
-		::Input::ApplicationKeyboard *keyboardDevice_application;
+		::Input::Keyboard *keyboardDevice;
 	};
 } }
 

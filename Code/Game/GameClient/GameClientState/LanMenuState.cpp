@@ -29,7 +29,7 @@ struct  LanMenuState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
-	::Input::ApplicationKeyboard *keyboardInput;
+	::Input::Keyboard *keyboardInput;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
 
@@ -55,8 +55,7 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
 	this->privData->mouseInput = shared.mouseDevice;
-	this->privData->keyboardInput = shared.keyboardDevice_application;
-	this->privData->keyboardInput->Activate();
+	this->privData->keyboardInput = shared.keyboardDevice;
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
 

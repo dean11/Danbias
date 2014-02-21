@@ -27,8 +27,7 @@ struct  GameState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
-	::Input::Keyboard *keyboardInput_raw;
-	::Input::ApplicationKeyboard *keyboardInput_app;
+	::Input::Keyboard *keyboardInput;
 
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
@@ -67,14 +66,10 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
 	this->privData->mouseInput = shared.mouseDevice;
-	this->privData->keyboardInput_raw = shared.keyboardDevice_raw;
-	this->privData->keyboardInput_app = shared.keyboardDevice_application;
+	this->privData->keyboardInput = shared.keyboardDevice;
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
-
-	this->privData->keyboardInput_app->Deactivate();
-	this->privData->mouseInput->Enable();
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
@@ -101,7 +96,7 @@ bool GameState::Init( SharedStateContent &shared )
 	}
 
 	// create UI states
-	this->gameUI = new GamingUI(this->privData->mouseInput, this->privData->keyboardInput_raw, this->privData->nwClient, &this->privData->camera);
+	this->gameUI = new GamingUI(this->privData->mouseInput, this->privData->keyboardInput, this->privData->nwClient, &this->privData->camera);
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
 	this->currGameUI = gameUI; 
 	((GamingUI*)gameUI)->Init();
@@ -268,8 +263,6 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
-		this->privData->mouseInput->Disable();
-
 		auto staticObject = this->privData->staticObjects->begin();
 		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 		{
@@ -323,7 +316,7 @@ void GameState::ReadKeyInput()
 #ifdef _DEBUG // DEGUG KEYS
 
 	// Reload shaders
-	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_R) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_R) )
 	{
 		if( !this->key_Reload_Shaders )
 		{
@@ -337,7 +330,7 @@ void GameState::ReadKeyInput()
 		this->key_Reload_Shaders = false;
 
 	// toggle wire frame render
-	if( this->privData->keyboardInput_raw->IsKeyDown(::Input::Enum::SAKI_T) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_T) )
 	{
 		if( !this->key_Wireframe_Toggle )
 		{

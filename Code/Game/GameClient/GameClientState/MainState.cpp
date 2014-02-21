@@ -48,6 +48,7 @@ bool MainState::Init( SharedStateContent &shared )
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
 	this->privData->mouseInput = shared.mouseDevice;
+	//this->privData->mouseInput->
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
 
