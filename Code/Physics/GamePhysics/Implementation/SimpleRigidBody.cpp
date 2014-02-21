@@ -423,3 +423,8 @@ void SimpleRigidBody::ReleaseFromLimbo()
 {
 	this->rigidBody->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 }
+
+void SimpleRigidBody::SetPreviousVelocity(::Oyster::Math::Float3 velocity)
+{
+	this->state.previousVelocity = velocity;
+}
