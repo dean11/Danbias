@@ -30,7 +30,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	key_jump = 0;
 	invincibleCooldown = 0;
 	this->deathTimeLeft = 0;
-	this->deathTime		= 1;
+	this->deathTime		= 5;
 
 	this->previousPosition = Oyster::Math::Float3(0,0,0);
 
@@ -57,7 +57,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	key_jump = 0;
 	invincibleCooldown = 0;
 	this->deathTimeLeft = 0;
-	this->deathTime		= 1;
+	this->deathTime		= 5;
 	this->previousPosition = Oyster::Math::Float3(0,0,0);
 	this->moveDir = Oyster::Math::Float3(0,0,0);
 	this->moveSpeed = 20;
