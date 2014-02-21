@@ -11,6 +11,7 @@
 #include "Utilities.h"
 #include "GamingUI.h"
 #include "RespawnUI.h"
+#include "StatsUI.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -96,9 +97,11 @@ bool GameState::Init( SharedStateContent &shared )
 	// create UI states
 	this->gameUI = new GamingUI(this->privData->input, this->privData->nwClient, &this->privData->camera);
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
+	this->statsUI = new StatsUI();
 	this->currGameUI = gameUI; 
 	((GamingUI*)gameUI)->Init();
-	// TODO init respawn
+	((RespawnUI*)respawnUI)->Init();
+	((StatsUI*)statsUI)->Init();
 
 	return true;
 }
@@ -246,12 +249,24 @@ bool GameState::Render()
 		//!RB DEBUG 
 #endif
 
-	// render current UI state
+	Oyster::Graphics::API::StartGuiRender();
+	// render gui elemnts
 	if(currGameUI->HaveGUIRender())
 		currGameUI->RenderGUI();
+	if(renderStats)
+	{	
+		if(statsUI->HaveGUIRender())
+			statsUI->RenderGUI();
+	}
+	Oyster::Graphics::API::StartTextRender();
 	if(currGameUI->HaveTextRender())
 		currGameUI->RenderText();
-	
+	if(renderStats)
+	{	
+		if(statsUI->HaveTextRender())
+			statsUI->RenderText();
+	}
+
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
@@ -298,6 +313,12 @@ bool GameState::Release()
 		delete gameUI;
 		gameUI = NULL;
 	}
+	if(statsUI)
+	{
+		statsUI->Release();
+		delete statsUI;
+		statsUI = NULL;
+	}
 	currGameUI = NULL;
 
 	return true;
@@ -332,10 +353,33 @@ void GameState::ReadKeyInput()
 		{
 			this->renderWhireframe = !this->renderWhireframe;
 			this->key_Wireframe_Toggle = true;
+			// DEBUG set you as dead when render wireframe
+			this->currGameUI = respawnUI;
+			// !DEBUG
 		}
 	} 
 	else 
+	{
 		this->key_Wireframe_Toggle = false;
+		// DEBUG set you as dead when render wireframe
+		this->currGameUI = gameUI;
+		// !DEBUG
+	}
+
+	// toggle wire frame render
+	if( this->privData->input->IsKeyPressed(DIK_TAB) )
+	{
+		if( !this->key_showStats )
+		{
+			this->renderStats = true;
+			this->key_showStats = true;
+		}
+	} 
+	else 
+	{
+		this->renderStats = false;
+		this->key_showStats = false;
+	}
 }
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
@@ -356,8 +400,22 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		switch(ID)
 		{
 		case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectDamage:			break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectHealthStatus:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectDamage:			
+			{
+				Protocol_ObjectDamage decoded(data);
+				if( this->privData->myId == decoded.object_ID )
+				{
+					if(currGameUI == gameUI)
+					{
+						((GamingUI*)currGameUI)->SetHPtext(std::to_wstring(decoded.healthLost));
+					}
+				}
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectHealthStatus:		
+			{
+			}
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectPosition:
 			{
 				Protocol_ObjectPosition decoded(data);
@@ -493,15 +551,37 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectRespawn:		
-			this->currGameUI =  this->gameUI;
+		case protocol_Gameplay_ObjectRespawn:	
+			{
+				// set player pos
+				Protocol_ObjectRespawn decoded(data);
+				// move player. Remember to change camera
+				this->privData->camera.SetPosition( decoded.position );
+				this->privData->player.setPos( decoded.position );
+				this->privData->player.updateWorld();
+				// RB DEBUG 
+				this->privData->player.setRBPos ( decoded.position );   
+				this->privData->player.updateRBWorld();
+				// !RB DEBUG 
+				
+				this->currGameUI =  this->gameUI;
+			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectDie:
-			this->currGameUI =  this->respawnUI;
-			// set countdown 
+			{
+				Protocol_ObjectDie decoded(data);
+				// if is this player. Remember to change camera
+				if( this->privData->myId == decoded.objectID )
+				{
+					this->currGameUI =  this->respawnUI;
+					// set countdown 
+					((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
+				}
+			}
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectDisconnectPlayer:
 			{
-				//Removes 
+				//Remove the disconnected player
 				Protocol_ObjectDisconnectPlayer decoded(data);
 				auto object = this->privData->dynamicObjects->find( decoded.objectID );
 				if( object != this->privData->dynamicObjects->end() )

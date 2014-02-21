@@ -78,6 +78,7 @@ using namespace DanBias;
 			{
 				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
 				{
+					printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 					Protocol_ObjectDisconnectPlayer prot(this->gClients[temp]->GetPlayer()->GetID());
 					for (unsigned int i = 0; i < this->gClients.Size(); i++)
 					{
