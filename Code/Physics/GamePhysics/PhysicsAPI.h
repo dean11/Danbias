@@ -169,6 +169,9 @@ namespace Oyster
 			virtual void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss) = 0;
 			virtual void CallSubscription_Move() = 0;
 
+			virtual void MoveToLimbo() = 0;
+			virtual void ReleaseFromLimbo() = 0;
+
 			/********************************************************
 			 * @return the void pointer set by SetCustomTag.
 			 * nullptr if none is set.

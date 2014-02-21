@@ -9,6 +9,8 @@
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
 #include "Utilities.h"
+#include "GamingUI.h"
+#include "RespawnUI.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -29,19 +31,6 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
-
-	bool key_forward;
-	bool key_backward;
-	bool key_strafeRight;
-	bool key_strafeLeft;
-	bool key_Shoot;
-	bool key_Jump;
-
-	// DEGUG KEYS
-	bool key_Reload_Shaders;
-	bool key_Wireframe_Toggle; 
-	bool renderWhireframe; 
-	// !DEGUG KEYS
 
 	C_Player player;
 	Camera_FPSV2 camera;
@@ -73,11 +62,6 @@ bool GameState::Init( SharedStateContent &shared )
 
 	this->privData = new MyData();
 
-	this->privData->key_forward = false;
-	this->privData->key_backward = false;
-	this->privData->key_strafeRight = false;
-	this->privData->key_strafeLeft = false;
-
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
 	this->privData->input = shared.input;
@@ -98,9 +82,9 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 			
 	// DEGUG KEYS
-	this->privData->key_Reload_Shaders = false;
-	this->privData->key_Wireframe_Toggle = false;
-	this->privData->renderWhireframe = false;
+	this->key_Reload_Shaders = false;
+	this->key_Wireframe_Toggle = false;
+	this->renderWhireframe = false;
 	// !DEGUG KEYS
 
 	auto light = this->privData->lights->begin();
@@ -109,6 +93,12 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
+	// create UI states
+	this->gameUI = new GamingUI(this->privData->input, this->privData->nwClient, &this->privData->camera);
+	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
+	this->currGameUI = gameUI; 
+	((GamingUI*)gameUI)->Init();
+	// TODO init respawn
 
 	return true;
 }
@@ -165,7 +155,25 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	this->ReadKeyInput();
+	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+	switch (UIstate)
+	{
+	case DanBias::Client::GameStateUI::UIState_same:
+		break;
+	case DanBias::Client::GameStateUI::UIState_gaming:
+		break;
+	case DanBias::Client::GameStateUI::UIState_main_menu:
+		//this->privData->nextState = 
+		break;
+	case DanBias::Client::GameStateUI::UIState_shut_down:
+		this->privData->nextState = ClientState_Quit;
+		break;
+	default:
+		break;
+	} 
+	// DEBUG keybindings
+	ReadKeyInput();
+
 	return this->privData->nextState;
 }
 
@@ -194,16 +202,9 @@ bool GameState::Render()
 		}
 	}
 
-
-	/*auto light = this->privData->lights->begin();
-	for( ; light != this->privData->lights->end(); ++light )
-	{
-	light->second->Render();
-	}*/
-
 #ifdef _DEBUG
 	//RB DEBUG render wire frame 
-		if(this->privData->renderWhireframe)
+		if(this->renderWhireframe)
 		{
 			Oyster::Graphics::API::StartRenderWireFrame();
 
@@ -245,6 +246,12 @@ bool GameState::Render()
 		//!RB DEBUG 
 #endif
 
+	// render current UI state
+	if(currGameUI->HaveGUIRender())
+		currGameUI->RenderGUI();
+	if(currGameUI->HaveTextRender())
+		currGameUI->RenderText();
+	
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
@@ -278,6 +285,21 @@ bool GameState::Release()
 
 		privData = NULL;
 	}
+
+	if(respawnUI) 
+	{
+		respawnUI->Release();
+		delete respawnUI;
+		respawnUI = NULL;
+	}
+	if(gameUI)
+	{
+		gameUI->Release();
+		delete gameUI;
+		gameUI = NULL;
+	}
+	currGameUI = NULL;
+
 	return true;
 }
 
@@ -285,152 +307,36 @@ void GameState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
-
 void GameState::ReadKeyInput()
 {
-	if( this->privData->input->IsKeyPressed(DIK_W) )
-	{
-		//if(!this->privData->key_forward)
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
-			this->privData->key_forward = true;
-		}
-	}
-	else
-		this->privData->key_forward = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_S) )
-	{
-		//if( !this->privData->key_backward )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
-			this->privData->key_backward = true;
-		}
-	}
-	else 
-		this->privData->key_backward = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_A) )
-	{
-		//if( !this->privData->key_strafeLeft )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
-			this->privData->key_strafeLeft = true;
-		}
-	}
-	else 
-		this->privData->key_strafeLeft = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_D) )
-	{
-		//if( !this->privData->key_strafeRight )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
-			this->privData->key_strafeRight = true;
-		}
-	} 
-	else 
-		this->privData->key_strafeRight = false;
-
-	//send delta mouse movement 
-	{
-		static const float mouseSensitivity = Radian( 1.0f );
-		this->privData->camera.PitchDown( this->privData->input->GetPitch() * mouseSensitivity );
-		float yaw = this->privData->input->GetYaw();
-		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
-		{
-			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
-		}
-	}
-
-	// shoot
-	if( this->privData->input->IsKeyPressed(DIK_Z) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = true;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = false;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-	if( this->privData->input->IsKeyPressed(DIK_X) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = true;
-			playerShot.utilityPressed = false;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-	if( this->privData->input->IsKeyPressed(DIK_C) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = true;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-
-	// jump
-	if( this->privData->input->IsKeyPressed(DIK_SPACE) )
-	{
-		if(!this->privData->key_Jump)
-		{
-			this->privData->nwClient->Send( Protocol_PlayerJump() );
-			this->privData->key_Jump = true;
-		}
-	}
-	else 
-		this->privData->key_Jump = false;
-
-
 	// DEGUG KEYS
 
 	// Reload shaders
 	if( this->privData->input->IsKeyPressed(DIK_R) )
 	{
-		if( !this->privData->key_Reload_Shaders )
+		if( !this->key_Reload_Shaders )
 		{
 #ifdef _DEBUG
-			Graphics::API::ReloadShaders();
+			Oyster::Graphics::API::ReloadShaders();
 #endif
-			this->privData->key_Reload_Shaders = true;
+			this->key_Reload_Shaders = true;
 		}
 	} 
 	else 
-		this->privData->key_Reload_Shaders = false;
+		this->key_Reload_Shaders = false;
 
 	// toggle wire frame render
 	if( this->privData->input->IsKeyPressed(DIK_T) )
 	{
-		if( !this->privData->key_Wireframe_Toggle )
+		if( !this->key_Wireframe_Toggle )
 		{
-			this->privData->renderWhireframe = !this->privData->renderWhireframe;
-			this->privData->key_Wireframe_Toggle = true;
+			this->renderWhireframe = !this->renderWhireframe;
+			this->key_Wireframe_Toggle = true;
 		}
 	} 
 	else 
-		this->privData->key_Wireframe_Toggle = false;
-	// !DEGUG KEYS
-	// TODO: implement sub-menu
+		this->key_Wireframe_Toggle = false;
 }
-
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
@@ -587,8 +493,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectRespawn:			break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectDie:				break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectRespawn:		
+			this->currGameUI =  this->gameUI;
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectDie:
+			this->currGameUI =  this->respawnUI;
+			// set countdown 
 		case protocol_Gameplay_ObjectDisconnectPlayer:
 			{
 				//Removes 
