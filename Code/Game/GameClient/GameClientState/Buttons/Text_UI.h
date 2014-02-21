@@ -21,6 +21,10 @@ namespace DanBias
 				: pos(pos), size(size), text(text), textColor(textColor)
 			{
 			}
+			void setText(std::wstring text)
+			{
+				this->text = text;
+			}
 			void RenderText() const
 			{
 				if(text.size() > 0)
