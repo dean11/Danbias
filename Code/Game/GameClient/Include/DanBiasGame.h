@@ -55,7 +55,7 @@ namespace DanBias
 			};
 
 			static HRESULT	InitDirect3D();
-			static HRESULT	InitInput( HINSTANCE *handle );
+			static HRESULT	InitInput( HWND handle );
 
 			static Result Update(float deltaTime);
 			static HRESULT Render();

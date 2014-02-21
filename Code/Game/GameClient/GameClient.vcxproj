@@ -251,6 +251,7 @@
     <ClInclude Include="GameClientState\NetLoadState.h" />
     <ClInclude Include="GameClientState\RespawnUI.h" />
     <ClInclude Include="GameClientState\SharedStateContent.h" />
+    <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="Include\GameClient.h" />
     <ClInclude Include="GameClientState\LobbyState.h" />
     <ClInclude Include="GameClientState\C_Object.h" />

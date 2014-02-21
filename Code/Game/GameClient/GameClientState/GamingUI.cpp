@@ -79,39 +79,39 @@ bool GamingUI::Release()
 
 void GamingUI::ReadKeyInput()
 {
-	if( this->input->IsKeyPressed(DIK_W) )
-	{
+	if( this->keyboardInput->IsKeyDown(::Input::Enum::SAKI_W) )
+	{ // move forward
 		this->netClient->Send( Protocol_PlayerMovementForward() );
 	}
 
-	if( this->input->IsKeyPressed(DIK_S) )
-	{
+	if( this->keyboardInput->IsKeyDown(::Input::Enum::SAKI_S) )
+	{ // move backward
 		this->netClient->Send( Protocol_PlayerMovementBackward() );
 	}
 
-	if( this->input->IsKeyPressed(DIK_A) )
-	{
+	if( this->keyboardInput->IsKeyDown(::Input::Enum::SAKI_A) )
+	{ // strafe left
 		this->netClient->Send( Protocol_PlayerMovementLeft() );
 	}
 
-	if( this->input->IsKeyPressed(DIK_D) )
-	{
+	if( this->keyboardInput->IsKeyDown(::Input::Enum::SAKI_D) )
+	{ // strafe right
 		this->netClient->Send( Protocol_PlayerMovementRight() );
 	}
 
-//send delta mouse movement 
-	{
-		static const float mouseSensitivity = Radian( 1.0f );
-		this->camera->PitchDown( this->input->GetPitch() * mouseSensitivity );
-		float yaw = this->input->GetYaw();
-		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
+	if( this->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Space) )
+	{ // jump
+		if(!this->key_Jump)
 		{
-			this->netClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
+			this->netClient->Send( Protocol_PlayerJump() );
+			this->key_Jump = true;
 		}
 	}
+	else 
+		this->key_Jump = false;
 
 	// shoot
-	if( this->input->IsKeyPressed(DIK_Z) )
+	if( this->mouseInput->IsBtnDown(::Input::Enum::SAMI_MouseLeftBtn) )
 	{
 		if( !this->key_Shoot )
 		{
@@ -125,7 +125,8 @@ void GamingUI::ReadKeyInput()
 	} 
 	else 
 		this->key_Shoot = false;
-	if( this->input->IsKeyPressed(DIK_X) )
+	
+	if( this->mouseInput->IsBtnDown(::Input::Enum::SAMI_MouseRightBtn) )
 	{
 		if( !this->key_Shoot )
 		{
@@ -139,7 +140,8 @@ void GamingUI::ReadKeyInput()
 	} 
 	else 
 		this->key_Shoot = false;
-	if( this->input->IsKeyPressed(DIK_C) )
+	
+	if( this->mouseInput->IsBtnDown(::Input::Enum::SAMI_MouseMiddleBtn) )
 	{
 		if( !this->key_Shoot )
 		{
@@ -154,23 +156,22 @@ void GamingUI::ReadKeyInput()
 	else 
 		this->key_Shoot = false;
 
-	// jump
-	if( this->input->IsKeyPressed(DIK_SPACE) )
+	//send delta mouse movement 
 	{
-		if(!this->key_Jump)
+		static const float mouseSensitivity = Radian( 1.0f );
+		::Input::Struct::SAIPoint2D deltaPos;
+		this->mouseInput->GetDeltaPosition( deltaPos );
+
+		this->camera->PitchDown( deltaPos.y * mouseSensitivity );;
+		//if( deltaPos.x != 0.0f ) //This made the camera reset to a specific rotation. Why?
 		{
-			this->netClient->Send( Protocol_PlayerJump() );
-			this->key_Jump = true;
+			this->netClient->Send( Protocol_PlayerLeftTurn(deltaPos.x * mouseSensitivity) );
 		}
 	}
-	else 
-		this->key_Jump = false;
 
-	if( this->input->IsKeyPressed(DIK_ESCAPE) )
+	if( this->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Escape) )
 	{
 		this->nextState = GameStateUI::UIState_shut_down;
 	} 
-	// !DEGUG KEYS
-	// TODO: implement sub-menu
 }
 
