@@ -553,17 +553,33 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectRespawn:	
 			{
-				// set player pos
 				Protocol_ObjectRespawn decoded(data);
-				// move player. Remember to change camera
-				this->privData->camera.SetPosition( decoded.position );
-				this->privData->player.setPos( decoded.position );
-				this->privData->player.updateWorld();
-				// RB DEBUG 
-				this->privData->player.setRBPos ( decoded.position );   
-				this->privData->player.updateRBWorld();
-				// !RB DEBUG 
 				
+				if( this->privData->myId == decoded.objectID )
+				{
+					// move player. Remember to change camera
+					this->privData->camera.SetPosition( decoded.position );
+					this->privData->player.setPos( decoded.position );
+					this->privData->player.updateWorld();
+					// RB DEBUG 
+					this->privData->player.setRBPos ( decoded.position );   
+					this->privData->player.updateRBWorld();
+					// !RB DEBUG 
+				}
+				else
+				{
+					C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.objectID];
+
+					if( object )
+					{
+						object->setPos( decoded.position );
+						object->updateWorld();
+						// RB DEBUG 
+						object->setRBPos ( decoded.position );  
+						object->updateRBWorld();
+						// !RB DEBUG 
+					}
+				}
 				this->currGameUI =  this->gameUI;
 			}
 			return GameClientState::event_processed;
