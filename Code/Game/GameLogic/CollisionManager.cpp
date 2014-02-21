@@ -181,13 +181,23 @@ using namespace GameLogic;
 		Oyster::Math::Float angularFactor = deltaPos.GetNormalized().Dot( (objPrevVel - playerPrevVel).GetNormalized());
 
 		Oyster::Math::Float impactPower = deltaSpeed * angularFactor;
+		Oyster::Math::Float damageFactor = 0.1f;
+
 
 		int damageDone = 0;
-		int forceThreashHold = 200000; //FIX: balance this
+		int forceThreashHold = 100; //FIX: balance this
 
 		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{
-			damageDone = (int)(kineticEnergyLoss * 0.10f);
+			if(obj.GetRigidBody()->GetState().mass == 0)
+			{
+				damageDone = impactPower * damageFactor;
+			}
+			else
+			{
+				damageDone = (impactPower * obj.GetRigidBody()->GetState().mass)* damageFactor;
+			}
+			
 			//player.DamageLife(damageDone);
 		}
 		
