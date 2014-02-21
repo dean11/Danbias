@@ -30,6 +30,7 @@ GamingUI::GamingUI( InputClass *input, NetworkClient *connection, Camera_FPSV2 *
 GamingUI::~GamingUI() { /* Do nothing */ }
 bool GamingUI::Init()
 {
+	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
 	this->plane	=  new Plane_UI(L"box_tex.png", Float3(0.5f, 0.0f, 0.5f), Float2(0.3f, 0.1f));
 	this->text	=  new Text_UI(L"hej", Float3(0.5f,0.0f,0.1f), Float2(0.1f,0.1f));
@@ -54,13 +55,11 @@ bool GamingUI::HaveTextRender() const
 
 void GamingUI::RenderGUI() const
 {
-	Oyster::Graphics::API::StartGuiRender();
 	this->plane->RenderTexture();
 }
 
 void GamingUI::RenderText() const
 {
-	Oyster::Graphics::API::StartTextRender();
 	this->text->RenderText();
 }
 
@@ -73,7 +72,10 @@ bool GamingUI::Release()
 		delete this->text;
 	return true;
 }
-
+void GamingUI::SetHPtext( std::wstring hp )
+{
+	this->text->setText(hp);
+}
 void GamingUI::ReadKeyInput()
 {
 	if( this->input->IsKeyPressed(DIK_W) )
