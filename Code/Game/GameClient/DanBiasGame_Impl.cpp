@@ -103,7 +103,6 @@ namespace DanBias
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
-			Graphics::API::Update( dt );
 			
 			data.capFrame += dt;
 			if(data.capFrame > 0.03f)
@@ -115,6 +114,8 @@ namespace DanBias
 				case Result_error:		return DanBiasClientReturn_Error;
 				default:				break;
 				}
+				
+				Graphics::API::Update( data.capFrame );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
 				data.capFrame -= 0.03f; 

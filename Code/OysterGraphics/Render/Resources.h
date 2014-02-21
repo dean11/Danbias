@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Core/Core.h"
+#include "../Model/ModelInfo.h"
+#include "../Definitions/GraphicalDefinition.h"
 
 namespace Oyster
 {
@@ -11,6 +13,14 @@ namespace Oyster
 				class Resources
 				{
 				public:
+					struct ModelDataWrapper
+					{
+						Definitions::RenderInstanceData* rid;
+						int Models;
+					};
+
+					
+					static std::map<Model::ModelInfo*, ModelDataWrapper*> RenderData;
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;

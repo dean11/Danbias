@@ -62,31 +62,24 @@ using namespace DanBias;
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
 			{
-				printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				Protocol_ObjectDisconnectPlayer prot(this->gClients[temp]->GetPlayer()->GetID());
-				for (unsigned int i = 0; i < this->gClients.Size(); i++)
+				//Send disconnect message to all the other players so the player can be removed from the client.
+				Protocol_ObjectDisconnectPlayer dp(cl->GetClient()->GetID());
+				for(int i = 0; i < this->gClients.Size(); i++)
 				{
-					if(i != temp && this->gClients[i])	this->gClients[i]->GetClient()->Send(prot);
+					if(this->gClients[i] && this->gClients[i] != cl)
+					{
+						this->gClients[i]->GetClient()->Send(dp);
+					}
 				}
-
+				printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 				this->gClients[temp]->Invalidate();
 			}
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
-			{
 				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
-				{
-					printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-					Protocol_ObjectDisconnectPlayer prot(this->gClients[temp]->GetPlayer()->GetID());
-					for (unsigned int i = 0; i < this->gClients.Size(); i++)
-					{
-						if(i != temp && this->gClients[i])	this->gClients[i]->GetClient()->Send(prot);
-					}
 					this->gClients[temp]->Invalidate();
-				}
-			}
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				this->ParseProtocol(e.args.data.protocol, cl);
@@ -149,9 +142,6 @@ using namespace DanBias;
 			Protocol_ObjectPositionRotation p(movedObject->GetPosition(), movedObject->GetRotation(), id);
 
 			Oyster::Math::Float3 temp = movedObject->GetPosition();
-
-			if(temp.x < -300)
-				id = 0;
 
 			GameSession::gameSession->Send(p.GetProtocol());
 		//}	
@@ -231,7 +221,7 @@ using namespace DanBias;
 	void GameSession::Gameplay_PlayerLeftTurn			( Protocol_PlayerLeftTurn& p, DanBias::GameClient* c )
 	{
 		c->GetPlayer()->TurnLeft( p.deltaRadian );
-		c->GetPlayer()->SetLookDir(p.lookdir);
+		c->GetPlayer()->SetLookDir( p.lookdir ) ;
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
@@ -275,17 +265,10 @@ using namespace DanBias;
 		switch (p.status)
 		{
 			case GameLogic::Protocol_General_Status::States_disconected:
-			{
 				printf("Client with ID [%i] dissconnected\n", c->GetClient()->GetID());
-			
-				Protocol_ObjectDisconnectPlayer prot(c->GetPlayer()->GetID());
-				for (unsigned int i = 0; i < this->gClients.Size(); i++)
-				{
-					if( this->gClients[i] && c->GetClient()->GetID() != this->gClients[i]->GetClient()->GetID() )	this->gClients[i]->GetClient()->Send(prot);
-				}
-				c->Invalidate();
+				//TODO: Tell other clients
+				//Protocol_
 				this->Detach(c->GetClient()->GetID());
-			}
 			break;
 
 			case GameLogic::Protocol_General_Status::States_idle:

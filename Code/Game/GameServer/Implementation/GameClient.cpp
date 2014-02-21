@@ -19,7 +19,7 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 	this->client = nwClient;
 	this->player = 0;
 	isReady = false;
-	this->character = L"crate_colonists.dan";
+	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
 	this->secondsSinceLastResponse = 0.0f;
 }
@@ -29,7 +29,7 @@ GameClient::~GameClient()
 		this->player->Inactivate();
 
 	this->isReady = false;
-	this->character = L"crate_colonists.dan";
+	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
 	this->secondsSinceLastResponse = 0.0f;
 	this->client = 0;
