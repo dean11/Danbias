@@ -173,13 +173,19 @@ using namespace GameLogic;
 		//Collision between a player and a general static or dynamic object
 		//use kinetic energyloss of the collision in order too determin how much damage to take
 		//use as part of the damage algorithm
-		//Oyster::Math::Float3 prevVel = obj.GetRigidBody()->GetState().prev
+		Oyster::Math::Float3 objPrevVel = obj.GetRigidBody()->GetState().previousVelocity;
+		Oyster::Math::Float3 playerPrevVel = player.GetRigidBody()->GetState().previousVelocity;
 
+		Oyster::Math::Float3 deltaPos = (player.GetPosition() - obj.GetPosition());
+		Oyster::Math::Float deltaSpeed = (objPrevVel - playerPrevVel).GetMagnitude();
+		Oyster::Math::Float angularFactor = deltaPos.GetNormalized().Dot( (objPrevVel - playerPrevVel).GetNormalized());
+
+		Oyster::Math::Float impactPower = deltaSpeed * angularFactor;
 
 		int damageDone = 0;
-		int forceThreashHold = 200000;
+		int forceThreashHold = 200000; //FIX: balance this
 
-		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
+		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{
 			damageDone = (int)(kineticEnergyLoss * 0.10f);
 			//player.DamageLife(damageDone);
