@@ -106,6 +106,9 @@ namespace GameLogic
 			* @return The current player state
 			********************************************************/
 			virtual PLAYER_STATE GetState() const = 0;
+
+			virtual void Inactivate() = 0;
+			virtual void Release() = 0;
 		};
 
 		class ILevelData :public IObjectData

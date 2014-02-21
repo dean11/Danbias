@@ -61,14 +61,32 @@ using namespace DanBias;
 		switch (e.args.type)
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
+			{
 				printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+				Protocol_ObjectDisconnectPlayer prot(this->gClients[temp]->GetPlayer()->GetID());
+				for (unsigned int i = 0; i < this->gClients.Size(); i++)
+				{
+					if(i != temp && this->gClients[i])	this->gClients[i]->GetClient()->Send(prot);
+				}
+
 				this->gClients[temp]->Invalidate();
+			}
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
+			{
 				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
+				{
+					printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+					Protocol_ObjectDisconnectPlayer prot(this->gClients[temp]->GetPlayer()->GetID());
+					for (unsigned int i = 0; i < this->gClients.Size(); i++)
+					{
+						if(i != temp && this->gClients[i])	this->gClients[i]->GetClient()->Send(prot);
+					}
 					this->gClients[temp]->Invalidate();
+				}
+			}
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				this->ParseProtocol(e.args.data.protocol, cl);
@@ -256,10 +274,17 @@ using namespace DanBias;
 		switch (p.status)
 		{
 			case GameLogic::Protocol_General_Status::States_disconected:
+			{
 				printf("Client with ID [%i] dissconnected\n", c->GetClient()->GetID());
-				//TODO: Tell other clients
-				//Protocol_
+			
+				Protocol_ObjectDisconnectPlayer prot(c->GetPlayer()->GetID());
+				for (unsigned int i = 0; i < this->gClients.Size(); i++)
+				{
+					if( this->gClients[i] && c->GetClient()->GetID() != this->gClients[i]->GetClient()->GetID() )	this->gClients[i]->GetClient()->Send(prot);
+				}
+				c->Invalidate();
 				this->Detach(c->GetClient()->GetID());
+			}
 			break;
 
 			case GameLogic::Protocol_General_Status::States_idle:

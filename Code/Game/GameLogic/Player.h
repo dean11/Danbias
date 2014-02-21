@@ -63,6 +63,8 @@ namespace GameLogic
 		bool IsJumping();
 		bool IsIdle();
 
+		void Inactivate();
+
 		Oyster::Math::Float3 GetPosition() const;
 		Oyster::Math::Float3 GetLookDir() const;
 		Oyster::Math::Float4x4 GetOrientation() const;

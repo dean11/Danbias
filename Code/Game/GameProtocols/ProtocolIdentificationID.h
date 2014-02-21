@@ -69,6 +69,7 @@
 #define protocol_Gameplay_ObjectWeaponEnergy		364
 #define protocol_Gameplay_ObjectRespawn				365
 #define protocol_Gameplay_ObjectDie					366
+#define protocol_Gameplay_ObjectDisconnectPlayer	367
 #define protocol_GameplayMAX							399
 
 

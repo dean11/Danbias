@@ -55,6 +55,7 @@ namespace DanBias
 		GameLogic::IPlayerData* ReleasePlayer();
 		Oyster::Network::NetClient ReleaseClient();
 
+		bool IsInvalid();
 		void Invalidate();
 		int IncrementFailedProtocol();
 		void ResetFailedProtocolCount();

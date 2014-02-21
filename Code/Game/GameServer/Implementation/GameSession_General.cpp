@@ -214,14 +214,21 @@ bool GameSession::Join(gClient gameClient)
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i])
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				IPlayerData* temp = this->gClients[i]->GetPlayer();
-				Protocol_ObjectCreatePlayer oc(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
+				Protocol_ObjectCreatePlayer p1(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
 												Utility::String::WStringToString(this->gClients[i]->GetAlias(), std::string()), 
 												Utility::String::WStringToString(this->gClients[i]->GetCharacter(), std::string()));
-				nwClient->Send(oc);
+				nwClient->Send(p1);
+
+				temp = playerData;
+				Protocol_ObjectCreatePlayer p2(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
+												temp->GetID(), false, temp->GetTeamID(), 
+												Utility::String::WStringToString(gameClient->GetAlias(), std::string()), 
+												Utility::String::WStringToString(gameClient->GetCharacter(), std::string()));
+				this->gClients[i]->GetClient()->Send(p2);
 			}
 		}
 	}
@@ -234,7 +241,7 @@ bool GameSession::Join(gClient gameClient)
 		{
 			//Protocol_ObjectPosition p(movedObject->GetPosition(), id);
 			Protocol_ObjectPositionRotation p(objects[i]->GetPosition(), objects[i]->GetRotation(), objects[i]->GetID());
-			GameSession::gameSession->Send(p.GetProtocol());
+			nwClient->Send(p.GetProtocol());
 		}
 	}
 
