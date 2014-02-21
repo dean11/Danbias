@@ -287,7 +287,8 @@ void API_Impl::UpdateWorld()
 		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
 		{
 			this->customBodies[i]->CallSubscription_Move();
-		}	
+		}
+		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
 	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
@@ -312,7 +313,7 @@ void API_Impl::UpdateWorld()
 
 		ICustomBody* bodyA = (ICustomBody*)obA->getUserPointer();
 		ICustomBody* bodyB = (ICustomBody*)obB->getUserPointer();
-
+	
 		bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
 		bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
 	}

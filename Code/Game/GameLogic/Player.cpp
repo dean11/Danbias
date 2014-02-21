@@ -74,7 +74,7 @@ Player::~Player(void)
 
 void Player::BeginFrame()
 {
-	//weapon->Update(0.002f); 
+	weapon->Update(0.002f); 
 	//Object::BeginFrame();
 
 	Oyster::Math::Float maxSpeed = 30;
@@ -264,10 +264,10 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	this->rigidBody->SetPosition(spawnPoint);
 }
 
-void Player::Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)
+void Player::SetLookDir(const Oyster::Math3D::Float3& lookDir)
 {
 	// this is the camera right vector
-	this->lookDir = lookDir;
+	this->lookDir = -lookDir;
 
 }
 void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
