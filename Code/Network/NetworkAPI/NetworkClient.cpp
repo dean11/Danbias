@@ -13,6 +13,7 @@
 #include "CustomNetProtocol.h"
 #include "NetworkSession.h"
 
+#include "../NetworkDependencies/ConnectionUDP.h"
 #include "../NetworkDependencies/Connection.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
@@ -56,8 +57,11 @@ struct NetworkClient::PrivateData : public IThreadObject
 	ThreadSafeQueue<CustomNetProtocol> sendQueue;
 	ThreadSafeQueue<NetEvent<NetworkClient*, NetworkClient::ClientEventArgs>> recieveQueue;
 
+	//Broadcast
+	ConnectionUDP broadcastConnection;
+
 	//Testing for eventSelect.
-	HANDLE socketEvents[2];
+	HANDLE socketEvents[3];
 	HANDLE shutdownEvent;
 
 	//The OysterByte each message is packed in.
@@ -101,6 +105,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		shutdownEvent = CreateEvent(NULL, true, false, NULL);
 		socketEvents[0] = WSACreateEvent();
 		socketEvents[1] = WSACreateEvent();
+		socketEvents[2] = WSACreateEvent();
 
 		if(socketEvents[0] == WSA_INVALID_EVENT)
 		{
@@ -111,12 +116,18 @@ struct NetworkClient::PrivateData : public IThreadObject
 		{
 			//Error
 		}
+
+		if(WSAEventSelect(this->broadcastConnection.GetSocket(), socketEvents[2], FD_READ) == SOCKET_ERROR)
+		{
+			//Error
+		}
 	}
 
 	void ThreadExit()
 	{
 		WSACloseEvent(socketEvents[0]);
 		WSACloseEvent(socketEvents[1]);
+		WSACloseEvent(socketEvents[2]);
 		CloseHandle(shutdownEvent);
 	}
 
@@ -128,7 +139,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		{
 			if(!this->connection.IsConnected())	return false;
 
-			int result = WSAWaitForMultipleEvents(2, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
+			int result = WSAWaitForMultipleEvents(3, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
 			if(result == 0)
 			{
 				WSAEnumNetworkEvents(this->connection.GetSocket(), socketEvents[0], &wsaEvents);
@@ -156,9 +167,62 @@ struct NetworkClient::PrivateData : public IThreadObject
 					SendBuffer();
 				}
 			}
+			else if(result == 2)
+			{
+				WSAEnumNetworkEvents(this->broadcastConnection.GetSocket(), socketEvents[2], &wsaEvents);
+				if((wsaEvents.lNetworkEvents & FD_READ) && (wsaEvents.iErrorCode[FD_READ_BIT] == 0))
+				{
+					//Recieve a message
+				}
+			}
+			if(broadcastConnection.GetSocket() > 0)
+			{
+				RecvUDP();
+			}
 		}
 
 		return false;
+	}
+
+	void RecvUDP()
+	{
+		int errorCode = -1;
+
+		errorCode = this->broadcastConnection.Recieve(tempMessage);
+		
+		if(errorCode == 0 && tempMessage.GetSize())
+		{
+			CustomNetProtocol protocol;
+			bool ok = this->translator.Unpack(protocol, tempMessage);
+
+			//Check if the protocol was unpacked correctly
+			if(ok)
+			{
+				CEA parg;
+				parg.type = CEA::EventType_ProtocolRecieved;
+				parg.data.protocol = protocol;
+				NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e;
+				e.sender = this->parent;
+				e.args.data.protocol = parg.data.protocol;
+				e.args.type = parg.type;
+			
+				this->recieveQueue.Push(e);
+
+				if(this->outputEvent)
+				{
+					printf("\t(ID: %i | IP: %s | Protocol: %i) Message recieved!\n", this->ID, this->connection.GetIpAddress().c_str(), protocol[0].value.netShort);	
+				}
+			}
+			else
+			{
+				if(this->outputEvent)
+				{
+					printf("\t(ID: %i | IP: %s) Failed to unpack CustomNetProtocol!\n", this->ID, this->connection.GetIpAddress().c_str());	
+				}
+			}
+
+			tempMessage.Clear();
+		}
 	}
 
 	void SendBuffer()
@@ -483,6 +547,9 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 	if(!this->privateData)
 		this->privateData = new PrivateData();
 	
+	this->privateData->broadcastConnection.InitiateClient();
+	this->privateData->broadcastConnection.Connect(port, "0.0.0.0");
+
 	int result = this->privateData->connection.Connect(port, serverIP, true);
 	
 	//Connect has succeeded

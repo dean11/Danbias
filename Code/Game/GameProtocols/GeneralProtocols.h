@@ -72,5 +72,38 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
+	//#define protocol_Broadcast_Test							102
+	struct Protocol_Broadcast_Test :public Oyster::Network::CustomProtocolObject
+	{
+		int test;
+
+		Protocol_Broadcast_Test()
+		{ 
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value.netShort = protocol_Broadcast_Test;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->test = 0;
+		}
+		Protocol_Broadcast_Test(int test)
+		{ 
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[0].value.netShort = protocol_Broadcast_Test;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->test = test;
+		}
+		Protocol_Broadcast_Test(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->test = p[1].value.netInt;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = this->test;
+			
+			return protocol;		 
+		}							 
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 }
 #endif //!GAMELOGIC_CONTROL_PROTOCOLS_H

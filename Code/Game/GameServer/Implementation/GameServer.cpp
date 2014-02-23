@@ -10,6 +10,8 @@
 #include "..\GameLobby.h"
 #include "..\GameSession.h"
 
+#include "..\GameProtocols\GeneralProtocols.h"
+
 #include <NetworkServer.h>
 #include <NetworkClient.h>
 
@@ -47,6 +49,13 @@ DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 	ServerOptions opt;
 	opt.mainOptions.listenPort = desc.listenPort;
 	opt.mainOptions.ownerSession = &lobby;
+
+	GameLogic::Protocol_Broadcast_Test broadcastMessage(2);
+
+	opt.broadcastOptions.broadcast = true;
+	opt.broadcastOptions.broadcastInterval = 1.0f;
+	opt.broadcastOptions.broadcastMessage = broadcastMessage.GetProtocol();
+
 	if(server.Init(opt) == NetworkServer::ServerReturnCode_Error)
 	{
 		return DanBiasServerReturn_Error;

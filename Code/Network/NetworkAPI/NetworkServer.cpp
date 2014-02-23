@@ -10,6 +10,8 @@
 
 #include "NetworkServer.h"
 
+#include "Translator.h"
+#include "../NetworkDependencies/ConnectionUDP.h"
 #include "../NetworkDependencies/Listener.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
@@ -81,7 +83,14 @@ public:
 		,	port(-1)
 		,	broadcast(0)
 		,	broadcastTime(1.0f, 0.0f)
-	{  }
+	{
+		InitWinSock();
+		serverOptions.broadcastOptions.broadcastInterval = 1.0f;
+		serverOptions.broadcastOptions.broadcast = true;
+		broadcastMessage.Resize(MAX_NETWORK_MESSAGE_SIZE);
+
+		broadcastConnection.InitiateBroadcastServer(15151, "255.255.255.255");
+	}
 	~PrivateData()
 	{
 		if(listener)
@@ -89,6 +98,12 @@ public:
 			delete listener;
 			listener = NULL;
 		}
+	}
+
+	
+	void SendBroadcast()
+	{
+		broadcastConnection.Send(broadcastMessage);
 	}
 
 	bool DoWork();
@@ -106,6 +121,11 @@ public:
 	int port;
 	bool broadcast;
 
+	ServerOptions serverOptions;
+
+	ConnectionUDP broadcastConnection;
+	OysterByte broadcastMessage;
+
 	TimeInstance broadcastTime;
 
 	Utility::WinTimer serverTimer;
@@ -113,11 +133,17 @@ public:
 
 bool NetworkServer::PrivateData::DoWork()
 {
-	if(broadcast)	
+	if(serverOptions.broadcastOptions.broadcast)	
 	{
 		if( (this->serverTimer.getElapsedSeconds() - this->broadcastTime.previous) >= this->broadcastTime.length )
 		{
-			Broadcast();
+			broadcastMessage.Clear();
+			Translator t;
+			t.Pack(broadcastMessage, serverOptions.broadcastOptions.broadcastMessage);
+			serverTimer.reset();
+			//Broadcast();
+			SendBroadcast();
+
 		}
 	}
 
@@ -196,6 +222,8 @@ NetworkServer::ServerReturnCode NetworkServer::Init(ServerOptions& options)
 	{
 		return NetworkServer::ServerReturnCode_Error;
 	}
+
+	this->privateData->serverOptions.broadcastOptions = options.broadcastOptions;
 
 	this->privateData->isInitiated = true;
 	this->privateData->isReleased = false;
@@ -319,6 +347,35 @@ int NetworkServer::GetPort()
 	return this->privateData->port;
 }
 
+/***************************************
+		Broadcast functions
+***************************************/
+//Set broadcast settings.
+void NetworkServer::SetBroadcast(CustomNetProtocol& broadcastMessage, float interval, bool enable)
+{
+	this->privateData->serverOptions.broadcastOptions.broadcast = enable;
+	this->privateData->serverOptions.broadcastOptions.broadcastMessage = broadcastMessage;
+	this->privateData->serverOptions.broadcastOptions.broadcastInterval = interval;
+	Translator t;
+	t.Pack(this->privateData->broadcastMessage, broadcastMessage);
+}
 
+//Set broadcast settings.
+void NetworkServer::SetBroadcastMessage(CustomNetProtocol& broadcastMessage)
+{
+	this->privateData->serverOptions.broadcastOptions.broadcastMessage = broadcastMessage;
+	Translator t;
+	t.Pack(this->privateData->broadcastMessage, broadcastMessage);
+}
 
+//Enable/disable broadcast.
+void NetworkServer::SetBroadcast(bool enable)
+{
+	this->privateData->serverOptions.broadcastOptions.broadcast = enable;
+}
 
+//Set interval between each broadcast message in seconds.
+void NetworkServer::SetBroadcastInterval(float interval)
+{
+	this->privateData->serverOptions.broadcastOptions.broadcastInterval = interval;
+}
