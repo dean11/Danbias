@@ -20,6 +20,7 @@
 #include "Thread/OysterThread.h"
 #include "WinTimer.h"
 
+#include <mutex>
 
 using namespace Oyster::Network;
 using namespace Utility::DynamicMemory;
@@ -83,6 +84,7 @@ public:
 		,	port(-1)
 		,	broadcast(0)
 		,	broadcastTime(1.0f, 0.0f)
+		,	broadcastMutex(new std::mutex)
 	{
 		InitWinSock();
 		serverOptions.broadcastOptions.broadcastInterval = 1.0f;
@@ -98,12 +100,6 @@ public:
 			delete listener;
 			listener = NULL;
 		}
-	}
-
-	
-	void SendBroadcast()
-	{
-		broadcastConnection.Send(broadcastMessage);
 	}
 
 	bool DoWork();
@@ -123,6 +119,7 @@ public:
 
 	ServerOptions serverOptions;
 
+	SmartPointer<std::mutex> broadcastMutex;
 	ConnectionUDP broadcastConnection;
 	OysterByte broadcastMessage;
 
@@ -135,15 +132,16 @@ bool NetworkServer::PrivateData::DoWork()
 {
 	if(serverOptions.broadcastOptions.broadcast)	
 	{
-		if( (this->serverTimer.getElapsedSeconds() - this->broadcastTime.previous) >= this->broadcastTime.length )
+		if( (this->serverTimer.getElapsedSeconds() - this->broadcastTime.previous) >= this->serverOptions.broadcastOptions.broadcastInterval )
 		{
-			broadcastMessage.Clear();
-			Translator t;
-			t.Pack(broadcastMessage, serverOptions.broadcastOptions.broadcastMessage);
+			//broadcastMessage.Clear();
+			//Translator t;
+			//t.Pack(broadcastMessage, serverOptions.broadcastOptions.broadcastMessage);
 			serverTimer.reset();
-			//Broadcast();
-			SendBroadcast();
-
+			
+			broadcastMutex->lock();
+			broadcastConnection.Send(broadcastMessage);
+			broadcastMutex->unlock();
 		}
 	}
 
@@ -353,29 +351,41 @@ int NetworkServer::GetPort()
 //Set broadcast settings.
 void NetworkServer::SetBroadcast(CustomNetProtocol& broadcastMessage, float interval, bool enable)
 {
+	this->privateData->broadcastMutex->lock();
 	this->privateData->serverOptions.broadcastOptions.broadcast = enable;
 	this->privateData->serverOptions.broadcastOptions.broadcastMessage = broadcastMessage;
 	this->privateData->serverOptions.broadcastOptions.broadcastInterval = interval;
+
+	this->privateData->broadcastMessage.Clear();
 	Translator t;
 	t.Pack(this->privateData->broadcastMessage, broadcastMessage);
+	this->privateData->broadcastMutex->unlock();
 }
 
 //Set broadcast settings.
 void NetworkServer::SetBroadcastMessage(CustomNetProtocol& broadcastMessage)
 {
+	this->privateData->broadcastMutex->lock();
 	this->privateData->serverOptions.broadcastOptions.broadcastMessage = broadcastMessage;
+
+	this->privateData->broadcastMessage.Clear();
 	Translator t;
 	t.Pack(this->privateData->broadcastMessage, broadcastMessage);
+	this->privateData->broadcastMutex->unlock();
 }
 
 //Enable/disable broadcast.
 void NetworkServer::SetBroadcast(bool enable)
 {
+	this->privateData->broadcastMutex->lock();
 	this->privateData->serverOptions.broadcastOptions.broadcast = enable;
+	this->privateData->broadcastMutex->unlock();
 }
 
 //Set interval between each broadcast message in seconds.
 void NetworkServer::SetBroadcastInterval(float interval)
 {
+	this->privateData->broadcastMutex->lock();
 	this->privateData->serverOptions.broadcastOptions.broadcastInterval = interval;
+	this->privateData->broadcastMutex->unlock();
 }

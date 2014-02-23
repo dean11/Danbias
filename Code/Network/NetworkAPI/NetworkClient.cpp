@@ -736,19 +736,22 @@ bool NetworkClient::StartListeningForBroadcasting(unsigned short port)
 
 void NetworkClient::StopListeningForBroadcasting()
 {
-	if(this->privateData->broadcastingStarted)
+	if(this->privateData)
 	{
-		//Tell the thread to shutdown
-		WSASetEvent(this->privateData->broadcastShutdownEvent);
+		if(this->privateData->broadcastingStarted)
+		{
+			//Tell the thread to shutdown
+			WSASetEvent(this->privateData->broadcastShutdownEvent);
 
-		//Wait for thread
-		this->privateData->broadcastThread.join();
+			//Wait for thread
+			this->privateData->broadcastThread.join();
 
-		WSACloseEvent(this->privateData->broadcastEvent);
-		CloseHandle(this->privateData->broadcastShutdownEvent);
+			WSACloseEvent(this->privateData->broadcastEvent);
+			CloseHandle(this->privateData->broadcastShutdownEvent);
 
-		this->privateData->broadcastConnection.Disconnect();
+			this->privateData->broadcastConnection.Disconnect();
 
-		this->privateData->broadcastingStarted = false;
+			this->privateData->broadcastingStarted = false;
+		}
 	}
 }
