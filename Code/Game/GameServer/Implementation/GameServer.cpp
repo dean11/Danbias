@@ -50,7 +50,7 @@ DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 	opt.mainOptions.listenPort = desc.listenPort;
 	opt.mainOptions.ownerSession = &lobby;
 
-	GameLogic::Protocol_Broadcast_Test broadcastMessage(2);
+	GameLogic::Protocol_Broadcast_Test broadcastMessage(opt.mainOptions.listenPort, "127.0.0.1", "ServerName");
 
 	opt.broadcastOptions.broadcast = true;
 	opt.broadcastOptions.broadcastInterval = 1.0f;

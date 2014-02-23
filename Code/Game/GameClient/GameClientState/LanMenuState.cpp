@@ -190,7 +190,11 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 		{
 			Protocol_Broadcast_Test decoded(data);
 
-			int test = decoded.test;
+			unsigned short port = decoded.port;
+			std::string ip = decoded.ip;
+			std::string name = decoded.name;
+			printf("Broadcast message: %d: %s: %s\n", port, ip.c_str(), name.c_str());
+			this->privData->connectIP->AppendText(L"Hej");
 		}
 		break;
 
