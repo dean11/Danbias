@@ -38,6 +38,7 @@ namespace Oyster
 			bool IsSending();
 			bool IsConnected();
 			int GetIpSize();
+			int GetSocket();
 
 			int SetBlockingMode( bool blocking );
 

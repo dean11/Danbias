@@ -244,6 +244,12 @@ int ConnectionUDP::SetBlockingMode( bool blocking )
 	//Success
 	return 0;
 }
+
+int ConnectionUDP::GetSocket()
+{
+	return socket;
+}
+
 //////////////////////////////////////
 // Private Methods
 //////////////////////////////////////
