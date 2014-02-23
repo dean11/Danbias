@@ -133,6 +133,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		CloseHandle(shutdownEvent);
 	}
 
+	//Thread for receiving broadcast messages
 	void BroadcastThread()
 	{
 		WSANETWORKEVENTS wsaEvents;

@@ -20,6 +20,9 @@
 #include <WinTimer.h>
 #include <thread>
 
+//For conversion from wstring to string
+#include <codecvt>
+
 using namespace DanBias;
 using namespace Oyster::Network;
 using namespace Oyster::Thread;
@@ -43,6 +46,11 @@ namespace
 }
 
 
+std::string wstring_to_utf8 (const std::wstring& str)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+    return myconv.to_bytes(str);
+}
 
 DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 {
@@ -50,7 +58,9 @@ DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 	opt.mainOptions.listenPort = desc.listenPort;
 	opt.mainOptions.ownerSession = &lobby;
 
-	GameLogic::Protocol_Broadcast_Test broadcastMessage(opt.mainOptions.listenPort, "127.0.0.1", "ServerName");
+	std::string serverName = wstring_to_utf8(desc.serverName);
+
+	GameLogic::Protocol_Broadcast_Test broadcastMessage(opt.mainOptions.listenPort, "127.0.0.1", serverName);
 
 	opt.broadcastOptions.broadcast = true;
 	opt.broadcastOptions.broadcastInterval = 1.0f;
@@ -63,7 +73,10 @@ DanBiasServerReturn GameServerAPI::ServerInitiate(const ServerInitDesc& desc)
 	GameSession::GameDescription d;
 
 	std::printf("Server created!\t-\t%s: [%i]\n\n", server.GetLanAddress().c_str(), desc.listenPort);
-		
+	
+	GameLogic::Protocol_Broadcast_Test broadcastMessage2(opt.mainOptions.listenPort, server.GetLanAddress(), serverName);
+	server.SetBroadcastMessage(broadcastMessage2.GetProtocol());
+
 	return DanBiasServerReturn_Sucess;
 }
 void GameServerAPI::ServerStart()
