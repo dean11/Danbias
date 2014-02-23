@@ -37,6 +37,9 @@ struct  LanMenuState::MyData
 
 	TextField<LanMenuState*> *connectIP;
 	unsigned short connectPort;
+
+	std::string ip;
+
 } privData;
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
@@ -139,7 +142,7 @@ void LanMenuState::ChangeState( ClientState next )
 	{
 	case GameClientState::ClientState_Lobby:
 		// attempt to connect to lobby
-		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
+		if( !this->privData->nwClient->Connect(this->privData->connectPort, this->privData->ip.c_str()) )
 			return;
 		break;
 	default: break;
@@ -194,6 +197,9 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 			std::string ip = decoded.ip;
 			std::string name = decoded.name;
 			printf("Broadcast message: %d: %s: %s\n", port, ip.c_str(), name.c_str());
+
+			this->privData->connectPort = port;
+			this->privData->ip = ip;
 		}
 		break;
 
