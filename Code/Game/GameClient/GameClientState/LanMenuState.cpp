@@ -30,7 +30,8 @@ struct  LanMenuState::MyData
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
 	::Input::Keyboard *keyboardInput;
-	Graphics::API::Texture background;
+	Float3 mousePos;
+	Graphics::API::Texture background, mouseCursor;
 	EventButtonCollection guiElements;
 
 	TextField<LanMenuState*> *connectIP;
@@ -58,6 +59,7 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->keyboardInput = shared.keyboardDevice;
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
 
 	// create guiElements
 	this->privData->connectIP = new TextField<LanMenuState*>( L"color_white.png", Float4(1.0f), Float4(0.0f), this, Float3(0.5f, 0.3f, 0.5f), Float2(0.8f, 0.09f), ResizeAspectRatio_None );
@@ -92,11 +94,11 @@ GameClientState::ClientState LanMenuState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		::Input::Struct::SAIPointInt2D pos;
-		this->privData->mouseInput->GetPixelPosition( pos );
+		::Input::Struct::SAIPointFloat2D pos;
+		this->privData->mouseInput->GetNormalizedPosition( pos );
 
-		mouseState.x = pos.x;
-		mouseState.y = pos.y;
+		this->privData->mousePos.x = mouseState.x = pos.x;
+		this->privData->mousePos.y = mouseState.y = pos.y;
 		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
 	EventHandler::Instance().Update( mouseState );
@@ -110,6 +112,7 @@ bool LanMenuState::Render( )
 
 	Graphics::API::StartGuiRender();
 
+	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 

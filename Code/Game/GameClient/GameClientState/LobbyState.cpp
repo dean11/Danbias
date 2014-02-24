@@ -23,7 +23,8 @@ struct LobbyState::MyData
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
-	Graphics::API::Texture background;
+	Float3 mousePos;
+	Graphics::API::Texture background, mouseCursor;;
 	EventButtonCollection guiElements;
 } privData;
 
@@ -46,6 +47,7 @@ bool LobbyState::Init( SharedStateContent &shared )
 	this->privData->mouseInput = shared.mouseDevice;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
 
 	// create buttons
 	ButtonRectangle<LobbyState*> *button;
@@ -63,11 +65,11 @@ GameClientState::ClientState LobbyState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		::Input::Struct::SAIPointInt2D pos;
-		this->privData->mouseInput->GetPixelPosition( pos );
+		::Input::Struct::SAIPointFloat2D pos;
+		this->privData->mouseInput->GetNormalizedPosition( pos );
 
-		mouseState.x = pos.x;
-		mouseState.y = pos.y;
+		this->privData->mousePos.x = mouseState.x = pos.x;
+		this->privData->mousePos.y = mouseState.y = pos.y;
 		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
 	EventHandler::Instance().Update( mouseState );
@@ -79,6 +81,7 @@ bool LobbyState::Render( )
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
+	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 

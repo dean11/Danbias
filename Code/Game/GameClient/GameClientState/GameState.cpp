@@ -81,9 +81,6 @@ bool GameState::Init( SharedStateContent &shared )
 	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);
 
-	//tell server ready
-	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
-			
 	// DEGUG KEYS
 	this->key_Reload_Shaders = false;
 	this->key_Wireframe_Toggle = false;
@@ -104,6 +101,9 @@ bool GameState::Init( SharedStateContent &shared )
 	((GamingUI*)gameUI)->Init();
 	((RespawnUI*)respawnUI)->Init();
 	((StatsUI*)statsUI)->Init();
+
+	//tell server ready
+	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 
 	return true;
 }

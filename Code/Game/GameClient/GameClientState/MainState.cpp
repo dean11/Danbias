@@ -98,7 +98,7 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.1f), Float4(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(63.0f/255.0f,73.0f/255.0f,127.0f/255.0f,0.6f) );
 	this->privData->guiElements.RenderTexture();
 
