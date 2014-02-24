@@ -18,6 +18,7 @@ namespace GameLogic
 
 		*/
 		void ParseObject(char* buffer, void *header, int size);
+		void ParseLight(char* buffer, BasicLight& header, int& size);
 		void ParseObject(char* buffer, ObjectHeader& header, int& size , bool loadCgf);
 		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size);
 		void ParseBoundingVolume(char* buffer, LevelLoaderInternal::BoundingVolume& volume, int &size);
