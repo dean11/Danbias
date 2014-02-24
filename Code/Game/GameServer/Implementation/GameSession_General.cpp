@@ -36,8 +36,8 @@ GameSession::GameSession()
 	this->isCreated = false;
 	this->isRunning = false;
 	this->gameSession = this;
-	this->logicFrameTime = DELTA_TIME_20;
-	this->networkFrameTime = DELTA_TIME_20;
+	this->logicFrameTime = DELTA_TIME_60;
+	this->networkFrameTime = DELTA_TIME_60;
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 
@@ -108,6 +108,9 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 /* Set some game instance data options */
 	this->gameInstance.SetSubscription(GameSession::ObjectMove);
 	this->gameInstance.SetSubscription(GameSession::ObjectDisabled);
+	this->gameInstance.SetHpSubscription(GameSession::ObjectDamaged);
+	this->gameInstance.SetRespawnSubscription(GameSession::ObjectRespawned);
+	this->gameInstance.SetDeadSubscription(GameSession::ObjectDead);
 	this->gameInstance.SetFPS(60);
 
 	this->description.clients.Clear();

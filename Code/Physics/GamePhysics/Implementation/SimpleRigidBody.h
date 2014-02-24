@@ -93,6 +93,8 @@ namespace Oyster
 			btVector3 raySource[2];
 			btVector3 rayTarget[2];
 			btScalar rayLambda[2];
+
+			int collisionFlags;
 		};
 	} 
 }
