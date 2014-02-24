@@ -9,6 +9,8 @@
 #include "GameState.h"
 #include "../Network/NetworkAPI/NetworkClient.h"
 
+#include <Protocols.h>
+
 #include "EventHandler\EventHandler.h"
 #include "Buttons\ButtonRectangle.h"
 #include "Buttons\TextField.h"
@@ -21,6 +23,7 @@ using namespace ::Oyster;
 using namespace ::Oyster::Network;
 using namespace ::Oyster::Event;
 using namespace ::Oyster::Math3D;
+using namespace ::GameLogic;
 
 struct  LanMenuState::MyData
 {
@@ -34,6 +37,9 @@ struct  LanMenuState::MyData
 
 	TextField<LanMenuState*> *connectIP;
 	unsigned short connectPort;
+
+	std::string ip;
+
 } privData;
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
@@ -82,6 +88,11 @@ bool LanMenuState::Init( SharedStateContent &shared )
 
 	this->privData->connectPort = 15151;
 
+	if(!this->privData->nwClient->StartListeningForBroadcasting(this->privData->connectPort))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -94,6 +105,8 @@ GameClientState::ClientState LanMenuState::Update( float deltaTime )
 	}
 
 	EventHandler::Instance().Update( mouseState );
+
+	this->privData->nwClient->Update();
 
 	return this->privData->nextState;
 }
@@ -116,6 +129,11 @@ bool LanMenuState::Render( )
 
 bool LanMenuState::Release()
 {
+	if(privData)
+	{
+		this->privData->nwClient->StopListeningForBroadcasting();
+	}
+
 	privData = NULL;
 	return true;
 }
@@ -155,4 +173,42 @@ void OnButtonInteract_Exit( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 		break;
 	default: break;
 	}
+}
+
+const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &message )
+{
+	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
+	{ // TODO: Reconnect
+		const char *breakpoint = "temp trap";
+		this->privData->nwClient->Disconnect();
+		this->ChangeState( GameClientState::ClientState_Main );
+	}
+
+	// fetching the id data.
+	short ID = message.args.data.protocol[0].value.netShort;
+
+	CustomNetProtocol data = message.args.data.protocol;
+
+	switch(ID)
+	{
+	case protocol_Broadcast_Test:
+		{
+			Protocol_Broadcast_Test decoded(data);
+
+			unsigned short port = decoded.port;
+			std::string ip = decoded.ip;
+			std::string name = decoded.name;
+			printf("Broadcast message: %d: %s: %s\n", port, ip.c_str(), name.c_str());
+
+			//this->privData->connectPort = port;
+			//this->privData->ip = ip;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+
+	return message;
 }
