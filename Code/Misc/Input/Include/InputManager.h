@@ -37,9 +37,9 @@ namespace Input
 			* @see InputDescription
 			* @return Returns a handle to a device that can be rethrown to a specific device.
 			*/
-			virtual InputObject*			CreateDevice					( const Enum::SAIType inputType, Typedefs::WindowHandle targetApplication = 0 )	= 0;
-			virtual Keyboard*				CreateKeyboardDevice			( Typedefs::WindowHandle targetApplication = 0 ) { return (Keyboard*)CreateDevice(Enum::SAIType_Keyboard, targetApplication); }
-			virtual Mouse*					CreateMouseDevice				( Typedefs::WindowHandle targetApplication = 0 ) { return (Mouse*)CreateDevice(Enum::SAIType_Mouse, targetApplication); }
+			virtual InputObject*			CreateDevice					( const Enum::SAIType inputType, Typedefs::WindowHandle targetApplication )	= 0;
+			virtual Keyboard*				CreateKeyboardDevice			( Typedefs::WindowHandle targetApplication ) { return (Keyboard*)CreateDevice(Enum::SAIType_Keyboard, targetApplication); }
+			virtual Mouse*					CreateMouseDevice				( Typedefs::WindowHandle targetApplication ) { return (Mouse*)CreateDevice(Enum::SAIType_Mouse, targetApplication); }
 
 			/**	Enables or Disables the Input proccessing.
 			*	@param The toggler.

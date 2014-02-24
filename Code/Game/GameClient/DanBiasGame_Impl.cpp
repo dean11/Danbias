@@ -60,8 +60,8 @@ namespace DanBias
 
 		~DanBiasGamePrivateData()
 		{
-			SafeDeleteInstance( this->sharedStateContent.mouseDevice );
-			SafeDeleteInstance( this->sharedStateContent.keyboardDevice );
+			//SafeDeleteInstance( this->sharedStateContent.mouseDevice );
+			//SafeDeleteInstance( this->sharedStateContent.keyboardDevice );
 		}
 	} data;
 }
@@ -272,6 +272,9 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 	{
 		case WM_DESTROY:
 			PostQuitMessage( 0 );
+		break;
+		case WM_INPUT:
+			message = 0;
 		break;
 		default: break;
 	}

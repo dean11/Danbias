@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
 /////////////////////////////////////////////////////////////////////
-#include "..\..\Include\Win32\Win32Keyboard.h"
+#include "..\..\Include\Win32\Win32Input.h"
 #include <algorithm>
 
 #pragma warning ( disable : 4172 )
@@ -10,8 +10,13 @@ using namespace Input::Enum;
 using namespace std;
 
 
-Win32Keyboard::Win32Keyboard()
+Win32Keyboard::Win32Keyboard(HWND target)
 {
+	this->isActive = false;
+	this->device.usUsagePage = 0x01;
+	this->device.hwndTarget = target;
+	this->device.usUsage = RawInput_Usage_keyboard;
+	this->device.dwFlags = RIDEV_NOLEGACY;
 	memset(&this->keys[0], 0, sizeof(Win32Keyboard::Keys) * MAXKEYS);
 }
 Win32Keyboard::~Win32Keyboard()
@@ -37,6 +42,28 @@ wchar_t* Win32Keyboard::GetAsText(Enum::SAKI key)
 	GetKeyNameTextW((LONG)temp, buff, 16);
 	return buff;
 }
+
+void Win32Keyboard::Activate ()
+{
+	if(this->isActive) return;
+
+	this->Create();
+}
+void Win32Keyboard::Deactivate ()
+{
+	if(!this->isActive) return;
+
+	RAWINPUTDEVICE d;
+	d.dwFlags = RIDEV_REMOVE;
+	d.hwndTarget = 0;
+	d.usUsage = RawInput_Usage_keyboard;
+	d.usUsagePage = 0x01;
+	if(RegisterRawInputDevices(&d, 1, sizeof(RAWINPUTDEVICE)))
+	{
+		this->isActive = true;
+	}
+}
+
 void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 {
 	if(!this->active)
@@ -55,7 +82,7 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 		//The key is released.
 		if(isUp)/*(k.Flags == RI_KEY_BREAK || k.Flags == (RI_KEY_BREAK | RI_KEY_E0) || k.Flags == (RI_KEY_BREAK | RI_KEY_E1))*/
 		{
-			InternalOnKeyRelease(key, L"");
+			InternalOnKeyRelease(key);
 			this->keys[key].isDown = false;
 			this->keys[key].isE0 = isE0;
 			this->keys[key].makecode = keyboard.MakeCode;
@@ -65,11 +92,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 		{
 			if(this->keys[key].isDown)
 			{
-				this->InternalOnKeyDown(key, L"");
+				this->InternalOnKeyDown(key);
 			}
 			else
 			{
-				this->InternalOnKeyPress(key, L"");
+				this->InternalOnKeyPress(key);
 				this->keys[key].isDown = true;
 				this->keys[key].isE0 = isE0;
 				this->keys[key].makecode = keyboard.MakeCode;
@@ -108,8 +135,32 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 		{
 			wchar_t test = towlower((wchar_t)virtualKey);
 			if( this->keys[SAKI_LeftShift].isDown || this->keys[SAKI_RightShift].isDown )
+			{
+					 if(key == SAKI_0)		test = L'=';
+				else if(key == SAKI_1)		test = L'!';
+				else if(key == SAKI_2)		test = L'"';
+				else if(key == SAKI_3)		test = L'#';
+				else if(key == SAKI_4)		test = L'¤';
+				else if(key == SAKI_5)		test = L'%';
+				else if(key == SAKI_6)		test = L'&';
+				else if(key == SAKI_7)		test = L'/';
+				else if(key == SAKI_8)		test = L'(';
+				else if(key == SAKI_9)		test = L')';
+				else if(key == SAKI_Add)	test = L'?';
 				test = towupper(test);
-
+			}
+			else if( this->keys[SAKI_LeftAlt].isDown || this->keys[SAKI_RightAlt].isDown )
+			{
+					 if(key == SAKI_2)		test = L'@';
+				else if(key == SAKI_3)		test = L'£';
+				else if(key == SAKI_4)		test = L'$';
+				else if(key == SAKI_5)		test = L'€';
+				else if(key == SAKI_7)		test = L'{';
+				else if(key == SAKI_8)		test = L'[';
+				else if(key == SAKI_9)		test = L']';
+				else if(key == SAKI_0)		test = L'}';
+				else if(key == SAKI_Add)	test = L'\\';
+			}
 			this->textTarget->insert( this->writePos, 1, test);
 			++this->writePos;
 		}
@@ -247,7 +298,7 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
 			out_key = SAKI_LeftShift;
 			out_key = SAKI_RightShift;
 		break;	
-		case 0x13	:	//VK_PAUSE	
+		case 0x13	:	//VK_PAUSE
 			out_key = SAKI_Pause;
 		break;
 		case 0x14	:	//VK_CAPITAL
@@ -614,12 +665,16 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
 		break;
 
 		case 0xBB://VK_OEM_PLUS		
+			out_key = SAKI_Add;
 		break;
 		case 0xBC://VK_OEM_COMMA	
+			out_key = SAKI_Comma;
 		break;
 		case 0xBD://VK_OEM_MINUS	
+			out_key = SAKI_Minus;
 		break;
 		case 0xBE://VK_OEM_PERIOD	
+			out_key = SAKI_Period;
 		break;
 		case 0xBA://VK_OEM_1		
 		break;
@@ -638,6 +693,16 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
 		case 0xDF://VK_OEM_8	
 		break;
 	}
+}
+bool Win32Keyboard::Create()
+{
+	if(RegisterRawInputDevices(&this->device, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
+	{
+		this->isActive = true;
+		return true;
+	}
+
+	return false;
 }
 
 
