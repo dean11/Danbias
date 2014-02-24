@@ -38,6 +38,10 @@ bool GamingUI::Init()
 	this->plane	=  new Plane_UI(L"box_tex.png", Float3(0.5f, 0.0f, 0.5f), Float2(0.3f, 0.1f));
 	this->text	=  new Text_UI(L"hej", Float3(0.5f,0.0f,0.1f), Float2(0.1f,0.1f));
 
+	// setting input mode to all raw
+	this->keyboardInput->Activate();
+	this->mouseInput->Activate();
+
 	return true; 
 }
 GameStateUI::UIState GamingUI::Update( float deltaTime )
