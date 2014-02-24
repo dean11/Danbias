@@ -40,7 +40,7 @@ public:
 							POINT				_windowSize = cPOINT(800, 600),
 							POINT				_windowPosition = cPOINT(0,0),
 							UINT				_windowClassStyle = (CS_HREDRAW | CS_VREDRAW | CS_OWNDC),
-							UINT				_windowStyle = (WS_POPUPWINDOW|WS_SYSMENU|WS_CAPTION),
+							UINT				_windowStyle = (WS_POPUPWINDOW|WS_CAPTION),
 							HICON				_icon = LoadIcon(0, IDI_APPLICATION),
 							HCURSOR				_cursor = LoadCursor(NULL, IDC_ARROW),
 							HBRUSH				_background = (HBRUSH)GetStockObject(BLACK_BRUSH)

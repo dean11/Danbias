@@ -112,13 +112,13 @@ Keyboard::~Keyboard()
 
 }
 
-void Keyboard::InternalOnKeyPress(Enum::SAKI key, wchar_t text[16])
+void Keyboard::InternalOnKeyPress(Enum::SAKI key)
 {
 	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
 	{
 		if(this->keyEventSubscrivers[i])
 		{
-			this->keyEventSubscrivers[i]->OnKeyPress(key, GetAsText(key), this);
+			this->keyEventSubscrivers[i]->OnKeyPress(key, this);
 		}
 	}
 	KeyboardCallbackList *w = this->callbackList;
@@ -126,17 +126,17 @@ void Keyboard::InternalOnKeyPress(Enum::SAKI key, wchar_t text[16])
 	{
 		if(w->function)
 			if (w->type == KeyboardCallbackList::CallbackDataType_OnPress)
-				w->function.keyPressCallback(key, GetAsText(key), this);
+				w->function.keyPressCallback(key, this);
 		w = w->next;
 	}
 }
-void Keyboard::InternalOnKeyDown(Enum::SAKI key, wchar_t text[16])
+void Keyboard::InternalOnKeyDown(Enum::SAKI key)
 {
 	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
 	{
 		if(this->keyEventSubscrivers[i])
 		{
-			this->keyEventSubscrivers[i]->OnKeyDown(key, GetAsText(key), this);
+			this->keyEventSubscrivers[i]->OnKeyDown(key, this);
 		}
 	}
 	KeyboardCallbackList *w = this->callbackList;
@@ -144,17 +144,17 @@ void Keyboard::InternalOnKeyDown(Enum::SAKI key, wchar_t text[16])
 	{
 		if(w->function)
 			if (w->type == KeyboardCallbackList::CallbackDataType_OnDown)
-				w->function.keyDownCallback(key, GetAsText(key), this);
+				w->function.keyDownCallback(key, this);
 		w = w->next;
 	}
 }
-void Keyboard::InternalOnKeyRelease(Enum::SAKI key, wchar_t text[16])
+void Keyboard::InternalOnKeyRelease(Enum::SAKI key)
 {
 	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
 	{
 		if(this->keyEventSubscrivers[i])
 		{
-			this->keyEventSubscrivers[i]->OnKeyRelease(key, GetAsText(key), this);
+			this->keyEventSubscrivers[i]->OnKeyRelease(key, this);
 		}
 	}
 	KeyboardCallbackList *w = this->callbackList;
@@ -162,7 +162,7 @@ void Keyboard::InternalOnKeyRelease(Enum::SAKI key, wchar_t text[16])
 	{
 		if(w->function)
 			if (w->type == KeyboardCallbackList::CallbackDataType_OnRelease)
-				w->function.keyReleaseCallback(key, GetAsText(key), this);
+				w->function.keyReleaseCallback(key, this);
 		w = w->next;
 	}
 }

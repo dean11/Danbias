@@ -16,7 +16,6 @@ using namespace Input::Enum;
 using namespace Input::Struct;
 using namespace Input::Typedefs;
 
-
 Win32Input *Win32Input::instance = 0;
 
 LRESULT Win32Input::RawInputParser(HWND h, LPARAM l)
@@ -88,14 +87,6 @@ LRESULT CALLBACK Win32Input::RawWindowCallback(HWND h, UINT m, WPARAM w, LPARAM 
 		case WM_INPUT:
 			return Win32Input::instance->RawInputParser(h, l);
 		break;
-
-		case WM_KEYDOWN:
-			val = 0;
-		break;
-
-		case WM_CHAR:
-			val = 0;
-		break;
 		
 		case WM_ACTIVATE:
 			Win32Input::instance->WindowActivate((w == TRUE));
@@ -115,7 +106,7 @@ void Win32Input::WindowActivate(bool activate)
 	}
 	else
 	{
-		ShowCursor(0);
+		ShowCursor(1);
 	}
 }
 
@@ -151,55 +142,49 @@ InputObject* Win32Input::CreateDevice(const SAIType inputType, Typedefs::WindowH
 {
 	if(!this->instance->targetHwin)
 	{
-		this->targetHwin = CreateWindowExW(  0, L"RawInputCallbackFunc" ,  NULL, NULL, NULL, NULL, NULL, 
-												NULL, (HWND)targetApplication, NULL, (HINSTANCE)GetModuleHandle(0), NULL ); 
+		RECT rc;
+		GetClientRect((HWND)targetApplication, &rc);
+		
+		AdjustWindowRect(&rc, GetWindowStyle((HWND)targetApplication), FALSE);
+		
+		rc.right  = rc.right - rc.left;
+		rc.bottom = rc.bottom - rc.top;
+
+		this->targetHwin = CreateWindowExW(  0, L"RawInputCallbackFunc" ,  NULL, NULL, rc.left, rc.top, rc.right, rc.bottom, 
+											(HWND)targetApplication, NULL, (HINSTANCE)GetModuleHandle(0), NULL ); 
 	}
+
 	InputObject* val = 0;
-	RAWINPUTDEVICE rid;
-	rid.usUsagePage = 0x01;
-	rid.hwndTarget = this->instance->targetHwin;
 
 	switch (inputType)
 	{
 		case SAIType_Keyboard:
 		{
-			rid.usUsage = RawInput_Usage_keyboard;
-			rid.dwFlags = RIDEV_NOLEGACY;
-			if(RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
+			Win32Keyboard* obj = new Win32Keyboard(this->targetHwin);
+			if(!obj->Create())
 			{
-				Win32Keyboard* obj = new Win32Keyboard();
-				this->keyboard.push_back(obj);
-				val = obj;
-			}
-			else
-			{
+				delete obj;
 				return 0;
 			}
+
+			this->keyboard.push_back(obj);
+			val = obj;
 		}
 		break;
 
 		case SAIType_Mouse:
 		{
-			rid.usUsage = RawInput_Usage_mouse;
-			rid.dwFlags = RIDEV_NOLEGACY | RIDEV_CAPTUREMOUSE;
-			if(RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
+			Win32Mouse* obj = new Win32Mouse(this->targetHwin);
+			if(!obj->Create())
 			{
-				int i = 0;
-				val = (InputObject*)1;
-				Win32Mouse* obj = new Win32Mouse();
-				this->mouse.push_back(obj);
-				val = obj;
-			}
-			else
-			{
+				delete obj;
 				return 0;
 			}
+
+			this->mouse.push_back(obj);
+			val = obj;
 		}
 		break;
-
-		//case SAIType_ApplicationKeyboard:
-		//	//val = new Win32ApplicationKeyboard();
-		//	break;
 	}
 
 	return val;
@@ -208,6 +193,21 @@ InputObject* Win32Input::CreateDevice(const SAIType inputType, Typedefs::WindowH
 void Win32Input::ToggleInputSystem(bool enable)
 {
 	this->enabled = enable;
+
+	if(this->enabled)
+	{
+		for (unsigned int i = 0; i < this->mouse.size(); i++)
+		{ this->mouse[i]->Deactivate(); }
+		for (unsigned int i = 0; i < this->keyboard.size(); i++)
+		{ this->keyboard[i]->Deactivate(); }
+	}
+	else
+	{
+		for (unsigned int i = 0; i < this->mouse.size(); i++)
+		{ this->mouse[i]->Activate(); }
+		for (unsigned int i = 0; i < this->keyboard.size(); i++)
+		{ this->keyboard[i]->Activate(); }
+	}
 }
 void Win32Input::Destroy ()
 {

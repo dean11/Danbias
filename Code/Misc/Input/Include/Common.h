@@ -26,6 +26,11 @@ namespace Input
 			SAIType_futureExample2,
 			SAIType_futureExample3,
 		};
+		enum InputOptionType
+		{
+			InputOptionType_RawInput,
+			InputOptionType_PlatformDefault,
+		};
 		enum ButtonState
 		{
 			ButtonState_Press,			// When button is pressed (once)
@@ -37,13 +42,22 @@ namespace Input
 	/*********************************************************************/
 	namespace Struct
 	{
-		struct SAIPoint2D
+		struct SAIPointInt2D
 		{
 			int x;
 			int y;
-			SAIPoint2D() :x(0), y(0) { }
-			SAIPoint2D(int _x, int _y) :x(_x), y(_y) { }
+			SAIPointInt2D() :x(0), y(0) { }
+			SAIPointInt2D(int _x, int _y) :x(_x), y(_y) { }
 			int Length() { return (abs(x) + abs(y)); }
+		};
+
+		struct SAIPointFloat2D
+		{
+			float x;
+			float y;
+			SAIPointFloat2D() :x(0.0f), y(0.0f) { }
+			SAIPointFloat2D(float _x, float _y) :x(_x), y(_y) { }
+			float Length() { return (fabs(x) + fabs(y)); }
 		};
 
 		struct InputData;
