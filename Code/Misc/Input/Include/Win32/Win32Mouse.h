@@ -40,6 +40,7 @@ namespace Input
 		RAWINPUTDEVICE device;
 		Struct::SAIPointInt2D windowSize;
 		bool isActive;
+		Struct::SAIPointInt2D winCursPos;
 	};
 }
 

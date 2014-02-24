@@ -145,6 +145,8 @@ void Win32Mouse::Deactivate ()
 	if(RegisterRawInputDevices(&d, 1, sizeof(RAWINPUTDEVICE)))
 	{
 		this->isActive = false;
+		SetCursorPos(this->winCursPos.x, this->winCursPos.y);
+		ShowCursor(TRUE);
 	}
 }
 
@@ -219,6 +221,12 @@ bool Win32Mouse::Create()
 	if(RegisterRawInputDevices(&this->device, 1, sizeof(RAWINPUTDEVICE)) == TRUE)
 	{
 		this->isActive = true;
+		POINT p;
+		GetCursorPos(&p);
+		this->winCursPos.x = p.x;
+		this->winCursPos.y = p.y;
+		ShowCursor(FALSE);
+
 		return true;
 	}
 

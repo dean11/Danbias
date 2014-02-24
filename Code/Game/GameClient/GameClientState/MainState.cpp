@@ -81,8 +81,8 @@ GameClientState::ClientState MainState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		::Input::Struct::SAIPoint2D pos;
-		this->privData->mouseInput->GetPixelPosition( pos );
+		::Input::Struct::SAIPointFloat2D pos;
+		this->privData->mouseInput->GetNormalizedPosition( pos );
 
 		this->privData->mousePos.x = mouseState.x = pos.x;
 		this->privData->mousePos.y = mouseState.y = pos.y;

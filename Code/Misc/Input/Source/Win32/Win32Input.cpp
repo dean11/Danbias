@@ -17,6 +17,7 @@ using namespace Input::Struct;
 using namespace Input::Typedefs;
 
 Win32Input *Win32Input::instance = 0;
+TRACKMOUSEEVENT tme;
 
 LRESULT Win32Input::RawInputParser(HWND h, LPARAM l)
 {
@@ -93,6 +94,18 @@ LRESULT CALLBACK Win32Input::RawWindowCallback(HWND h, UINT m, WPARAM w, LPARAM 
 		break;
 		case WM_CREATE:
 			Win32Input::instance->WindowActivate(true);
+			//tme.cbSize=sizeof(tme);
+			//tme.dwFlags=TME_HOVER;
+			//tme.hwndTrack=h;//hanlde of window you want the mouse over message for.
+			//tme.dwHoverTime=HOVER_DEFAULT;
+			//if(TrackMouseEvent(&tme) == FALSE)
+			//{ }
+		break;
+		case WM_MOUSEHOVER:
+			//val = 0;
+		break;
+		case WM_MOUSELEAVE:
+			//val = 0;
 		break;
 	}
 
@@ -100,14 +113,14 @@ LRESULT CALLBACK Win32Input::RawWindowCallback(HWND h, UINT m, WPARAM w, LPARAM 
 }
 void Win32Input::WindowActivate(bool activate)
 {
-	if(activate)
-	{
-		ShowCursor(0);
-	}
-	else
-	{
-		ShowCursor(1);
-	}
+	//if(activate)
+	//{
+	//	ShowCursor(0);
+	//}
+	//else
+	//{
+	//	ShowCursor(1);
+	//}
 }
 
 

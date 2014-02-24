@@ -161,7 +161,7 @@ void GamingUI::ReadKeyInput()
 	//send delta mouse movement 
 	{
 		static const float mouseSensitivity = Radian( 1.0f );
-		::Input::Struct::SAIPoint2D deltaPos;
+		::Input::Struct::SAIPointFloat2D deltaPos;
 		this->mouseInput->GetDeltaPosition( deltaPos );
 
 		this->camera->PitchDown( deltaPos.y * mouseSensitivity );;
