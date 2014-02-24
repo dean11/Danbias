@@ -95,7 +95,8 @@ namespace Oyster
 			{
 				Math::Matrix WV;
 				Math::Matrix WVP;
-				TintData td;
+				Math::Float3 Tint;
+				Math::Float3 GTint;
 			};
 		}
 	}

@@ -141,7 +141,26 @@ namespace Oyster
 		void API::EndLoadingModels()
 		{
 			//TODO finalize instance buffers and create rendering map;
+			int maxModels = 0;
+			for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+			{
+				if((*i).second->Models > maxModels)
+				{
+					maxModels = (*i).second->Models;
+				}
+				(*i).second->rid = new Definitions::RenderInstanceData[(*i).second->Models+1];
+			}
+
+			Core::Buffer::BUFFER_INIT_DESC desc;
 			
+
+			desc.ElementSize = sizeof(Definitions::RenderInstanceData);
+			desc.Type = Core::Buffer::VERTEX_BUFFER;
+			desc.Usage = Core::Buffer::BUFFER_CPU_WRITE_DISCARD;
+			desc.InitData = 0;
+			desc.NumElements = maxModels;
+
+			Render::Resources::Gather::InstancedData.Init(desc);
 		}
 
 		//returns null for invalid filenames
@@ -163,14 +182,17 @@ namespace Oyster
 				delete mi;
 				return NULL;
 			}
-
-			if(Core::loader.GetResourceCount(m->info) == 1)
+			
+			if(!m->info->Animated)
 			{
-				Render::Resources::RenderData[m->info] = new Render::Resources::ModelDataWrapper();
-			}
-			else
-			{
-				Render::Resources::RenderData[m->info]->Models++;
+				if(Core::loader.GetResourceCount(m->info) == 1)
+				{
+					Render::Resources::RenderData[m->info] = new Render::Resources::ModelDataWrapper();
+				}
+				else
+				{
+					Render::Resources::RenderData[m->info]->Models++;
+				}
 			}
 
 			return m;
@@ -207,6 +229,12 @@ namespace Oyster
 			SAFE_RELEASE(Core::deviceContext);
 			SAFE_RELEASE(Core::device);
 
+			for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+			{
+				SAFE_DELETE((*i).second->rid);
+				SAFE_DELETE((*i).second);
+			}
+
 		}
 
 		void API::AddLight(Definitions::Pointlight light)
@@ -228,9 +256,9 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 			Core::deviceContext->RSSetState(wire);
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 		}
 
 		void API::RenderDebugCube(Math::Matrix world)
