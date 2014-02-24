@@ -138,9 +138,9 @@ bool C_Object::InitRB(RBInitData RBInit)
 }
 void C_Object::updateRBWorld()
 {
-	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->position); 
-	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->rotation);
-	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
+	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(this->RBposition); 
+	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(this->RBrotation);
+	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->RBscale);
 	RBworld = translation * rot * scale;
 }
 Oyster::Math::Float4x4 C_Object::getRBWorld() const

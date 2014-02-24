@@ -8,11 +8,34 @@ using namespace Input::Enum;
 using namespace Input::Typedefs;
 using namespace Input::Struct;
 
-
-void Keyboard::ClearList(Keyboard::KeyboardCallbackList* first)
+struct Keyboard::KeyboardCallbackList
 {
-	KeyboardCallbackList* w = first;
-	KeyboardCallbackList* removee = 0;
+	enum CallbackDataType
+	{
+		CallbackDataType_OnPress,
+		CallbackDataType_OnDown,
+		CallbackDataType_OnRelease
+	} type;
+	union CallbackData
+	{
+		Typedefs::OnKeyPressCallback	keyPressCallback;
+		Typedefs::OnKeyDownCallback		keyDownCallback;
+		Typedefs::OnKeyReleaseCallback	keyReleaseCallback;
+
+		CallbackData (){ memset(this, 0, sizeof(CallbackData)); }
+		CallbackData (Typedefs::OnKeyPressCallback o){ keyPressCallback = o; }
+		bool operator ==(CallbackData o){ return o.keyDownCallback == keyDownCallback; }
+		bool operator ==(Typedefs::OnKeyPressCallback o ){ return o == keyPressCallback; }
+		operator bool(){ return this->keyDownCallback != 0; }
+	} function;
+	KeyboardCallbackList *next;
+	KeyboardCallbackList(CallbackData func, CallbackDataType t) :function(func), next(0), type(t) { }
+};
+
+void ClearList(Keyboard::KeyboardCallbackList* first)
+{
+	Keyboard::KeyboardCallbackList* w = first;
+	Keyboard::KeyboardCallbackList* removee = 0;
 
 	while (w)
 	{
@@ -21,27 +44,27 @@ void Keyboard::ClearList(Keyboard::KeyboardCallbackList* first)
 		delete removee;
 	}
 }
-void Keyboard::AddToList(Keyboard::KeyboardCallbackList* first, KeyboardCallbackList::CallbackData data, KeyboardCallbackList::CallbackDataType type)
+void AddToList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallbackList::CallbackData data, Keyboard::KeyboardCallbackList::CallbackDataType type)
 {
-	KeyboardCallbackList *w = first;
-	KeyboardCallbackList *prev = first;
+	Keyboard::KeyboardCallbackList *w = first;
+	Keyboard::KeyboardCallbackList *prev = first;
 	while (w)
 	{ prev = w; w = w->next; }
 
-	KeyboardCallbackList::CallbackData f;
+	Keyboard::KeyboardCallbackList::CallbackData f;
 	f = data;
 
-	prev->next = new KeyboardCallbackList(f, type);
+	prev->next = new Keyboard::KeyboardCallbackList(f, type);
 }
-void Keyboard::RemoveFromList(KeyboardCallbackList* first, KeyboardCallbackList::CallbackData data)
+void RemoveFromList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallbackList::CallbackData data)
 {
-	KeyboardCallbackList *w = first;
-	KeyboardCallbackList *prev = first;
+	Keyboard::KeyboardCallbackList *w = first;
+	Keyboard::KeyboardCallbackList *prev = first;
 	while (w)
 	{
 		if(data == w->function)
 		{
-			KeyboardCallbackList *removee = w;
+			Keyboard::KeyboardCallbackList *removee = w;
 			w = w->next;
 			prev->next = w;
 			delete removee;
@@ -51,9 +74,9 @@ void Keyboard::RemoveFromList(KeyboardCallbackList* first, KeyboardCallbackList:
 		w = w->next; 
 	}
 }
-bool Keyboard::ExistsInList(KeyboardCallbackList* first, KeyboardCallbackList::CallbackData data)
+bool ExistsInList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallbackList::CallbackData data)
 {
-	KeyboardCallbackList *w = first;
+	Keyboard::KeyboardCallbackList *w = first;
 	while (w)
 	{
 		if(data == w->function)
@@ -64,7 +87,7 @@ bool Keyboard::ExistsInList(KeyboardCallbackList* first, KeyboardCallbackList::C
 	}
 	return true;
 }
-bool Keyboard::ExistsInList(std::vector<KeyboardEvent*>& list, KeyboardEvent* data)
+bool ExistsInList(std::vector<Keyboard::KeyboardEvent*>& list, Keyboard::KeyboardEvent* data)
 {
 	for (unsigned int i = 0; i < list.size(); i++)
 	{
@@ -74,13 +97,74 @@ bool Keyboard::ExistsInList(std::vector<KeyboardEvent*>& list, KeyboardEvent* da
 	return false;
 }
 
+
+
+
 Keyboard::Keyboard()
 	:	InputObject(SAIType_Keyboard)
 	,	callbackList(0)
+	,	active(1)
+	,	textTarget(0)
+	,	writePos(0)
 {}
 Keyboard::~Keyboard()
 {
 
+}
+
+void Keyboard::InternalOnKeyPress(Enum::SAKI key)
+{
+	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
+	{
+		if(this->keyEventSubscrivers[i])
+		{
+			this->keyEventSubscrivers[i]->OnKeyPress(key, this);
+		}
+	}
+	KeyboardCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == KeyboardCallbackList::CallbackDataType_OnPress)
+				w->function.keyPressCallback(key, this);
+		w = w->next;
+	}
+}
+void Keyboard::InternalOnKeyDown(Enum::SAKI key)
+{
+	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
+	{
+		if(this->keyEventSubscrivers[i])
+		{
+			this->keyEventSubscrivers[i]->OnKeyDown(key, this);
+		}
+	}
+	KeyboardCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == KeyboardCallbackList::CallbackDataType_OnDown)
+				w->function.keyDownCallback(key, this);
+		w = w->next;
+	}
+}
+void Keyboard::InternalOnKeyRelease(Enum::SAKI key)
+{
+	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
+	{
+		if(this->keyEventSubscrivers[i])
+		{
+			this->keyEventSubscrivers[i]->OnKeyRelease(key, this);
+		}
+	}
+	KeyboardCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == KeyboardCallbackList::CallbackDataType_OnRelease)
+				w->function.keyReleaseCallback(key, this);
+		w = w->next;
+	}
 }
 
 void Keyboard::AddOnKeyPressCallback (OnKeyPressCallback func)
@@ -132,5 +216,19 @@ void Keyboard::operator-= (KeyboardEvent* object)
 		std::swap(this->keyEventSubscrivers[i], this->keyEventSubscrivers[this->keyEventSubscrivers.size() - 1]);
 		this->keyEventSubscrivers.resize(this->keyEventSubscrivers.size() - 1);
 	}
+}
+
+void Keyboard::BindTextTarget( ::std::wstring *field )
+{
+	this->textTarget = field;
+	
+	if( field )
+	{
+		this->writePos = field->size();
+	}
+}
+void Keyboard::ReleaseTextTarget( )
+{
+	this->BindTextTarget( nullptr );
 }
 

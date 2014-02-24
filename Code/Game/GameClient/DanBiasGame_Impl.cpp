@@ -14,68 +14,81 @@
 #include <GameServerAPI.h>
 
 #include "../WindowManager/WindowShell.h"
-#include "L_inputClass.h"
 #include "WinTimer.h"
 #include "vld.h"
 
 #include "EventHandler/EventHandler.h"
 
-#include "GameClientState\SharedStateContent.h"
+#include "GameClientState/SharedStateContent.h"
+#include "Utilities.h"
 
 using namespace ::Oyster;
 using namespace ::Oyster::Event;
 using namespace ::Oyster::Network;
 using namespace ::Utility::DynamicMemory;
 using namespace ::DanBias::Client;
+using namespace ::Utility::DynamicMemory;
 
+LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam );
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
 
+#pragma region Game Data
 namespace DanBias
 {
-#pragma region Game Data
 	class DanBiasGamePrivateData
 	{
 	public:
 		WindowShell* window;
-		InputClass inputObj;
 		Utility::WinTimer timer;
 
 		UniquePointer<Client::GameClientState> state;
-		SharedStateContent sharedStateContent;
 		NetworkClient networkClient;
 
+		SharedStateContent sharedStateContent;
 
 		bool serverOwner;
 		float capFrame;
 
 		DanBiasGamePrivateData()
 		{
-			this->capFrame = 0;
+			this->sharedStateContent.network		= nullptr;
+			this->sharedStateContent.mouseDevice	= nullptr;
+			this->sharedStateContent.keyboardDevice	= nullptr;
+			this->serverOwner						= false;
+			this->capFrame							= 0;
+		}
+
+		~DanBiasGamePrivateData()
+		{
+			//SafeDeleteInstance( this->sharedStateContent.mouseDevice );
+			//SafeDeleteInstance( this->sharedStateContent.keyboardDevice );
 		}
 	} data;
-
+}
 #pragma endregion
 
-
+namespace DanBias
+{
 	//--------------------------------------------------------------------------------------
 	// Interface API functions
 	//--------------------------------------------------------------------------------------
-	DanBiasClientReturn DanBiasGame::Initiate(DanBiasGameDesc& desc)
+	DanBiasClientReturn DanBiasGame::Initiate( DanBiasGameDesc& desc )
 	{
 		WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x = 1280;
-		winDesc.windowSize.y = 720;
-		
+		winDesc.windowSize.x		= 1280;
+		winDesc.windowSize.y		= 720;
+		winDesc.windowProcCallback	= WindowCallBack;
+
 		if(! data.window->CreateWin(winDesc) )
 			return DanBiasClientReturn_Error;
 
-		if( FAILED( InitDirect3D() ) )
+		if( FAILED( InitInput(data.window->GetHWND()) ) )
 			return DanBiasClientReturn_Error;
 
-		if( FAILED( InitInput() ) )
+		if( FAILED( InitDirect3D() ) )
 			return DanBiasClientReturn_Error;
 
 		data.serverOwner = false;
@@ -83,7 +96,6 @@ namespace DanBias
 		data.networkClient.SetMessagePump( ClientEventFunction );
 
 		data.sharedStateContent.network = &data.networkClient;
-		data.sharedStateContent.input	= &data.inputObj;
 
 		// Start in main menu state
 		data.state = new Client::MainState();
@@ -137,7 +149,6 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitDirect3D()
 	{
-		
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
 		p.texturePath = L"..\\Content\\Textures\\";
@@ -153,35 +164,27 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	// Init the input
 	//-------------------------------------------------------------------------------------
-	HRESULT DanBiasGame::InitInput() 
+	HRESULT DanBiasGame::InitInput( HWND handle ) 
 	{
-		if(!data.inputObj.Initialize(data.window->GetHINSTANCE(), data.window->GetHWND(), data.window->GetHeight(), data.window->GetWidth()))
+		data.sharedStateContent.mouseDevice = dynamic_cast<Input::Mouse*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Mouse, handle) );
+		if( !data.sharedStateContent.mouseDevice )
 		{
-			MessageBox(0, L"Could not initialize the input object.", L"Error", MB_OK);
+			MessageBox( 0, L"Could not initialize the mouseDevice.", L"Error", MB_OK );
 			return E_FAIL;
 		}
+		
+		data.sharedStateContent.keyboardDevice= dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
+		if( !data.sharedStateContent.keyboardDevice )
+		{
+			MessageBox( 0, L"Could not initialize the raw keyboard device.", L"Error", MB_OK );
+			return E_FAIL;
+		}
+
 		return S_OK;
 	}
 	
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
-		{ // updating mouse input
-		  // TODO: Is obosolete when Dennis's input system is wired in
-			POINT mousePos;
-			GetCursorPos( &mousePos );
-
-			RECT windowVertex;
-			GetWindowRect( data.window->GetHWND(), &windowVertex );
-
-			float mouseNormalisedX = (float)(mousePos.x - windowVertex.left);
-			mouseNormalisedX /= (float)(windowVertex.right - windowVertex.left);
-
-			float mouseNormalisedY = (float)(mousePos.y - windowVertex.top);
-			mouseNormalisedY /= (float)(windowVertex.bottom - windowVertex.top);
-
-			data.inputObj.Update( mouseNormalisedX, mouseNormalisedY );
-		}
-
 		if( data.serverOwner )
 		{
 			DanBias::GameServerAPI::ServerUpdate();
@@ -251,6 +254,8 @@ namespace DanBias
 			data.networkClient.Disconnect();
 
 		data.state = nullptr;
+		SafeDeleteInstance( data.sharedStateContent.network );
+
 		EventHandler::Instance().Clean();
 		Graphics::API::Clean();
 
@@ -260,6 +265,22 @@ namespace DanBias
 	}	
 
 } //End namespace DanBias
+
+LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam )
+{
+	switch ( message ) 
+	{
+		case WM_DESTROY:
+			PostQuitMessage( 0 );
+		break;
+		case WM_INPUT:
+			message = 0;
+		break;
+		default: break;
+	}
+
+	return DefWindowProc( handle, message, wParam, lParam );
+}
 
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e )
 {

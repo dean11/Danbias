@@ -9,11 +9,41 @@ using namespace Input::Enum;
 using namespace Input::Struct;
 using namespace Input::Typedefs;
 
-
-void Mouse::ClearList(Mouse::MouseCallbackList* first)
+struct Mouse::MouseCallbackList
 {
-	MouseCallbackList* w = first;
-	MouseCallbackList* removee = 0;
+	enum CallbackDataType
+	{
+		CallbackDataType_OnPress,
+		CallbackDataType_OnDown,
+		CallbackDataType_OnRelease,
+		CallbackDataType_OnMovePixelPos,
+		CallbackDataType_OnMoveVelocity,
+		CallbackDataType_OnScroll,
+	} type;
+	union CallbackData
+	{
+		Typedefs::OnMousePressCallback mousePressCallback;
+		Typedefs::OnMouseDownCallback mouseDownCallback;
+		Typedefs::OnMouseReleaseCallback mouseReleaseCallback;
+		Typedefs::OnMouseMovePixelPosCallback mouseMovePixelPosCallback;
+		Typedefs::OnMouseMoveVelocityCallback mouseMoveVelocityCallback;
+		Typedefs::OnMouseScrollCallback mouseScrollCallback;
+		void* dummy;
+
+		CallbackData (){ memset(this, 0, sizeof(CallbackData)); }
+		CallbackData (void* d){ dummy = d; }
+		bool operator ==(CallbackData o){ return o.dummy == dummy; }
+		bool operator ==(void* o ){ return o == dummy; }
+		operator bool(){ return this->dummy != 0; }
+	} function;
+	MouseCallbackList *next;
+	MouseCallbackList(CallbackData func, CallbackDataType t) :function(func), next(0), type(t) { }
+};
+
+void ClearList(Mouse::MouseCallbackList* first)
+{
+	Mouse::MouseCallbackList* w = first;
+	Mouse::MouseCallbackList* removee = 0;
 
 	while (w)
 	{
@@ -22,27 +52,27 @@ void Mouse::ClearList(Mouse::MouseCallbackList* first)
 		delete removee;
 	}
 }
-void Mouse::AddToList(Mouse::MouseCallbackList* first, MouseCallbackList::CallbackData data, MouseCallbackList::CallbackDataType type)
+void AddToList(Mouse::MouseCallbackList* first, Mouse::MouseCallbackList::CallbackData data, Mouse::MouseCallbackList::CallbackDataType type)
 {
-	MouseCallbackList *w = first;
-	MouseCallbackList *prev = first;
+	Mouse::MouseCallbackList *w = first;
+	Mouse::MouseCallbackList *prev = first;
 	while (w)
 	{ prev = w; w = w->next; }
 
-	MouseCallbackList::CallbackData f;
+	Mouse::MouseCallbackList::CallbackData f;
 	f = data;
 
-	prev->next = new MouseCallbackList(f, type);
+	prev->next = new Mouse::MouseCallbackList(f, type);
 }
-void Mouse::RemoveFromList(MouseCallbackList* first, MouseCallbackList::CallbackData data)
+void RemoveFromList(Mouse::MouseCallbackList* first, Mouse::MouseCallbackList::CallbackData data)
 {
-	MouseCallbackList *w = first;
-	MouseCallbackList *prev = first;
+	Mouse::MouseCallbackList *w = first;
+	Mouse::MouseCallbackList *prev = first;
 	while (w)
 	{
 		if(data == w->function)
 		{
-			MouseCallbackList *removee = w;
+			Mouse::MouseCallbackList *removee = w;
 			w = w->next;
 			prev->next = w;
 			delete removee;
@@ -52,9 +82,9 @@ void Mouse::RemoveFromList(MouseCallbackList* first, MouseCallbackList::Callback
 		w = w->next; 
 	}
 }
-bool Mouse::ExistsInList(MouseCallbackList* first, MouseCallbackList::CallbackData data)
+bool ExistsInList(Mouse::MouseCallbackList* first, Mouse::MouseCallbackList::CallbackData data)
 {
-	MouseCallbackList *w = first;
+	Mouse::MouseCallbackList *w = first;
 	while (w)
 	{
 		if(data == w->function)
@@ -65,7 +95,7 @@ bool Mouse::ExistsInList(MouseCallbackList* first, MouseCallbackList::CallbackDa
 	}
 	return true;
 }
-bool Mouse::ExistsInList(std::vector<MouseEvent*>& list, MouseEvent* data)
+bool ExistsInList(std::vector<Mouse::MouseEvent*>& list, Mouse::MouseEvent* data)
 {
 	for (unsigned int i = 0; i < list.size(); i++)
 	{
@@ -89,38 +119,107 @@ Mouse::~Mouse()
 
 }
 
-int Mouse::GetWheelDelta() const
+void Mouse::InternalOnBtnPress(Enum::SAMI btn)
 {
-	return this->wheelDelta;
+	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
+	{
+		if(this->mouseSubscribers[i])
+			this->mouseSubscribers[i]->OnMousePress(btn, this);
+	}
+	MouseCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == MouseCallbackList::CallbackDataType_OnPress)
+				w->function.mousePressCallback(btn, this);
+		w = w->next;
+	}
+}
+void Mouse::InternalOnBtnDown(Enum::SAMI btn)
+{
+	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
+	{
+		if(this->mouseSubscribers[i])
+			this->mouseSubscribers[i]->OnMouseDown(btn, this);
+	}
+	MouseCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == MouseCallbackList::CallbackDataType_OnDown)
+				w->function.mouseDownCallback(btn, this);
+		w = w->next;
+	}
+}
+void Mouse::InternalOnBtnRelease(Enum::SAMI btn)
+{
+	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
+	{
+		if(this->mouseSubscribers[i])
+			this->mouseSubscribers[i]->OnMouseRelease(btn, this);
+	}
+	MouseCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == MouseCallbackList::CallbackDataType_OnRelease)
+				w->function.mouseReleaseCallback(btn, this);
+		w = w->next;
+	}
+}
+void Mouse::InternalOnMove(Struct::SAIPointInt2D pixelPos, Struct::SAIPointInt2D velocity)
+{
+	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
+	{
+		if(this->mouseSubscribers[i])
+		{
+			this->mouseSubscribers[i]->OnMouseMovePixelPos(pixelPos, this);
+			this->mouseSubscribers[i]->OnMouseMoveVelocity(velocity, this);
+		}
+	}
+	MouseCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == MouseCallbackList::CallbackDataType_OnMovePixelPos)
+				w->function.mouseMovePixelPosCallback(pixelPos, this);
+			else if (w->type == MouseCallbackList::CallbackDataType_OnMoveVelocity)
+				w->function.mouseMoveVelocityCallback(velocity, this);
+		w = w->next;
+	}
+}
+void Mouse::InternalOnScroll(int delta)
+{
+	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
+	{
+		if(this->mouseSubscribers[i])
+			this->mouseSubscribers[i]->OnMouseScroll(delta, this);
+	}
+	MouseCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == MouseCallbackList::CallbackDataType_OnScroll)
+				w->function.mouseScrollCallback(delta, this);
+		w = w->next;
+	}
 }
 
-SAIPoint2D & Mouse::GetPixelPosition( Struct::SAIPoint2D &targetMem ) const
-{
-	targetMem.x = this->pixelPos.x;
-	targetMem.y = this->pixelPos.y;
-	return targetMem;
-}
 
-SAIPoint2D & Mouse::GetDeltaPosition( Struct::SAIPoint2D &targetMem ) const
-{
-	targetMem.x = this->deltaPos.x;
-	targetMem.y = this->deltaPos.y;
-	return targetMem;
-}
 
 void Mouse::AddOnMousePressCallback( Typedefs::OnMousePressCallback func)
 {
 	MouseCallbackList::CallbackData d;
 	d.mousePressCallback = func;
-	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnRelease);
-	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnRelease);
+	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnPress);
+	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnPress);
 }
 void Mouse::AddOnMouseDownCallback( Typedefs::OnMouseDownCallback func )
 {
 	MouseCallbackList::CallbackData d;
 	d.mouseDownCallback = func;
-	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnRelease);
-	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnRelease);
+	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnDown);
+	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnDown);
 }
 void Mouse::AddOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func )
 {
@@ -129,19 +228,26 @@ void Mouse::AddOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func )
 	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnRelease);
 	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnRelease);
 }
-void Mouse::AddOnMouseMoveCallback( Typedefs::OnMouseMoveCallback func )
+void Mouse::AddOnMouseMovePixelPosCallback( Typedefs::OnMouseMovePixelPosCallback func )
 {
 	MouseCallbackList::CallbackData d;
-	d.mouseMoveCallback = func;
-	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnRelease);
-	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnRelease);
+	d.mouseMovePixelPosCallback = func;
+	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnMovePixelPos);
+	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnMovePixelPos);
+}
+void Mouse::AddOnMouseMoveVelocityCallback( Typedefs::OnMouseMoveVelocityCallback func )
+{
+	MouseCallbackList::CallbackData d;
+	d.mouseMoveVelocityCallback = func;
+	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnMoveVelocity);
+	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnMoveVelocity);
 }
 void Mouse::AddOnMouseScrollCallback( Typedefs::OnMouseScrollCallback func )
 {
 	MouseCallbackList::CallbackData d;
 	d.mouseScrollCallback = func;
-	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnRelease);
-	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnRelease);
+	if(!this->callbackList) this->callbackList = new MouseCallbackList(d, MouseCallbackList::CallbackDataType_OnScroll);
+	else					AddToList(this->callbackList, d, MouseCallbackList::CallbackDataType_OnScroll);
 }
 
 void Mouse::RemoveOnMousePressCallback( Typedefs::OnMousePressCallback func)
@@ -156,7 +262,11 @@ void Mouse::RemoveOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func 
 {
 	RemoveFromList(this->callbackList, func);
 }
-void Mouse::RemoveOnMouseMoveCallback( Typedefs::OnMouseMoveCallback func )
+void Mouse::RemoveOnMouseMovePixelPosCallback( Typedefs::OnMouseMovePixelPosCallback func )
+{
+	RemoveFromList(this->callbackList, func);
+}
+void Mouse::RemoveOnMouseMoveVelocityCallback( Typedefs::OnMouseMoveVelocityCallback func )
 {
 	RemoveFromList(this->callbackList, func);
 }

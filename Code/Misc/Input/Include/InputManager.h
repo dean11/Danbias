@@ -18,12 +18,12 @@ namespace Input
 			/**
 			* @return Returns an instance of the default input manager.
 			*/
-			static InputManager*					Instance						();
+			static InputManager*			Instance						();
 
 			/**
 			* @return Returns a new input manager. Should be destroyd with DestroyInputManager function.
 			*/
-			static InputManager*					CreateInputManager				();
+			static InputManager*			CreateInputManager				();
 
 			/**
 			* @return Destroys a input manager.
@@ -37,7 +37,9 @@ namespace Input
 			* @see InputDescription
 			* @return Returns a handle to a device that can be rethrown to a specific device.
 			*/
-			virtual InputObject*			CreateDevice					(const Enum::SAIType inputType, Typedefs::WindowHandle targetApplication = 0)	= 0;
+			virtual InputObject*			CreateDevice					( const Enum::SAIType inputType, Typedefs::WindowHandle targetApplication )	= 0;
+			virtual Keyboard*				CreateKeyboardDevice			( Typedefs::WindowHandle targetApplication ) { return (Keyboard*)CreateDevice(Enum::SAIType_Keyboard, targetApplication); }
+			virtual Mouse*					CreateMouseDevice				( Typedefs::WindowHandle targetApplication ) { return (Mouse*)CreateDevice(Enum::SAIType_Mouse, targetApplication); }
 
 			/**	Enables or Disables the Input proccessing.
 			*	@param The toggler.

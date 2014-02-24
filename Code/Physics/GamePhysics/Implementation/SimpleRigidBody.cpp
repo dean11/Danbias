@@ -168,9 +168,15 @@ void SimpleRigidBody::SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxi
 		return;
 	}
 
+	float s = sin(angularAxis.w/2);
+	float x = angularAxis.x * s;
+	float y = angularAxis.y * s;
+	float z = angularAxis.z * s;
+	float w = cos(angularAxis.w/2);
+
 	btTransform trans;
 	btVector3 vector(angularAxis.x, angularAxis.y, angularAxis.z);
-	btQuaternion quaternion(vector, angularAxis.w);
+	btQuaternion quaternion(x,y,z,w);
 
 	trans = this->rigidBody->getWorldTransform();
 	trans.setRotation(quaternion);
@@ -263,22 +269,11 @@ Float4x4 SimpleRigidBody::GetRotation() const
 Float4 SimpleRigidBody::GetRotationAsAngularAxis()
 {
 	Float4 axis = Float4::null;
-	Float s = sqrtf(1 - this->state.quaternion.real*this->state.quaternion.real);
+	btTransform trans;
 
-	axis.w = 2*acos(this->state.quaternion.real*this->state.quaternion.real);
-
-	if(1 - this->state.quaternion.real > 0.001f)
-	{
-		axis.x = this->state.quaternion.imaginary.x/s;
-		axis.y = this->state.quaternion.imaginary.y/s;
-		axis.z = this->state.quaternion.imaginary.z/s;
-	}
-	else
-	{
-		axis.x = this->state.quaternion.imaginary.x;
-		axis.y = this->state.quaternion.imaginary.y;
-		axis.z = this->state.quaternion.imaginary.z;
-	}
+	trans = this->rigidBody->getWorldTransform();
+	axis.xyz = trans.getRotation().getAxis();
+	axis.w = trans.getRotation().getAngle();
 
 	return axis;
 }
@@ -353,7 +348,8 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 {
 	btTransform xform;
 	xform = this->rigidBody->getWorldTransform ();
-	btVector3 down = -xform.getBasis()[1];
+	Float3 normalDown = -this->state.centerPos.GetNormalized();
+	btVector3 down(normalDown.x, normalDown.y, normalDown.z);
 	btVector3 forward = xform.getBasis()[2];
 	down.normalize ();
 	forward.normalize();
@@ -361,12 +357,17 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 	this->raySource[0] = xform.getOrigin();
 	this->raySource[1] = xform.getOrigin();
 
+	if(this->state.reach.y < 1.0f)
+
+
 	Float angle = acos(Float3(0, 1, 0).Dot(this->state.centerPos.GetNormalized()));
-	down.setZ(-down.z());
-	down.setX(-down.x());
+	//down.setZ(-down.z());
 	btVector3 targetPlus = down * this->state.reach.y * btScalar(1.1);
 
-	
+	if(this->state.mass == 40)
+	{
+		const char* breakpoint = "STOP";
+	}
 
 	this->rayTarget[0] = this->raySource[0] + targetPlus;
 	this->rayTarget[1] = this->raySource[1] + forward * this->state.reach.y * btScalar(1.1);
@@ -383,7 +384,6 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 		{
 			if (rayResult.m_collisionObject == m_me)
 				return 1.0;
-
 			return ClosestRayResultCallback::addSingleResult (rayResult, normalInWorldSpace);
 		}
 	protected:
@@ -412,4 +412,14 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 float SimpleRigidBody::GetLambda() const
 {
 	return this->rayLambda[0];
+}
+
+void SimpleRigidBody::MoveToLimbo()
+{
+	this->rigidBody->setCollisionFlags(this->rigidBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+}
+
+void SimpleRigidBody::ReleaseFromLimbo()
+{
+	this->rigidBody->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 }

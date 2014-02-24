@@ -9,6 +9,9 @@
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
 #include "Utilities.h"
+#include "GamingUI.h"
+#include "RespawnUI.h"
+#include "StatsUI.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -24,24 +27,12 @@ struct  GameState::MyData
 	MyData(){}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
+	::Input::Mouse *mouseInput;
+	::Input::Keyboard *keyboardInput;
 
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
-
-	bool key_forward;
-	bool key_backward;
-	bool key_strafeRight;
-	bool key_strafeLeft;
-	bool key_Shoot;
-	bool key_Jump;
-
-	// DEGUG KEYS
-	bool key_Reload_Shaders;
-	bool key_Wireframe_Toggle; 
-	bool renderWhireframe; 
-	// !DEGUG KEYS
 
 	C_Player player;
 	Camera_FPSV2 camera;
@@ -73,14 +64,10 @@ bool GameState::Init( SharedStateContent &shared )
 
 	this->privData = new MyData();
 
-	this->privData->key_forward = false;
-	this->privData->key_backward = false;
-	this->privData->key_strafeRight = false;
-	this->privData->key_strafeLeft = false;
-
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
+	this->privData->keyboardInput = shared.keyboardDevice;
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
@@ -89,16 +76,18 @@ bool GameState::Init( SharedStateContent &shared )
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
-	gfxOp.AmbientValue = 1.0f;
+	gfxOp.AmbientValue = 0.5f;
+	gfxOp.GlobalGlowTint = Math::Float3(2,1,1);
+	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);
 
 	//tell server ready
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 			
 	// DEGUG KEYS
-	this->privData->key_Reload_Shaders = false;
-	this->privData->key_Wireframe_Toggle = false;
-	this->privData->renderWhireframe = false;
+	this->key_Reload_Shaders = false;
+	this->key_Wireframe_Toggle = false;
+	this->renderWhireframe = false;
 	// !DEGUG KEYS
 
 	auto light = this->privData->lights->begin();
@@ -107,6 +96,14 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
+	// create UI states
+	this->gameUI = new GamingUI(this->privData->mouseInput, this->privData->keyboardInput, this->privData->nwClient, &this->privData->camera);
+	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
+	this->statsUI = new StatsUI();
+	this->currGameUI = gameUI; 
+	((GamingUI*)gameUI)->Init();
+	((RespawnUI*)respawnUI)->Init();
+	((StatsUI*)statsUI)->Init();
 
 	return true;
 }
@@ -140,8 +137,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetPosition( this->privData->player.getPos() );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			offset.y = this->privData->player.getScale().y * 5.0f;
-			offset.z = this->privData->player.getScale().z * -5.0f;
+			//offset.y = this->privData->player.getScale().y * 5.0f;
+			//offset.z = this->privData->player.getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
@@ -163,7 +160,25 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	this->ReadKeyInput();
+	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+	switch (UIstate)
+	{
+	case DanBias::Client::GameStateUI::UIState_same:
+		break;
+	case DanBias::Client::GameStateUI::UIState_gaming:
+		break;
+	case DanBias::Client::GameStateUI::UIState_main_menu:
+		//this->privData->nextState = 
+		break;
+	case DanBias::Client::GameStateUI::UIState_shut_down:
+		this->privData->nextState = ClientState_Quit;
+		break;
+	default:
+		break;
+	} 
+	// DEBUG keybindings
+	ReadKeyInput();
+
 	return this->privData->nextState;
 }
 
@@ -188,19 +203,12 @@ bool GameState::Render()
 		if( dynamicObject->second )
 		{
 			dynamicObject->second->Render();
+
 		}
 	}
 
-
-	/*auto light = this->privData->lights->begin();
-	for( ; light != this->privData->lights->end(); ++light )
-	{
-	light->second->Render();
-	}*/
-
-#ifdef _DEBUG
-	//RB DEBUG render wire frame 
-		if(this->privData->renderWhireframe)
+#ifdef _DEBUG //RB DEBUG render wire frame 
+		if(this->renderWhireframe)
 		{
 			Oyster::Graphics::API::StartRenderWireFrame();
 
@@ -239,8 +247,25 @@ bool GameState::Render()
 				}
 			}
 		}
-		//!RB DEBUG 
-#endif
+#endif //!RB DEBUG 
+
+	Oyster::Graphics::API::StartGuiRender();
+	// render gui elemnts
+	if(currGameUI->HaveGUIRender())
+		currGameUI->RenderGUI();
+	if(renderStats)
+	{	
+		if(statsUI->HaveGUIRender())
+			statsUI->RenderGUI();
+	}
+	Oyster::Graphics::API::StartTextRender();
+	if(currGameUI->HaveTextRender())
+		currGameUI->RenderText();
+	if(renderStats)
+	{	
+		if(statsUI->HaveTextRender())
+			statsUI->RenderText();
+	}
 
 	Oyster::Graphics::API::EndFrame();
 	return true;
@@ -275,6 +300,28 @@ bool GameState::Release()
 
 		privData = NULL;
 	}
+
+	if(respawnUI) 
+	{
+		respawnUI->Release();
+		delete respawnUI;
+		respawnUI = NULL;
+	}
+	
+	if(gameUI)
+	{
+		gameUI->Release();
+		delete gameUI;
+		gameUI = NULL;
+	}
+	if(statsUI)
+	{
+		statsUI->Release();
+		delete statsUI;
+		statsUI = NULL;
+	}
+	currGameUI = NULL;
+	
 	return true;
 }
 
@@ -285,147 +332,57 @@ void GameState::ChangeState( ClientState next )
 
 void GameState::ReadKeyInput()
 {
-	if( this->privData->input->IsKeyPressed(DIK_W) )
-	{
-		//if(!this->privData->key_forward)
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementForward() );
-			this->privData->key_forward = true;
-		}
-	}
-	else
-		this->privData->key_forward = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_S) )
-	{
-		//if( !this->privData->key_backward )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementBackward() );
-			this->privData->key_backward = true;
-		}
-	}
-	else 
-		this->privData->key_backward = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_A) )
-	{
-		//if( !this->privData->key_strafeLeft )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementLeft() );
-			this->privData->key_strafeLeft = true;
-		}
-	}
-	else 
-		this->privData->key_strafeLeft = false;
-
-	if( this->privData->input->IsKeyPressed(DIK_D) )
-	{
-		//if( !this->privData->key_strafeRight )
-		{
-			this->privData->nwClient->Send( Protocol_PlayerMovementRight() );
-			this->privData->key_strafeRight = true;
-		}
-	} 
-	else 
-		this->privData->key_strafeRight = false;
-
-	//send delta mouse movement 
-	{
-		static const float mouseSensitivity = Radian( 1.0f );
-		this->privData->camera.PitchDown( this->privData->input->GetPitch() * mouseSensitivity );
-		float yaw = this->privData->input->GetYaw();
-		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
-		{
-			this->privData->nwClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
-		}
-	}
-
-	// shoot
-	if( this->privData->input->IsKeyPressed(DIK_Z) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = true;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = false;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-	if( this->privData->input->IsKeyPressed(DIK_X) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = true;
-			playerShot.utilityPressed = false;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-	if( this->privData->input->IsKeyPressed(DIK_C) )
-	{
-		if( !this->privData->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = true;
-			this->privData->nwClient->Send( playerShot );
-			this->privData->key_Shoot = true;
-		}
-	} 
-	else 
-		this->privData->key_Shoot = false;
-
-	// jump
-	if( this->privData->input->IsKeyPressed(DIK_SPACE) )
-	{
-		if(!this->privData->key_Jump)
-		{
-			this->privData->nwClient->Send( Protocol_PlayerJump() );
-			this->privData->key_Jump = true;
-		}
-	}
-	else 
-		this->privData->key_Jump = false;
-
-
-	// DEGUG KEYS
+#ifdef _DEBUG // DEGUG KEYS
 
 	// Reload shaders
-	if( this->privData->input->IsKeyPressed(DIK_R) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_R) )
 	{
-		if( !this->privData->key_Reload_Shaders )
+		if( !this->key_Reload_Shaders )
 		{
-#ifdef _DEBUG
+
 			Graphics::API::ReloadShaders();
-#endif
-			this->privData->key_Reload_Shaders = true;
+
+			this->key_Reload_Shaders = true;
 		}
 	} 
 	else 
-		this->privData->key_Reload_Shaders = false;
+		this->key_Reload_Shaders = false;
 
 	// toggle wire frame render
-	if( this->privData->input->IsKeyPressed(DIK_T) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_T) )
 	{
-		if( !this->privData->key_Wireframe_Toggle )
+		if( !this->key_Wireframe_Toggle )
 		{
-			this->privData->renderWhireframe = !this->privData->renderWhireframe;
-			this->privData->key_Wireframe_Toggle = true;
+			this->renderWhireframe = !this->renderWhireframe;
+			this->key_Wireframe_Toggle = true;
+			// DEBUG set you as dead when render wireframe
+			this->currGameUI = respawnUI;
+			// !DEBUG
 		}
 	} 
 	else 
-		this->privData->key_Wireframe_Toggle = false;
-	// !DEGUG KEYS
-	// TODO: implement sub-menu
+	{
+		this->key_Wireframe_Toggle = false;
+		// DEBUG set you as dead when render wireframe
+		this->currGameUI = gameUI;
+		// !DEBUG
+	}
+#endif // !DEGUG KEYS
+
+	// toggle wire frame render
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
+	{
+		if( !this->key_showStats )
+		{
+			this->renderStats = true;
+			this->key_showStats = true;
+		}
+	} 
+	else 
+	{
+		this->renderStats = false;
+		this->key_showStats = false;
+	}
 }
 
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
@@ -447,8 +404,22 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		switch(ID)
 		{
 		case protocol_Gameplay_ObjectPickup:			break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectDamage:			break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectHealthStatus:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectDamage:			
+			{
+				Protocol_ObjectDamage decoded(data);
+				if( this->privData->myId == decoded.object_ID )
+				{
+					if(currGameUI == gameUI)
+					{
+						((GamingUI*)currGameUI)->SetHPtext(std::to_wstring(decoded.healthLost));
+					}
+				}
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectHealthStatus:		
+			{
+			}
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectPosition:
 			{
 				Protocol_ObjectPosition decoded(data);
@@ -513,19 +484,21 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					this->privData->player.updateRBWorld();
 					// !RB DEBUG 
 				}
-
-				C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
-
-				if( object )
+				else
 				{
-					object->setPos( position );
-					object->setRot( rotation );
-					object->updateWorld();
-					// RB DEBUG 
-					object->setRBPos ( position );  
-					object->setRBRot ( rotation );  
-					object->updateRBWorld();
-					// !RB DEBUG 
+					C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
+
+					if( object )
+					{
+						object->setPos( position );
+						object->setRot( rotation );
+						object->updateWorld();
+						// RB DEBUG 
+						object->setRBPos ( position );  
+						object->setRBRot ( rotation );  
+						object->updateRBWorld();
+						// !RB DEBUG 
+					}
 				}
 			}
 			return GameClientState::event_processed;
@@ -582,8 +555,46 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectRespawn:			break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectDie:				break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectRespawn:	
+			{
+				// set player pos
+				Protocol_ObjectRespawn decoded(data);
+				// move player. Remember to change camera
+				this->privData->camera.SetPosition( decoded.position );
+				this->privData->player.setPos( decoded.position );
+				this->privData->player.updateWorld();
+				// RB DEBUG 
+				this->privData->player.setRBPos ( decoded.position );   
+				this->privData->player.updateRBWorld();
+				// !RB DEBUG 
+				
+				this->currGameUI =  this->gameUI;
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectDie:
+			{
+				Protocol_ObjectDie decoded(data);
+				// if is this player. Remember to change camera
+				if( this->privData->myId == decoded.objectID )
+				{
+					this->currGameUI =  this->respawnUI;
+					// set countdown 
+					((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
+				}
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectDisconnectPlayer:
+			{
+				//Removes 
+				Protocol_ObjectDisconnectPlayer decoded(data);
+				auto object = this->privData->dynamicObjects->find( decoded.objectID );
+				if( object != this->privData->dynamicObjects->end() )
+				{
+					object->second = nullptr;
+					this->privData->dynamicObjects->erase( object );
+				}
+			}
+			return GameClientState::event_processed;
 		default: break;
 		}
 	}

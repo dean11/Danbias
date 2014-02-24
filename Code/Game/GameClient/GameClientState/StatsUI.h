@@ -1,5 +1,5 @@
-#ifndef DANBIAS_CLIENT_RESPAWN_UI_H
-#define DANBIAS_CLIENT_RESPAWN_UI_H
+#ifndef DANBIAS_CLIENT_STATS_UI_H
+#define DANBIAS_CLIENT_STATS_UI_H
 
 #include "GameStateUI.h"
 #include "Buttons\Text_UI.h"
@@ -7,29 +7,27 @@
 
 namespace DanBias { namespace Client
 {
-	class RespawnUI : public GameStateUI
+	class StatsUI : public GameStateUI
 	{
 	public:
-		RespawnUI( ::Oyster::Network::NetworkClient *connection, float delay );
-		virtual ~RespawnUI();
+		StatsUI();
+		virtual ~StatsUI();
 		bool Init();
 
-		// TODO countdown
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
 		bool HaveTextRender() const;
 		void RenderGUI() const;
 		void RenderText() const;
 		bool Release();
-		void SetCountdown( float cd );
+		// TODO add function to add a new players statistics 
+		// TODO add function to remove a players statistics 
 
 	private:
-		::Oyster::Network::NetworkClient *netClient;
-		float countDown;
-
 		// TODO add multiple UI elements
+		// one for each player ingame
 		Text_UI* text;
-		RespawnUI();
+		Plane_UI* plane;
 	};
 } }
 

@@ -24,8 +24,9 @@ struct MainState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
-	Graphics::API::Texture background;
+	::Input::Mouse *mouseInput;
+	Float3 mousePos;
+	Graphics::API::Texture background, mouseCursor;
 	EventButtonCollection guiElements;
 };
 
@@ -47,9 +48,12 @@ bool MainState::Init( SharedStateContent &shared )
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
+	//this->privData->mouseInput->
+	this->privData->mousePos = Float3( 0.0f );
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
 
 	// create buttons
 	ButtonRectangle<MainState*> *button;
@@ -77,16 +81,13 @@ GameClientState::ClientState MainState::Update( float deltaTime )
 {
 	MouseInput mouseState;
 	{
-		bool test = this->privData->input->IsMousePressed();
-		if(test)
-		{ // HACK: debug trap still in use?
-			int i = 0;
-		};
+		::Input::Struct::SAIPointFloat2D pos;
+		this->privData->mouseInput->GetNormalizedPosition( pos );
 
-		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
+		this->privData->mousePos.x = mouseState.x = pos.x;
+		this->privData->mousePos.y = mouseState.y = pos.y;
+		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
-
 	EventHandler::Instance().Update( mouseState );
 
 	return this->privData->nextState;
@@ -97,6 +98,7 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
+	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.1f), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(63.0f/255.0f,73.0f/255.0f,127.0f/255.0f,0.6f) );
 	this->privData->guiElements.RenderTexture();
 
@@ -112,6 +114,7 @@ bool MainState::Release()
 	if( this->privData )
 	{
 		Graphics::API::DeleteTexture( this->privData->background );
+		Graphics::API::DeleteTexture( this->privData->mouseCursor );
 		EventHandler::Instance().ReleaseCollection( &this->privData->guiElements );
 
 		this->privData = NULL;
