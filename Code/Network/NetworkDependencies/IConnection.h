@@ -11,6 +11,8 @@ namespace Oyster
 {
 	namespace Network
 	{
+		const int MAX_NETWORK_MESSAGE_SIZE = 1400;
+
 		struct ConnectionInfo
 		{
 			int socket;
@@ -44,6 +46,8 @@ namespace Oyster
 
 			//Disconnects the client or server TODO: optimize!
 			virtual int Disconnect() = 0;
+
+			virtual int GetSocket() { return -1; };
 		};
 	}
 }
