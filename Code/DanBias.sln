@@ -49,6 +49,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LevelLoader", "Game\LevelLo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServerDebugEnvironment", "Game\LanServer\GameServerDebugEnvironment\GameServerDebugEnvironment.vcxproj", "{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lab", "Lab", "{46A660B9-6BE9-411C-B366-235FD8F8A9BD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RawDeviceLab", "LabProjects\RawDeviceLab\RawDeviceLab.vcxproj", "{32DD438B-8C9C-49EF-9EA5-EB48951D869A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -751,6 +755,38 @@ Global
 		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|x64.ActiveCfg = Release|Win32
 		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
 		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE}.RelWithDebInfo|x86.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|Win32.Build.0 = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|x64.ActiveCfg = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|x86.ActiveCfg = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Debug|x86.Build.0 = Debug|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|Any CPU.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|Mixed Platforms.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|Mixed Platforms.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|Win32.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|Win32.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|x64.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|x86.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.MinSizeRel|x86.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|Any CPU.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|Win32.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|Win32.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|x64.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|x86.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.Release|x86.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|Any CPU.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|Mixed Platforms.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|Mixed Platforms.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|Win32.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|Win32.Build.0 = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|x64.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A}.RelWithDebInfo|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -774,5 +810,6 @@ Global
 		{604A12A7-07BF-4482-BDF3-7101C811F121} = {C83A6FAD-E71F-4B1E-9D63-E93E61DDC012}
 		{C8CBA520-5D7D-4D61-A8DA-6E05FD132BCB} = {C83A6FAD-E71F-4B1E-9D63-E93E61DDC012}
 		{67D0FB00-FF1F-4DE4-84BD-664AE93D25EE} = {C83A6FAD-E71F-4B1E-9D63-E93E61DDC012}
+		{32DD438B-8C9C-49EF-9EA5-EB48951D869A} = {46A660B9-6BE9-411C-B366-235FD8F8A9BD}
 	EndGlobalSection
 EndGlobal
