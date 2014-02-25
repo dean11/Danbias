@@ -1,4 +1,5 @@
 #include "Pickup.h"
+#include "../Game.h"
 
 using namespace GameLogic;
 
@@ -7,6 +8,7 @@ Pickup::Pickup(Oyster::Physics::ICustomBody *rigidBody, EventOnCollision collisi
 {
 	this->active = true;
 	this->spawnTime = spawnTime;
+	timer.reset();
 }
 
 Pickup::~Pickup()
@@ -19,6 +21,7 @@ void Pickup::Update()
 		if(timer.getElapsedSeconds() >= spawnTime)
 		{
 			active = true;
+			((Game*)&Game::Instance())->onEnableFnc(this);
 		}
 	}
 }
