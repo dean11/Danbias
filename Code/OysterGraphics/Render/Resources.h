@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Core/Core.h"
+#include "../Model/ModelInfo.h"
+#include "../Definitions/GraphicalDefinition.h"
 
 namespace Oyster
 {
@@ -11,6 +13,14 @@ namespace Oyster
 				class Resources
 				{
 				public:
+					struct ModelDataWrapper
+					{
+						Definitions::RenderInstanceData* rid;
+						int Models;
+					};
+
+					
+					static std::map<Model::ModelInfo*, ModelDataWrapper*> RenderData;
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
@@ -44,9 +54,11 @@ namespace Oyster
 
 					struct Gather
 					{
-						static Core::PipelineManager::RenderPass Pass;
+						static Core::PipelineManager::RenderPass AnimatedPass;
+						static Core::PipelineManager::RenderPass InstancedPass;
 						static Core::Buffer ModelData;
 						static Core::Buffer AnimationData;
+						static Core::Buffer InstancedData;
 					};
 
 					struct Light

@@ -9,6 +9,7 @@
 
 namespace GameLogic
 {
+	class Player;
 	class DynamicObject : public Object
 	{
 
@@ -22,7 +23,28 @@ namespace GameLogic
 
 		~DynamicObject(void);
 
+		void ReleaseDynamicObject();
+		bool IsReleased();
+		bool IsActive();
+		void Inactivate();
+		void Activate();
+
+		void SetAffectedBy(GameLogic::Player &player);
+		void SetManipulatingPlayer(GameLogic::Player &player);
+		void RemoveAffectedBy();
+		void RemoveManipulation();
+		GameLogic::Player* getAffectingPlayer();
+		GameLogic::Player* getManipulatingPlayer();
+
+		static void DynamicObject::DynamicDefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+
 	private:
+		bool isActive;
+		bool isReleased;
+	protected:
+		GameLogic::Player *affectedBy;
+		GameLogic::Player *manipulatedBy;
+
 
 	};
 

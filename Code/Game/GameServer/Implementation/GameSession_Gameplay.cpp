@@ -29,10 +29,10 @@ using namespace DanBias;
 			float dt = (float)this->logicTimer.getElapsedSeconds();
 			if( dt >= this->logicFrameTime )
 			{
+				this->logicTimer.reset();
+
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
-
-				this->logicTimer.reset();
 			}
 		}
 
@@ -90,7 +90,7 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] )
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				this->gClients[i]->UpdateClient();
 			}
@@ -101,7 +101,7 @@ using namespace DanBias;
 		bool returnValue = false;
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i])
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				this->gClients[i]->GetClient()->Send(message);
 				returnValue = true;
@@ -115,7 +115,7 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] && this->gClients[i]->GetClient()->GetID() == ID)
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid() && this->gClients[i]->GetClient()->GetID() == ID)
 			{
 				this->gClients[i]->GetClient()->Send(protocol);
 				return true;
@@ -143,9 +143,6 @@ using namespace DanBias;
 
 			Oyster::Math::Float3 temp = movedObject->GetPosition();
 
-			if(temp.x < -300)
-				id = 0;
-
 			GameSession::gameSession->Send(p.GetProtocol());
 		//}	
 	}
@@ -153,7 +150,18 @@ using namespace DanBias;
 	{
 		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID(), seconds).GetProtocol());
 	}
-
+	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDamage(movedObject->GetID(), hp).GetProtocol());
+	}
+	void GameSession::ObjectRespawned( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectRespawn(movedObject->GetID(), spawnPos).GetProtocol());
+	}
+	void GameSession::ObjectDead( GameLogic::IObjectData* victim, GameLogic::IObjectData* killer, float seconds )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDie(victim->GetID(), killer->GetID(), seconds).GetProtocol());
+	}
 //*****************************************************//
 //****************** Protocol methods *****************//
 //******************************************************************************************************************//
@@ -180,7 +188,6 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_PlayerShot:					this->Gameplay_PlayerShot				( Protocol_PlayerShot			(p), c );
 			break;
-		
 			case protocol_Gameplay_ObjectPickup:				this->Gameplay_ObjectPickup				( Protocol_ObjectPickup			(p), c );
 			break;
 			case protocol_Gameplay_ObjectDamage:				this->Gameplay_ObjectDamage				( Protocol_ObjectDamage			(p), c );
@@ -193,7 +200,6 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_ObjectCreate:				this->Gameplay_ObjectCreate				( Protocol_ObjectCreate			(p), c );
 			break;
-
 			case protocol_General_Status:						this->General_Status					( Protocol_General_Status		(p), c );
 			break;
 			case protocol_General_Text:							this->General_Text						( Protocol_General_Text			(p), c );
@@ -224,6 +230,7 @@ using namespace DanBias;
 	void GameSession::Gameplay_PlayerLeftTurn			( Protocol_PlayerLeftTurn& p, DanBias::GameClient* c )
 	{
 		c->GetPlayer()->TurnLeft( p.deltaRadian );
+		c->GetPlayer()->SetLookDir( p.lookdir ) ;
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
@@ -233,11 +240,8 @@ using namespace DanBias;
 	{ 
 		if(p.secondaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
 		if(p.primaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
-		
 		if(p.utilityPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
 	}
-	
-	
 	void GameSession::Gameplay_ObjectPickup				( Protocol_ObjectPickup& p, DanBias::GameClient* c )
 	{
 

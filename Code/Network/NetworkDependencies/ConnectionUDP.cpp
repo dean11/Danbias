@@ -135,10 +135,10 @@ int ConnectionUDP::Recieve(OysterByte &bytes)
 	sockaddr_in from;
     int fromLength = sizeof( from );
 
-	bytes.Resize(1000);
+	bytes.Resize(MAX_NETWORK_MESSAGE_SIZE);
 	nBytes = recvfrom(this->socket,
 					  bytes,
-					  1000,
+					  MAX_NETWORK_MESSAGE_SIZE,
 					  0,
 					  (sockaddr*)&from,
 					  &fromLength 

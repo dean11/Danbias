@@ -27,6 +27,9 @@ namespace GameLogic
 	{
 		typedef void(*ObjectMovedFunction)(IObjectData* object);	// Callback method that recieves and object
 		typedef void(*ObjectDisabledFunction)(IObjectData* object, float seconds);	// Callback method that recieves and object
+		typedef void(*ObjectHpFunction)(IObjectData* object, float hp);	// Callback method that sends obj HP
+		typedef void(*ObjectRespawnedFunction)(IObjectData* object, Oyster::Math::Float3 spawnPos );	// Callback method that sends spawnPos
+		typedef void(*ObjectDeadFunction)(IObjectData* victim, IObjectData* killer, float seconds);	// Callback method that sends killer and death timer
 		//etc...
 	};
 
@@ -85,7 +88,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right) = 0;
+			virtual void SetLookDir(const Oyster::Math3D::Float3& lookDir) = 0;
 
 			/** Relative rotation around given axis
 			*	@param leftRadians: The relative amount of radians to turn
@@ -106,13 +109,18 @@ namespace GameLogic
 			* @return The current player state
 			********************************************************/
 			virtual PLAYER_STATE GetState() const = 0;
+
+			virtual void Inactivate() = 0;
+			virtual void Release() = 0;
 		};
 
 		class ILevelData :public IObjectData
 		{
 		public:
+			virtual void Update(float deltaTime)						= 0;
 			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
+			virtual void AddPlayerToGame(IPlayerData *player)				= 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
@@ -175,6 +183,9 @@ namespace GameLogic
 		*	@param 
 		*/
 		virtual void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
+		virtual void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer) = 0;
+		virtual void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer) = 0;
+		virtual void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) = 0;
 
 	};	
 }

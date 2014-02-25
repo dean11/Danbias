@@ -1,6 +1,6 @@
-#include "Header.hlsli"
+#include "AnimHeader.hlsli"
 
-VertexOut main( VertexIn input )
+VertexOut main( AnimVertexIn input )
 {
 	VertexOut output;
 

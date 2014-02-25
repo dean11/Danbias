@@ -33,7 +33,8 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
-	C_Player player;
+	//C_Player player;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
 	Camera_FPSV2 camera;
 
 	int myId;
@@ -75,7 +76,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 	gfxOp.AmbientValue = 0.5f;
-	gfxOp.GlobalGlowTint = Math::Float3(2,1,1);
+	gfxOp.GlobalGlowTint = Math::Float3(1,1,1);
 	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);
 
@@ -113,8 +114,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	modelData.position	= position;
 	modelData.rotation	= ArrayToQuaternion( rotation );
 	modelData.scale		= scale;
-	StringToWstring( modelName, modelData.modelPath );
 	modelData.id		= id;
+	StringToWstring(modelName,modelData.modelPath);
 
 	// RB DEBUG
 	RBInitData RBData;
@@ -123,35 +124,28 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	RBData.scale =  scale;
 	RBData.type = RB_Type_Cube;
 	// !RB DEBUG 
-	if( isMyPlayer )
+	C_Player *p = new C_Player();
+	if( p->Init(modelData) )
 	{
-		if( this->privData->player.Init(modelData) )
-		{
-			// RB DEBUG
-			this->privData->player.InitRB( RBData );
-			// !RB DEBUG 
+		// RB DEBUG
+		p->InitRB( RBData );
+		// !RB DEBUG 
+		// start with runing animation
+		p->playAnimation( L"run_forwards", true );
 
+		(this->privData->players)[id] = p;
+		
+		if( isMyPlayer )
+		{
 			this->privData->myId = id;
-			this->privData->camera.SetPosition( this->privData->player.getPos() );
+			this->privData->camera.SetPosition( p->getPos() );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			//offset.y = this->privData->player.getScale().y * 5.0f;
-			//offset.z = this->privData->player.getScale().z * -5.0f;
+			offset.y = p->getScale().y * 5.0f;
+			offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
-		}
-	}
-	else
-	{
-		C_DynamicObj *p = new C_DynamicObj();
-		if( p->Init(modelData) )
-		{
-			// RB DEBUG
-			this->privData->player.InitRB( RBData );
-			// !RB DEBUG 
-
-			(*this->privData->dynamicObjects)[id] = p;
 		}
 	}
 }
@@ -187,7 +181,17 @@ bool GameState::Render()
 	Oyster::Graphics::API::NewFrame();
 
 	// for debugging to be replaced with render weapon
-	this->privData->player.Render();
+	auto playerObject = this->privData->players.begin();
+	for( ; playerObject != this->privData->players.end(); ++playerObject )
+	{
+		if(playerObject->second)
+		{
+			//if( this->privData->myId != playerObject->second->GetId() )
+			{
+				playerObject->second->Render();
+			}
+		}
+	}
 
 	auto staticObject = this->privData->staticObjects->begin();
 	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
@@ -211,11 +215,21 @@ bool GameState::Render()
 		{
 			Oyster::Graphics::API::StartRenderWireFrame();
 
-			Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(Float3( 0,132, 20)); 
-			Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(Float3( 0.5f, 0.5f, 0.5f));
-			Oyster::Math3D::Float4x4 world = translation  * scale;
-			Oyster::Graphics::API::RenderDebugCube( world );
-			Oyster::Graphics::API::RenderDebugCube(this->privData->player.getRBWorld()); 
+			playerObject = this->privData->players.begin();
+			for( ; playerObject != this->privData->players.end(); ++playerObject )
+			{
+				if(playerObject->second)
+				{
+					if( playerObject->second->getBRtype() == RB_Type_Cube)
+					{
+						Oyster::Graphics::API::RenderDebugCube( playerObject->second->getRBWorld());
+					}
+					if( playerObject->second->getBRtype() == RB_Type_Sphere)
+					{
+						Oyster::Graphics::API::RenderDebugSphere( playerObject->second->getRBWorld());
+					}
+				}
+			}
 
 			staticObject = this->privData->staticObjects->begin();
 			for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
@@ -276,6 +290,12 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
+		auto playerObject = this->privData->players.begin();
+		for( ; playerObject != this->privData->players.end(); ++playerObject )
+		{
+			playerObject->second = nullptr;
+		}
+
 		auto staticObject = this->privData->staticObjects->begin();
 		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 		{
@@ -381,6 +401,7 @@ void GameState::ReadKeyInput()
 		this->key_showStats = false;
 	}
 }
+
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
@@ -459,42 +480,29 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Protocol_ObjectPositionRotation decoded(data);
 				Float3 position = decoded.position;
 				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
-
-				// if is this player. Remember to change camera
-				if( this->privData->myId == decoded.object_ID )
+				C_Object *object; 
+				object = (this->privData->players)[decoded.object_ID];
+				if( !object)
 				{
-					if( !Within(position.Dot(position), 2500.0f, 90000.0f) )
-					{ // HACK: bug trap
-						const char *breakPoint = "Something is wrong.";
-						position = Float3( 0.0f, 160.0f, 0.0f );
-					}
-
-					this->privData->camera.SetPosition( position );
-					this->privData->camera.SetRotation( rotation );
-					this->privData->player.setPos( position );
-					this->privData->player.setRot( rotation );
-					this->privData->player.updateWorld();
-					// RB DEBUG 
-					this->privData->player.setRBPos ( position );  
-					this->privData->player.setRBRot ( rotation );  
-					this->privData->player.updateRBWorld();
-					// !RB DEBUG 
+					// if it is not a player 
+					object = (*this->privData->dynamicObjects)[decoded.object_ID];
 				}
-				else
-				{
-					C_DynamicObj *object = (*this->privData->dynamicObjects)[decoded.object_ID];
 
-					if( object )
+				if( object )
+				{
+					if( this->privData->myId == decoded.object_ID )
 					{
-						object->setPos( position );
-						object->setRot( rotation );
-						object->updateWorld();
-						// RB DEBUG 
-						object->setRBPos ( position );  
-						object->setRBRot ( rotation );  
-						object->updateRBWorld();
-						// !RB DEBUG 
+						this->privData->camera.SetPosition( position );
+						this->privData->camera.SetRotation( rotation );
 					}
+					object->setPos( position );
+					object->setRot( rotation );
+					object->updateWorld();
+					// RB DEBUG 
+					object->setRBPos ( position );  
+					object->setRBRot ( rotation );  
+					object->updateRBWorld();
+					// !RB DEBUG 
 				}
 			}
 			return GameClientState::event_processed;
@@ -534,7 +542,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				RBData.rotation = ArrayToQuaternion( decoded.position );
 				RBData.scale =  Float3( decoded.scale );
 
-				this->privData->player.InitRB( RBData );
+				object->InitRB( RBData );
 				// !RB DEBUG 
 
 				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
@@ -553,17 +561,29 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectRespawn:	
 			{
-				// set player pos
 				Protocol_ObjectRespawn decoded(data);
-				// move player. Remember to change camera
-				this->privData->camera.SetPosition( decoded.position );
-				this->privData->player.setPos( decoded.position );
-				this->privData->player.updateWorld();
-				// RB DEBUG 
-				this->privData->player.setRBPos ( decoded.position );   
-				this->privData->player.updateRBWorld();
-				// !RB DEBUG 
 				
+				C_Object *object; 
+				object = (this->privData->players)[decoded.objectID];
+				if( !object)
+				{
+					// if it is not a player 
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
+				}
+
+				if( object )
+				{
+					if( this->privData->myId == decoded.objectID )
+					{
+						this->privData->camera.SetPosition( decoded.position );
+					}
+					object->setPos( decoded.position );
+					object->updateWorld();
+					// RB DEBUG 
+					object->setRBPos ( decoded.position );  
+					object->updateRBWorld();
+					// !RB DEBUG 
+				}
 				this->currGameUI =  this->gameUI;
 			}
 			return GameClientState::event_processed;
@@ -571,6 +591,8 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			{
 				Protocol_ObjectDie decoded(data);
 				// if is this player. Remember to change camera
+				int killerID = decoded.killerID;
+				int victimID = decoded.objectID;
 				if( this->privData->myId == decoded.objectID )
 				{
 					this->currGameUI =  this->respawnUI;
@@ -581,7 +603,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectDisconnectPlayer:
 			{
-				//Removes 
+				//Remove the disconnected player
 				Protocol_ObjectDisconnectPlayer decoded(data);
 				auto object = this->privData->dynamicObjects->find( decoded.objectID );
 				if( object != this->privData->dynamicObjects->end() )

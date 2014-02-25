@@ -231,7 +231,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				pointLight.Color	= light->color;
 				pointLight.Pos		= light->position;
 				pointLight.Bright	= light->intensity;
-				pointLight.Radius	= light->raduis; 
+				pointLight.Radius	= light->radius; 
 
 				C_Light *newLight = new C_Light( pointLight, objectID );
 
@@ -241,6 +241,8 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		default: break;
 		}
 	}
+
+	Graphics::API::EndLoadingModels();
 
 	this->privData->nextState = ClientState::ClientState_Game;
 }

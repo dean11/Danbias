@@ -19,18 +19,21 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 	this->client = nwClient;
 	this->player = 0;
 	isReady = false;
-	this->character = L"crate_colonists.dan";
+	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
 	this->secondsSinceLastResponse = 0.0f;
 }
 GameClient::~GameClient()
 {
-	this->client = 0;
-	this->player = 0;
+	if(this->player)
+		this->player->Inactivate();
+
 	this->isReady = false;
-	this->character = L"crate_colonists.dan";
+	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
 	this->secondsSinceLastResponse = 0.0f;
+	this->client = 0;
+	this->player = 0;
 }
 
 void GameClient::SetPlayer(GameLogic::IPlayerData* player)
@@ -58,8 +61,14 @@ void GameClient::SetState(ClientState state)
 	this->state = state;
 }
 
+bool GameClient::IsInvalid()
+{
+	return this->isInvalid;
+}
 void GameClient::Invalidate()
 {
+	this->player->Release();
+	this->player = 0;
 	this->isInvalid = true;
 	this->isReady = false;
 	this->state = ClientState_Invalid;

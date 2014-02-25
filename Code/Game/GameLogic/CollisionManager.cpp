@@ -20,37 +20,50 @@ using namespace GameLogic;
 	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target);
 
 	//Physics::ICustomBody::SubscriptMessage
-	void Player::PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	void Player::PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		Player *player = ((Player*)(rigidBodyPlayer->GetCustomTag()));
-		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
+		Object *realObjA = ((Object*)(objA->GetCustomTag()));
+		Player *player;
+		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
 
-		if(!realObj)	
+		if(!realObjA)	
 			return;
-		if(!player)		
+		if(!realObjB)		
 			return;
 
-		switch (realObj->GetObjectType())
+		//check who is player and who is the object
+		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		{
+			player = (Player*)realObjA;
+		}
+		else
+		{
+			player = (Player*)realObjB;
+			realObjB = realObjA;
+		}
+
+
+		switch (realObjB->GetObjectType())
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		
 		case ObjectSpecialType::ObjectSpecialType_StandardBox:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
 			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_World:
-			PlayerVObject(*player,*realObj, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
-			PlayerVLethalObject(*player,*realObj, kineticEnergyLoss,realObj->GetExtraDamageOnCollision());
+			PlayerVLethalObject(*player,*realObjB, kineticEnergyLoss,realObjB->GetExtraDamageOnCollision());
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
@@ -95,13 +108,31 @@ using namespace GameLogic;
 		obj.SetPosition(target);
 	}
 
-	void ExplosiveCrate::ExplosiveCrateCollision(Oyster::Physics::ICustomBody *rigidBodyCrate, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	void ExplosiveCrate::ExplosiveCrateCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		int forceThreashHold = 200000; //how much force for the box to explode of the impact
+		
 
-		Object *realObj = (Object*)obj->GetCustomTag(); //needs to be changed?
+		Object *realObjA = ((Object*)(objA->GetCustomTag()));
+		Object *realObjB = (Object*)objB->GetCustomTag();
+		ExplosiveCrate* crate;
 
-		switch (realObj->GetObjectType())
+		if(!realObjA)	
+			return;
+		if(!realObjB)		
+			return;
+
+		//check who is player and who is the object
+		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_RedExplosiveBox)
+		{
+			crate = (ExplosiveCrate*)realObjA;
+		}
+		else
+		{
+			crate = (ExplosiveCrate*)realObjB;
+			realObjB = realObjA;
+		}
+
+		switch (realObjB->GetObjectType())
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
 			break;
@@ -109,29 +140,15 @@ using namespace GameLogic;
 			
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
-			ExplosiveCrate* crate = ((ExplosiveCrate*)rigidBodyCrate->GetCustomTag());
-
-
-			Oyster::Math::Float3 pos = rigidBodyCrate->GetState().centerPos;
+			if(crate->hasExploaded) return;
+			Oyster::Math::Float3 pos = crate->GetRigidBody()->GetState().centerPos;
 			Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,crate->ExplosionRadius);
 
 			Oyster::Physics::API::Instance().ApplyEffect(hitSphere,crate,Explode);
-
+			crate->hasExploaded = true;
 			delete hitSphere;
 			break;
 		}
-		/*if(kineticEnergyLoss > forceThreashHold)
-		{
-		ExplosiveCrate* crate = ((ExplosiveCrate*)rigidBodyCrate->GetCustomTag());
-
-
-		Oyster::Math::Float3 pos = rigidBodyCrate->GetState().centerPos;
-		Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,crate->ExplosionRadius);
-
-		Oyster::Physics::API::Instance().ApplyEffect(hitSphere,crate,Explode);
-
-		delete hitSphere;
-		}*/
 	}
 	
 	void ExplosiveCrate::Explode(Oyster::Physics::ICustomBody *obj, void* args)
@@ -142,16 +159,21 @@ using namespace GameLogic;
 		Oyster::Math::Float3 explosionCenterPos = ExplosionSource->GetPosition();
 		Oyster::Math::Float3 hitObjectPos = obj->GetState().centerPos;
 		Oyster::Math::Float3 force = (((hitObjectPos- explosionCenterPos).GetNormalized()) * ExplosionSource->pushForceMagnitude);
-		
+
+
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
 		{
 			Player *hitPlayer = (Player*)realObj;
-			
+			hitPlayer->DamageLife(ExplosionSource->extraDamageOnCollision);
+			//hitPlayer->GetRigidBody()->ApplyImpulse(force);
+
 			//hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
+			realObj->GetRigidBody()->ApplyImpulse(force * 5);
 			//do shredding damage
 		}
 
-		realObj->GetRigidBody()->ApplyImpulse(force);
+
+		
 
 	}
 
@@ -160,13 +182,32 @@ using namespace GameLogic;
 		//Collision between a player and a general static or dynamic object
 		//use kinetic energyloss of the collision in order too determin how much damage to take
 		//use as part of the damage algorithm
-		int damageDone = 0;
-		int forceThreashHold = 200000;
+		Oyster::Math::Float3 objPrevVel = obj.GetRigidBody()->GetState().previousVelocity;
+		Oyster::Math::Float3 playerPrevVel = player.GetRigidBody()->GetState().previousVelocity;
 
-		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
+		Oyster::Math::Float3 deltaPos = (player.GetPosition() - obj.GetPosition());
+		Oyster::Math::Float deltaSpeed = (objPrevVel - playerPrevVel).GetMagnitude();
+		Oyster::Math::Float angularFactor = deltaPos.GetNormalized().Dot( (objPrevVel - playerPrevVel).GetNormalized());
+
+		Oyster::Math::Float impactPower = deltaSpeed * angularFactor;
+		Oyster::Math::Float damageFactor = 0.01f;
+
+
+		int damageDone = 0;
+		int forceThreashHold = 30; //FIX: balance this
+
+		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{
-			damageDone = (int)(kineticEnergyLoss * 0.10f);
-			//player.DamageLife(damageDone);
+			if(obj.GetRigidBody()->GetState().mass == 0)
+			{
+				damageDone = impactPower * damageFactor;
+			}
+			else
+			{
+				damageDone = (impactPower * obj.GetRigidBody()->GetState().mass)* damageFactor;
+			}
+			
+			player.DamageLife(damageDone);
 		}
 		
 	}	
@@ -189,6 +230,58 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
+
+	void DynamicObject::DynamicDefaultOnCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
+	{
+		
+		DynamicObject *realObjA = dynamic_cast<DynamicObject*>((Object*)objA->GetCustomTag());
+		
+		DynamicObject *realObjB = dynamic_cast<DynamicObject*>((Object*)objB->GetCustomTag());
+
+		if(!realObjA || !realObjB) // one of the objects cannot be cast into a dynamicObject and so we leave the function
+		{
+			return;
+		}
+
+		//check which obj is the one that is already affected, if both are then use the special case of changing ownership.
+		if(realObjA->getAffectingPlayer() == NULL && realObjB->getAffectingPlayer() == NULL) //None of the objects have a player affecting them
+		{
+			return;//leave function as the are not to transfer any ownership
+		}
+
+		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() == NULL)
+		{
+			//realobjA is the affectedObject, transfer this to realobjB
+			realObjB->SetAffectedBy(*realObjA->getAffectingPlayer());
+
+		}
+		if(realObjB->getAffectingPlayer() != NULL && realObjA->getAffectingPlayer() == NULL)
+		{
+			//realobjB is the affectedObject, transfer this to realobjA
+			realObjA->SetAffectedBy(*realObjB->getAffectingPlayer());
+
+		}
+
+		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() != NULL)
+		{
+			//Both objects have a player affecting them, now use the special case
+			if(realObjA->GetRigidBody()->GetState().previousVelocity.GetMagnitude() > realObjB->GetRigidBody()->GetState().previousVelocity.GetMagnitude() )
+			{
+				//realObjA is the winner and will change Bs ownership to A
+				realObjB->SetAffectedBy(*realObjA->getAffectingPlayer());
+			}
+			else
+			{
+				realObjA->SetAffectedBy(*realObjB->getAffectingPlayer());
+				//realObjB is the winner and will change As ownership to B
+			}
+		}
+		
+
+
+
+	}
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
@@ -213,7 +306,17 @@ using namespace GameLogic;
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
+		
+
 		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
+		
+
+		DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
+		
+		if(dynamicObj)
+		{
+			dynamicObj->SetAffectedBy(*((forcePushData*)(args))->p);
+		}
 	}
 
 	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
@@ -231,11 +334,21 @@ using namespace GameLogic;
 			Object* realObj = (Object*)(obj->GetCustomTag());
 			//check so that it is an object that you can pickup
 
-			switch(realObj->GetObjectType())
+			DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
+
+			if(!dynamicObj) return;
+		
+			if(dynamicObj->getManipulatingPlayer() != NULL)
+			{
+				return;
+			}
+
+			switch(dynamicObj->GetObjectType())
 			{
 			case ObjectSpecialType::ObjectSpecialType_StandardBox:
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
+				dynamicObj->SetManipulatingPlayer(*weapon->owner); //TODO: add if this is to be a struggle of who has the most power in its weapon, the player that is already manipulating the object or you. if you then you take the object from the other player, if not then you do not take the object
 
 				break;
 			}

@@ -39,6 +39,8 @@ namespace Oyster
 			int SetBlockingMode( bool blocking );
 
 			std::string GetIpAddress();
+			int GetSocket();
+
 
 		private:
 			int InitiateSocket();

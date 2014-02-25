@@ -4,8 +4,14 @@
 #ifndef ATTATCHMENTMASSDRIVER_H
 #define ATTATCHMENTMASSDRIVER_H
 #include "IAttatchment.h"
+
+
+
 namespace GameLogic
 {
+	const Oyster::Math::Float StandardMaxEnergy = 100.0f;
+	const Oyster::Math::Float StandardrechargeRate = 0.5f;
+	const Oyster::Math::Float Standardforce = 1000.0f;
 
 	class AttatchmentMassDriver : public IAttatchment
 	{
@@ -52,6 +58,19 @@ namespace GameLogic
 	private:
 		Oyster::Physics::ICustomBody *heldObject;
 		bool hasObject;
+
+		Oyster::Math::Float force;
+
+		Oyster::Math::Float maxEnergy;
+		Oyster::Math::Float currentEnergy;
+
+		Oyster::Math::Float rechargeRate;
+
+		struct Aim
+		{
+			
+		};
+
 
 	};
 }

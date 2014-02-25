@@ -7,7 +7,10 @@
 #include "GameLogicStates.h"
 #include "OysterMath.h"
 #include "DynamicObject.h"
+#include "DynamicArray.h"
 
+const float MAX_HP = 100.0f;
+const float BASIC_SPEED = 30.0f;
 
 namespace GameLogic
 {
@@ -15,6 +18,21 @@ namespace GameLogic
 	class Player : public DynamicObject
 	{
 	public:
+		struct PlayerStats
+		{
+			Oyster::Math::Float hp;
+			Oyster::Math::Float movementSpeed;
+			//Oyster::Math::Float resistance;
+		};
+
+		struct PlayerScore
+		{
+			int killScore;
+			int deathScore;
+			// int assistScore;
+			// int suicideScore;
+		};
+
 		Player(void);
 
 		Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID);
@@ -46,9 +64,11 @@ namespace GameLogic
 		void Respawn(Oyster::Math::Float3 spawnPoint);
 
 
-		void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right);
+		void SetLookDir(const Oyster::Math3D::Float3& lookDir);
 
 		void TurnLeft(Oyster::Math3D::Float deltaRadians);
+		
+		void AddAffectedObject(DynamicObject &AffectedObject);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -56,12 +76,14 @@ namespace GameLogic
 		* @param rigidBodyPlayer: physics object of the player
 		* @param obj: physics object for the object that collided with the player
 		********************************************************/
-		static void PlayerCollision(Oyster::Physics::ICustomBody *rigidBodyPlayer, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
+		static void PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss);
 
 		
 		bool IsWalking();
 		bool IsJumping();
 		bool IsIdle();
+
+		void Inactivate();
 
 		Oyster::Math::Float3 GetPosition() const;
 		Oyster::Math::Float3 GetLookDir() const;
@@ -70,6 +92,8 @@ namespace GameLogic
 		PLAYER_STATE GetState() const;
 
 		void DamageLife(int damage);
+		void setDeathTimer(float deathTimer);
+		bool deathTimerTick(float dt);
 
 		void BeginFrame();
 		void EndFrame();
@@ -77,9 +101,11 @@ namespace GameLogic
 
 	private:
 		void Jump();
+		void initPlayerData();
 
 	private:
-		Oyster::Math::Float life;
+
+		Utility::DynamicMemory::DynamicArray<DynamicObject*> AffectedObjects;
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
@@ -91,16 +117,15 @@ namespace GameLogic
 		float key_jump;
 
 
-		Oyster::Math::Float3 previousPosition;
-		Oyster::Math::Float3 moveDir;
-		Oyster::Math::Float moveSpeed;
-		Oyster::Math::Float3 previousMoveSpeed;
-
 		Oyster::Math::Float rotationUp;
 
+		float deathTimer;
 
 		bool hasTakenDamage;
 		float invincibleCooldown;
+		PlayerStats playerStats;
+		PlayerScore playerScore;
+
 	};
 }
 #endif

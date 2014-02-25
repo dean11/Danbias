@@ -64,6 +64,7 @@ namespace Oyster
 			void SetCollisionShape(btCollisionShape* shape);
 			void SetMotionState(btDefaultMotionState* motionState);
 			void SetRigidBody(btRigidBody* rigidBody);
+			void SetPreviousVelocity(Math::Float3 velocity);
 
 			void PreStep(const btCollisionWorld* collisionWorld);
 
@@ -71,6 +72,8 @@ namespace Oyster
 
 			void MoveToLimbo();
 			void ReleaseFromLimbo();
+
+
 
 			private:
 
@@ -90,6 +93,8 @@ namespace Oyster
 			btVector3 raySource[2];
 			btVector3 rayTarget[2];
 			btScalar rayLambda[2];
+
+			int collisionFlags;
 		};
 	} 
 }

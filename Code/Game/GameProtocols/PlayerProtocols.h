@@ -79,6 +79,7 @@ namespace GameLogic
 	{
 	public:
 		float deltaRadian;
+		float lookdir[3];
 		
 		Protocol_PlayerLeftTurn()
 		{
@@ -86,25 +87,40 @@ namespace GameLogic
 			this->protocol[0].type = ::Oyster::Network::NetAttributeType_Short;
 			// deltaRadian
 			this->protocol[1].type = ::Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
+			deltaRadian = 0.0f;
+			memset(&lookdir[0], 0, sizeof(float) * 3);
 		}
 
 		Protocol_PlayerLeftTurn( const ::Oyster::Network::CustomNetProtocol &p )
 		{
 			this->deltaRadian = p[1].value.netFloat;
+			lookdir[0] = p[2].value.netFloat;
+			lookdir[1] = p[3].value.netFloat;
+			lookdir[2] = p[4].value.netFloat;
 		}
 
-		Protocol_PlayerLeftTurn( float deltaRadian )
+		Protocol_PlayerLeftTurn( float deltaRadian,float v[3] )
 		{
 			this->protocol[0].value = protocol_Gameplay_PlayerLeftTurn;
 			this->protocol[0].type = ::Oyster::Network::NetAttributeType_Short;
-			// deltaRadian
 			this->protocol[1].type = ::Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[4].type = Oyster::Network::NetAttributeType_Float;
 			this->deltaRadian = deltaRadian;
+			memcpy(&lookdir[0], &v[0], sizeof(float) * 3);
+
 		}
 		
 		::Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = this->deltaRadian;
+			this->protocol[2].value = this->lookdir[0];
+			this->protocol[3].value = this->lookdir[1];
+			this->protocol[4].value = this->lookdir[2];
 			return protocol;
 		}
 

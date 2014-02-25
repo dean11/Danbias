@@ -33,8 +33,12 @@ bool GamingUI::Init()
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
 	this->plane	=  new Plane_UI(L"box_tex.png", Float3(0.5f, 0.0f, 0.5f), Float2(0.3f, 0.1f));
+<<<<<<< HEAD
 	this->hp 	=  new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), Float4(1,0,0,1));
 	this->energy = new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.4f,0.1f), Float4(1,1,0,1));
+=======
+	this->text	=  new Text_UI(L"hej", Float3(0.3f,0.0f,0.1f), Float2(0.1f,0.1f));
+>>>>>>> origin/GameLogic
 
 	return true; 
 }
@@ -109,7 +113,7 @@ void GamingUI::ReadKeyInput()
 		float yaw = this->input->GetYaw();
 		//if( yaw != 0.0f )	//This made the camera reset to a specific rotation.
 		{
-			this->netClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity) );
+			this->netClient->Send( Protocol_PlayerLeftTurn(yaw * mouseSensitivity, camera->GetLook()) );
 		}
 	}
 

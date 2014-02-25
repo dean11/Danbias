@@ -287,10 +287,11 @@ void API_Impl::UpdateWorld()
 		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
 		{
 			this->customBodies[i]->CallSubscription_Move();
-		}	
+		}
+		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
-	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
+	this->dynamicsWorld->stepSimulation(this->timeStep, 10, this->timeStep);
 
 	ICustomBody::State state;
 
@@ -312,9 +313,34 @@ void API_Impl::UpdateWorld()
 
 		ICustomBody* bodyA = (ICustomBody*)obA->getUserPointer();
 		ICustomBody* bodyB = (ICustomBody*)obB->getUserPointer();
+	
+		
 
-		bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
-		bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
+		int numContacts = contactManifold->getNumContacts();
+		for (int j=0;j<numContacts;j++)
+		{
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance()<0.f)
+			{
+				if(bodyA->GetState().mass == 40 && bodyB->GetState().centerPos == Float3::null)
+				{
+					const char* breakPoint = "STOP";
+				}
+				if(bodyB->GetState().mass == 40 && bodyA->GetState().centerPos == Float3::null)
+				{
+					const char* breakPoint = "STOP";
+				}
+
+				const btVector3& ptA = pt.getPositionWorldOnA();
+				const btVector3& ptB = pt.getPositionWorldOnB();
+				const btVector3& normalOnB = pt.m_normalWorldOnB;
+
+				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
+				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
+			}
+		}
+
+		
 	}
 
 }

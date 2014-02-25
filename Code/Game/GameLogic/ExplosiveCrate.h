@@ -18,6 +18,7 @@ namespace GameLogic
 	private:
 		Oyster::Math::Float pushForceMagnitude;
 		Oyster::Math::Float ExplosionRadius;
+		bool hasExploaded;
 	};
 
 
