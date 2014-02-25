@@ -188,8 +188,8 @@ int Connection::Recieve(OysterByte &bytes)
 	if(this->closed) return -1;
 	int nBytes;
 
-	bytes.Resize(1000);
-	nBytes = recv(this->socket, bytes, 1000, 0);
+	bytes.Resize(MAX_NETWORK_MESSAGE_SIZE);
+	nBytes = recv(this->socket, bytes, MAX_NETWORK_MESSAGE_SIZE, 0);
 	if(nBytes == SOCKET_ERROR)
 	{
 		bytes.SetSize(0);
@@ -261,6 +261,11 @@ int Connection::SetBlockingMode(bool blocking)
 std::string	Connection::GetIpAddress()
 {
 	return this->addr;
+}
+
+int Connection::GetSocket()
+{
+	return socket;
 }
 
 ///////////////////////////////////////

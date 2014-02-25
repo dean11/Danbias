@@ -22,6 +22,8 @@ SimpleRigidBody::SimpleRigidBody()
 	this->state.restitutionCoeff = 0.0f;
 	this->state.reach = Float3(0.0f, 0.0f, 0.0f);
 
+	this->collisionFlags = 0;
+
 	this->afterCollision = NULL;
 	this->onMovement = NULL;
 
@@ -85,7 +87,7 @@ void SimpleRigidBody::SetMotionState(btDefaultMotionState* motionState)
 void SimpleRigidBody::SetRigidBody(btRigidBody* rigidBody)
 {
 	this->rigidBody = rigidBody;
-	
+	this->collisionFlags = rigidBody->getCollisionFlags();
 }
 
 void SimpleRigidBody::SetSubscription(EventAction_AfterCollisionResponse function)
@@ -421,5 +423,10 @@ void SimpleRigidBody::MoveToLimbo()
 
 void SimpleRigidBody::ReleaseFromLimbo()
 {
-	this->rigidBody->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	this->rigidBody->setCollisionFlags(this->collisionFlags);
+}
+
+void SimpleRigidBody::SetPreviousVelocity(::Oyster::Math::Float3 velocity)
+{
+	this->state.previousVelocity = velocity;
 }

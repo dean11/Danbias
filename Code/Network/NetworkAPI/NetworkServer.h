@@ -22,16 +22,16 @@ namespace Oyster
 			{
 				struct BroadcastOptions
 				{
-					//bool broadcast;
-					//float broadcastInterval;
-					//std::wstring subnetToBroadcast;
-					//CustomNetProtocol broadcastMessage;
-					//BroadcastOptions()
-					//{
-					//	broadcast = true;
-					//	broadcastInterval = 1.0f;
-					//	subnetToBroadcast = L"192.168.0.1";
-					//}
+					bool broadcast;
+					float broadcastInterval;
+					std::wstring subnetToBroadcast;
+					CustomNetProtocol broadcastMessage;
+					BroadcastOptions()
+					{
+						broadcast = true;
+						broadcastInterval = 1.0f;
+						subnetToBroadcast = L"192.168.0.1";
+					}
 				} broadcastOptions;
 
 				struct MainOptions
@@ -116,6 +116,23 @@ namespace Oyster
 				*	@return Returns the port the server has been initiated with.
 				*/
 				int NetworkServer::GetPort();
+
+
+
+				/***************************************
+						Broadcast functions
+				***************************************/
+				//Set broadcast settings.
+				void SetBroadcast(CustomNetProtocol& broadcastMessage, float interval = 1.0f, bool enable = true);
+
+				//Set broadcast settings.
+				void SetBroadcastMessage(CustomNetProtocol& broadcastMessage);
+
+				//Enable/disable broadcast.
+				void SetBroadcast(bool enable);
+
+				//Set interval between each broadcast message in seconds.
+				void SetBroadcastInterval(float interval);
 
 			private:
 				struct PrivateData;

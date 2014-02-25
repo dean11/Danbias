@@ -90,6 +90,14 @@ namespace Oyster
 				Math::Float3 GlowTint;
 				Math::Float PAD2;
 			};
+
+			struct RenderInstanceData
+			{
+				Math::Matrix WV;
+				Math::Matrix WVP;
+				Math::Float3 Tint;
+				Math::Float3 GTint;
+			};
 		}
 	}
 }

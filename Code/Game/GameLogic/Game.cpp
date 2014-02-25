@@ -43,6 +43,9 @@ Game::Game(void)
 	:	initiated(false)
 	,	onMoveFnc(0)
 	,	onDisableFnc(0)
+	,	onDamageTakenFnc(0)
+	,   onRespawnFnc(0)
+	,	onDeadFnc(0)
 	,	frameTime(1.0f/120.0f)
 {}
 
@@ -67,6 +70,17 @@ void Game::GetAllPlayerPositions() const
 
 Game::PlayerData* Game::CreatePlayer()
 {
+	//Se if there is a free player somewhere in our list
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		if(this->players[i] && this->players[i]->player->IsReleased())
+		{
+			//We give the body to someone else
+			this->players[i]->player->Activate();
+			return this->players[i];
+		}
+	}
+
 	// Find a free space in array or insert at end
 	int insert = InsertObject(this->players, (PlayerData*)0);
 	int freeID = 0;
@@ -145,7 +159,18 @@ void Game::SetSubscription(GameEvent::ObjectMovedFunction functionPointer)
 void Game::SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)
 {
 	this->onDisableFnc = functionPointer;
-
+}
+void Game::SetHpSubscription(GameEvent::ObjectHpFunction functionPointer)
+{
+	this->onDamageTakenFnc = functionPointer;
+}
+void Game::SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer)
+{
+	this->onRespawnFnc = functionPointer;
+}
+void Game::SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)
+{
+	this->onDeadFnc = functionPointer;
 }
 
 bool Game::Initiate()

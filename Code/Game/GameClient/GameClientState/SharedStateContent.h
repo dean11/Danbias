@@ -29,6 +29,8 @@ namespace DanBias { namespace Client
 
 		::Input::Mouse *mouseDevice;
 		::Input::Keyboard *keyboardDevice;
+
+		float mouseSensitivity;
 	};
 } }
 

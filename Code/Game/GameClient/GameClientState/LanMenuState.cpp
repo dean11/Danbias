@@ -66,6 +66,7 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->connectIP->ReserveLines( 1 );
 	this->privData->connectIP->AppendText( L"127.0.0.1" );
 	//this->privData->connectIP->AppendText( L"194.47.150.206" ); // HACK: connecting to Dennis's server
+	//this->privData->connectIP->AppendText( L"194.47.150.189" ); // HACK: connecting to Robins server
 	this->privData->connectIP->SetFontHeight( 0.035f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
 	this->privData->connectIP->SetBottomAligned();

@@ -40,11 +40,11 @@ namespace GameLogic
 			Oyster::Math::Float3 GetScale()																override;
 			Oyster::Math::Float4x4 GetOrientation()														override; 
 			int GetID() const																			override;
-			void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)		override;
+			void SetLookDir(const Oyster::Math3D::Float3& lookDir)		override;
 			void TurnLeft(Oyster::Math3D::Float deltaLeftRadians )										override;
 			ObjectSpecialType GetObjectType()	const													override;
-
-
+			void Inactivate()																			override;
+			void Release()																				override;
 
 			Player *player;
 		};
@@ -80,6 +80,10 @@ namespace GameLogic
 		void SetFrameTimeLength( float seconds )																		override;
 		void SetSubscription(GameEvent::ObjectMovedFunction functionPointer)											override;
 		void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)											override;
+		void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer)											override;
+		void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer)										override;
+		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)												override;
+		
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -91,9 +95,11 @@ namespace GameLogic
 		LevelData* level;
 		float frameTime;
 		bool initiated;
-		GameEvent::ObjectDisabledFunction onDisableFnc;
-		GameEvent::ObjectMovedFunction onMoveFnc;
-
+		GameEvent::ObjectDisabledFunction	onDisableFnc;
+		GameEvent::ObjectMovedFunction		onMoveFnc;
+		GameEvent::ObjectHpFunction			onDamageTakenFnc;
+		GameEvent::ObjectRespawnedFunction 	onRespawnFnc;
+		GameEvent::ObjectDeadFunction		onDeadFnc;
 	};	
 }
 

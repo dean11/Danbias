@@ -19,7 +19,6 @@ namespace Oyster
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,0));
 					Preparations::Basic::ClearDepthStencil(Resources::Gui::depth);
 					Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
-					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::Pass);
 					Lights[1];
 
 					void* data;
@@ -39,15 +38,39 @@ namespace Oyster
 					data = Resources::Light::PointLightsData.Map();
 					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
+
+					for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+					{
+						(*i).second->Models=0;
+					}
+
+					Core::PipelineManager::SetRenderPass(Resources::Gather::AnimatedPass);
 				}
 
 				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection, float deltaTime)
 				{
 					for(int i = 0; i < count; ++i)
 					{
-						if(&models[i] == NULL)
+						if(&models[i] == NULL || !models[i].Visible)
 							continue;
-						if(models[i].Visible)
+
+						Model::ModelInfo* info = models[i].info;
+						if(!info->Animated && models[i].Instanced)
+						{
+							Definitions::RenderInstanceData rid;
+							Math::Float3x3 normalTransform;
+							normalTransform = Math::Float3x3(models[i].WorldMatrix.v[0].xyz, models[i].WorldMatrix.v[1].xyz, models[i].WorldMatrix.v[2].xyz);
+							normalTransform.Transpose().Invert();
+							Math::Matrix m = Math::Matrix(Math::Vector4(normalTransform.v[0],0.0f), Math::Vector4(normalTransform.v[1],0.0f), Math::Vector4(normalTransform.v[2],0.0f), Math::Vector4(0.0f));
+							rid.WV = View * m;
+							rid.WVP = Projection * View * models[i].WorldMatrix;
+
+							rid.Tint = models[i].Tint;
+							rid.GTint = models[i].GlowTint;
+
+							Resources::RenderData[info]->rid[Resources::RenderData[info]->Models++] = rid;
+						}
+						else
 						{
 							Definitions::PerModel pm;
 							Math::Float3x3 normalTransform;
@@ -55,7 +78,6 @@ namespace Oyster
 							normalTransform.Transpose().Invert();
 							Math::Matrix m = Math::Matrix(Math::Vector4(normalTransform.v[0],0.0f), Math::Vector4(normalTransform.v[1],0.0f), Math::Vector4(normalTransform.v[2],0.0f), Math::Vector4(0.0f));
 							pm.WV = View * m;
-							//pm.WV = models[i].WorldMatrix.GetTranspose().GetInverse();
 							pm.WVP = Projection * View * models[i].WorldMatrix;
 
 							Model::ModelInfo* info = models[i].info;
@@ -207,9 +229,47 @@ namespace Oyster
 					Core::deviceContext->Dispatch((UINT)(Core::resolution.x/2), (UINT)((Core::resolution.y/2 + 127U) / 128U), 1);
 				}
 
+				void RenderModel(Model::ModelInfo* info, Definitions::RenderInstanceData* rid , int count)
+				{
+					if(count < 1)
+						return;
+					if(info->Material.size())
+					{
+						Core::deviceContext->PSSetShaderResources(0,(UINT)info->Material.size(),&(info->Material[0]));
+					}
+					info->Vertices->Apply();
+					if(info->Indexed)
+					{
+						info->Indecies->Apply();
+					}
+
+					void* data = Resources::Gather::InstancedData.Map();
+					memcpy(data, rid, sizeof(Definitions::RenderInstanceData)*count);
+					Resources::Gather::InstancedData.Unmap();
+
+					if(info->Indexed)
+					{
+						Core::deviceContext->DrawIndexedInstanced(info->IndexCount,count,0,0,0);
+						//Core::deviceContext->DrawIndexed(info->IndexCount,0,0);
+					}
+					else
+					{
+						Core::deviceContext->DrawInstanced(info->VertexCount,count,0,0);
+						//Core::deviceContext->Draw(info->VertexCount,0);
+					}
+				}
+
 
 				void DefaultRenderer::EndFrame()
 				{
+					Core::PipelineManager::SetRenderPass(Graphics::Render::Resources::Gather::InstancedPass);
+					Resources::Gather::InstancedData.Apply(1);
+
+					for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+					{
+						RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
+					}
+
 					Core::PipelineManager::SetRenderPass(Resources::Light::Pass);
 
 					Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);

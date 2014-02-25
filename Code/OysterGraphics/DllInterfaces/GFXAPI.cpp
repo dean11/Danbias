@@ -19,6 +19,7 @@ namespace Oyster
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
+			int MostModel;
 #ifdef _DEBUG
 			Model::Model* cube;
 			Model::Model* sphere;
@@ -57,9 +58,11 @@ namespace Oyster
 			debugSRV = (ID3D11ShaderResourceView*)API::CreateTexture(L"color_white.png");
 
 			cube = CreateModel(L"generic_cube.dan");
-			cube->Tint = Math::Float3(0.0f,0.0f,1.0f);
+			cube->Tint = Math::Float3(1.0f,0.0f,0.0f);
+			cube->Instanced = false;
 			sphere = CreateModel(L"generic_sphere.dan");
 			sphere->Tint = Math::Float3(1.0f,0.5f,182/255.0f);
+			sphere->Instanced = false;
 
 
 			D3D11_RASTERIZER_DESC desc;
@@ -133,6 +136,35 @@ namespace Oyster
 			return API::Sucsess;
 		}
 
+		void API::BeginLoadingModels()
+		{
+		}
+
+		void API::EndLoadingModels()
+		{
+			//TODO finalize instance buffers and create rendering map;
+			int maxModels = 0;
+			for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+			{
+				if((*i).second->Models > maxModels)
+				{
+					maxModels = (*i).second->Models;
+				}
+				(*i).second->rid = new Definitions::RenderInstanceData[(*i).second->Models+1];
+			}
+
+			Core::Buffer::BUFFER_INIT_DESC desc;
+			
+
+			desc.ElementSize = sizeof(Definitions::RenderInstanceData);
+			desc.Type = Core::Buffer::VERTEX_BUFFER;
+			desc.Usage = Core::Buffer::BUFFER_CPU_WRITE_DISCARD;
+			desc.InitData = 0;
+			desc.NumElements = maxModels+1;
+
+			Render::Resources::Gather::InstancedData.Init(desc);
+		}
+
 		//returns null for invalid filenames
 		Model::Model* API::CreateModel(std::wstring filename)
 		{
@@ -142,6 +174,7 @@ namespace Oyster
 			m->Animation.AnimationPlaying = NULL;
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
+			m->Instanced = true;
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -151,6 +184,18 @@ namespace Oyster
 				Core::loader.ReleaseResource(mi);
 				delete mi;
 				return NULL;
+			}
+			
+			if(!m->info->Animated)
+			{
+				if(Core::loader.GetResourceCount(m->info) == 1)
+				{
+					Render::Resources::RenderData[m->info] = new Render::Resources::ModelDataWrapper();
+				}
+				else
+				{
+					Render::Resources::RenderData[m->info]->Models++;
+				}
 			}
 
 			return m;
@@ -187,6 +232,12 @@ namespace Oyster
 			SAFE_RELEASE(Core::deviceContext);
 			SAFE_RELEASE(Core::device);
 
+			for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+			{
+				SAFE_DELETE((*i).second->rid);
+				SAFE_DELETE((*i).second);
+			}
+
 		}
 
 		void API::AddLight(Definitions::Pointlight light)
@@ -208,9 +259,9 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			//Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 			Core::deviceContext->RSSetState(wire);
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			//Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 		}
 
 		void API::RenderDebugCube(Math::Matrix world)

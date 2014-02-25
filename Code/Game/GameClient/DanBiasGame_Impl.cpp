@@ -9,6 +9,7 @@
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
 #include "GameClientState\NetLoadState.h"
+#include "Utilities.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
 #include <GameServerAPI.h>
@@ -51,11 +52,12 @@ namespace DanBias
 
 		DanBiasGamePrivateData()
 		{
-			this->sharedStateContent.network		= nullptr;
-			this->sharedStateContent.mouseDevice	= nullptr;
-			this->sharedStateContent.keyboardDevice	= nullptr;
-			this->serverOwner						= false;
-			this->capFrame							= 0;
+			this->sharedStateContent.network			= nullptr;
+			this->sharedStateContent.mouseDevice		= nullptr;
+			this->sharedStateContent.keyboardDevice		= nullptr;
+			this->sharedStateContent.mouseSensitivity	= Utility::Value::Radian( 0.1f );
+			this->serverOwner							= false;
+			this->capFrame								= 0;
 		}
 
 		~DanBiasGamePrivateData()
@@ -115,7 +117,6 @@ namespace DanBias
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
-			Graphics::API::Update( dt );
 			
 			data.capFrame += dt;
 			if(data.capFrame > 0.03f)
@@ -127,6 +128,8 @@ namespace DanBias
 				case Result_error:		return DanBiasClientReturn_Error;
 				default:				break;
 				}
+				
+				Graphics::API::Update( data.capFrame );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
 				data.capFrame -= 0.03f; 

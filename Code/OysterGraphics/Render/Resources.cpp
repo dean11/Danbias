@@ -33,7 +33,8 @@ namespace Oyster
 				ID3D11UnorderedAccessView* Resources::Blur::BufferUAV = {0};
 				ID3D11ShaderResourceView* Resources::Blur::BufferSRV = {0};
 
-				Shader::RenderPass Resources::Gather::Pass;
+				Shader::RenderPass Resources::Gather::AnimatedPass;
+				Shader::RenderPass Resources::Gather::InstancedPass;
 				Shader::RenderPass Resources::Light::Pass;
 				Shader::RenderPass Resources::Post::Pass;
 				Shader::RenderPass Resources::Gui::Pass;
@@ -43,6 +44,7 @@ namespace Oyster
 
 				Buffer Resources::Gather::ModelData = Buffer();
 				Buffer Resources::Gather::AnimationData = Buffer();
+				Buffer Resources::Gather::InstancedData = Buffer();
 				Buffer Resources::Light::LightConstantsData = Buffer();
 				Buffer Resources::Gui::Data = Buffer();
 				Buffer Resources::Color = Buffer();
@@ -63,6 +65,8 @@ namespace Oyster
 
 				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
 				ID3D11DepthStencilView* Resources::Gui::depth = NULL;
+
+				std::map<Model::ModelInfo*, Resources::ModelDataWrapper*> Resources::RenderData = std::map<Model::ModelInfo*, Resources::ModelDataWrapper*>();
 #pragma endregion
 
 
@@ -76,8 +80,12 @@ namespace Oyster
 					std::wstring end = L".cso";
 #endif
 					//Load Shaders
-					Core::PipelineManager::Init(path + L"GatherPixel" + end, ShaderType::Pixel, L"Gather");
-					Core::PipelineManager::Init(path + L"GatherVertex" + end, ShaderType::Vertex, L"Gather");
+					Core::PipelineManager::Init(path + L"GatherAnimPixel" + end, ShaderType::Pixel, L"AGather");
+					Core::PipelineManager::Init(path + L"GatherAnimVertex" + end, ShaderType::Vertex, L"AGather");
+
+					
+					Core::PipelineManager::Init(path + L"GatherInstPixel" + end, ShaderType::Pixel, L"IGather");
+					Core::PipelineManager::Init(path + L"GatherInstVertex" + end, ShaderType::Vertex, L"IGather");
 #ifdef _DEBUG
 					path = PathToHLSL+L"Light\\";
 #endif
@@ -150,6 +158,7 @@ namespace Oyster
 					desc.ElementSize = sizeof(Definitions::Text2D);
 					desc.NumElements = MAX_LETTER_COUNT;
 					Gui::Text::Vertex.Init(desc);
+
 
 					return Core::Init::Success;
 				}
@@ -356,10 +365,11 @@ namespace Oyster
 				{
 
 					////---------------- Geometry Pass Setup ----------------------------
-					Gather::Pass.Shaders.Pixel = GetShader::Pixel(L"Gather");
-					Gather::Pass.Shaders.Vertex = GetShader::Vertex(L"Gather");
+#pragma region Animated Pass
+					Gather::AnimatedPass.Shaders.Pixel = GetShader::Pixel(L"AGather");
+					Gather::AnimatedPass.Shaders.Vertex = GetShader::Vertex(L"AGather");
 
-					D3D11_INPUT_ELEMENT_DESC indesc[] =
+					D3D11_INPUT_ELEMENT_DESC AnimInDesc[] =
 					{
 						{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 						{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -368,20 +378,163 @@ namespace Oyster
 						{ "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 					};
 
-					Shader::CreateInputLayout(indesc,5,GetShader::Vertex(L"Gather"),Gather::Pass.IAStage.Layout);
-					Gather::Pass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-					Gather::Pass.CBuffers.Vertex.push_back(Gather::AnimationData);
-					Gather::Pass.CBuffers.Vertex.push_back(Gather::ModelData);
-					Gather::Pass.CBuffers.Pixel.push_back(Color);
-					Gather::Pass.RenderStates.Rasterizer = RenderStates::rs;
-					Gather::Pass.RenderStates.SampleCount = 1;
-					Gather::Pass.RenderStates.SampleState = RenderStates::ss;
-					Gather::Pass.RenderStates.DepthStencil = RenderStates::dsState;
+					Shader::CreateInputLayout(AnimInDesc,5,GetShader::Vertex(L"AGather"),Gather::AnimatedPass.IAStage.Layout);
+					Gather::AnimatedPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+					Gather::AnimatedPass.CBuffers.Vertex.push_back(Gather::AnimationData);
+					Gather::AnimatedPass.CBuffers.Vertex.push_back(Gather::ModelData);
+					Gather::AnimatedPass.CBuffers.Pixel.push_back(Color);
+					Gather::AnimatedPass.RenderStates.Rasterizer = RenderStates::rs;
+					Gather::AnimatedPass.RenderStates.SampleCount = 1;
+					Gather::AnimatedPass.RenderStates.SampleState = RenderStates::ss;
+					Gather::AnimatedPass.RenderStates.DepthStencil = RenderStates::dsState;
 					for(int i = 0; i<GBufferSize;++i)
 					{
-						Gather::Pass.RTV.push_back(GBufferRTV[i]);
+						Gather::AnimatedPass.RTV.push_back(GBufferRTV[i]);
 					}
-					Gather::Pass.depth = Core::depthStencil;
+					Gather::AnimatedPass.depth = Core::depthStencil;
+#pragma endregion
+
+#pragma region Instanced Pass
+					Gather::InstancedPass.Shaders.Pixel = GetShader::Pixel(L"IGather");
+					Gather::InstancedPass.Shaders.Vertex = GetShader::Vertex(L"IGather");
+
+					D3D11_INPUT_ELEMENT_DESC InstInDesc[15];
+
+					InstInDesc[0].AlignedByteOffset = 0;
+					InstInDesc[0].SemanticName = "POSITION";
+					InstInDesc[0].SemanticIndex = 0;
+					InstInDesc[0].InputSlot = 0;
+					InstInDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					InstInDesc[0].InstanceDataStepRate = 0;
+					InstInDesc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+
+					InstInDesc[1].AlignedByteOffset = 12;
+					InstInDesc[1].SemanticName = "TEXCOORD";
+					InstInDesc[1].SemanticIndex = 0;
+					InstInDesc[1].InputSlot = 0;
+					InstInDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					InstInDesc[1].InstanceDataStepRate = 0;
+					InstInDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+
+					InstInDesc[2].AlignedByteOffset = 20;
+					InstInDesc[2].SemanticName = "NORMAL";
+					InstInDesc[2].SemanticIndex = 0;
+					InstInDesc[2].InputSlot = 0;
+					InstInDesc[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					InstInDesc[2].InstanceDataStepRate = 0;
+					InstInDesc[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+
+					InstInDesc[3].AlignedByteOffset = 36;
+					InstInDesc[3].SemanticName = "BONEINDEX";
+					InstInDesc[3].SemanticIndex = 0;
+					InstInDesc[3].InputSlot = 0;
+					InstInDesc[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					InstInDesc[3].InstanceDataStepRate = 0;
+					InstInDesc[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[4].AlignedByteOffset = 48;
+					InstInDesc[4].SemanticName = "BONEWEIGHT";
+					InstInDesc[4].SemanticIndex = 0;
+					InstInDesc[4].InputSlot = 0;
+					InstInDesc[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					InstInDesc[4].InstanceDataStepRate = 0;
+					InstInDesc[4].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					/// Set WV
+					InstInDesc[5].AlignedByteOffset = 0;
+					InstInDesc[5].SemanticName = "WV";
+					InstInDesc[5].SemanticIndex = 0;
+					InstInDesc[5].InputSlot = 1;
+					InstInDesc[5].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[5].InstanceDataStepRate = 1;
+					InstInDesc[5].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[6].AlignedByteOffset = 16;
+					InstInDesc[6].SemanticName = "WV";
+					InstInDesc[6].SemanticIndex = 1;
+					InstInDesc[6].InputSlot = 1;
+					InstInDesc[6].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[6].InstanceDataStepRate = 1;
+					InstInDesc[6].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[7].AlignedByteOffset = 32;
+					InstInDesc[7].SemanticName = "WV";
+					InstInDesc[7].SemanticIndex = 2;
+					InstInDesc[7].InputSlot = 1;
+					InstInDesc[7].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[7].InstanceDataStepRate = 1;
+					InstInDesc[7].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[8].AlignedByteOffset = 48;
+					InstInDesc[8].SemanticName = "WV";
+					InstInDesc[8].SemanticIndex = 3;
+					InstInDesc[8].InputSlot = 1;
+					InstInDesc[8].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[8].InstanceDataStepRate = 1;
+					InstInDesc[8].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					//WVP
+
+					InstInDesc[9].AlignedByteOffset = 64;
+					InstInDesc[9].SemanticName = "WVP";
+					InstInDesc[9].SemanticIndex = 0;
+					InstInDesc[9].InputSlot = 1;
+					InstInDesc[9].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[9].InstanceDataStepRate = 1;
+					InstInDesc[9].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[10].AlignedByteOffset = 80;
+					InstInDesc[10].SemanticName = "WVP";
+					InstInDesc[10].SemanticIndex = 1;
+					InstInDesc[10].InputSlot = 1;
+					InstInDesc[10].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[10].InstanceDataStepRate = 1;
+					InstInDesc[10].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[11].AlignedByteOffset = 96;
+					InstInDesc[11].SemanticName = "WVP";
+					InstInDesc[11].SemanticIndex = 2;
+					InstInDesc[11].InputSlot = 1;
+					InstInDesc[11].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[11].InstanceDataStepRate = 1;
+					InstInDesc[11].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[12].AlignedByteOffset = 112;
+					InstInDesc[12].SemanticName = "WVP";
+					InstInDesc[12].SemanticIndex = 3;
+					InstInDesc[12].InputSlot = 1;
+					InstInDesc[12].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[12].InstanceDataStepRate = 1;
+					InstInDesc[12].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+					InstInDesc[13].AlignedByteOffset = 128;
+					InstInDesc[13].SemanticName = "TINT";
+					InstInDesc[13].SemanticIndex = 0;
+					InstInDesc[13].InputSlot = 1;
+					InstInDesc[13].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[13].InstanceDataStepRate = 1;
+					InstInDesc[13].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+
+					InstInDesc[14].AlignedByteOffset = 140;
+					InstInDesc[14].SemanticName = "GTINT";
+					InstInDesc[14].SemanticIndex = 0;
+					InstInDesc[14].InputSlot = 1;
+					InstInDesc[14].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					InstInDesc[14].InstanceDataStepRate = 1;
+					InstInDesc[14].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+
+					Shader::CreateInputLayout(InstInDesc,15,GetShader::Vertex(L"IGather"),Gather::InstancedPass.IAStage.Layout);
+					Gather::InstancedPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+					Gather::InstancedPass.RenderStates.Rasterizer = RenderStates::rs;
+					Gather::InstancedPass.RenderStates.SampleCount = 1;
+					Gather::InstancedPass.RenderStates.SampleState = RenderStates::ss;
+					Gather::InstancedPass.RenderStates.DepthStencil = RenderStates::dsState;
+					for(int i = 0; i<GBufferSize;++i)
+					{
+						Gather::InstancedPass.RTV.push_back(GBufferRTV[i]);
+					}
+					Gather::InstancedPass.depth = Core::depthStencil;
+#pragma endregion
 
 					////---------------- Light Pass Setup ----------------------------
 					Light::Pass.Shaders.Compute = GetShader::Compute(L"LightPass");
@@ -496,6 +649,7 @@ namespace Oyster
 				{
 					Gather::ModelData.~Buffer();
 					Gather::AnimationData.~Buffer();
+					Gather::InstancedData.~Buffer();
 					Light::LightConstantsData.~Buffer();
 					Light::PointLightsData.~Buffer();
 					Gui::Data.~Buffer();
@@ -522,20 +676,21 @@ namespace Oyster
 						SAFE_RELEASE(LBufferSRV[i]);
 					}
 
-					SAFE_RELEASE(Gather::Pass.IAStage.Layout);
+					SAFE_RELEASE(Gather::AnimatedPass.IAStage.Layout);
+					SAFE_RELEASE(Gather::InstancedPass.IAStage.Layout);
 
-					SAFE_RELEASE(Gather::Pass.RenderStates.BlendState);
+					SAFE_RELEASE(Gather::AnimatedPass.RenderStates.BlendState);
 
-					SAFE_RELEASE(Gather::Pass.RenderStates.DepthStencil);
+					SAFE_RELEASE(Gather::AnimatedPass.RenderStates.DepthStencil);
 
-					SAFE_RELEASE(Gather::Pass.RenderStates.Rasterizer);
+					SAFE_RELEASE(Gather::AnimatedPass.RenderStates.Rasterizer);
 
-					for(int i = 0; i < Gather::Pass.RenderStates.SampleCount; ++i)
+					for(int i = 0; i < Gather::AnimatedPass.RenderStates.SampleCount; ++i)
 					{
-						SAFE_RELEASE(Gather::Pass.RenderStates.SampleState[i]);
+						SAFE_RELEASE(Gather::AnimatedPass.RenderStates.SampleState[i]);
 					}
 				
-					SAFE_DELETE_ARRAY(Gather::Pass.RenderStates.SampleState);
+					SAFE_DELETE_ARRAY(Gather::AnimatedPass.RenderStates.SampleState);
 
 					SAFE_RELEASE(Gui::Pass.IAStage.Layout);
 

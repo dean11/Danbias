@@ -376,9 +376,13 @@ namespace LinearAlgebra3D
 	template<typename ScalarType>
 	inline ::LinearAlgebra::Vector3<ScalarType> AngularAxis( const ::LinearAlgebra::Quaternion<ScalarType> &rotation )
 	{ // see http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
-		ScalarType angle = ScalarType(2) * (ScalarType)::std::acos( rotation.real ),
-				   multiplier = angle / (ScalarType)::std::sqrt( ScalarType(1) - rotation.real * rotation.real );
-		return multiplier * rotation.imaginary;
+		if( rotation.real < ScalarType(1) )
+		{
+			ScalarType angle = ScalarType(2) * ScalarType( ::std::acos(rotation.real) ),
+					   multiplier = angle / ScalarType( ::std::sqrt(ScalarType(1) - rotation.real * rotation.real) );
+			return multiplier * rotation.imaginary;
+		}
+		else return ::LinearAlgebra::Vector3<ScalarType>::null;
 	}
 
 	// All Matrix to AngularAxis conversions here is incorrect
@@ -838,7 +842,7 @@ namespace LinearAlgebra3D
 
 	template<typename ScalarType>
 	::LinearAlgebra::Vector3<ScalarType> & SnapAngularAxis( const ::LinearAlgebra::Vector3<ScalarType> &startAngularAxis, const ::LinearAlgebra::Vector3<ScalarType> &localStartNormal, const ::LinearAlgebra::Vector3<ScalarType> &worldEndNormal, ::LinearAlgebra::Vector3<ScalarType> &targetMem = ::LinearAlgebra::Vector3<ScalarType>() )
-	{
+	{ //! @todo TODO: This code is broken and do not work!
 		::LinearAlgebra::Vector3<ScalarType> worldStartNormal( WorldAxisOf(Rotation(startAngularAxis), localStartNormal) );
 		targetMem = worldStartNormal.Cross( worldEndNormal );
 		targetMem *= (ScalarType)::std::acos( ::Utility::Value::Clamp(worldStartNormal.Dot(worldEndNormal), (ScalarType)0, (ScalarType)1) );

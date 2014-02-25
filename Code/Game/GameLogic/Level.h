@@ -66,6 +66,7 @@ namespace GameLogic
 		
 		int getNrOfDynamicObj();
 		Object* GetObj( int ID ) const;
+
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
 
