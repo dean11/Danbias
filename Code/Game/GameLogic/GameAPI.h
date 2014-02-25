@@ -26,10 +26,13 @@ namespace GameLogic
 	namespace GameEvent
 	{
 		typedef void(*ObjectMovedFunction)(IObjectData* object);	// Callback method that recieves and object
-		typedef void(*ObjectDisabledFunction)(IObjectData* object, float seconds);	// Callback method that recieves and object
+		typedef void(*ObjectDisabledFunction)(IObjectData* object);	// Callback method that recieves and object
+		typedef void(*ObjectEnabledFunction)(IObjectData* object);	// Callback method that recieves and object
 		typedef void(*ObjectHpFunction)(IObjectData* object, float hp);	// Callback method that sends obj HP
 		typedef void(*ObjectRespawnedFunction)(IObjectData* object, Oyster::Math::Float3 spawnPos );	// Callback method that sends spawnPos
 		typedef void(*ObjectDeadFunction)(IObjectData* victim, IObjectData* killer, float seconds);	// Callback method that sends killer and death timer
+		typedef void(*PickupEventFunction)(IObjectData* player, int pickupEffectID );	// Callback method that sends killer and death timer
+		typedef void(*AnimationEventFunction)(IObjectData* player, int actionID );	// Callback method that sends killer and death timer
 		//etc...
 	};
 
@@ -177,15 +180,14 @@ namespace GameLogic
 		/**	Set a specific object event subscription callback
 		*	@param 
 		*/
-		virtual void SetSubscription(GameEvent::ObjectMovedFunction functionPointer) = 0;
-
-		/**	Set a specific object event subscription callback
-		*	@param 
-		*/
-		virtual void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
+		virtual void SetMoveSubscription(GameEvent::ObjectMovedFunction functionPointer) = 0;
+		virtual void SetDisableSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
+		virtual void SetEnableSubscription(GameEvent::ObjectEnabledFunction functionPointer) = 0;
 		virtual void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer) = 0;
 		virtual void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer) = 0;
 		virtual void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) = 0;
+		virtual void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) = 0;
+		virtual void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) = 0;
 
 	};	
 }

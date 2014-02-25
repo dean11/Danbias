@@ -434,10 +434,13 @@ void Level::Update(float deltaTime)
 		{
 			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
 			// HACK to avoid crasch. affected by tag is NULL
+			Player* killer = this->playerObjects[i]->getAffectingPlayer();
 			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
 			//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->getAffectingPlayer(), DEATH_TIMER); // add killer ID
 		}
 	}
+
+
 }
 int Level::getNrOfDynamicObj()
 {

@@ -146,9 +146,13 @@ using namespace DanBias;
 			GameSession::gameSession->Send(p.GetProtocol());
 		//}	
 	}
-	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject, float seconds )
+	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject )
 	{
-		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID(), seconds).GetProtocol());
+		//GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
+	}
+	void GameSession::ObjectEnabled( GameLogic::IObjectData* movedObject )
+	{
+		//GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
 	}
 	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
 	{
@@ -161,6 +165,16 @@ using namespace DanBias;
 	void GameSession::ObjectDead( GameLogic::IObjectData* victim, GameLogic::IObjectData* killer, float seconds )
 	{
 		GameSession::gameSession->Send(Protocol_ObjectDie(victim->GetID(), killer->GetID(), seconds).GetProtocol());
+	}
+	void GameSession::PickupEvent( GameLogic::IObjectData* movedObject, int pickupEffectID )
+	{
+		// send pickup protocol
+		GameSession::gameSession->Send(Protocol_ObjectPickup(movedObject->GetID(), pickupEffectID).GetProtocol());
+	}
+	void GameSession::ActionEvent( GameLogic::IObjectData* movedObject , int actionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectAction(movedObject->GetID(), actionID).GetProtocol());
 	}
 //*****************************************************//
 //****************** Protocol methods *****************//

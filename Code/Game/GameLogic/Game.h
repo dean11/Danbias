@@ -79,11 +79,14 @@ namespace GameLogic
 		bool NewFrame()																									override;
 		void SetFPS( int FPS )																							override;
 		void SetFrameTimeLength( float seconds )																		override;
-		void SetSubscription(GameEvent::ObjectMovedFunction functionPointer)											override;
-		void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)											override;
-		void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer)												override;
-		void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer)									override;
-		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)											override;
+		void SetMoveSubscription(GameEvent::ObjectMovedFunction functionPointer) 										override;
+		void SetDisableSubscription(GameEvent::ObjectDisabledFunction functionPointer) 									override;
+		void SetEnableSubscription(GameEvent::ObjectEnabledFunction functionPointer) 									override;
+		void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer) 											override;
+		void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer) 								override;
+		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) 										override;
+		void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) 									override;
+		void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) 										override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -96,11 +99,15 @@ namespace GameLogic
 		LevelData* level;
 		float frameTime;
 		bool initiated;
-		GameEvent::ObjectDisabledFunction	onDisableFnc;
+
 		GameEvent::ObjectMovedFunction		onMoveFnc;
+		GameEvent::ObjectDisabledFunction	onDisableFnc;
+		GameEvent::ObjectEnabledFunction	onEnableFnc;
 		GameEvent::ObjectHpFunction			onDamageTakenFnc;
 		GameEvent::ObjectRespawnedFunction 	onRespawnFnc;
 		GameEvent::ObjectDeadFunction		onDeadFnc;
+		GameEvent::AnimationEventFunction	onPlayerActionEventFnc;
+		GameEvent::PickupEventFunction		onPickupEventFnc;
 	};	
 }
 

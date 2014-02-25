@@ -106,11 +106,14 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 	}
 
 /* Set some game instance data options */
-	this->gameInstance.SetSubscription(GameSession::ObjectMove);
-	this->gameInstance.SetSubscription(GameSession::ObjectDisabled);
+	this->gameInstance.SetMoveSubscription(GameSession::ObjectMove);
+	this->gameInstance.SetDisableSubscription(GameSession::ObjectDisabled);
+	this->gameInstance.SetEnableSubscription(GameSession::ObjectEnabled);
 	this->gameInstance.SetHpSubscription(GameSession::ObjectDamaged);
 	this->gameInstance.SetRespawnSubscription(GameSession::ObjectRespawned);
 	this->gameInstance.SetDeadSubscription(GameSession::ObjectDead);
+	this->gameInstance.SetActionSubscription(GameSession::ActionEvent);
+	this->gameInstance.SetPickupSubscription(GameSession::PickupEvent);
 	this->gameInstance.SetFPS(60);
 
 	this->description.clients.Clear();
