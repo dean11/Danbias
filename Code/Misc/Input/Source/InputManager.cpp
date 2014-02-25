@@ -57,6 +57,14 @@ InputManager* InputManager::CreateInputManager()
 {
 	return CreateManager();
 }
+void InputManager::DestroyInputManager()
+{
+	if(!defaultInstance) return;
+
+	defaultInstance->Destroy();
+	delete defaultInstance;
+	defaultInstance = 0;
+}
 void InputManager::DestroyInputManager(InputManager* inputSystem)
 {
 	if(!inputSystem) return;
