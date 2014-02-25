@@ -226,6 +226,10 @@ void Keyboard::BindTextTarget( ::std::wstring *field )
 	{
 		this->writePos = field->size();
 	}
+	else
+	{
+		this->writePos = 0;
+	}
 }
 void Keyboard::ReleaseTextTarget( )
 {
