@@ -463,20 +463,21 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			{
 				Protocol_ObjectDamage decoded(data);
 				C_Object *object; 
-				object = (this->privData->players)[decoded.object_ID];
+				object = (this->privData->players)[decoded.objectID];
 				if( !object)
 				{
 					// if it is not a player 
-					object = (*this->privData->dynamicObjects)[decoded.object_ID];
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
 				}
 
 				if( object )
 				{
-					if( this->privData->myId == decoded.object_ID )
+					if( this->privData->myId == decoded.objectID )
 					{
+						// show that you took dmg
 						if(currGameUI == gameUI)
 						{
-							// set my HP
+							// set given players HP 
 							((GamingUI*)currGameUI)->SetHPtext(std::to_wstring(decoded.healthLost));
 						}
 					}
@@ -484,7 +485,8 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectHealthStatus:		
-			{
+			{ 
+				// don't know if needed
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectPosition:
@@ -492,16 +494,16 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Protocol_ObjectPosition decoded(data);
 
 				C_Object *object; 
-				object = (this->privData->players)[decoded.object_ID];
+				object = (this->privData->players)[decoded.objectID];
 				if( !object)
 				{
 					// if it is not a player 
-					object = (*this->privData->dynamicObjects)[decoded.object_ID];
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
 				}
 
 				if( object )
 				{
-					if( this->privData->myId == decoded.object_ID )
+					if( this->privData->myId == decoded.objectID )
 					{
 						this->privData->camera.SetPosition( decoded.position );
 					}
@@ -517,11 +519,11 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			{
 				Protocol_ObjectScale decoded(data);
 				C_Object *object; 
-				object = (this->privData->players)[decoded.object_ID];
+				object = (this->privData->players)[decoded.objectID];
 				if( !object)
 				{
 					// if it is not a player 
-					object = (*this->privData->dynamicObjects)[decoded.object_ID];
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
 				}
 
 				if( object )
@@ -538,16 +540,16 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Protocol_ObjectRotation decoded(data);
 				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
 				C_Object *object; 
-				object = (this->privData->players)[decoded.object_ID];
+				object = (this->privData->players)[decoded.objectID];
 				if( !object)
 				{
 					// if it is not a player 
-					object = (*this->privData->dynamicObjects)[decoded.object_ID];
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
 				}
 
 				if( object )
 				{
-					if( this->privData->myId == decoded.object_ID )
+					if( this->privData->myId == decoded.objectID )
 					{
 						this->privData->camera.SetRotation( rotation );
 					}
@@ -565,16 +567,16 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Float3 position = decoded.position;
 				Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
 				C_Object *object; 
-				object = (this->privData->players)[decoded.object_ID];
+				object = (this->privData->players)[decoded.objectID];
 				if( !object)
 				{
 					// if it is not a player 
-					object = (*this->privData->dynamicObjects)[decoded.object_ID];
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
 				}
 
 				if( object )
 				{
-					if( this->privData->myId == decoded.object_ID )
+					if( this->privData->myId == decoded.objectID )
 					{
 						this->privData->camera.SetPosition( position );
 						this->privData->camera.SetRotation( rotation );
@@ -643,7 +645,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 					modelData.rotation = Quaternion( Float3(decoded.position), decoded.rotationQ[3] );
 					modelData.scale = Float3( decoded.scale );
 					modelData.visible = true;
-					modelData.id = decoded.object_ID;
+					modelData.id = decoded.objectID;
 
 					::Utility::String::StringToWstring( decoded.name, modelData.modelPath );
 				}
@@ -658,14 +660,14 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				object->InitRB( RBData );
 				// !RB DEBUG 
 
-				(*this->privData->dynamicObjects)[decoded.object_ID] = object;
+				(*this->privData->dynamicObjects)[decoded.objectID] = object;
 
 			}		
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectCreatePlayer:
 			{
 				Protocol_ObjectCreatePlayer decoded(data);
-				this->InitiatePlayer( decoded.object_ID, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
+				this->InitiatePlayer( decoded.objectID, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
