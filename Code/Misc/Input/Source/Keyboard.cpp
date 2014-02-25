@@ -12,12 +12,14 @@ struct Keyboard::KeyboardCallbackList
 {
 	enum CallbackDataType
 	{
+		CallbackDataType_OnEvent,
 		CallbackDataType_OnPress,
 		CallbackDataType_OnDown,
 		CallbackDataType_OnRelease
 	} type;
 	union CallbackData
 	{
+		Typedefs::OnKeyEventCallback	keyEventCallback;
 		Typedefs::OnKeyPressCallback	keyPressCallback;
 		Typedefs::OnKeyDownCallback		keyDownCallback;
 		Typedefs::OnKeyReleaseCallback	keyReleaseCallback;
@@ -29,7 +31,8 @@ struct Keyboard::KeyboardCallbackList
 		operator bool(){ return this->keyDownCallback != 0; }
 	} function;
 	KeyboardCallbackList *next;
-	KeyboardCallbackList(CallbackData func, CallbackDataType t) :function(func), next(0), type(t) { }
+	void* tag;
+	KeyboardCallbackList(CallbackData func, CallbackDataType t, void* ct) :function(func), next(0), type(t), tag(ct) { }
 };
 
 void ClearList(Keyboard::KeyboardCallbackList* first)
@@ -44,7 +47,7 @@ void ClearList(Keyboard::KeyboardCallbackList* first)
 		delete removee;
 	}
 }
-void AddToList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallbackList::CallbackData data, Keyboard::KeyboardCallbackList::CallbackDataType type)
+void AddToList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallbackList::CallbackData data, Keyboard::KeyboardCallbackList::CallbackDataType type, void* tag)
 {
 	Keyboard::KeyboardCallbackList *w = first;
 	Keyboard::KeyboardCallbackList *prev = first;
@@ -54,7 +57,7 @@ void AddToList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallback
 	Keyboard::KeyboardCallbackList::CallbackData f;
 	f = data;
 
-	prev->next = new Keyboard::KeyboardCallbackList(f, type);
+	prev->next = new Keyboard::KeyboardCallbackList(f, type, tag);
 }
 void RemoveFromList(Keyboard::KeyboardCallbackList* first, Keyboard::KeyboardCallbackList::CallbackData data)
 {
@@ -112,6 +115,27 @@ Keyboard::~Keyboard()
 
 }
 
+void Keyboard::InternalOnEvent(Struct::KeyboardEventData& data)
+{
+	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
+	{
+		if(this->keyEventSubscrivers[i])
+		{
+			this->keyEventSubscrivers[i]->OnKeyEvent(data);
+		}
+	}
+	KeyboardCallbackList *w = this->callbackList;
+	while (w)
+	{
+		if(w->function)
+			if (w->type == KeyboardCallbackList::CallbackDataType_OnEvent)
+			{
+				data.tag = w->tag;
+				w->function.keyEventCallback(data);
+			}
+		w = w->next;
+	}
+}
 void Keyboard::InternalOnKeyPress(Enum::SAKI key)
 {
 	for (unsigned int i = 0; i < this->keyEventSubscrivers.size(); i++)
@@ -126,7 +150,9 @@ void Keyboard::InternalOnKeyPress(Enum::SAKI key)
 	{
 		if(w->function)
 			if (w->type == KeyboardCallbackList::CallbackDataType_OnPress)
-				w->function.keyPressCallback(key, this);
+			{
+				w->function.keyPressCallback(key, this, w->tag);
+			}
 		w = w->next;
 	}
 }
@@ -144,7 +170,7 @@ void Keyboard::InternalOnKeyDown(Enum::SAKI key)
 	{
 		if(w->function)
 			if (w->type == KeyboardCallbackList::CallbackDataType_OnDown)
-				w->function.keyDownCallback(key, this);
+				w->function.keyDownCallback(key, this, w->tag);
 		w = w->next;
 	}
 }
@@ -162,46 +188,26 @@ void Keyboard::InternalOnKeyRelease(Enum::SAKI key)
 	{
 		if(w->function)
 			if (w->type == KeyboardCallbackList::CallbackDataType_OnRelease)
-				w->function.keyReleaseCallback(key, this);
+				w->function.keyReleaseCallback(key, this, w->tag);
 		w = w->next;
 	}
 }
 
-void Keyboard::AddOnKeyPressCallback (OnKeyPressCallback func)
+void Keyboard::AddKeyboardEvent(KeyboardEvent* object)
 {
-	KeyboardCallbackList::CallbackData d;
-	d.keyPressCallback = func;
-	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnPress);
-	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnPress);
-}
-void Keyboard::AddOnKeyDownCallback (OnKeyDownCallback func)
-{
-	KeyboardCallbackList::CallbackData d;
-	d.keyDownCallback = func;
-	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnDown);
-	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnDown);
-}
-void Keyboard::AddOnKeyReleaseCallback (OnKeyReleaseCallback func)
-{
-	KeyboardCallbackList::CallbackData d;
-	d.keyReleaseCallback = func;
-	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnRelease);
-	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnRelease);
-}
+	if(ExistsInList(this->keyEventSubscrivers, object)) return;
 
-void Keyboard::RemoveOnKeyPressCallback (OnKeyPressCallback func)
-{
-	RemoveFromList(this->callbackList, func);
+	this->keyEventSubscrivers.push_back(object);
 }
-void Keyboard::RemoveOnKeyDownCallback (OnKeyDownCallback func)
+void Keyboard::RemoveKeyboardEvent(KeyboardEvent* object)
 {
-	RemoveFromList(this->callbackList, func);
+	int i = -1;
+	if((i = ExistsInList(this->keyEventSubscrivers, object)))
+	{
+		std::swap(this->keyEventSubscrivers[i], this->keyEventSubscrivers[this->keyEventSubscrivers.size() - 1]);
+		this->keyEventSubscrivers.resize(this->keyEventSubscrivers.size() - 1);
+	}
 }
-void Keyboard::RemoveOnKeyReleaseCallback (OnKeyReleaseCallback func)
-{
-	RemoveFromList(this->callbackList, func);
-}
-
 void Keyboard::operator+= (KeyboardEvent* object)
 {
 	if(ExistsInList(this->keyEventSubscrivers, object)) return;
@@ -217,6 +223,56 @@ void Keyboard::operator-= (KeyboardEvent* object)
 		this->keyEventSubscrivers.resize(this->keyEventSubscrivers.size() - 1);
 	}
 }
+
+void Keyboard::AddOnKeyEventCallback (OnKeyEventCallback func, void* tag)
+{
+	KeyboardCallbackList::CallbackData d;
+	d.keyEventCallback = func;
+	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnEvent, tag);
+	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnEvent, tag);
+}
+void Keyboard::AddOnKeyPressCallback (OnKeyPressCallback func, void* tag)
+{
+	KeyboardCallbackList::CallbackData d;
+	d.keyPressCallback = func;
+	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnPress, tag);
+	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnPress, tag);
+}
+void Keyboard::AddOnKeyDownCallback (OnKeyDownCallback func, void* tag)
+{
+	KeyboardCallbackList::CallbackData d;
+	d.keyDownCallback = func;
+	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnDown, tag);
+	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnDown, tag);
+}
+void Keyboard::AddOnKeyReleaseCallback (OnKeyReleaseCallback func, void* tag)
+{
+	KeyboardCallbackList::CallbackData d;
+	d.keyReleaseCallback = func;
+	if(!this->callbackList) this->callbackList = new KeyboardCallbackList(d, KeyboardCallbackList::CallbackDataType_OnRelease, tag);
+	else					AddToList(this->callbackList, d, KeyboardCallbackList::CallbackDataType_OnRelease, tag);
+}
+
+void Keyboard::RemoveOnKeyEventCallback (OnKeyEventCallback func)
+{
+	Keyboard::KeyboardCallbackList::CallbackData temp;
+	temp.keyEventCallback = func;
+	RemoveFromList(this->callbackList, temp);
+}
+void Keyboard::RemoveOnKeyPressCallback (OnKeyPressCallback func)
+{
+	RemoveFromList(this->callbackList, func);
+}
+void Keyboard::RemoveOnKeyDownCallback (OnKeyDownCallback func)
+{
+	RemoveFromList(this->callbackList, func);
+}
+void Keyboard::RemoveOnKeyReleaseCallback (OnKeyReleaseCallback func)
+{
+	RemoveFromList(this->callbackList, func);
+}
+
+
 
 void Keyboard::BindTextTarget( ::std::wstring *field )
 {

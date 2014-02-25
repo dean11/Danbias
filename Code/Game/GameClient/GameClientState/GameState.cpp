@@ -87,6 +87,8 @@ bool GameState::Init( SharedStateContent &shared )
 	this->renderWhireframe = false;
 	// !DEGUG KEYS
 
+	shared.keyboardDevice->ReleaseTextTarget();
+
 	auto light = this->privData->lights->begin();
 	for( ; light != this->privData->lights->end(); ++light )
 	{

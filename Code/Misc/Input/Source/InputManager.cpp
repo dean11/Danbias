@@ -59,6 +59,9 @@ InputManager* InputManager::CreateInputManager()
 }
 void InputManager::DestroyInputManager()
 {
+	if(!defaultInstance) return;
+
+	defaultInstance->Destroy();
 	delete defaultInstance;
 	defaultInstance = 0;
 }

@@ -152,6 +152,10 @@ void Win32Mouse::Deactivate ()
 
 void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 {
+	static MouseEventData mouseEventData;
+	memset(&mouseEventData, 0, sizeof(MouseEventData));
+
+
 	bool isUp = true;
 	Enum::SAMI btn = Enum::SAMI_Unknown;
 	int delta = 0;
@@ -167,11 +171,30 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		ContainPoint(this->pixelPos, this->windowSize);
 
 		InternalOnMove(this->pixelPos, velocity);
+
+		GetNormalizedPosition( mouseEventData.normalizedPos );
+		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.velocity			= velocity;
+		mouseEventData.buttonState		= Enum::ButtonState_Unknown;
+		mouseEventData.scrollDelta		= 0;
+		mouseEventData.sender			= this;
+		mouseEventData.type				= SAMI::SAMI_MouseMove;
+		
+		InternalOnEvent(mouseEventData);
 	}
 
 	if(delta != 0)
 	{
 		InternalOnScroll(delta);
+
+		GetNormalizedPosition( mouseEventData.normalizedPos );
+		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.buttonState		= Enum::ButtonState_Unknown;
+		mouseEventData.scrollDelta		= delta;
+		mouseEventData.sender			= this;
+		mouseEventData.type				= SAMI::SAMI_MouseScroll;
+		
+		InternalOnEvent(mouseEventData);
 	}
 
 
@@ -184,6 +207,14 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 	if(isUp)
 	{
 		InternalOnBtnRelease(btn);
+
+		GetNormalizedPosition( mouseEventData.normalizedPos );
+		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.buttonState		= Enum::ButtonState_Release;
+		mouseEventData.type				= btn;
+		mouseEventData.sender			= this;
+		
+		InternalOnEvent(mouseEventData);
 	}
 	//The btn is pressed.
 	else
@@ -192,10 +223,26 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		if(this->buttons[btn].isDown)
 		{
 			InternalOnBtnDown(btn);
+
+			GetNormalizedPosition( mouseEventData.normalizedPos );
+			mouseEventData.pixelPos			= this->pixelPos;
+			mouseEventData.buttonState		= Enum::ButtonState_Down;
+			mouseEventData.type				= btn;
+			mouseEventData.sender			= this;
+		
+			InternalOnEvent(mouseEventData);
 		}
 		else
 		{
 			InternalOnBtnPress(btn);
+
+			GetNormalizedPosition( mouseEventData.normalizedPos );
+			mouseEventData.pixelPos			= this->pixelPos;
+			mouseEventData.buttonState		= Enum::ButtonState_Press;
+			mouseEventData.type				= btn;
+			mouseEventData.sender			= this;
+		
+			InternalOnEvent(mouseEventData);
 		}
 	}
 }

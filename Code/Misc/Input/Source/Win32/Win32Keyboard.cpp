@@ -66,10 +66,10 @@ void Win32Keyboard::Deactivate ()
 
 void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 {
-	if(!this->active)
-	{
-		return;
-	}
+	if(!this->active)	return;
+
+	static Struct::KeyboardEventData keyboardEventData;
+	memset(&keyboardEventData, 0, sizeof(Struct::KeyboardEventData));
 
 	bool isUp = (( keyboard.Flags & RI_KEY_BREAK) != 0);
 	SAKI key = SAKI_Unknown;
@@ -86,6 +86,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 			this->keys[key].isDown = false;
 			this->keys[key].isE0 = isE0;
 			this->keys[key].makecode = keyboard.MakeCode;
+
+			keyboardEventData.key = key;
+			keyboardEventData.sender = this;
+			keyboardEventData.state = Enum::ButtonState_Release;
+			InternalOnEvent(keyboardEventData);
 		}
 		//The key is pressed.
 		else /*if (k.Flags == RI_KEY_MAKE || k.Flags == (RI_KEY_MAKE | RI_KEY_E0) || k.Flags == (RI_KEY_MAKE | RI_KEY_E1))*/
@@ -93,6 +98,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 			if(this->keys[key].isDown)
 			{
 				this->InternalOnKeyDown(key);
+
+				keyboardEventData.key = key;
+				keyboardEventData.sender = this;
+				keyboardEventData.state = Enum::ButtonState_Down;
+				InternalOnEvent(keyboardEventData);
 			}
 			else
 			{
@@ -100,6 +110,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				this->keys[key].isDown = true;
 				this->keys[key].isE0 = isE0;
 				this->keys[key].makecode = keyboard.MakeCode;
+
+				keyboardEventData.key = key;
+				keyboardEventData.sender = this;
+				keyboardEventData.state = Enum::ButtonState_Press;
+				InternalOnEvent(keyboardEventData);
 			}
 		}
 	}

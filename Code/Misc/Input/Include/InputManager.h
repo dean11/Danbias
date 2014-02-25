@@ -26,7 +26,7 @@ namespace Input
 			static InputManager*			CreateInputManager				();
 
 			/**
-			* @return Destroy default input manager.
+			* @return Destroys the default input manager.
 			*/
 			static void						DestroyInputManager				();
 

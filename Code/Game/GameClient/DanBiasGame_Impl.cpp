@@ -254,8 +254,8 @@ namespace DanBias
 			data.networkClient.Disconnect();
 
 		data.state = nullptr;
-		SafeDeleteInstance( data.sharedStateContent.network );
 
+		Input::InputManager::DestroyInputManager();
 		EventHandler::Instance().Clean();
 		Graphics::API::Clean();
 

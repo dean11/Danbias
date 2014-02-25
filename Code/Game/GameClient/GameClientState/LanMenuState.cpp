@@ -62,21 +62,21 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
 
 	// create guiElements
-	this->privData->connectIP = new TextField<LanMenuState*>( L"color_white.png", Float4(1.0f), Float4(0.0f), this, Float3(0.5f, 0.3f, 0.5f), Float2(0.8f, 0.09f), ResizeAspectRatio_None );
+	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
 	this->privData->connectIP->ReserveLines( 1 );
 	this->privData->connectIP->AppendText( L"127.0.0.1" );
 	//this->privData->connectIP->AppendText( L"194.47.150.206" ); // HACK: connecting to Dennis's server
-	this->privData->connectIP->SetFontHeight( 0.08f );
+	this->privData->connectIP->SetFontHeight( 0.035f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
-	this->privData->connectIP->SetTopAligned();
+	this->privData->connectIP->SetBottomAligned();
 	
 	this->privData->guiElements.AddButton( this->privData->connectIP );
 
 	ButtonRectangle<LanMenuState*> *guiElements;
-	guiElements = new ButtonRectangle<LanMenuState*>( L"color_white.png", L"Connect", Float4(1.0f),Float4(0.0f),Float4(0.0f),Float4(0.0f), OnButtonInteract_Connect, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-join.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Connect, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
-	guiElements = new ButtonRectangle<LanMenuState*>( L"color_white.png", L"Exit", Float4(1.0f),Float4(0.0f),Float4(0.0f),Float4(0.0f), OnButtonInteract_Exit, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.3f, 0.05f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-back.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Exit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
 	// bind guiElements collection to the singleton eventhandler
