@@ -102,3 +102,7 @@ void Game::PlayerData::Release()
 {
 	this->player->ReleaseDynamicObject();
 }
+Player* Game::PlayerData::GetPlayer()
+{
+	return this->player;
+}

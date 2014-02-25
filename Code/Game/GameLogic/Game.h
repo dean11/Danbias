@@ -45,7 +45,7 @@ namespace GameLogic
 			ObjectSpecialType GetObjectType()	const													override;
 			void Inactivate()																			override;
 			void Release()																				override;
-
+			Player* GetPlayer();
 			Player *player;
 		};
 
@@ -63,7 +63,8 @@ namespace GameLogic
 			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
 			void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& mem) const override;
-
+			void Update(float deltaTime);
+			void AddPlayerToGame(IPlayerData *player);
 			Level *level;
 		};
 
@@ -80,16 +81,16 @@ namespace GameLogic
 		void SetFrameTimeLength( float seconds )																		override;
 		void SetSubscription(GameEvent::ObjectMovedFunction functionPointer)											override;
 		void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)											override;
-		void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer)											override;
-		void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer)										override;
-		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)												override;
-		
+		void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer)												override;
+		void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer)									override;
+		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)											override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
 
 		static void PhysicsOnMove(const Oyster::Physics::ICustomBody *object);
 		static void PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> proto);
+		static void PhysicsOnDead(const Oyster::Physics::ICustomBody *object);
 
 		Utility::DynamicMemory::DynamicArray<PlayerData*> players;
 		LevelData* level;

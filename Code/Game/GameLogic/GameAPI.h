@@ -117,8 +117,10 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
+			virtual void Update(float deltaTime)						= 0;
 			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
+			virtual void AddPlayerToGame(IPlayerData *player)				= 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 

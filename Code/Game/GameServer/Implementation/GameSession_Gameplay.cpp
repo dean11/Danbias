@@ -188,7 +188,6 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_PlayerShot:					this->Gameplay_PlayerShot				( Protocol_PlayerShot			(p), c );
 			break;
-		
 			case protocol_Gameplay_ObjectPickup:				this->Gameplay_ObjectPickup				( Protocol_ObjectPickup			(p), c );
 			break;
 			case protocol_Gameplay_ObjectDamage:				this->Gameplay_ObjectDamage				( Protocol_ObjectDamage			(p), c );
@@ -201,7 +200,6 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_ObjectCreate:				this->Gameplay_ObjectCreate				( Protocol_ObjectCreate			(p), c );
 			break;
-
 			case protocol_General_Status:						this->General_Status					( Protocol_General_Status		(p), c );
 			break;
 			case protocol_General_Text:							this->General_Text						( Protocol_General_Text			(p), c );
@@ -242,11 +240,8 @@ using namespace DanBias;
 	{ 
 		if(p.secondaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
 		if(p.primaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
-		
 		if(p.utilityPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
 	}
-	
-	
 	void GameSession::Gameplay_ObjectPickup				( Protocol_ObjectPickup& p, DanBias::GameClient* c )
 	{
 
