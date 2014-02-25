@@ -30,8 +30,11 @@ namespace GameLogic
 		void Activate();
 
 		void SetAffectedBy(GameLogic::Player &player);
+		void SetManipulatingPlayer(GameLogic::Player &player);
 		void RemoveAffectedBy();
+		void RemoveManipulation();
 		GameLogic::Player* getAffectingPlayer();
+		GameLogic::Player* getManipulatingPlayer();
 
 		static void DynamicObject::DynamicDefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
@@ -40,6 +43,8 @@ namespace GameLogic
 		bool isReleased;
 	protected:
 		GameLogic::Player *affectedBy;
+		GameLogic::Player *manipulatedBy;
+
 
 	};
 
