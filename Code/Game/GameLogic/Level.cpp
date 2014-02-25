@@ -434,8 +434,11 @@ void Level::Update(float deltaTime)
 		{
 			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
 			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], DEATH_TIMER); // add killer ID
+			Player* killer = this->playerObjects[i]->getAffectingPlayer();
 		}
 	}
+
+
 }
 int Level::getNrOfDynamicObj()
 {

@@ -92,6 +92,18 @@ namespace GameLogic
 		WorldSize_Unknown = -1
 	};
 
+	enum PlayerAction
+	{
+		PlayerAction_Jump,
+		PlayerAction_Walk,
+		PlayerAction_Idle,
+	};
+
+	enum PickupType
+	{
+		PickupType_Health,
+		PickupType_SpeedBoost
+	};
 
 	/************************************
 				Structs
