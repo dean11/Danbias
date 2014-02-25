@@ -150,7 +150,7 @@ Win32Input::Win32Input()
 	{ /*wrong*/ }
 }
 Win32Input::~Win32Input()
-{}
+{ Destroy(); }
 InputObject* Win32Input::CreateDevice(const SAIType inputType, Typedefs::WindowHandle targetApplication)
 {
 	if(!this->instance->targetHwin)
@@ -225,9 +225,7 @@ void Win32Input::ToggleInputSystem(bool enable)
 void Win32Input::Destroy ()
 {
 	ShowCursor(true);
-	RECT r;
-	GetWindowRect(GetDesktopWindow(), &r);
-	ClipCursor(&r);
+	ClipCursor(0);
 
 	for (unsigned int i = 0; i < this->keyboard.size(); i++)
 	{
