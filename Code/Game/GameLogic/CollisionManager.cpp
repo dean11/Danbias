@@ -10,6 +10,8 @@
 #include "Portal.h"
 #include "ExplosiveCrate.h"
 
+#include "PickupSystem/PickupHealth.h"
+
 using namespace Oyster;
 
 using namespace GameLogic;
@@ -281,4 +283,31 @@ using namespace GameLogic;
 		}
 		
 
+	}
+
+	//General collision collision for pickups
+	//It calls the collision function defined in each pickup.
+	void Pickup::PickupCollision(Oyster::Physics::ICustomBody* objA, Oyster::Physics::ICustomBody* objB, Oyster::Math::Float kineticEnergyLoss)
+	{
+		//Check if player is a player.
+		Object* a = (Object*)objA->GetCustomTag();
+		Object* b = (Object*)objB->GetCustomTag();
+
+		if(!a)	
+			return;
+		if(!b)		
+			return;
+
+		if(b->GetObjectType() == ObjectSpecialType_Player)
+		{
+			((Pickup*)a)->OnCollision((Player*)(b));
+		}
+		else if(a->GetObjectType() != ObjectSpecialType_Player)
+		{
+			//One of the objects are not a player.
+			//Do nothing.
+			return;
+		}
+
+		((Pickup*)b)->OnCollision((Player*)a);
 	}
