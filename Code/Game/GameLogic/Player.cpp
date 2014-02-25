@@ -80,13 +80,9 @@ void Player::BeginFrame()
 	Oyster::Math::Float maxSpeed = 30;
 
 	// Rotate player accordingly
+	this->rigidBody->AddRotationAroundY(this->rotationUp);
 	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
-	Oyster::Math::Quaternion firstUp = this->rigidBody->GetState().quaternion;
-	this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
-	Oyster::Math::Quaternion secondTurn = this->rigidBody->GetState().quaternion;
 
-	this->rigidBody->SetRotation(secondTurn*firstUp);
-	
 	// Direction data
 	Oyster::Math::Float4x4 xform;
 	xform = this->rigidBody->GetState().GetOrientation();
@@ -272,7 +268,7 @@ void Player::SetLookDir(const Oyster::Math3D::Float3& lookDir)
 }
 void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
 {
-	this->rotationUp += deltaRadians;
+	this->rotationUp = deltaRadians;
 }
 
 void Player::Jump()
