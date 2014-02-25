@@ -80,7 +80,6 @@ namespace GameLogic
 
 	private:
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>> playerObjects;
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>> deadPlayerObjects;
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;

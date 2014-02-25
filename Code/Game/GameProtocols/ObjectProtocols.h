@@ -948,29 +948,29 @@ namespace GameLogic
 	struct Protocol_ObjectAction :public Oyster::Network::CustomProtocolObject
 	{
 		short objectID;
-		float animationID; 
+		int animationID; 
 		
 		Protocol_ObjectAction()
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectAction;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;		
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
 			
-			objectID = 0;
+			objectID = -1;
 			animationID = -1;
 		}
 		Protocol_ObjectAction(Oyster::Network::CustomNetProtocol& p)
 		{
 			objectID = p[1].value.netShort;
-			animationID = p[2].value.netFloat;
+			animationID = p[2].value.netInt;
 		}
-		Protocol_ObjectAction(float animID, int id)
+		Protocol_ObjectAction( int id, float animID)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectAction;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
 
 			objectID = id;
 			animationID = animID;

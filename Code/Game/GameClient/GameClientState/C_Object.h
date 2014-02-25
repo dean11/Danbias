@@ -72,7 +72,7 @@ namespace DanBias
 
 			void SetTint(Oyster::Math::Float3);
 			void SetGlowTint(Oyster::Math::Float3);
-
+			void SetVisible(bool visible);
 
 			// RB DEBUG
 			void updateRBWorld();
