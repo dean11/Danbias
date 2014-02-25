@@ -148,11 +148,11 @@ using namespace DanBias;
 	}
 	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject )
 	{
-		//GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
+		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
 	}
 	void GameSession::ObjectEnabled( GameLogic::IObjectData* movedObject )
 	{
-		//GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
+		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
 	}
 	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
 	{

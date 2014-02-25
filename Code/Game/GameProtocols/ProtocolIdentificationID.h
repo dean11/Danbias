@@ -62,15 +62,16 @@
 #define protocol_Gameplay_ObjectEnabled				357
 #define protocol_Gameplay_ObjectDisabled			358
 #define protocol_Gameplay_ObjectCreate				359
-#define protocol_Gameplay_ObjectCreatePlayer		360
-#define protocol_Gameplay_ObjectJoinTeam			361
-#define protocol_Gameplay_ObjectLeaveTeam			362
-#define protocol_Gameplay_ObjectWeaponCooldown		363
-#define protocol_Gameplay_ObjectWeaponEnergy		364
-#define protocol_Gameplay_ObjectRespawn				365
-#define protocol_Gameplay_ObjectDie					366
-#define protocol_Gameplay_ObjectDisconnectPlayer	367
-#define protocol_Gameplay_ObjectAction				368
+#define protocol_Gameplay_ObjectDelete				360
+#define protocol_Gameplay_ObjectCreatePlayer		361
+#define protocol_Gameplay_ObjectJoinTeam			362
+#define protocol_Gameplay_ObjectLeaveTeam			363
+#define protocol_Gameplay_ObjectWeaponCooldown		364
+#define protocol_Gameplay_ObjectWeaponEnergy		365
+#define protocol_Gameplay_ObjectRespawn				366
+#define protocol_Gameplay_ObjectDie					367
+#define protocol_Gameplay_ObjectDisconnectPlayer	368
+#define protocol_Gameplay_ObjectAction				369
 #define protocol_GameplayMAX							399
 
 
