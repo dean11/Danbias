@@ -10,6 +10,8 @@
 
 #include "NetworkServer.h"
 
+#include "Translator.h"
+#include "../NetworkDependencies/ConnectionUDP.h"
 #include "../NetworkDependencies/Listener.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
@@ -18,6 +20,7 @@
 #include "Thread/OysterThread.h"
 #include "WinTimer.h"
 
+#include <mutex>
 
 using namespace Oyster::Network;
 using namespace Utility::DynamicMemory;
@@ -81,7 +84,15 @@ public:
 		,	port(-1)
 		,	broadcast(0)
 		,	broadcastTime(1.0f, 0.0f)
-	{  }
+		,	broadcastMutex(new std::mutex)
+	{
+		InitWinSock();
+		serverOptions.broadcastOptions.broadcastInterval = 1.0f;
+		serverOptions.broadcastOptions.broadcast = true;
+		broadcastMessage.Resize(MAX_NETWORK_MESSAGE_SIZE);
+
+		broadcastConnection.InitiateBroadcastServer(15151, "255.255.255.255");
+	}
 	~PrivateData()
 	{
 		if(listener)
@@ -106,6 +117,12 @@ public:
 	int port;
 	bool broadcast;
 
+	ServerOptions serverOptions;
+
+	SmartPointer<std::mutex> broadcastMutex;
+	ConnectionUDP broadcastConnection;
+	OysterByte broadcastMessage;
+
 	TimeInstance broadcastTime;
 
 	Utility::WinTimer serverTimer;
@@ -113,11 +130,18 @@ public:
 
 bool NetworkServer::PrivateData::DoWork()
 {
-	if(broadcast)	
+	if(serverOptions.broadcastOptions.broadcast)	
 	{
-		if( (this->serverTimer.getElapsedSeconds() - this->broadcastTime.previous) >= this->broadcastTime.length )
+		if( (this->serverTimer.getElapsedSeconds() - this->broadcastTime.previous) >= this->serverOptions.broadcastOptions.broadcastInterval )
 		{
-			Broadcast();
+			//broadcastMessage.Clear();
+			//Translator t;
+			//t.Pack(broadcastMessage, serverOptions.broadcastOptions.broadcastMessage);
+			serverTimer.reset();
+			
+			broadcastMutex->lock();
+			broadcastConnection.Send(broadcastMessage);
+			broadcastMutex->unlock();
 		}
 	}
 
@@ -196,6 +220,8 @@ NetworkServer::ServerReturnCode NetworkServer::Init(ServerOptions& options)
 	{
 		return NetworkServer::ServerReturnCode_Error;
 	}
+
+	this->privateData->serverOptions.broadcastOptions = options.broadcastOptions;
 
 	this->privateData->isInitiated = true;
 	this->privateData->isReleased = false;
@@ -319,6 +345,47 @@ int NetworkServer::GetPort()
 	return this->privateData->port;
 }
 
+/***************************************
+		Broadcast functions
+***************************************/
+//Set broadcast settings.
+void NetworkServer::SetBroadcast(CustomNetProtocol& broadcastMessage, float interval, bool enable)
+{
+	this->privateData->broadcastMutex->lock();
+	this->privateData->serverOptions.broadcastOptions.broadcast = enable;
+	this->privateData->serverOptions.broadcastOptions.broadcastMessage = broadcastMessage;
+	this->privateData->serverOptions.broadcastOptions.broadcastInterval = interval;
 
+	this->privateData->broadcastMessage.Clear();
+	Translator t;
+	t.Pack(this->privateData->broadcastMessage, broadcastMessage);
+	this->privateData->broadcastMutex->unlock();
+}
 
+//Set broadcast settings.
+void NetworkServer::SetBroadcastMessage(CustomNetProtocol& broadcastMessage)
+{
+	this->privateData->broadcastMutex->lock();
+	this->privateData->serverOptions.broadcastOptions.broadcastMessage = broadcastMessage;
 
+	this->privateData->broadcastMessage.Clear();
+	Translator t;
+	t.Pack(this->privateData->broadcastMessage, broadcastMessage);
+	this->privateData->broadcastMutex->unlock();
+}
+
+//Enable/disable broadcast.
+void NetworkServer::SetBroadcast(bool enable)
+{
+	this->privateData->broadcastMutex->lock();
+	this->privateData->serverOptions.broadcastOptions.broadcast = enable;
+	this->privateData->broadcastMutex->unlock();
+}
+
+//Set interval between each broadcast message in seconds.
+void NetworkServer::SetBroadcastInterval(float interval)
+{
+	this->privateData->broadcastMutex->lock();
+	this->privateData->serverOptions.broadcastOptions.broadcastInterval = interval;
+	this->privateData->broadcastMutex->unlock();
+}

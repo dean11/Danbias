@@ -41,8 +41,24 @@ int ConnectionUDP::Connect(unsigned short port, const char serverName[])
 	}
 
 	
+	//this->Address = htonl(0xffffffff);
 	this->Address = *(unsigned long*)hostEnt->h_addr;
 	this->port = htons(this->port);
+
+	if(this->Address == 0)
+	{
+		sockaddr_in addr;
+		addr.sin_addr.s_addr = INADDR_ANY;
+		addr.sin_family = AF_INET;
+		addr.sin_port = this->port;
+
+		int result = bind(socket, (const sockaddr*)&addr, sizeof(addr));
+		if(result)
+		{
+			int a = 0;
+		}
+	}
+
 	return 0;
 }
 
@@ -89,19 +105,46 @@ int ConnectionUDP::InitiateClient()
 	return InitiateSocket();
 }
 
-int ConnectionUDP::InitiateBroadcast(unsigned short port)
+int ConnectionUDP::InitiateBroadcastServer(unsigned short port, const char serverName[])
 {
 	int result = InitiateSocket();
 
-
 	int flag = 1;
-	result = setsockopt(this->socket,			/* socket affected */
-							SOL_SOCKET,			/* set option at TCP level */
-							SO_BROADCAST,		/* name of option */
-							(char *) &flag,		/* the cast is historical cruft */
-							sizeof(flag));		/* length of option value */
+	result = setsockopt(this->socket, SOL_SOCKET, SO_BROADCAST, (char *) &flag, sizeof(flag));	
 	if (result < 0)
 		return -1;
+	
+	closed = false;
+	stillSending = true;
+
+	struct hostent *hostEnt;
+	if((hostEnt = gethostbyname(serverName)) == NULL)
+	{
+		return SOCKET_ERROR;
+	}
+
+	this->Address = *(unsigned long*)hostEnt->h_addr;
+	this->port = htons(port);
+
+	return 0;
+}
+
+int ConnectionUDP::InitiateBroadcastClient(unsigned short port)
+{
+	int result = InitiateSocket();
+
+	struct sockaddr_in recvAddr;
+	recvAddr.sin_family = AF_INET;
+	recvAddr.sin_addr.s_addr = INADDR_ANY;
+	recvAddr.sin_port = htons(port);
+
+	if(bind(this->socket, (sockaddr*)&recvAddr, sizeof(recvAddr)) == SOCKET_ERROR)
+	{
+		closesocket(this->socket);
+		return SOCKET_ERROR;
+	}
+
+	return result;
 }
 
 int ConnectionUDP::Send(OysterByte &bytes)
@@ -201,6 +244,12 @@ int ConnectionUDP::SetBlockingMode( bool blocking )
 	//Success
 	return 0;
 }
+
+int ConnectionUDP::GetSocket()
+{
+	return socket;
+}
+
 //////////////////////////////////////
 // Private Methods
 //////////////////////////////////////

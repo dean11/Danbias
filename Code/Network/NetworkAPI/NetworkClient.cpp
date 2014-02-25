@@ -13,6 +13,7 @@
 #include "CustomNetProtocol.h"
 #include "NetworkSession.h"
 
+#include "../NetworkDependencies/ConnectionUDP.h"
 #include "../NetworkDependencies/Connection.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
@@ -24,6 +25,8 @@
 
 #include <queue>
 #include <WinSock2.h>
+
+#include <thread>
 
 //For conversion from wstring to string
 #include <codecvt>
@@ -60,6 +63,15 @@ struct NetworkClient::PrivateData : public IThreadObject
 	HANDLE socketEvents[2];
 	HANDLE shutdownEvent;
 
+	//Broadcasting
+	bool broadcastingStarted;
+	HANDLE broadcastEvent;
+	HANDLE broadcastShutdownEvent;
+	std::thread broadcastThread; 
+	ConnectionUDP broadcastConnection;
+	OysterByte broadcastTempMessage;
+	Translator broadcastTranslator;
+
 	//The OysterByte each message is packed in.
 	OysterByte tempMessage;
 
@@ -77,6 +89,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		,	owner(0)
 		,	outputEvent(0)
 	{
+		broadcastingStarted = false;
 		numPackages = 0;
 		bufferedSend.Resize(MAX_NETWORK_MESSAGE_SIZE);
 		tempMessage.Resize(MAX_NETWORK_MESSAGE_SIZE);
@@ -120,6 +133,26 @@ struct NetworkClient::PrivateData : public IThreadObject
 		CloseHandle(shutdownEvent);
 	}
 
+	//Thread for receiving broadcast messages
+	void BroadcastThread()
+	{
+		WSANETWORKEVENTS wsaEvents;
+
+		while(WaitForSingleObject(broadcastShutdownEvent, 0) != WAIT_OBJECT_0)
+		{
+			int result = WSAWaitForMultipleEvents(1, &broadcastEvent, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
+			if(result == 0)
+			{
+				WSAEnumNetworkEvents(this->broadcastConnection.GetSocket(), broadcastEvent, &wsaEvents);
+				if((wsaEvents.lNetworkEvents & FD_READ) && (wsaEvents.iErrorCode[FD_READ_BIT] == 0))
+				{
+					//Recieve a message
+					RecvUDP();
+				}
+			}
+		}
+	}
+
 	bool DoWork() override
 	{
 		WSANETWORKEVENTS wsaEvents;
@@ -128,7 +161,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		{
 			if(!this->connection.IsConnected())	return false;
 
-			int result = WSAWaitForMultipleEvents(2, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
+			int result = WSAWaitForMultipleEvents(3, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
 			if(result == 0)
 			{
 				WSAEnumNetworkEvents(this->connection.GetSocket(), socketEvents[0], &wsaEvents);
@@ -159,6 +192,47 @@ struct NetworkClient::PrivateData : public IThreadObject
 		}
 
 		return false;
+	}
+
+	void RecvUDP()
+	{
+		int errorCode = -1;
+
+		errorCode = this->broadcastConnection.Recieve(broadcastTempMessage);
+		
+		if(errorCode == 0 && broadcastTempMessage.GetSize())
+		{
+			CustomNetProtocol protocol;
+			bool ok = this->broadcastTranslator.Unpack(protocol, broadcastTempMessage);
+
+			//Check if the protocol was unpacked correctly
+			if(ok)
+			{
+				CEA parg;
+				parg.type = CEA::EventType_ProtocolRecieved;
+				parg.data.protocol = protocol;
+				NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e;
+				e.sender = this->parent;
+				e.args.data.protocol = parg.data.protocol;
+				e.args.type = parg.type;
+			
+				this->recieveQueue.Push(e);
+
+				if(this->outputEvent)
+				{
+					printf("\t(ID: %i | IP: %s | Protocol: %i) Message recieved!\n", this->ID, this->connection.GetIpAddress().c_str(), protocol[0].value.netShort);	
+				}
+			}
+			else
+			{
+				if(this->outputEvent)
+				{
+					printf("\t(ID: %i | IP: %s) Failed to unpack CustomNetProtocol!\n", this->ID, this->connection.GetIpAddress().c_str());	
+				}
+			}
+
+			broadcastTempMessage.Clear();
+		}
 	}
 
 	void SendBuffer()
@@ -482,7 +556,7 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 
 	if(!this->privateData)
 		this->privateData = new PrivateData();
-	
+
 	int result = this->privateData->connection.Connect(port, serverIP, true);
 	
 	//Connect has succeeded
@@ -598,4 +672,86 @@ std::string NetworkClient::GetIpAddress()
 void NetworkClient::OutputEventData(bool output)
 {
 	this->privateData->outputEvent;
+}
+
+bool NetworkClient::StartListeningForBroadcasting(unsigned short port)
+{
+	//Create privateData if it doesn't exists.
+	if(this->privateData == NULL)
+	{
+		privateData = new PrivateData;
+	}
+
+	//Initiate broadcasting only if it's not started.
+	if(!this->privateData->broadcastingStarted)
+	{
+		//Create UDP connection
+		int result = this->privateData->broadcastConnection.InitiateBroadcastClient(port);
+		if(result)
+		{
+			return false;
+		}
+
+		//Create event for closing the thread.
+		this->privateData->broadcastShutdownEvent = CreateEvent(NULL, true, false, NULL);
+		if(this->privateData->broadcastShutdownEvent == NULL)
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			return false;
+		}
+
+		//Creating event for broadcast messages on the UDP connection.
+		this->privateData->broadcastEvent = WSACreateEvent();
+		if(this->privateData->broadcastEvent == WSA_INVALID_EVENT)
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+			return false;
+		}
+
+		//Set the event for only Receiving.
+		if(WSAEventSelect(this->privateData->broadcastConnection.GetSocket(), this->privateData->broadcastEvent, FD_READ) == SOCKET_ERROR)
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+			WSACloseEvent(this->privateData->broadcastEvent);
+			return false;
+		}
+
+		//Start thread receiving broadcast messages.
+		this->privateData->broadcastThread = thread(&PrivateData::BroadcastThread, this->privateData);
+		if(!this->privateData->broadcastThread.joinable())
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+			WSACloseEvent(this->privateData->broadcastEvent);
+			return false;
+		}
+
+		this->privateData->broadcastingStarted = true;
+	}
+
+	return true;
+}
+
+void NetworkClient::StopListeningForBroadcasting()
+{
+	if(this->privateData)
+	{
+		if(this->privateData->broadcastingStarted)
+		{
+			//Tell the thread to shutdown
+			WSASetEvent(this->privateData->broadcastShutdownEvent);
+
+			//Wait for thread
+			this->privateData->broadcastThread.join();
+
+			WSACloseEvent(this->privateData->broadcastEvent);
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+
+			this->privateData->broadcastConnection.Disconnect();
+
+			this->privateData->broadcastingStarted = false;
+		}
+	}
 }
