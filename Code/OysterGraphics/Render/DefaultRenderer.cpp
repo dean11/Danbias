@@ -43,6 +43,8 @@ namespace Oyster
 					{
 						(*i).second->Models=0;
 					}
+
+					Core::PipelineManager::SetRenderPass(Resources::Gather::AnimatedPass);
 				}
 
 				void DefaultRenderer::RenderScene(Model::Model* models, int count, Math::Matrix View, Math::Matrix Projection, float deltaTime)
@@ -53,7 +55,7 @@ namespace Oyster
 							continue;
 
 						Model::ModelInfo* info = models[i].info;
-						if(!info->Animated)
+						if(!info->Animated && models[i].Instanced)
 						{
 							Definitions::RenderInstanceData rid;
 							Math::Float3x3 normalTransform;
@@ -229,6 +231,8 @@ namespace Oyster
 
 				void RenderModel(Model::ModelInfo* info, Definitions::RenderInstanceData* rid , int count)
 				{
+					if(count < 1)
+						return;
 					if(info->Material.size())
 					{
 						Core::deviceContext->PSSetShaderResources(0,(UINT)info->Material.size(),&(info->Material[0]));
@@ -263,10 +267,7 @@ namespace Oyster
 
 					for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
 					{
-						for(int m = 0; m <(*i).second->Models; ++m)
-						{
-							RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
-						}
+						RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
 					}
 
 					Core::PipelineManager::SetRenderPass(Resources::Light::Pass);

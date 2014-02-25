@@ -58,9 +58,11 @@ namespace Oyster
 			debugSRV = (ID3D11ShaderResourceView*)API::CreateTexture(L"color_white.png");
 
 			cube = CreateModel(L"generic_cube.dan");
-			cube->Tint = Math::Float3(0.0f,0.0f,1.0f);
+			cube->Tint = Math::Float3(1.0f,0.0f,0.0f);
+			cube->Instanced = false;
 			sphere = CreateModel(L"generic_sphere.dan");
 			sphere->Tint = Math::Float3(1.0f,0.5f,182/255.0f);
+			sphere->Instanced = false;
 
 
 			D3D11_RASTERIZER_DESC desc;
@@ -158,7 +160,7 @@ namespace Oyster
 			desc.Type = Core::Buffer::VERTEX_BUFFER;
 			desc.Usage = Core::Buffer::BUFFER_CPU_WRITE_DISCARD;
 			desc.InitData = 0;
-			desc.NumElements = maxModels;
+			desc.NumElements = maxModels+1;
 
 			Render::Resources::Gather::InstancedData.Init(desc);
 		}
@@ -172,6 +174,7 @@ namespace Oyster
 			m->Animation.AnimationPlaying = NULL;
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
+			m->Instanced = true;
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -256,9 +259,9 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
+			//Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 			Core::deviceContext->RSSetState(wire);
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
+			//Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 		}
 
 		void API::RenderDebugCube(Math::Matrix world)
