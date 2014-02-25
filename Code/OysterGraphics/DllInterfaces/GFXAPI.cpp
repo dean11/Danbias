@@ -171,7 +171,8 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-			m->Animation.AnimationPlaying = NULL;
+			m->Animation[0].AnimationPlaying = nullptr;
+			m->Animation[1].AnimationPlaying = nullptr;
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
 			m->Instanced = true;
@@ -327,14 +328,20 @@ namespace Oyster
 			Core::loader.ReleaseResource(tex);
 		}
 
-		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
+		float API::PlayAnimation( Model::Model* m, const std::wstring &name, bool looping )
 		{
-			if(m==NULL)
-				return 0;
-			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
-			m->Animation.AnimationTime=0;
-			m->Animation.LoopAnimation = looping;
-			return (float)m->Animation.AnimationPlaying->duration;
+			if( m )
+			{ // nasty temp solution by Dan
+				static int fairSlotLooper = 0;
+				fairSlotLooper = (fairSlotLooper + 1) & 3; // same as n % 2				
+
+				m->Animation[fairSlotLooper].AnimationPlaying = &(*m->info->Animations.find(name)).second;
+				m->Animation[fairSlotLooper].AnimationTime=0;
+				m->Animation[fairSlotLooper].LoopAnimation = looping;
+
+				return (float)m->Animation[fairSlotLooper].AnimationPlaying->duration;
+			}
+			return 0;
 		}
 
 		void API::Update(float dt)
