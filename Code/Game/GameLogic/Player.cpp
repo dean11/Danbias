@@ -18,6 +18,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
 	weapon = new Weapon(2,this);
+	AffectedObjects.Reserve(15);
+	
 
 	this->life = 100;
 	this->teamID = teamID;
@@ -45,6 +47,9 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
 	weapon = new Weapon(2,this);
+
+	AffectedObjects.Reserve(15);
+	
 
 	this->life = 100;
 	this->teamID = teamID;
@@ -213,6 +218,16 @@ void Player::BeginFrame()
 
 void Player::EndFrame()
 {
+	//check if there are any objects that can be removed from the AffectedObjects list
+	for(int i = 0; i < this->AffectedObjects.Size(); i++)
+	{
+		if((this->AffectedObjects[i]->GetRigidBody()->GetState().previousVelocity).GetMagnitude() <= 0.1f)
+		{
+			this->AffectedObjects[i]->RemoveAffectedBy();
+			this->AffectedObjects.Remove(i);
+		}
+
+	}
 
 }
 
@@ -334,17 +349,31 @@ PLAYER_STATE Player::GetState() const
 
 void Player::DamageLife(int damage)
 {
-	if( this->playerState != PLAYER_STATE_DEAD) 
-	{
-		this->life -= damage;
-		this->gameInstance->onDamageTakenFnc( this, this->life);
 
-		if(this->life <= 0)
+	this->life -= damage;
+	this->gameInstance->onDamageTakenFnc( this, this->life);
+
+	if(this->life <= 0)
+	{
+		this->life = 0;
+		playerState = PLAYER_STATE_DEAD;
+		this->deathTimeLeft = this->deathTime;
+		this->gameInstance->onDeadFnc(this, this->deathTimeLeft);
+	}
+
+}
+
+void Player::AddAffectedObject(DynamicObject &AffectedObject)
+{
+	//check if object already exists in the list, if so then do not add
+	for(int i = 0; i < AffectedObjects.Size(); i++)
+	{
+		if(AffectedObjects[i]->GetID() == AffectedObject.GetID())
 		{
-			this->life = 0;
-			playerState = PLAYER_STATE_DEAD;
-			this->deathTimeLeft = this->deathTime;
-			this->gameInstance->onDeadFnc(this, this->deathTimeLeft);
+			//object already exists, exit function
+			return;
 		}
 	}
+	//else you add the object to the stack
+	AffectedObjects.Push(&AffectedObject);
 }

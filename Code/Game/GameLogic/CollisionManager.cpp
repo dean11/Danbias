@@ -113,7 +113,7 @@ using namespace GameLogic;
 		
 
 		Object *realObjA = ((Object*)(objA->GetCustomTag()));
-		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
+		Object *realObjB = (Object*)objB->GetCustomTag();
 		ExplosiveCrate* crate;
 
 		if(!realObjA)	
@@ -166,8 +166,12 @@ using namespace GameLogic;
 			Player *hitPlayer = (Player*)realObj;
 			hitPlayer->DamageLife(ExplosionSource->extraDamageOnCollision);
 			//hitPlayer->GetRigidBody()->ApplyImpulse(force);
+
+			//hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
+			realObj->GetRigidBody()->ApplyImpulse(force * 5);
 			//do shredding damage
 		}
+
 
 		
 
@@ -226,6 +230,58 @@ using namespace GameLogic;
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
 	}
+
+	void DynamicObject::DynamicDefaultOnCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
+	{
+		
+		DynamicObject *realObjA = dynamic_cast<DynamicObject*>((Object*)objA->GetCustomTag());
+		
+		DynamicObject *realObjB = dynamic_cast<DynamicObject*>((Object*)objB->GetCustomTag());
+
+		if(!realObjA || !realObjB) // one of the objects cannot be cast into a dynamicObject and so we leave the function
+		{
+			return;
+		}
+
+		//check which obj is the one that is already affected, if both are then use the special case of changing ownership.
+		if(realObjA->getAffectingPlayer() == NULL && realObjB->getAffectingPlayer() == NULL) //None of the objects have a player affecting them
+		{
+			return;//leave function as the are not to transfer any ownership
+		}
+
+		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() == NULL)
+		{
+			//realobjA is the affectedObject, transfer this to realobjB
+			realObjB->SetAffectedBy(*realObjA->getAffectingPlayer());
+
+		}
+		if(realObjB->getAffectingPlayer() != NULL && realObjA->getAffectingPlayer() == NULL)
+		{
+			//realobjB is the affectedObject, transfer this to realobjA
+			realObjA->SetAffectedBy(*realObjB->getAffectingPlayer());
+
+		}
+
+		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() != NULL)
+		{
+			//Both objects have a player affecting them, now use the special case
+			if(realObjA->GetRigidBody()->GetState().previousVelocity.GetMagnitude() > realObjB->GetRigidBody()->GetState().previousVelocity.GetMagnitude() )
+			{
+				//realObjA is the winner and will change Bs ownership to A
+				realObjB->SetAffectedBy(*realObjA->getAffectingPlayer());
+			}
+			else
+			{
+				realObjA->SetAffectedBy(*realObjB->getAffectingPlayer());
+				//realObjB is the winner and will change As ownership to B
+			}
+		}
+		
+
+
+
+	}
+
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		return Physics::ICustomBody::SubscriptMessage_none;
@@ -250,7 +306,16 @@ using namespace GameLogic;
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
+		
+
 		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
+
+		DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
+		
+		if(dynamicObj)
+		{
+			dynamicObj->SetAffectedBy(*((forcePushData*)(args))->p);
+		}
 	}
 
 	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
