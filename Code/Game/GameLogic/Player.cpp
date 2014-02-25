@@ -221,7 +221,7 @@ void Player::EndFrame()
 	//check if there are any objects that can be removed from the AffectedObjects list
 	for(int i = 0; i < this->AffectedObjects.Size(); i++)
 	{
-		if((this->AffectedObjects[i]->GetRigidBody()->GetState().previousVelocity).GetMagnitude() <= 0.1f)
+		if(this->AffectedObjects[i] && (this->AffectedObjects[i]->GetRigidBody()->GetState().previousVelocity).GetMagnitude() <= 0.1f)
 		{
 			this->AffectedObjects[i]->RemoveAffectedBy();
 			this->AffectedObjects.Remove(i);

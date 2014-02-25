@@ -309,6 +309,7 @@ using namespace GameLogic;
 		
 
 		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
+		
 
 		DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
 		
@@ -333,12 +334,21 @@ using namespace GameLogic;
 			Object* realObj = (Object*)(obj->GetCustomTag());
 			//check so that it is an object that you can pickup
 
-			switch(realObj->GetObjectType())
+			DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
+
+			if(!dynamicObj) return;
+		
+			if(dynamicObj->getManipulatingPlayer() != NULL)
+			{
+				return;
+			}
+
+			switch(dynamicObj->GetObjectType())
 			{
 			case ObjectSpecialType::ObjectSpecialType_StandardBox:
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
-				
+				dynamicObj->SetManipulatingPlayer(*weapon->owner); //TODO: add if this is to be a struggle of who has the most power in its weapon, the player that is already manipulating the object or you. if you then you take the object from the other player, if not then you do not take the object
 
 				break;
 			}
