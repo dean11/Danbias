@@ -123,7 +123,10 @@ void C_Object::SetGlowTint(Oyster::Math::Float3 tint)
 	model->GlowTint = tint;
 }
 
-
+void C_Object::SetVisible(bool visible)
+{
+	model->Visible = visible;
+}
 
 ////////////////////////////////////////////////
 // RB DEBUG

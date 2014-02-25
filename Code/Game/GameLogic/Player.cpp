@@ -134,7 +134,16 @@ void Player::BeginFrame()
 				rightVelocity *= Oyster::Math::Float3(0.2f*fabs(rightDir.x), 0.2f*fabs(rightDir.y), 0.2f*fabs(rightDir.z));
 			}
 		}
-	
+
+		if(walkDirection == Oyster::Math::Float3::null)
+		{
+			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
+			{
+				if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
+					this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
+			}
+		}
 		// Walk if walkdirection is something
 		if(walkDirection != Oyster::Math::Float3::null)
 		{
@@ -164,6 +173,12 @@ void Player::BeginFrame()
 					rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z)) * walkSpeed*0.2f;
 				}
 			}
+			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
+			{
+				if(this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING)
+					this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Walk);
+				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
+			}
 		}
 
 		// Adjust velocities so no squaring occurs
@@ -181,7 +196,18 @@ void Player::BeginFrame()
 			{
 				Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
 				this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass * 20);
+				
+				if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
+					this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Jump);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+			}
+		}
+		else
+		{
+			if(this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING)
+			{
+				this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 			}
 		}
 	}
