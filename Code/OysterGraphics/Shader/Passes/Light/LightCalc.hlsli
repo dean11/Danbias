@@ -28,3 +28,8 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 	output.Specular = output.Specular * SpecCo;
 	return output;  
 }
+
+bool intersects(FrustrumPoints box, int Index)
+{
+	return true;
+}
