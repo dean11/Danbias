@@ -16,6 +16,9 @@
 #include "DynamicArray.h"
 #include "LevelLoader.h"
 
+#include "PickupSystem\PickupSystem.h"
+#include "PickupSystem\PickupHealth.h"
+
 const int DEATH_TIMER = 5;
 namespace GameLogic
 {
@@ -89,6 +92,7 @@ namespace GameLogic
 		StaticObject *levelObj;
 		int objID; 
 		Utility::DynamicMemory::DynamicArray<Oyster::Math::Float3> spawnPoints;
+		PickupSystem pickupSystem;
 
 	};
 

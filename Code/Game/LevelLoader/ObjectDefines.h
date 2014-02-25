@@ -259,7 +259,11 @@ namespace GameLogic
 		float skySize;
 	};
 
-	
+	struct PickupHealthAttributes : public ObjectHeader
+	{
+		float spawnTime;
+		float healthValue;
+	};
 
 	
 

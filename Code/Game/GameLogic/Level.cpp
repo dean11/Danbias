@@ -131,6 +131,11 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
+	case ObjectSpecialType_PickupHealth:
+		{
+			gameObj = new PickupHealth(rigidBody, obj->specialTypeID, objID, ((PickupHealthAttributes*)obj)->spawnTime, ((PickupHealthAttributes*)obj)->healthValue);
+		}
+		break;
 	default:
 		{
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
@@ -216,7 +221,6 @@ bool Level::InitiateLevel(std::wstring levelPath)
 	std::string convertedLevelPath = converterX.to_bytes(levelPath);
 	objects = ll.LoadLevel(convertedLevelPath);
 
-
 	if(objects.size() == 0)
 		return false;
 
@@ -264,7 +268,12 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				{
 					// create game object
 					Object* staticGameObj = CreateGameObj(staticObjData, rigidBody_Static);
-					if(staticGameObj != NULL)
+					
+					if(staticObjData->specialTypeID == ObjectSpecialType_PickupHealth)
+					{
+						this->pickupSystem.CreatePickup((PickupHealth*)staticGameObj);
+					}
+					else if(staticGameObj != NULL)
 					{
 						this->staticObjects.Push((StaticObject*)staticGameObj);
 					}
@@ -321,6 +330,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 			break;
 		}
 	}
+
 	return true;
 }
 bool Level::InitiateLevel(float radius)
@@ -440,7 +450,7 @@ void Level::Update(float deltaTime)
 		}
 	}
 
-
+	this->pickupSystem.Update();
 }
 int Level::getNrOfDynamicObj()
 {
