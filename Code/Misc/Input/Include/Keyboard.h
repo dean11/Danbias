@@ -199,7 +199,6 @@ namespace Input
 		::std::wstring*					textTarget;
 		::std::wstring::size_type		writePos;
 		bool							active;
-		Enum::InputOptionType			inputMode;
 	};
 }
 
