@@ -25,6 +25,16 @@ cbuffer LightConstants					: register(b0)
 	float4x4 View;
 }
 
+struct FrustrumPoints
+{
+	float3 v0;
+	float3 v1;
+	float3 v2;
+	float3 v3;
+	float3 v4;
+	float3 v5;
+};
+
 Texture2D DiffuseGlow					: register(t0);
 Texture2D NormalSpec					: register(t1);
 Texture2D GUI							: register(t2);

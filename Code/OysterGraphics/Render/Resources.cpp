@@ -366,8 +366,8 @@ namespace Oyster
 
 					////---------------- Geometry Pass Setup ----------------------------
 #pragma region Animated Pass
-					Gather::AnimatedPass.Shaders.Pixel = GetShader::Pixel(L"Gather");
-					Gather::AnimatedPass.Shaders.Vertex = GetShader::Vertex(L"Gather");
+					Gather::AnimatedPass.Shaders.Pixel = GetShader::Pixel(L"AGather");
+					Gather::AnimatedPass.Shaders.Vertex = GetShader::Vertex(L"AGather");
 
 					D3D11_INPUT_ELEMENT_DESC AnimInDesc[] =
 					{
@@ -378,7 +378,7 @@ namespace Oyster
 						{ "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 					};
 
-					Shader::CreateInputLayout(AnimInDesc,5,GetShader::Vertex(L"Gather"),Gather::AnimatedPass.IAStage.Layout);
+					Shader::CreateInputLayout(AnimInDesc,5,GetShader::Vertex(L"AGather"),Gather::AnimatedPass.IAStage.Layout);
 					Gather::AnimatedPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 					Gather::AnimatedPass.CBuffers.Vertex.push_back(Gather::AnimationData);
 					Gather::AnimatedPass.CBuffers.Vertex.push_back(Gather::ModelData);
@@ -525,9 +525,6 @@ namespace Oyster
 
 					Shader::CreateInputLayout(InstInDesc,15,GetShader::Vertex(L"IGather"),Gather::InstancedPass.IAStage.Layout);
 					Gather::InstancedPass.IAStage.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-					Gather::InstancedPass.CBuffers.Vertex.push_back(Gather::AnimationData);
-					Gather::InstancedPass.CBuffers.Vertex.push_back(Gather::ModelData);
-					Gather::InstancedPass.CBuffers.Pixel.push_back(Color);
 					Gather::InstancedPass.RenderStates.Rasterizer = RenderStates::rs;
 					Gather::InstancedPass.RenderStates.SampleCount = 1;
 					Gather::InstancedPass.RenderStates.SampleState = RenderStates::ss;

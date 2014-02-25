@@ -80,7 +80,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	{
 		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (800);
 		heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
-		
+		((DynamicObject*)(heldObject->GetCustomTag()))->RemoveManipulation();
 		hasObject = false;
 		heldObject = NULL;
 		return;
@@ -99,6 +99,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	forcePushData args;
 	args.pushForce = pushForce;
+	args.p = this->owner;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
 
@@ -136,6 +137,7 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
 	args.pushForce = -pushForce;
+	args.p = this->owner;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
 

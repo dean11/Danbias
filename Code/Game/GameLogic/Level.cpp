@@ -59,12 +59,12 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_Stone: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_StandardBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
@@ -81,12 +81,12 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_Spike: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_CrystalFormation: 
@@ -98,7 +98,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_CrystalShard: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_JumpPad: 
@@ -433,7 +433,9 @@ void Level::Update(float deltaTime)
 		else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
 		{
 			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
-			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], DEATH_TIMER); // add killer ID
+			// HACK to avoid crasch. affected by tag is NULL
+			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
+			//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->getAffectingPlayer(), DEATH_TIMER); // add killer ID
 		}
 	}
 }
