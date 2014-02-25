@@ -12,7 +12,7 @@
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Physics;
-
+using namespace Oyster::Math;
 
 Level::Level(void)
 {
@@ -59,17 +59,17 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_Stone: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_StandardBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
-			Oyster::Math::Float dmg = 50; 
+			Oyster::Math::Float dmg = 120; 
 			Oyster::Math::Float force = 500; 
 			Oyster::Math::Float radie = 3; 
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, dmg, force, radie);
@@ -81,12 +81,12 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_Spike: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_CrystalFormation: 
@@ -98,7 +98,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_CrystalShard: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
 		}
 		break;
 	case ObjectSpecialType_JumpPad: 
@@ -393,7 +393,20 @@ void Level::AddPlayerToTeam(Player *player, int teamID)
 {
 	this->teamManager.AddPlayerToTeam(player,teamID);
 }
-
+void Level::AddPlayerToGame(Player *player)
+{
+	this->playerObjects.Push(player);
+}
+void Level::RemovePlayerFromGame(Player *player)
+{
+	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
+	{
+		if ((Player*)this->playerObjects[i] == player)
+		{
+			//this->playerObjects[i].
+		}
+	}
+}
 void Level::CreateTeam(int teamSize)
 {
 	this->teamManager.CreateTeam(teamSize);
@@ -401,9 +414,34 @@ void Level::CreateTeam(int teamSize)
 
 void Level::RespawnPlayer(Player *player)
 {
-	this->teamManager.RespawnPlayerRandom(player);
-}
+	//this->teamManager.RespawnPlayerRandom(player);
 
+	Float3 spawnPoint = spawnPoints[0]; 
+	player->Respawn(spawnPoint);
+}
+void Level::Update(float deltaTime)
+{
+	// update lvl-things
+	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
+	{
+		if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+		{
+			// true when timer reaches 0 
+			if(this->playerObjects[i]->deathTimerTick(deltaTime))
+				RespawnPlayer(this->playerObjects[i]);
+		}
+		else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
+		{
+			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
+			// HACK to avoid crasch. affected by tag is NULL
+			Player* killer = this->playerObjects[i]->getAffectingPlayer();
+			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
+			//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->getAffectingPlayer(), DEATH_TIMER); // add killer ID
+		}
+	}
+
+
+}
 int Level::getNrOfDynamicObj()
 {
 	return this->dynamicObjects.Size(); 
@@ -417,10 +455,23 @@ Object* Level::GetObj( int ID) const
 	}
 	return NULL;
 }
+
 void Level::PhysicsOnMoveLevel(const ICustomBody *object)
 {
 	// function call from physics update when object was moved
 	Object* temp = (Object*)object->GetCustomTag();
 	((Game*)&Game::Instance())->onMoveFnc(temp);
-	
 }
+Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>>			Level::GetPlayers()
+{
+	return this->playerObjects;
+}
+Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>>	Level::GetStaticObjects()
+{
+	return this->staticObjects;
+}
+Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>>	Level::GetDynamicObject()
+{
+	return this->dynamicObjects;
+}
+

@@ -3,6 +3,7 @@
 using namespace DanBias::Client;
 
 C_DynamicObj::C_DynamicObj(void)
+		:C_Object()
 {
 }
 

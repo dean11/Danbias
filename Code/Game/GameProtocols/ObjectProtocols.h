@@ -75,13 +75,15 @@ namespace GameLogic
 		}
 		Protocol_ObjectDamage(Oyster::Network::CustomNetProtocol& p)
 		{
-
+			this->object_ID = p[1].value.netInt; 
+			this->healthLost = p[2].value.netFloat; 
 		}
 		Protocol_ObjectDamage(int id, float hp)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectDamage;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-									
+					
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 			
 			object_ID = id;
@@ -866,6 +868,7 @@ namespace GameLogic
 	struct Protocol_ObjectDie :public Oyster::Network::CustomProtocolObject
 	{
 		int objectID;
+		int killerID;
 		float seconds;
 
 		Protocol_ObjectDie()
@@ -873,28 +876,34 @@ namespace GameLogic
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_Gameplay_ObjectDie;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
-			this->objectID = 0;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
+			this->objectID = -1;
+			this->killerID = -1;
 			this->seconds = 0.0f;
 		}
-		Protocol_ObjectDie(int objectID, float seconds)
+		Protocol_ObjectDie(int objectID, int killerID, float seconds)
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_Gameplay_ObjectDie;
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Float;
 			this->objectID = objectID;
+			this->killerID = killerID;
 			this->seconds = seconds;
 		}
 		Protocol_ObjectDie(Oyster::Network::CustomNetProtocol& p)
 		{
-			this->objectID = p[1].value.netInt;
-			this->seconds = p[2].value.netFloat;
+			this->objectID	= p[1].value.netInt;
+			this->killerID	= p[2].value.netInt;
+			this->seconds	= p[3].value.netFloat;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = this->objectID;
-			this->protocol[2].value = this->seconds;
+			this->protocol[2].value = this->killerID;
+			this->protocol[3].value = this->seconds;
 			return protocol;		 
 		}
 
@@ -935,5 +944,45 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 }
+//#define protocol_Gameplay_ObjectAction				368
+	struct Protocol_ObjectAction :public Oyster::Network::CustomProtocolObject
+	{
+		short objectID;
+		float animationID; 
+		
+		Protocol_ObjectAction()
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectAction;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;		
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			
+			objectID = 0;
+			animationID = -1;
+		}
+		Protocol_ObjectAction(Oyster::Network::CustomNetProtocol& p)
+		{
+			objectID = p[1].value.netShort;
+			animationID = p[2].value.netFloat;
+		}
+		Protocol_ObjectAction(float animID, int id)
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectAction;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 
+			objectID = id;
+			animationID = animID;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = objectID;
+			this->protocol[2].value = animationID;
+			return protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

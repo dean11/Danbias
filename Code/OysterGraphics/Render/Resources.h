@@ -54,9 +54,11 @@ namespace Oyster
 
 					struct Gather
 					{
-						static Core::PipelineManager::RenderPass Pass;
+						static Core::PipelineManager::RenderPass AnimatedPass;
+						static Core::PipelineManager::RenderPass InstancedPass;
 						static Core::Buffer ModelData;
 						static Core::Buffer AnimationData;
+						static Core::Buffer InstancedData;
 					};
 
 					struct Light

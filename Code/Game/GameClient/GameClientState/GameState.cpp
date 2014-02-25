@@ -114,8 +114,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	modelData.position	= position;
 	modelData.rotation	= ArrayToQuaternion( rotation );
 	modelData.scale		= scale;
-	StringToWstring( modelName, modelData.modelPath );
 	modelData.id		= id;
+	StringToWstring(modelName,modelData.modelPath);
 
 	// RB DEBUG
 	RBInitData RBData;
@@ -141,8 +141,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetPosition( p->getPos() );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			//offset.y = p->getScale().y * 5.0f;
-			//offset.z = p->getScale().z * -5.0f;
+			offset.y = p->getScale().y * 5.0f;
+			offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
@@ -186,7 +186,7 @@ bool GameState::Render()
 	{
 		if(playerObject->second)
 		{
-			if( this->privData->myId != playerObject->second->GetId() )
+			//if( this->privData->myId != playerObject->second->GetId() )
 			{
 				playerObject->second->Render();
 			}
@@ -218,13 +218,16 @@ bool GameState::Render()
 			playerObject = this->privData->players.begin();
 			for( ; playerObject != this->privData->players.end(); ++playerObject )
 			{
-				if( playerObject->second->getBRtype() == RB_Type_Cube)
+				if(playerObject->second)
 				{
-					Oyster::Graphics::API::RenderDebugCube( playerObject->second->getRBWorld());
-				}
-				if( playerObject->second->getBRtype() == RB_Type_Sphere)
-				{
-					Oyster::Graphics::API::RenderDebugSphere( playerObject->second->getRBWorld());
+					if( playerObject->second->getBRtype() == RB_Type_Cube)
+					{
+						Oyster::Graphics::API::RenderDebugCube( playerObject->second->getRBWorld());
+					}
+					if( playerObject->second->getBRtype() == RB_Type_Sphere)
+					{
+						Oyster::Graphics::API::RenderDebugSphere( playerObject->second->getRBWorld());
+					}
 				}
 			}
 
@@ -588,6 +591,8 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			{
 				Protocol_ObjectDie decoded(data);
 				// if is this player. Remember to change camera
+				int killerID = decoded.killerID;
+				int victimID = decoded.objectID;
 				if( this->privData->myId == decoded.objectID )
 				{
 					this->currGameUI =  this->respawnUI;

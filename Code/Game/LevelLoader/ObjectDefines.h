@@ -53,6 +53,7 @@ namespace GameLogic
 		CollisionGeometryType_Box,
 		CollisionGeometryType_Sphere,
 		CollisionGeometryType_Cylinder,
+		CollisionGeometryType_CG_MESH,
 
 		CollisionGeometryType_Count,
 		CollisionGeometryType_Unknown = -1
@@ -92,6 +93,18 @@ namespace GameLogic
 		WorldSize_Unknown = -1
 	};
 
+	enum PlayerAction
+	{
+		PlayerAction_Jump,
+		PlayerAction_Walk,
+		PlayerAction_Idle,
+	};
+
+	enum PickupType
+	{
+		PickupType_Health,
+		PickupType_SpeedBoost
+	};
 
 	/************************************
 				Structs
@@ -162,6 +175,11 @@ namespace GameLogic
 			float radius;
 		};
 
+		struct BoundingVolumeCGMesh : public BoundingVolumeBase
+		{
+			wchar_t filename[128];
+		};
+
 		struct BoundingVolume
 		{
 			CollisionGeometryType geoType;
@@ -170,9 +188,9 @@ namespace GameLogic
 				LevelLoaderInternal::BoundingVolumeBox box;
 				LevelLoaderInternal::BoundingVolumeSphere sphere;
 				LevelLoaderInternal::BoundingVolumeCylinder cylinder;
+				LevelLoaderInternal::BoundingVolumeCGMesh cgMesh;
 			};
 		};
-
 	}
 
 	struct LevelMetaData : public ObjectTypeHeader
@@ -254,8 +272,10 @@ namespace GameLogic
 		LightType lightType;	//Is not used right now
 		float color[3];
 		float position[3];
-		float raduis;
+		float radius;
 		float intensity;
+
+		virtual ~BasicLight(){}
 	};
 	/* We only support pointlight right now.
 	struct PointLight : public BasicLight
