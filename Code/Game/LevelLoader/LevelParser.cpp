@@ -156,6 +156,21 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 							objects.push_back(header);
 							break;
 						}
+
+						case ObjectSpecialType_PickupHealth:
+						{
+							PickupHealthAttributes* header = new PickupHealthAttributes;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+							ParseObject(&buffer[counter], &header->spawnTime, 4);
+							counter += 4;
+
+							ParseObject(&buffer[counter], &header->healthValue, 4);
+							counter += 4;
+
+							objects.push_back(header);
+							break;
+						}
 						//this is a hotfix, fix so you only load the relevant data when the file is updated
 						default:
 							//Couldn't find specialType

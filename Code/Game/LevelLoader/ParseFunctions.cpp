@@ -23,9 +23,9 @@ namespace GameLogic
 		void ParseLight(char* buffer, BasicLight& header, int& size)
 		{
 			int start = 0;
-			memcpy(&header.typeID, &buffer[start], 40);
-			start += 40;
-			/*
+			memcpy(&header.typeID, &buffer[start], 4);
+			start += 4;
+
 			memcpy(&header.lightType, &buffer[start], 4);
 			start += 4;
 			
@@ -39,7 +39,7 @@ namespace GameLogic
 			start += 4;
 			
 			memcpy(&header.intensity, &buffer[start], 4);
-			start += 4;*/
+			start += 4;
 
 			size += start;
 
