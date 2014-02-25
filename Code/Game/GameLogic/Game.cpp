@@ -108,6 +108,7 @@ Game::PlayerData* Game::CreatePlayer()
 	this->players[insert] = new PlayerData(freeID, 0); // user constructor with objectID and teamID
 	this->players[insert]->player->GetRigidBody()->SetSubscription(Game::PhysicsOnMove);
 
+	this->level->AddPlayerToGame(this->players[insert]);
 	return this->players[insert];
 }
 
@@ -128,6 +129,9 @@ void Game::CreateTeam()
 
 bool Game::NewFrame()
 {
+	// HACK need dynamic delta time
+	this->level->Update(this->frameTime);
+
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
@@ -202,4 +206,3 @@ void Game::PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<ICustomBody>
 {
 	if(gameInstance.onDisableFnc) gameInstance.onDisableFnc(0, 0);
 }
-
