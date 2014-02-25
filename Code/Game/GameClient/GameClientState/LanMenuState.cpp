@@ -59,7 +59,7 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->keyboardInput = shared.keyboardDevice;
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
-	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor.png" );
 
 	// create guiElements
 	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
@@ -112,7 +112,7 @@ bool LanMenuState::Render( )
 
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 
@@ -133,13 +133,15 @@ void LanMenuState::ChangeState( ClientState next )
 {
 	switch( next )
 	{
-	case GameClientState::ClientState_Lobby:
+	case GameClientState::ClientState_NetLoad:
 		// attempt to connect to lobby
 		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
 			return;
 		break;
 	default: break;
 	}
+
+	this->privData->keyboardInput->ReleaseTextTarget();
 
 	this->privData->nextState = next;
 }
@@ -149,7 +151,7 @@ void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 	switch( e.state )
 	{
 	case ButtonState_Released:
-		e.owner->ChangeState( GameClientState::ClientState_Lobby );
+		e.owner->ChangeState( GameClientState::ClientState_NetLoad );
 		break;
 	default: break;
 	}

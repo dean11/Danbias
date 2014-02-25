@@ -55,7 +55,7 @@ bool MainState::Init( SharedStateContent &shared )
 	this->privData->mousePos = Float3( 0.0f );
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
-	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor.png" );
 
 	// create buttons
 	ButtonRectangle<MainState*> *button;
@@ -103,7 +103,11 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
+	if(this->privData->mouseInput->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
+		Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f), Float4(1.0f) );
+	else
+		Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
+
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(0.0f, 0.0f, 0.0f, 1.0f) );
 	this->privData->guiElements.RenderTexture();
 
