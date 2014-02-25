@@ -937,5 +937,45 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 }
+//#define protocol_Gameplay_ObjectAction				368
+	struct Protocol_ObjectAction :public Oyster::Network::CustomProtocolObject
+	{
+		short objectID;
+		float animationID; 
+		
+		Protocol_ObjectAction()
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectAction;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;		
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			
+			objectID = 0;
+			animationID = -1;
+		}
+		Protocol_ObjectAction(Oyster::Network::CustomNetProtocol& p)
+		{
+			objectID = p[1].value.netShort;
+			animationID = p[2].value.netFloat;
+		}
+		Protocol_ObjectAction(float animID, int id)
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectAction;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
 
+			objectID = id;
+			animationID = animID;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = objectID;
+			this->protocol[2].value = animationID;
+			return protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H
