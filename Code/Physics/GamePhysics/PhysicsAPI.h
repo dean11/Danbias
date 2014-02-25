@@ -147,7 +147,7 @@ namespace Oyster
 			virtual void SetRotation(::Oyster::Math::Quaternion quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
 			virtual void SetRotation(::Oyster::Math::Float4x4 rotation) = 0;
-			virtual void SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis) = 0;
+			virtual void AddRotationAroundY(::Oyster::Math::Float angle) = 0;
 			virtual void SetAngularFactor(::Oyster::Math::Float factor) = 0;
 			virtual void SetMass(::Oyster::Math::Float mass) = 0;
 

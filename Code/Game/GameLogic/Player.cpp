@@ -70,13 +70,9 @@ void Player::BeginFrame()
 		Oyster::Math::Float maxSpeed = 30;
 
 		// Rotate player accordingly
+	this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
-		Oyster::Math::Quaternion firstUp = this->rigidBody->GetState().quaternion;
-		this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
-		Oyster::Math::Quaternion secondTurn = this->rigidBody->GetState().quaternion;
 
-		this->rigidBody->SetRotation(secondTurn*firstUp);
-	
 		// Direction data
 		Oyster::Math::Float4x4 xform;
 		xform = this->rigidBody->GetState().GetOrientation();
@@ -284,7 +280,7 @@ void Player::SetLookDir(const Oyster::Math3D::Float3& lookDir)
 }
 void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
 {
-	this->rotationUp += deltaRadians;
+	this->rotationUp = deltaRadians;
 }
 
 void Player::Jump()
@@ -333,17 +329,14 @@ PLAYER_STATE Player::GetState() const
 
 void Player::DamageLife(int damage)
 {
-	if( this->playerState != PLAYER_STATE_DEAD) 
-	{
-		this->playerStats.hp -= damage;
-		// send hp to client
-		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+	this->life -= damage;
+	this->life = 0;
 
-		if(this->playerStats.hp <= 0)
-		{
-			this->playerStats.hp = 0;
-			this->playerState = PLAYER_STATE_DIED;
-		}
+	if(this->life <= 0)
+	{
+		this->life = 0;
+		playerState = PLAYER_STATE_DEAD;
+		this->gameInstance->onDisableFnc(this, 0.0f);
 	}
 }
 bool Player::deathTimerTick(float dt)
