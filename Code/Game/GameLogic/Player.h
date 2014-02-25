@@ -7,6 +7,7 @@
 #include "GameLogicStates.h"
 #include "OysterMath.h"
 #include "DynamicObject.h"
+#include "DynamicArray.h"
 
 
 namespace GameLogic
@@ -49,6 +50,8 @@ namespace GameLogic
 		void SetLookDir(const Oyster::Math3D::Float3& lookDir);
 
 		void TurnLeft(Oyster::Math3D::Float deltaRadians);
+		
+		void AddAffectedObject(DynamicObject &AffectedObject);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -77,10 +80,14 @@ namespace GameLogic
 		void EndFrame();
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
+
+
 	private:
 		void Jump();
 
 	private:
+		Utility::DynamicMemory::DynamicArray<DynamicObject*> AffectedObjects;
+
 		Oyster::Math::Float life;
 		int teamID;
 		Weapon *weapon;

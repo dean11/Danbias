@@ -2,8 +2,10 @@
 #define GAMELOGICSTATES_H
 #include "OysterMath.h"
 
+
 namespace GameLogic
 {
+	class Player;
 	enum PLAYER_MOVEMENT
 	{
 		PLAYER_MOVEMENT_FORWARD = 0,
@@ -41,6 +43,7 @@ namespace GameLogic
 	struct forcePushData
 	{
 		Oyster::Math::Float3 pushForce;
+		Player *p;
 	};
 
 
