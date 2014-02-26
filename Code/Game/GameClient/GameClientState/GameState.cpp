@@ -158,19 +158,28 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+	GameStateUI::UIState UIstate = this->gameUI->Update( deltaTime );
 	switch (UIstate)
 	{
+	case DanBias::Client::GameStateUI::UIState_shut_down:
+		{
+			this->privData->nextState = ClientState_Quit;
+			// disconnect 
+		}
+	
+		break;
 	case DanBias::Client::GameStateUI::UIState_same:
 		break;
 	case DanBias::Client::GameStateUI::UIState_gaming:
 		break;
 	case DanBias::Client::GameStateUI::UIState_main_menu:
-		//this->privData->nextState = 
+		{
+			this->privData->nextState = ClientState_Main;
+			// disconnect 
+		}
+		
 		break;
-	case DanBias::Client::GameStateUI::UIState_shut_down:
-		this->privData->nextState = ClientState_Quit;
-		break;
+	
 	default:
 		break;
 	} 
@@ -603,6 +612,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					// if it is not a player 
 					object = (*this->privData->dynamicObjects)[decoded.objectID];
+
+					if(!object)
+					{
+						//If it is a static object
+						object = (*this->privData->staticObjects)[decoded.objectID];
+					}
 				}
 
 				if( object )
@@ -620,6 +635,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					// if it is not a player 
 					object = (*this->privData->dynamicObjects)[decoded.objectID];
+					
+					if(!object)
+					{
+						//If it is a static object
+						object = (*this->privData->staticObjects)[decoded.objectID];
+					}
 				}
 
 				if( object )
@@ -757,9 +778,40 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 						case GameLogic::PlayerAction::PlayerAction_Idle:
 							player->playAnimation(L"idle", true);
 							break;
+
+						case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
+							break;
+						case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+							break;
+						case GameLogic::WeaponAction::WeaponAction_Reload:
+							break;
+
+
 						default:
 							break;
 						}
+					}
+				}
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectCollision:
+			{
+				Protocol_ObjectCollision decoded(data);
+				C_Object *object; 
+				object = (this->privData->players)[decoded.objectID];
+				if( !object)
+				{
+					// if it is not a player 
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
+				}
+				if( object )
+				{
+					switch (decoded.collisionID)
+					{
+					case GameLogic::CollisionEvent::CollisionEvent_BasicCollision:
+						break;
+					default:
+						break;
 					}
 				}
 			}

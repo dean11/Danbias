@@ -152,7 +152,7 @@ using namespace DanBias;
 	}
 	void GameSession::ObjectEnabled( GameLogic::IObjectData* movedObject )
 	{
-		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
+		GameSession::gameSession->Send(Protocol_ObjectEnable(movedObject->GetID()).GetProtocol());
 	}
 	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
 	{
@@ -175,6 +175,11 @@ using namespace DanBias;
 	{
 		// send action protocol
 		GameSession::gameSession->Send(Protocol_ObjectAction(movedObject->GetID(), actionID).GetProtocol());
+	}
+	void GameSession::CollisionEvent( GameLogic::IObjectData* movedObject , int collisionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectCollision(movedObject->GetID(), collisionID).GetProtocol());
 	}
 //*****************************************************//
 //****************** Protocol methods *****************//

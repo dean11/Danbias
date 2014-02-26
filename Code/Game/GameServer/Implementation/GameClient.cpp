@@ -25,9 +25,6 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 }
 GameClient::~GameClient()
 {
-	if(this->player)
-		this->player->Inactivate();
-
 	delete this->player;
 
 	this->isReady = false;

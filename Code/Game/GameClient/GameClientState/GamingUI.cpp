@@ -17,6 +17,7 @@ GamingUI::GamingUI() :
 	this->camera		= nullptr;
 	this->plane			= nullptr;
 	this->text			= nullptr;
+	this->nextState = GameStateUI::UIState_same;
 }
 
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
@@ -24,6 +25,7 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
 {
 	this->sharedData = shared;
 	this->camera = camera;
+	this->nextState = GameStateUI::UIState_same;
 }
 
 GamingUI::~GamingUI() { /* Do nothing */ }

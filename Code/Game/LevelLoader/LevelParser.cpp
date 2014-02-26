@@ -167,6 +167,14 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 
 							ParseObject(&buffer[counter], &header->healthValue, 4);
 							counter += 4;
+							
+							// DEBUG
+							header->position[1] = 150;
+							header->spawnTime = 5;
+							header->boundingVolume.box.mass = 0;
+							header->typeID = ObjectType_Static;
+							header->healthValue = 50;
+							// !DEBUG
 
 							objects.push_back(header);
 							break;
