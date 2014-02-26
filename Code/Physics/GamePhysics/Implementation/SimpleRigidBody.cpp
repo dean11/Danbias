@@ -163,30 +163,19 @@ void SimpleRigidBody::SetRotation(::Oyster::Math::Float4x4 rotation)
 	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
 }
 
-void SimpleRigidBody::SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis)
+void SimpleRigidBody::AddRotationAroundY(::Oyster::Math::Float angle)
 {
-	if(angularAxis.xyz.GetMagnitude() == 0)
-	{
-		return;
-	}
-
-	float s = sin(angularAxis.w/2);
-	float x = angularAxis.x * s;
-	float y = angularAxis.y * s;
-	float z = angularAxis.z * s;
-	float w = cos(angularAxis.w/2);
-
 	btTransform trans;
-	btVector3 vector(angularAxis.x, angularAxis.y, angularAxis.z);
-	btQuaternion quaternion(x,y,z,w);
+	btQuaternion quaternion;
 
 	trans = this->rigidBody->getWorldTransform();
-	trans.setRotation(quaternion);
+
+	quaternion = btQuaternion(trans.getBasis().getColumn(1), angle);
+	trans.setRotation(quaternion*trans.getRotation());
 	this->rigidBody->setWorldTransform(trans);
 
 	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
 }
-
 void SimpleRigidBody::SetAngularFactor(Float factor)
 {
 	this->rigidBody->setAngularFactor(factor);
@@ -245,23 +234,45 @@ void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math:
 
 void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
 {
-	Float3 vector = Float3(0, 1, 0).Cross(up);
-
-	if(vector == Float3::null)
-	{
-		return;
-	}
-
-	Float sine = vector.GetLength();
-	Float cosine = acos(Float3(0, 1, 0).Dot(up));
-
-	btQuaternion quaternion(btVector3(vector.x, vector.y, vector.z),cosine);
-
+	btQuaternion newRotation;
 	btTransform trans;
 	trans = this->rigidBody->getWorldTransform();
-	trans.setRotation(quaternion);
+
+	btVector3 v1 = trans.getBasis().getColumn(1);
+	btVector3 v2(up.x, up.y, up.z);
+
+	btQuaternion q;
+	btVector3 a = v1.cross(v2);
+
+	if (v1.dot(v2) < -0.999999)
+	{
+		btVector3 xCrossPre = btVector3(1, 0 ,0).cross(v1);
+		if(xCrossPre.length() < 0.000001)
+			xCrossPre = btVector3(0, 1 ,0).cross(v1);
+		xCrossPre.normalize();
+		q.setRotation(xCrossPre, 3.1415);
+	}
+	else if (v1.dot(v2) > 0.999999)
+	{
+		q = btQuaternion(0, 0, 0, 1);
+	}
+	else
+	{
+		q.setX(a.x());
+		q.setY(a.y());
+		q.setZ(a.z());
+
+		q.setW(1 + v1.dot(v2));
+
+		q.normalize();
+	}
+
+	newRotation = q*trans.getRotation();
+
+	trans.setRotation(newRotation);
 	this->rigidBody->setWorldTransform(trans);
-	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+
+	this->state.quaternion = Quaternion(Float3(newRotation.x(), newRotation.y(), newRotation.z()), newRotation.w());
 }
 
 Float4x4 SimpleRigidBody::GetRotation() const

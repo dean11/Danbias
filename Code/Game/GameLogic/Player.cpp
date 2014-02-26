@@ -65,20 +65,17 @@ void Player::initPlayerData()
 
 void Player::BeginFrame()
 {
-	if( this->playerState != PLAYER_STATE_DEAD && PLAYER_STATE_DIED) 
+	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
 		weapon->Update(0.002f); 
 
 		Oyster::Math::Float maxSpeed = 30;
 
 		// Rotate player accordingly
+		this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
-		Oyster::Math::Quaternion firstUp = this->rigidBody->GetState().quaternion;
-		this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
-		Oyster::Math::Quaternion secondTurn = this->rigidBody->GetState().quaternion;
+		this->rotationUp = 0;
 
-		this->rigidBody->SetRotation(secondTurn*firstUp);
-	
 		// Direction data
 		Oyster::Math::Float4x4 xform;
 		xform = this->rigidBody->GetState().GetOrientation();
@@ -125,7 +122,7 @@ void Player::BeginFrame()
 		}
 	
 		// Dampen velocity if certain keys are not pressed
-		if(key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.9f)
+		if(key_jump <= 0.001 && IsWalking())
 		{
 			if(key_forward <= 0.001 && key_backward <= 0.001)
 			{
@@ -152,7 +149,7 @@ void Player::BeginFrame()
 			walkDirection.Normalize();
 
 			// If on the ground, accelerate normally
-			if(this->rigidBody->GetLambda() < 0.9f)
+			if(IsWalking())
 			{
 				if(forwardSpeed < maxSpeed)
 				{
@@ -164,7 +161,7 @@ void Player::BeginFrame()
 				}
 			}
 			// If in the air, accelerate slower
-			if(this->rigidBody->GetLambda() >= 0.9f)
+			if(IsJumping())
 			{
 				if(forwardSpeed < maxSpeed)
 				{
@@ -193,8 +190,8 @@ void Player::BeginFrame()
 		//Jump
 		if(key_jump > 0.001)
 		{
-			this->key_jump -= this->gameInstance->GetFrameTime();
-			if(this->rigidBody->GetLambda() < 0.9f)
+ 			this->key_jump -= this->gameInstance->GetFrameTime();
+			if(IsWalking())
 			{
 				Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
 				this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass * 20);
@@ -306,15 +303,15 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
+	return (this->rigidBody->GetLambda() < 0.99f);
 }
 bool Player::IsJumping()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
+	return (this->rigidBody->GetLambda() == 1.0f);
 }
 bool Player::IsIdle()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
+	return (this->rigidBody->GetLambda() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
 }
 
 void Player::Inactivate()

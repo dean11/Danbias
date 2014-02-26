@@ -153,6 +153,19 @@ namespace Oyster
 				*/
 				void SetOutputEventDataStream(FILE out);
 
+
+				/** Starts a seperate thread for listening to broadcast messages.
+				* @param port: The port to listen for messages on.
+				* @return Returns true if broadcasting is already started or if it started now.
+						Returns false if it failed to start broadcasting.
+				*/
+				bool StartListeningForBroadcasting(unsigned short port);
+
+				/** Stops the seperate thread for broadcast messages.
+				*
+				*/
+				void StopListeningForBroadcasting();
+
 			private:
 				NetworkClient(const NetworkClient& obj);
 				NetworkClient& operator =(const NetworkClient& obj);
