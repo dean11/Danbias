@@ -82,6 +82,7 @@ namespace GameLogic
 		bool IsIdle();
 
 		void Inactivate();
+		void ResetPlayer( Oyster::Math::Float3 spawnPos);
 
 		Oyster::Math::Float3 GetPosition() const;
 		Oyster::Math::Float3 GetLookDir() const;
