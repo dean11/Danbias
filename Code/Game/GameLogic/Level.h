@@ -38,6 +38,8 @@ namespace GameLogic
 		bool InitiateLevel(float radius);
 		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);
+		Oyster::Physics::ICustomBody* InitRigidBodyMesh( const ObjectHeader* obj);
+		
 
 		Object* CreateGameObj(ObjectHeader* obj, Oyster::Physics::ICustomBody* rigidBody);
 		/********************************************************

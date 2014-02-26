@@ -208,6 +208,38 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
 	return rigidBody;
 }
+ICustomBody* Level::InitRigidBodyMesh( const ObjectHeader* obj)
+{
+	ICustomBody* rigidBody = NULL;
+	Oyster::Math::Float3 rigidWorldPos;
+	Oyster::Math::Float4 rigidWorldRotation;
+	float rigidBodyMass;
+	float rigidBodyRadius;
+
+	//offset the rigidPosition from modelspace to worldspace;
+	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.cgMesh.position;
+	//scales the position so the collision geomentry is in the right place
+	rigidWorldPos = rigidWorldPos * obj->scale;
+
+	//offset the rigidRotation from modelspace to worldspace;
+	Oyster::Math::Quaternion worldPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->rotation[0],obj->rotation[1],obj->rotation[2]), obj->rotation[3]);
+	Oyster::Math::Quaternion physicsPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->boundingVolume.cgMesh.rotation[0],obj->boundingVolume.cgMesh.rotation[1],obj->boundingVolume.cgMesh.rotation[2]), obj->boundingVolume.cgMesh.rotation[3]);
+	Oyster::Math::Quaternion rigidWorldQuaternion = worldPosQuaternion * physicsPosQuaternion; 
+
+	rigidWorldRotation = Oyster::Math::Float4(rigidWorldQuaternion); 
+
+
+	//mass scaled
+	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.cgMesh.mass;
+
+	//Radius scaled
+	//rigidBodyRadius = (obj->scale[0]) * obj->boundingVolume.sphere.radius;
+	//rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
+
+	//create the rigid body
+	rigidBody = API::Instance().AddTriangleMesh(obj->boundingVolume.cgMesh.filename, rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.cgMesh.restitutionCoeff , obj->boundingVolume.cgMesh.frictionCoeffStatic , obj->boundingVolume.cgMesh.frictionCoeffDynamic);
+	return rigidBody;
+}
 bool Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
@@ -262,6 +294,11 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
 				{
 					//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
+				}
+
+				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_CG_MESH)
+				{
+					rigidBody_Static = InitRigidBodyMesh(staticObjData);
 				}
 
 				if(rigidBody_Static != NULL)
