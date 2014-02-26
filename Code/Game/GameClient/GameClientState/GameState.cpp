@@ -142,8 +142,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetPosition( p->getPos() );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			offset.y = p->getScale().y * 5.0f;
-			offset.z = p->getScale().z * -5.0f;
+			//offset.y = p->getScale().y * 5.0f;
+			//offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
@@ -187,7 +187,7 @@ bool GameState::Render()
 	{
 		if(playerObject->second)
 		{
-			//if( this->privData->myId != playerObject->second->GetId() )
+			if( this->privData->myId != playerObject->second->GetId() )
 			{
 				playerObject->second->Render();
 			}
@@ -596,6 +596,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					// if it is not a player 
 					object = (*this->privData->dynamicObjects)[decoded.objectID];
+
+					if(!object)
+					{
+						//If it is a static object
+						object = (*this->privData->staticObjects)[decoded.objectID];
+					}
 				}
 
 				if( object )
@@ -613,6 +619,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					// if it is not a player 
 					object = (*this->privData->dynamicObjects)[decoded.objectID];
+					
+					if(!object)
+					{
+						//If it is a static object
+						object = (*this->privData->staticObjects)[decoded.objectID];
+					}
 				}
 
 				if( object )

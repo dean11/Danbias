@@ -44,7 +44,6 @@ using namespace GameLogic;
 			realObjB = realObjA;
 		}
 
-
 		switch (realObjB->GetObjectType())
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
@@ -368,14 +367,19 @@ using namespace GameLogic;
 		Object* a = (Object*)objA->GetCustomTag();
 		Object* b = (Object*)objB->GetCustomTag();
 
-		if(!a)	
+		if(!a)
 			return;
-		if(!b)		
+		if(!b)
 			return;
 
 		if(b->GetObjectType() == ObjectSpecialType_Player)
 		{
-			((Pickup*)a)->OnCollision((Player*)(b));
+			//Only update if it is active. And if the player is alive
+			if(((Pickup*)a)->IsActive() && ((Player*)b)->GetState() != PLAYER_STATE_DEAD && ((Player*)b)->GetState() != PLAYER_STATE_DIED)
+			{
+				((Pickup*)a)->OnCollision((Player*)(b));
+			}
+			return;
 		}
 		else if(a->GetObjectType() != ObjectSpecialType_Player)
 		{
@@ -383,6 +387,10 @@ using namespace GameLogic;
 			//Do nothing.
 			return;
 		}
-
-		((Pickup*)b)->OnCollision((Player*)a);
+		
+		//Only update if it is active. And if the player is alive
+		if(((Pickup*)b)->IsActive() && ((Player*)a)->GetState() != PLAYER_STATE_DEAD && ((Player*)a)->GetState() != PLAYER_STATE_DIED)
+		{
+			((Pickup*)b)->OnCollision((Player*)a);
+		}
 	}
