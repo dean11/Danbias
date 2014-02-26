@@ -1,7 +1,7 @@
 #include "AttatchmentMassDriver.h"
 #include "PhysicsAPI.h"
 #include "GameLogicStates.h"
-
+#include "Game.h"
 using namespace GameLogic;
 
 
@@ -48,6 +48,8 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		{
 			currentEnergy -= 90.0f;
 			ForcePush(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
 		}
 	break;
 
@@ -55,7 +57,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		if(currentEnergy >= 1.0f)
 		{
 			currentEnergy -= 1.0f;
-			ForcePull(usage,dt);	
+			ForcePull(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
 		}
 	break;
 
@@ -64,6 +68,8 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		{
 			currentEnergy -= 90.0f;
 			ForceZip(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
 		}
 	break;
 	}

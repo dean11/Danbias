@@ -188,6 +188,10 @@ void Game::SetPickupSubscription(GameEvent::PickupEventFunction functionPointer)
 {
 	this->onPickupEventFnc = functionPointer;
 }
+void Game::SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) 
+{
+	this->onCollisionEventFnc = functionPointer;
+}
 bool Game::Initiate()
 {
 	API::Instance().Init();

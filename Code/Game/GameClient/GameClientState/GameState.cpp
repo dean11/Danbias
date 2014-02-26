@@ -753,9 +753,40 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 						case GameLogic::PlayerAction::PlayerAction_Idle:
 							player->playAnimation(L"idle", true);
 							break;
+
+						case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
+							break;
+						case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+							break;
+						case GameLogic::WeaponAction::WeaponAction_Reload:
+							break;
+
+
 						default:
 							break;
 						}
+					}
+				}
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_ObjectCollision:
+			{
+				Protocol_ObjectCollision decoded(data);
+				C_Object *object; 
+				object = (this->privData->players)[decoded.objectID];
+				if( !object)
+				{
+					// if it is not a player 
+					object = (*this->privData->dynamicObjects)[decoded.objectID];
+				}
+				if( object )
+				{
+					switch (decoded.collisionID)
+					{
+					case GameLogic::CollisionEvent::CollisionEvent_BasicCollision:
+						break;
+					default:
+						break;
 					}
 				}
 			}
