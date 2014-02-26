@@ -91,7 +91,10 @@ void C_Object::Render()
 {
 	if( this->model )
 	{
-		Oyster::Graphics::API::RenderModel(model);
+		if(this->model->Visible)
+		{
+			Oyster::Graphics::API::RenderModel(model);
+		}
 	}
 }
 void C_Object::Release()

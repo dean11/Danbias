@@ -1,4 +1,5 @@
 #include "PickupHealth.h"
+#include "../Game.h"
 
 using namespace GameLogic;
 
@@ -14,5 +15,8 @@ PickupHealth::~PickupHealth()
 void PickupHealth::OnCollision(Player *player)
 {
 	timer.reset();
+	((Game*)&Game::Instance())->onDisableFnc(this);
+
+	this->active = false;
 	player->DamageLife(-hpValue);
 }

@@ -342,16 +342,22 @@ PLAYER_STATE Player::GetState() const
 
 void Player::DamageLife(int damage)
 {
-	this->playerStats.hp -= damage;
-	// send hp to client
-	this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
-
-	if(this->playerStats.hp <= 0)
+	if(damage != 0)
 	{
-		this->playerStats.hp = 0;
-		this->playerState = PLAYER_STATE_DIED;
-	}
+		this->playerStats.hp -= damage;
 
+		if(this->playerStats.hp > 100)
+			this->playerStats.hp = 100;
+
+		// send hp to client
+		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+
+		if(this->playerStats.hp <= 0)
+		{
+			this->playerStats.hp = 0;
+			this->playerState = PLAYER_STATE_DIED;
+		}
+	}
 }
 
 void Player::AddAffectedObject(DynamicObject &AffectedObject)
