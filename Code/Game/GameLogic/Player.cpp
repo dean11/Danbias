@@ -8,11 +8,11 @@ using namespace GameLogic;
 using namespace Oyster::Physics;
 const float MOVE_FORCE = 30;
 const float KEY_TIMER = 0.03f;
-const float AFFECTED_TIMER = 1.0f;
 Player::Player()
 	:DynamicObject()
 {
 	Player::initPlayerData();
+	AffectedObjects.Reserve(15);
 	this->weapon = NULL;
 	this->teamID = -1; 
 }
@@ -22,6 +22,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 {
 	this->weapon = new Weapon(2,this);
 	Player::initPlayerData();
+	AffectedObjects.Reserve(15);
 	this->teamID = teamID;
 }
 
@@ -30,15 +31,16 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 {
 	this->weapon = new Weapon(2,this);
 	Player::initPlayerData();
+	AffectedObjects.Reserve(15);
 	this->teamID = teamID;
 }
 
 Player::~Player(void)
 {
-	if(this->weapon)
+	if(weapon)
 	{
-		delete this->weapon;
-		this->weapon = NULL;
+		delete weapon;
+		weapon = NULL;
 	}	
 }
 void Player::initPlayerData()
@@ -55,7 +57,7 @@ void Player::initPlayerData()
 	this->key_strafeRight		= 0;
 	this->key_strafeLeft		= 0;
 	this->key_jump				= 0;
-	this->RecentlyAffected		= 0;
+	this->invincibleCooldown	= 0;
 	this->deathTimer			= 0;
 
 	this->rotationUp = 0;
@@ -65,21 +67,14 @@ void Player::BeginFrame()
 {
 	if( this->playerState != PLAYER_STATE_DEAD && PLAYER_STATE_DIED) 
 	{
-		weapon->Update(0.002f);
-
-
-
+		weapon->Update(0.002f); 
 
 		Oyster::Math::Float maxSpeed = 30;
 
 		// Rotate player accordingly
+		this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
-		Oyster::Math::Quaternion firstUp = this->rigidBody->GetState().quaternion;
-		this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
-		Oyster::Math::Quaternion secondTurn = this->rigidBody->GetState().quaternion;
 
-		this->rigidBody->SetRotation(secondTurn*firstUp);
-	
 		// Direction data
 		Oyster::Math::Float4x4 xform;
 		xform = this->rigidBody->GetState().GetOrientation();
@@ -126,7 +121,7 @@ void Player::BeginFrame()
 		}
 	
 		// Dampen velocity if certain keys are not pressed
-		if(key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.9f)
+		if(key_jump <= 0.001 && IsWalking())
 		{
 			if(key_forward <= 0.001 && key_backward <= 0.001)
 			{
@@ -153,7 +148,7 @@ void Player::BeginFrame()
 			walkDirection.Normalize();
 
 			// If on the ground, accelerate normally
-			if(this->rigidBody->GetLambda() < 0.9f)
+			if(IsWalking())
 			{
 				if(forwardSpeed < maxSpeed)
 				{
@@ -165,7 +160,7 @@ void Player::BeginFrame()
 				}
 			}
 			// If in the air, accelerate slower
-			if(this->rigidBody->GetLambda() >= 0.9f)
+			if(IsJumping())
 			{
 				if(forwardSpeed < maxSpeed)
 				{
@@ -195,7 +190,7 @@ void Player::BeginFrame()
 		if(key_jump > 0.001)
 		{
 			this->key_jump -= this->gameInstance->GetFrameTime();
-			if(this->rigidBody->GetLambda() < 0.9f)
+		if(IsWalking())
 			{
 				Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
 				this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass * 20);
@@ -218,6 +213,16 @@ void Player::BeginFrame()
 
 void Player::EndFrame()
 {
+	//check if there are any objects that can be removed from the AffectedObjects list
+	for(int i = 0; i < this->AffectedObjects.Size(); i++)
+	{
+		if(this->AffectedObjects[i] && (this->AffectedObjects[i]->GetRigidBody()->GetState().previousVelocity).GetMagnitude() <= 0.1f)
+		{
+			this->AffectedObjects[i]->RemoveAffectedBy();
+			this->AffectedObjects.Remove(i);
+		}
+
+	}
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -287,7 +292,7 @@ void Player::SetLookDir(const Oyster::Math3D::Float3& lookDir)
 }
 void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
 {
-	this->rotationUp += deltaRadians;
+	this->rotationUp = deltaRadians;
 }
 
 void Player::Jump()
@@ -297,15 +302,15 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
+	return (this->rigidBody->GetLambdaUp() < 0.99f);
 }
 bool Player::IsJumping()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
+	return (this->rigidBody->GetLambdaUp() == 1.0f);
 }
 bool Player::IsIdle()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
+	return (this->rigidBody->GetLambdaUp() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
 }
 
 void Player::Inactivate()
@@ -336,24 +341,32 @@ PLAYER_STATE Player::GetState() const
 
 void Player::DamageLife(int damage)
 {
-	if(damage != 0)
+	this->playerStats.hp -= damage;
+	// send hp to client
+	this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+
+	if(this->playerStats.hp <= 0)
 	{
-		this->playerStats.hp -= damage;
-
-		if(this->playerStats.hp > 100)
-			this->playerStats.hp = 100;
-
-		// send hp to client
-		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
-
-		if(this->playerStats.hp <= 0)
-		{
-			this->playerStats.hp = 0;
-			this->playerState = PLAYER_STATE_DIED;
-		}
+		this->playerStats.hp = 0;
+		this->playerState = PLAYER_STATE_DIED;
 	}
+
 }
 
+void Player::AddAffectedObject(DynamicObject &AffectedObject)
+{
+	//check if object already exists in the list, if so then do not add
+	for(int i = 0; i < AffectedObjects.Size(); i++)
+	{
+		if(AffectedObjects[i]->GetID() == AffectedObject.GetID())
+		{
+			//object already exists, exit function
+			return;
+		}
+	}
+	//else you add the object to the stack
+	AffectedObjects.Push(&AffectedObject);
+}
 bool Player::deathTimerTick(float dt)
 {
 	this->deathTimer -= dt;

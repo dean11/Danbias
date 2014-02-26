@@ -68,7 +68,8 @@ namespace Oyster
 
 			void PreStep(const btCollisionWorld* collisionWorld);
 
-			float GetLambda() const;
+			float GetLambdaUp() const;
+			float GetLambdaForward() const;
 
 			void MoveToLimbo();
 			void ReleaseFromLimbo();
