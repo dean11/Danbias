@@ -27,7 +27,8 @@ struct  GameState::MyData
 	MyData(){}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
+	::Input::Mouse *mouseInput;
+	::Input::Keyboard *keyboardInput;
 
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
@@ -66,7 +67,8 @@ bool GameState::Init( SharedStateContent &shared )
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
+	this->privData->keyboardInput = shared.keyboardDevice;
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
@@ -80,14 +82,13 @@ bool GameState::Init( SharedStateContent &shared )
 	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);
 
-	//tell server ready
-	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
-			
 	// DEGUG KEYS
 	this->key_Reload_Shaders = false;
 	this->key_Wireframe_Toggle = false;
 	this->renderWhireframe = false;
 	// !DEGUG KEYS
+
+	shared.keyboardDevice->ReleaseTextTarget();
 
 	auto light = this->privData->lights->begin();
 	for( ; light != this->privData->lights->end(); ++light )
@@ -96,13 +97,16 @@ bool GameState::Init( SharedStateContent &shared )
 	}
 
 	// create UI states
-	this->gameUI = new GamingUI(this->privData->input, this->privData->nwClient, &this->privData->camera);
+	this->gameUI = new GamingUI(&shared, &this->privData->camera);
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
 	this->statsUI = new StatsUI();
 	this->currGameUI = gameUI; 
 	((GamingUI*)gameUI)->Init();
 	((RespawnUI*)respawnUI)->Init();
 	((StatsUI*)statsUI)->Init();
+
+	//tell server ready
+	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
 
 	return true;
 }
@@ -114,8 +118,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	modelData.position	= position;
 	modelData.rotation	= ArrayToQuaternion( rotation );
 	modelData.scale		= scale;
-	StringToWstring( modelName, modelData.modelPath );
 	modelData.id		= id;
+	StringToWstring(modelName,modelData.modelPath);
 
 	// RB DEBUG
 	RBInitData RBData;
@@ -141,8 +145,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetPosition( p->getPos() );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			//offset.y = p->getScale().y * 5.0f;
-			//offset.z = p->getScale().z * -5.0f;
+			offset.y = p->getScale().y * 5.0f;
+			offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
@@ -186,7 +190,7 @@ bool GameState::Render()
 	{
 		if(playerObject->second)
 		{
-			if( this->privData->myId != playerObject->second->GetId() )
+			//if( this->privData->myId != playerObject->second->GetId() )
 			{
 				playerObject->second->Render();
 			}
@@ -209,8 +213,7 @@ bool GameState::Render()
 		}
 	}
 
-#ifdef _DEBUG
-	//RB DEBUG render wire frame 
+#ifdef _DEBUG //RB DEBUG render wire frame 
 		if(this->renderWhireframe)
 		{
 			Oyster::Graphics::API::StartRenderWireFrame();
@@ -260,8 +263,7 @@ bool GameState::Render()
 				}
 			}
 		}
-		//!RB DEBUG 
-#endif
+#endif //!RB DEBUG 
 
 	Oyster::Graphics::API::StartGuiRender();
 	// render gui elemnts
@@ -327,6 +329,7 @@ bool GameState::Release()
 		delete respawnUI;
 		respawnUI = NULL;
 	}
+	
 	if(gameUI)
 	{
 		gameUI->Release();
@@ -340,7 +343,7 @@ bool GameState::Release()
 		statsUI = NULL;
 	}
 	currGameUI = NULL;
-
+	
 	return true;
 }
 
@@ -348,18 +351,19 @@ void GameState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
+
 void GameState::ReadKeyInput()
 {
-	// DEGUG KEYS
+#ifdef _DEBUG // DEGUG KEYS
 
 	// Reload shaders
-	if( this->privData->input->IsKeyPressed(DIK_R) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_R) )
 	{
 		if( !this->key_Reload_Shaders )
 		{
-#ifdef _DEBUG
-			Oyster::Graphics::API::ReloadShaders();
-#endif
+
+			Graphics::API::ReloadShaders();
+
 			this->key_Reload_Shaders = true;
 		}
 	} 
@@ -367,7 +371,7 @@ void GameState::ReadKeyInput()
 		this->key_Reload_Shaders = false;
 
 	// toggle wire frame render
-	if( this->privData->input->IsKeyPressed(DIK_T) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_T) )
 	{
 		if( !this->key_Wireframe_Toggle )
 		{
@@ -385,9 +389,10 @@ void GameState::ReadKeyInput()
 		this->currGameUI = gameUI;
 		// !DEBUG
 	}
+#endif // !DEGUG KEYS
 
 	// toggle wire frame render
-	if( this->privData->input->IsKeyPressed(DIK_TAB) )
+	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		if( !this->key_showStats )
 		{
