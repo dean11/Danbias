@@ -182,7 +182,7 @@ void Game::SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer)
 }
 void Game::SetActionSubscription(GameEvent::AnimationEventFunction functionPointer)
 {
-	this->onPlayerActionEventFnc = functionPointer;
+	this->onActionEventFnc = functionPointer;
 }
 void Game::SetPickupSubscription(GameEvent::PickupEventFunction functionPointer)
 {
