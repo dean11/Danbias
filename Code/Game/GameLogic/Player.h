@@ -67,8 +67,6 @@ namespace GameLogic
 		void SetLookDir(const Oyster::Math3D::Float3& lookDir);
 
 		void TurnLeft(Oyster::Math3D::Float deltaRadians);
-		
-		void AddAffectedObject(DynamicObject &AffectedObject);
 
 		/********************************************************
 		* Collision function for player, this is to be sent to physics through the subscribe function with the rigidbody
@@ -90,6 +88,7 @@ namespace GameLogic
 		Oyster::Math::Float4x4 GetOrientation() const;
 		int GetTeamID() const;
 		PLAYER_STATE GetState() const;
+		Oyster::Math::Float GetRecentlyAffected();
 
 		void DamageLife(int damage);
 		void setDeathTimer(float deathTimer);
@@ -99,14 +98,11 @@ namespace GameLogic
 		void EndFrame();
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
-
 	private:
 		void Jump();
 		void initPlayerData();
 
 	private:
-	
-
 		int teamID;
 		Weapon *weapon;
 		PLAYER_STATE playerState;
@@ -123,7 +119,7 @@ namespace GameLogic
 		float deathTimer;
 
 		bool hasTakenDamage;
-		float invincibleCooldown;
+		Oyster::Math::Float RecentlyAffected;
 		PlayerStats playerStats;
 		PlayerScore playerScore;
 

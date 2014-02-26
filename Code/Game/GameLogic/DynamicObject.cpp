@@ -90,11 +90,6 @@ void DynamicObject::Activate()
 void DynamicObject::SetAffectedBy(Player &player)
 {
 	this->affectedBy = &player;
-	if(this->type != ObjectSpecialType::ObjectSpecialType_Player) //should not add itself to its own list if its a player
-	{
-		player.AddAffectedObject(*this);
-	}
-	
 }
 
 Player* DynamicObject::getAffectingPlayer()

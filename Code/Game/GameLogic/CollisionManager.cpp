@@ -255,16 +255,18 @@ using namespace GameLogic;
 		{
 			//realobjA is the affectedObject, transfer this to realobjB
 			realObjB->SetAffectedBy(*realObjA->getAffectingPlayer());
+			return;
 
 		}
 		if(realObjB->getAffectingPlayer() != NULL && realObjA->getAffectingPlayer() == NULL)
 		{
 			//realobjB is the affectedObject, transfer this to realobjA
 			realObjA->SetAffectedBy(*realObjB->getAffectingPlayer());
+			return;
 
 		}
 
-		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() != NULL)
+		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() != NULL && ( realObjA->getAffectingPlayer()->GetID() != realObjB->getAffectingPlayer()->GetID()))
 		{
 			//Both objects have a player affecting them, now use the special case
 			if(realObjA->GetRigidBody()->GetState().previousVelocity.GetMagnitude() > realObjB->GetRigidBody()->GetState().previousVelocity.GetMagnitude() )
