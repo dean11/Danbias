@@ -8,11 +8,11 @@ using namespace GameLogic;
 using namespace Oyster::Physics;
 const float MOVE_FORCE = 30;
 const float KEY_TIMER = 0.03f;
+const float AFFECTED_TIMER = 1.0f;
 Player::Player()
 	:DynamicObject()
 {
 	Player::initPlayerData();
-	AffectedObjects.Reserve(15);
 	this->weapon = NULL;
 	this->teamID = -1; 
 }
@@ -22,7 +22,6 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 {
 	this->weapon = new Weapon(2,this);
 	Player::initPlayerData();
-	AffectedObjects.Reserve(15);
 	this->teamID = teamID;
 }
 
@@ -31,7 +30,6 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 {
 	this->weapon = new Weapon(2,this);
 	Player::initPlayerData();
-	AffectedObjects.Reserve(15);
 	this->teamID = teamID;
 }
 
@@ -57,7 +55,7 @@ void Player::initPlayerData()
 	this->key_strafeRight		= 0;
 	this->key_strafeLeft		= 0;
 	this->key_jump				= 0;
-	this->invincibleCooldown	= 0;
+	this->RecentlyAffected		= 0;
 	this->deathTimer			= 0;
 
 	this->rotationUp = 0;
@@ -67,7 +65,10 @@ void Player::BeginFrame()
 {
 	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		weapon->Update(0.002f); 
+		weapon->Update(0.002f);
+
+
+
 
 		Oyster::Math::Float maxSpeed = 30;
 
@@ -214,16 +215,6 @@ void Player::BeginFrame()
 
 void Player::EndFrame()
 {
-	//check if there are any objects that can be removed from the AffectedObjects list
-	for(int i = 0; i < this->AffectedObjects.Size(); i++)
-	{
-		if(this->AffectedObjects[i] && (this->AffectedObjects[i]->GetRigidBody()->GetState().previousVelocity).GetMagnitude() <= 0.1f)
-		{
-			this->AffectedObjects[i]->RemoveAffectedBy();
-			this->AffectedObjects.Remove(i);
-		}
-
-	}
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -360,20 +351,6 @@ void Player::DamageLife(int damage)
 	}
 }
 
-void Player::AddAffectedObject(DynamicObject &AffectedObject)
-{
-	//check if object already exists in the list, if so then do not add
-	for(int i = 0; i < AffectedObjects.Size(); i++)
-	{
-		if(AffectedObjects[i]->GetID() == AffectedObject.GetID())
-		{
-			//object already exists, exit function
-			return;
-		}
-	}
-	//else you add the object to the stack
-	AffectedObjects.Push(&AffectedObject);
-}
 bool Player::deathTimerTick(float dt)
 {
 	this->deathTimer -= dt;

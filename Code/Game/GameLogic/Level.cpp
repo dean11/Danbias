@@ -369,23 +369,59 @@ void Level::RespawnPlayer(Player *player)
 void Level::Update(float deltaTime)
 {
 	// update lvl-things
+	
+
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
-		if(this->playerObjects[i])
+		if(this->playerObjects[i]->getAffectingPlayer() != NULL)
 		{
-			if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+			
+		}
+
+		if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+		{
+			// true when timer reaches 0 
+			if(this->playerObjects[i]->deathTimerTick(deltaTime))
+				RespawnPlayer(this->playerObjects[i]);
+		}
+		else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
+		{
+			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
+			// HACK to avoid crasch. affected by tag is NULL
+			//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
+			Player* killer = this->playerObjects[i]->getAffectingPlayer();
+			if(!killer) //if there is no killer then you commited suicide
 			{
-				// true when timer reaches 0 
-				if(this->playerObjects[i]->deathTimerTick(deltaTime))
-					RespawnPlayer(this->playerObjects[i]);
+				killer = this->playerObjects[i];
 			}
-			else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
+			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], killer, DEATH_TIMER); // add killer ID
+		}
+	}
+
+	for(int i = 0; i < dynamicObjects.Size(); i++)
+	{
+		if(dynamicObjects[i]->getAffectingPlayer() != NULL)
+		{
+			Oyster::Math::Float vel = dynamicObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+
+			if(vel <= 0.1f) // is bearly moving
 			{
-				this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
-				// HACK to avoid crasch. affected by tag is NULL
-				Player* killer = this->playerObjects[i]->getAffectingPlayer();
-				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
-				//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->getAffectingPlayer(), DEATH_TIMER); // add killer ID
+				//set the tag AffectedBy to NULL
+				dynamicObjects[i]->RemoveAffectedBy();
+			}
+		}
+	}
+
+	for(int i = 0; i < playerObjects.Size(); i++)
+	{
+		if(playerObjects[i]->getAffectingPlayer() != NULL)
+		{
+			Oyster::Math::Float vel = playerObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+
+			if(vel <= 0.1f) // is bearly moving
+			{
+				//set the tag AffectedBy to NULL
+				playerObjects[i]->RemoveAffectedBy();
 			}
 		}
 	}
