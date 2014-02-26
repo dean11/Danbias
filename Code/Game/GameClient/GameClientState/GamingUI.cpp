@@ -17,6 +17,7 @@ GamingUI::GamingUI() :
 	this->camera = nullptr;
 	this->plane	= nullptr;
 	this->text	= nullptr;
+	this->nextState = GameStateUI::UIState_same;
 }
 
 GamingUI::GamingUI( InputClass *input, NetworkClient *connection, Camera_FPSV2 *camera ) :
@@ -25,6 +26,7 @@ GamingUI::GamingUI( InputClass *input, NetworkClient *connection, Camera_FPSV2 *
 	this->input = input;
 	this->netClient = connection;
 	this->camera = camera;
+	this->nextState = GameStateUI::UIState_same;
 }
 
 GamingUI::~GamingUI() { /* Do nothing */ }
@@ -168,6 +170,10 @@ void GamingUI::ReadKeyInput()
 	if( this->input->IsKeyPressed(DIK_ESCAPE) )
 	{
 		this->nextState = GameStateUI::UIState_shut_down;
+	} 
+	if( this->input->IsKeyPressed(DIK_M) )
+	{
+		this->nextState = GameStateUI::UIState_main_menu;
 	} 
 	// !DEGUG KEYS
 	// TODO: implement sub-menu
