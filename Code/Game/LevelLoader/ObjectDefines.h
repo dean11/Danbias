@@ -42,6 +42,7 @@ namespace GameLogic
 		ObjectSpecialType_Player,
 		ObjectSpecialType_Generic,
 		
+		ObjectSpecialType_PickupHealth,
 
 		ObjectSpecialType_Count,
 		ObjectSpecialType_Unknown  = -1
@@ -92,6 +93,23 @@ namespace GameLogic
 		WorldSize_Unknown = -1
 	};
 
+	enum PlayerAction
+	{
+		PlayerAction_Jump,
+		PlayerAction_Walk,
+		PlayerAction_Idle,
+	};
+	enum WeaponAction
+	{
+		WeaponAtcion_PrimaryShoot,
+		WeaponAction_SecondaryShoot
+	};
+
+	enum PickupType
+	{
+		PickupType_Health,
+		PickupType_SpeedBoost
+	};
 
 	/************************************
 				Structs
@@ -246,7 +264,11 @@ namespace GameLogic
 		float skySize;
 	};
 
-	
+	struct PickupHealthAttributes : public ObjectHeader
+	{
+		float spawnTime;
+		float healthValue;
+	};
 
 	
 
