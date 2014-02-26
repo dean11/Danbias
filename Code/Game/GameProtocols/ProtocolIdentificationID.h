@@ -72,6 +72,7 @@
 #define protocol_Gameplay_ObjectDie					367
 #define protocol_Gameplay_ObjectDisconnectPlayer	368
 #define protocol_Gameplay_ObjectAction				369
+#define protocol_Gameplay_ObjectCollision			370
 #define protocol_GameplayMAX							399
 
 

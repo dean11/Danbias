@@ -176,6 +176,11 @@ using namespace DanBias;
 		// send action protocol
 		GameSession::gameSession->Send(Protocol_ObjectAction(movedObject->GetID(), actionID).GetProtocol());
 	}
+	void GameSession::CollisionEvent( GameLogic::IObjectData* movedObject , int collisionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectCollision(movedObject->GetID(), collisionID).GetProtocol());
+	}
 //*****************************************************//
 //****************** Protocol methods *****************//
 //******************************************************************************************************************//

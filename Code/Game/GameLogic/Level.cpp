@@ -16,6 +16,7 @@ using namespace Oyster::Math;
 
 Level::Level(void)
 {
+	srand (time(NULL));
 	objID = 100; 
 }
 Level::~Level(void)
@@ -405,6 +406,15 @@ void Level::AddPlayerToTeam(Player *player, int teamID)
 }
 void Level::AddPlayerToGame(Player *player)
 {
+	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
+	{
+		if (!this->playerObjects[i])
+		{
+			this->playerObjects[i] = player;
+			return;
+		}
+	}
+	// if no free space, allocate a new spot
 	this->playerObjects.Push(player);
 }
 void Level::RemovePlayerFromGame(Player *player)
@@ -413,7 +423,7 @@ void Level::RemovePlayerFromGame(Player *player)
 	{
 		if ((Player*)this->playerObjects[i] == player)
 		{
-			//this->playerObjects[i].
+			this->playerObjects[i] =  nullptr;
 		}
 	}
 }
@@ -426,7 +436,8 @@ void Level::RespawnPlayer(Player *player)
 {
 	//this->teamManager.RespawnPlayerRandom(player);
 
-	Float3 spawnPoint = spawnPoints[0]; 
+	int i = rand() % spawnPoints.Size();
+	Float3 spawnPoint = spawnPoints[i]; 
 	player->Respawn(spawnPoint);
 }
 void Level::Update(float deltaTime)
@@ -434,19 +445,22 @@ void Level::Update(float deltaTime)
 	// update lvl-things
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
-		if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+		if(this->playerObjects[i])
 		{
-			// true when timer reaches 0 
-			if(this->playerObjects[i]->deathTimerTick(deltaTime))
-				RespawnPlayer(this->playerObjects[i]);
-		}
-		else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
-		{
-			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
-			// HACK to avoid crasch. affected by tag is NULL
-			Player* killer = this->playerObjects[i]->getAffectingPlayer();
-			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
-			//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->getAffectingPlayer(), DEATH_TIMER); // add killer ID
+			if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+			{
+				// true when timer reaches 0 
+				if(this->playerObjects[i]->deathTimerTick(deltaTime))
+					RespawnPlayer(this->playerObjects[i]);
+			}
+			else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
+			{
+				this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
+				// HACK to avoid crasch. affected by tag is NULL
+				Player* killer = this->playerObjects[i]->getAffectingPlayer();
+				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
+				//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->getAffectingPlayer(), DEATH_TIMER); // add killer ID
+			}
 		}
 	}
 
