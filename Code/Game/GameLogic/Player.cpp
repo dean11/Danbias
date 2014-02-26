@@ -72,7 +72,7 @@ void Player::BeginFrame()
 		Oyster::Math::Float maxSpeed = 30;
 
 		// Rotate player accordingly
-	this->rigidBody->AddRotationAroundY(this->rotationUp);
+		this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
 
 		// Direction data
@@ -121,7 +121,7 @@ void Player::BeginFrame()
 		}
 	
 		// Dampen velocity if certain keys are not pressed
-	if(key_jump <= 0.001 && IsWalking())
+		if(key_jump <= 0.001 && IsWalking())
 		{
 			if(key_forward <= 0.001 && key_backward <= 0.001)
 			{
@@ -148,7 +148,7 @@ void Player::BeginFrame()
 			walkDirection.Normalize();
 
 			// If on the ground, accelerate normally
-		if(IsWalking())
+			if(IsWalking())
 			{
 				if(forwardSpeed < maxSpeed)
 				{
@@ -160,7 +160,7 @@ void Player::BeginFrame()
 				}
 			}
 			// If in the air, accelerate slower
-		if(IsJumping())
+			if(IsJumping())
 			{
 				if(forwardSpeed < maxSpeed)
 				{
@@ -306,11 +306,11 @@ bool Player::IsWalking()
 }
 bool Player::IsJumping()
 {
-	return (this->rigidBody->GetLambda() < 1.0f);
+	return (this->rigidBody->GetLambda() == 1.0f);
 }
 bool Player::IsIdle()
 {
-	return (this->rigidBody->GetLambda() < 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
+	return (this->rigidBody->GetLambda() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
 }
 
 void Player::Inactivate()
