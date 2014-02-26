@@ -238,7 +238,11 @@ bool Level::InitiateLevel(std::wstring levelPath)
 			{
 				LevelMetaData* LevelObjData = ((LevelMetaData*)obj);
 				std::string levelName = LevelObjData->levelName;
+
 				// LevelObjData->worldSize;
+
+				//LevelMetaData is not an object.
+				--this->objID;
 			}
 			break;
 		case ObjectType::ObjectType_Static:
