@@ -99,6 +99,11 @@ namespace GameLogic
 		PlayerAction_Walk,
 		PlayerAction_Idle,
 	};
+	enum WeaponAction
+	{
+		WeaponAtcion_PrimaryShoot,
+		WeaponAction_SecondaryShoot
+	};
 
 	enum PickupType
 	{
