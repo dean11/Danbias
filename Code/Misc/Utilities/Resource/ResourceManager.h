@@ -148,6 +148,14 @@ namespace Oyster
 			*	@return Returns the accociated ID
 			*/
 			int				GetResourceId(const wchar_t filename[]);
+
+			int				GetResourceCount(const wchar_t filename[]);
+
+			int				GetResourceCount(const HRESOURCE& resource);
+
+			int				GetResourceSize(const wchar_t filename[]);
+
+			int				GetResourceSize(const HRESOURCE& resource);
 		
 		private:
 			ResourceManager(const ResourceManager& obj);

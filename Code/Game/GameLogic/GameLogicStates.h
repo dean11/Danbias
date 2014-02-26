@@ -2,8 +2,10 @@
 #define GAMELOGICSTATES_H
 #include "OysterMath.h"
 
+
 namespace GameLogic
 {
+	class Player;
 	enum PLAYER_MOVEMENT
 	{
 		PLAYER_MOVEMENT_FORWARD = 0,
@@ -18,7 +20,8 @@ namespace GameLogic
 		PLAYER_STATE_WALKING = 1,
 		PLAYER_STATE_IDLE = 2,
 		PLAYER_STATE_DEAD = 4,
-		PLAYER_STATE_INVALID = 8,
+		PLAYER_STATE_DIED = 8,
+		PLAYER_STATE_INVALID = 16,
 	};
 
 	enum WEAPON_FIRE
@@ -41,6 +44,7 @@ namespace GameLogic
 	struct forcePushData
 	{
 		Oyster::Math::Float3 pushForce;
+		Player *p;
 	};
 
 

@@ -16,6 +16,10 @@
 #include "DynamicArray.h"
 #include "LevelLoader.h"
 
+#include "PickupSystem\PickupSystem.h"
+#include "PickupSystem\PickupHealth.h"
+
+const int DEATH_TIMER = 5;
 namespace GameLogic
 {
 
@@ -48,7 +52,8 @@ namespace GameLogic
 		* @param teamID: ArrayPos of the team you want to add the player to
 		********************************************************/
 		void AddPlayerToTeam(Player *player, int teamID);
-
+		void AddPlayerToGame(Player *player);
+		void RemovePlayerFromGame(Player *player);
 
 		/********************************************************
 		* Respawns a player on a random teammate
@@ -64,12 +69,20 @@ namespace GameLogic
 		********************************************************/
 		static Oyster::Physics::ICustomBody::SubscriptMessage LevelCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 		
+		void Update(float deltaTime);
+
 		int getNrOfDynamicObj();
 		Object* GetObj( int ID ) const;
+
+		static void PlayerDied( Player* player );
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>>			GetPlayers();
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>>	GetStaticObjects();
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>>	GetDynamicObject();
 
-	//private:
+	private:
+		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>> playerObjects;
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
@@ -78,6 +91,7 @@ namespace GameLogic
 		StaticObject *levelObj;
 		int objID; 
 		Utility::DynamicMemory::DynamicArray<Oyster::Math::Float3> spawnPoints;
+		PickupSystem pickupSystem;
 
 	};
 

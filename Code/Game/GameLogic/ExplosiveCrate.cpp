@@ -7,6 +7,7 @@ ExplosiveCrate::ExplosiveCrate(void)
 {
 	this->pushForceMagnitude = 0;
 	this->ExplosionRadius = 0;
+	this->hasExploaded = false;
 }
 
 ExplosiveCrate::ExplosiveCrate(Oyster::Physics::ICustomBody *rigidBody,ObjectSpecialType type, int objectID,Oyster::Math::Float extraDamageOnCollision, Oyster::Math::Float pushForceMagnitude, Oyster::Math::Float ExplosionRadius)
@@ -15,6 +16,7 @@ ExplosiveCrate::ExplosiveCrate(Oyster::Physics::ICustomBody *rigidBody,ObjectSpe
 	this->extraDamageOnCollision = extraDamageOnCollision;
 	this->pushForceMagnitude = pushForceMagnitude;
 	this->ExplosionRadius = ExplosionRadius;
+	this->hasExploaded = false;
 }
 
 ExplosiveCrate::~ExplosiveCrate(void)

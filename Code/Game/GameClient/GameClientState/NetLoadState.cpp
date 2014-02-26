@@ -242,5 +242,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		}
 	}
 
+	Graphics::API::EndLoadingModels();
+
 	this->privData->nextState = ClientState::ClientState_Game;
 }
