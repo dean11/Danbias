@@ -332,6 +332,9 @@ void Level::AddPlayerToTeam(Player *player, int teamID)
 }
 void Level::AddPlayerToGame(Player *player)
 {
+	int i = rand() % spawnPoints.Size();
+	Float3 spawnPoint = spawnPoints[i]; 
+	player->ResetPlayer(spawnPoint);
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
 		if (!this->playerObjects[i])
@@ -373,28 +376,31 @@ void Level::Update(float deltaTime)
 
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
-		if(this->playerObjects[i]->getAffectingPlayer() != NULL)
+		if(this->playerObjects[i])
 		{
-			
-		}
-
-		if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
-		{
-			// true when timer reaches 0 
-			if(this->playerObjects[i]->deathTimerTick(deltaTime))
-				RespawnPlayer(this->playerObjects[i]);
-		}
-		else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
-		{
-			this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
-			// HACK to avoid crasch. affected by tag is NULL
-			//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
-			Player* killer = this->playerObjects[i]->getAffectingPlayer();
-			if(!killer) //if there is no killer then you commited suicide
+			if(this->playerObjects[i]->getAffectingPlayer() != NULL)
 			{
-				killer = this->playerObjects[i];
+			
 			}
-			((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], killer, DEATH_TIMER); // add killer ID
+
+			if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+			{
+				// true when timer reaches 0 
+				if(this->playerObjects[i]->deathTimerTick(deltaTime))
+					RespawnPlayer(this->playerObjects[i]);
+			}
+			else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
+			{
+				this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
+				// HACK to avoid crasch. affected by tag is NULL
+				//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
+				Player* killer = this->playerObjects[i]->getAffectingPlayer();
+				if(!killer) //if there is no killer then you commited suicide
+				{
+					killer = this->playerObjects[i];
+				}
+				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], killer, DEATH_TIMER); // add killer ID
+			}
 		}
 	}
 

@@ -149,6 +149,11 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.UpdateOrientation();
 		}
 	}
+	else
+	{
+		int i = 0; 
+		// some error loading model 
+	}
 }
 
 GameClientState::ClientState GameState::Update( float deltaTime )
@@ -736,11 +741,20 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 			{
 				//Remove the disconnected player
 				Protocol_ObjectDisconnectPlayer decoded(data);
-				auto object = this->privData->dynamicObjects->find( decoded.objectID );
-				if( object != this->privData->dynamicObjects->end() )
+				C_Player *player; 
+				player = (this->privData->players)[decoded.objectID];
+
+				if( player )
 				{
-					object->second = nullptr;
-					this->privData->dynamicObjects->erase( object );
+					if( this->privData->myId == decoded.objectID )
+					{
+						// dont delete my player
+					}
+					if( player )
+					{
+						player->SetVisible(false);
+						(this->privData->players)[decoded.objectID].Release();
+					}
 				}
 			}
 			return GameClientState::event_processed;
