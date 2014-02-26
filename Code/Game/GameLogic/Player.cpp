@@ -37,10 +37,10 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 
 Player::~Player(void)
 {
-	if(weapon)
+	if(this->weapon)
 	{
-		delete weapon;
-		weapon = NULL;
+		delete this->weapon;
+		this->weapon = NULL;
 	}	
 }
 void Player::initPlayerData()
