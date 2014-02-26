@@ -95,11 +95,26 @@ namespace GameLogic
 
 	enum PlayerAction
 	{
-		PlayerAction_Jump,
-		PlayerAction_Walk,
-		PlayerAction_Idle,
+		PlayerAction_Jump = 0,
+		PlayerAction_Walk = 1,
+		PlayerAction_Idle = 2,
+	};
+	// continue ID counting from playerAction
+	enum WeaponAction
+	{
+		WeaponAction_PrimaryShoot		= 3,
+		WeaponAction_SecondaryShoot		= 4,
+		WeaponAction_UtilityActivate	= 5,
+		WeaponAction_Reload				= 6, 
+		WeaponAction_EnergyDepleted		= 7,
+
 	};
 
+	// TODO: add more collision Events
+	enum CollisionEvent
+	{
+		CollisionEvent_BasicCollision,
+	};
 	enum PickupType
 	{
 		PickupType_Health,

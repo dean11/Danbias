@@ -33,6 +33,7 @@ namespace GameLogic
 		typedef void(*ObjectDeadFunction)(IObjectData* victim, IObjectData* killer, float seconds);	// Callback method that sends killer and death timer
 		typedef void(*PickupEventFunction)(IObjectData* player, int pickupEffectID );	// Callback method that sends killer and death timer
 		typedef void(*AnimationEventFunction)(IObjectData* player, int actionID );	// Callback method that sends killer and death timer
+		typedef void(*CollisionEventFunction)(IObjectData*object, int collisionID); 
 		//etc...
 	};
 
@@ -188,7 +189,7 @@ namespace GameLogic
 		virtual void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) = 0;
 		virtual void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) = 0;
 		virtual void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) = 0;
-
+		virtual void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) = 0;
 	};	
 }
 

@@ -142,7 +142,7 @@ void Player::BeginFrame()
 			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
 			{
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
-					this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 			}
 		}
@@ -178,7 +178,7 @@ void Player::BeginFrame()
 			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
 			{
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING)
-					this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Walk);
+					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			}
 		}
@@ -200,7 +200,7 @@ void Player::BeginFrame()
 				this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass * 20);
 				
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
-					this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Jump);
+					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Jump);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 			}
 		}
@@ -208,7 +208,7 @@ void Player::BeginFrame()
 		{
 			if(this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING)
 			{
-				this->gameInstance->onPlayerActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 			}
 		}

@@ -68,7 +68,8 @@ using namespace GameLogic;
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
-
+		// send collision event message
+		((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_BasicCollision);
 		//return Physics::ICustomBody::SubscriptMessage_none;
 	}
 
