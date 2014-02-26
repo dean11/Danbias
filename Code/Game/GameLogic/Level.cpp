@@ -71,7 +71,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			Oyster::Math::Float dmg = 120; 
 			Oyster::Math::Float force = 500; 
 			Oyster::Math::Float radie = 3; 
-			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter++, dmg, force, radie);
+			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg, force, radie);
 		}
 		break;
 	//case ObjectSpecialType_BlueExplosiveBox: 
@@ -228,9 +228,6 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				std::string levelName = LevelObjData->levelName;
 
 				// LevelObjData->worldSize;
-
-				//LevelMetaData is not an object.
-				--this->objIDCounter;
 			}
 			break;
 		case ObjectType::ObjectType_Static:
