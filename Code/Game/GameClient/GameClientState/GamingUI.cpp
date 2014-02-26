@@ -148,7 +148,7 @@ void GamingUI::ReadKeyInput()
 			this->key_Shoot = true;
 		}
 	} 
-	else 
+	else
 		this->key_Shoot = false;
 	
 	if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseMiddleBtn) )
@@ -172,7 +172,54 @@ void GamingUI::ReadKeyInput()
 	} 
 }
 
-
+void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )	
+{ 
+	switch ( key )
+	{
+		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = true;
+			playerShot.secondaryPressed = false;
+			playerShot.utilityPressed = false;
+			this->sharedData->network->Send( playerShot );
+		}
+		break;
+		case ::Input::Enum::SAMI_MouseRightBtn:
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = false;
+			playerShot.secondaryPressed = true;
+			playerShot.utilityPressed = false;
+			this->sharedData->network->Send( playerShot );
+		}
+		break;
+		case ::Input::Enum::SAMI_MouseMiddleBtn:
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = false;
+			playerShot.secondaryPressed = false;
+			playerShot.utilityPressed = true;
+			this->sharedData->network->Send( playerShot );
+		}
+		break;
+	}
+}
+void GamingUI::OnMouseRelease ( Input::Enum::SAMI key, Input::Mouse* sender )
+{ 
+	switch ( key )
+	{
+		case ::Input::Enum::SAMI_MouseRightBtn:
+		{
+			Protocol_PlayerShot playerShot;
+			playerShot.primaryPressed = false;
+			playerShot.secondaryPressed = false;
+			playerShot.utilityPressed = false;
+			this->sharedData->network->Send( playerShot );
+		}
+		break;
+	}
+}
 void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )
 { 
 	//send delta mouse movement 
