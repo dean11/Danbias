@@ -157,19 +157,28 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+	GameStateUI::UIState UIstate = this->gameUI->Update( deltaTime );
 	switch (UIstate)
 	{
+	case DanBias::Client::GameStateUI::UIState_shut_down:
+		{
+			this->privData->nextState = ClientState_Quit;
+			// disconnect 
+		}
+	
+		break;
 	case DanBias::Client::GameStateUI::UIState_same:
 		break;
 	case DanBias::Client::GameStateUI::UIState_gaming:
 		break;
 	case DanBias::Client::GameStateUI::UIState_main_menu:
-		//this->privData->nextState = 
+		{
+			this->privData->nextState = ClientState_Main;
+			// disconnect 
+		}
+		
 		break;
-	case DanBias::Client::GameStateUI::UIState_shut_down:
-		this->privData->nextState = ClientState_Quit;
-		break;
+	
 	default:
 		break;
 	} 
