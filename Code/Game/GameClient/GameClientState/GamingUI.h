@@ -28,9 +28,9 @@ namespace DanBias { namespace Client
 
 	private: /* Overidden mouse methods */
 		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override { }
-		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
+		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
 		void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
-		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
+		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
 		void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override { }
 		void OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override;
 		void OnMouseScroll			( int delta, Input::Mouse* sender )										override { }

@@ -44,9 +44,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		if(currentEnergy >= 90.0f)
+		if(currentEnergy >= 9.0f)
 		{
-			currentEnergy -= 90.0f;
+			currentEnergy -= 9.0f;
 			ForcePush(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
@@ -54,13 +54,33 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	break;
 
 	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
-		if(currentEnergy >= 1.0f)
+		if( currentEnergy >= 1.0f )
 		{
 			currentEnergy -= 1.0f;
-			ForcePull(usage,dt);
-			// add CD 
-			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+			if(!this->hasObject)
+			{
+				ForcePull(usage,dt);
+				// add CD 
+				((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+			}
 		}
+		else	//Energy drained, release object
+		{
+			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+			this->hasObject = false;
+			this->heldObject = NULL;
+		}
+	break;
+
+	case WEAPON_USE_SECONDARY_RELEASE:
+	{
+		if (this->hasObject)	//Dummy check
+		{
+			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+			this->hasObject = false;
+			this->heldObject = NULL;
+		}
+	}
 	break;
 
 	case WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS:
@@ -112,11 +132,11 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	if(hasObject)
 	{
 		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force);
-		heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
-		((DynamicObject*)(heldObject->GetCustomTag()))->RemoveManipulation();
-		hasObject = false;
-		heldObject = NULL;
-		return;
+		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
+		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+		this->hasObject = false;
+		this->heldObject = NULL;
+		return ;
 	}
 
 	Oyster::Math::Float radius = 4;
