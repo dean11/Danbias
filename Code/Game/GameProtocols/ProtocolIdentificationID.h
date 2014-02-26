@@ -20,6 +20,7 @@
 #define protocol_GeneralMIN								100
 #define protocol_General_Status						100
 #define protocol_General_Text						101
+#define protocol_Broadcast_Test							102
 #define protocol_GeneralMAX								199
 
 

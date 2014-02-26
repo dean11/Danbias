@@ -13,6 +13,7 @@
 #include "CustomNetProtocol.h"
 #include "NetworkSession.h"
 
+#include "../NetworkDependencies/ConnectionUDP.h"
 #include "../NetworkDependencies/Connection.h"
 #include "../NetworkDependencies/PostBox.h"
 #include "../NetworkDependencies/WinsockFunctions.h"
@@ -24,6 +25,8 @@
 
 #include <queue>
 #include <WinSock2.h>
+
+#include <thread>
 
 //For conversion from wstring to string
 #include <codecvt>
@@ -56,6 +59,26 @@ struct NetworkClient::PrivateData : public IThreadObject
 	ThreadSafeQueue<CustomNetProtocol> sendQueue;
 	ThreadSafeQueue<NetEvent<NetworkClient*, NetworkClient::ClientEventArgs>> recieveQueue;
 
+	//Testing for eventSelect.
+	HANDLE socketEvents[2];
+	HANDLE shutdownEvent;
+
+	//Broadcasting
+	bool broadcastingStarted;
+	HANDLE broadcastEvent;
+	HANDLE broadcastShutdownEvent;
+	std::thread broadcastThread; 
+	ConnectionUDP broadcastConnection;
+	OysterByte broadcastTempMessage;
+	Translator broadcastTranslator;
+
+	//The OysterByte each message is packed in.
+	OysterByte tempMessage;
+
+	//Used to buffer messages
+	OysterByte bufferedSend;
+	int numPackages;
+
 	//ID
 	static unsigned int currID;
 	const unsigned int ID;
@@ -65,14 +88,19 @@ struct NetworkClient::PrivateData : public IThreadObject
 		,	parent(0)
 		,	owner(0)
 		,	outputEvent(0)
-	{ 
+	{
+		broadcastingStarted = false;
+		numPackages = 0;
+		bufferedSend.Resize(MAX_NETWORK_MESSAGE_SIZE);
+		tempMessage.Resize(MAX_NETWORK_MESSAGE_SIZE);
 		InitWinSock();
 		this->thread.Create(this, false);
 		this->thread.SetPriority(Oyster::Thread::OYSTER_THREAD_PRIORITY_1);
 	}
 	~PrivateData()
 	{ 
-		this->thread.Terminate();
+		SetEvent(shutdownEvent);
+		this->thread.Wait();
 
 		ShutdownWinSock();
 		this->connection.Disconnect();
@@ -80,15 +108,211 @@ struct NetworkClient::PrivateData : public IThreadObject
 		this->parent = 0;
 	}
 
+	void ThreadEntry()
+	{
+		//Create alla events used in the thread
+		shutdownEvent = CreateEvent(NULL, true, false, NULL);
+		socketEvents[0] = WSACreateEvent();
+		socketEvents[1] = WSACreateEvent();
+
+		if(socketEvents[0] == WSA_INVALID_EVENT)
+		{
+			//Error
+		}
+
+		if(WSAEventSelect(this->connection.GetSocket(), socketEvents[0], FD_READ) == SOCKET_ERROR)
+		{
+			//Error
+		}
+	}
+
+	void ThreadExit()
+	{
+		WSACloseEvent(socketEvents[0]);
+		WSACloseEvent(socketEvents[1]);
+		CloseHandle(shutdownEvent);
+	}
+
+	//Thread for receiving broadcast messages
+	void BroadcastThread()
+	{
+		WSANETWORKEVENTS wsaEvents;
+
+		while(WaitForSingleObject(broadcastShutdownEvent, 0) != WAIT_OBJECT_0)
+		{
+			int result = WSAWaitForMultipleEvents(1, &broadcastEvent, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
+			if(result == 0)
+			{
+				WSAEnumNetworkEvents(this->broadcastConnection.GetSocket(), broadcastEvent, &wsaEvents);
+				if((wsaEvents.lNetworkEvents & FD_READ) && (wsaEvents.iErrorCode[FD_READ_BIT] == 0))
+				{
+					//Recieve a message
+					RecvUDP();
+				}
+			}
+		}
+	}
+
 	bool DoWork() override
 	{
-		if(!this->connection.IsConnected())	return false;
+		WSANETWORKEVENTS wsaEvents;
 
-		Send();
-		Recv();
-		
-		return true;
+		while(WaitForSingleObject(shutdownEvent, 0) != WAIT_OBJECT_0)
+		{
+			if(!this->connection.IsConnected())	return false;
+
+			int result = WSAWaitForMultipleEvents(3, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
+			if(result == 0)
+			{
+				WSAEnumNetworkEvents(this->connection.GetSocket(), socketEvents[0], &wsaEvents);
+				if((wsaEvents.lNetworkEvents & FD_READ) && (wsaEvents.iErrorCode[FD_READ_BIT] == 0))
+				{
+					//Recieve a message
+					Recv();
+				}
+			}
+			else if(result == 1)
+			{
+				//Send all messages in the sendQueue
+				int i = this->sendQueue.Size();
+				WSAResetEvent(socketEvents[1]);
+
+				if(i == 1)
+				{
+					Send();
+				}
+				else if(i > 1)
+				{
+					for(int j = 0; j < i; j++)
+						BufferMessage();
+
+					SendBuffer();
+				}
+			}
+		}
+
+		return false;
 	}
+
+	void RecvUDP()
+	{
+		int errorCode = -1;
+
+		errorCode = this->broadcastConnection.Recieve(broadcastTempMessage);
+		
+		if(errorCode == 0 && broadcastTempMessage.GetSize())
+		{
+			CustomNetProtocol protocol;
+			bool ok = this->broadcastTranslator.Unpack(protocol, broadcastTempMessage);
+
+			//Check if the protocol was unpacked correctly
+			if(ok)
+			{
+				CEA parg;
+				parg.type = CEA::EventType_ProtocolRecieved;
+				parg.data.protocol = protocol;
+				NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e;
+				e.sender = this->parent;
+				e.args.data.protocol = parg.data.protocol;
+				e.args.type = parg.type;
+			
+				this->recieveQueue.Push(e);
+
+				if(this->outputEvent)
+				{
+					printf("\t(ID: %i | IP: %s | Protocol: %i) Message recieved!\n", this->ID, this->connection.GetIpAddress().c_str(), protocol[0].value.netShort);	
+				}
+			}
+			else
+			{
+				if(this->outputEvent)
+				{
+					printf("\t(ID: %i | IP: %s) Failed to unpack CustomNetProtocol!\n", this->ID, this->connection.GetIpAddress().c_str());	
+				}
+			}
+
+			broadcastTempMessage.Clear();
+		}
+	}
+
+	void SendBuffer()
+	{
+		if(bufferedSend.GetSize() > 0)
+		{
+			this->connection.Send(bufferedSend);
+			//printf("2. %d, %d\n", numPackages, bufferedSend.GetSize());
+			bufferedSend.Clear();
+
+			//Debug
+			numPackages = 0;
+		}
+	}
+
+	void BufferMessage()
+	{
+		int errorCode = 0;
+
+		if(!this->sendQueue.IsEmpty())
+		{
+			CustomNetProtocol p = this->sendQueue.Pop();
+
+			this->translator.Pack(tempMessage, p);
+
+
+			if(tempMessage.GetSize() > MAX_NETWORK_MESSAGE_SIZE - bufferedSend.GetSize())
+			{
+				//Send buffered message
+				errorCode = this->connection.Send(bufferedSend);
+				//printf("2. %d, %d\n", numPackages, bufferedSend.GetSize());
+				bufferedSend.Clear();
+
+				//Debug
+				numPackages = 0;
+			}
+
+			bufferedSend += tempMessage;
+			tempMessage.Clear();
+
+			//Debug
+			numPackages++;
+
+			if(errorCode != 0 && errorCode != WSAEWOULDBLOCK)
+			{
+				if( errorCode == WSAECONNABORTED || errorCode == WSAENOTCONN)
+				{
+					CEA parg;
+					parg.type = CEA::EventType_Disconnect;
+					parg.data.protocol = p;
+					NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
+					this->recieveQueue.Push(e);
+					
+					if(this->outputEvent)
+					{
+						printf("\t(ID: %i | IP: %s | Protocol: %i) - EventType_Disconnect && EventType_ProtocolFailedToSend \n", this->ID, this->connection.GetIpAddress().c_str(), p[0].value.netShort);	
+					}
+				}
+				else
+				{
+					CEA parg;
+					parg.type = CEA::EventType_ProtocolFailedToSend;
+					parg.data.protocol = p;
+					NetEvent<NetworkClient*, CEA> e = { this->parent, parg };
+					this->recieveQueue.Push(e);
+
+					if(this->outputEvent)
+					{
+						printf("\t(ID: %i | IP: %s | Protocol: %i) - EventType_ProtocolFailedToSend\n", this->ID, this->connection.GetIpAddress().c_str(), p[0].value.netShort);	
+					}
+				}
+			}
+
+			if(this->outputEvent)
+			{
+				printf("\t(ID: %i | IP: %s | Protocol: %i) Message sent!\n", this->ID, this->connection.GetIpAddress().c_str(), p[0].value.netShort);	
+			}
+		}
+	}
+
 	int Send()
 	{
 		int errorCode = 0;
@@ -96,11 +320,11 @@ struct NetworkClient::PrivateData : public IThreadObject
 		if(!this->sendQueue.IsEmpty())
 		{
 			//printf("\t(%i)\n", this->sendQueue.Size());
-			OysterByte temp;
 			CustomNetProtocol p = this->sendQueue.Pop();
 
-			this->translator.Pack(temp, p);
-			errorCode = this->connection.Send(temp);
+			this->translator.Pack(tempMessage, p);
+ 			errorCode = this->connection.Send(tempMessage);
+			tempMessage.Clear();
 
 			if(errorCode != 0 && errorCode != WSAEWOULDBLOCK)
 			{
@@ -144,12 +368,12 @@ struct NetworkClient::PrivateData : public IThreadObject
 	{
 		int errorCode = -1;
 
-		OysterByte temp = OysterByte();
-		errorCode = this->connection.Recieve(temp);
+		errorCode = this->connection.Recieve(tempMessage);
 		
-		if(errorCode == 0 && temp.GetSize())
+		if(errorCode == 0 && tempMessage.GetSize())
 		{
-			HandleRecievedData(temp);
+			HandleRecievedData(tempMessage);
+			tempMessage.Clear();
 
 
 			/*	Replaced with EmptyOutbufferedQueue() and HandleRecievedData(OysterByte)
@@ -312,7 +536,7 @@ bool NetworkClient::Connect(ConnectionInfo& socket)
 	if(this->privateData)	return false;
 	if(!this->privateData)	this->privateData = new PrivateData();
 
-	int result = this->privateData->connection.Connect(socket, false);
+	int result = this->privateData->connection.Connect(socket, true);
 	
 	//Connect has succeeded
 	if(result != 0)		return false;
@@ -332,8 +556,8 @@ bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 
 	if(!this->privateData)
 		this->privateData = new PrivateData();
-	
-	int result = this->privateData->connection.Connect(port, serverIP, false);
+
+	int result = this->privateData->connection.Connect(port, serverIP, true);
 	
 	//Connect has succeeded
 	if(result != 0)		return false;
@@ -381,7 +605,9 @@ void NetworkClient::Disconnect()
 {
 	if(!privateData) return;
 
-	privateData->thread.Stop();
+	SetEvent(privateData->shutdownEvent);
+	privateData->thread.Wait();
+
 	privateData->connection.Disconnect();
 	this->privateData->sendQueue.Clear();
 	this->privateData->recieveQueue.Clear();
@@ -390,11 +616,13 @@ void NetworkClient::Disconnect()
 void NetworkClient::Send(CustomProtocolObject& protocol)
 {
 	this->privateData->sendQueue.Push(protocol.GetProtocol());
+	WSASetEvent(this->privateData->socketEvents[1]);
 }
 
 void NetworkClient::Send(CustomNetProtocol& protocol)
 {
 	this->privateData->sendQueue.Push(protocol);
+	WSASetEvent(this->privateData->socketEvents[1]);
 }
 
 void NetworkClient::SetOwner(NetworkSession* owner)
@@ -444,4 +672,86 @@ std::string NetworkClient::GetIpAddress()
 void NetworkClient::OutputEventData(bool output)
 {
 	this->privateData->outputEvent;
+}
+
+bool NetworkClient::StartListeningForBroadcasting(unsigned short port)
+{
+	//Create privateData if it doesn't exists.
+	if(this->privateData == NULL)
+	{
+		privateData = new PrivateData;
+	}
+
+	//Initiate broadcasting only if it's not started.
+	if(!this->privateData->broadcastingStarted)
+	{
+		//Create UDP connection
+		int result = this->privateData->broadcastConnection.InitiateBroadcastClient(port);
+		if(result)
+		{
+			return false;
+		}
+
+		//Create event for closing the thread.
+		this->privateData->broadcastShutdownEvent = CreateEvent(NULL, true, false, NULL);
+		if(this->privateData->broadcastShutdownEvent == NULL)
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			return false;
+		}
+
+		//Creating event for broadcast messages on the UDP connection.
+		this->privateData->broadcastEvent = WSACreateEvent();
+		if(this->privateData->broadcastEvent == WSA_INVALID_EVENT)
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+			return false;
+		}
+
+		//Set the event for only Receiving.
+		if(WSAEventSelect(this->privateData->broadcastConnection.GetSocket(), this->privateData->broadcastEvent, FD_READ) == SOCKET_ERROR)
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+			WSACloseEvent(this->privateData->broadcastEvent);
+			return false;
+		}
+
+		//Start thread receiving broadcast messages.
+		this->privateData->broadcastThread = thread(&PrivateData::BroadcastThread, this->privateData);
+		if(!this->privateData->broadcastThread.joinable())
+		{
+			this->privateData->broadcastConnection.Disconnect();
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+			WSACloseEvent(this->privateData->broadcastEvent);
+			return false;
+		}
+
+		this->privateData->broadcastingStarted = true;
+	}
+
+	return true;
+}
+
+void NetworkClient::StopListeningForBroadcasting()
+{
+	if(this->privateData)
+	{
+		if(this->privateData->broadcastingStarted)
+		{
+			//Tell the thread to shutdown
+			WSASetEvent(this->privateData->broadcastShutdownEvent);
+
+			//Wait for thread
+			this->privateData->broadcastThread.join();
+
+			WSACloseEvent(this->privateData->broadcastEvent);
+			CloseHandle(this->privateData->broadcastShutdownEvent);
+
+			this->privateData->broadcastConnection.Disconnect();
+
+			this->privateData->broadcastingStarted = false;
+		}
+	}
 }

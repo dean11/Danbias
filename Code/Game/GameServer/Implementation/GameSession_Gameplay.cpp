@@ -29,10 +29,10 @@ using namespace DanBias;
 			float dt = (float)this->logicTimer.getElapsedSeconds();
 			if( dt >= this->logicFrameTime )
 			{
+				this->logicTimer.reset();
+
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
-
-				this->logicTimer.reset();
 			}
 		}
 
