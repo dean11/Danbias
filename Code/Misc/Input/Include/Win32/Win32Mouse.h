@@ -28,6 +28,7 @@ namespace Input
 
 		void ProccessMouseData (RAWMOUSE mouse);
 		bool Create( );
+		void ToggleDefault( bool toggler );
 
 	private:
 		struct Buttons

@@ -4,10 +4,12 @@
 #include "OysterMath.h"
 #include <string>
 #include "GameStateUI.h"
+#include "C_obj\C_Player.h"
+
 
 namespace DanBias { namespace Client
 {
-	class GameState : public GameClientState
+	class GameState : public GameClientState//, Input::Mouse::MouseEvent
 	{
 	public:
 		enum gameStateState
@@ -41,6 +43,10 @@ namespace DanBias { namespace Client
 		bool key_showStats;
 		bool renderStats;
 		// !DEGUG KEYS
+
+		//:HACK!
+		//void OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;
+		//void SetUp( DanBias::Client::C_Player* p);
 
 	};
 } }

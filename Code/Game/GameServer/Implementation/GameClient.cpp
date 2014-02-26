@@ -28,6 +28,8 @@ GameClient::~GameClient()
 	if(this->player)
 		this->player->Inactivate();
 
+	delete this->player;
+
 	this->isReady = false;
 	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";

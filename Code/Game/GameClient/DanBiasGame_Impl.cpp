@@ -55,15 +55,13 @@ namespace DanBias
 			this->sharedStateContent.network			= nullptr;
 			this->sharedStateContent.mouseDevice		= nullptr;
 			this->sharedStateContent.keyboardDevice		= nullptr;
-			this->sharedStateContent.mouseSensitivity	= Utility::Value::Radian( 0.1f );
+			this->sharedStateContent.mouseSensitivity	= Utility::Value::Radian( 0.6f );
 			this->serverOwner							= false;
 			this->capFrame								= 0;
 		}
 
 		~DanBiasGamePrivateData()
 		{
-			//SafeDeleteInstance( this->sharedStateContent.mouseDevice );
-			//SafeDeleteInstance( this->sharedStateContent.keyboardDevice );
 		}
 	} data;
 }

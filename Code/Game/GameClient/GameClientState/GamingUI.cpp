@@ -175,10 +175,13 @@ void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, In
 { 
 	//send delta mouse movement 
 	{
-		this->camera->PitchDown( (-coordinate.y) * this->sharedData->mouseSensitivity );;
+		this->camera->PitchDown( (-coordinate.y) * this->sharedData->mouseSensitivity );
+		//this->camera->YawLeft( (-coordinate.x) * this->sharedData->mouseSensitivity );
 		//if( deltaPos.x != 0.0f ) //This made the camera reset to a specific rotation. Why?
 		{
 			this->sharedData->network->Send( Protocol_PlayerLeftTurn((coordinate.x) * this->sharedData->mouseSensitivity, this->camera->GetLook()) );
 		}
 	}
 }
+
+

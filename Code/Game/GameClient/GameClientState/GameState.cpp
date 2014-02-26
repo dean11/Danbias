@@ -89,6 +89,7 @@ bool GameState::Init( SharedStateContent &shared )
 	// !DEGUG KEYS
 
 	shared.keyboardDevice->ReleaseTextTarget();
+	//shared.mouseDevice->AddMouseEvent(this);
 
 	auto light = this->privData->lights->begin();
 	for( ; light != this->privData->lights->end(); ++light )
@@ -144,10 +145,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( p->getPos() );
 			Float3 offset = Float3( 0.0f );
-			// DEBUG position of camera so we can see the player model
-			offset.y = p->getScale().y * 5.0f;
-			offset.z = p->getScale().z * -5.0f;
-			// !DEBUG
+		
 			this->privData->camera.SetHeadOffset( offset );
 			this->privData->camera.UpdateOrientation();
 		}
@@ -407,6 +405,7 @@ void GameState::ReadKeyInput()
 	}
 }
 
+
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
@@ -631,3 +630,104 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 
 	return message;
 }
+
+/* :HACK! */
+// TODO: Fix camera movement on client
+/*
+void GameState::SetUp( DanBias::Client::C_Player* p)
+{
+	Float3 up;
+	auto it = this->privData->staticObjects->begin();
+	for (it; it != this->privData->staticObjects->end(); it++)
+	{
+		if(it->second->GetGameObjectType() == GameLogic::ObjectSpecialType_World)
+		{
+			up = - (p->getPos() - it->second->getPos());
+			break;
+		}
+	}
+	
+	Quaternion newRotation;
+
+	Float3 v1 = this->privData->camera.GetUp();
+	Float3 v2(up.x, up.y, up.z);
+
+	Quaternion q;
+	Float3 a = v1.Cross(v2);
+	
+	if (v1.Dot(v2) < -0.999999) 
+	{
+		Float3 xCrossPre = Float3(1, 0 ,0).Cross(v1);
+		if(xCrossPre.GetLength() < 0.000001)
+			xCrossPre = Float3(0, 1 ,0).Cross(v1);
+		xCrossPre.Normalize();
+		
+		//q.setRotation(xCrossPre, 3.1415);
+    }
+	else if (v1.Dot(v2) > 0.999999) 
+	{
+           q = Quaternion(Float3(0.0f), 1);
+	}
+	else
+	{
+		q.imaginary.x = a.x;
+		q.imaginary.y = a.y;
+		q.imaginary.z = a.z;
+
+		q.real = (1 + v1.Dot(v2));
+
+		q.Normalize();
+	}
+
+	//Get Rotation from matrix
+	//float trace = this->privData->camera..v[0].x + trans.v[1].y + trans.v[2].z;
+	float trace = trans.v[0].x + trans.v[1].y + trans.v[2].z;
+
+	float temp[4];
+
+	if (trace > float(0.0)) 
+	{
+		float s = sqrt(trace + float(1.0));
+		temp[3]=(s * float(0.5));
+		s = float(0.5) / s;
+
+		temp[0]=((trans.v[2].y - trans.v[1].z) * s);
+		temp[1]=((trans.v[0].z - trans.v[2].x) * s);
+		temp[2]=((trans.v[1].x - trans.v[0].y) * s);
+	} 
+	else 
+	{
+		int i = trans.v[0].x < trans.v[1].y ? 
+			(trans.v[1].y < trans.v[2].z ? 2 : 1) :
+			(trans.v[0].x < trans.v[2].z ? 2 : 0); 
+		int j = (i + 1) % 3;  
+		int k = (i + 2) % 3;
+
+		float s = sqrt(trans.v[i][i] - trans.v[j][j] - trans.v[k][k] + float(1.0));
+		temp[i] = s * float(0.5);
+		s = float(0.5) / s;
+
+		temp[3] = (trans.v[k][j] - trans.v[j][k]) * s;
+		temp[j] = (trans.v[j][i] + trans.v[i][j]) * s;
+		temp[k] = (trans.v[k][i] + trans.v[i][k]) * s;
+	}
+	Quaternion n = Quaternion(Float3(temp[0],temp[1],temp[2]),temp[3]);
+
+	newRotation = q * n;
+	this->privData->camera.SetRotation(newRotation);
+}
+void GameState::OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )
+{ 
+	auto it = this->privData->players.begin();
+	for (it; it != this->privData->players.end(); it++)
+	{
+		if(it->second->GetId() == this->privData->myId)
+		{
+			this->SetUp(it->second);
+			return;
+		}
+	}
+	
+}
+*/
+

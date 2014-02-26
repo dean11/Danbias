@@ -83,44 +83,47 @@ LRESULT Win32Input::RawInputParser(HWND h, LPARAM l)
 LRESULT CALLBACK Win32Input::RawWindowCallback(HWND h, UINT m, WPARAM w, LPARAM l)
 {
 	LRESULT val = 0;
+	UINT te = 0;
+	if(m != WM_INPUT)
+		te = m;
+	
 	switch (m)
 	{
 		case WM_INPUT:
 			return Win32Input::instance->RawInputParser(h, l);
 		break;
 		
+		case WM_NCACTIVATE:
+		case WM_ACTIVATEAPP:
 		case WM_ACTIVATE:
 			Win32Input::instance->WindowActivate((w == TRUE));
 		break;
+	
 		case WM_CREATE:
 			Win32Input::instance->WindowActivate(true);
-			//tme.cbSize=sizeof(tme);
-			//tme.dwFlags=TME_HOVER;
-			//tme.hwndTrack=h;//hanlde of window you want the mouse over message for.
-			//tme.dwHoverTime=HOVER_DEFAULT;
-			//if(TrackMouseEvent(&tme) == FALSE)
-			//{ }
 		break;
-		case WM_MOUSEHOVER:
-			//val = 0;
-		break;
-		case WM_MOUSELEAVE:
-			//val = 0;
-		break;
+		
 	}
 
 	return DefWindowProc(h, m, w, l);
 }
 void Win32Input::WindowActivate(bool activate)
 {
-	//if(activate)
-	//{
-	//	ShowCursor(0);
-	//}
-	//else
-	//{
-	//	ShowCursor(1);
-	//}
+	if(activate)
+	{
+		SetCursor(0);
+		for (unsigned int i = 0; i < Win32Input::instance->mouse.size(); i++)
+		{
+			Win32Input::instance->mouse[i]->ToggleDefault(false);
+		}
+	}
+	else
+	{
+		for (unsigned int i = 0; i < Win32Input::instance->mouse.size(); i++)
+		{
+			Win32Input::instance->mouse[i]->ToggleDefault(true);
+		}
+	}
 }
 
 
