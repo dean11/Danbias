@@ -80,7 +80,6 @@ void Player::BeginFrame()
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
 		this->rotationUp = 0;
-
 		// Direction data
 		Oyster::Math::Float4x4 xform;
 		xform = this->rigidBody->GetState().GetOrientation();
@@ -298,15 +297,15 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->rigidBody->GetLambda() < 0.99f);
+	return (this->rigidBody->GetLambdaUp() < 0.99f);
 }
 bool Player::IsJumping()
 {
-	return (this->rigidBody->GetLambda() == 1.0f);
+	return (this->rigidBody->GetLambdaUp() == 1.0f);
 }
 bool Player::IsIdle()
 {
-	return (this->rigidBody->GetLambda() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
+	return (this->rigidBody->GetLambdaUp() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
 }
 
 void Player::Inactivate()

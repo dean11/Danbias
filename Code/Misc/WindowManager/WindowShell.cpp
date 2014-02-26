@@ -77,7 +77,6 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 	if(!desc.hInstance)				desc.hInstance = GetModuleHandle(0);
 	if(desc.windowSize.x <= 0)		desc.windowSize.x = 50;
 	if(desc.windowSize.y <= 0)		desc.windowSize.y = 50;
-
 	
 	__windowShellData.parent			= desc.parent;
 	__windowShellData.hIns				= desc.hInstance;
@@ -111,20 +110,14 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 
 
 	RECT rectW;
-	int width;
-	int height;
 	DWORD style = desc.windowStyle;
 	bool windowed = false;
 
-	width = desc.windowSize.x + GetSystemMetrics(SM_CXFIXEDFRAME)*2;
-	height = desc.windowSize.y + GetSystemMetrics(SM_CYFIXEDFRAME)*2 + GetSystemMetrics(SM_CYCAPTION);
+	rectW.left = 0;
+	rectW.top = 0;
+	rectW.right = desc.windowSize.x;
+	rectW.bottom = desc.windowSize.y;
 
-	rectW.left=(GetSystemMetrics(SM_CXSCREEN)-width)/2;
-	rectW.top=(GetSystemMetrics(SM_CYSCREEN)-height)/2;
-	rectW.right=rectW.left+width;
-	rectW.bottom=rectW.top+height;
-	
-	
 	if(__windowShellData.parent)
 	{
 		rectW.left		= 0;
@@ -134,6 +127,8 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 		style			= WS_CHILD | WS_VISIBLE; 
 		windowed		= true;
 	}
+
+	AdjustWindowRect(& rectW, style, FALSE);
 
 	if(windowed)
 	{
@@ -161,8 +156,8 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 									style, 
 									desc.windowPosition.x, 
 									desc.windowPosition.y, 
-									desc.windowSize.x, 
-									desc.windowSize.y, 
+									rectW.right - rectW.left, 
+									rectW.bottom - rectW.top, 
 									0, 
 									0, 
 									__windowShellData.hIns, 
@@ -173,7 +168,6 @@ bool WindowShell::CreateWin(WINDOW_INIT_DESC &desc)
 	if( !__windowShellData.hWnd )
 	{
 		printf("Failed to create window handle : Code ( %ul )", GetLastError());
-		//MessageBox(0, L"Failed to create window", L"Error!", 0);
 		return false;
 	}
 
@@ -258,3 +252,4 @@ bool WindowShell::Frame()
 
 	return true;
 }
+

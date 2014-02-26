@@ -229,7 +229,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	SimpleRigidBody* body = new SimpleRigidBody;
 	SimpleRigidBody::State state;
 
-	btBulletWorldImporter bulletFile;
+	btBulletWorldImporter bulletFile(0);
 
 	typedef std::codecvt_utf8<wchar_t> convert_typeX;
 	std::wstring_convert<convert_typeX, wchar_t> converterX;
@@ -247,8 +247,8 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 
 	// Add rigid body
 	btVector3 fallInertia(0, 0, 0);
-	collisionShape->calculateLocalInertia(mass, fallInertia);
-	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, fallInertia);
+	//collisionShape->calculateLocalInertia(mass, fallInertia);
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
 	rigidBody->setFriction(staticFriction);
 	rigidBody->setRestitution(restitution);
@@ -264,7 +264,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	state.dynamicFrictionCoeff = dynamicFriction;
 	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
-	state.mass = mass;
+	state.mass = 0;
 
 	body->SetState(state);
 
@@ -291,7 +291,7 @@ void API_Impl::UpdateWorld()
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
-	this->dynamicsWorld->stepSimulation(this->timeStep, 10, this->timeStep);
+	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
 
 	ICustomBody::State state;
 
@@ -314,23 +314,12 @@ void API_Impl::UpdateWorld()
 		ICustomBody* bodyA = (ICustomBody*)obA->getUserPointer();
 		ICustomBody* bodyB = (ICustomBody*)obB->getUserPointer();
 	
-		
-
 		int numContacts = contactManifold->getNumContacts();
 		for (int j=0;j<numContacts;j++)
 		{
 			btManifoldPoint& pt = contactManifold->getContactPoint(j);
 			if (pt.getDistance()<0.f)
 			{
-				if(bodyA->GetState().mass == 40 && bodyB->GetState().centerPos == Float3::null)
-				{
-					const char* breakPoint = "STOP";
-				}
-				if(bodyB->GetState().mass == 40 && bodyA->GetState().centerPos == Float3::null)
-				{
-					const char* breakPoint = "STOP";
-				}
-
 				const btVector3& ptA = pt.getPositionWorldOnA();
 				const btVector3& ptB = pt.getPositionWorldOnB();
 				const btVector3& normalOnB = pt.m_normalWorldOnB;

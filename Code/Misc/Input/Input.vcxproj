@@ -28,7 +28,6 @@
     <ClCompile Include="Source\Win32\Win32Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\ApplicationKeyboard.h" />
     <ClInclude Include="Include\Common.h" />
     <ClInclude Include="Include\Input.h" />
     <ClInclude Include="Include\InputManager.h" />
@@ -36,7 +35,6 @@
     <ClInclude Include="Include\Keyboard.h" />
     <ClInclude Include="Include\Mouse.h" />
     <ClInclude Include="Include\PreReq.h" />
-    <ClInclude Include="Include\Win32\Win32ApplicationKeyboard.h" />
     <ClInclude Include="Include\Win32\Win32Input.h" />
     <ClInclude Include="Include\Win32\Win32Keyboard.h" />
     <ClInclude Include="Include\Win32\Win32Mouse.h" />
@@ -93,28 +91,32 @@
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)..\External\Lib\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
