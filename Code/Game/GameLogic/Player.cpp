@@ -129,7 +129,7 @@ void Player::BeginFrame()
 	}
 	
 	// Dampen velocity if certain keys are not pressed
-	if(key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.9f)
+	if(key_jump <= 0.001 && IsWalking())
 	{
 		if(key_forward <= 0.001 && key_backward <= 0.001)
 		{
@@ -147,7 +147,7 @@ void Player::BeginFrame()
 		walkDirection.Normalize();
 
 		// If on the ground, accelerate normally
-		if(this->rigidBody->GetLambda() < 0.9f)
+		if(IsWalking())
 		{
 			if(forwardSpeed < maxSpeed)
 			{
@@ -159,7 +159,7 @@ void Player::BeginFrame()
 			}
 		}
 		// If in the air, accelerate slower
-		if(this->rigidBody->GetLambda() >= 0.9f)
+		if(IsJumping())
 		{
 			if(forwardSpeed < maxSpeed)
 			{
@@ -183,15 +183,13 @@ void Player::BeginFrame()
 	if(key_jump > 0.001)
 	{
 		this->key_jump -= this->gameInstance->GetFrameTime();
-		if(this->rigidBody->GetLambda() < 0.9f)
+		if(IsWalking())
 		{
 			Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
 			this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass*20);
 			this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 		}
 	}
-
-	
 	
 
 	//this->weapon->Update(0.01f);
@@ -278,15 +276,15 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
+	return (this->rigidBody->GetLambda() < 0.99f);
 }
 bool Player::IsJumping()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
+	return (this->rigidBody->GetLambda() < 1.0f);
 }
 bool Player::IsIdle()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
+	return (this->rigidBody->GetLambda() < 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
 }
 
 void Player::Inactivate()
