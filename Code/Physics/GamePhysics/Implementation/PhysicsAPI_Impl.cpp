@@ -234,10 +234,10 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	typedef std::codecvt_utf8<wchar_t> convert_typeX;
 	std::wstring_convert<convert_typeX, wchar_t> converterX;
 
-	//std::string bulletPath = converterX.to_bytes();
+	std::string bulletPath = converterX.to_bytes(fileName);
 
 	// Add collision shape
-	bulletFile.loadFile("C:\\DV1477\\Git Repository\\Danbias\\Bin\\Content\\Worlds\\cgf\\structure_corporation.bullet");
+	bulletFile.loadFile(bulletPath.c_str());
 	btCollisionShape* collisionShape = bulletFile.getCollisionShapeByIndex(0);
 	body->SetCollisionShape(collisionShape);
 
