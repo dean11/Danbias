@@ -193,7 +193,7 @@ using namespace GameLogic;
 
 
 		Oyster::Math::Float damageDone = 0.0f;
-		Oyster::Math::Float forceThreashHold = 30.0f; //FIX: balance this
+		Oyster::Math::Float forceThreashHold = 100.0f; //FIX: balance this
 
 		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{
