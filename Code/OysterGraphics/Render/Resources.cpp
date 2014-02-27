@@ -275,6 +275,8 @@ namespace Oyster
 
 					//Blur
 					Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&Blur::BufferSRV,&Blur::BufferUAV);
+
+					return Core::Init::Success;
 				}
 
 				Core::Init::State Resources::InitViews()
