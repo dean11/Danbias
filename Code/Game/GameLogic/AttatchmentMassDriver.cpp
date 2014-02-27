@@ -105,6 +105,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 void AttatchmentMassDriver::Update(float dt)
 {
 	
+
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
@@ -116,12 +117,26 @@ void AttatchmentMassDriver::Update(float dt)
 		heldObject->SetPosition(pos);
 		heldObject->SetLinearVelocity(Oyster::Math::Float3::null);
 
-		currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object
+		if(currentEnergy < maxEnergy)
+		{
+			currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
+		}
+		
 	}
 	else
 	{
-		currentEnergy += rechargeRate;
+		if(currentEnergy < maxEnergy)
+		{
+			currentEnergy += rechargeRate;
+
+			if(currentEnergy == maxEnergy)
+			{
+				int trap = 0;
+			}
+		}
 	}
+
+	if(currentEnergy > maxEnergy) currentEnergy = maxEnergy;
 	
 
 }
