@@ -304,13 +304,19 @@ using namespace GameLogic;
 
 		Object *realObj = (Object*)obj->GetCustomTag();
 
-		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
+		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
-		
+		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		{
+			obj->ApplyImpulse(((forcePushData*)(args))->pushForce* 0.5);
+			((Player*)obj->GetCustomTag())->DamageLife(10);
+		}
+		else
+		{
+			obj->ApplyImpulse(((forcePushData*)(args))->pushForce);		
+		}
 
-		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
-		
 
 		DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
 		
