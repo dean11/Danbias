@@ -108,6 +108,7 @@ namespace Oyster
 
 					static Core::Init::State Init();
 					static Core::Init::State InitShaders();
+					static Core::Init::State ReInitViews(Math::Float2);
 					static Core::Init::State InitRenderStates();
 					static Core::Init::State InitBuffers();
 					static Core::Init::State InitViews();
