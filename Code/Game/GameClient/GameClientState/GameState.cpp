@@ -713,7 +713,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				if( this->privData->myId == decoded.objectID )
 				{
 					// show my energy 
-					float energy = decoded.energy;
+					int energy = (int)decoded.energy;
 					((GamingUI*)this->gameUI)->SetEnergyText(std::to_wstring(energy));
 				}
 			}

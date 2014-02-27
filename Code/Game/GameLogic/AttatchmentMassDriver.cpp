@@ -62,22 +62,13 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		}
 		else if( currentEnergy >= 1.0f )
 		{
-			if(this->hasObject)
-			{
-				currentEnergy -= 1.0f;
-				if(!this->hasObject)
-				{
-					ForcePull(usage,dt);
-					// add CD 
-					((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
-				}
-			}
-		}
-		else	//Energy drained, release object
-		{
-			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
-			this->hasObject = false;
-			this->heldObject = NULL;
+			
+			currentEnergy -= 1.0f;
+		
+			ForcePull(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+		
 		}
 		break;
 
@@ -142,7 +133,11 @@ void AttatchmentMassDriver::Update(float dt)
 		}
 	}
 
-	if(currentEnergy > maxEnergy) currentEnergy = maxEnergy;
+	if(currentEnergy > maxEnergy) 
+	{
+		currentEnergy = maxEnergy;
+		energyChange = 6;
+	}
 	
 	if(energyChange > 5)
 	{
