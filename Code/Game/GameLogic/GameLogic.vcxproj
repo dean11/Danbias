@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AttatchmentGun.h" />
     <ClInclude Include="AttatchmentMassDriver.h" />
     <ClInclude Include="AttatchmentSocket.h" />
     <ClInclude Include="CollisionManager.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AttatchmentGun.cpp" />
     <ClCompile Include="AttatchmentMassDriver.cpp" />
     <ClCompile Include="AttatchmentSocket.cpp" />
     <ClCompile Include="CollisionManager.cpp" />

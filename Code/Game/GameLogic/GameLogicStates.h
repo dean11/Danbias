@@ -32,6 +32,7 @@ namespace GameLogic
 		WEAPON_USE_SECONDARY_RELEASE = 4,
 		WEAPON_USE_UTILLITY_PRESS = 8,
 		WEAPON_USE_UTILLITY_RELEASE = 16,
+		WEAPON_INTERRUPT = 32
 	};
 
 	enum WEAPON_STATE
@@ -45,6 +46,10 @@ namespace GameLogic
 	{
 		Oyster::Math::Float3 pushForce;
 		Player *p;
+	};
+	struct firedBullet
+	{
+		Oyster::Math::Float hitDamage;
 	};
 
 
