@@ -714,6 +714,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				{
 					// show my energy 
 					float energy = decoded.energy;
+					((GamingUI*)this->gameUI)->SetEnergyText(std::to_wstring(energy));
 				}
 			}
 			return GameClientState::event_processed;

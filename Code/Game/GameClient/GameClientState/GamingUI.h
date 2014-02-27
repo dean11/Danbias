@@ -25,6 +25,7 @@ namespace DanBias { namespace Client
 		void RenderText() const;
 		bool Release();
 		void SetHPtext( std::wstring hp );
+		void SetEnergyText( std::wstring energy );
 
 	private: /* Overidden mouse methods */
 		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override	{ }

@@ -102,6 +102,10 @@ void GamingUI::SetHPtext( std::wstring hp )
 {
 	this->hp->setText(hp);
 }
+void GamingUI::SetEnergyText( std::wstring energy )
+{
+	this->energy->setText(energy);
+}
 void GamingUI::ReadKeyInput()
 {
 	if( this->key_forward )			this->sharedData->network->Send( Protocol_PlayerMovementForward() );

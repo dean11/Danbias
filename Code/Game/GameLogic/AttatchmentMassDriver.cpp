@@ -144,10 +144,10 @@ void AttatchmentMassDriver::Update(float dt)
 
 	if(currentEnergy > maxEnergy) currentEnergy = maxEnergy;
 	
-	if(energyChange > 10)
+	if(energyChange > 5)
 	{
 		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->owner, currentEnergy);
-		energyChange = 0;
+		energyChange -= 5;
 	}
 }
 
