@@ -182,5 +182,12 @@ void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 		case SAKI_D:		this->key_strafeRight = false;
 		break;
 	}
+
+	//DEBUG: 
+	
+	if(key == SAKI_L)
+		this->sharedData->mouseDevice->Deactivate();
+	if(key == SAKI_M)
+		this->sharedData->mouseDevice->Activate();
 }
 
