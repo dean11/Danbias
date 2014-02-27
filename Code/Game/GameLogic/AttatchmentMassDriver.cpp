@@ -54,7 +54,13 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	break;
 
 	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
-		if( currentEnergy >= 1.0f )
+		if(this->hasObject)
+		{
+			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+			this->hasObject = false;
+			this->heldObject = NULL;
+		}
+		else if( currentEnergy >= 1.0f )
 		{
 			currentEnergy -= 1.0f;
 			if(!this->hasObject)
@@ -76,9 +82,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	{
 		if (this->hasObject)	//Dummy check
 		{
-			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
-			this->hasObject = false;
-			this->heldObject = NULL;
+			//((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+			//this->hasObject = false;
+			//this->heldObject = NULL;
 		}
 	}
 	break;
@@ -185,22 +191,27 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 	Oyster::Math::Float4 pullForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.2);
 
-	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
+	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
 	args.pushForce = -pullForce;
 	args.p = this->owner;
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
-
-	if(hitCone) delete hitCone;
+	Oyster::Physics::API::Instance().ApplyEffect(&hitCone,&args,ForcePushAction);
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized()*2;
-	Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,10);
+	//DEBUG:
+	MessageBeep(MB_ICONINFORMATION);
+	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized() * 2;
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitSphere,this,AttemptPickUp);
+	//Do ray test first!
+	//Oyster::Collision3D::Ray r(pos, owner->GetLookDir());
+	//Oyster::Physics::API::Instance().ApplyEffect(&r, this, AttemptPickUp);
 
-	if(hitSphere) delete hitSphere;
+	if(this->hasObject) return;
+
+	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos , 1);
+	Oyster::Physics::API::Instance().ApplyEffect(&hitSphere,this,AttemptPickUp);
+	return;
 }

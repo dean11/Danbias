@@ -257,9 +257,21 @@ using namespace DanBias;
 	}
 	void GameSession::Gameplay_PlayerShot				( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{ 
-		if(p.secondaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
-		if(p.primaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
-		if(p.utilityPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
+		switch (p.value)
+		{
+			case Protocol_PlayerShot::ShootValue_PrimaryPress:			c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+			break;
+			case Protocol_PlayerShot::ShootValue_PrimaryRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_RELEASE);
+			break;
+			case Protocol_PlayerShot::ShootValue_SecondaryPress:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
+			break;
+			case Protocol_PlayerShot::ShootValue_SecondaryRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_RELEASE);
+			break;
+			case Protocol_PlayerShot::ShootValue_UtilityPress:			c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
+			break;
+			case Protocol_PlayerShot::ShootValue_UtilityRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_RELEASE);
+			break;
+		}
 	}
 	void GameSession::Gameplay_ObjectPickup				( Protocol_ObjectPickup& p, DanBias::GameClient* c )
 	{

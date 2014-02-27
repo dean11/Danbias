@@ -326,6 +326,7 @@ using namespace GameLogic;
 	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
 	{
 		if(obj->GetState().mass == 0) return;
+		if(!args) return;
 
 		AttatchmentMassDriver *weapon = ((AttatchmentMassDriver*)args);
 
@@ -339,7 +340,6 @@ using namespace GameLogic;
 			//check so that it is an object that you can pickup
 
 			DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
-
 			if(!dynamicObj) return;
 		
 			if(dynamicObj->getManipulatingPlayer() != NULL)

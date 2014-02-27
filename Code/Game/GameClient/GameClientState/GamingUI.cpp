@@ -119,50 +119,50 @@ void GamingUI::ReadKeyInput()
 		this->key_Jump = false;
 
 	// shoot
-	if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseLeftBtn) )
-	{
-		if( !this->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = true;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = false;
-			this->sharedData->network->Send( playerShot );
-			this->key_Shoot = true;
-		}
-	} 
-	else 
-		this->key_Shoot = false;
-	
-	if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseRightBtn) )
-	{
-		if( !this->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = true;
-			playerShot.utilityPressed = false;
-			this->sharedData->network->Send( playerShot );
-			this->key_Shoot = true;
-		}
-	} 
-	else
-		this->key_Shoot = false;
-	
-	if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseMiddleBtn) )
-	{
-		if( !this->key_Shoot )
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = true;
-			this->sharedData->network->Send( playerShot );
-			this->key_Shoot = true;
-		}
-	} 
-	else 
-		this->key_Shoot = false;
+	//if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseLeftBtn) )
+	//{
+	//	if( !this->key_Shoot )
+	//	{
+	//		Protocol_PlayerShot playerShot;
+	//		playerShot.primaryPressed = true;
+	//		playerShot.secondaryPressed = false;
+	//		playerShot.utilityPressed = false;
+	//		this->sharedData->network->Send( playerShot );
+	//		this->key_Shoot = true;
+	//	}
+	//} 
+	//else 
+	//	this->key_Shoot = false;
+	//
+	//if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseRightBtn) )
+	//{
+	//	if( !this->key_Shoot )
+	//	{
+	//		Protocol_PlayerShot playerShot;
+	//		playerShot.primaryPressed = false;
+	//		playerShot.secondaryPressed = true;
+	//		playerShot.utilityPressed = false;
+	//		this->sharedData->network->Send( playerShot );
+	//		this->key_Shoot = true;
+	//	}
+	//} 
+	//else
+	//	this->key_Shoot = false;
+	//
+	//if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseMiddleBtn) )
+	//{
+	//	if( !this->key_Shoot )
+	//	{
+	//		Protocol_PlayerShot playerShot;
+	//		playerShot.primaryPressed = false;
+	//		playerShot.secondaryPressed = false;
+	//		playerShot.utilityPressed = true;
+	//		this->sharedData->network->Send( playerShot );
+	//		this->key_Shoot = true;
+	//	}
+	//} 
+	//else 
+	//	this->key_Shoot = false;
 
 	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_Escape) )
 	{
@@ -175,31 +175,13 @@ void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )
 	switch ( key )
 	{
 		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = true;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = false;
-			this->sharedData->network->Send( playerShot );
-		}
+			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
 		break;
 		case ::Input::Enum::SAMI_MouseRightBtn:
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = true;
-			playerShot.utilityPressed = false;
-			this->sharedData->network->Send( playerShot );
-		}
+			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryPress) );
 		break;
-		case ::Input::Enum::SAMI_MouseMiddleBtn:
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = true;
-			this->sharedData->network->Send( playerShot );
-		}
+		case ::Input::Enum::SAMI_MouseMiddleBtn:	
+			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityPress) );
 		break;
 	}
 }
@@ -207,14 +189,14 @@ void GamingUI::OnMouseRelease ( Input::Enum::SAMI key, Input::Mouse* sender )
 { 
 	switch ( key )
 	{
+		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
+			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryRelease) );
+		break;
 		case ::Input::Enum::SAMI_MouseRightBtn:
-		{
-			Protocol_PlayerShot playerShot;
-			playerShot.primaryPressed = false;
-			playerShot.secondaryPressed = false;
-			playerShot.utilityPressed = false;
-			this->sharedData->network->Send( playerShot );
-		}
+			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryRelease) );
+		break;
+		case ::Input::Enum::SAMI_MouseMiddleBtn:	
+			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityRelease) );
 		break;
 	}
 }

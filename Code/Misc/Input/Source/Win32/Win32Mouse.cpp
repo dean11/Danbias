@@ -200,12 +200,12 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 
 	if(btn == SAMI_Unknown) return;
 
-	this->buttons[btn].isDown = !isUp;
 	this->buttons[btn].makeCode = makeCode;
 
 	//The btn is released.
 	if(isUp)
 	{
+		this->buttons[btn].isDown = false;
 		InternalOnBtnRelease(btn);
 
 		GetNormalizedPosition( mouseEventData.normalizedPos );
@@ -222,6 +222,7 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		//The btn is down since last frame
 		if(this->buttons[btn].isDown)
 		{
+			this->buttons[btn].isDown = true;
 			InternalOnBtnDown(btn);
 
 			GetNormalizedPosition( mouseEventData.normalizedPos );
@@ -234,6 +235,7 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		}
 		else
 		{
+			this->buttons[btn].isDown = true;
 			InternalOnBtnPress(btn);
 
 			GetNormalizedPosition( mouseEventData.normalizedPos );
