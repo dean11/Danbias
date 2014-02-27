@@ -73,9 +73,15 @@ bool GameState::Init( SharedStateContent &shared )
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.Resolution.x / gfxOp.Resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 1.0f, 100.0f );
+
+	// HACK: debug test
+	Matrix debug_p = this->privData->camera.GetProjectionMatrix();
+	Float debug_n = - debug_p.m34 / debug_p.m33;
+	Float debug_f = debug_p.m34 / (1.0f - debug_p.m33);
+
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
-	gfxOp.AmbientValue = 0.5f;
+	gfxOp.AmbientValue = 0.3f;
 	gfxOp.GlobalGlowTint = Math::Float3(1,1,1);
 	gfxOp.GlobalTint = Math::Float3(1,1,1);
 	Graphics::API::SetOptions(gfxOp);

@@ -19,20 +19,24 @@ cbuffer LightConstants					: register(b0)
 {
 	float4x4 InvProj;
 	float4x4 Proj;
-	float2 Pixels;
+	float FoV;
 	int Lights;
 	float SSAORadius;
+	float pad;
 	float4x4 View;
 }
 
 struct FrustrumPoints
 {
-	float3 v0;
-	float3 v1;
-	float3 v2;
-	float3 v3;
-	float3 v4;
-	float3 v5;
+	float3 NUL;
+	float3 NUR;
+	float3 NDL;
+	float3 NDR;
+
+	float3 FUL;
+	float3 FUR;
+	float3 FDL;
+	float3 FDR;
 };
 
 Texture2D DiffuseGlow					: register(t0);
