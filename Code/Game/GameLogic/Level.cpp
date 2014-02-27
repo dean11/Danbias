@@ -68,8 +68,8 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
-			Oyster::Math::Float dmg = 120; 
-			Oyster::Math::Float force = 500; 
+			Oyster::Math::Float dmg = 50; 
+			Oyster::Math::Float force = 800; 
 			Oyster::Math::Float radie = 3; 
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg, force, radie);
 		}
@@ -90,8 +90,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_CrystalFormation: 
 		{
-			int dmg = 50; 
-			//gameObj = new Crystal(rigidBody);
+			int dmg = 30; 
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
@@ -102,7 +101,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_JumpPad: 
 		{
-			float power = 500; //((JumpPadAttributes*)obj)->power; 
+			float power = ((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
 			Oyster::Math::Float3 pushForce = dir * power; 
 			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter , pushForce);
@@ -352,7 +351,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				pos.x = ((SpawnPointAttributes*)obj)->position[0];
 				pos.y = ((SpawnPointAttributes*)obj)->position[1];
 				pos.z = ((SpawnPointAttributes*)obj)->position[2];
-				spawnPoints.Push(pos);
+				spawnPoints.addSpawnPos(pos);
 			}
 		default:
 			break;
@@ -368,9 +367,7 @@ void Level::AddPlayerToTeam(Player *player, int teamID)
 }
 void Level::AddPlayerToGame(Player *player)
 {
-	int i = rand() % spawnPoints.Size();
-	Float3 spawnPoint = spawnPoints[i]; 
-	player->ResetPlayer(spawnPoint);
+	player->ResetPlayer(spawnPoints.getSpawnPos());
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
 		if (!this->playerObjects[i])
@@ -400,10 +397,7 @@ void Level::CreateTeam(int teamSize)
 void Level::RespawnPlayer(Player *player)
 {
 	//this->teamManager.RespawnPlayerRandom(player);
-
-	int i = rand() % spawnPoints.Size();
-	Float3 spawnPoint = spawnPoints[i]; 
-	player->Respawn(spawnPoint);
+	player->Respawn(spawnPoints.getSpawnPos());
 }
 void Level::Update(float deltaTime)
 {
@@ -414,6 +408,11 @@ void Level::Update(float deltaTime)
 	{
 		if(this->playerObjects[i])
 		{
+			// TODO check against gameMode win condition
+			if(this->playerObjects[i]->GetKills() > 30 )
+			{
+				// winner 
+			}
 			if(this->playerObjects[i]->getAffectingPlayer() != NULL)
 			{
 			
@@ -428,14 +427,20 @@ void Level::Update(float deltaTime)
 			else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
 			{
 				this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
-				// HACK to avoid crasch. affected by tag is NULL
-				//((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i], DEATH_TIMER); // add killer ID
 				Player* killer = this->playerObjects[i]->getAffectingPlayer();
-				if(!killer) //if there is no killer then you commited suicide
+				if(!killer) //if there is no killer then you committed suicide
 				{
 					killer = this->playerObjects[i];
+					// suicide penalty 
 				}
-				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], killer, DEATH_TIMER); // add killer ID
+				else
+					killer->AddKill();
+
+				this->playerObjects[i]->AddDeath();
+
+
+				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->GetDeath(), killer, killer->GetKills(), DEATH_TIMER); // add killer ID
+
 			}
 		}
 	}
@@ -446,7 +451,7 @@ void Level::Update(float deltaTime)
 		{
 			Oyster::Math::Float vel = dynamicObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
 
-			if(vel <= 0.1f) // is bearly moving
+			if(vel <= 0.1f) // is barely moving
 			{
 				//set the tag AffectedBy to NULL
 				dynamicObjects[i]->RemoveAffectedBy();
@@ -460,7 +465,7 @@ void Level::Update(float deltaTime)
 		{
 			Oyster::Math::Float vel = playerObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
 
-			if(vel <= 0.1f) // is bearly moving
+			if(vel <= 0.1f) // is barely moving
 			{
 				//set the tag AffectedBy to NULL
 				playerObjects[i]->RemoveAffectedBy();

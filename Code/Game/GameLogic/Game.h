@@ -40,6 +40,8 @@ namespace GameLogic
 			Oyster::Math::Float3 GetScale()																override;
 			Oyster::Math::Float4x4 GetOrientation()														override; 
 			int GetID() const																			override;
+			int GetKills() const override;
+			int GetDeaths() const override;
 			void SetLookDir(const Oyster::Math3D::Float3& lookDir)		override;
 			void TurnLeft(Oyster::Math3D::Float deltaLeftRadians )										override;
 			ObjectSpecialType GetObjectType()	const													override;

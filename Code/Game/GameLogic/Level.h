@@ -9,6 +9,7 @@
 #include "StaticObject.h"
 #include "DynamicObject.h"
 #include "GameModeType.h"
+#include "SpawnPoint.h"
 
 #include "Player.h"
 #include "PhysicsAPI.h"
@@ -88,10 +89,8 @@ namespace GameLogic
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
 		GameModeType gameMode;
-		//Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
-// 		//StaticObject *levelObj;
 		int objIDCounter; 
-		Utility::DynamicMemory::DynamicArray<Oyster::Math::Float3> spawnPoints;
+		SpawnPoint spawnPoints;
 		PickupSystem pickupSystem;
 
 	};

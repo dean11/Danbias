@@ -178,6 +178,7 @@
     <ClInclude Include="PickupSystem\PickupSystem.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portal.h" />
+    <ClInclude Include="SpawnPoint.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="Team.h" />
     <ClInclude Include="TeamManager.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="PickupSystem\PickupSystem.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="SpawnPoint.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Team.cpp" />
     <ClCompile Include="TeamManager.cpp" />
