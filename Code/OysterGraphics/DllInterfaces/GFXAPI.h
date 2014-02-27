@@ -113,7 +113,7 @@ namespace Oyster
 			static Option GetOption();
 
 			//! @brief Starts an animation and returns the time of the animation
-			static float PlayAnimation(Model::Model* model, std::wstring name, bool looping = false);
+			static float PlayAnimation(Model::Model* model, const std::wstring &name, bool looping = false);
 
 			//! @brief Moves all animating models forward the specified time;
 			static void Update(float deltaTime);
