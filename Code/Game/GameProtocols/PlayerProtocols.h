@@ -157,37 +157,59 @@ namespace GameLogic
 
 	struct Protocol_PlayerShot :public Oyster::Network::CustomProtocolObject
 	{
-		bool primaryPressed; 
-		bool secondaryPressed;
-		bool utilityPressed; 
+		enum ShootValue
+		{
+			ShootValue_PrimaryPress,
+			ShootValue_PrimaryRelease,
+			ShootValue_SecondaryPress,
+			ShootValue_SecondaryRelease,
+			ShootValue_UtilityPress,
+			ShootValue_UtilityRelease,
+		} value;
+		//bool primaryPressed; 
+		//bool secondaryPressed;
+		//bool utilityPressed; 
 
 		Protocol_PlayerShot()
 		{
 			this->protocol[0].value = protocol_Gameplay_PlayerShot;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
-			this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
-			this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+
+			//this->protocol[1].type = Oyster::Network::NetAttributeType_Bool;
+			//this->protocol[2].type = Oyster::Network::NetAttributeType_Bool;
+			//this->protocol[3].type = Oyster::Network::NetAttributeType_Bool;
+		}
+		Protocol_PlayerShot(ShootValue val)
+		{
+			this->protocol[0].value = protocol_Gameplay_PlayerShot;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Char;
+			this->value = val;
 		}
 		Protocol_PlayerShot(Oyster::Network::CustomNetProtocol& p)
 		{
-			primaryPressed		= p[1].value.netBool;
-			secondaryPressed	= p[2].value.netBool;
-			utilityPressed		= p[3].value.netBool;
+			value = (ShootValue)p[1].value.netChar;
+			//primaryPressed		= p[1].value.netBool;
+			//secondaryPressed	= p[2].value.netBool;
+			//utilityPressed		= p[3].value.netBool;
 		}
 		const Protocol_PlayerShot& operator=(Oyster::Network::CustomNetProtocol& val)
 		{
-			primaryPressed		= val[1].value.netBool;
-			secondaryPressed	= val[2].value.netBool;
-			utilityPressed		= val[3].value.netBool;
+			value = (ShootValue)val[1].value.netChar;
+			//primaryPressed		= val[1].value.netBool;
+			//secondaryPressed	= val[2].value.netBool;
+			//utilityPressed		= val[3].value.netBool;
 			return *this;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			this->protocol[1].value = primaryPressed;
-			this->protocol[2].value = secondaryPressed;
-			this->protocol[3].value = utilityPressed;
+			this->protocol[1].value = value;
+			//this->protocol[1].value = primaryPressed;
+			//this->protocol[2].value = secondaryPressed;
+			//this->protocol[3].value = utilityPressed;
 			return protocol;
 		}
 

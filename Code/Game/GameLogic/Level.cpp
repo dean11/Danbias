@@ -68,8 +68,8 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
-			Oyster::Math::Float dmg = 120; 
-			Oyster::Math::Float force = 500; 
+			Oyster::Math::Float dmg = 50; 
+			Oyster::Math::Float force = 800; 
 			Oyster::Math::Float radie = 3; 
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg, force, radie);
 		}
@@ -90,8 +90,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_CrystalFormation: 
 		{
-			int dmg = 50; 
-			//gameObj = new Crystal(rigidBody);
+			int dmg = 30; 
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
@@ -102,7 +101,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_JumpPad: 
 		{
-			float power = 500; //((JumpPadAttributes*)obj)->power; 
+			float power = ((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
 			Oyster::Math::Float3 pushForce = dir * power; 
 			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter , pushForce);

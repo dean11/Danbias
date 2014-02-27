@@ -167,9 +167,6 @@ using namespace GameLogic;
 		{
 			Player *hitPlayer = (Player*)realObj;
 			hitPlayer->DamageLife(ExplosionSource->extraDamageOnCollision);
-			//hitPlayer->GetRigidBody()->ApplyImpulse(force);
-
-			//hitPlayer->DamageLife(ExplosionSource->getExtraDamageOnCollision());
 			realObj->GetRigidBody()->ApplyImpulse(force * 5);
 			//do shredding damage
 		}
@@ -192,11 +189,11 @@ using namespace GameLogic;
 		Oyster::Math::Float angularFactor = deltaPos.GetNormalized().Dot( (objPrevVel - playerPrevVel).GetNormalized());
 
 		Oyster::Math::Float impactPower = deltaSpeed * angularFactor;
-		Oyster::Math::Float damageFactor = 0.01f;
+		Oyster::Math::Float damageFactor = 0.1f;
 
 
-		int damageDone = 0;
-		int forceThreashHold = 30; //FIX: balance this
+		Oyster::Math::Float damageDone = 0.0f;
+		Oyster::Math::Float forceThreashHold = 30.0f; //FIX: balance this
 
 		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{
@@ -326,6 +323,7 @@ using namespace GameLogic;
 	void AttatchmentMassDriver::AttemptPickUp(Oyster::Physics::ICustomBody *obj, void* args)
 	{
 		if(obj->GetState().mass == 0) return;
+		if(!args) return;
 
 		AttatchmentMassDriver *weapon = ((AttatchmentMassDriver*)args);
 
@@ -339,7 +337,6 @@ using namespace GameLogic;
 			//check so that it is an object that you can pickup
 
 			DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
-
 			if(!dynamicObj) return;
 		
 			if(dynamicObj->getManipulatingPlayer() != NULL)
