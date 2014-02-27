@@ -107,7 +107,7 @@ namespace GameLogic
 		GameEvent::ObjectHpFunction			onDamageTakenFnc;
 		GameEvent::ObjectRespawnedFunction 	onRespawnFnc;
 		GameEvent::ObjectDeadFunction		onDeadFnc;
-		GameEvent::AnimationEventFunction	onPlayerActionEventFnc;
+		GameEvent::AnimationEventFunction	onActionEventFnc;
 		GameEvent::PickupEventFunction		onPickupEventFnc;
 		GameEvent::CollisionEventFunction	onCollisionEventFnc;
 	};	

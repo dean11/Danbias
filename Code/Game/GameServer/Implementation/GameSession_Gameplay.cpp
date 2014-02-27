@@ -162,7 +162,7 @@ using namespace DanBias;
 	{
 		GameSession::gameSession->Send(Protocol_ObjectRespawn(movedObject->GetID(), spawnPos).GetProtocol());
 	}
-	void GameSession::ObjectDead( GameLogic::IObjectData* movedObject, float seconds )
+	void GameSession::ObjectDead( GameLogic::IObjectData* movedObject, GameLogic::IObjectData* killer, float seconds )
 	{
 		GameSession::gameSession->Send(Protocol_ObjectDie(movedObject->GetID(), seconds).GetProtocol());
 	}
