@@ -9,8 +9,9 @@
 
 namespace GameLogic
 {
-	const Oyster::Math::Float standardDamage = 10;
-
+	const Oyster::Math::Float standardDamage = 10.0f;
+	const Oyster::Math::Float standardCooldown = 0.5f;
+	
 	class AttatchmentGun : public IAttatchment
 	{
 	public:
@@ -24,9 +25,13 @@ namespace GameLogic
 
 	private:
 		Oyster::Math::Float damage;
+		Oyster::Math::Float Cooldown;
+		Oyster::Math::Float TimeUntilFire;
+
 	private:
 		void ShootBullet(const WEAPON_FIRE &usage, float dt);
-
+		static void BulletCollision(Oyster::Physics::ICustomBody *obj, void* args);
+	
 	};
 }
 #endif

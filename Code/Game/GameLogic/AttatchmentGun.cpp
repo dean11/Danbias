@@ -10,12 +10,15 @@ AttatchmentGun::AttatchmentGun(void)
 {
 	this->owner = 0;
 	this->damage = 0.0f;
+	this->Cooldown = 0.0f;
 }
 
 AttatchmentGun::AttatchmentGun(Player &owner)
 {
 	this->owner = &owner;
 	this->damage = standardDamage;
+	this->Cooldown = standardCooldown;
+	this->TimeUntilFire = 0.0f;
 }
 
 
@@ -33,16 +36,13 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-	//skjut här
-	break;
 
-	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
-	break;
+		if(TimeUntilFire == 0.0f)
+		{
+			ShootBullet(usage,dt);
+			TimeUntilFire = this->Cooldown;
+		}
 
-	case WEAPON_USE_SECONDARY_RELEASE:
-	break;
-
-	case WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS:
 	break;
 	}
 		
@@ -50,6 +50,14 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 
 void AttatchmentGun::Update(float dt)
 {
+	if(TimeUntilFire > 0.0f)
+	{
+		TimeUntilFire-= dt;
+	}
+	else
+	{
+		TimeUntilFire = 0.0f;
+	}
 
 }
 
@@ -65,7 +73,7 @@ void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 
 	hitRay = new Oyster::Collision3D::Ray(pos,look);
 
+	Oyster::Physics::API::Instance().ApplyEffect(hitRay,&bullet,BulletCollision);
 
-
-
+	delete hitRay;
 }
