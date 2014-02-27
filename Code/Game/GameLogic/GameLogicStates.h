@@ -46,6 +46,10 @@ namespace GameLogic
 		Oyster::Math::Float3 pushForce;
 		Player *p;
 	};
+	struct firedBullet
+	{
+		Oyster::Math::Float hitDamage;
+	};
 
 
 	
