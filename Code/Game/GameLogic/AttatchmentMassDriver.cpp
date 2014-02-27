@@ -45,7 +45,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	//switch case to determin what functionallity to use in the attatchment
 	switch (usage)
 	{
-	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
+	case WEAPON_USE_PRIMARY_PRESS:
 		//if(currentEnergy >= 9.0f)
 		{
 			currentEnergy -= 9.0f;
@@ -53,23 +53,24 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
 		}
-	break;
+		break;
 
-	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
+	case WEAPON_USE_SECONDARY_PRESS:
 		if(this->hasObject)
 		{
-			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
-			this->hasObject = false;
-			this->heldObject = NULL;
+			goto CASE_WEAPON_INTERRUPT;
 		}
 		else if( currentEnergy >= 1.0f )
 		{
-			currentEnergy -= 1.0f;
-			if(!this->hasObject)
+			if(this->hasObject)
 			{
-				ForcePull(usage,dt);
-				// add CD 
-				((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+				currentEnergy -= 1.0f;
+				if(!this->hasObject)
+				{
+					ForcePull(usage,dt);
+					// add CD 
+					((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+				}
 			}
 		}
 		else	//Energy drained, release object
@@ -78,20 +79,27 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 			this->hasObject = false;
 			this->heldObject = NULL;
 		}
-	break;
+		break;
+
+	case WEAPON_INTERRUPT:
+	CASE_WEAPON_INTERRUPT:
+		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+		this->hasObject = false;
+		this->heldObject = NULL;
+		break;
 
 	case WEAPON_USE_SECONDARY_RELEASE:
-	{
-		if (this->hasObject)	//Dummy check
 		{
-			//((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
-			//this->hasObject = false;
-			//this->heldObject = NULL;
+			if (this->hasObject)	//Dummy check
+			{
+				//((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+				//this->hasObject = false;
+				//this->heldObject = NULL;
+			}
 		}
-	}
-	break;
+		break;
 
-	case WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS:
+	case WEAPON_USE_UTILLITY_PRESS:
 		if(currentEnergy >= 90.0f)
 		{
 			currentEnergy -= 90.0f;
@@ -99,9 +107,8 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
 		}
-	break;
+		break;
 	}
-		
 }
 
 void AttatchmentMassDriver::Update(float dt)
