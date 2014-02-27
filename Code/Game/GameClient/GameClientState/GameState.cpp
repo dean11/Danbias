@@ -3,7 +3,7 @@
 #include <Protocols.h>
 #include "NetworkClient.h"
 #include "Camera_FPSV2.h"
-#include <GameServerAPI.h>
+//#include <GameServerAPI.h>
 #include "C_Light.h"
 #include "C_obj/C_Player.h"
 #include "C_obj/C_DynamicObj.h"

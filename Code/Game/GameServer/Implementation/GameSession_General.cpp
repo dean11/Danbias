@@ -41,7 +41,8 @@ GameSession::GameSession()
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 
-	memset(&this->description, 0, sizeof(GameDescription));
+	// HACK to avoid mem leaks 
+	//memset(&this->description, 0, sizeof(GameDescription));
 }
 
 GameSession::~GameSession()

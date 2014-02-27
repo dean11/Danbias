@@ -12,7 +12,7 @@
 #include "Utilities.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-#include <GameServerAPI.h>
+//#include <GameServerAPI.h>
 
 #include "../WindowManager/WindowShell.h"
 #include "WinTimer.h"
@@ -185,11 +185,11 @@ namespace DanBias
 	
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
-		if( data.serverOwner )
+		/*if( data.serverOwner )
 		{
-			DanBias::GameServerAPI::ServerUpdate();
+		DanBias::GameServerAPI::ServerUpdate();
 		}
-
+		*/
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
 		state = data.state->Update( deltaTime );
 
@@ -264,7 +264,7 @@ namespace DanBias
 		EventHandler::Instance().Clean();
 		Graphics::API::Clean();
 
-		GameServerAPI::ServerStop();
+		//GameServerAPI::ServerStop();
 
 		return S_OK;
 	}	
