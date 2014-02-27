@@ -162,9 +162,28 @@ using namespace DanBias;
 	{
 		GameSession::gameSession->Send(Protocol_ObjectRespawn(movedObject->GetID(), spawnPos).GetProtocol());
 	}
+<<<<<<< HEAD
 	void GameSession::ObjectDead( GameLogic::IObjectData* victim, GameLogic::IObjectData* killer, float seconds )
+=======
+	void GameSession::ObjectDead( GameLogic::IObjectData* movedObject, GameLogic::IObjectData* killer, float seconds )
+>>>>>>> origin/New-inputsystem
 	{
 		GameSession::gameSession->Send(Protocol_ObjectDie(victim->GetID(), killer->GetID(), seconds).GetProtocol());
+	}
+	void GameSession::PickupEvent( GameLogic::IObjectData* movedObject, int pickupEffectID )
+	{
+		// send pickup protocol
+		GameSession::gameSession->Send(Protocol_ObjectPickup(movedObject->GetID(), pickupEffectID).GetProtocol());
+	}
+	void GameSession::ActionEvent( GameLogic::IObjectData* movedObject , int actionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectAction(movedObject->GetID(), actionID).GetProtocol());
+	}
+	void GameSession::CollisionEvent( GameLogic::IObjectData* movedObject , int collisionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectCollision(movedObject->GetID(), collisionID).GetProtocol());
 	}
 	void GameSession::PickupEvent( GameLogic::IObjectData* movedObject, int pickupEffectID )
 	{

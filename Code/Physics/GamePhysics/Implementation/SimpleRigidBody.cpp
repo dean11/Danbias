@@ -239,6 +239,7 @@ void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
 	btQuaternion newRotation;
 	btTransform trans;
 	trans = this->rigidBody->getWorldTransform();
+<<<<<<< HEAD
 
 	btVector3 v1 = trans.getBasis().getColumn(1);
 	btVector3 v2(up.x, up.y, up.z);
@@ -247,17 +248,35 @@ void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
 	btVector3 a = v1.cross(v2);
 
 	if (v1.dot(v2) < -0.999999)
+=======
+
+	btVector3 v1 = trans.getBasis().getColumn(1);
+	btVector3 v2(up.x, up.y, up.z);
+
+	btQuaternion q;
+	btVector3 a = v1.cross(v2);
+	
+	if (v1.dot(v2) < -0.999999) 
+>>>>>>> origin/New-inputsystem
 	{
 		btVector3 xCrossPre = btVector3(1, 0 ,0).cross(v1);
 		if(xCrossPre.length() < 0.000001)
 			xCrossPre = btVector3(0, 1 ,0).cross(v1);
 		xCrossPre.normalize();
 		q.setRotation(xCrossPre, 3.1415);
+<<<<<<< HEAD
 	}
 	else if (v1.dot(v2) > 0.999999)
 	{
 		q = btQuaternion(0, 0, 0, 1);
 	}
+=======
+    }
+	else if (v1.dot(v2) > 0.999999) 
+	{
+           q = btQuaternion(0, 0, 0, 1);
+	}
+>>>>>>> origin/New-inputsystem
 	else
 	{
 		q.setX(a.x());
