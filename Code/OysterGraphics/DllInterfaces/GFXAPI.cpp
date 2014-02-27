@@ -20,7 +20,6 @@ namespace Oyster
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
 			int MostModel;
-			float FoV;
 #ifdef _DEBUG
 			Model::Model* cube;
 			Model::Model* sphere;
@@ -89,7 +88,6 @@ namespace Oyster
 		void API::SetProjection(const Math::Float4x4& projection)
 		{
 			Projection = projection;
-			FoV = 2 * std::atanf(1/projection.m[1][1]);
 		}
 
 		void API::SetView(const Math::Float4x4& view)
@@ -101,11 +99,11 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size(), FoV);
+				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
 			}
 			else
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0, FoV);
+				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0);
 			}
 		}
 

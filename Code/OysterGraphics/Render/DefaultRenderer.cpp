@@ -56,7 +56,6 @@ namespace Oyster
 
 				Definitions::LightConstants lc;
 				lc.InvProj =  Projection.GetInverse();
-				lc.Pixels = Core::resolution;
 				lc.Lights = numLights;
 				lc.View = View;
 				lc.Proj = Projection;
