@@ -20,6 +20,7 @@ namespace Oyster
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;
 			int MostModel;
+			float FoV;
 #ifdef _DEBUG
 			Model::Model* cube;
 			Model::Model* sphere;
@@ -30,13 +31,14 @@ namespace Oyster
 #endif
 		}
 
-		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, API::Option o)
+		API::State API::Init(HWND Window, bool MSAA_Quality, API::Option o)
 		{
-			Core::resolution = o.Resolution;
+			Core::resolution = o.resolution;
 			Core::modelPath = o.modelPath;
 			Core::texturePath = o.texturePath;
+			Core::fullscreen = o.fullscreen;
 
-			if(Core::Init::FullInit(Window, MSAA_Quality, Fullscreen) == Core::Init::Fail)
+			if(Core::Init::FullInit(Window, MSAA_Quality, o.fullscreen) == Core::Init::Fail)
 			{
 				return API::Fail;
 			}
@@ -44,7 +46,9 @@ namespace Oyster
 			Render::Resources::Init();
 
 			Definitions::PostData pd;
-			pd.Amb = o.AmbientValue;
+			pd.Amb = o.ambientValue;
+			pd.GlowTint = o.globalGlowTint;
+			pd.Tint = o.globalTint;
 
 			void* data = Render::Resources::Post::Data.Map();
 			memcpy(data,&pd,sizeof(Definitions::PostData));
@@ -85,6 +89,7 @@ namespace Oyster
 		void API::SetProjection(const Math::Float4x4& projection)
 		{
 			Projection = projection;
+			FoV = 2 * std::atanf(1/projection.m[1][1]);
 		}
 
 		void API::SetView(const Math::Float4x4& view)
@@ -96,11 +101,11 @@ namespace Oyster
 		{
 			if(Lights.size())
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size());
+				Render::DefaultRenderer::NewFrame(View, Projection, &Lights[0], (int)Lights.size(), FoV);
 			}
 			else
 			{
-				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0);
+				Render::DefaultRenderer::NewFrame(View, Projection, NULL, 0, FoV);
 			}
 		}
 
@@ -125,13 +130,21 @@ namespace Oyster
 			Core::texturePath = option.texturePath;
 			
 			Definitions::PostData pd;
-			pd.Amb = option.AmbientValue;
-			pd.Tint = option.GlobalTint;
-			pd.GlowTint = option.GlobalGlowTint;
+			pd.Amb = option.ambientValue;
+			pd.Tint = option.globalTint;
+			pd.GlowTint = option.globalGlowTint;
 
 			void* data = Render::Resources::Post::Data.Map();
 			memcpy(data,&pd,sizeof(Definitions::PostData));
 			Render::Resources::Post::Data.Unmap();
+
+			if(option.resolution != Core::resolution || option.fullscreen != Core::fullscreen)
+			{
+				//RESIZE
+				Core::Init::ReInitialize(false,option.fullscreen,option.resolution);
+				Core::fullscreen = option.fullscreen;
+				Core::resolution = option.resolution;
+			}
 
 			return API::Sucsess;
 		}
@@ -171,7 +184,8 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-			m->Animation.AnimationPlaying = NULL;
+			m->Animation[0].AnimationPlaying = nullptr;
+			m->Animation[1].AnimationPlaying = nullptr;
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
 			m->Instanced = true;
@@ -300,10 +314,11 @@ namespace Oyster
 		API::Option API::GetOption()
 		{
 			Option o;
-			o.BytesUsed = Core::UsedMem;
+			o.bytesUsed = Core::UsedMem;
 			o.modelPath = Core::modelPath;
 			o.texturePath = Core::texturePath;
-			o.Resolution = Core::resolution;
+			o.resolution = Core::resolution;
+			o.fullscreen = Core::fullscreen;
 			return o;
 		}
 
@@ -327,14 +342,20 @@ namespace Oyster
 			Core::loader.ReleaseResource(tex);
 		}
 
-		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
+		float API::PlayAnimation( Model::Model* m, const std::wstring &name, bool looping )
 		{
-			if(m==NULL)
-				return 0;
-			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
-			m->Animation.AnimationTime=0;
-			m->Animation.LoopAnimation = looping;
-			return (float)m->Animation.AnimationPlaying->duration;
+			if( m )
+			{ // nasty temp solution by Dan
+				static int fairSlotLooper = 0;
+				fairSlotLooper = (fairSlotLooper + 1) & 3; // same as n % 2				
+
+				m->Animation[fairSlotLooper].AnimationPlaying = &(*m->info->Animations.find(name)).second;
+				m->Animation[fairSlotLooper].AnimationTime=0;
+				m->Animation[fairSlotLooper].LoopAnimation = looping;
+
+				return (float)m->Animation[fairSlotLooper].AnimationPlaying->duration;
+			}
+			return 0;
 		}
 
 		void API::Update(float dt)

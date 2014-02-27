@@ -74,7 +74,7 @@ void Player::initPlayerData()
 
 void Player::BeginFrame()
 {
-	if( this->playerState & (PLAYER_STATE_DEAD | PLAYER_STATE_DIED) ) 
+	if( !(this->playerState & (PLAYER_STATE_DEAD | PLAYER_STATE_DIED)) ) 
 	{
 		static const Float maxSpeed = 30.0f;
 

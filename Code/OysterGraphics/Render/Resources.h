@@ -24,7 +24,7 @@ namespace Oyster
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
-					static const int MaxLightSize = 100;
+					static const int MaxLightSize = 1024;
 
 					//! GBuffers
 					//! 0 = Diffuse + Glow

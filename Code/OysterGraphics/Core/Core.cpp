@@ -36,3 +36,7 @@ ID3D11RenderTargetView* Core::rtvNULL[8] = {0};
 ID3D11UnorderedAccessView* Core::uavNULL[8] = {0};
 
 int Core::UsedMem = 0;
+
+HWND Core::window = 0;
+
+bool Core::fullscreen = false;
