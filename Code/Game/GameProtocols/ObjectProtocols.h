@@ -810,28 +810,35 @@ namespace GameLogic
 	//#define protocol_Gameplay_ObjectWeaponEnergy		365
 	struct Protocol_ObjectWeaponEnergy :public Oyster::Network::CustomProtocolObject
 	{
+		int objectID;
 		float energy;
 		Protocol_ObjectWeaponEnergy()
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_Gameplay_ObjectWeaponEnergy;
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->objectID = -1;
 			this->energy = 0.0f;
 		}
-		Protocol_ObjectWeaponEnergy(float energy)
+		Protocol_ObjectWeaponEnergy(int objectID, float energy)
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_Gameplay_ObjectWeaponEnergy;
-			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->objectID = objectID;
 			this->energy = energy;
 		}
 		Protocol_ObjectWeaponEnergy(Oyster::Network::CustomNetProtocol& p)
 		{
-			this->energy = p[1].value.netFloat;
+			this->objectID = p[1].value.netInt;
+			this->energy = p[2].value.netFloat;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			this->protocol[1].value = this->energy;
+			this->protocol[1].value = this->objectID;
+			this->protocol[2].value = this->energy;
 			return protocol;		 
 		}
 

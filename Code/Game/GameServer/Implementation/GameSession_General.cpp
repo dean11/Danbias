@@ -116,6 +116,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 	this->gameInstance.SetActionSubscription(GameSession::ActionEvent);
 	this->gameInstance.SetPickupSubscription(GameSession::PickupEvent);
 	this->gameInstance.SetCollisionSubscription(GameSession::CollisionEvent);
+	this->gameInstance.SetWeaponEnergySubscription(GameSession::EnergyUpdate);
 	this->gameInstance.SetFPS(60);
 
 	this->description.clients.Clear();

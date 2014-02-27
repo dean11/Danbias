@@ -707,7 +707,16 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		case protocol_Gameplay_ObjectJoinTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectLeaveTeam:			break; /** @todo TODO: implement */
 		case protocol_Gameplay_ObjectWeaponCooldown:	break; /** @todo TODO: implement */
-		case protocol_Gameplay_ObjectWeaponEnergy:		break; /** @todo TODO: implement */
+		case protocol_Gameplay_ObjectWeaponEnergy:		
+			{
+				Protocol_ObjectWeaponEnergy decoded(data);
+				if( this->privData->myId == decoded.objectID )
+				{
+					// show my energy 
+					float energy = decoded.energy;
+				}
+			}
+			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectRespawn:	
 			{
 				Protocol_ObjectRespawn decoded(data);

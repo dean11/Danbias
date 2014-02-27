@@ -106,6 +106,7 @@ namespace DanBias
 		static void PickupEvent				( GameLogic::IObjectData* movedObject, int pickupEffectID );
 		static void ActionEvent				( GameLogic::IObjectData* movedObject , int actionID );
 		static void CollisionEvent			( GameLogic::IObjectData* Object , int collisionID );
+		static void EnergyUpdate			( GameLogic::IObjectData* movedObject , float energy );
 		//Private member variables
 	private:
 		Utility::DynamicMemory::DynamicArray<gClient> gClients;

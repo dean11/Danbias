@@ -63,7 +63,7 @@ namespace GameLogic
 
 		Oyster::Math::Float maxEnergy;
 		Oyster::Math::Float currentEnergy;
-
+		Oyster::Math::Float energyChange; // variable used to limit energy update messages
 		Oyster::Math::Float rechargeRate;
 
 		struct Aim

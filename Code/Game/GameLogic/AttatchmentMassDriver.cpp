@@ -13,6 +13,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(void)
 	this->hasObject = false;
 	this->currentEnergy = StandardMaxEnergy;
 	this->maxEnergy = StandardMaxEnergy;
+	this->energyChange = 0;
 	this->rechargeRate = StandardrechargeRate;
 	this->force = Standardforce;
 }
@@ -22,6 +23,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(Player &owner)
 	this->currentEnergy = StandardMaxEnergy;
 	this->maxEnergy = StandardMaxEnergy;
 	this->rechargeRate = StandardrechargeRate;
+	this->energyChange = 0;
 	this->force = Standardforce;
 	
 	this->owner = &owner;
@@ -120,6 +122,7 @@ void AttatchmentMassDriver::Update(float dt)
 		if(currentEnergy < maxEnergy)
 		{
 			currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
+			energyChange  += rechargeRate * 0.5f;
 		}
 		
 	}
@@ -128,12 +131,17 @@ void AttatchmentMassDriver::Update(float dt)
 		if(currentEnergy < maxEnergy)
 		{
 			currentEnergy += rechargeRate;
+			energyChange  += rechargeRate * 0.5f;
 		}
 	}
 
 	if(currentEnergy > maxEnergy) currentEnergy = maxEnergy;
 	
-
+	if(energyChange > 10)
+	{
+		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->owner, currentEnergy);
+		energyChange = 0;
+	}
 }
 
 /********************************************************

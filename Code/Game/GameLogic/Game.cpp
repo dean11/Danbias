@@ -192,6 +192,10 @@ void Game::SetCollisionSubscription(GameEvent::CollisionEventFunction functionPo
 {
 	this->onCollisionEventFnc = functionPointer;
 }
+void Game::SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer) 
+{
+	this->onEnergyUpdateFnc = functionPointer;
+}
 bool Game::Initiate()
 {
 	API::Instance().Init();

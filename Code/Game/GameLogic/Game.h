@@ -90,6 +90,7 @@ namespace GameLogic
 		void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) 									override;
 		void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) 										override;
 		void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) 										override;
+		void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer)						override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -112,6 +113,7 @@ namespace GameLogic
 		GameEvent::AnimationEventFunction	onActionEventFnc;
 		GameEvent::PickupEventFunction		onPickupEventFnc;
 		GameEvent::CollisionEventFunction	onCollisionEventFnc;
+		GameEvent::WeaponEnergyFunction		onEnergyUpdateFnc;
 	};	
 }
 
