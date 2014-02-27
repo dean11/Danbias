@@ -11,7 +11,7 @@
 
 namespace DanBias { namespace Client
 {
-	class GamingUI : public GameStateUI, Input::Mouse::MouseEvent
+	class GamingUI : public GameStateUI, Input::Mouse::MouseEvent, Input::Keyboard::KeyboardEvent
 	{
 	public:
 		GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera );
@@ -27,13 +27,18 @@ namespace DanBias { namespace Client
 		void SetHPtext( std::wstring hp );
 
 	private: /* Overidden mouse methods */
-		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override { }
+		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override	{ }
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
-		void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
+		void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender )							override	{ }
 		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
-		void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override { }
+		void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override	{ }
 		void OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override;
-		void OnMouseScroll			( int delta, Input::Mouse* sender )										override { }
+		void OnMouseScroll			( int delta, Input::Mouse* sender )										override	{ }
+
+		void OnKeyEvent				( const Input::Struct::KeyboardEventData& eventData)					override	{  }
+		void OnKeyPress				( Input::Enum::SAKI key, Input::Keyboard* sender)						override;
+		void OnKeyDown				( Input::Enum::SAKI key, Input::Keyboard* sender)						override	{  }
+		void OnKeyRelease			( Input::Enum::SAKI key, Input::Keyboard* sender)						override;
 
 	private:
 		SharedStateContent *sharedData;
@@ -47,8 +52,6 @@ namespace DanBias { namespace Client
 		bool key_backward;
 		bool key_strafeRight;
 		bool key_strafeLeft;
-		bool key_Shoot;
-		bool key_Jump;
 
 		GamingUI();
 		void ReadKeyInput();

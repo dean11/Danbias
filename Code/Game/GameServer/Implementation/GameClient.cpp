@@ -18,17 +18,19 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 	this->failedPackagesCount = 0;
 	this->client = nwClient;
 	this->player = 0;
-	isReady = false;
+	this->isReady = false;
 	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
 	this->secondsSinceLastResponse = 0.0f;
 }
 GameClient::~GameClient()
 {
+	this->client->Disconnect();
  	if(this->player)
 	{
  		this->player->Inactivate();
 	}
+
 	this->isReady = false;
 	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
@@ -68,12 +70,17 @@ bool GameClient::IsInvalid()
 }
 void GameClient::Invalidate()
 {
+	GameLogic::IPlayerData* player;
+	this->client->Disconnect();
+	this->isReady = false;
+	this->isInvalid = true;	//TODO: Fix this, should be true
+	this->secondsSinceLastResponse = 0.0f;
+	this->failedPackagesCount = 0;
+	this->character = L"char_orca.dan";
+	this->alias = L"Unknown";
+	this->state = ClientState_Invalid;
 	this->player->Release();
 	this->player = 0;
-	this->isInvalid = true;
-	this->isReady = false;
-	this->state = ClientState_Invalid;
-	this->client->Disconnect();
 }
 int GameClient::IncrementFailedProtocol()
 {

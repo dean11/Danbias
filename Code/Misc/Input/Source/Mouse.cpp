@@ -107,6 +107,18 @@ bool ExistsInList(std::vector<Mouse::MouseEvent*>& list, Mouse::MouseEvent* data
 	}
 	return false;
 }
+void RemoveFromList(std::vector<Mouse::MouseEvent*>& list, Mouse::MouseEvent* data)
+{
+	for (unsigned int i = 0; i < list.size(); i++)
+	{
+		if(list[i] == data)
+		{
+			std::swap(list[i], list[list.size() - 1]);
+			list.resize(list.size() - 1);
+			return;
+		}
+	}
+}
 
 Mouse::Mouse()
 	:	InputObject(Input::Enum::SAIType_Mouse)
@@ -235,12 +247,7 @@ void Mouse::AddMouseEvent(MouseEvent* object)
 }
 void Mouse::RemoveMouseEvent(MouseEvent* object)
 {
-	int i = -1;
-	if((i = ExistsInList(this->mouseSubscribers, object)))
-	{
-		std::swap(this->mouseSubscribers[i], this->mouseSubscribers[this->mouseSubscribers.size() - 1]);
-		this->mouseSubscribers.resize(this->mouseSubscribers.size() - 1);
-	}
+	RemoveFromList(this->mouseSubscribers, object);
 }
 void Mouse::operator+= (MouseEvent* object)
 {

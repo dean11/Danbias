@@ -8,27 +8,38 @@ using namespace ::GameLogic;
 using namespace ::Utility::Value;
 using namespace ::Oyster::Math;
 using namespace ::Input;
+using namespace ::Input::Enum;
 
 GamingUI::GamingUI() :
 	GameStateUI()
 {
 	/* Should never be called! */
-	this->sharedData	= nullptr;
-	this->camera		= nullptr;
-	this->plane			= nullptr;
-	this->text			= nullptr;
+	this->sharedData		= nullptr;
+	this->camera			= nullptr;
+	this->plane				= nullptr;
+	this->text				= nullptr;
+	this->key_backward		= false;
+	this->key_forward		= false;
+	this->key_strafeLeft	= false;
+	this->key_strafeRight	= false;
 	this->nextState = GameStateUI::UIState_same;
 }
 
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
 	GameStateUI()
 {
-	this->sharedData = shared;
-	this->camera = camera;
-	this->nextState = GameStateUI::UIState_same;
+	this->sharedData		= shared;
+	this->camera			= camera;
+	this->plane				= nullptr;
+	this->text				= nullptr;
+	this->key_backward		= false;
+	this->key_forward		= false;
+	this->key_strafeLeft	= false;
+	this->key_strafeRight	= false;
+	this->nextState			= GameStateUI::UIState_same;
 }
 
-GamingUI::~GamingUI() { /* Do nothing */ }
+GamingUI::~GamingUI() { }
 bool GamingUI::Init()
 {
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
@@ -40,6 +51,7 @@ bool GamingUI::Init()
 
 	// setting input mode to all raw
 	this->sharedData->keyboardDevice->Activate();
+	this->sharedData->keyboardDevice->AddKeyboardEvent(this);
 	this->sharedData->mouseDevice->Activate();
 	this->sharedData->mouseDevice->AddMouseEvent(this);
 
@@ -73,11 +85,13 @@ void GamingUI::RenderText() const
 
 bool GamingUI::Release()
 {
+	//Release as input event
+	this->sharedData->keyboardDevice->RemoveKeyboardEvent(this);
+	this->sharedData->mouseDevice->RemoveMouseEvent(this);
+
 	// TODO: Release UI components here.
-	if(this->plane) 
-		delete this->plane;
-	if(this->text)
-		delete this->text;
+	if(this->plane)		delete this->plane;
+	if(this->text)		delete this->text;
 
 	this->sharedData = 0;
 
@@ -89,91 +103,10 @@ void GamingUI::SetHPtext( std::wstring hp )
 }
 void GamingUI::ReadKeyInput()
 {
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_W) )
-	{ // move forward
-		this->sharedData->network->Send( Protocol_PlayerMovementForward() );
-	}
-
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_S) )
-	{ // move backward
-		this->sharedData->network->Send( Protocol_PlayerMovementBackward() );
-	}
-
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_A) )
-	{ // strafe left
-		this->sharedData->network->Send( Protocol_PlayerMovementLeft() );
-	}
-
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_D) )
-	{ // strafe right
-		this->sharedData->network->Send( Protocol_PlayerMovementRight() );
-	}
-
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_Space) )
-	{ // jump
-		if(!this->key_Jump)
-		{
-			this->sharedData->network->Send( Protocol_PlayerJump() );
-			this->key_Jump = true;
-		}
-	}
-	else 
-		this->key_Jump = false;
-
-	// shoot
-	//if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseLeftBtn) )
-	//{
-	//	if( !this->key_Shoot )
-	//	{
-	//		Protocol_PlayerShot playerShot;
-	//		playerShot.primaryPressed = true;
-	//		playerShot.secondaryPressed = false;
-	//		playerShot.utilityPressed = false;
-	//		this->sharedData->network->Send( playerShot );
-	//		this->key_Shoot = true;
-	//	}
-	//} 
-	//else 
-	//	this->key_Shoot = false;
-	//
-	//if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseRightBtn) )
-	//{
-	//	if( !this->key_Shoot )
-	//	{
-	//		Protocol_PlayerShot playerShot;
-	//		playerShot.primaryPressed = false;
-	//		playerShot.secondaryPressed = true;
-	//		playerShot.utilityPressed = false;
-	//		this->sharedData->network->Send( playerShot );
-	//		this->key_Shoot = true;
-	//	}
-	//} 
-	//else
-	//	this->key_Shoot = false;
-	//
-	//if( this->sharedData->mouseDevice->IsBtnDown(::Input::Enum::SAMI_MouseMiddleBtn) )
-	//{
-	//	if( !this->key_Shoot )
-	//	{
-	//		Protocol_PlayerShot playerShot;
-	//		playerShot.primaryPressed = false;
-	//		playerShot.secondaryPressed = false;
-	//		playerShot.utilityPressed = true;
-	//		this->sharedData->network->Send( playerShot );
-	//		this->key_Shoot = true;
-	//	}
-	//} 
-	//else 
-	//	this->key_Shoot = false;
-
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_Escape) )
-	{
-		this->nextState = GameStateUI::UIState_shut_down;
-	} 
-	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_M) )
-	{
-		this->nextState = GameStateUI::UIState_main_menu;
-	} 
+	if( this->key_forward )			this->sharedData->network->Send( Protocol_PlayerMovementForward() );
+	if( this->key_backward )		this->sharedData->network->Send( Protocol_PlayerMovementBackward() );
+	if( this->key_strafeLeft )		this->sharedData->network->Send( Protocol_PlayerMovementLeft() );
+	if( this->key_strafeRight )		this->sharedData->network->Send( Protocol_PlayerMovementRight() );
 }
 
 void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )	
@@ -209,14 +142,45 @@ void GamingUI::OnMouseRelease ( Input::Enum::SAMI key, Input::Mouse* sender )
 void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )
 { 
 	//send delta mouse movement 
+	this->camera->PitchDown( (-coordinate.y) * this->sharedData->mouseSensitivity );
+	//this->camera->YawLeft( (-coordinate.x) * this->sharedData->mouseSensitivity );
+	//if( deltaPos.x != 0.0f ) //This made the camera reset to a specific rotation. Why?
 	{
-		this->camera->PitchDown( (-coordinate.y) * this->sharedData->mouseSensitivity );
-		//this->camera->YawLeft( (-coordinate.x) * this->sharedData->mouseSensitivity );
-		//if( deltaPos.x != 0.0f ) //This made the camera reset to a specific rotation. Why?
-		{
-			this->sharedData->network->Send( Protocol_PlayerLeftTurn((coordinate.x) * this->sharedData->mouseSensitivity, this->camera->GetLook()) );
-		}
+		this->sharedData->network->Send( Protocol_PlayerLeftTurn((coordinate.x) * this->sharedData->mouseSensitivity, this->camera->GetLook()) );
 	}
 }
 
+void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
+{
+	switch (key)
+	{
+		case SAKI_W:		this->key_forward = true;
+		break;
+		case SAKI_S:		this->key_backward = true;
+		break;
+		case SAKI_A:		this->key_strafeLeft = true;
+		break;
+		case SAKI_D:		this->key_strafeRight = true;
+		break;
+		case SAKI_Space:	this->sharedData->network->Send( Protocol_PlayerJump() );
+		break;
+		case SAKI_Escape:	this->nextState = GameStateUI::UIState_main_menu;
+		break;
+	}
+}
+void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
+{
+	if(sender != this->sharedData->keyboardDevice) return;
+	switch (key)
+	{
+		case SAKI_W:		this->key_forward = false;
+		break;
+		case SAKI_S:		this->key_backward = false;
+		break;
+		case SAKI_A:		this->key_strafeLeft = false;
+		break;
+		case SAKI_D:		this->key_strafeRight = false;
+		break;
+	}
+}
 

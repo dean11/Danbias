@@ -99,6 +99,18 @@ bool ExistsInList(std::vector<Keyboard::KeyboardEvent*>& list, Keyboard::Keyboar
 	}
 	return false;
 }
+void RemoveFromList(std::vector<Keyboard::KeyboardEvent*>& list, Keyboard::KeyboardEvent* data)
+{
+	for (unsigned int i = 0; i < list.size(); i++)
+	{
+		if(list[i] == data)
+		{
+			std::swap(list[i], list[list.size() - 1]);
+			list.resize(list.size() - 1);
+			return;
+		}
+	}
+}
 
 
 
@@ -201,12 +213,7 @@ void Keyboard::AddKeyboardEvent(KeyboardEvent* object)
 }
 void Keyboard::RemoveKeyboardEvent(KeyboardEvent* object)
 {
-	int i = -1;
-	if((i = ExistsInList(this->keyEventSubscrivers, object)))
-	{
-		std::swap(this->keyEventSubscrivers[i], this->keyEventSubscrivers[this->keyEventSubscrivers.size() - 1]);
-		this->keyEventSubscrivers.resize(this->keyEventSubscrivers.size() - 1);
-	}
+	RemoveFromList( this->keyEventSubscrivers, object);
 }
 void Keyboard::operator+= (KeyboardEvent* object)
 {

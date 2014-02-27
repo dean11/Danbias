@@ -521,8 +521,7 @@ bool NetworkClient::operator ==(const int& ID)
 
 void NetworkClient::Update()
 {
-	if(!this->privateData) return;
-	while (!this->privateData->recieveQueue.IsEmpty())
+	while ( this->privateData && !this->privateData->recieveQueue.IsEmpty())
 	{
 		NetEvent<NetworkClient*, ClientEventArgs> temp = this->privateData->recieveQueue.Pop();
 
@@ -532,9 +531,9 @@ void NetworkClient::Update()
 
 bool NetworkClient::Connect(ConnectionInfo& socket)
 {
-	if(this->IsConnected()) return true;
 	if(this->privateData)	return false;
 	if(!this->privateData)	this->privateData = new PrivateData();
+	if(this->IsConnected()) return true;
 
 	int result = this->privateData->connection.Connect(socket, true);
 	
@@ -550,12 +549,13 @@ bool NetworkClient::Connect(ConnectionInfo& socket)
 
 bool NetworkClient::Connect(unsigned short port, const char serverIP[])
 {
+	if(!this->privateData)
+		this->privateData = new PrivateData();
+
 	//Return true if you are already connected.
 	if(this->IsConnected())
 		return true;
-
-	if(!this->privateData)
-		this->privateData = new PrivateData();
+	
 
 	int result = this->privateData->connection.Connect(port, serverIP, true);
 	
@@ -582,11 +582,12 @@ bool NetworkClient::Connect(unsigned short port, std::wstring serverIP)
 
 bool NetworkClient::Reconnect()
 {
+	if(!this->privateData)	
+		this->privateData = new PrivateData();
+
 	//Return true if you are already connected.
 	if(this->IsConnected())	
 		return true;
-
-	if(!this->privateData)	this->privateData = new PrivateData();
 
 	int result = this->privateData->connection.Reconnect();
 
@@ -605,12 +606,8 @@ void NetworkClient::Disconnect()
 {
 	if(!privateData) return;
 
-	SetEvent(privateData->shutdownEvent);
-	privateData->thread.Wait();
-
-	privateData->connection.Disconnect();
-	this->privateData->sendQueue.Clear();
-	this->privateData->recieveQueue.Clear();
+	delete this->privateData;
+	this->privateData = 0;
 }
 
 void NetworkClient::Send(CustomProtocolObject& protocol)
@@ -650,6 +647,7 @@ bool NetworkClient::IsConnected()
 
 int NetworkClient::GetID() const
 {
+	if(!this->privateData) return false;
 	return this->privateData->ID;
 }
 

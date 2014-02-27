@@ -16,7 +16,6 @@
 
 #include "../WindowManager/WindowShell.h"
 #include "WinTimer.h"
-#include "vld.h"
 
 #include "EventHandler/EventHandler.h"
 
@@ -192,37 +191,42 @@ namespace DanBias
 		}
 
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-
 		state = data.state->Update( deltaTime );
 
 		if( state != Client::GameClientState::ClientState_Same )
 		{
 			bool stateChanged = false;
-			data.state->Release();
-
+			
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_Main:
+				data.networkClient.Disconnect();
+				data.state->Release();
 				data.state = new Client::MainState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Lan:
+				data.state->Release();
 				data.state = new Client::LanMenuState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Lobby:
+				data.state->Release();
 				data.state = new Client::LobbyState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_LobbyCreate:
+				data.state->Release();
 				data.state = new Client::LobbyAdminState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
+				data.state->Release();
 				data.state = new Client::GameState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_NetLoad:
+				data.state->Release();
 				data.state = new Client::NetLoadState();
 				stateChanged = true;
 				break;

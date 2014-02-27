@@ -79,7 +79,9 @@ using namespace DanBias;
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
+				{
 					this->gClients[temp]->Invalidate();
+				}
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				this->ParseProtocol(e.args.data.protocol, cl);
@@ -93,6 +95,8 @@ using namespace DanBias;
 			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				this->gClients[i]->UpdateClient();
+				if(this->gClients[i]->IsInvalid())
+					this->gClients[i] = 0;
 			}
 		}
 	}
@@ -101,7 +105,7 @@ using namespace DanBias;
 		bool returnValue = false;
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
+			if(this->gClients[i] && !this->gClients[i]->IsReady())
 			{
 				this->gClients[i]->GetClient()->Send(message);
 				returnValue = true;
