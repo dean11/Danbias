@@ -52,6 +52,7 @@
 #define protocol_Gameplay_PlayerChangeWeapon		305
 #define protocol_Gameplay_PlayerShot				306
 #define protocol_Gameplay_PlayerJump				307
+#define protocol_Gameplay_PlayerScore				308
 
 #define protocol_Gameplay_ObjectPickup				350
 #define protocol_Gameplay_ObjectDamage				351

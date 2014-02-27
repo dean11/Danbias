@@ -13,6 +13,7 @@
 #include "RespawnUI.h"
 #include "StatsUI.h"
 #include <ObjectDefines.h>
+#include "ColorDefines.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -113,7 +114,7 @@ bool GameState::Init( SharedStateContent &shared )
 	return true;
 }
 
-void GameState::InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer )
+void GameState::InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer)
 {
 	ModelInitData modelData;
 	modelData.visible	= true;
@@ -139,6 +140,11 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		// start with runing animation
 		p->playAnimation( L"idle", true );
 
+		// set color tint
+		ColorDefines colors;
+		p->SetTint(colors.getTintColor(id));
+		p->SetGlowTint(colors.getGlowColor(id));
+		
 		(this->privData->players)[id] = p;
 		
 		if( isMyPlayer )
@@ -735,13 +741,27 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Protocol_ObjectDie decoded(data);
 				// if is this player. Remember to change camera
 				int killerID = decoded.killerID;
-				int victimID = decoded.objectID;
-				if( this->privData->myId == decoded.objectID )
+				int victimID = decoded.victimID;
+				if( this->privData->myId == decoded.victimID )
 				{
 					this->currGameUI =  this->respawnUI;
 					// set countdown 
 					((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
 				}
+				// update score board
+				int killerKills = decoded.killerKillCount;
+				int victimDeath = decoded.victimDeathCount;
+			}
+			return GameClientState::event_processed;
+		case protocol_Gameplay_PlayerScore:
+			{
+				Protocol_PlayerScore decoded(data);
+				int ID = decoded.playerID;
+				int kills = decoded.killCount;
+				int death = decoded.deathCount;
+
+				// update scoreboard 
+
 			}
 			return GameClientState::event_processed;
 		case protocol_Gameplay_ObjectDisconnectPlayer:

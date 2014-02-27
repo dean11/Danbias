@@ -223,6 +223,7 @@ bool GameSession::Join(gClient gameClient)
 		{
 			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
+				// other Player
 				IPlayerData* temp = this->gClients[i]->GetPlayer();
 				Protocol_ObjectCreatePlayer p1(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
@@ -230,12 +231,19 @@ bool GameSession::Join(gClient gameClient)
 												Utility::String::WStringToString(this->gClients[i]->GetCharacter(), std::string()));
 				nwClient->Send(p1);
 
+				Protocol_PlayerScore oldPlayerScore(temp->GetID(), temp->GetKills(), temp->GetDeaths());
+				nwClient->Send(oldPlayerScore);
+
+				// new player
 				temp = playerData;
 				Protocol_ObjectCreatePlayer p2(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 
 												temp->GetID(), false, temp->GetTeamID(), 
 												Utility::String::WStringToString(gameClient->GetAlias(), std::string()), 
 												Utility::String::WStringToString(gameClient->GetCharacter(), std::string()));
 				this->gClients[i]->GetClient()->Send(p2);
+
+				Protocol_PlayerScore newPlayerScore(temp->GetID(), temp->GetKills(), temp->GetDeaths());
+				this->gClients[i]->GetClient()->Send(newPlayerScore);
 			}
 		}
 	}

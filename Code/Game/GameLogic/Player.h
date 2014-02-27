@@ -91,6 +91,10 @@ namespace GameLogic
 		PLAYER_STATE GetState() const;
 		Oyster::Math::Float GetRecentlyAffected();
 
+		void AddKill();
+		void AddDeath();
+		int GetKills() const;
+		int GetDeath() const;
 		void DamageLife(int damage);
 		void setDeathTimer(float deathTimer);
 		bool deathTimerTick(float dt);

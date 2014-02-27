@@ -339,7 +339,22 @@ PLAYER_STATE Player::GetState() const
 {
 	return this->playerState;
 }
-
+void Player::AddKill()
+{
+	this->playerScore.killScore++;
+}
+void Player::AddDeath()
+{
+	this->playerScore.deathScore++;
+}
+int Player::GetKills() const
+{
+	return this->playerScore.killScore;
+}
+int Player::GetDeath() const
+{
+	return this->playerScore.deathScore;
+}
 void Player::DamageLife(int damage)
 {
 	if(damage != 0)

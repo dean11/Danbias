@@ -194,7 +194,56 @@ namespace GameLogic
 	private:
 		Oyster::Network::CustomNetProtocol protocol;
 	};
+	//#define protocol_Gameplay_ObjectPickup			350
+	struct Protocol_PlayerScore :public Oyster::Network::CustomProtocolObject
+	{
+		int playerID;
+		int killCount;
+		int deathCount;
 
+		Protocol_PlayerScore()
+		{
+			this->protocol[0].value = protocol_Gameplay_PlayerScore;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
+
+			playerID	= -1;
+			killCount	= -1;
+			deathCount	= -1;
+		}
+		Protocol_PlayerScore(Oyster::Network::CustomNetProtocol& p)
+		{
+			playerID = p[1].value.netShort;
+			killCount = p[2].value.netInt;
+			deathCount = p[3].value.netInt;
+		}
+		Protocol_PlayerScore(int objectID, int kills, int deaths)
+		{
+			this->protocol[0].value = protocol_Gameplay_PlayerScore;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
+
+			playerID	= objectID;
+			killCount	= kills;
+			deathCount	= deaths;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = playerID;
+			this->protocol[2].value = killCount;
+			this->protocol[3].value = deathCount;
+			return protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
 }
 
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

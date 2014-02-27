@@ -77,6 +77,14 @@ int Game::PlayerData::GetID() const
 {
 	return this->player->GetID();
 }
+int Game::PlayerData::GetKills() const
+{
+	return this->player->GetKills();
+}
+int Game::PlayerData::GetDeaths() const
+{
+	return this->player->GetDeath();
+}
 int Game::PlayerData::GetTeamID() const
 {
 	return this->player->GetTeamID();

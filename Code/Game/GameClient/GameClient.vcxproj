@@ -237,6 +237,7 @@
     <ClInclude Include="GameClientState\Camera_BasicV2.h" />
     <ClInclude Include="GameClientState\Camera_FPS.h" />
     <ClInclude Include="GameClientState\Camera_FPSV2.h" />
+    <ClInclude Include="GameClientState\ColorDefines.h" />
     <ClInclude Include="GameClientState\C_Light.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
