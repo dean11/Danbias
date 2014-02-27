@@ -27,7 +27,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 
 	SSAO = SSAO / 16;
 
-	float4 Light = Diffuse[DTid.xy];// + saturate(Specular[DTid.xy]);
+	float4 Light = Diffuse[DTid.xy] + saturate(Specular[DTid.xy]);
 	float3 Amb =  Ambient[DTid.xy/2].xyz  * SSAO * Color;
 	
 	float4 Glow =  Ambient[DTid.xy/2 + uint2(0,Output.Length.y/2)];
@@ -43,6 +43,6 @@ void main( uint3 DTid : SV_DispatchThreadID )
 
 	//Output[DTid.xy] = float4(Ambient[DTid.xy/2 + uint2(Output.Length*0.5f)].xyz,1);
 	//Output[DTid.xy] = SSAO * float4(1,1,1,1);
-	Output[DTid.xy] = Ambient[DTid.xy];
+	//Output[DTid.xy] = Ambient[DTid.xy];
 	//Output[DTid.xy] = Diffuse[DTid.xy];
 }

@@ -93,18 +93,12 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 		PointLight pl = Points[lightIndex];
 	
 		bool inFrustrum = true;
-		float d = dot(frustumPlanes[0], float4(pl.Pos, 1.0f));
-		inFrustrum = inFrustrum && (d >= -pl.Radius);
-		d = dot(frustumPlanes[1], float4(pl.Pos, 1.0f));
-		inFrustrum = inFrustrum && (d >= -pl.Radius);
-		d = dot(frustumPlanes[2], float4(pl.Pos, 1.0f));
-		inFrustrum = inFrustrum && (d >= -pl.Radius);
-		d = dot(frustumPlanes[3], float4(pl.Pos, 1.0f));
-		inFrustrum = inFrustrum && (d >= -pl.Radius);
-		d = dot(frustumPlanes[4], float4(pl.Pos, 1.0f));
-		inFrustrum = inFrustrum && (d >= -pl.Radius);
-		d = dot(frustumPlanes[5], float4(pl.Pos, 1.0f));
-		inFrustrum = inFrustrum && (d >= -pl.Radius);
+		[unroll]
+		for(int i = 0; i < 6; ++i)
+		{
+			float d = dot(frustumPlanes[i], float4(pl.Pos, 1.0f));
+			inFrustrum = inFrustrum && (d >= -pl.Radius);
+		}
 
 		[branch]
 		if(inFrustrum)
@@ -152,7 +146,8 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 		//Ambient[DTid.xy/2] = float4(DiffBase.xyz, 1);
 		Ambient[DTid.xy/2 + float2(Diffuse.Length.x/2, 0)] = GUI[DTid.xy];
 		Ambient[DTid.xy/2 + float2(0, Diffuse.Length.y/2)] = float4(DiffBase.xyz * DiffBase.w ,DiffBase.w);
-		Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(numVisiblePointLights * (1.0f/Lights), 0, 0 ,1);
+		//Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(numVisiblePointLights * (1.0f/Lights), 0, 0 ,1);
+		Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(NormalSpec[DTid.xy/2].xyz ,1);
 	}
 
 }
