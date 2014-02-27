@@ -45,7 +45,8 @@ namespace DanBias { namespace Client
 		Camera_FPSV2 *camera;
 
 		// TODO add multiple UI elements
-		Text_UI* text;
+		Text_UI* hp;
+		Text_UI* energy;
 		Plane_UI* plane;
 
 		bool key_forward;

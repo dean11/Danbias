@@ -27,7 +27,7 @@ bool RespawnUI::Init()
 {
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->text	=  new Text_UI(L"DEAD", Float3(0.5f,0.0f,0.5f), Float2(0.2f,0.2f));
+	this->text	=  new Text_UI(L"DEAD", Float3(0.35f,0.35f,0.5f), Float2(0.5f,0.2f));
 	return true; 
 }
 GameStateUI::UIState RespawnUI::Update( float deltaTime )
