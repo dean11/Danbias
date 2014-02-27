@@ -71,9 +71,6 @@ void Player::BeginFrame()
 	{
 		weapon->Update(0.002f);
 
-
-
-
 		Oyster::Math::Float maxSpeed = 30;
 
 		// Rotate player accordingly
@@ -137,15 +134,11 @@ void Player::BeginFrame()
 				rightVelocity *= Oyster::Math::Float3(0.2f*fabs(rightDir.x), 0.2f*fabs(rightDir.y), 0.2f*fabs(rightDir.z));
 			}
 		}
-
-		if(walkDirection == Oyster::Math::Float3::null)
+		if(IsIdle())
 		{
-			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
-			{
-				if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
-					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
-				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-			}
+			if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
+				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+			this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 		}
 		// Walk if walkdirection is something
 		if(walkDirection != Oyster::Math::Float3::null)
@@ -176,12 +169,13 @@ void Player::BeginFrame()
 					rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z)) * walkSpeed*0.2f;
 				}
 			}
-			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
-			{
+			// TODO not suer if we want to keep jump animation while jumping
+			//if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
+			//{
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING)
 					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
-			}
+			//}
 		}
 
 		// Adjust velocities so no squaring occurs
@@ -203,14 +197,6 @@ void Player::BeginFrame()
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
 					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Jump);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
-			}
-		}
-		else
-		{
-			if(this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING)
-			{
-				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
-				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 			}
 		}
 	}
@@ -305,7 +291,7 @@ bool Player::IsJumping()
 }
 bool Player::IsIdle()
 {
-	return (this->rigidBody->GetLambdaUp() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
+	return (this->rigidBody->GetLambdaUp() < 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f);
 }
 
 void Player::Inactivate()
