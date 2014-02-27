@@ -14,7 +14,7 @@ namespace Oyster
 		{
 				Definitions::Pointlight pl;
 
-				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
+				void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights, float Fov)
 				{
 					Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,0));
 					Preparations::Basic::ClearDepthStencil(Resources::Gui::depth);
@@ -25,7 +25,7 @@ namespace Oyster
 
 					Definitions::LightConstants lc;
 					lc.InvProj =  Projection.GetInverse();
-					lc.Pixels = Core::resolution;
+					lc.FoV = Fov;
 					lc.Lights = numLights;
 					lc.View = View;
 					lc.Proj = Projection;
@@ -36,7 +36,15 @@ namespace Oyster
 					Resources::Light::LightConstantsData.Unmap();
 
 					data = Resources::Light::PointLightsData.Map();
-					memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
+					Definitions::Pointlight* plData = (Definitions::Pointlight*)data;
+					for(int i=0; i < numLights; ++i)
+					{
+						plData[i].Pos =  (View * Math::Float4(Lights[i].Pos,1)).xyz;
+						plData[i].Radius = Lights[i].Radius;
+						plData[i].Color = Lights[i].Color;
+						plData[i].Bright = Lights[i].Bright;
+					}
+					//memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 					Resources::Light::PointLightsData.Unmap();
 
 					for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )

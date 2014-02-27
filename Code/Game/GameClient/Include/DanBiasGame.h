@@ -45,6 +45,7 @@ namespace DanBias
 			static DanBiasClientReturn Initiate(DanBiasGameDesc& desc);
 			static DanBiasClientReturn Run();
 			static void Release();
+			static HRESULT Render();
 
 		private:
 			enum Result
@@ -58,7 +59,6 @@ namespace DanBias
 			static HRESULT	InitInput( HWND handle );
 
 			static Result Update(float deltaTime);
-			static HRESULT Render();
 			static HRESULT CleanUp();
 		};
 		

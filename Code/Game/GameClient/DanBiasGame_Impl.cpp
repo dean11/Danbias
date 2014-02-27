@@ -40,7 +40,7 @@ namespace DanBias
 	{
 	public:
 		WindowShell* window;
-		Utility::WinTimer timer;
+		Utility::WinTimer timer, graphicalTimer;
 
 		UniquePointer<Client::GameClientState> state;
 		NetworkClient networkClient;
@@ -130,7 +130,7 @@ namespace DanBias
 				Graphics::API::Update( data.capFrame );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
-				data.capFrame -= 0.03f; 
+				data.capFrame = 0.0f; 
 			}
 
 			if(data.networkClient.IsConnected())
@@ -153,11 +153,14 @@ namespace DanBias
 		Oyster::Graphics::API::Option p;
 		p.modelPath = L"..\\Content\\Models\\";
 		p.texturePath = L"..\\Content\\Textures\\";
-		p.Resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
+		p.resolution = Oyster::Math::Float2( 1920.0f, 1080.0f );
 		//! @todo fix proper amb value
-		p.AmbientValue = 1.3f;
+		p.ambientValue = 0.3f;
+		p.globalGlowTint = Math::Float3(1);
+		p.globalTint = Math::Float3(1);
+		p.fullscreen = false;
 
-		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, p) != Oyster::Graphics::API::Sucsess)
+		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, p) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
 		return S_OK;
 	}
