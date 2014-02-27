@@ -2,17 +2,19 @@
 #define DANBIAS_CLIENT_GAMING_UI_H
 
 #include "GameStateUI.h"
-#include "L_inputClass.h"
+#include "Input.h"
 #include "Camera_FPSV2.h"
 #include "Buttons\Text_UI.h"
 #include "Buttons\Plane_UI.h"
+#include "InputManager.h"
+#include "SharedStateContent.h"
 
 namespace DanBias { namespace Client
 {
-	class GamingUI : public GameStateUI
+	class GamingUI : public GameStateUI, Input::Mouse::MouseEvent
 	{
 	public:
-		GamingUI( InputClass *input, ::Oyster::Network::NetworkClient *connection, Camera_FPSV2 *camera );
+		GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera );
 		virtual ~GamingUI();
 		bool Init();
 
@@ -24,9 +26,17 @@ namespace DanBias { namespace Client
 		bool Release();
 		void SetHPtext( std::wstring hp );
 
+	private: /* Overidden mouse methods */
+		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override { }
+		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
+		void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
+		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override { }
+		void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override { }
+		void OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override;
+		void OnMouseScroll			( int delta, Input::Mouse* sender )										override { }
+
 	private:
-		InputClass *input;
-		::Oyster::Network::NetworkClient *netClient;
+		SharedStateContent *sharedData;
 		Camera_FPSV2 *camera;
 
 		// TODO add multiple UI elements

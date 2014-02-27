@@ -193,8 +193,11 @@ using namespace Utility::DynamicMemory;
 			if(w->msec > 0)
 				std::this_thread::sleep_for(std::chrono::milliseconds(w->msec));
 	
-			while (w->state == OYSTER_THREAD_STATE_IDLE)	
+			while (w->state == OYSTER_THREAD_STATE_IDLE)
+			{
+				CheckPriority(w);
 				std::this_thread::yield();
+			}
 		}
 		static void ThreadingFunction(ThreadData* w)
 		{

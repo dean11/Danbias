@@ -12,15 +12,22 @@ namespace Input
 	class Win32Mouse :public Mouse
 	{
 	public:
-		Win32Mouse();
+		Win32Mouse(HWND target);
 		~Win32Mouse();
 
-		bool IsBtnUp(Enum::SAMI key) override;
-		bool IsBtnDown(Enum::SAMI key) override;
-		int GetWheelDelta()  override;
-		Struct::SAIPoint2D GetPixelPosition(Struct::SAIPoint2D targetMem = Struct::SAIPoint2D())  override;
+		bool IsBtnUp(Enum::SAMI key) const override;
+		bool IsBtnDown(Enum::SAMI key) const override;
+		int GetWheelDelta()  const override;
+		Struct::SAIPointInt2D& GetPixelPosition(Struct::SAIPointInt2D &targetMem = Struct::SAIPointInt2D())  const override;
+		Struct::SAIPointFloat2D& GetNormalizedPosition(Struct::SAIPointFloat2D &targetMem = Struct::SAIPointFloat2D()) override;
+		Struct::SAIPointFloat2D& GetDeltaPosition(Struct::SAIPointFloat2D& targetMem = Struct::SAIPointFloat2D()) const override;
+	
+		void Activate () override;
+		void Deactivate () override;
+		inline bool IsActive() override { return this->isActive; }
 
-		void ProccessMouseData (bool isDown, Enum::SAMI btn, int delta, Struct::SAIPoint2D velocity, unsigned int makeCode);
+		void ProccessMouseData (RAWMOUSE mouse);
+		bool Create( );
 
 	private:
 		struct Buttons
@@ -28,8 +35,12 @@ namespace Input
 			unsigned int makeCode;
 			bool isDown;
 		};
-		static const int MAXBUTTONS = 25;
-		Buttons buttons[25];
+		static const int MAXBUTTONS =Enum::SAMI_Unknown;
+		Buttons buttons[MAXBUTTONS];
+		RAWINPUTDEVICE device;
+		Struct::SAIPointInt2D windowSize;
+		bool isActive;
+		Struct::SAIPointInt2D winCursPos;
 	};
 }
 
