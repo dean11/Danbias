@@ -170,6 +170,10 @@ void GamingUI::ReadKeyInput()
 	{
 		this->nextState = GameStateUI::UIState_shut_down;
 	} 
+	if( this->sharedData->keyboardDevice->IsKeyDown(::Input::Enum::SAKI_M) )
+	{
+		this->nextState = GameStateUI::UIState_main_menu;
+	} 
 }
 
 void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )	

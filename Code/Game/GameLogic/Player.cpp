@@ -15,6 +15,8 @@ Player::Player()
 	Player::initPlayerData();
 	this->weapon = NULL;
 	this->teamID = -1; 
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -23,6 +25,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	this->weapon = new Weapon(2,this);
 	Player::initPlayerData();
 	this->teamID = teamID;
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -31,6 +35,8 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->weapon = new Weapon(2,this);
 	Player::initPlayerData();
 	this->teamID = teamID;
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
 }
 
 Player::~Player(void)
@@ -45,8 +51,6 @@ void Player::initPlayerData()
 {
 	this->playerStats.hp = MAX_HP;
 	this->playerStats.movementSpeed = BASIC_SPEED;
-	this->playerScore.killScore = 0;
-	this->playerScore.deathScore = 0;
 	this->playerState			= PLAYER_STATE_IDLE;
 	this->lookDir				= Oyster::Math::Float3(0,0,-1);
 
@@ -308,7 +312,13 @@ void Player::Inactivate()
 {
 	//this->
 }
-
+void Player::ResetPlayer( Oyster::Math::Float3 spawnPos)
+{
+	Player::initPlayerData();
+	this->rigidBody->SetPosition(spawnPos);
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
+}
 Oyster::Math::Float3 Player::GetPosition() const
 {
 	return (Oyster::Math::Float3) this->rigidBody->GetState().centerPos;
