@@ -9,6 +9,7 @@
 #include "JumpPad.h"
 #include "Portal.h"
 #include "ExplosiveCrate.h"
+#include "AttatchmentGun.h"
 
 #include "PickupSystem/PickupHealth.h"
 
@@ -368,6 +369,17 @@ using namespace GameLogic;
 		}
 		
 
+	}
+	void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj, void* args)
+	{
+		Object *realObj = (Object*)obj->GetCustomTag();
+		
+		if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_Player)
+			return;
+		
+		firedBullet *bullet = (firedBullet*)(args);
+
+		((Player*)realObj)->DamageLife(bullet->hitDamage);
 	}
 
 	//General collision collision for pickups
