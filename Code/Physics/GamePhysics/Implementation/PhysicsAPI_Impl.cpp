@@ -93,6 +93,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
+	dynamic_cast<btSphereShape*>(collisionShape)->setMargin(0.2f);
+
 	state.centerPos = position;
 	state.reach = Float3(radius, radius, radius);
 	state.dynamicFrictionCoeff = dynamicFriction;
@@ -132,6 +134,8 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
+	dynamic_cast<btBoxShape*>(collisionShape)->setMargin(0.2f);
+
 	state.centerPos = position;
 	state.reach = halfSize;
 	state.dynamicFrictionCoeff = dynamicFriction;
@@ -170,6 +174,8 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	// Add rigid body to world
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
+
+	dynamic_cast<btCylinderShape*>(collisionShape)->setMargin(0.2f);
 
 	state.centerPos = position;
 	state.reach = halfSize;
@@ -212,6 +218,8 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
+	dynamic_cast<btCapsuleShape*>(collisionShape)->setMargin(0.2f);
+
 	state.centerPos = position;
 	state.reach = Float3(radius, height, radius);
 	state.dynamicFrictionCoeff = dynamicFriction;
@@ -245,9 +253,11 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w),btVector3(position.x, position.y, position.z)));
 	body->SetMotionState(motionState);
 
+	
+
 	// Add rigid body
 	btVector3 fallInertia(0, 0, 0);
-	//collisionShape->calculateLocalInertia(mass, fallInertia);
+	//collisionShape->calcu%lateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
 	rigidBody->setFriction(staticFriction);
@@ -258,6 +268,8 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	// Add rigid body to world
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
+
+	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.5);
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);
@@ -284,10 +296,7 @@ void API_Impl::UpdateWorld()
 		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
 		simpleBody->PreStep(this->dynamicsWorld);
 
-		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
-		{
-			this->customBodies[i]->CallSubscription_Move();
-		}
+		
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
@@ -301,7 +310,12 @@ void API_Impl::UpdateWorld()
 		btTransform trans;
 		trans = simpleBody->GetRigidBody()->getWorldTransform();
 		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
-		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));		
+		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
+
+		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
+		{
+			this->customBodies[i]->CallSubscription_Move();
+		}
 	}
 
 	int numManifolds = this->dynamicsWorld->getDispatcher()->getNumManifolds();
@@ -411,7 +425,7 @@ void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void*
 			btConeShapeZ coneShape = btConeShapeZ(cone->radius, cone->length);
 
 			// Add motion state
-			 btDefaultMotionState state = btDefaultMotionState(btTransform(btQuaternion(cone->quaternion.x, cone->quaternion.y, cone->quaternion.z, cone->quaternion.w),btVector3(cone->center.x, cone->center.y, cone->center.z)));
+			 btDefaultMotionState state = btDefaultMotionState(btTransform(btQuaternion(cone->quaternion.x, cone->quaternion.y, cone->quaternion.z, cone->quaternion.w)*btQuaternion(0, 1, 0, 0),btVector3(cone->center.x, cone->center.y, cone->center.z)));
 
 			// Add rigid body
 			btRigidBody::btRigidBodyConstructionInfo rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo (0, &state, &coneShape);
