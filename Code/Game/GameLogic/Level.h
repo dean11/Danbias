@@ -35,7 +35,6 @@ namespace GameLogic
 		* @param levelPath: Path to a file that contains all information on the level
 		********************************************************/
 		bool InitiateLevel(std::wstring levelPath);
-		bool InitiateLevel(float radius);
 		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodyMesh( const ObjectHeader* obj);
@@ -79,19 +78,19 @@ namespace GameLogic
 		static void PlayerDied( Player* player );
 		static void PhysicsOnMoveLevel(const Oyster::Physics::ICustomBody *object);
 		
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>>			GetPlayers();
+		Utility::DynamicMemory::DynamicArray<Player*>			GetPlayers();
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>>	GetStaticObjects();
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>>	GetDynamicObject();
 
 	private:
-		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<Player>> playerObjects;
+		Utility::DynamicMemory::DynamicArray<Player*> playerObjects;
 		TeamManager teamManager;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>> staticObjects;
 		Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>> dynamicObjects;
 		GameModeType gameMode;
-		Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
-		StaticObject *levelObj;
-		int objID; 
+		//Utility::DynamicMemory::SmartPointer<Oyster::Physics::ICustomBody> rigidBodyLevel;
+// 		//StaticObject *levelObj;
+		int objIDCounter; 
 		Utility::DynamicMemory::DynamicArray<Oyster::Math::Float3> spawnPoints;
 		PickupSystem pickupSystem;
 

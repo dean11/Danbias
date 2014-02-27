@@ -1,9 +1,11 @@
 #include "C_StaticObj.h"
 #include "DllInterfaces/GFXAPI.h"
+
 using namespace DanBias::Client;
 
-C_StaticObj::C_StaticObj(void)
+C_StaticObj::C_StaticObj( GameLogic::ObjectSpecialType t )
 	:C_Object()
+	,gameObjectType(t)
 {
 
 }

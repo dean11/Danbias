@@ -144,7 +144,7 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 				desc.scale		= oh->scale;
 				desc.visible	= true; 
 
-				C_StaticObj *staticObject = new C_StaticObj();
+				C_StaticObj *staticObject = new C_StaticObj(oh->specialTypeID);
 				if( staticObject->Init( desc ) )
 				{
 

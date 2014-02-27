@@ -177,7 +177,6 @@ void SimpleRigidBody::AddRotationAroundY(::Oyster::Math::Float angle)
 
 	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
 }
-
 void SimpleRigidBody::SetAngularFactor(Float factor)
 {
 	this->rigidBody->setAngularFactor(factor);
@@ -246,18 +245,18 @@ void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
 
 	btQuaternion q;
 	btVector3 a = v1.cross(v2);
-	
-	if (v1.dot(v2) < -0.999999) 
+
+	if (v1.dot(v2) < -0.999999)
 	{
 		btVector3 xCrossPre = btVector3(1, 0 ,0).cross(v1);
 		if(xCrossPre.length() < 0.000001)
 			xCrossPre = btVector3(0, 1 ,0).cross(v1);
 		xCrossPre.normalize();
 		q.setRotation(xCrossPre, 3.1415);
-    }
-	else if (v1.dot(v2) > 0.999999) 
+	}
+	else if (v1.dot(v2) > 0.999999)
 	{
-           q = btQuaternion(0, 0, 0, 1);
+		q = btQuaternion(0, 0, 0, 1);
 	}
 	else
 	{

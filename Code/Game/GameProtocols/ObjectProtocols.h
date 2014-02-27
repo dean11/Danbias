@@ -969,7 +969,7 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 }
-//#define protocol_Gameplay_ObjectAction				369
+	//#define protocol_Gameplay_ObjectAction				369
 	struct Protocol_ObjectAction :public Oyster::Network::CustomProtocolObject
 	{
 		short objectID;
@@ -1004,6 +1004,48 @@ namespace GameLogic
 		{
 			this->protocol[1].value = objectID;
 			this->protocol[2].value = animationID;
+			return protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+	//#define protocol_Gameplay_ObjectCollision				370
+	struct Protocol_ObjectCollision :public Oyster::Network::CustomProtocolObject
+	{
+		short objectID;
+		int collisionID; 
+		// TODO: maybe position, impact, and velocity
+
+		Protocol_ObjectCollision()
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectCollision;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;		
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+
+			this->objectID = -1;
+			this->collisionID = -1;
+		}
+		Protocol_ObjectCollision(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->objectID = p[1].value.netShort;
+			this->collisionID = p[2].value.netInt;
+		}
+		Protocol_ObjectCollision( int id, int collisionID)
+		{
+			this->protocol[0].value = protocol_Gameplay_ObjectCollision;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[2].type = Oyster::Network::NetAttributeType_Int;
+
+			this->objectID = id;
+			this->collisionID = collisionID;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = objectID;
+			this->protocol[2].value = collisionID;
 			return protocol;		 
 		}	
 

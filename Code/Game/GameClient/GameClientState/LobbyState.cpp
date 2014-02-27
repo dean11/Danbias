@@ -22,8 +22,9 @@ struct LobbyState::MyData
 
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
-	InputClass *input;
-	Graphics::API::Texture background;
+	::Input::Mouse *mouseInput;
+	Float3 mousePos;
+	Graphics::API::Texture background, mouseCursor;;
 	EventButtonCollection guiElements;
 } privData;
 
@@ -43,9 +44,10 @@ bool LobbyState::Init( SharedStateContent &shared )
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
-	this->privData->input = shared.input;
+	this->privData->mouseInput = shared.mouseDevice;
 
 	this->privData->background = Graphics::API::CreateTexture( L"grass_md.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
 
 	// create buttons
 	ButtonRectangle<LobbyState*> *button;
@@ -61,21 +63,15 @@ bool LobbyState::Init( SharedStateContent &shared )
 
 GameClientState::ClientState LobbyState::Update( float deltaTime )
 {
-	// Wishlist:
-	// picking 
-	// mouse events
-	// different menus
-	// play sounds
-	// update animation
-	// send data to server
-	// check data from server
-
 	MouseInput mouseState;
 	{
-		this->privData->input->GetMousePos( mouseState.x, mouseState.y );
-		mouseState.mouseButtonPressed = this->privData->input->IsMousePressed();
-	}
+		::Input::Struct::SAIPointFloat2D pos;
+		this->privData->mouseInput->GetNormalizedPosition( pos );
 
+		this->privData->mousePos.x = mouseState.x = pos.x;
+		this->privData->mousePos.y = mouseState.y = pos.y;
+		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+	}
 	EventHandler::Instance().Update( mouseState );
 
 	return this->privData->nextState;
@@ -85,6 +81,7 @@ bool LobbyState::Render( )
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
+	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 

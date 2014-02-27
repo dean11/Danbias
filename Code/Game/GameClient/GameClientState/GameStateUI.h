@@ -42,17 +42,4 @@ namespace DanBias { namespace Client
 	};
 } }
 
-namespace Utility { namespace DynamicMemory
-{ // template specializationto allowuse of dynamicmemory tools
-	template<>
-	inline void SafeDeleteInstance( ::DanBias::Client::GameStateUI *dynamicInstance )
-	{
-		if( dynamicInstance )
-		{
-			dynamicInstance->Release();
-			delete dynamicInstance;
-		}
-	}
-} }
-
 #endif

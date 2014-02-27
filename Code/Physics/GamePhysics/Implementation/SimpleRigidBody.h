@@ -29,7 +29,7 @@ namespace Oyster
 			void SetRotation(Math::Quaternion quaternion);
 			void SetRotation(Math::Float3 eulerAngles);
 			void SetRotation(::Oyster::Math::Float4x4 rotation);
-			void AddRotationAroundY(Math::Float angle);
+			void AddRotationAroundY(::Oyster::Math::Float angle);
 			void SetAngularFactor(Math::Float factor);
 			void SetMass(Math::Float mass);
 

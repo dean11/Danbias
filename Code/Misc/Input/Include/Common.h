@@ -31,18 +31,28 @@ namespace Input
 			ButtonState_Down,			// When the button is held down
 			ButtonState_Release,		// When button is released (once)
 			ButtonState_Up,				// Default state, will not be proccesed as a callback!
+			ButtonState_Unknown,
 		};
 	}
 	/*********************************************************************/
 	namespace Struct
 	{
-		struct SAIPoint2D
+		struct SAIPointInt2D
 		{
 			int x;
 			int y;
-			SAIPoint2D() :x(0), y(0) { }
-			SAIPoint2D(int _x, int _y) :x(_x), y(_y) { }
+			SAIPointInt2D() :x(0), y(0) { }
+			SAIPointInt2D(int _x, int _y) :x(_x), y(_y) { }
 			int Length() { return (abs(x) + abs(y)); }
+		};
+
+		struct SAIPointFloat2D
+		{
+			float x;
+			float y;
+			SAIPointFloat2D() :x(0.0f), y(0.0f) { }
+			SAIPointFloat2D(float _x, float _y) :x(_x), y(_y) { }
+			float Length() { return (fabs(x) + fabs(y)); }
 		};
 
 		struct InputData;

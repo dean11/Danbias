@@ -44,7 +44,6 @@ using namespace GameLogic;
 			realObjB = realObjA;
 		}
 
-
 		switch (realObjB->GetObjectType())
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
@@ -69,7 +68,8 @@ using namespace GameLogic;
 			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
-
+		// send collision event message
+		((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_BasicCollision);
 		//return Physics::ICustomBody::SubscriptMessage_none;
 	}
 
@@ -255,16 +255,18 @@ using namespace GameLogic;
 		{
 			//realobjA is the affectedObject, transfer this to realobjB
 			realObjB->SetAffectedBy(*realObjA->getAffectingPlayer());
+			return;
 
 		}
 		if(realObjB->getAffectingPlayer() != NULL && realObjA->getAffectingPlayer() == NULL)
 		{
 			//realobjB is the affectedObject, transfer this to realobjA
 			realObjA->SetAffectedBy(*realObjB->getAffectingPlayer());
+			return;
 
 		}
 
-		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() != NULL)
+		if(realObjA->getAffectingPlayer() != NULL && realObjB->getAffectingPlayer() != NULL && ( realObjA->getAffectingPlayer()->GetID() != realObjB->getAffectingPlayer()->GetID()))
 		{
 			//Both objects have a player affecting them, now use the special case
 			if(realObjA->GetRigidBody()->GetState().previousVelocity.GetMagnitude() > realObjB->GetRigidBody()->GetState().previousVelocity.GetMagnitude() )
@@ -368,14 +370,19 @@ using namespace GameLogic;
 		Object* a = (Object*)objA->GetCustomTag();
 		Object* b = (Object*)objB->GetCustomTag();
 
-		if(!a)	
+		if(!a)
 			return;
-		if(!b)		
+		if(!b)
 			return;
 
 		if(b->GetObjectType() == ObjectSpecialType_Player)
 		{
-			((Pickup*)a)->OnCollision((Player*)(b));
+			//Only update if it is active. And if the player is alive
+			if(((Pickup*)a)->IsActive() && ((Player*)b)->GetState() != PLAYER_STATE_DEAD && ((Player*)b)->GetState() != PLAYER_STATE_DIED)
+			{
+				((Pickup*)a)->OnCollision((Player*)(b));
+			}
+			return;
 		}
 		else if(a->GetObjectType() != ObjectSpecialType_Player)
 		{
@@ -383,6 +390,10 @@ using namespace GameLogic;
 			//Do nothing.
 			return;
 		}
-
-		((Pickup*)b)->OnCollision((Player*)a);
+		
+		//Only update if it is active. And if the player is alive
+		if(((Pickup*)b)->IsActive() && ((Player*)a)->GetState() != PLAYER_STATE_DEAD && ((Player*)a)->GetState() != PLAYER_STATE_DIED)
+		{
+			((Pickup*)b)->OnCollision((Player*)a);
+		}
 	}
