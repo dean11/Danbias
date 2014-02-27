@@ -17,12 +17,13 @@ GamingUI::GamingUI() :
 	this->sharedData		= nullptr;
 	this->camera			= nullptr;
 	this->plane				= nullptr;
-	this->text				= nullptr;
+	this->energy			= nullptr;
+	this->hp				= nullptr;
 	this->key_backward		= false;
 	this->key_forward		= false;
 	this->key_strafeLeft	= false;
 	this->key_strafeRight	= false;
-	this->nextState = GameStateUI::UIState_same;
+	this->nextState 		= GameStateUI::UIState_same;
 }
 
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
@@ -31,7 +32,8 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
 	this->sharedData		= shared;
 	this->camera			= camera;
 	this->plane				= nullptr;
-	this->text				= nullptr;
+	this->hp				= nullptr;
+	this->energy			= nullptr;
 	this->key_backward		= false;
 	this->key_forward		= false;
 	this->key_strafeLeft	= false;
@@ -44,11 +46,10 @@ bool GamingUI::Init()
 {
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->plane	=  new Plane_UI(L"box_tex.png", Float3(0.5f, 0.0f, 0.5f), Float2(0.3f, 0.1f));
-	this->text	=  new Text_UI(L"hej", Float3(0.5f,0.0f,0.1f), Float2(0.1f,0.1f));
+	this->hp 	= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), Float4(1,0,0,1));
+	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.4f,0.1f), Float4(1,1,0,1));
 
 	this->sharedData = sharedData;
-
 	// setting input mode to all raw
 	this->sharedData->keyboardDevice->Activate();
 	this->sharedData->keyboardDevice->AddKeyboardEvent(this);
@@ -75,12 +76,13 @@ bool GamingUI::HaveTextRender() const
 
 void GamingUI::RenderGUI() const
 {
-	this->plane->RenderTexture();
+	//this->plane->RenderTexture();
 }
 
 void GamingUI::RenderText() const
 {
-	this->text->RenderText();
+	this->hp->RenderText();
+	this->energy->RenderText();
 }
 
 bool GamingUI::Release()
@@ -90,16 +92,15 @@ bool GamingUI::Release()
 	this->sharedData->mouseDevice->RemoveMouseEvent(this);
 
 	// TODO: Release UI components here.
-	if(this->plane)		delete this->plane;
-	if(this->text)		delete this->text;
-
+	if(this->plane) 	delete this->plane;
+	if(this->hp)		delete this->hp;
+	if(this->energy)	delete this->energy;
 	this->sharedData = 0;
-
 	return true;
 }
 void GamingUI::SetHPtext( std::wstring hp )
 {
-	this->text->setText(hp);
+	this->hp->setText(hp);
 }
 void GamingUI::ReadKeyInput()
 {

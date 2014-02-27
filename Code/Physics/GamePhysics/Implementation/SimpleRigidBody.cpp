@@ -73,6 +73,7 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 void SimpleRigidBody::ApplyImpulse(Float3 impulse)
 {
 	this->rigidBody->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+	this->rigidBody->setActivationState(ACTIVE_TAG);
 }
 
 void SimpleRigidBody::SetCollisionShape(btCollisionShape* shape)
