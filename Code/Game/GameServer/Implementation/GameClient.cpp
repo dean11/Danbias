@@ -25,8 +25,6 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 }
 GameClient::~GameClient()
 {
-	delete this->player;
-
 	this->isReady = false;
 	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
