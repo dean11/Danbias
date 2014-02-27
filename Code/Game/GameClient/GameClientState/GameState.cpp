@@ -752,7 +752,6 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				player = (this->privData->players)[decoded.objectID];
 
 				if( player )
-<<<<<<< HEAD
 				{
 					if( this->privData->myId == decoded.objectID )
 					{
@@ -793,15 +792,12 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 						case GameLogic::PlayerAction::PlayerAction_Idle:
 							player->playAnimation(L"idle", true);
 							break;
-
 						case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 							break;
 						case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
 							break;
 						case GameLogic::WeaponAction::WeaponAction_Reload:
 							break;
-
-
 						default:
 							break;
 						}
@@ -821,76 +817,6 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				}
 				if( object )
 				{
-=======
-				{
-					if( this->privData->myId == decoded.objectID )
-					{
-						// dont delete my player
-					}
-					if( player )
-					{
-						player->SetVisible(false);
-						(this->privData->players)[decoded.objectID].Release();
-					}
-				}
-			}
-			return GameClientState::event_processed;
-		case protocol_Gameplay_ObjectAction:
-			{
-				Protocol_ObjectAction decoded(data);
-
-				C_Player *player; 
-				player = (this->privData->players)[decoded.objectID];
-				
-				if( player )
-				{
-					if( this->privData->myId == decoded.objectID )
-					{
-						// my player animation
-					//}
-					//else
-					//{
-						// HACK for now animate my char
-						switch (decoded.animationID)
-						{
-						case  GameLogic::PlayerAction::PlayerAction_Walk:
-							player->playAnimation(L"run_forwards", true);
-							break;
-						case GameLogic::PlayerAction::PlayerAction_Jump:
-							player->playAnimation(L"movement", true);
-							break;
-						case GameLogic::PlayerAction::PlayerAction_Idle:
-							player->playAnimation(L"idle", true);
-							break;
-
-						case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
-							break;
-						case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
-							break;
-						case GameLogic::WeaponAction::WeaponAction_Reload:
-							break;
-
-
-						default:
-							break;
-						}
-					}
-				}
-			}
-			return GameClientState::event_processed;
-		case protocol_Gameplay_ObjectCollision:
-			{
-				Protocol_ObjectCollision decoded(data);
-				C_Object *object; 
-				object = (this->privData->players)[decoded.objectID];
-				if( !object)
-				{
-					// if it is not a player 
-					object = (*this->privData->dynamicObjects)[decoded.objectID];
-				}
-				if( object )
-				{
->>>>>>> origin/New-inputsystem
 					switch (decoded.collisionID)
 					{
 					case GameLogic::CollisionEvent::CollisionEvent_BasicCollision:

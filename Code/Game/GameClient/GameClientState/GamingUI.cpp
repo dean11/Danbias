@@ -218,8 +218,3 @@ void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, In
 		}
 	}
 }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/New-inputsystem

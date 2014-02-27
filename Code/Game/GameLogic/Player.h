@@ -10,11 +10,7 @@
 #include "DynamicArray.h"
 
 const float MAX_HP = 100.0f;
-<<<<<<< HEAD
-const float BASIC_SPEED = 30.0f;// * 0.2f;
-=======
-const float BASIC_SPEED = 30.0f;
->>>>>>> origin/New-inputsystem
+const float BASIC_SPEED = 30.0f * 0.2f;
 
 namespace GameLogic
 {

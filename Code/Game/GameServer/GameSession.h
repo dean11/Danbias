@@ -102,11 +102,7 @@ namespace DanBias
 		static void ObjectEnabled			( GameLogic::IObjectData* movedObject );
 		static void ObjectDamaged			( GameLogic::IObjectData* movedObject, float hp );
 		static void ObjectRespawned			( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos );
-<<<<<<< HEAD
 		static void ObjectDead				( GameLogic::IObjectData* victim, GameLogic::IObjectData* killer, float seconds  );
-=======
-		static void ObjectDead				( GameLogic::IObjectData* movedObject, GameLogic::IObjectData* killer, float seconds );
->>>>>>> origin/New-inputsystem
 		static void PickupEvent				( GameLogic::IObjectData* movedObject, int pickupEffectID );
 		static void ActionEvent				( GameLogic::IObjectData* movedObject , int actionID );
 		static void CollisionEvent			( GameLogic::IObjectData* Object , int collisionID );

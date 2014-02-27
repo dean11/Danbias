@@ -30,11 +30,7 @@ namespace GameLogic
 		typedef void(*ObjectEnabledFunction)(IObjectData* object);	// Callback method that recieves and object
 		typedef void(*ObjectHpFunction)(IObjectData* object, float hp);	// Callback method that sends obj HP
 		typedef void(*ObjectRespawnedFunction)(IObjectData* object, Oyster::Math::Float3 spawnPos );	// Callback method that sends spawnPos
-<<<<<<< HEAD
 		typedef void(*ObjectDeadFunction)(IObjectData* victim, IObjectData* killer, float seconds);	// Callback method that sends killer and death timer
-=======
-		typedef void(*ObjectDeadFunction)(IObjectData* object, IObjectData* killer, float seconds);	// Callback method that sends death timer
->>>>>>> origin/New-inputsystem
 		typedef void(*PickupEventFunction)(IObjectData* player, int pickupEffectID );	// Callback method that sends killer and death timer
 		typedef void(*AnimationEventFunction)(IObjectData* player, int actionID );	// Callback method that sends killer and death timer
 		typedef void(*CollisionEventFunction)(IObjectData*object, int collisionID); 

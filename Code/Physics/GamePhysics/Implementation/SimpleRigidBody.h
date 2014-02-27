@@ -29,11 +29,8 @@ namespace Oyster
 			void SetRotation(Math::Quaternion quaternion);
 			void SetRotation(Math::Float3 eulerAngles);
 			void SetRotation(::Oyster::Math::Float4x4 rotation);
-<<<<<<< HEAD
-			void AddRotationAroundY(::Oyster::Math::Float angle);
-=======
+
 			void AddRotationAroundY(Math::Float angle);
->>>>>>> origin/New-inputsystem
 			void SetAngularFactor(Math::Float factor);
 			void SetMass(Math::Float mass);
 
@@ -61,8 +58,6 @@ namespace Oyster
 
 			void SetCustomTag( void *ref );
 			void* GetCustomTag() const;
-
-			
 
 			// Class specific
 			void SetCollisionShape(btCollisionShape* shape);

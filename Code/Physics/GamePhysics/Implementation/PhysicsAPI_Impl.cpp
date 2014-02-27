@@ -68,7 +68,7 @@ void API_Impl::SetGravity(float gravity)
 // Bullet physics
 ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
-	SimpleRigidBody* body = new SimpleRigidBody;
+	SimpleRigidBody* body = new SimpleRigidBody();
 	SimpleRigidBody::State state;
 
 	// Add collision shape
