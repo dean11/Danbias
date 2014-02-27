@@ -83,9 +83,10 @@ void Player::BeginFrame()
 		// Rotate player accordingly
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp( this->rigidBody->GetState().centerPos.GetNormalized() );
+		this->rotationUp = 0.0f;
 
 		// Direction data
-		Oyster::Math::Float4x4 orientation;
+		Float4x4 orientation;
 		orientation = this->rigidBody->GetState().GetOrientation();
 
 		Float3 &forwardDir = orientation.v[2].xyz;
