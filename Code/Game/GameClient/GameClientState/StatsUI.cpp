@@ -62,13 +62,13 @@ bool StatsUI::HaveTextRender() const
 	return true; 
 }
 
-void StatsUI::RenderGUI() const
+void StatsUI::RenderGUI()
 {
 	// render all the planes
 	this->backGround->RenderTexture();
 }
 
-void StatsUI::RenderText() const
+void StatsUI::RenderText()
 {
 	// render all the text
 	this->nameText->RenderText(); 
@@ -88,7 +88,8 @@ void StatsUI::RenderText() const
 bool StatsUI::Release()
 {
 	// TODO: Release UI components here.
-	
+	if(this->id)
+		delete this->id;
 	if(this->nameText)
 		delete this->nameText;
 	if(this->killText)
@@ -175,4 +176,8 @@ bool StatsUI::updateDeatchScore( int id, int deaths)
 		}
 	}
 	return false;
+}
+void StatsUI::ChangeState( UIState next )
+{
+	this->nextState = next;
 }
