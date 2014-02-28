@@ -66,23 +66,25 @@ void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 {
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
+	Oyster::Math::Float3 target = pos + (look * 100);
 
-
-	/*Oyster::Physics::ICustomBody *hitObject = rayClosestObjectNotMe(this->owner,pos,look*100);
+	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
 	
 	if(hitObject != NULL)
 	{
 		BulletCollision(hitObject);
-	}*/
+	}
 }
 
 
-void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj, Oyster::Math::Float damage)
+void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj)
 	{
 		Object *realObj = (Object*)obj->GetCustomTag();
 		
 		if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_Player)
+		{
 			return;
-
+		}
+		
 		((Player*)realObj)->DamageLife(this->damage);
 	}
