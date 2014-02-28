@@ -179,8 +179,6 @@ using namespace GameLogic;
 		ExplosionSource->GetRigidBody()->MoveToLimbo();
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 
-	}
-
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
