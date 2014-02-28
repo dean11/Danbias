@@ -172,8 +172,9 @@ using namespace GameLogic;
 			//do shredding damage
 		}
 
-
-		
+		//send message that box has exploded?
+		ExplosionSource->GetRigidBody()->MoveToLimbo();
+		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 
 	}
 
