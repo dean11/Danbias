@@ -99,7 +99,7 @@ void Player::BeginFrame()
 
 		// Walking data
 		Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
-		Oyster::Math::Float walkSpeed = this->playerStats.movementSpeed*0.2f;
+		Oyster::Math::Float walkSpeed = this->playerStats.movementSpeed;
 
 		// Check for input
 		if(key_forward > 0.001)
