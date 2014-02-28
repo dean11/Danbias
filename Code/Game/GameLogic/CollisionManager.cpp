@@ -243,16 +243,23 @@ using namespace GameLogic;
 			return;
 		}
 
-		Player *player = realObjA->getManipulatingPlayer();
-		if( player != nullptr )
-		{
-			player->UseWeapon( WEAPON_INTERRUPT );
-		}
+		Math::Float3 deltaVelocity = realObjA->GetRigidBody()->GetLinearVelocity() - realObjB->GetRigidBody()->GetLinearVelocity();
+		Math::Float VelocityNorm = deltaVelocity.Dot( deltaVelocity );
 
-		player = realObjB->getManipulatingPlayer();
-		if( player != nullptr )
+		static const Math::Float velocity_norm_threshold_interrupt_weapon = 100.0f; // 10 m/s deltaVelocity
+		if( VelocityNorm >= velocity_norm_threshold_interrupt_weapon )
 		{
-			player->UseWeapon( WEAPON_INTERRUPT );
+			Player *player = realObjA->getManipulatingPlayer();
+			if( player != nullptr )
+			{
+				player->UseWeapon( WEAPON_INTERRUPT );
+			}
+
+			player = realObjB->getManipulatingPlayer();
+			if( player != nullptr )
+			{
+				player->UseWeapon( WEAPON_INTERRUPT );
+			}
 		}
 
 		//check which obj is the one that is already affected, if both are then use the special case of changing ownership.
@@ -290,10 +297,6 @@ using namespace GameLogic;
 				//realObjB is the winner and will change As ownership to B
 			}
 		}
-		
-
-
-
 	}
 
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
