@@ -30,7 +30,7 @@ namespace GameLogic
 
 	private:
 		void ShootBullet(const WEAPON_FIRE &usage, float dt);
-		void BulletCollision(Oyster::Physics::ICustomBody *obj, Oyster::Math::Float damage);
+		void BulletCollision(Oyster::Physics::ICustomBody *obj);
 	
 	};
 }
