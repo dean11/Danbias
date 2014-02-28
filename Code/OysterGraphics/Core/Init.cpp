@@ -110,7 +110,7 @@ namespace Oyster
 			if(Core::swapChain)
 			{
 				Core::swapChain->Release();
-				Core::UsedMem -= desc.BufferDesc.Height * desc.BufferDesc.Width * 16;
+				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
 				delete Core::swapChain;
 			}
 
@@ -168,7 +168,7 @@ namespace Oyster
 			}
 
 			dxgiFactory->Release();
-			Core::UsedMem += desc.BufferDesc.Height * desc.BufferDesc.Width * 16;
+			Core::UsedMem += desc.BufferDesc.Height * desc.BufferDesc.Width * 4;
 			return Init::Success;
 		}
 
@@ -188,7 +188,7 @@ namespace Oyster
 			if(Core::depthStencil)
 			{
 				Core::depthStencil->Release();
-				Core::UsedMem -= desc.Height * desc.Width * 4;
+				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
 				delete Core::depthStencil;
 			}
 
@@ -327,12 +327,16 @@ namespace Oyster
 				return Init::Fail;
 			}
 
+			
+			Core::window = Window;
+			Core::fullscreen = Fullscreen;
+
 			return Init::Success;
 		}
 
-		Core::Init::State Core::Init::ReInitialize(HWND Window, bool MSAA_Quality, bool Fullscreen)
+		Core::Init::State Core::Init::ReInitialize(bool MSAA_Quality, bool Fullscreen, Math::Float2 Size)
 		{
-			if(Init::CreateSwapChain(Window, 1, MSAA_Quality, Fullscreen, Core::resolution) == Init::Fail)
+			if(Init::CreateSwapChain(Core::window, 1, MSAA_Quality, Fullscreen, Size) == Init::Fail)
 			{
 				return Init::Fail;
 			}

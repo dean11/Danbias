@@ -154,6 +154,11 @@ namespace Oyster
 					desc.Type = Buffer::STRUCTURED_BUFFER;
 					Light::PointLightsData.Init(desc);
 
+					
+					Buffer* b = &Light::PointLightsData;
+
+					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&Light::PointLightView,NULL);
+
 					desc.Type = Buffer::BUFFER_TYPE::VERTEX_BUFFER;
 					desc.ElementSize = sizeof(Definitions::Text2D);
 					desc.NumElements = MAX_LETTER_COUNT;
@@ -237,6 +242,43 @@ namespace Oyster
 					return Core::Init::Success;
 				}
 
+				Core::Init::State Resources::ReInitViews(Math::Float2 size)
+				{
+					//Release Views
+					for(int i = 0; i < GBufferSize; ++i)
+					{
+						SAFE_RELEASE(GBufferRTV[i]);
+						SAFE_RELEASE(GBufferSRV[i]);
+						Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
+					}
+
+					//Release Views
+					for(int i = 0; i < GBufferSize; ++i)
+					{
+						SAFE_RELEASE(LBufferUAV[i]);
+						SAFE_RELEASE(LBufferSRV[i]);
+						Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
+					}
+
+					Core::resolution = size;
+
+					//Create Views
+					for(int i = 0; i< GBufferSize; ++i)
+					{
+						Core::Init::CreateLinkedShaderResourceFromTexture(&GBufferRTV[i],&GBufferSRV[i],NULL);
+					}
+
+					for(int i = 0; i < LBufferSize; ++i)
+					{
+						Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&LBufferSRV[i],&LBufferUAV[i]);
+					}
+
+					//Blur
+					Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&Blur::BufferSRV,&Blur::BufferUAV);
+
+					return Core::Init::State::Success;
+				}
+
 				Core::Init::State Resources::InitViews()
 				{
 					//Create Views
@@ -253,9 +295,6 @@ namespace Oyster
 					//Blur
 					Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&Blur::BufferSRV,&Blur::BufferUAV);
 
-					Buffer* b = &Light::PointLightsData;
-
-					Core::Init::CreateLinkedShaderResourceFromStructuredBuffer(&b,&Light::PointLightView,NULL);
 					srand((unsigned int)time(0));
 
 					//SSAO
