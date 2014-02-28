@@ -88,7 +88,8 @@ void StatsUI::RenderText() const
 bool StatsUI::Release()
 {
 	// TODO: Release UI components here.
-	
+	if(this->id)
+		delete this->id;
 	if(this->nameText)
 		delete this->nameText;
 	if(this->killText)
