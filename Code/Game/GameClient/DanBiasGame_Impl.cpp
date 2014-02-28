@@ -9,6 +9,7 @@
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
 #include "GameClientState\NetLoadState.h"
+#include "GameClientState\States\OptionState.h"
 #include "Utilities.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
@@ -95,6 +96,13 @@ namespace DanBias
 		data.networkClient.SetMessagePump( ClientEventFunction );
 
 		data.sharedStateContent.network = &data.networkClient;
+
+		if( (data.sharedStateContent.background = Graphics::API::CreateTexture( L"color_white.png" ) ) == 0)
+			printf("Failed to load the default background [color_white.png]\n");
+
+		
+		if( ( data.sharedStateContent.mouseCursor = Graphics::API::CreateTexture( L"cursor.png" ) ) == 0)
+			printf("Failed to load the mouse cursor [cursor.png]\n");
 
 		// Start in main menu state
 		data.state = new Client::MainState();
@@ -230,6 +238,11 @@ namespace DanBias
 			case Client::GameClientState::ClientState_NetLoad:
 				data.state->Release();
 				data.state = new Client::NetLoadState();
+				stateChanged = true;
+				break;
+			case Client::GameClientState::ClientState_Options:
+				data.state->Release();
+				data.state = new Client::OptionState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Quit:

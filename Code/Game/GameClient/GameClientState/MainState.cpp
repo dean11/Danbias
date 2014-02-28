@@ -22,12 +22,10 @@ using namespace ::Utility::StaticArray;
 struct MainState::MyData
 {
 	MyData() {}
-
+	SharedStateContent* sharedData;
 	GameClientState::ClientState nextState;
-	NetworkClient *nwClient;
-	::Input::Mouse *mouseInput;
+
 	Float3 mousePos;
-	Graphics::API::Texture background, mouseCursor;
 	EventButtonCollection guiElements;
 };
 
@@ -48,14 +46,10 @@ bool MainState::Init( SharedStateContent &shared )
 {
 	this->privData = new MyData();
 
+	this->privData->sharedData = &shared;
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = shared.network;
-	this->privData->mouseInput = shared.mouseDevice;
-	//this->privData->mouseInput->
-	this->privData->mousePos = Float3( 0.0f );
 
-	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
-	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor.png" );
+	this->privData->mousePos = Float3( 0.0f );
 
 	// create buttons
 	ButtonRectangle<MainState*> *button;
@@ -87,11 +81,11 @@ GameClientState::ClientState MainState::Update( float deltaTime )
 	MouseInput mouseState;
 	{
 		::Input::Struct::SAIPointFloat2D pos;
-		this->privData->mouseInput->GetNormalizedPosition( pos );
+		this->privData->sharedData->mouseDevice->GetNormalizedPosition( pos );
 
 		this->privData->mousePos.x = mouseState.x = pos.x;
 		this->privData->mousePos.y = mouseState.y = pos.y;
-		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+		mouseState.mouseButtonPressed = this->privData->sharedData->mouseDevice->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
 	EventHandler::Instance().Update( mouseState );
 
@@ -103,12 +97,12 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	if(this->privData->mouseInput->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
-		Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f), Float4(1.0f) );
+	if(this->privData->sharedData->mouseDevice->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
+		Graphics::API::RenderGuiElement( this->privData->sharedData->mouseCursor, this->privData->mousePos, Float2(0.15f), Float4(1.0f) );
 	else
-		Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
+		Graphics::API::RenderGuiElement( this->privData->sharedData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
 
-	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(0.0f, 0.0f, 0.0f, 1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->sharedData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(0.0f, 0.0f, 0.0f, 1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
@@ -122,8 +116,6 @@ bool MainState::Release()
 {
 	if( this->privData )
 	{
-		Graphics::API::DeleteTexture( this->privData->background );
-		Graphics::API::DeleteTexture( this->privData->mouseCursor );
 		EventHandler::Instance().ReleaseCollection( &this->privData->guiElements );
 
 		this->privData = NULL;
@@ -153,7 +145,7 @@ void OnButtonInteract_Settings( Oyster::Event::ButtonEvent<MainState*>& e )
 	switch( e.state )
 	{
 	case ButtonState_Released:
-		//e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		e.owner->ChangeState( GameClientState::ClientState_Options );
 		break;
 	default: break;
 	}

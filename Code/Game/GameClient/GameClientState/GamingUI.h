@@ -48,7 +48,7 @@ namespace DanBias { namespace Client
 		// TODO add multiple UI elements
 		Text_UI* hp;
 		Text_UI* energy;
-		Plane_UI* plane;
+		Plane_UI* corsair;
 
 		bool key_forward;
 		bool key_backward;

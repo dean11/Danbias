@@ -16,7 +16,7 @@ GamingUI::GamingUI() :
 	/* Should never be called! */
 	this->sharedData		= nullptr;
 	this->camera			= nullptr;
-	this->plane				= nullptr;
+	this->corsair				= nullptr;
 	this->energy			= nullptr;
 	this->hp				= nullptr;
 	this->key_backward		= false;
@@ -31,7 +31,7 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
 {
 	this->sharedData		= shared;
 	this->camera			= camera;
-	this->plane				= nullptr;
+	this->corsair			= nullptr;
 	this->hp				= nullptr;
 	this->energy			= nullptr;
 	this->key_backward		= false;
@@ -44,10 +44,12 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
 GamingUI::~GamingUI() { }
 bool GamingUI::Init()
 {
+	Float2 size = Oyster::Graphics::API::GetOption().resolution;
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->hp 	= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), Float4(1,0,0,1));
+	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), Float4(1,0,0,1));
 	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.4f,0.1f), Float4(1,1,0,1));
+	this->corsair	= new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
 
 	this->sharedData = sharedData;
 	// setting input mode to all raw
@@ -76,7 +78,7 @@ bool GamingUI::HaveTextRender() const
 
 void GamingUI::RenderGUI() const
 {
-	//this->plane->RenderTexture();
+	this->corsair->RenderTexture();
 }
 
 void GamingUI::RenderText() const
@@ -92,7 +94,7 @@ bool GamingUI::Release()
 	this->sharedData->mouseDevice->RemoveMouseEvent(this);
 
 	// TODO: Release UI components here.
-	if(this->plane) 	delete this->plane;
+	if(this->corsair) 	delete this->corsair;
 	if(this->hp)		delete this->hp;
 	if(this->energy)	delete this->energy;
 	this->sharedData = 0;
