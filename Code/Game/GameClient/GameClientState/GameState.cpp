@@ -102,7 +102,9 @@ bool GameState::Init( SharedStateContent &shared )
 	this->currGameUI = gameUI; 
 	((GamingUI*)gameUI)->Init();
 	((RespawnUI*)respawnUI)->Init();
-	((StatsUI*)statsUI)->Init();
+
+	// HACK hardcoded max nr of players
+	((StatsUI*)statsUI)->Init(10);
 
 	//tell server ready
 	this->privData->nwClient->Send( Protocol_General_Status(Protocol_General_Status::States_ready) );
@@ -154,6 +156,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			// !DEBUG
 			//this->privData->camera.SetHeadOffset( offset );
 			//this->privData->camera.UpdateOrientation();
+			((StatsUI*)this->statsUI)->addPLayer( id, L"linda", 0 , 0); 
 		}
 	}
 	else
