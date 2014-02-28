@@ -187,6 +187,8 @@ namespace Oyster
 
 			virtual float GetLambdaUp() const = 0;
 			virtual float GetLambdaForward() const = 0;
+
+			virtual void OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce) = 0;
 		};
 	}
 }
