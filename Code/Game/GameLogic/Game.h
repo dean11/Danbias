@@ -67,6 +67,7 @@ namespace GameLogic
 			void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& mem) const override;
 			void Update(float deltaTime);
 			void AddPlayerToGame(IPlayerData *player);
+			void RemovePlayerFromGame(IPlayerData *player);
 			Level *level;
 		};
 
@@ -76,6 +77,7 @@ namespace GameLogic
 
 		void GetAllPlayerPositions() const																				override;
 		PlayerData* CreatePlayer()																						override;
+		void RemovePlayer( IPlayerData* )																				override;
 		LevelData* CreateLevel(const wchar_t mapName[255] )																override;
 		void CreateTeam()																								override;
 		bool NewFrame()																									override;

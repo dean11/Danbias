@@ -80,6 +80,7 @@ using namespace DanBias;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
 				{
+					this->gameInstance.RemovePlayer(this->gClients[temp]->GetPlayer());
 					this->gClients[temp]->Invalidate();
 				}
 			break;

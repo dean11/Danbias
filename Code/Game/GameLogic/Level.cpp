@@ -385,6 +385,36 @@ void Level::RemovePlayerFromGame(Player *player)
 	{
 		if ((Player*)this->playerObjects[i] == player)
 		{
+			
+			// remove object tags 
+			for(int i = 0; i < dynamicObjects.Size(); i++)
+			{
+				// get affecting player
+				Player* temp = dynamicObjects[i]->getAffectingPlayer();
+				if(temp  && temp == player)
+				{
+					// remove affected by tag
+					dynamicObjects[i]->RemoveAffectedBy();
+					if(temp->getManipulatingPlayer())
+					{
+						// if disconnecting while holding a object
+						dynamicObjects[i]->RemoveManipulation();
+					}
+				}
+			}
+
+			// remove player tags
+			for(int i = 0; i < playerObjects.Size(); i++)
+			{
+				if(playerObjects[i])
+				{	
+					Player* temp = playerObjects[i]->getAffectingPlayer();
+					if(temp  && temp == player)
+					{
+						playerObjects[i]->RemoveAffectedBy();
+					}
+				}
+			}
 			this->playerObjects[i] =  nullptr;
 		}
 	}
@@ -398,6 +428,18 @@ void Level::RespawnPlayer(Player *player)
 {
 	//this->teamManager.RespawnPlayerRandom(player);
 	player->Respawn(spawnPoints.getSpawnPos());
+	
+	// remove manipulation tag  
+	for(int i = 0; i < dynamicObjects.Size(); i++)
+	{
+		// get manipulating player
+		Player* temp = dynamicObjects[i]->getManipulatingPlayer();
+		if(temp  && temp == player)
+		{
+			player->UseWeapon(GameLogic::WEAPON_INTERRUPT);
+			dynamicObjects[i]->RemoveManipulation();
+		}
+	}
 }
 void Level::Update(float deltaTime)
 {
@@ -461,14 +503,17 @@ void Level::Update(float deltaTime)
 
 	for(int i = 0; i < playerObjects.Size(); i++)
 	{
-		if(playerObjects[i]->getAffectingPlayer() != NULL)
-		{
-			Oyster::Math::Float vel = playerObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
-
-			if(vel <= 0.1f) // is barely moving
+		if(playerObjects[i])
+		{		
+			if(playerObjects[i]->getAffectingPlayer() != NULL)
 			{
-				//set the tag AffectedBy to NULL
-				playerObjects[i]->RemoveAffectedBy();
+				Oyster::Math::Float vel = playerObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+
+				if(vel <= 0.1f) // is barely moving
+				{
+					//set the tag AffectedBy to NULL
+					playerObjects[i]->RemoveAffectedBy();
+				}
 			}
 		}
 	}
