@@ -61,32 +61,43 @@ using namespace DanBias;
 		switch (e.args.type)
 		{
 			case NetworkClient::ClientEventArgs::EventType_Disconnect:
-			{
-				//Send disconnect message to all the other players so the player can be removed from the client.
-				Protocol_ObjectDisconnectPlayer dp(cl->GetClient()->GetID());
-				for(int i = 0; i < this->gClients.Size(); i++)
 				{
-					if(this->gClients[i] && this->gClients[i] != cl)
+					//Send disconnect message to all the other players so the player can be removed from the client.
+					Protocol_ObjectDisconnectPlayer dp(cl->GetClient()->GetID());
+					for(int i = 0; i < this->gClients.Size(); i++)
 					{
-						this->gClients[i]->GetClient()->Send(dp);
+						if(this->gClients[i] && this->gClients[i] != cl)
+						{
+							this->gClients[i]->GetClient()->Send(dp);
+						}
 					}
-				}
-				printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-				this->gClients[temp]->Invalidate();
-			}
-			break;
-			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
-			break;
-			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
-				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
-				{
+					printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 					this->gameInstance.RemovePlayer(this->gClients[temp]->GetPlayer());
 					this->gClients[temp]->Invalidate();
 				}
-			break;
+				break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
+				break;
+			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
+				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
+				{
+					//Send disconnect message to all the other players so the player can be removed from the client.
+					Protocol_ObjectDisconnectPlayer dp(cl->GetClient()->GetID());
+					for(int i = 0; i < this->gClients.Size(); i++)
+					{
+						if(this->gClients[i] && this->gClients[i] != cl)
+						{
+							this->gClients[i]->GetClient()->Send(dp);
+						}
+					}
+					printf("\t(%i : %s) - EventType_ProtocolFailedToSend -> disconnecting\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
+					this->gameInstance.RemovePlayer(this->gClients[temp]->GetPlayer());
+					this->gClients[temp]->Invalidate();
+				}
+				break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				this->ParseProtocol(e.args.data.protocol, cl);
-			break;
+				break;
 		}
 	}
 	void GameSession::ProcessClients()
