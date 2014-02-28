@@ -17,13 +17,14 @@ namespace DanBias { namespace Client
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
 		bool HaveTextRender() const;
-		void RenderGUI() const;
-		void RenderText() const;
+		void RenderGUI();
+		void RenderText();
 		bool Release();
 		void addPLayer( int id, std::wstring name, int kills, int deaths );
 		bool removePlayer( int id );
 		bool updateKillScore( int id, int kills);
 		bool updateDeatchScore( int id, int deaths); 
+		void ChangeState( UIState next );
 
 	private:
 		// TODO add multiple UI elements

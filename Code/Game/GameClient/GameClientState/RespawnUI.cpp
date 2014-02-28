@@ -48,12 +48,12 @@ bool RespawnUI::HaveTextRender() const
 	return true; // TODO: change to true when we want UI elements like a chat window
 }
 
-void RespawnUI::RenderGUI() const
+void RespawnUI::RenderGUI() 
 {
 	// TODO:BLOODY SCREEN
 }
 
-void RespawnUI::RenderText() const
+void RespawnUI::RenderText() 
 {
 	this->text->RenderText();
 	// TODO: Text countdown somewhere on screen would be nice
@@ -72,5 +72,8 @@ void RespawnUI::SetCountdown( float cd )
 	// this text should be rendered
 }
 
-
+void RespawnUI::ChangeState( UIState next )
+{
+	this->nextState = next;
+}
 
