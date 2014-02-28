@@ -180,18 +180,6 @@ using namespace GameLogic;
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
 
-	void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj, void* args)
-	{
-		Object *realObj = (Object*)obj->GetCustomTag();
-		
-		if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_Player)
-			return;
-		
-		firedBullet *bullet = (firedBullet*)(args);
-
-		((Player*)realObj)->DamageLife(bullet->hitDamage);
-	}
-
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
