@@ -19,6 +19,7 @@ Player::Player()
 	this->teamID = -1; 
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
+	this->lookDir				= Oyster::Math::Float3(0,0,-1);
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -29,6 +30,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	this->teamID = teamID;
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
+	this->lookDir				= Oyster::Math::Float3(0,0,-1);
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -39,6 +41,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->teamID = teamID;
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
+	this->lookDir				= Oyster::Math::Float3(0,0,-1);
 }
 
 Player::~Player(void)
@@ -54,7 +57,7 @@ void Player::initPlayerData()
 	this->playerStats.hp = MAX_HP;
 	this->playerStats.movementSpeed = BASIC_SPEED;
 	this->playerState			= PLAYER_STATE_IDLE;
-	this->lookDir				= Oyster::Math::Float3(0,0,-1);
+	//this->lookDir				= Oyster::Math::Float3(0,0,-1);
 
 	this->key_forward			= 0;
 	this->key_backward			= 0;
@@ -68,6 +71,7 @@ void Player::initPlayerData()
 
 	ICustomBody::State state;
 	this->rigidBody->GetState( state );
+	//this->rigidBody->SetRotation(q)
 	state.staticFrictionCoeff = 0.0f;
 	state.dynamicFrictionCoeff = 0.0f;
 	this->rigidBody->SetState( state );

@@ -81,6 +81,7 @@ void GameClient::Invalidate()
 	this->state = ClientState_Invalid;
 	this->player->Release();
 	this->player = 0;
+	
 }
 int GameClient::IncrementFailedProtocol()
 {
