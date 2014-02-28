@@ -299,6 +299,7 @@ void Player::DamageLife(int damage)
 		{
 			this->playerStats.hp = 0;
 			this->playerState = PLAYER_STATE_DIED;
+			this->rigidBody->SetLinearVelocity(Oyster::Math::Float3(0,0,0));
 		}
 	}
 }
