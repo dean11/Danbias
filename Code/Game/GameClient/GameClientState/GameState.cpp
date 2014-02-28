@@ -156,7 +156,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			// !DEBUG
 			//this->privData->camera.SetHeadOffset( offset );
 			//this->privData->camera.UpdateOrientation();
-			((StatsUI*)this->statsUI)->addPLayer( id, L"linda", 0 , 0); 
+			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0); 
 		}
 	}
 	else
@@ -714,9 +714,6 @@ void GameState::Gameplay_ObjectRespawn( CustomNetProtocol data )
 void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 {
 	Protocol_ObjectDie decoded(data);
-	// if is this player. Remember to change camera
-	int killerID = decoded.killerID;
-	int victimID = decoded.victimID;
 	if( this->privData->myId == decoded.victimID )
 	{
 		this->currGameUI =  this->respawnUI;
@@ -724,17 +721,15 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 		((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
 	}
 	// update score board
-	int killerKills = decoded.killerKillCount;
-	int victimDeath = decoded.victimDeathCount;
+	((StatsUI*)this->statsUI)->updateDeatchScore( decoded.victimID, decoded.victimDeathCount ); 
+	((StatsUI*)this->statsUI)->updateKillScore( decoded.killerID, decoded.killerKillCount ); 
 }
 void GameState::Gameplay_PlayerScore( CustomNetProtocol data )
 {
 	Protocol_PlayerScore decoded(data);
-	int ID = decoded.playerID;
-	int kills = decoded.killCount;
-	int death = decoded.deathCount;
-
 	// update scoreboard 
+	ColorDefines colors;
+	((StatsUI*)this->statsUI)->addPLayer( decoded.playerID, colors.getColorName(decoded.playerID), decoded.killCount, decoded.deathCount );	
 }
 void GameState::Gameplay_ObjectDisconnectPlayer( CustomNetProtocol data )
 {
@@ -753,6 +748,7 @@ void GameState::Gameplay_ObjectDisconnectPlayer( CustomNetProtocol data )
 		{
 			player->SetVisible(false);
 			(this->privData->players)[decoded.objectID].Release();
+			((StatsUI*)this->statsUI)->removePlayer( decoded.objectID);
 		}
 	}
 }

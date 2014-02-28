@@ -21,7 +21,7 @@ namespace DanBias { namespace Client
 		void RenderText() const;
 		bool Release();
 		void addPLayer( int id, std::wstring name, int kills, int deaths );
-		void removePlayer( int id );
+		bool removePlayer( int id );
 		bool updateKillScore( int id, int kills);
 		bool updateDeatchScore( int id, int deaths); 
 
@@ -31,7 +31,9 @@ namespace DanBias { namespace Client
 		Text_UI* nameText;
 		Text_UI* killText;
 		Text_UI* deathText;
+		std::string s;
 
+		int * id; 
 		Text_UI** names;
 		Text_UI** kills;
 		Text_UI** death;

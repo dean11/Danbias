@@ -37,6 +37,7 @@ bool StatsUI::Init( int maxNrOfPlayers )
 	this->killText = new Text_UI(L"kill", Float3(killsMargin, textHeightPos-lineSpacing, textDepth), Float2(textWidth, textHeight));
 	this->deathText = new Text_UI(L"death", Float3(deathMargin, textHeightPos-lineSpacing, textDepth), Float2(textWidth, textHeight));
 
+	this->id = new int[maxNrOfPlayers];
 	this->names	=  new Text_UI*[maxNrOfPlayers];
 	this->kills	=  new Text_UI*[maxNrOfPlayers];
 	this->death	=  new Text_UI*[maxNrOfPlayers];
@@ -74,11 +75,13 @@ void StatsUI::RenderText() const
 	this->killText->RenderText();
 	this->deathText->RenderText();
 
+	float offset = textHeightPos;
 	for( int i = 0; i< nrOfPlayers; i++)
 	{
-		this->names[i]->RenderText(); 
-		this->kills[i]->RenderText();
-		this->death[i]->RenderText();
+		offset += 0.05;
+		this->names[i]->RenderText(Float3(nameMargin, offset, textDepth), Float2(textWidth, textHeight)); 
+		this->kills[i]->RenderText(Float3(killsMargin, offset, textDepth), Float2(textWidth, textHeight));
+		this->death[i]->RenderText(Float3(deathMargin, offset, textDepth), Float2(textWidth, textHeight));
 	}
 }
 
@@ -108,35 +111,68 @@ bool StatsUI::Release()
 
 void StatsUI::addPLayer( int id, std::wstring name, int kills, int deaths )
 {
-	this->names[id] = new Text_UI(name, Float3(nameMargin, textHeightPos + nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->kills[id] = new Text_UI(std::to_wstring(kills), Float3(killsMargin, textHeightPos + nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->death[id] = new Text_UI(std::to_wstring(deaths), Float3(deathMargin,  textHeightPos+ nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
+	for( int i = 0; i< nrOfPlayers; i++)
+	{
+		if(this->id[i] == id)
+		{
+			// player already exist
+			return;
+		}
+	}
+
+	// new player
+	this->id[nrOfPlayers] = id;
+	this->names[nrOfPlayers] = new Text_UI(name, Float3(nameMargin, textHeightPos + nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->kills[nrOfPlayers] = new Text_UI(std::to_wstring(kills), Float3(killsMargin, textHeightPos + nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->death[nrOfPlayers] = new Text_UI(std::to_wstring(deaths), Float3(deathMargin,  textHeightPos+ nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
 	nrOfPlayers ++; 
 }
-void StatsUI::removePlayer( int id )
+bool StatsUI::removePlayer( int id )
 {
-	if( id < maxNrOfPlayers && id >= 0)
+	for( int i = 0; i< nrOfPlayers; i++)
 	{
-		delete this->kills[id];
-		this->kills[id] = this->kills[--maxNrOfPlayers];
-		this->kills[maxNrOfPlayers] = nullptr;
+		if(this->id[i] == id)
+		{
+			nrOfPlayers --; 
+			this->id[i] = this->id[nrOfPlayers];
+
+			delete this->names[this->id[i]];
+			this->names[this->id[i]] = this->names[nrOfPlayers];
+			this->names[nrOfPlayers] = nullptr;
+			
+			delete this->kills[this->id[i]];
+			this->kills[this->id[i]] = this->kills[nrOfPlayers];
+			this->kills[nrOfPlayers] = nullptr;
+
+			delete this->death[this->id[i]];
+			this->death[this->id[i]] = this->death[nrOfPlayers];
+			this->death[nrOfPlayers] = nullptr;
+			return true;
+		}
 	}
+	return false;
 }
 bool StatsUI::updateKillScore( int id, int kills)
 {
-	if( id < maxNrOfPlayers && id >= 0)
+	for( int i = 0; i< nrOfPlayers; i++)
 	{
-		this->kills[id]->setText( std::to_wstring(kills) );
-		return true;
+		if(this->id[i] == id)
+		{
+			this->kills[this->id[i]]->setText( std::to_wstring(kills) );
+			return true;
+		}
 	}
 	return false;
 }
 bool StatsUI::updateDeatchScore( int id, int deaths)
 {
-	if( id < maxNrOfPlayers && id >= 0)
+	for( int i = 0; i< nrOfPlayers; i++)
 	{
-		this->death[id]->setText( std::to_wstring(deaths) );
-		return true;
+		if(this->id[i] == id)
+		{
+			this->death[this->id[i]]->setText( std::to_wstring(deaths) );
+			return true;
+		}
 	}
 	return false;
 }
