@@ -106,6 +106,8 @@ namespace Oyster
 			 ********************************************************/
 			virtual void ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect) = 0;
 
+			virtual ICustomBody* RayClosestObjectNotMe(ICustomBody* self, Oyster::Math::Float3 origin, Oyster::Math::Float3 target) = 0;
+
 		protected:
 			virtual ~API() {}
 		};
