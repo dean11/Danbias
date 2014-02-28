@@ -1,6 +1,7 @@
 #include "AttatchmentGun.h"
 #include "PhysicsAPI.h"
 #include "GameLogicStates.h"
+#include "Player.h"
 #include "Game.h"
 using namespace GameLogic;
 
@@ -63,17 +64,25 @@ void AttatchmentGun::Update(float dt)
 
 void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Collision3D::Ray *hitRay;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float hitDamage = this->damage;
 
-	firedBullet bullet;
-	bullet.hitDamage = hitDamage;
 
-	hitRay = new Oyster::Collision3D::Ray(pos,look);
-
-	Oyster::Physics::API::Instance().ApplyEffect(hitRay,&bullet,BulletCollision);
-
-	delete hitRay;
+	/*Oyster::Physics::ICustomBody *hitObject = rayClosestObjectNotMe(this->owner,pos,look*100);
+	
+	if(hitObject != NULL)
+	{
+		BulletCollision(hitObject);
+	}*/
 }
+
+
+void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj, Oyster::Math::Float damage)
+	{
+		Object *realObj = (Object*)obj->GetCustomTag();
+		
+		if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_Player)
+			return;
+
+		((Player*)realObj)->DamageLife(this->damage);
+	}

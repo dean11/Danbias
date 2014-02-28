@@ -46,7 +46,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	switch (usage)
 	{
 	case WEAPON_USE_PRIMARY_PRESS:
-		//if(currentEnergy >= 9.0f)
+		if(currentEnergy >= 9.0f)
 		{
 			currentEnergy -= 9.0f;
 			ForcePush(usage,dt);
@@ -136,6 +136,11 @@ void AttatchmentMassDriver::Update(float dt)
 	if(currentEnergy > maxEnergy) 
 	{
 		currentEnergy = maxEnergy;
+		energyChange = 6;
+	}
+	else if(currentEnergy < 0.0f)
+	{
+		currentEnergy = 0.0f;
 		energyChange = 6;
 	}
 	
