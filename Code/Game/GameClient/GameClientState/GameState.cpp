@@ -12,6 +12,7 @@
 #include "GamingUI.h"
 #include "RespawnUI.h"
 #include "StatsUI.h"
+#include "IngameMenyUI.h"
 #include <ObjectDefines.h>
 #include "ColorDefines.h"
 
@@ -99,9 +100,11 @@ bool GameState::Init( SharedStateContent &shared )
 	this->gameUI = new GamingUI(&shared, &this->privData->camera);
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
 	this->statsUI = new StatsUI();
+	this->inGameMeny = new IngameMenyUI(&shared);
 	this->currGameUI = gameUI; 
 	((GamingUI*)gameUI)->Init();
 	((RespawnUI*)respawnUI)->Init();
+	((IngameMenyUI*)inGameMeny)->Init();
 
 	// HACK hardcoded max nr of players
 	((StatsUI*)statsUI)->Init(10);
@@ -168,7 +171,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	GameStateUI::UIState UIstate = this->gameUI->Update( deltaTime );
+	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
 	switch (UIstate)
 	{
 	case DanBias::Client::GameStateUI::UIState_shut_down:
@@ -187,7 +190,26 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 			this->privData->nextState = ClientState_Main;
 			// disconnect 
 		}
-		
+		break;
+	case GameStateUI::UIStat_inGameMeny:
+		{
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
+			this->currGameUI = inGameMeny;
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
+		}
+		break;
+	case GameStateUI::UIStat_resumeGame:
+		{
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
+			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
+			this->currGameUI = gameUI;
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+		}
 		break;
 	
 	default:
@@ -357,6 +379,12 @@ bool GameState::Release()
 		delete gameUI;
 		gameUI = NULL;
 	}
+	if(inGameMeny)
+	{
+		inGameMeny->Release();
+		delete inGameMeny;
+		inGameMeny = NULL;
+	}
 	if(statsUI)
 	{
 		statsUI->Release();
@@ -398,17 +426,11 @@ void GameState::ReadKeyInput()
 		{
 			this->renderWhireframe = !this->renderWhireframe;
 			this->key_Wireframe_Toggle = true;
-			// DEBUG set you as dead when render wireframe
-			this->currGameUI = respawnUI;
-			// !DEBUG
 		}
 	} 
 	else 
 	{
 		this->key_Wireframe_Toggle = false;
-		// DEBUG set you as dead when render wireframe
-		this->currGameUI = gameUI;
-		// !DEBUG
 	}
 #endif // !DEGUG KEYS
 

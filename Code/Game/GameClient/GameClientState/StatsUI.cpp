@@ -62,13 +62,13 @@ bool StatsUI::HaveTextRender() const
 	return true; 
 }
 
-void StatsUI::RenderGUI() const
+void StatsUI::RenderGUI()
 {
 	// render all the planes
 	this->backGround->RenderTexture();
 }
 
-void StatsUI::RenderText() const
+void StatsUI::RenderText()
 {
 	// render all the text
 	this->nameText->RenderText(); 
@@ -176,4 +176,8 @@ bool StatsUI::updateDeatchScore( int id, int deaths)
 		}
 	}
 	return false;
+}
+void StatsUI::ChangeState( UIState next )
+{
+	this->nextState = next;
 }
