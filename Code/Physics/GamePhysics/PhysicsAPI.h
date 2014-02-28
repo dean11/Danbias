@@ -128,7 +128,7 @@ namespace Oyster
 
 			
 			typedef SubscriptMessage (*EventAction_BeforeCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
-			typedef void (*EventAction_AfterCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
+			typedef void (*EventAction_AfterCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
 			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::CustomBodyState State;
 
@@ -168,7 +168,7 @@ namespace Oyster
 			virtual ::Oyster::Math::Float3 GetGravity() const = 0;
 			virtual ::Oyster::Math::Float3 GetLinearVelocity() const = 0;
 
-			virtual void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss) = 0;
+			virtual void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB) = 0;
 			virtual void CallSubscription_Move() = 0;
 
 			virtual void MoveToLimbo() = 0;
