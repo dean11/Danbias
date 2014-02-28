@@ -12,7 +12,7 @@ namespace DanBias { namespace Client
 	public:
 		StatsUI();
 		virtual ~StatsUI();
-		bool Init();
+		bool Init( int maxNROfPlayers );
 
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
@@ -20,14 +20,32 @@ namespace DanBias { namespace Client
 		void RenderGUI() const;
 		void RenderText() const;
 		bool Release();
-		// TODO add function to add a new players statistics 
-		// TODO add function to remove a players statistics 
+		void addPLayer( int id, std::wstring name, int kills, int deaths );
+		void removePlayer( int id );
+		bool updateKillScore( int id, int kills);
+		bool updateDeatchScore( int id, int deaths); 
 
 	private:
 		// TODO add multiple UI elements
 		// one for each player ingame
-		Text_UI* text;
-		Plane_UI* plane;
+		Text_UI* nameText;
+		Text_UI* killText;
+		Text_UI* deathText;
+
+		Text_UI** names;
+		Text_UI** kills;
+		Text_UI** death;
+		Plane_UI* backGround;
+		int nrOfPlayers; 
+		int maxNrOfPlayers; 
+		float textDepth;
+		float nameMargin;
+		float killsMargin;
+		float deathMargin; 
+		float lineSpacing;
+		float textHeightPos; 
+		float textHeight;
+		float textWidth;
 	};
 } }
 
