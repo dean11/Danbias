@@ -17,11 +17,13 @@ namespace Oyster
 				Math::Matrix Absolute;
 				int Parent;
 			};
+
 			struct Frame
 			{
 				Bone bone;
 				double time;
 			};
+
 			struct Animation
 			{
 				int Bones;
@@ -29,6 +31,7 @@ namespace Oyster
 				Frame** Keyframes; //! @brief [Bone][Frame]
 				double duration;
 			};
+
 			struct ModelInfo
 			{
 				std::vector<ID3D11ShaderResourceView*> Material;

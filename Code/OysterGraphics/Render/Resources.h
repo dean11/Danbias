@@ -24,7 +24,7 @@ namespace Oyster
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
-					static const int MaxLightSize = 100;
+					static const int MaxLightSize = 1024;
 
 					//! GBuffers
 					//! 0 = Diffuse + Glow
@@ -108,6 +108,7 @@ namespace Oyster
 
 					static Core::Init::State Init();
 					static Core::Init::State InitShaders();
+					static Core::Init::State ReInitViews(Math::Float2);
 					static Core::Init::State InitRenderStates();
 					static Core::Init::State InitBuffers();
 					static Core::Init::State InitViews();

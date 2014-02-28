@@ -44,4 +44,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	//Output[DTid.xy] = float4(Ambient[DTid.xy/2 + uint2(Output.Length*0.5f)].xyz,1);
 	//Output[DTid.xy] = SSAO * float4(1,1,1,1);
 	//Output[DTid.xy] = Ambient[DTid.xy];
+	//Output[DTid.xy] = Diffuse[DTid.xy];
 }

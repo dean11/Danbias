@@ -17,8 +17,6 @@ std::stringstream Core::log;
 
 Oyster::Resource::ResourceManager Core::loader;
 
-std::wstring Core::modelPath;
-std::wstring Core::texturePath;
 
 ID3D11RenderTargetView* Core::backBufferRTV = NULL;
 
@@ -29,10 +27,17 @@ ID3D11ShaderResourceView* Core::depthStencilUAV = NULL;
 
 D3D11_VIEWPORT* Core::viewPort = NULL;
 
-Oyster::Math::Float2 Core::resolution = Oyster::Math::Float2::null;
 
 ID3D11ShaderResourceView* Core::srvNULL[16] = {0};
 ID3D11RenderTargetView* Core::rtvNULL[8] = {0};
 ID3D11UnorderedAccessView* Core::uavNULL[8] = {0};
 
 int Core::UsedMem = 0;
+Oyster::Math::Float2 Core::resolution = Oyster::Math::Float2::null;
+std::wstring Core::modelPath;
+std::wstring Core::texturePath;
+HWND Core::window = 0;
+bool Core::fullscreen = false;
+float Core::amb;
+Oyster::Math::Float3 Core::gTint;
+Oyster::Math::Float3 Core::gGTint;
