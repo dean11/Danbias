@@ -58,7 +58,7 @@ namespace Oyster
 			void SetCustomTag( void *ref );
 			void* GetCustomTag() const;
 
-			
+			void OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce);
 
 			// Class specific
 			void SetCollisionShape(btCollisionShape* shape);
@@ -74,7 +74,8 @@ namespace Oyster
 			void MoveToLimbo();
 			void ReleaseFromLimbo();
 
-
+			bool IsGravityOverrided();
+			void SetOverrideGravity(bool overrideGravity);
 
 			private:
 
@@ -96,6 +97,8 @@ namespace Oyster
 			btScalar rayLambda[2];
 
 			int collisionFlags;
+
+			bool overrideGravity;
 		};
 	} 
 }

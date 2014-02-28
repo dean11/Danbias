@@ -293,10 +293,16 @@ void API_Impl::UpdateWorld()
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
-		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
-		simpleBody->PreStep(this->dynamicsWorld);
+		if(!simpleBody->IsGravityOverrided())
+		{
+			this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
+		}
+		else
+		{
+			simpleBody->SetOverrideGravity(false);
+		}
 
-		
+		simpleBody->PreStep(this->dynamicsWorld);
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
