@@ -44,6 +44,28 @@ namespace DanBias { namespace Client
 		bool renderStats;
 		// !DEGUG KEYS
 
+		void Gameplay_ObjectPickup( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectDamage( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectHealthStatus( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectPosition( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectScale( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectRotation( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectPositionRotation( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectEnabled( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectDisabled( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectCreate( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectCreatePlayer( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectJoinTeam( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectLeaveTeam( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectWeaponCooldown( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectWeaponEnergy( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectRespawn( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectDie( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_PlayerScore( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectDisconnectPlayer( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectAction( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_ObjectCollision( Oyster::Network::CustomNetProtocol data );
+
 		//:HACK!
 		//void OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;
 		//void SetUp( DanBias::Client::C_Player* p);
