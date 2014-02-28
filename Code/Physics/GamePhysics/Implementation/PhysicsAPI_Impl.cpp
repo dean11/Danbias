@@ -345,8 +345,8 @@ void API_Impl::UpdateWorld()
 				const btVector3& ptB = pt.getPositionWorldOnB();
 				const btVector3& normalOnB = pt.m_normalWorldOnB;
 
-				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
-				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
+				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB);
+				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA);
 			}
 		}
 

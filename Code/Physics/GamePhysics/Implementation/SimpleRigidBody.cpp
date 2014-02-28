@@ -342,10 +342,10 @@ bool SimpleRigidBody::IsGravityOverrided()
 	return this->overrideGravity;
 }
 
-void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
+void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB)
 {
 	if(this->afterCollision)
-		this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
+		this->afterCollision(bodyA, bodyB);
 }
 
 void SimpleRigidBody::CallSubscription_Move()

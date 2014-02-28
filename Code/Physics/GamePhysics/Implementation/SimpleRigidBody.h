@@ -48,7 +48,7 @@ namespace Oyster
 			Math::Float3 GetGravity() const;
 			::Oyster::Math::Float3 GetLinearVelocity() const;
 
-			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss);
+			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB);
 			void CallSubscription_Move();
 
 			btCollisionShape* GetCollisionShape() const;
