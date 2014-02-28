@@ -173,6 +173,9 @@ using namespace GameLogic;
 		}
 
 		//send message that box has exploded?
+		ExplosionSource->RemoveAffectedBy();
+		ExplosionSource->RemoveManipulation();
+
 		ExplosionSource->GetRigidBody()->MoveToLimbo();
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 
