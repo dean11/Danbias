@@ -6,11 +6,20 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-using namespace Oyster::Math;
+using namespace Oyster::Math3D;
+using namespace Utility::Value;
 
 const float MOVE_FORCE = 30;
 const float KEY_TIMER = 0.03f;
 const float AFFECTED_TIMER = 1.0f;
+
+// movement properties
+const Float dampening_factor = 0.2f,
+			forward_velocity = 20.0f,
+			backward_velocity = 15.0f,
+			strafe_velocity = 17.5f,
+			jump_velocity = 20.0f;
+
 Player::Player()
 	:DynamicObject()
 {
@@ -77,135 +86,58 @@ void Player::BeginFrame()
 {
 	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		static const Float maxSpeed = 30;
-		weapon->Update(0.002f);
+		this->weapon->Update(0.002f);
 
 		// Rotate player accordingly
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
 		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
 		this->rotationUp = 0;
+
+		ICustomBody::State state;
+		this->rigidBody->GetState( state );
+
 		// Direction data
-		Oyster::Math::Float4x4 xform;
-		xform = this->rigidBody->GetState().GetOrientation();
+		Float4x4 rotation = state.GetRotation();
+		Float3 &forwardDir = rotation.v[2].xyz;
+		Float3 &upDir = rotation.v[1].xyz;
+		Float3 &rightDir = rotation.v[0].xyz;
 
-		Oyster::Math::Float3 &forwardDir = xform.v[2].xyz;
-		Oyster::Math::Float3 &upDir = xform.v[1].xyz;
-		Oyster::Math::Float3 &rightDir = xform.v[0].xyz;
-		forwardDir.Normalize();
-		upDir.Normalize();
-		rightDir.Normalize();
+		if( this->IsWalking() )
+		{
+			this->UpdateMovement( rotation, state );
 
-		// Previous velocities data
-		Oyster::Math::Float3 linearVelocity = this->rigidBody->GetLinearVelocity();
-		Oyster::Math::Float3 forwardVelocity = linearVelocity*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z));
-		Oyster::Math::Float forwardSpeed = (linearVelocity*forwardDir).GetLength();
-		Oyster::Math::Float3 rightVelocity = linearVelocity*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z));
-		Oyster::Math::Float rightSpeed = (linearVelocity*rightDir).GetLength();
-		Oyster::Math::Float3 upVelocity = linearVelocity*Oyster::Math::Float3(fabs(upDir.x), fabs(upDir.y), fabs(upDir.z));
+			if( this->key_jump > 0.001f )
+			{ // process jumping
+				this->rigidBody->ApplyImpulse( upDir * jump_velocity * state.mass );
 
-		// Walking data
-		Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
-		Oyster::Math::Float &walkSpeed = this->playerStats.movementSpeed;
-
-		// Check for input
-		if(key_forward > 0.001)
-		{
-			key_forward -= gameInstance->GetFrameTime();
-			walkDirection += forwardDir;
-		}
-		if(key_backward > 0.001)
-		{
-			key_backward -= gameInstance->GetFrameTime();
-			walkDirection -= forwardDir;
-		}
-		if(key_strafeRight > 0.001)
-		{
-			key_strafeRight -= gameInstance->GetFrameTime();
-			walkDirection += rightDir;
-		}
-		if(key_strafeLeft > 0.001)
-		{
-			key_strafeLeft -= gameInstance->GetFrameTime();
-			walkDirection -= rightDir;
-		}
-	
-		// Dampen velocity if certain keys are not pressed
-		if(key_jump <= 0.001 && IsWalking())
-		{
-			if(key_forward <= 0.001 && key_backward <= 0.001)
-			{
-				forwardVelocity *= Oyster::Math::Float3(0.2f*fabs(forwardDir.x), 0.2f*fabs(forwardDir.y), 0.2f*fabs(forwardDir.z));
+				if( this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING )
+				{
+					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Jump );
+					this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+				}
 			}
-			if(key_strafeRight <= 0.001 && key_strafeLeft <= 0.001)
-			{
-				rightVelocity *= Oyster::Math::Float3(0.2f*fabs(rightDir.x), 0.2f*fabs(rightDir.y), 0.2f*fabs(rightDir.z));
+			else if( this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING )
+			{ // if is walking and not attempting to jump. Play walking animation
+				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk );
+				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			}
 		}
-		if(IsIdle())
+		else if( this->IsJumping() )
 		{
-			if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
-				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+			this->UpdateMovement( rotation, state );
+		}
+		else if( this->IsIdle() && this->playerState != PLAYER_STATE_IDLE )
+		{
+			this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle );
 			this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 		}
-		// Walk if walkdirection is something
-		if(walkDirection != Oyster::Math::Float3::null)
-		{
-			walkDirection.Normalize();
 
-			// If on the ground, accelerate normally
-			if(IsWalking())
-			{
-				if(forwardSpeed < maxSpeed)
-				{
-					forwardVelocity += walkDirection*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z)) * walkSpeed;
-				}
-				if(rightSpeed < maxSpeed)
-				{
-					rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), abs(rightDir.y), fabs(rightDir.z)) * walkSpeed;
-				}
-			}
-			// If in the air, accelerate slower
-			if(IsJumping())
-			{
-				if(forwardSpeed < maxSpeed)
-				{
-					forwardVelocity += walkDirection*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z)) * walkSpeed*0.2f;
-				}
-				if(rightSpeed < maxSpeed)
-				{
-					rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z)) * walkSpeed*0.2f;
-				}
-			}
-			// TODO not suer if we want to keep jump animation while jumping
-			//if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
-			//{
-				if(this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING)
-					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk);
-				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
-			//}
-		}
-
-		// Adjust velocities so no squaring occurs
-		forwardVelocity *= Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z));
-		rightVelocity *= Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z));
-		upVelocity *= Oyster::Math::Float3(fabs(upDir.x), fabs(upDir.y), fabs(upDir.z)); 
-
-		this->rigidBody->SetLinearVelocity(forwardVelocity+rightVelocity+upVelocity);
-
-		//Jump
-		if(key_jump > 0.001)
-		{
- 			this->key_jump -= this->gameInstance->GetFrameTime();
-			if(IsWalking())
-			{
-				Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
-				this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass * 20);
-				
-				if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
-					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Jump);
-				this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
-			}
-		}
+		Float frameTime = gameInstance->GetFrameTime();
+		this->key_forward = Max( this->key_forward - frameTime, 0.0f );
+		this->key_backward = Max( this->key_backward - frameTime, 0.0f );
+		this->key_strafeRight = Max( this->key_strafeRight - frameTime, 0.0f );
+		this->key_strafeLeft = Max( this->key_strafeLeft - frameTime, 0.0f );
+		this->key_jump = Max( this->key_jump - frameTime, 0.0f );
 	}
 }
 
@@ -290,15 +222,15 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->rigidBody->GetLambdaUp() < 0.99f);
+	return (this->rigidBody->GetLambdaUp() < 0.6f);
 }
 bool Player::IsJumping()
 {
-	return (this->rigidBody->GetLambdaUp() == 1.0f);
+	return (this->rigidBody->GetLambdaUp() >= 0.6f);
 }
 bool Player::IsIdle()
 {
-	return (this->rigidBody->GetLambdaUp() < 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f);
+	return (this->rigidBody->GetLambdaUp() < 0.6f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f);
 }
 
 void Player::Inactivate()
@@ -381,4 +313,55 @@ void Player::setDeathTimer(float deathTimer)
 {
 	this->deathTimer = deathTimer;
 	this->playerState = PLAYER_STATE_DEAD;
+}
+
+void Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBody::State &state )
+{
+	const Float3 &rightDir = orientationMatrix.v[0].xyz,
+				 &upDir = orientationMatrix.v[1].xyz,
+				 &forwardDir = orientationMatrix.v[2].xyz;
+
+	// preserve up/down movement
+	Float3 movementAccumulator = NormalProjection( this->rigidBody->GetLinearVelocity(), upDir );
+
+	{ // process forward/backward
+		Float3 forwardVelocity = 0.0f;
+		bool isNotMovingForwardOrBackward = true;
+		if( this->key_forward > 0.001f )
+		{
+			forwardVelocity += forwardDir * forward_velocity;
+			isNotMovingForwardOrBackward = false;
+		}
+		if( this->key_backward > 0.001f )
+		{
+			forwardVelocity -= forwardDir * backward_velocity;
+			isNotMovingForwardOrBackward = false;
+		}
+		if( isNotMovingForwardOrBackward )
+		{ // dampen forward/backward velocity if not running forward/backward
+			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * dampening_factor;
+		}
+		movementAccumulator += forwardVelocity;
+	}
+	{ // process strafe right/left
+		Float3 strafeVelocity = 0.0f;
+		bool isNotStrafing = true;
+		if( this->key_strafeRight > 0.001f )
+		{
+			strafeVelocity = rightDir * strafe_velocity;
+			isNotStrafing = false;
+		}
+		if( this->key_strafeLeft > 0.001f )
+		{
+			strafeVelocity -= rightDir * strafe_velocity;
+			isNotStrafing = false;
+		}
+		if( isNotStrafing )
+		{ // dampen right/left strafe velocity if not strafing
+			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * dampening_factor;
+		}
+		movementAccumulator += strafeVelocity;
+	}
+
+	this->rigidBody->SetLinearVelocity( movementAccumulator );
 }
