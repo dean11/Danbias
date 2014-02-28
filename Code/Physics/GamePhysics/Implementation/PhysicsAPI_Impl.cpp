@@ -175,7 +175,7 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btCylinderShape*>(collisionShape)->setMargin(0.2f);
+	dynamic_cast<btCylinderShape*>(collisionShape)->setMargin(0.5f);
 
 	state.centerPos = position;
 	state.reach = halfSize;
@@ -269,7 +269,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.5);
+	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);
@@ -292,6 +292,7 @@ void API_Impl::UpdateWorld()
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
+		//this->dynamicsWorld->
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
 		if(!simpleBody->IsGravityOverrided())
 		{
@@ -306,7 +307,7 @@ void API_Impl::UpdateWorld()
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
-	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
+	this->dynamicsWorld->stepSimulation(this->timeStep, 100, this->timeStep);
 
 	ICustomBody::State state;
 
@@ -444,6 +445,21 @@ void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void*
 		default:
 			return;
 	}
+}
+
+ICustomBody* API_Impl::RayClosestObjectNotMe(ICustomBody* self, Float3 origin, Float3 target)
+{
+	ClosestNotMe rayCallback(dynamic_cast<SimpleRigidBody*>(self)->GetRigidBody());
+
+	if((origin - target).GetLength() != 0)
+		this->dynamicsWorld->rayTest (btVector3(origin.x, origin.y, origin.z), btVector3(target.x, target.y, target.z), rayCallback);
+	else
+		return nullptr;
+
+	if(rayCallback.hasHit())
+		return (ICustomBody*)rayCallback.m_collisionObject->getUserPointer();
+	else
+		return nullptr;
 }
 
 namespace Oyster 
