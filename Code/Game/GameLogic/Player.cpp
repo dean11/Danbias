@@ -6,8 +6,6 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
-using namespace Oyster::Math;
-
 const float MOVE_FORCE = 30;
 const float KEY_TIMER = 0.03f;
 const float AFFECTED_TIMER = 1.0f;
@@ -65,20 +63,18 @@ void Player::initPlayerData()
 	this->deathTimer			= 0;
 
 	this->rotationUp = 0;
-
-	ICustomBody::State state;
-	this->rigidBody->GetState( state );
-	state.staticFrictionCoeff = 0.0f;
-	state.dynamicFrictionCoeff = 0.0f;
-	this->rigidBody->SetState( state );
 }
 
 void Player::BeginFrame()
 {
 	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		static const Float maxSpeed = 30;
 		weapon->Update(0.002f);
+
+
+
+
+		Oyster::Math::Float maxSpeed = 30;
 
 		// Rotate player accordingly
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
@@ -88,9 +84,9 @@ void Player::BeginFrame()
 		Oyster::Math::Float4x4 xform;
 		xform = this->rigidBody->GetState().GetOrientation();
 
-		Oyster::Math::Float3 &forwardDir = xform.v[2].xyz;
-		Oyster::Math::Float3 &upDir = xform.v[1].xyz;
-		Oyster::Math::Float3 &rightDir = xform.v[0].xyz;
+		Oyster::Math::Float3 forwardDir = xform.v[2];
+		Oyster::Math::Float3 upDir = xform.v[1];
+		Oyster::Math::Float3 rightDir = xform.v[0];
 		forwardDir.Normalize();
 		upDir.Normalize();
 		rightDir.Normalize();
@@ -105,7 +101,7 @@ void Player::BeginFrame()
 
 		// Walking data
 		Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
-		Oyster::Math::Float &walkSpeed = this->playerStats.movementSpeed;
+		Oyster::Math::Float walkSpeed = this->playerStats.movementSpeed*0.2f;
 
 		// Check for input
 		if(key_forward > 0.001)
@@ -141,11 +137,15 @@ void Player::BeginFrame()
 				rightVelocity *= Oyster::Math::Float3(0.2f*fabs(rightDir.x), 0.2f*fabs(rightDir.y), 0.2f*fabs(rightDir.z));
 			}
 		}
-		if(IsIdle())
+
+		if(walkDirection == Oyster::Math::Float3::null)
 		{
-			if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
-				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
-			this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
+			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
+			{
+				if(this->playerState != PLAYER_STATE::PLAYER_STATE_IDLE)
+					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
+			}
 		}
 		// Walk if walkdirection is something
 		if(walkDirection != Oyster::Math::Float3::null)
@@ -176,13 +176,12 @@ void Player::BeginFrame()
 					rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z)) * walkSpeed*0.2f;
 				}
 			}
-			// TODO not suer if we want to keep jump animation while jumping
-			//if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
-			//{
+			if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
+			{
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING)
 					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
-			//}
+			}
 		}
 
 		// Adjust velocities so no squaring occurs
@@ -204,6 +203,14 @@ void Player::BeginFrame()
 				if(this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING)
 					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Jump);
 				this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+			}
+		}
+		else
+		{
+			if(this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING)
+			{
+				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle);
+				this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 			}
 		}
 	}
@@ -298,7 +305,7 @@ bool Player::IsJumping()
 }
 bool Player::IsIdle()
 {
-	return (this->rigidBody->GetLambdaUp() < 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f);
+	return (this->rigidBody->GetLambdaUp() == 1.0f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.0001f);
 }
 
 void Player::Inactivate()
