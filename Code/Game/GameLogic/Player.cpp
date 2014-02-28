@@ -66,7 +66,6 @@ void Player::initPlayerData()
 	this->playerStats.hp = MAX_HP;
 	this->playerStats.movementSpeed = BASIC_SPEED;
 	this->playerState			= PLAYER_STATE_IDLE;
-	//this->lookDir				= Oyster::Math::Float3(0,0,-1);
 
 	this->key_forward			= 0;
 	this->key_backward			= 0;
