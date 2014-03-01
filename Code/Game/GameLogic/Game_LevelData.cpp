@@ -68,3 +68,7 @@ void Game::LevelData::AddPlayerToGame(IPlayerData *player)
 {
 	this->level->AddPlayerToGame(((PlayerData*)player)->GetPlayer());
 }
+void Game::LevelData::RemovePlayerFromGame(IPlayerData *player)			
+{
+	this->level->RemovePlayerFromGame(((PlayerData*)player)->GetPlayer());
+}

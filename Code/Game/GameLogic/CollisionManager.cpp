@@ -4,12 +4,12 @@
 #include "Player.h"
 #include "Level.h"
 #include "AttatchmentMassDriver.h"
+#include "AttatchmentGun.h"
 #include "Game.h"
 #include "CollisionManager.h"
 #include "JumpPad.h"
 #include "Portal.h"
 #include "ExplosiveCrate.h"
-#include "AttatchmentGun.h"
 
 #include "PickupSystem/PickupHealth.h"
 
@@ -172,10 +172,15 @@ using namespace GameLogic;
 			//do shredding damage
 		}
 
+		//send message that box has exploded?
+		ExplosionSource->RemoveAffectedBy();
+		ExplosionSource->RemoveManipulation();
 
-		
+		ExplosionSource->GetRigidBody()->MoveToLimbo();
+		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 
 	}
+
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
@@ -255,6 +260,7 @@ using namespace GameLogic;
 			player->UseWeapon( WEAPON_INTERRUPT );
 		}
 
+
 		//check which obj is the one that is already affected, if both are then use the special case of changing ownership.
 		if(realObjA->getAffectingPlayer() == NULL && realObjB->getAffectingPlayer() == NULL) //None of the objects have a player affecting them
 		{
@@ -321,7 +327,7 @@ using namespace GameLogic;
 			return;
 
 		
-
+		obj->SetLinearVelocity(((forcePushData*)(args))->p->GetRigidBody()->GetLinearVelocity());
 		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
 		
 
@@ -363,23 +369,12 @@ using namespace GameLogic;
 				weapon->heldObject = obj; //weapon now holds the object
 				weapon->hasObject = true;
 				dynamicObj->SetManipulatingPlayer(*weapon->owner); //TODO: add if this is to be a struggle of who has the most power in its weapon, the player that is already manipulating the object or you. if you then you take the object from the other player, if not then you do not take the object
+
 				break;
 			}
 			
 		}
-		
 
-	}
-	void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj, void* args)
-	{
-		Object *realObj = (Object*)obj->GetCustomTag();
-		
-		if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_Player)
-			return;
-		
-		firedBullet *bullet = (firedBullet*)(args);
-
-		((Player*)realObj)->DamageLife(bullet->hitDamage);
 	}
 
 	//General collision collision for pickups

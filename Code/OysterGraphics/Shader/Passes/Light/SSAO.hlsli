@@ -23,6 +23,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 
 		float3 sampled = mul(tbn, SSAOKernel[i].xyz);
 		sampled = sampled * Radius + pos;
+
 		//project sample to get uv.xy
 		float4 ProjOffset = float4(sampled,1);
 		ProjOffset = mul(Proj, ProjOffset);
@@ -35,7 +36,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 		
 		// get depth from that point in screenspace
 		uint2 texCoord;
-		texCoord = (uint2)(offset.xy * Pixels);
+		texCoord = (uint2)(offset.xy * Diffuse.Length.xy);
 		float3 ViewPos = ToVpos(texCoord, UV);
 
 		float sampleDepth = ViewPos.z;
@@ -43,6 +44,8 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 		//compare to depth from sample
 		float rangeCheck = (abs(pos.z - sampleDepth) > Radius) ? 1.0f : 0.0f;
 		occlusion += (sampleDepth <= sampled.z ? 1.0f : 0.0f) * rangeCheck;
+		//occlusion += rangeCheck;
+
 	}
 	occlusion /= (float)(SSAOKernel.Length.x);
 	occlusion = 1.0f - occlusion;

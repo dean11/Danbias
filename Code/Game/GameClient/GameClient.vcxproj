@@ -217,6 +217,7 @@
     <ClCompile Include="GameClientState\GameState.cpp" />
     <ClCompile Include="GameClientState\GameStateUI.cpp" />
     <ClCompile Include="GameClientState\GamingUI.cpp" />
+    <ClCompile Include="GameClientState\IngameMenyUI.cpp" />
     <ClCompile Include="GameClientState\LanMenuState.cpp" />
     <ClCompile Include="GameClientState\LobbyAdminState.cpp" />
     <ClCompile Include="GameClientState\LobbyState.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="GameClientState\GameState.h" />
     <ClInclude Include="GameClientState\GameStateUI.h" />
     <ClInclude Include="GameClientState\GamingUI.h" />
+    <ClInclude Include="GameClientState\IngameMenyUI.h" />
     <ClInclude Include="GameClientState\LanMenuState.h" />
     <ClInclude Include="GameClientState\LobbyAdminState.h" />
     <ClInclude Include="GameClientState\MainState.h" />

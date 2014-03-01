@@ -20,7 +20,7 @@
 #include "PickupSystem\PickupSystem.h"
 #include "PickupSystem\PickupHealth.h"
 
-const int DEATH_TIMER = 5;
+const int DEATH_TIMER = 3;
 namespace GameLogic
 {
 

@@ -21,11 +21,12 @@ namespace DanBias { namespace Client
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
 		bool HaveTextRender() const;
-		void RenderGUI() const;
-		void RenderText() const;
+		void RenderGUI();
+		void RenderText();
 		bool Release();
 		void SetHPtext( std::wstring hp );
 		void SetEnergyText( std::wstring energy );
+		void ChangeState( UIState next );
 
 	private: /* Overidden mouse methods */
 		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override	{ }

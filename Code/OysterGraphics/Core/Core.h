@@ -28,7 +28,6 @@ namespace Oyster
 
 			static Resource::ResourceManager loader;
 
-			static std::wstring modelPath, texturePath;
 
 			//BackBufferRTV
 			static ID3D11RenderTargetView* backBufferRTV;
@@ -40,13 +39,20 @@ namespace Oyster
 			//ViewPort
 			static D3D11_VIEWPORT* viewPort;
 
-			static  Oyster::Math::Float2 resolution;
 
 			static ID3D11ShaderResourceView* srvNULL[16];
 			static ID3D11RenderTargetView* rtvNULL[8];
 			static ID3D11UnorderedAccessView* uavNULL[8];
 
 			static int UsedMem;
+			static HWND window;
+			static Oyster::Math::Float2 resolution;
+			static float amb;
+			static Math::Float3 gTint;
+			static Math::Float3 gGTint;
+			static bool fullscreen;
+			static std::wstring modelPath;
+			static std::wstring texturePath;
 
 			class Buffer
 			{
@@ -250,11 +256,12 @@ namespace Oyster
 
 				static State FullInit(HWND Window, bool MSAA_Quality, bool Fullscreen);
 
-				static State ReInitialize(HWND Window, bool MSAA_Quality, bool Fullscreen);
+				static State ReInitialize(bool MSAA_Quality, bool Fullscreen, Math::Float2 Size);
 
 				static State CreateLinkedShaderResourceFromTexture(ID3D11RenderTargetView** rtv, ID3D11ShaderResourceView** srv, ID3D11UnorderedAccessView** uav);
 
 				static State CreateLinkedShaderResourceFromStructuredBuffer(Buffer** Structured, ID3D11ShaderResourceView** srv, ID3D11UnorderedAccessView** uav);
+
 				static State CreateLinkedShaderResourceFromStructuredBuffer(void* InitData, int numElem, int ElemSize, Buffer** Structured, ID3D11ShaderResourceView** srv, ID3D11UnorderedAccessView** uav);
 
 			};

@@ -16,7 +16,9 @@ namespace DanBias { namespace Client
 
 
 			UIState_main_menu,
-			UIState_shut_down
+			UIState_shut_down,
+			UIStat_inGameMeny,
+			UIStat_resumeGame
 		};
 
 		typedef ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> NetEvent;
@@ -27,10 +29,10 @@ namespace DanBias { namespace Client
 		virtual UIState Update( float deltaTime ) = 0;
 		virtual bool HaveGUIRender() const = 0;
 		virtual bool HaveTextRender() const = 0;
-		virtual void RenderGUI() const = 0;
-		virtual void RenderText() const = 0;
+		virtual void RenderGUI() = 0;
+		virtual void RenderText() = 0;
 		virtual bool Release() = 0;
-
+		virtual void ChangeState( UIState next ) = 0;
 		/******************************************************************
 		 * @param message of the event
 		 * @return message or a reference to GameStateUI::event_processed.
