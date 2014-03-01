@@ -109,13 +109,22 @@ void AttatchmentMassDriver::Update(float dt)
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
+		
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
 		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
 		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
 		up *= -0.3f;
 		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*2);
-		heldObject->SetPosition(pos);
-		heldObject->SetLinearVelocity(Oyster::Math::Float3::null);
+		heldObject->OverrideGravity(pos, 1);
+
+		if((pos - heldObject->GetState().centerPos).GetMagnitude() > 0.001f)
+		{
+			heldObject->SetLinearVelocity((pos - heldObject->GetState().centerPos)*200.0f);
+		}
+		else
+		{
+			heldObject->SetLinearVelocity(Oyster::Math::Float3(0.0f));
+		}
 
 		if(currentEnergy < maxEnergy)
 		{
