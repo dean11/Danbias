@@ -793,7 +793,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 
 	if( player )
 	{
-		if( this->privData->myId == decoded.objectID )
+		if( this->privData->myId != decoded.objectID )
 		{
 			// my player animation
 			//}

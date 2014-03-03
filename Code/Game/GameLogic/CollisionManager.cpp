@@ -247,10 +247,10 @@ using namespace GameLogic;
 		}
 
 		Math::Float3 deltaVelocity = realObjA->GetRigidBody()->GetLinearVelocity() - realObjB->GetRigidBody()->GetLinearVelocity();
-		Math::Float VelocityNorm = deltaVelocity.Dot( deltaVelocity );
+		Math::Float velocityNorm = deltaVelocity.Dot( deltaVelocity );
 
-		static const Math::Float velocity_norm_threshold_interrupt_weapon = 100.0f; // 10 m/s deltaVelocity
-		if( VelocityNorm >= velocity_norm_threshold_interrupt_weapon )
+		static const Math::Float velocity_norm_threshold_interrupt_weapon = 900.0f; // 30 m/s deltaVelocity
+		if( velocityNorm >= velocity_norm_threshold_interrupt_weapon )
 		{
 			Player *player = realObjA->getManipulatingPlayer();
 			if( player != nullptr )
