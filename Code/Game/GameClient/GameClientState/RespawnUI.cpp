@@ -66,6 +66,8 @@ bool RespawnUI::Release()
 	// TODO: Release UI components here.
 	if(this->text)
 		delete this->text;
+	if(this->deathCounter)
+		delete this->deathCounter;
 	return true;
 }
 void RespawnUI::SetCountdown( float cd )

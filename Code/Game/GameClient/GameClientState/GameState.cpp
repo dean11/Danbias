@@ -190,31 +190,40 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	case DanBias::Client::GameStateUI::UIState_main_menu:
 		{
 			this->privData->nextState = ClientState_Main;
+
 			// disconnect 
+
+			// inactivate MenyInput
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
+			// activate GameInput
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		}
 		break;
 	case GameStateUI::UIState_inGameMeny:
 		{
 			// turn off gameInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
 			this->currGameUI = inGameMeny;
 			// activate menyInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
 		}
 		break;
 	case GameStateUI::UIState_resumeGame:
 		{
 			// inactivate MenyInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
 			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
 			this->currGameUI = gameUI;
 			// activate GameInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		}
 		break;
 	
