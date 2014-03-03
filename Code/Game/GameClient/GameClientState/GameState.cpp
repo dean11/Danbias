@@ -811,6 +811,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				player->playAnimation(L"movement", true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
 				break;
 
