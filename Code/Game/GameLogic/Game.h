@@ -68,6 +68,7 @@ namespace GameLogic
 			void Update(float deltaTime);
 			void AddPlayerToGame(IPlayerData *player);
 			void RemovePlayerFromGame(IPlayerData *player);
+			void InitGameMode(float endTimer, int endKillScore);
 			Level *level;
 		};
 
@@ -91,8 +92,9 @@ namespace GameLogic
 		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) 										override;
 		void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) 									override;
 		void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) 										override;
-		void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) 										override;
-		void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer)						override;
+		void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) 								override;
+		void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer)								override;
+		void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer)										override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -116,6 +118,7 @@ namespace GameLogic
 		GameEvent::PickupEventFunction		onPickupEventFnc;
 		GameEvent::CollisionEventFunction	onCollisionEventFnc;
 		GameEvent::WeaponEnergyFunction		onEnergyUpdateFnc;
+		GameEvent::EndGameFunction			onEndGameFnc;
 	};	
 }
 
