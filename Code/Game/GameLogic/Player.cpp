@@ -234,7 +234,7 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return ( this->rigidBody->GetLambdaUp() );
+	return ( this->rigidBody->GetLambdaUp() < 0.7f );
 }
 
 bool Player::IsJumping()
