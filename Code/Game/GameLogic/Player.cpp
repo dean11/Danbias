@@ -227,17 +227,17 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return ( this->rigidBody->GetLambdaUp() < 0.6f );
+	return ( this->rigidBody->GetLambdaUp() < 0.7f );
 }
 
 bool Player::IsJumping()
 {
-	return ( this->rigidBody->GetLambdaUp() >= 0.6f );
+	return ( this->rigidBody->GetLambdaUp() >= 0.7f );
 }
 
 bool Player::IsIdle()
 {
-	return ( this->rigidBody->GetLambdaUp() < 0.6f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f );
+	return ( this->rigidBody->GetLambdaUp() < 0.7f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f );
 }
 
 void Player::Inactivate()
