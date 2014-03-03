@@ -169,7 +169,7 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_Space:	this->sharedData->network->Send( Protocol_PlayerJump() );
 		break;
-		case SAKI_Escape:	this->nextState = GameStateUI::UIStat_inGameMeny;
+		case SAKI_Escape:	this->nextState = GameStateUI::UIState_inGameMeny;
 		break;
 	}
 }
