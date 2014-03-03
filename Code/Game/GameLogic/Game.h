@@ -68,6 +68,7 @@ namespace GameLogic
 			void Update(float deltaTime);
 			void AddPlayerToGame(IPlayerData *player);
 			void RemovePlayerFromGame(IPlayerData *player);
+			void InitGameMode(float endTimer, int endKillScore);
 			Level *level;
 		};
 

@@ -360,7 +360,14 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	return true;
 }
-
+bool Level::InitiateGameMode(float endTimer, int endKillScore)
+{
+	GameModeType::EndConditions end;
+	end.endTimer = endTimer; 
+	end.killCount = endKillScore; 
+	this->gameMode.initGameMode(end);
+	return true;
+}
 void Level::AddPlayerToTeam(Player *player, int teamID)
 {
 	this->teamManager.AddPlayerToTeam(player,teamID);
@@ -387,31 +394,31 @@ void Level::RemovePlayerFromGame(Player *player)
 		{
 			
 			// remove object tags 
-			for(int i = 0; i < dynamicObjects.Size(); i++)
+			for(int k = 0; k < (int)dynamicObjects.Size(); k++)
 			{
 				// get affecting player
-				Player* temp = dynamicObjects[i]->getAffectingPlayer();
+				Player* temp = dynamicObjects[k]->getAffectingPlayer();
 				if(temp  && temp == player)
 				{
 					// remove affected by tag
-					dynamicObjects[i]->RemoveAffectedBy();
+					dynamicObjects[k]->RemoveAffectedBy();
 					if(temp->getManipulatingPlayer())
 					{
 						// if disconnecting while holding a object
-						dynamicObjects[i]->RemoveManipulation();
+						dynamicObjects[k]->RemoveManipulation();
 					}
 				}
 			}
 
 			// remove player tags
-			for(int i = 0; i < playerObjects.Size(); i++)
+			for(int k = 0; k < (int)playerObjects.Size(); k++)
 			{
-				if(playerObjects[i])
+				if(playerObjects[k])
 				{	
-					Player* temp = playerObjects[i]->getAffectingPlayer();
+					Player* temp = playerObjects[k]->getAffectingPlayer();
 					if(temp  && temp == player)
 					{
-						playerObjects[i]->RemoveAffectedBy();
+						playerObjects[k]->RemoveAffectedBy();
 					}
 				}
 			}
@@ -430,7 +437,7 @@ void Level::RespawnPlayer(Player *player)
 	player->Respawn(spawnPoints.getSpawnPos());
 	
 	// remove manipulation tag  
-	for(int i = 0; i < dynamicObjects.Size(); i++)
+	for(int i = 0; i < (int)dynamicObjects.Size(); i++)
 	{
 		// get manipulating player
 		Player* temp = dynamicObjects[i]->getManipulatingPlayer();
@@ -444,17 +451,25 @@ void Level::RespawnPlayer(Player *player)
 void Level::Update(float deltaTime)
 {
 	// update lvl-things
-	
+	gameMode.Update(deltaTime);
+
+	int winnerID =  gameMode.EndConditionMet(this->playerObjects);
+	if (winnerID != -1 )
+	{
+		this->playerObjects[winnerID];
+		
+		// game ends because of timer
+		if (gameMode.TimeExit())
+		{
+		}
+
+		//send message
+	}
 
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
 		if(this->playerObjects[i])
 		{
-			// TODO check against gameMode win condition
-			if(this->playerObjects[i]->GetKills() > 30 )
-			{
-				// winner 
-			}
 			if(this->playerObjects[i]->getAffectingPlayer() != NULL)
 			{
 			
@@ -487,7 +502,7 @@ void Level::Update(float deltaTime)
 		}
 	}
 
-	for(int i = 0; i < dynamicObjects.Size(); i++)
+	for(int i = 0; i < (int)dynamicObjects.Size(); i++)
 	{
 		if(dynamicObjects[i]->getAffectingPlayer() != NULL)
 		{
@@ -501,7 +516,7 @@ void Level::Update(float deltaTime)
 		}
 	}
 
-	for(int i = 0; i < playerObjects.Size(); i++)
+	for(int i = 0; i < (int)playerObjects.Size(); i++)
 	{
 		if(playerObjects[i])
 		{		

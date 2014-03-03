@@ -129,6 +129,7 @@ namespace GameLogic
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
 			virtual void AddPlayerToGame(IPlayerData *player)			= 0;
 			virtual  void RemovePlayerFromGame(IPlayerData *player)			= 0;
+			virtual void InitGameMode(float endTimer, int endKillScore) = 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
