@@ -41,6 +41,8 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
 	Camera_FPSV2 camera;
 
+	::Utility::DynamicMemory::SmartPointer<FirstPersonWeapon> weapon;
+
 	int myId;
 
 } privData;
@@ -75,6 +77,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
+	this->privData->weapon = shared.weapon;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
@@ -224,6 +227,8 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	// DEBUG keybindings
 	ReadKeyInput();
 
+	this->privData->weapon->Update(this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook());
+
 	return this->privData->nextState;
 }
 
@@ -232,6 +237,8 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView( this->privData->camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
+
+	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -444,6 +451,7 @@ void GameState::ReadKeyInput()
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		this->renderStats = true;
+		this->privData->weapon->Shoot();
 	} 
 	else 
 	{
