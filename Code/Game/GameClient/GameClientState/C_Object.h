@@ -40,6 +40,7 @@ namespace DanBias
 			Oyster::Math::Float3 position; 
 			Oyster::Math::Quaternion rotation; 
 			Oyster::Math::Float3 scale; 
+			int light;
 
 			// RB DEBUG
 			Oyster::Math::Float4x4 RBworld; 
@@ -56,9 +57,13 @@ namespace DanBias
 		public:
 			C_Object();
 			virtual ~C_Object();
-			virtual bool Init(ModelInitData modelInit);
+			virtual bool Init(ModelInitData modelInit, int Light=-1);
 			void updateWorld();
 			//void setWorld(Oyster::Math::Float4x4 world);
+
+			int GetLight();
+			void SetLight(int i);
+
 			Oyster::Math::Float4x4 getWorld() const;
 			void setPos(Oyster::Math::Float3 newPos);
 			Oyster::Math::Float3  getPos() const;

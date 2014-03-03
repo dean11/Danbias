@@ -153,9 +153,9 @@ namespace DanBias
 		gfxOp.modelPath = L"..\\Content\\Models\\";
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
 		gfxOp.resolution = Oyster::Math::Float2( 1920.0f, 1080.0f );
-		gfxOp.ambientValue = 0.5f;
+		gfxOp.ambientValue = 0.2f;
 		gfxOp.fullscreen = false;
-		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
+		gfxOp.globalGlowTint = Math::Float3(2.0f, 2.0f, 2.0f);
 		gfxOp.globalTint = Math::Float3(1.0f, 1.0f, 1.0f);
 
 		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, gfxOp) != Oyster::Graphics::API::Sucsess)

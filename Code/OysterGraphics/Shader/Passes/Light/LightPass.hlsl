@@ -45,8 +45,10 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 	Shaded.Specular = float3(0,0,0);
 
 	for(int i = 0; i < numVisiblePointLights; ++i)
+	//for(int i = 0; i < Lights; ++i)
 	{
 		DiffSpec light = LightCalc(Points[visiblePointlightIndex[i]], ViewPos, DTid.xy);
+		//DiffSpec light = LightCalc(Points[i], ViewPos, DTid.xy);
 		Shaded.Diffuse += light.Diffuse;
 		Shaded.Specular += light.Specular;
 	}
@@ -74,15 +76,16 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 		{
 			AmbValue = 1;
 			float3 ViewVec = mul(transpose(View), float4(ViewPos,0));
-			DiffBase = ReadSky(ViewVec);
+			DiffBase = float4(ReadSky(ViewVec).xyz*(1/FoV), 0);
 		}
 
 		Ambient[DTid.xy/2] = float4(DiffBase.xyz , AmbValue);
 		//Ambient[DTid.xy/2] = float4(DiffBase.xyz, 1);
 		Ambient[DTid.xy/2 + float2(Diffuse.Length.x/2, 0)] = GUI[DTid.xy];
 		Ambient[DTid.xy/2 + float2(0, Diffuse.Length.y/2)] = float4(DiffBase.xyz * DiffBase.w ,DiffBase.w);
-		//Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(numVisiblePointLights * (1.0f/Lights), 0, 0 ,1);
-		Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(NormalSpec[DTid.xy/2].xyz ,1);
+		Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(numVisiblePointLights * (1.0f/Lights), 0, 0 ,1);
+		//Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(NormalSpec[DTid.xy/2].xyz ,1);
+		//Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(Points[0].Pos ,1);
 	}
 
 }

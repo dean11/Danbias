@@ -482,6 +482,7 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 	}
 	decoded.pickup_ID;
 }
+
 void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 {
 	Protocol_ObjectDamage decoded(data);
@@ -506,10 +507,12 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 		}
 	}
 }
+
 void GameState::Gameplay_ObjectHealthStatus( CustomNetProtocol data )
 {
 
 }
+
 void GameState::Gameplay_ObjectPosition( CustomNetProtocol data )
 {
 	Protocol_ObjectPosition decoded(data);
@@ -530,6 +533,7 @@ void GameState::Gameplay_ObjectPosition( CustomNetProtocol data )
 		}
 
 		object->setPos( decoded.position );
+		
 		// RB DEBUG 
 		object->setRBPos ( decoded.position );  
 		// !RB DEBUG 
@@ -602,6 +606,14 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 		object->setPos( position );
 		object->setRot( rotation );
 		object->updateWorld();
+		if(object->GetLight()!=-1)
+		{
+			std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>::iterator light = privData->lights->find(object->GetLight());
+			if(light != privData->lights->end())
+			{
+				light->second->setPos(object->getPos());
+			}
+		}
 		// RB DEBUG 
 		object->setRBPos ( position );  
 		object->setRBRot ( rotation );  

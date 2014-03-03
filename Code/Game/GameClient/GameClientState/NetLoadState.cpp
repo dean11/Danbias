@@ -172,7 +172,9 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 	desc.position	= oh->position; 
 	desc.rotation	= ArrayToQuaternion( oh->rotation );
 	desc.scale		= oh->scale;
-	desc.visible	= true; 
+	desc.visible	= true;
+
+	int light = -1;
 
 	switch (oh->specialTypeID)
 	{
@@ -180,12 +182,56 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		{
 			desc.tint = Float3(1.0f);
 			desc.gtint = Float3(1.0f, 0.0f, 0.0f);
+
+			Graphics::Definitions::Pointlight pointLight; 
+
+			pointLight.Color	= desc.gtint;
+			pointLight.Pos		= desc.position;
+			pointLight.Bright	= 1.0f;
+			pointLight.Radius	= 10.0f; 
+
+			C_Light *newLight = new C_Light( pointLight, ID );
+
+			(*this->privData->lights)[ID] = newLight;
 			break;
 		}
 	case ObjectSpecialType::ObjectSpecialType_Portal:
 		{
 			desc.tint = Float3(0.0f, 0.0f, 1.0f);
 			desc.gtint = Float3(1.0f, 1.0f, 1.0f);
+			break;
+		}
+	case ObjectSpecialType::ObjectSpecialType_StandardBox:
+		{
+			desc.tint = Float3(1.0f);
+			if(desc.modelPath == L"crate_colonists.dan")
+			{
+				desc.gtint = Float3(
+					((float)rand() / (RAND_MAX + 1) * (1 - 0.5f) + 0),
+					((float)rand() / (RAND_MAX + 1) * (1 - 0) + 0.5f),
+					((float)rand() / (RAND_MAX + 1) * (1 - 0) + 0)
+					).Normalize();
+			}
+			else
+			{
+				desc.gtint = Float3(
+					((float)rand() / (RAND_MAX + 1) * (1 - 0.5f) + 0),
+					((float)rand() / (RAND_MAX + 1) * (1 - 0) + 0),
+					((float)rand() / (RAND_MAX + 1) * (1 - 0.) + 0.5f)
+					).Normalize();
+			}
+			light = ID;
+
+			Graphics::Definitions::Pointlight pointLight; 
+
+			pointLight.Color	= desc.gtint;
+			pointLight.Pos		= desc.position;
+			pointLight.Bright	= 1.0f;
+			pointLight.Radius	= 10.0f; 
+
+			C_Light *newLight = new C_Light( pointLight, ID );
+
+			(*this->privData->lights)[ID] = newLight;
 			break;
 		}
 
@@ -212,6 +258,7 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 	{
 		if(object->Init(desc))
 		{
+			object->SetLight(light);
 			// RB DEBUG
 			RBInitData RBData;
 			if(oh->boundingVolume.geoType == CollisionGeometryType_Box)

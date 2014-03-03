@@ -335,8 +335,8 @@ namespace Oyster
 						{
 							random[i] = Oyster::Math::Vector3(
 								(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
-								/*(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,*/
-								1.0f,
+								(float)rand() / (RAND_MAX + 1) * (1 - -1)+ -1,
+								//1.0f,
 								0.0f);
 						}
 						random[i].Normalize();
