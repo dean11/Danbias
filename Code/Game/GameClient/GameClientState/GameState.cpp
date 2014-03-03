@@ -341,6 +341,8 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
+		this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+		this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
 		auto playerObject = this->privData->players.begin();
 		for( ; playerObject != this->privData->players.end(); ++playerObject )
 		{
@@ -362,7 +364,7 @@ bool GameState::Release()
 		auto light = this->privData->lights->begin();
 		for( ; light != this->privData->lights->end(); ++light )
 		{
-			light->second->Render();
+			light->second->Release();
 		}
 
 		this->privData->staticObjects->clear();

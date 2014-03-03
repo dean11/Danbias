@@ -35,3 +35,9 @@ void C_Light::Render()
 	// will be changed to new API 
 	Oyster::Graphics::API::AddLight(&pointLightDesc);
 }
+
+void C_Light::Release()
+{
+	// will be changed to new API 
+	Oyster::Graphics::API::RemoveLight(&pointLightDesc);
+}
