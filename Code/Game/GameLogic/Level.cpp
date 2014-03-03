@@ -464,6 +464,7 @@ void Level::Update(float deltaTime)
 		}
 
 		//send message
+		((Game*)&Game::Instance())->onEndGameFnc();
 	}
 
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
