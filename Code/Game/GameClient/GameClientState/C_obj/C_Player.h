@@ -13,6 +13,8 @@ public:
 	virtual ~C_Player(void);
 	bool Init(ModelInitData modelInit);
 	void playAnimation(std::wstring animation, bool loop);
+	void stopAnimation(std::wstring animation);
+	void stopAllAnimations();
 
 };};};
 #endif

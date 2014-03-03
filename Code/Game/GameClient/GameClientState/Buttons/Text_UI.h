@@ -32,6 +32,13 @@ namespace DanBias
 					Oyster::Graphics::API::RenderText(text, pos, size, size.y * 0.5f, textColor);
 				}
 			}
+			void RenderText(std::wstring text) const
+			{
+				if(text.size() > 0)
+				{
+					Oyster::Graphics::API::RenderText(text, pos, size, size.y * 0.5f, textColor);
+				}
+			}
 			void RenderText( Oyster::Math::Float3 pos) const
 			{
 				if(text.size() > 0)

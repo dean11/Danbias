@@ -28,12 +28,11 @@ namespace Oyster
 				Oyster::Math::Float3 GlowTint;
 				bool Visible;
 				bool Instanced;
-				AnimationData Animation[2];
+				AnimationData Animation[4];
+				int numOccupiedAnimationSlots;
 
-				~Model()
-				{
-					
-				}
+				Model() { this->numOccupiedAnimationSlots = 0; }
+				~Model() { }
 			};
 		}
 	};

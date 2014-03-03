@@ -141,6 +141,7 @@ using namespace DanBias;
 	}
 
 
+
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
 		//float dt = (float)GameSession::gameSession->networkTimer.getElapsedSeconds();
@@ -202,10 +203,18 @@ using namespace DanBias;
 		// send action protocol
 		GameSession::gameSession->Send(Protocol_ObjectWeaponEnergy(movedObject->GetID(), energy).GetProtocol());
 	}
+	void GameSession::GameOver(  )
+	{
+		GameSession::gameSession->Send( Protocol_General_GameOver().GetProtocol() );
+		GameSession::gameSession->isRunning = false;
+	}
+
+
+
+
 //*****************************************************//
 //****************** Protocol methods *****************//
 //******************************************************************************************************************//
-
 	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
 		//TODO: Update response timer

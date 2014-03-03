@@ -30,6 +30,7 @@ namespace DanBias { namespace Client
 
 		// TODO add multiple UI elements
 		Text_UI* text;
+		Text_UI* deathCounter;
 		RespawnUI();
 	};
 } }

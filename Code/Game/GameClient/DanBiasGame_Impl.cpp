@@ -47,7 +47,7 @@ namespace DanBias
 		SharedStateContent sharedStateContent;
 
 		bool serverOwner;
-		float capFrame;
+		float capFrame_gameplay, capFrame_gfx;
 
 		DanBiasGamePrivateData()
 		{
@@ -56,7 +56,8 @@ namespace DanBias
 			this->sharedStateContent.keyboardDevice		= nullptr;
 			this->sharedStateContent.mouseSensitivity	= Utility::Value::Radian( 0.6f );
 			this->serverOwner							= false;
-			this->capFrame								= 0;
+			this->capFrame_gameplay						= 0;
+			this->capFrame_gfx							= 0;
 		}
 
 		~DanBiasGamePrivateData()
@@ -111,25 +112,34 @@ namespace DanBias
 		// Main message loop
 		while(data.window->Frame())
 		{
+			static const float gameplay_frame_periodicy = 1.0f / 30.0f,
+							   gfx_frame_periodicy = 1.0f / 60.0f;
+
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
 			
-			data.capFrame += dt;
-			if(data.capFrame > 0.03f)
+			data.capFrame_gameplay += dt;
+			data.capFrame_gfx += dt;
+
+			if( data.capFrame_gameplay >= gameplay_frame_periodicy )
 			{
-				switch( Update(data.capFrame) )
+				switch( Update(gameplay_frame_periodicy) )
 				{
 				case Result_continue:	break;
 					case Result_quit:	return DanBiasClientReturn_Success;
 				case Result_error:		return DanBiasClientReturn_Error;
 				default:				break;
 				}
-				
-				Graphics::API::Update( data.capFrame );
+				data.capFrame_gameplay -= gameplay_frame_periodicy; 
+			}
+
+			if( data.capFrame_gfx >= gfx_frame_periodicy )
+			{
+				Graphics::API::Update( gfx_frame_periodicy );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
-				data.capFrame -= 0.03f; 
+				data.capFrame_gfx -= gfx_frame_periodicy; 
 			}
 
 			if(data.networkClient.IsConnected())

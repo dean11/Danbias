@@ -117,6 +117,12 @@ namespace Oyster
 			//! @brief Starts an animation and returns the time of the animation
 			static float PlayAnimation(Model::Model* model, const std::wstring &name, bool looping = false);
 
+			//! @brief Stops an animation of model
+			static void StopAnimation(Model::Model* model, const std::wstring &name);
+
+			//! @brief Stops all animations of model
+			static void StopAllAnimations(Model::Model* model);
+
 			//! @brief Moves all animating models forward the specified time;
 			static void Update(float deltaTime);
 		};
