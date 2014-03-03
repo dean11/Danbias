@@ -78,6 +78,9 @@ bool MainState::Init( SharedStateContent &shared )
 
 GameClientState::ClientState MainState::Update( float deltaTime )
 {
+	if(this->privData->sharedData->keyboardDevice->IsKeyDown(Input::Enum::SAKI_Escape))
+		return GameClientState::ClientState_Quit;
+
 	MouseInput mouseState;
 	{
 		::Input::Struct::SAIPointFloat2D pos;
