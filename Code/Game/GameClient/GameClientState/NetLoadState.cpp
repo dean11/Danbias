@@ -133,94 +133,9 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		switch( oth->typeID )
 		{
 		case ObjectType::ObjectType_Static:
-			{
-				ObjectHeader *oh = (ObjectHeader*)oth;
-
-				ModelInitData desc;
-				desc.id			= objectID;
-				StringToWstring( oh->ModelFile, desc.modelPath );
-				desc.position	= oh->position; 
-				desc.rotation	= ArrayToQuaternion( oh->rotation );
-				desc.scale		= oh->scale;
-				desc.visible	= true; 
-
-				C_StaticObj *staticObject = new C_StaticObj(oh->specialTypeID);
-				if( staticObject->Init( desc ) )
-				{
-
-					// RB DEBUG
-					RBInitData RBData;
-					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
-					{
-						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
-						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
-						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size * 2;
-						RBData.type = RB_Type_Cube;
-						staticObject->InitRB( RBData );
-						staticObject->updateRBWorld();
-					}
-
-					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
-					{
-						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
-						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
-						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius * 2;
-						RBData.type = RB_Type_Sphere;
-						staticObject->InitRB( RBData );
-						staticObject->updateRBWorld();
-					}
-					// !RB DEBUG 
-
-					(*this->privData->staticObjects)[objectID] = staticObject;	
-				}
-				else
-				{
-					delete staticObject;
-				}
-			}
-			break;
 		case ObjectType::ObjectType_Dynamic:
 			{
-				ObjectHeader *oh = (ObjectHeader*)oth;
-
-				ModelInitData desc;
-				desc.id			= objectID;
-				StringToWstring( oh->ModelFile, desc.modelPath );
-				desc.position	= oh->position; 
-				desc.rotation	= ArrayToQuaternion( oh->rotation );
-				desc.scale		= oh->scale;
-				desc.visible	= true; 
-					
-				C_DynamicObj *dynamicObject = new C_DynamicObj();
-				if( dynamicObject->Init( desc ) )
-				{
-					// RB DEBUG
-					RBInitData RBData;
-					if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
-					{
-						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
-						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
-						RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size * 2;
-						RBData.type = RB_Type_Cube;
-						dynamicObject->InitRB( RBData );
-					}
-
-					if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
-					{
-						RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
-						RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
-						RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius * 2;
-						RBData.type = RB_Type_Sphere;
-						dynamicObject->InitRB( RBData );
-					}
-					// !RB DEBUG 
-
-					(*this->privData->dynamicObjects)[objectID] = dynamicObject;
-				}
-				else
-				{
-					delete dynamicObject;
-				}
+				LoadObject(oth,objectID);
 			}
 			break;
 		case ObjectType::ObjectType_Light:
@@ -245,4 +160,95 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 	Graphics::API::EndLoadingModels();
 
 	this->privData->nextState = ClientState::ClientState_Game;
+}
+
+void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
+{
+	ObjectHeader *oh = (ObjectHeader*)oth;
+
+	ModelInitData desc;
+	desc.id			= ID;
+	StringToWstring( oh->ModelFile, desc.modelPath );
+	desc.position	= oh->position; 
+	desc.rotation	= ArrayToQuaternion( oh->rotation );
+	desc.scale		= oh->scale;
+	desc.visible	= true; 
+
+	switch (oh->specialTypeID)
+	{
+	case ObjectSpecialType::ObjectSpecialType_RedExplosiveBox:
+		{
+			desc.tint = Float3(1.0f);
+			desc.gtint = Float3(1.0f, 0.0f, 0.0f);
+			break;
+		}
+	case ObjectSpecialType::ObjectSpecialType_Portal:
+		{
+			desc.tint = Float3(0.0f, 0.0f, 1.0f);
+			desc.gtint = Float3(1.0f, 1.0f, 1.0f);
+			break;
+		}
+
+	default:
+		desc.tint = Float3(1.0f);
+		desc.gtint = Float3(1.0f);
+		break;
+	}
+
+	C_Object* object = nullptr;
+
+	if(oth->typeID == ObjectType::ObjectType_Static)
+	{
+		object = new C_StaticObj(oh->specialTypeID);
+	}
+	else
+	{
+		if(oth->typeID == ObjectType::ObjectType_Dynamic)
+		{
+			object = new C_DynamicObj();
+		}
+	}
+	if(object)
+	{
+		if(object->Init(desc))
+		{
+			// RB DEBUG
+			RBInitData RBData;
+			if(oh->boundingVolume.geoType == CollisionGeometryType_Box)
+			{
+				RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
+				RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+				RBData.scale =  (Float3)oh->scale * (Float3)oh->boundingVolume.box.size * 2;
+				RBData.type = RB_Type_Cube;
+				object->InitRB( RBData );
+			}
+
+			if(oh->boundingVolume.geoType == CollisionGeometryType_Sphere)
+			{
+				RBData.position = ((Float3)oh->position + (Float3)oh->boundingVolume.box.position) * (Float3)oh->scale;
+				RBData.rotation = ArrayToQuaternion( oh->rotation ); // Only model rotation 
+				RBData.scale =  (Float3)oh->scale * oh->boundingVolume.sphere.radius * 2;
+				RBData.type = RB_Type_Sphere;
+				object->InitRB( RBData );
+			}
+			// !RB DEBUG 
+
+			if(oth->typeID == ObjectType::ObjectType_Static)
+			{
+				(*this->privData->staticObjects)[ID] = (C_StaticObj*)object;
+			}
+			else
+			{
+				if(oth->typeID == ObjectType::ObjectType_Dynamic)
+				{
+					(*this->privData->dynamicObjects)[ID] = (C_DynamicObj*)object;
+				}
+			}
+				
+		}
+		else
+		{
+			delete object;
+		}
+	}
 }
