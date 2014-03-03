@@ -9,7 +9,7 @@ using namespace Oyster::Physics;
 using namespace Oyster::Math3D;
 using namespace Utility::Value;
 
-const float MOVE_FORCE = 30;
+const float MOVE_FORCE = 30.0f;
 const float KEY_TIMER = 0.03f;
 const float AFFECTED_TIMER = 1.0f;
 
@@ -28,10 +28,10 @@ Player::Player()
 	this->teamID = -1; 
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
-	this->lookDir				= Oyster::Math::Float3(0,0,-1);
+	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
 }
 
-Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
 	this->weapon = new Weapon(2,this);
@@ -39,10 +39,10 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	this->teamID = teamID;
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
-	this->lookDir				= Oyster::Math::Float3(0,0,-1);
+	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
 }
 
-Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
+Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
 	this->weapon = new Weapon(2,this);
@@ -50,7 +50,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->teamID = teamID;
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
-	this->lookDir				= Oyster::Math::Float3(0,0,-1);
+	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
 }
 
 Player::~Player(void)
@@ -61,21 +61,22 @@ Player::~Player(void)
 		this->weapon = NULL;
 	}	
 }
+
 void Player::initPlayerData()
 {
 	this->playerStats.hp = MAX_HP;
 	this->playerStats.movementSpeed = BASIC_SPEED;
-	this->playerState			= PLAYER_STATE_IDLE;
+	this->playerState = PLAYER_STATE_IDLE;
 
-	this->key_forward			= 0;
-	this->key_backward			= 0;
-	this->key_strafeRight		= 0;
-	this->key_strafeLeft		= 0;
-	this->key_jump				= 0;
-	this->RecentlyAffected		= 0;
-	this->deathTimer			= 0;
+	this->key_forward			= 0.0f;
+	this->key_backward			= 0.0f;
+	this->key_strafeRight		= 0.0f;
+	this->key_strafeLeft		= 0.0f;
+	this->key_jump				= 0.0f;
+	this->RecentlyAffected		= 0.0f;
+	this->deathTimer			= 0.0f;
 
-	this->rotationUp = 0;
+	this->rotationUp = 0.0f;
 
 	ICustomBody::State state;
 	this->rigidBody->GetState( state );
@@ -88,7 +89,7 @@ void Player::BeginFrame()
 {
 	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		this->weapon->Update(0.002f);
+		this->weapon->Update( 0.002f );
 
 		// Rotate player accordingly
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
@@ -143,9 +144,7 @@ void Player::BeginFrame()
 	}
 }
 
-void Player::EndFrame()
-{
-}
+void Player::EndFrame() { }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
 {
@@ -177,14 +176,17 @@ void Player::MoveForward()
 {
 	key_forward = KEY_TIMER;
 }
+
 void Player::MoveBackwards()
 {
 	key_backward = KEY_TIMER;
 }
+
 void Player::MoveRight()
 {
 	key_strafeRight = KEY_TIMER;
 }
+
 void Player::MoveLeft()
 {
 	key_strafeLeft = KEY_TIMER;
@@ -195,7 +197,7 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 	this->weapon->Use(usage,gameInstance->GetFrameTime());
 }
 
-void Player::Respawn(Oyster::Math::Float3 spawnPoint)
+void Player::Respawn( Float3 spawnPoint )
 { 
 	if( this->playerState == PLAYER_STATE_DEAD) 
 	{
@@ -206,13 +208,14 @@ void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 	}
 }
 
-void Player::SetLookDir(const Oyster::Math3D::Float3& lookDir)
+void Player::SetLookDir( const Float3& lookDir )
 {
 	// this is the camera right vector
 	this->lookDir = -lookDir;
 
 }
-void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
+
+void Player::TurnLeft( Float deltaRadians )
 {
 	this->rotationUp += deltaRadians;
 }
@@ -224,95 +227,109 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->rigidBody->GetLambdaUp() < 0.6f);
+	return ( this->rigidBody->GetLambdaUp() < 0.6f );
 }
+
 bool Player::IsJumping()
 {
-	return (this->rigidBody->GetLambdaUp() >= 0.6f);
+	return ( this->rigidBody->GetLambdaUp() >= 0.6f );
 }
+
 bool Player::IsIdle()
 {
-	return (this->rigidBody->GetLambdaUp() < 0.6f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f);
+	return ( this->rigidBody->GetLambdaUp() < 0.6f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f );
 }
 
 void Player::Inactivate()
 {
 	//this->
 }
-void Player::ResetPlayer( Oyster::Math::Float3 spawnPos)
+
+void Player::ResetPlayer( Float3 spawnPos )
 {
 	Player::initPlayerData();
-	this->rigidBody->SetPosition(spawnPos);
+	this->rigidBody->SetPosition( spawnPos );
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 }
-Oyster::Math::Float3 Player::GetPosition() const
+
+Float3 Player::GetPosition() const
 {
-	return (Oyster::Math::Float3) this->rigidBody->GetState().centerPos;
+	return this->rigidBody->GetState().centerPos;
 }
-Oyster::Math::Float4x4 Player::GetOrientation() const 
+
+Float4x4 Player::GetOrientation() const 
 {
 	return this->rigidBody->GetState().GetOrientation();
 }
-Oyster::Math::Float3 Player::GetLookDir() const
+
+Float3 Player::GetLookDir() const
 {
 	return this->lookDir;
 }
+
 int Player::GetTeamID() const
 {
 	return this->teamID;
 }
+
 PLAYER_STATE Player::GetState() const
 {
 	return this->playerState;
 }
+
 void Player::AddKill()
 {
 	this->playerScore.killScore++;
 }
+
 void Player::AddDeath()
 {
 	this->playerScore.deathScore++;
 }
+
 int Player::GetKills() const
 {
 	return this->playerScore.killScore;
 }
+
 int Player::GetDeath() const
 {
 	return this->playerScore.deathScore;
 }
-void Player::DamageLife(int damage)
+
+void Player::DamageLife( int damage )
 {
-	if(damage != 0)
+	if( damage != 0 )
 	{
 		this->playerStats.hp -= damage;
 
-		if(this->playerStats.hp > 100)
-			this->playerStats.hp = 100;
+		if( this->playerStats.hp > 100.0f )
+			this->playerStats.hp = 100.0f;
 
 		// send hp to client
 		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
 
-		if(this->playerStats.hp <= 0)
+		if( this->playerStats.hp <= 0.0f )
 		{
-			this->playerStats.hp = 0;
+			this->playerStats.hp = 0.0f;
 			this->playerState = PLAYER_STATE_DIED;
-			this->rigidBody->SetLinearVelocity(Oyster::Math::Float3(0,0,0));
+			this->rigidBody->SetLinearVelocity( 0.0f );
 		}
 	}
 }
 
-bool Player::deathTimerTick(float dt)
+bool Player::deathTimerTick( float dt )
 {
 	this->deathTimer -= dt;
-	if( this->deathTimer <= 0)
+	if( this->deathTimer <= 0.0f )
 	{
 		return true;
 	}
 	return false;
 }
-void Player::setDeathTimer(float deathTimer)
+
+void Player::setDeathTimer( float deathTimer )
 {
 	this->deathTimer = deathTimer;
 	this->playerState = PLAYER_STATE_DEAD;
