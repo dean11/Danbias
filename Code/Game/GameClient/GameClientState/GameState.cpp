@@ -25,6 +25,7 @@ using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::String;
 using namespace ::Utility::Value;
 
+//#define _CAMERA_DEBUG
 struct  GameState::MyData
 {
 	MyData(){}
@@ -156,11 +157,13 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.8f * p->getScale().y, 0.0f) );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			//offset.y = p->getScale().y * 5.0f;
-			//offset.z = p->getScale().z * -5.0f;
+		#ifdef _CAMERA_DEBUG
+			offset.y = p->getScale().y * 5.0f;
+			offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
-			//this->privData->camera.SetHeadOffset( offset );
-			//this->privData->camera.UpdateOrientation();
+			this->privData->camera.SetHeadOffset( offset );
+			this->privData->camera.UpdateOrientation();
+		#endif
 			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0); 
 		}
 	}
@@ -248,7 +251,9 @@ bool GameState::Render()
 	{
 		if(playerObject->second)
 		{
+			#ifndef _CAMERA_DEBUG
 			if( this->privData->myId != playerObject->second->GetId() )
+			#endif
 			{
 				playerObject->second->Render();
 			}
@@ -805,9 +810,29 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			// my player animation
-			//}
-			//else
-			//{
+			switch (decoded.animationID)
+			{
+			case  GameLogic::PlayerAction::PlayerAction_Walk:
+				player->playAnimation(L"run_forwards", true);
+				break;
+			case GameLogic::PlayerAction::PlayerAction_Jump:
+				player->playAnimation(L"movement", true);
+				break;
+			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->playAnimation(L"idle", true);
+				break;
+			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
+				break;
+			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+				break;
+			case GameLogic::WeaponAction::WeaponAction_Reload:
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
 			// HACK for now animate my char
 			switch (decoded.animationID)
 			{
@@ -820,15 +845,12 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->playAnimation(L"idle", true);
 				break;
-
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
 				break;
 			case GameLogic::WeaponAction::WeaponAction_Reload:
 				break;
-
-
 			default:
 				break;
 			}

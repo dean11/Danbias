@@ -45,9 +45,9 @@ bool IngameMenyUI::Init()
 	this->mouseCursor	= new Plane_UI(L"cursor.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f));
 	ButtonRectangle<IngameMenyUI*> *button;
 	Float4 TextCol = Float4(0.1f,0.1f,0.1f,1.0f);
-	Float4 BackCol = Float4(1.0f);
-	Float4 HoverCol = Float4(1.2f);
-	Float4 PressCol = Float4(1.5f);
+	Float4 BackCol = Float4(0.6f, 0.6f, 0.6f, 1.0f);
+	Float4 HoverCol = Float4(0.8f, 0.8f, 0.8f, 1.0f);
+	Float4 PressCol = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 	
 	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.3f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
