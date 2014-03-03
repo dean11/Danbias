@@ -25,6 +25,7 @@ using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::String;
 using namespace ::Utility::Value;
 
+//#define _CAMERA_DEBUG
 struct  GameState::MyData
 {
 	MyData(){}
@@ -159,11 +160,13 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.8f * p->getScale().y, 0.0f) );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			//offset.y = p->getScale().y * 5.0f;
-			//offset.z = p->getScale().z * -5.0f;
+		#ifdef _CAMERA_DEBUG
+			offset.y = p->getScale().y * 5.0f;
+			offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
-			//this->privData->camera.SetHeadOffset( offset );
-			//this->privData->camera.UpdateOrientation();
+			this->privData->camera.SetHeadOffset( offset );
+			this->privData->camera.UpdateOrientation();
+		#endif
 			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0); 
 		}
 	}
@@ -193,31 +196,40 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	case DanBias::Client::GameStateUI::UIState_main_menu:
 		{
 			this->privData->nextState = ClientState_Main;
+
 			// disconnect 
+
+			// inactivate MenyInput
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
+			// activate GameInput
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		}
 		break;
 	case GameStateUI::UIState_inGameMeny:
 		{
 			// turn off gameInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
 			this->currGameUI = inGameMeny;
 			// activate menyInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
 		}
 		break;
 	case GameStateUI::UIState_resumeGame:
 		{
 			// inactivate MenyInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
+			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
 			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
 			this->currGameUI = gameUI;
 			// activate GameInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		}
 		break;
 	
@@ -246,7 +258,9 @@ bool GameState::Render()
 	{
 		if(playerObject->second)
 		{
+			#ifndef _CAMERA_DEBUG
 			if( this->privData->myId != playerObject->second->GetId() )
+			#endif
 			{
 				playerObject->second->Render();
 			}
@@ -804,9 +818,29 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			// my player animation
-			//}
-			//else
-			//{
+			switch (decoded.animationID)
+			{
+			case  GameLogic::PlayerAction::PlayerAction_Walk:
+				player->playAnimation(L"run_forwards", true);
+				break;
+			case GameLogic::PlayerAction::PlayerAction_Jump:
+				player->playAnimation(L"movement", true);
+				break;
+			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->playAnimation(L"idle", true);
+				break;
+			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
+				break;
+			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+				break;
+			case GameLogic::WeaponAction::WeaponAction_Reload:
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
 			// HACK for now animate my char
 			switch (decoded.animationID)
 			{
@@ -819,15 +853,12 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->playAnimation(L"idle", true);
 				break;
-
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
 				break;
 			case GameLogic::WeaponAction::WeaponAction_Reload:
 				break;
-
-
 			default:
 				break;
 			}
