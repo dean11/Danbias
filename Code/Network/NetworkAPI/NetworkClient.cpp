@@ -100,7 +100,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 	~PrivateData()
 	{ 
 		SetEvent(shutdownEvent);
-		this->thread.Wait();
+		//this->thread.Terminate();
 
 		ShutdownWinSock();
 		this->connection.Disconnect();
@@ -605,7 +605,7 @@ bool NetworkClient::Reconnect()
 void NetworkClient::Disconnect()
 {
 	if(!privateData) return;
-
+	StopListeningForBroadcasting();
 	delete this->privateData;
 	this->privateData = 0;
 }

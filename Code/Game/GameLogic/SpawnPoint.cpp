@@ -16,7 +16,14 @@ void SpawnPoint::addSpawnPos(Oyster::Math::Float3 pos)
 }
 Oyster::Math::Float3 SpawnPoint::getSpawnPos()
 {
+	Oyster::Math::Float3 spawnPoint;
+
+	if(spawnPoints.Size() == 0)
+	{
+		spawnPoint = Oyster::Math::Float3(0,180,0);
+		return spawnPoint;
+	}
 	int i = rand() % spawnPoints.Size();
-	Oyster::Math::Float3 spawnPoint = spawnPoints[i]; 
+	spawnPoint = spawnPoints[i]; 
 	return spawnPoint;
 }

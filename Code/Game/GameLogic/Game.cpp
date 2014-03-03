@@ -77,6 +77,7 @@ Game::PlayerData* Game::CreatePlayer()
 		{
 			//We give the body to someone else
 			this->players[i]->player->Activate();
+			this->level->AddPlayerToGame(this->players[i]);
 			return this->players[i];
 		}
 	}
@@ -112,6 +113,10 @@ Game::PlayerData* Game::CreatePlayer()
 	return this->players[insert];
 }
 
+void Game::RemovePlayer( IPlayerData* player)
+{
+	this->level->RemovePlayerFromGame(player);
+}
 Game::LevelData* Game::CreateLevel(const wchar_t mapName[255])
 {
 	if(this->level) return this->level;

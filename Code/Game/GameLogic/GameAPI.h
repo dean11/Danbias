@@ -127,7 +127,8 @@ namespace GameLogic
 			virtual void Update(float deltaTime)						= 0;
 			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
-			virtual void AddPlayerToGame(IPlayerData *player)				= 0;
+			virtual void AddPlayerToGame(IPlayerData *player)			= 0;
+			virtual  void RemovePlayerFromGame(IPlayerData *player)			= 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
@@ -155,6 +156,8 @@ namespace GameLogic
 		*	@return Returns a IPlayerData container to use for player manipulation.
 		*/
 		virtual IPlayerData* CreatePlayer( void ) = 0;
+
+		virtual void RemovePlayer( IPlayerData* ) = 0;
 
 		/**	Creates a level 
 		*	@return Returns a ILevelData container to use for level manipulation

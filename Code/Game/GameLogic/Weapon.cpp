@@ -41,7 +41,7 @@ Weapon::Weapon(int MaxNrOfSockets,Player *owner)
 	IAttatchment *gun = new AttatchmentGun(*owner);
 	attatchmentSockets[1]->SetAttatchment(gun);
 	this->currentNrOfAttatchments = 2;
-
+	//SelectAttatchment(1);
 	//give the weapon a normal gun on socket 1
 }
 

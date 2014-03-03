@@ -10,8 +10,8 @@ Game::PlayerData::PlayerData()
 	Oyster::Math::Float radius = 0.5f;
 	Oyster::Math::Float mass = 40;
 	Oyster::Math::Float restitutionCoeff = 0.5f;
-	Oyster::Math::Float frictionCoeff_Static = 0.4f;
-	Oyster::Math::Float frictionCoeff_Dynamic = 0.3f;
+	Oyster::Math::Float frictionCoeff_Static = 2.0f;
+	Oyster::Math::Float frictionCoeff_Dynamic = 0.0f;
 
 	//create rigid body
 	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCharacter(	height, radius, Oyster::Math::Float4(0, 0, 0, 1), 
@@ -29,8 +29,8 @@ Game::PlayerData::PlayerData(int playerID,int teamID)
 	Oyster::Math::Float radius = 0.5f;
 	Oyster::Math::Float mass = 40;
 	Oyster::Math::Float restitutionCoeff = 0.5f;
-	Oyster::Math::Float frictionCoeff_Static = 0.4f;
-	Oyster::Math::Float frictionCoeff_Dynamic = 0.3f;
+	Oyster::Math::Float frictionCoeff_Static = 2.0f;
+	Oyster::Math::Float frictionCoeff_Dynamic = 0.0f;
 
 	//create rigid body
 	Oyster::Physics::ICustomBody* rigidBody = Oyster::Physics::API::Instance().AddCharacter(	height, radius, Oyster::Math::Float4(0, 0, 0, 1), 

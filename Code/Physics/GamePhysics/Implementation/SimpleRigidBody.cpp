@@ -27,6 +27,8 @@ SimpleRigidBody::SimpleRigidBody()
 	this->afterCollision = NULL;
 	this->onMovement = NULL;
 
+	this->overrideGravity = false;
+
 	this->customTag = nullptr;
 }
 
@@ -314,17 +316,36 @@ Float3 SimpleRigidBody::GetGravity() const
 	btVector3 gravity = this->rigidBody->getGravity();
 	return Float3(gravity.x(), gravity.y(), gravity.z());
 }
+
 Float3 SimpleRigidBody::GetLinearVelocity() const
 {
 	btVector3 linearVelocity = this->rigidBody->getLinearVelocity();
 	return Float3(linearVelocity.x(), linearVelocity.y(), linearVelocity.z());
 }
 
+void SimpleRigidBody::OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce)
+{
+	this->overrideGravity = true;
+	if(this->state.centerPos - point != Float3::null)
+		this->SetGravity(-(this->state.centerPos - point).GetNormalized()*gravityForce);
+	this->rigidBody->setDamping(1 - (this->state.centerPos - point).GetMagnitude(), 0);
+	//this->rigidBody->
+}
 
-void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
+void SimpleRigidBody::SetOverrideGravity(bool overrideGravity)
+{
+	this->overrideGravity = overrideGravity;
+}
+
+bool SimpleRigidBody::IsGravityOverrided()
+{
+	return this->overrideGravity;
+}
+
+void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB)
 {
 	if(this->afterCollision)
-		this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
+		this->afterCollision(bodyA, bodyB);
 }
 
 void SimpleRigidBody::CallSubscription_Move()
