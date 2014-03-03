@@ -70,7 +70,6 @@ bool GameClient::IsInvalid()
 }
 void GameClient::Invalidate()
 {
-	GameLogic::IPlayerData* player;
 	this->client->Disconnect();
 	this->isReady = false;
 	this->isInvalid = true;	//TODO: Fix this, should be true
