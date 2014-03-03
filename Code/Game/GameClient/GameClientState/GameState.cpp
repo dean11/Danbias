@@ -154,15 +154,13 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( p->getPos() );
 			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.8f * p->getScale().y, 0.0f) );
-
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
-			offset.y = p->getScale().y * 5.0f;
-			offset.z = p->getScale().z * -5.0f;
+			//offset.y = p->getScale().y * 5.0f;
+			//offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
-			this->privData->camera.SetHeadOffset( offset );
-			this->privData->camera.UpdateOrientation();
-
+			//this->privData->camera.SetHeadOffset( offset );
+			//this->privData->camera.UpdateOrientation();
 			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0); 
 		}
 	}
@@ -241,7 +239,7 @@ bool GameState::Render()
 	{
 		if(playerObject->second)
 		{
-			//if( this->privData->myId != playerObject->second->GetId() )
+			if( this->privData->myId != playerObject->second->GetId() )
 			{
 				playerObject->second->Render();
 			}
