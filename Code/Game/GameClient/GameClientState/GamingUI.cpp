@@ -76,12 +76,12 @@ bool GamingUI::HaveTextRender() const
 	return true; 
 }
 
-void GamingUI::RenderGUI() const
+void GamingUI::RenderGUI() 
 {
 	this->corsair->RenderTexture();
 }
 
-void GamingUI::RenderText() const
+void GamingUI::RenderText() 
 {
 	this->hp->RenderText();
 	this->energy->RenderText();
@@ -171,7 +171,7 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_Space:	this->sharedData->network->Send( Protocol_PlayerJump() );
 		break;
-		case SAKI_Escape:	this->nextState = GameStateUI::UIState_main_menu;
+		case SAKI_Escape:	this->nextState = GameStateUI::UIState_inGameMeny;
 		break;
 	}
 }
@@ -197,4 +197,7 @@ void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 	if(key == SAKI_M)
 		this->sharedData->mouseDevice->Activate();
 }
-
+void GamingUI::ChangeState( UIState next )
+{
+	this->nextState = next;
+}

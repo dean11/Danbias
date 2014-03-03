@@ -145,7 +145,7 @@ bool OptionState::Render()
 		Graphics::API::RenderGuiElement( this->sharedData->mouseCursor, this->musOrientation, Float2(0.15f, 0.24f), Float4(1.0f) );
 
 	Graphics::API::RenderGuiElement( this->sharedData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(0.0f, 0.0f, 0.0f, 1.0f) );
-	this->guiElements.RenderTexture();
+		this->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
 		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.18f), 10.0f);
@@ -229,12 +229,14 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 			if(e.state == ButtonState_Released)
 			{
 				e.owner->options.currentRes = (e.owner->options.currentRes - 1) % Utility::StaticArray::NumElementsOf(resolution);
+				e.owner->options.resolution = WStrToFloat2( resolution[e.owner->options.currentRes] );
 			}
 		break;
 		case DanBias::Client::OptionState::ButtonType_FlipResRight:
 			if(e.state == ButtonState_Released)
 			{
 				e.owner->options.currentRes = (e.owner->options.currentRes + 1) % Utility::StaticArray::NumElementsOf(resolution);
+				e.owner->options.resolution = WStrToFloat2( resolution[e.owner->options.currentRes] );
 			}
 		break;
 		case DanBias::Client::OptionState::ButtonType_Apply:

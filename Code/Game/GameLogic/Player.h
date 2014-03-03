@@ -107,6 +107,8 @@ namespace GameLogic
 		void Jump();
 		void initPlayerData();
 
+		void UpdateMovement( const ::Oyster::Math::Float4x4 &rotationMatrix, const ::Oyster::Physics::ICustomBody::State &state );
+
 	private:
 		int teamID;
 		Weapon *weapon;

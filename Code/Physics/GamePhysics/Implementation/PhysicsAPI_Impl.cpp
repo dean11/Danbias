@@ -93,7 +93,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btSphereShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(radius);
 
 	state.centerPos = position;
 	state.reach = Float3(radius, radius, radius);
@@ -134,7 +135,8 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btBoxShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(Min(halfSize.x, Min(halfSize.y, halfSize.z)));
 
 	state.centerPos = position;
 	state.reach = halfSize;
@@ -175,7 +177,8 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btCylinderShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(Min(halfSize.x, Min(halfSize.y, halfSize.z)));
 
 	state.centerPos = position;
 	state.reach = halfSize;
@@ -218,7 +221,8 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btCapsuleShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(Min(height, radius));
 
 	state.centerPos = position;
 	state.reach = Float3(radius, height, radius);
@@ -269,7 +273,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.5);
+	//dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);
@@ -292,15 +296,22 @@ void API_Impl::UpdateWorld()
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
+		//this->dynamicsWorld->
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
-		this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
-		simpleBody->PreStep(this->dynamicsWorld);
+		if(!simpleBody->IsGravityOverrided())
+		{
+			this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
+		}
+		else
+		{
+			simpleBody->SetOverrideGravity(false);
+		}
 
-		
+		simpleBody->PreStep(this->dynamicsWorld);
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
-	this->dynamicsWorld->stepSimulation(this->timeStep, 1, this->timeStep);
+	this->dynamicsWorld->stepSimulation(this->timeStep, 100, this->timeStep);
 
 	ICustomBody::State state;
 
@@ -338,8 +349,8 @@ void API_Impl::UpdateWorld()
 				const btVector3& ptB = pt.getPositionWorldOnB();
 				const btVector3& normalOnB = pt.m_normalWorldOnB;
 
-				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB, 0.0f);
-				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA, 0.0f);
+				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB);
+				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA);
 			}
 		}
 
@@ -438,6 +449,21 @@ void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void*
 		default:
 			return;
 	}
+}
+
+ICustomBody* API_Impl::RayClosestObjectNotMe(ICustomBody* self, Float3 origin, Float3 target)
+{
+	ClosestNotMe rayCallback(dynamic_cast<SimpleRigidBody*>(self)->GetRigidBody());
+
+	if((origin - target).GetLength() != 0)
+		this->dynamicsWorld->rayTest (btVector3(origin.x, origin.y, origin.z), btVector3(target.x, target.y, target.z), rayCallback);
+	else
+		return nullptr;
+
+	if(rayCallback.hasHit())
+		return (ICustomBody*)rayCallback.m_collisionObject->getUserPointer();
+	else
+		return nullptr;
 }
 
 namespace Oyster 

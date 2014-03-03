@@ -18,10 +18,11 @@ namespace DanBias { namespace Client
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
 		bool HaveTextRender() const;
-		void RenderGUI() const;
-		void RenderText() const;
+		void RenderGUI();
+		void RenderText();
 		bool Release();
 		void SetCountdown( float cd );
+		void ChangeState( UIState next );
 
 	private:
 		::Oyster::Network::NetworkClient *netClient;
@@ -29,6 +30,7 @@ namespace DanBias { namespace Client
 
 		// TODO add multiple UI elements
 		Text_UI* text;
+		Text_UI* deathCounter;
 		RespawnUI();
 	};
 } }

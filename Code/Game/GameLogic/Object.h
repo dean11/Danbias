@@ -27,7 +27,7 @@ namespace GameLogic
 
 		inline ObjectSpecialType				GetObjectType() const	override	{ return this->type; }
 		inline int								GetID()			const	override	{ return this->objectID; }	
-		inline Oyster::Math::Float3				GetScale()				override	{ return this->scale; }
+		inline Oyster::Math::Float3				GetScale()				override;	
 		inline Oyster::Math::Float3				GetPosition()			override;
 		inline Oyster::Math::Quaternion			GetRotation()			override;
 		inline Oyster::Math::Float4x4			GetOrientation()		override;
@@ -46,9 +46,7 @@ namespace GameLogic
 
 		static const Game* gameInstance;
 
-		Oyster::Math::Float3 lookDirection;		//The look direction for the camera
-		Oyster::Math::Float3 forwardDirection;	//The forward direction of the rigid body
-		Oyster::Math::Float3 scale;				//The scale of both rigid body and the mesh
+		//Oyster::Math::Float3 scale;				//The scale of both rigid body and the mesh
 
 		ObjectSpecialType type;
 		int objectID;

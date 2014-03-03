@@ -172,23 +172,13 @@ using namespace GameLogic;
 			//do shredding damage
 		}
 
+		//send message that box has exploded?
+		ExplosionSource->RemoveAffectedBy();
+		ExplosionSource->RemoveManipulation();
 
-		
-
+		ExplosionSource->GetRigidBody()->MoveToLimbo();
+		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
-
-	void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj, void* args)
-	{
-		Object *realObj = (Object*)obj->GetCustomTag();
-		
-		if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_Player)
-			return;
-		
-		firedBullet *bullet = (firedBullet*)(args);
-
-		((Player*)realObj)->DamageLife(bullet->hitDamage);
-	}
-
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
@@ -256,16 +246,23 @@ using namespace GameLogic;
 			return;
 		}
 
-		Player *player = realObjA->getManipulatingPlayer();
-		if( player != nullptr )
-		{
-			player->UseWeapon( WEAPON_INTERRUPT );
-		}
+		Math::Float3 deltaVelocity = realObjA->GetRigidBody()->GetLinearVelocity() - realObjB->GetRigidBody()->GetLinearVelocity();
+		Math::Float VelocityNorm = deltaVelocity.Dot( deltaVelocity );
 
-		player = realObjB->getManipulatingPlayer();
-		if( player != nullptr )
+		static const Math::Float velocity_norm_threshold_interrupt_weapon = 100.0f; // 10 m/s deltaVelocity
+		if( VelocityNorm >= velocity_norm_threshold_interrupt_weapon )
 		{
-			player->UseWeapon( WEAPON_INTERRUPT );
+			Player *player = realObjA->getManipulatingPlayer();
+			if( player != nullptr )
+			{
+				player->UseWeapon( WEAPON_INTERRUPT );
+			}
+
+			player = realObjB->getManipulatingPlayer();
+			if( player != nullptr )
+			{
+				player->UseWeapon( WEAPON_INTERRUPT );
+			}
 		}
 
 
@@ -304,10 +301,6 @@ using namespace GameLogic;
 				//realObjB is the winner and will change As ownership to B
 			}
 		}
-		
-
-
-
 	}
 
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)

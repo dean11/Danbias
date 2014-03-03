@@ -41,6 +41,8 @@ GameSession::GameSession()
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 
+	this->gameInstance.SetFrameTimeLength(this->logicFrameTime);
+
 	// HACK to avoid mem leaks 
 	//memset(&this->description, 0, sizeof(GameDescription));
 }
@@ -105,6 +107,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 		printf("Level not created!");
 		return false;
 	}
+	levelData->InitGameMode(desc.gameTimeMinutes * 60.0f, 300);
 
 /* Set some game instance data options */
 	this->gameInstance.SetMoveSubscription(GameSession::ObjectMove);
@@ -117,7 +120,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 	this->gameInstance.SetPickupSubscription(GameSession::PickupEvent);
 	this->gameInstance.SetCollisionSubscription(GameSession::CollisionEvent);
 	this->gameInstance.SetWeaponEnergySubscription(GameSession::EnergyUpdate);
-	this->gameInstance.SetFPS(60);
+	this->gameInstance.SetGameOverSubscription(GameSession::GameOver);
 
 	this->description.clients.Clear();
 

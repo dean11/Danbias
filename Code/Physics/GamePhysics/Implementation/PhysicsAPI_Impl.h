@@ -47,6 +47,24 @@ namespace Oyster
 				}
 			};
 
+			struct ClosestNotMe : btCollisionWorld::ClosestRayResultCallback
+			{
+				public:
+				ClosestNotMe (btRigidBody* me) : btCollisionWorld::ClosestRayResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0))
+				{
+					this->me = me;
+				}
+
+				virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
+				{
+					if (rayResult.m_collisionObject == this->me)
+						return 1.0;
+					return ClosestRayResultCallback::addSingleResult (rayResult, normalInWorldSpace);
+				}
+				protected:
+					btRigidBody* me;
+			};
+
 			API_Impl();
 			virtual ~API_Impl();
 
@@ -73,6 +91,8 @@ namespace Oyster
 			void UpdateWorld();
 
 			void ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect);
+
+			ICustomBody* RayClosestObjectNotMe(ICustomBody* self, Oyster::Math::Float3 origin, Oyster::Math::Float3 target);
 
 		private:
 			btBroadphaseInterface* broadphase;

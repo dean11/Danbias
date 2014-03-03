@@ -28,6 +28,7 @@ bool RespawnUI::Init()
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
 	this->text	=  new Text_UI(L"DEAD", Float3(0.35f,0.35f,0.5f), Float2(0.5f,0.2f));
+	this->deathCounter	=  new Text_UI(L"", Float3(0.5f,0.5f,0.5f), Float2(0.5f,0.2f));
 	return true; 
 }
 GameStateUI::UIState RespawnUI::Update( float deltaTime )
@@ -48,14 +49,15 @@ bool RespawnUI::HaveTextRender() const
 	return true; // TODO: change to true when we want UI elements like a chat window
 }
 
-void RespawnUI::RenderGUI() const
+void RespawnUI::RenderGUI() 
 {
 	// TODO:BLOODY SCREEN
 }
 
-void RespawnUI::RenderText() const
+void RespawnUI::RenderText() 
 {
 	this->text->RenderText();
+	this->deathCounter->RenderText(std::to_wstring((int)countDown));
 	// TODO: Text countdown somewhere on screen would be nice
 }
 
@@ -64,6 +66,8 @@ bool RespawnUI::Release()
 	// TODO: Release UI components here.
 	if(this->text)
 		delete this->text;
+	if(this->deathCounter)
+		delete this->deathCounter;
 	return true;
 }
 void RespawnUI::SetCountdown( float cd )
@@ -72,5 +76,8 @@ void RespawnUI::SetCountdown( float cd )
 	// this text should be rendered
 }
 
-
+void RespawnUI::ChangeState( UIState next )
+{
+	this->nextState = next;
+}
 

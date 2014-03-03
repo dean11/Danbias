@@ -33,10 +33,24 @@ namespace DanBias
 				texture = Oyster::Graphics::API::CreateTexture(textureName);
 			}
 
-			virtual void RenderTexture() const
+			void RenderTexture() const
 			{
 				if(texture)
 					Oyster::Graphics::API::RenderGuiElement(texture, pos, size, tintColor);
+			}
+			void RenderTexture( Oyster::Math::Float3 pos) const
+			{
+				if(texture)
+				{
+					Oyster::Graphics::API::RenderGuiElement(texture, pos, size, tintColor);
+				}
+			}
+			void RenderTexture( Oyster::Math::Float3 pos, Oyster::Math::Float2 size) const
+			{
+				if(texture)
+				{
+					Oyster::Graphics::API::RenderGuiElement(texture, pos, size, tintColor);
+				}
 			}
 			virtual void RenderTexture(const Oyster::Math::Float3& position) const
 			{

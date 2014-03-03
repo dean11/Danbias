@@ -28,6 +28,8 @@ namespace DanBias
 			Oyster::Math::Float3 position; 
 			Oyster::Math::Quaternion rotation; 
 			Oyster::Math::Float3 scale; 
+			Oyster::Math::Float3 tint;
+			Oyster::Math::Float3 gtint;
 			bool visible; 
 		};
 
