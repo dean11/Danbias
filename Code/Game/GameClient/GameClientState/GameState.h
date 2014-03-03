@@ -42,6 +42,7 @@ namespace DanBias { namespace Client
 		bool renderWhireframe; 
 		bool key_showStats;
 		bool renderStats;
+		bool gameOver; 
 		// !DEGUG KEYS
 
 		void Gameplay_ObjectPickup( Oyster::Network::CustomNetProtocol data );

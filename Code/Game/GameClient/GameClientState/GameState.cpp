@@ -86,6 +86,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->key_Wireframe_Toggle = false;
 	this->renderWhireframe = false;
 	// !DEGUG KEYS
+	this->gameOver = false;
 
 	shared.keyboardDevice->ReleaseTextTarget();
 	//shared.mouseDevice->AddMouseEvent(this);
@@ -438,19 +439,23 @@ void GameState::ReadKeyInput()
 	}
 #endif // !DEGUG KEYS
 
-	// toggle wire frame render
+	// show Stats
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
-		if( !this->key_showStats )
-		{
-			this->renderStats = true;
-			this->key_showStats = true;
-		}
+		this->renderStats = true;
 	} 
 	else 
 	{
 		this->renderStats = false;
-		this->key_showStats = false;
+	}
+
+	if( this->gameOver )
+	{
+		if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Escape) )
+		{
+			this->currGameUI = inGameMeny;
+		}
+		this->renderStats = true;
 	}
 }
 
@@ -844,14 +849,12 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 
 void GameState::General_GameOver( CustomNetProtocol data )
 {
-	//Protocol_ObjectDie decoded(data);
-	//
-	//((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
-	//// turn off gameInput
-	//this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
-	//this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
-	//this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
-	//renderStats = true;
+	Protocol_General_GameOver decoded(data);
+	
+	// turn off gameInput
+	this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+	this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+	gameOver = true;
 }
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
@@ -970,10 +973,13 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 	}
 	else if( ProtocolIsGeneral(ID) )
 	{
+		CustomNetProtocol data = message.args.data.protocol;
 		switch( ID )
 		{
 			case protocol_General_Status:				break; /** @todo TODO: implement */
 			case protocol_General_Text:					break; /** @todo TODO: implement */
+			case protocol_General_GameOver: General_GameOver( data );
+				break;
 		default: break;
 		}
 	}
