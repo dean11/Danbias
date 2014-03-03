@@ -72,3 +72,7 @@ void Game::LevelData::RemovePlayerFromGame(IPlayerData *player)
 {
 	this->level->RemovePlayerFromGame(((PlayerData*)player)->GetPlayer());
 }
+void Game::LevelData::InitGameMode(float endTimer, int endKillScore)
+{
+	this->level->InitiateGameMode(endTimer, endKillScore);
+}

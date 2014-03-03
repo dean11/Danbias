@@ -106,13 +106,18 @@ void Player::BeginFrame()
 		Float3 &upDir = rotation.v[1].xyz;
 		Float3 &rightDir = rotation.v[0].xyz;
 
+		bool haveMoved = false,
+			 isGrounded = true;
+
 		if( this->IsWalking() )
 		{
-			this->UpdateMovement( rotation, state );
+			haveMoved = this->UpdateMovement( rotation, state );
 
 			if( this->key_jump > 0.001f )
 			{ // process jumping
 				this->rigidBody->ApplyImpulse( upDir * jump_velocity * state.mass );
+				haveMoved = true;
+				isGrounded = false;
 
 				if( this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING )
 				{
@@ -120,7 +125,7 @@ void Player::BeginFrame()
 					this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
 				}
 			}
-			else if( this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING )
+			else if( haveMoved && this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING )
 			{ // if is walking and not attempting to jump. Play walking animation
 				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk );
 				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
@@ -128,9 +133,11 @@ void Player::BeginFrame()
 		}
 		else if( this->IsJumping() )
 		{
-			this->UpdateMovement( rotation, state );
+			haveMoved = this->UpdateMovement( rotation, state );
+			isGrounded = false;
 		}
-		else if( this->IsIdle() && this->playerState != PLAYER_STATE_IDLE )
+		
+		if( !haveMoved && isGrounded && this->playerState != PLAYER_STATE_IDLE )
 		{
 			this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle );
 			this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
@@ -228,17 +235,18 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return ( this->rigidBody->GetLambdaUp() < 0.6f );
+	return ( this->rigidBody->GetLambdaUp() );
 }
 
 bool Player::IsJumping()
 {
-	return ( this->rigidBody->GetLambdaUp() >= 0.6f );
+	return ( this->rigidBody->GetLambdaUp() >= 0.7f );
 }
 
 bool Player::IsIdle()
 {
-	return ( this->rigidBody->GetLambdaUp() < 0.6f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f );
+	Float3 v = this->rigidBody->GetLinearVelocity();
+	return ( this->rigidBody->GetLambdaUp() < 0.7f && v.Dot( v ) < 0.0001f );
 }
 
 void Player::Inactivate()
@@ -336,11 +344,13 @@ void Player::setDeathTimer( float deathTimer )
 	this->playerState = PLAYER_STATE_DEAD;
 }
 
-void Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBody::State &state )
+bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBody::State &state )
 {
 	const Float3 &rightDir = orientationMatrix.v[0].xyz,
 				 &upDir = orientationMatrix.v[1].xyz,
 				 &forwardDir = orientationMatrix.v[2].xyz;
+
+	bool haveMoved = false;
 
 	// preserve up/down movement
 	Float3 movementAccumulator = NormalProjection( this->rigidBody->GetLinearVelocity(), upDir );
@@ -348,6 +358,7 @@ void Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 	{ // process forward/backward
 		Float3 forwardVelocity = 0.0f;
 		bool isNotMovingForwardOrBackward = true;
+		
 		if( this->key_forward > 0.001f )
 		{
 			forwardVelocity += forwardDir * forward_velocity;
@@ -358,31 +369,46 @@ void Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 			forwardVelocity -= forwardDir * backward_velocity;
 			isNotMovingForwardOrBackward = false;
 		}
+
 		if( isNotMovingForwardOrBackward )
 		{ // dampen forward/backward velocity if not running forward/backward
 			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * dampening_factor;
 		}
+		else
+		{
+			haveMoved = true;
+		}
+
 		movementAccumulator += forwardVelocity;
 	}
 	{ // process strafe right/left
 		Float3 strafeVelocity = 0.0f;
 		bool isNotStrafing = true;
+
 		if( this->key_strafeRight > 0.001f )
 		{
 			strafeVelocity = rightDir * strafe_velocity;
 			isNotStrafing = false;
 		}
+
 		if( this->key_strafeLeft > 0.001f )
 		{
 			strafeVelocity -= rightDir * strafe_velocity;
 			isNotStrafing = false;
 		}
+
 		if( isNotStrafing )
 		{ // dampen right/left strafe velocity if not strafing
 			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * dampening_factor;
 		}
+		else
+		{
+			haveMoved = true;
+		}
+
 		movementAccumulator += strafeVelocity;
 	}
 
 	this->rigidBody->SetLinearVelocity( movementAccumulator );
+	return haveMoved;
 }

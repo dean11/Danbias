@@ -7,7 +7,10 @@
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
 #include "../Render/GuiRenderer.h"
+#include "Utilities.h" // need StaticArray::NumElementsOf
 #include <vld.h>
+
+using ::Utility::StaticArray::NumElementsOf;
 
 namespace Oyster
 {
@@ -357,20 +360,59 @@ namespace Oyster
 		float API::PlayAnimation( Model::Model* m, const std::wstring &name, bool looping )
 		{
 			if( m )
-			{ // nasty temp solution by Dan
-				static int fairSlotLooper = 0;
-				fairSlotLooper = (fairSlotLooper + 1) % 2; // & 3 ! same as n % 2	%2 works and does not chrash in delete models
-				auto temp = m->info->Animations.find(name);
-				if(temp != m->info->Animations.end())
+			{
+				if( m->numOccupiedAnimationSlots < NumElementsOf(m->Animation) )
 				{
-					m->Animation[fairSlotLooper].AnimationPlaying = &(temp->second);
-					m->Animation[fairSlotLooper].AnimationTime=0;
-					m->Animation[fairSlotLooper].LoopAnimation = looping;
-					return (float)m->Animation[fairSlotLooper].AnimationPlaying->duration;
+					auto animBlueprint = m->info->Animations.find(name);
+					if( animBlueprint != m->info->Animations.end() )
+					{
+						Model::AnimationData *animationSlot = &m->Animation[m->numOccupiedAnimationSlots]; // memory renaming for readability
+						++m->numOccupiedAnimationSlots;
+
+						animationSlot->AnimationPlaying	= &(animBlueprint->second);
+						animationSlot->AnimationTime	= 0.0f;
+						animationSlot->LoopAnimation	= looping;
+
+						return (float)animationSlot->AnimationPlaying->duration;
+					}
 				}
 			}
 			return 0.0f;
 		}
+
+		void API::StopAnimation( Model::Model* m, const std::wstring &name )
+		{
+			if( m )
+			{
+				if( m->numOccupiedAnimationSlots < NumElementsOf(m->Animation) )
+				{
+					auto animBlueprint = m->info->Animations.find(name);
+					if( animBlueprint != m->info->Animations.end() )
+					{
+						for( int i = 0; i < NumElementsOf(m->Animation); ++i )
+						{
+							if( m->Animation[i].AnimationPlaying == &animBlueprint->second )
+							{
+								--m->numOccupiedAnimationSlots;
+								if( i < m->numOccupiedAnimationSlots )
+								{
+									m->Animation[i] = m->Animation[m->numOccupiedAnimationSlots];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		void API::StopAllAnimations( Model::Model* m )
+		{
+			if( m )
+			{
+				m->numOccupiedAnimationSlots = 0;
+			}
+		}
+
 
 		void API::Update(float dt)
 		{

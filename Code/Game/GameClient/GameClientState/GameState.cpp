@@ -86,6 +86,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->key_Wireframe_Toggle = false;
 	this->renderWhireframe = false;
 	// !DEGUG KEYS
+	this->gameOver = false;
 
 	shared.keyboardDevice->ReleaseTextTarget();
 	//shared.mouseDevice->AddMouseEvent(this);
@@ -192,22 +193,26 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 			// disconnect 
 		}
 		break;
-	case GameStateUI::UIStat_inGameMeny:
+	case GameStateUI::UIState_inGameMeny:
 		{
+			// turn off gameInput
 			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
 			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
 			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
 			this->currGameUI = inGameMeny;
+			// activate menyInput
 			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
 			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
 		}
 		break;
-	case GameStateUI::UIStat_resumeGame:
+	case GameStateUI::UIState_resumeGame:
 		{
+			// inactivate MenyInput
 			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->currGameUI);
 			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->currGameUI);
 			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
 			this->currGameUI = gameUI;
+			// activate GameInput
 			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
 			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
 		}
@@ -435,19 +440,23 @@ void GameState::ReadKeyInput()
 	}
 #endif // !DEGUG KEYS
 
-	// toggle wire frame render
+	// show Stats
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
-		if( !this->key_showStats )
-		{
-			this->renderStats = true;
-			this->key_showStats = true;
-		}
+		this->renderStats = true;
 	} 
 	else 
 	{
 		this->renderStats = false;
-		this->key_showStats = false;
+	}
+
+	if( this->gameOver )
+	{
+		if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Escape) )
+		{
+			this->currGameUI = inGameMeny;
+		}
+		this->renderStats = true;
 	}
 }
 
@@ -800,6 +809,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				player->playAnimation(L"movement", true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
 				break;
 
@@ -839,6 +849,15 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 	}
 }
 
+void GameState::General_GameOver( CustomNetProtocol data )
+{
+	Protocol_General_GameOver decoded(data);
+	
+	// turn off gameInput
+	this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+	this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+	gameOver = true;
+}
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
@@ -956,10 +975,13 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 	}
 	else if( ProtocolIsGeneral(ID) )
 	{
+		CustomNetProtocol data = message.args.data.protocol;
 		switch( ID )
 		{
 			case protocol_General_Status:				break; /** @todo TODO: implement */
 			case protocol_General_Text:					break; /** @todo TODO: implement */
+			case protocol_General_GameOver: General_GameOver( data );
+				break;
 		default: break;
 		}
 	}
