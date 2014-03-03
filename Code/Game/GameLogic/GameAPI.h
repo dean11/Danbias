@@ -161,8 +161,6 @@ namespace GameLogic
 
 		virtual void RemovePlayer( IPlayerData* ) = 0;
 
-		virtual void RemovePlayer( IPlayerData* ) = 0;
-
 		/**	Creates a level 
 		*	@return Returns a ILevelData container to use for level manipulation
 		*/
