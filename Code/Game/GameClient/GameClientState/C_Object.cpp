@@ -30,6 +30,8 @@ bool C_Object::Init(ModelInitData modelInit)
 	if(model == NULL)
 		return false;
 	model->Visible = modelInit.visible;
+	model->Tint = modelInit.tint;
+	model->GlowTint = modelInit.gtint;
 	updateWorld();
 	return true;
 }
