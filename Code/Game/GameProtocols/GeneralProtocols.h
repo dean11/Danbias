@@ -72,20 +72,20 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	//#define protocol_General_GameOver							103
-	struct Protocol_General_EndGame :public Oyster::Network::CustomProtocolObject
+	//#define protocol_General_GameOver							10
+	struct Protocol_General_GameOver :public Oyster::Network::CustomProtocolObject
 	{
-		Protocol_General_EndGame()
+		Protocol_General_GameOver()
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_General_GameOver;
 		}
-		Protocol_General_EndGame(unsigned short port, std::string ip, std::string name)
+		Protocol_General_GameOver(unsigned short port, std::string ip, std::string name)
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_General_GameOver;
 		}
-		Protocol_General_EndGame(Oyster::Network::CustomNetProtocol& p)
+		Protocol_General_GameOver(Oyster::Network::CustomNetProtocol& p)
 		{
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
@@ -97,7 +97,7 @@ namespace GameLogic
 		Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	//#define protocol_Broadcast_Test							102
+	//#define protocol_Broadcast_Test							103
 	struct Protocol_Broadcast_Test :public Oyster::Network::CustomProtocolObject
 	{
 		unsigned short port;
