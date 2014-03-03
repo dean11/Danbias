@@ -206,6 +206,7 @@ using namespace DanBias;
 	void GameSession::GameOver(  )
 	{
 		GameSession::gameSession->Send( Protocol_General_GameOver().GetProtocol() );
+		GameSession::gameSession->isRunning = false;
 	}
 
 
