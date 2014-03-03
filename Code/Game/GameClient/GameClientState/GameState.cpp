@@ -794,6 +794,7 @@ void GameState::Gameplay_ObjectDisconnectPlayer( CustomNetProtocol data )
 		{
 			player->SetVisible(false);
 			(this->privData->players)[decoded.objectID].Release();
+			delete player;
 			((StatsUI*)this->statsUI)->removePlayer( decoded.objectID);
 		}
 	}
