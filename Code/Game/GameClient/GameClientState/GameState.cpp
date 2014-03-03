@@ -77,7 +77,7 @@ bool GameState::Init( SharedStateContent &shared )
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 100.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	// DEGUG KEYS
@@ -361,7 +361,8 @@ bool GameState::Release()
 		statsUI = NULL;
 	}
 	currGameUI = NULL;
-	
+	Graphics::API::SetView(Math::Float4x4::identity);
+	Graphics::API::SetProjection(Math::Float4x4::null);
 	return true;
 }
 
@@ -904,10 +905,10 @@ void GameState::SetUp( DanBias::Client::C_Player* p)
 		xCrossPre.Normalize();
 		
 		//q.setRotation(xCrossPre, 3.1415);
-    }
+	}
 	else if (v1.Dot(v2) > 0.999999) 
 	{
-           q = Quaternion(Float3(0.0f), 1);
+		   q = Quaternion(Float3(0.0f), 1);
 	}
 	else
 	{

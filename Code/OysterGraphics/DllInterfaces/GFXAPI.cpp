@@ -15,7 +15,7 @@ namespace Oyster
 	{
 		namespace
 		{
-			Math::Float4x4 View;
+			Math::Float4x4 View = Math::Float4x4::identity;
 			Math::Float4x4 Projection;
 			std::vector<Definitions::Pointlight> Lights;
 			float deltaTime;

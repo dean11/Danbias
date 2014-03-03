@@ -2,25 +2,12 @@
 #include "LightCalc.hlsli"
 #include "PosManipulation.hlsli"
 #include "SSAO.hlsli"
-//todo
-//LightCulling
-//Calc Diff + Spec	Done
-//Calc Ambience		Done
-//Write Glow
-
-#define UINT_MAX	0xFFFFFFFF
-#define FLOAT_MAX	3.402823466e+38
-#define BLOCKSIZE 16
-#define NUMTHREADS BLOCKSIZE * BLOCKSIZE
-#define MAXLIGHTS 1024
-#define TEXTURESPREAD 1/255
+#include "TileCulling.hlsli"
+#include "ReadSky.hlsli"
 
 
-// -- Shared Memory ------------------------------------------------- //
 
-groupshared uint iMinDepth, iMaxDepth;
-groupshared uint numVisiblePointLights,
-				 visiblePointlightIndex[MAXLIGHTS];
+
 
 // ------------------------------------------------------------------ //
 
@@ -43,73 +30,13 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 	}
 	GroupMemoryBarrierWithGroupSync();
 
-	// store and load shared minDepth and maxDepth
-	float minDepth = 0.0f, maxDepth = 0.0f;
+	bool ValidPixel = true;
+	if(posN.z == 1.0f)
 	{
-		InterlockedMin( iMinDepth, asuint(ViewPos.z) );
-		InterlockedMax( iMaxDepth, asuint(ViewPos.z) );
-
-		GroupMemoryBarrierWithGroupSync();
-		minDepth = asfloat(iMinDepth);
-		maxDepth = asfloat(iMaxDepth);
+		ValidPixel = false;
 	}
 
-
-	// -- Switching to LightCulling ------------------------------------- //
-
-	//define collision volume
-	float2 tilescale = float2(Diffuse.Length.xy) * rcp(float(2 * BLOCKSIZE));
-	float2 tilebias = tilescale - float2(Gid.xy);
-
-	// Now work out composite projection matrix
-	// Relevant matrix columns for this tile frusta
-	float4 c1 = float4(Proj._11 * tilescale.x, 0.0f, tilebias.x, 0.0f);
-	float4 c2 = float4(0.0f, -Proj._22 * tilescale.y, tilebias.y, 0.0f);
-	float4 c4 = float4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	// Derive frustum planes
-	float4 frustumPlanes[6];
-	// Sides
-	frustumPlanes[0] = c4 - c1;
-	frustumPlanes[1] = c4 + c1;
-	frustumPlanes[2] = c4 - c2;
-	frustumPlanes[3] = c4 + c2;
-	// Near/far
-	frustumPlanes[4] = float4(0.0f, 0.0f,  1.0f, -minDepth);
-	frustumPlanes[5] = float4(0.0f, 0.0f, -1.0f,  maxDepth);
-
-	// Normalize frustum planes (near/far already normalized)
-	[unroll]
-	for (uint i = 0; i < 4; ++i)
-	{
-		frustumPlanes[i] *= rcp(length(frustumPlanes[i].xyz));
-	}
-
-	// culling the tile's near and far to minDepth & maxDepth ( with tolerance )
-
-		
-	for(uint lightIndex = GI; lightIndex < Lights; lightIndex += NUMTHREADS)
-	{
-		PointLight pl = Points[lightIndex];
-	
-		bool inFrustrum = true;
-		[unroll]
-		for(int i = 0; i < 6; ++i)
-		{
-			float d = dot(frustumPlanes[i], float4(pl.Pos, 1.0f));
-			inFrustrum = inFrustrum && (d >= -pl.Radius);
-		}
-
-		[branch]
-		if(inFrustrum)
-		{
-			uint offset;
-			InterlockedAdd( numVisiblePointLights, 1, offset );
-			visiblePointlightIndex[offset] = lightIndex;
-		}
-	}
-
-	GroupMemoryBarrierWithGroupSync();
+	CullLights(Gid,GI,ValidPixel, ViewPos.z);
 
 
 	
@@ -130,18 +57,26 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 	
 	if(DTid.x & 1 && DTid.y & 1 )
 	{
-		float AmbValue = GetSSAO(ViewPos, UV, DTid.xy, GTid.xy/2);
-		float4 DiffBase = DiffuseGlow[DTid.xy];
-		DiffBase += DiffuseGlow[DTid.xy + uint2(1,0)];
-		DiffBase += DiffuseGlow[DTid.xy + uint2(0,1)];
-		DiffBase += DiffuseGlow[DTid.xy + uint2(1,1)];
-		DiffBase = DiffBase / 4;
-		
-		float4 DepthBase = DepthTexture[DTid.xy];
-		DepthBase += DepthTexture[DTid.xy + uint2(1,0)];
-		DepthBase += DepthTexture[DTid.xy + uint2(0,1)];
-		DepthBase += DepthTexture[DTid.xy + uint2(1,1)];
-		DepthBase = DepthBase /4;
+		float AmbValue;
+		float4 DiffBase = 0;
+
+		if(ValidPixel)
+		{
+			AmbValue = GetSSAO(ViewPos, UV, DTid.xy, GTid.xy/2);
+
+			DiffBase = DiffuseGlow[DTid.xy];
+			DiffBase += DiffuseGlow[DTid.xy + uint2(1,0)];
+			DiffBase += DiffuseGlow[DTid.xy + uint2(0,1)];
+			DiffBase += DiffuseGlow[DTid.xy + uint2(1,1)];
+			DiffBase = DiffBase / 4;
+		}
+		else
+		{
+			AmbValue = 1;
+			float3 ViewVec = mul(transpose(View), float4(ViewPos,0));
+			DiffBase = ReadSky(ViewVec);
+		}
+
 		Ambient[DTid.xy/2] = float4(DiffBase.xyz , AmbValue);
 		//Ambient[DTid.xy/2] = float4(DiffBase.xyz, 1);
 		Ambient[DTid.xy/2 + float2(Diffuse.Length.x/2, 0)] = GUI[DTid.xy];

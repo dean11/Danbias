@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Resources.h"
+#include "../FileLoader/GeneralLoader.h"
 #include "..\Definitions\GraphicalDefinition.h"
 
 typedef Oyster::Graphics::Core::PipelineManager::ShaderType ShaderType;
@@ -65,6 +66,13 @@ namespace Oyster
 
 				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
 				ID3D11DepthStencilView* Resources::Gui::depth = NULL;
+
+				ID3D11ShaderResourceView* Resources::Light::Up = NULL;
+				ID3D11ShaderResourceView* Resources::Light::Down = NULL;
+				ID3D11ShaderResourceView* Resources::Light::Left = NULL;
+				ID3D11ShaderResourceView* Resources::Light::Right = NULL;
+				ID3D11ShaderResourceView* Resources::Light::Front = NULL;
+				ID3D11ShaderResourceView* Resources::Light::Back = NULL;
 
 				std::map<Model::ModelInfo*, Resources::ModelDataWrapper*> Resources::RenderData = std::map<Model::ModelInfo*, Resources::ModelDataWrapper*>();
 #pragma endregion
@@ -397,6 +405,13 @@ namespace Oyster
 					Core::device->CreateDepthStencilView(depthstencil,NULL,&Gui::depth);
 					depthstencil->Release();
 
+					Light::Up = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"Up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Down = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"Down.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Left = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"Left.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Right = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"Right.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Front = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"Front.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Back = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"Back.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+
 					return Core::Init::Success;
 				}
 
@@ -590,6 +605,12 @@ namespace Oyster
 					Light::Pass.SRV.Compute.push_back(Light::PointLightView);
 					Light::Pass.SRV.Compute.push_back(Light::SSAOKernel);
 					Light::Pass.SRV.Compute.push_back(Light::SSAORandom);
+					Light::Pass.SRV.Compute.push_back(Light::Up);
+					Light::Pass.SRV.Compute.push_back(Light::Down);
+					Light::Pass.SRV.Compute.push_back(Light::Left);
+					Light::Pass.SRV.Compute.push_back(Light::Right);
+					Light::Pass.SRV.Compute.push_back(Light::Front);
+					Light::Pass.SRV.Compute.push_back(Light::Back);
 
 					////---------------- Post Pass Setup ----------------------------
 					Post::Pass.Shaders.Compute = GetShader::Compute(L"PostPass");
