@@ -842,6 +842,17 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 	}
 }
 
+void GameState::General_GameOver( CustomNetProtocol data )
+{
+	//Protocol_ObjectDie decoded(data);
+	//
+	//((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
+	//// turn off gameInput
+	//this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
+	//this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+	//this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
+	//renderStats = true;
+}
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
