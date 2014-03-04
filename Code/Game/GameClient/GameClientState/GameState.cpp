@@ -781,6 +781,9 @@ void GameState::Gameplay_ObjectRespawn( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			this->privData->camera.SetPosition( decoded.position );
+			this->currGameUI =  this->gameUI;
+			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		}
 		object->setPos( decoded.position );
 		object->updateWorld();
@@ -789,7 +792,7 @@ void GameState::Gameplay_ObjectRespawn( CustomNetProtocol data )
 		object->updateRBWorld();
 		// !RB DEBUG 
 	}
-	this->currGameUI =  this->gameUI;
+	
 }
 void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 {
@@ -797,8 +800,11 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	if( this->privData->myId == decoded.victimID )
 	{
 		this->currGameUI =  this->respawnUI;
+		this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
+		this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		// set countdown 
 		((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
+		
 	}
 	// update score board
 	((StatsUI*)this->statsUI)->updateDeatchScore( decoded.victimID, decoded.victimDeathCount ); 

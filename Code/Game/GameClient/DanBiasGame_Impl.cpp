@@ -79,8 +79,8 @@ namespace DanBias
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x		= 1920;
-		winDesc.windowSize.y		= 1080;
+		winDesc.windowSize.x		= 1200;
+		winDesc.windowSize.y		= 800;
 		winDesc.windowProcCallback	= WindowCallBack;
 
 		if(! data.window->CreateWin(winDesc) )
