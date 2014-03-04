@@ -142,6 +142,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	C_Player *p = new C_Player();
 	if( p->Init(modelData) )
 	{
+		
 		// RB DEBUG
 		p->InitRB( RBData );
 		// !RB DEBUG 
@@ -153,6 +154,16 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		p->SetTint(colors.getTintColor(id));
 		p->SetGlowTint(colors.getGlowColor(id));
 		
+		Graphics::Definitions::Pointlight pl;
+		pl.Pos = p->getPos();
+		pl.Bright = 0.6f;
+		pl.Radius = 100;
+		pl.Color = p->GetGlowTint();
+		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
+		p->SetLight(p->GetId());
+		(newLight)->Render();
+		(*this->privData->lights)[p->GetId()] = newLight;
+
 		(this->privData->players)[id] = p;
 		
 		if( isMyPlayer )
@@ -635,6 +646,14 @@ void GameState::Gameplay_ObjectScale( CustomNetProtocol data )
 		// RB DEBUG 
 		object->setRBScale ( decoded.scale );  
 		// !RB DEBUG 
+		if(object->GetLight()!=-1)
+		{
+			std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>::iterator light = privData->lights->find(object->GetLight());
+			if(light != privData->lights->end())
+			{
+				light->second->setPos(object->getPos());
+			}
+		}
 	}
 }
 void GameState::Gameplay_ObjectRotation( CustomNetProtocol data )
