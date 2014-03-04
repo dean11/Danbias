@@ -24,11 +24,10 @@ namespace DanBias { namespace Client
 	struct SharedStateContent
 	{
 	public:
-
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>>	staticObjects;
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>>	dynamicObjects;
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>		lights;
-
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> staticObjects;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> dynamicObjects;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> lights;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> pickups;
 		FirstPersonWeapon* weapon;
 
 		Oyster::Graphics::API::Texture		background;

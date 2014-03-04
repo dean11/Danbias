@@ -85,6 +85,7 @@ void Player::initPlayerData()
 	//this->rigidBody->SetRotation(q)
 	state.staticFrictionCoeff = 0.0f;
 	state.dynamicFrictionCoeff = 0.0f;
+	state.restitutionCoeff = 0.0f;
 	this->rigidBody->SetState( state );
 }
 
@@ -385,18 +386,18 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 	bool haveMoved = false;
 
 	// preserve up/down movement
-	Float3 movementAccumulator = NormalProjection( this->rigidBody->GetLinearVelocity(), upDir );
+	Float3 movementAccumulator = NormalProjection( this->rigidBody->GetLinearVelocity(), upDir ),
+		   forwardVelocity = 0.0f,
+		   strafeVelocity = 0.0f;
+	bool isNotMovingForwardOrBackward = true,
+		 isNotStrafing = true;
 
 	{ // process forward/backward
-		Float3 forwardVelocity = 0.0f;
-		bool isNotMovingForwardOrBackward = true;
-		
 		if( this->key_forward > 0.001f )
 		{
 			forwardVelocity = forwardDir * forward_velocity;
 			isNotMovingForwardOrBackward = false;
 		}
-
 		if( this->key_backward > 0.001f )
 		{
 			forwardVelocity -= forwardDir * backward_velocity;
@@ -413,19 +414,13 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 		{
 			haveMoved = true;
 		}
-
-		movementAccumulator += forwardVelocity;
 	}
 	{ // process strafe right/left
-		Float3 strafeVelocity = 0.0f;
-		bool isNotStrafing = true;
-
 		if( this->key_strafeRight > 0.001f )
 		{
 			strafeVelocity = rightDir * strafe_velocity;
 			isNotStrafing = false;
 		}
-
 		if( this->key_strafeLeft > 0.001f )
 		{
 			strafeVelocity -= rightDir * strafe_velocity;
@@ -442,12 +437,20 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 		{
 			haveMoved = true;
 		}
-
-		movementAccumulator += strafeVelocity;
 	}
 
 	if( this->IsStunned(haveMoved) )
-		return false;
+	{
+		if( isGrounded )
+		{
+			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * 2.0f * dampening_factor;
+			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * 2.0f * dampening_factor;
+		}
+		haveMoved = false;
+	}
+
+	movementAccumulator += forwardVelocity;
+	movementAccumulator += strafeVelocity;
 
 	if( isGrounded || haveMoved )
 		this->rigidBody->SetLinearVelocity( movementAccumulator );

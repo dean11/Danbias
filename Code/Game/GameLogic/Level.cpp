@@ -120,7 +120,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_PickupHealth:
 		{
-			gameObj = new PickupHealth(rigidBody, obj->specialTypeID, objIDCounter, ((PickupHealthAttributes*)obj)->spawnTime, ((PickupHealthAttributes*)obj)->healthValue);
+			gameObj = new PickupHealth(rigidBody, obj->specialTypeID, objIDCounter);
 		}
 		break;
 	default:
@@ -206,8 +206,7 @@ ICustomBody* Level::InitRigidBodyMesh( const ObjectHeader* obj)
 	//offset the rigidPosition from modelspace to worldspace;
 	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.cgMesh.position;
 	//scales the position so the collision geomentry is in the right place
-	rigidWorldPos = rigidWorldPos * obj->scale;
-
+	
 	//offset the rigidRotation from modelspace to worldspace;
 	Oyster::Math::Quaternion worldPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->rotation[0],obj->rotation[1],obj->rotation[2]), obj->rotation[3]);
 	Oyster::Math::Quaternion physicsPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->boundingVolume.cgMesh.rotation[0],obj->boundingVolume.cgMesh.rotation[1],obj->boundingVolume.cgMesh.rotation[2]), obj->boundingVolume.cgMesh.rotation[3]);
