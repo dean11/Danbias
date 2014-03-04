@@ -18,9 +18,9 @@ namespace Oyster
 	{
 		namespace
 		{
-			Math::Float4x4 View;
+			Math::Float4x4 View = Math::Float4x4::identity;
 			Math::Float4x4 Projection;
-			std::vector<Definitions::Pointlight> Lights;
+			std::vector<Definitions::Pointlight*> Lights;
 			float deltaTime;
 			int MostModel;
 #ifdef _DEBUG
@@ -48,9 +48,9 @@ namespace Oyster
 			Render::Resources::Init();
 
 			Definitions::PostData pd;
-			pd.Amb = o.ambientValue;
-			pd.GlowTint = o.globalGlowTint;
-			pd.Tint = o.globalTint;
+			Core::amb = pd.Amb = o.ambientValue;
+			Core::gGTint = pd.GlowTint = o.globalGlowTint;
+			Core::gTint = pd.Tint = o.globalTint;
 
 			void* data = Render::Resources::Post::Data.Map();
 			memcpy(data,&pd,sizeof(Definitions::PostData));
@@ -149,8 +149,10 @@ namespace Oyster
 				{
 					//RESIZE
 					Core::Init::ReInitialize(false,option.fullscreen,option.resolution);
+					Render::Resources::ReInitViews(option.resolution);
 					Core::fullscreen = option.fullscreen;
 					Core::resolution = option.resolution;
+					Render::Preparations::Basic::SetViewPort();
 				}
 				return API::Sucsess;
 			}
@@ -267,9 +269,21 @@ namespace Oyster
 
 		}
 
-		void API::AddLight(Definitions::Pointlight light)
+		void API::AddLight(Definitions::Pointlight* light)
 		{
 			Lights.push_back(light);
+		}
+
+		void API::RemoveLight(Definitions::Pointlight* light)
+		{
+			for(int i=0;i<Lights.size();++i)
+			{
+				if(Lights[i]==light)
+				{
+					Lights[i] = Lights[Lights.size()-1];
+					Lights.pop_back();
+				}
+			}
 		}
 
 		void API::ClearLights()

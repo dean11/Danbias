@@ -170,7 +170,6 @@ using namespace GameLogic;
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
 
-
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		//Collision between a player and a general static or dynamic object
