@@ -38,6 +38,8 @@ GameSession::GameSession()
 	this->gameSession = this;
 	this->logicFrameTime = DELTA_TIME_60;
 	this->networkFrameTime = DELTA_TIME_60;
+	this->accumulatedLogicTime =
+	this->accumulatedNetworkTime = 0.0f;
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 
