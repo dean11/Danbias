@@ -41,6 +41,9 @@ namespace Oyster
 			virtual void SendEvent(ButtonState state) = 0;
 			
 			virtual unsigned int GetID() = 0;
+
+			virtual void SetEnabled(bool enable) = 0;
+			virtual bool Enabled() = 0;
 		
 		};
 	}
