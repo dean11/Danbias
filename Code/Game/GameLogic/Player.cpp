@@ -223,6 +223,11 @@ void Player::Respawn( Float3 spawnPoint )
 		this->rigidBody->SetPosition(spawnPoint);
 		this->gameInstance->onRespawnFnc( this, spawnPoint);
 		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+		this->key_forward = 0;
+		this->key_backward = 0;
+		this->key_strafeRight = 0; 
+		this->key_strafeLeft = 0;
+		this->key_jump = 0;
 	}
 }
 
