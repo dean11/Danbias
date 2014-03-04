@@ -55,7 +55,8 @@ namespace Oyster
 				{
 					for(int i = 0; i < size; ++i)
 					{
-						Core::deviceContext->ClearRenderTargetView(RTVs[i],Color);
+						if(RTVs[i])
+							Core::deviceContext->ClearRenderTargetView(RTVs[i],Color);
 					}
 				}
 

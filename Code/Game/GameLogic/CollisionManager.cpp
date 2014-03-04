@@ -170,7 +170,6 @@ using namespace GameLogic;
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
 
-
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
 		//Collision between a player and a general static or dynamic object
@@ -233,6 +232,16 @@ using namespace GameLogic;
 
 		Math::Float3 deltaVelocity = realObjA->GetRigidBody()->GetLinearVelocity() - realObjB->GetRigidBody()->GetLinearVelocity();
 		Math::Float velocityNorm = deltaVelocity.Dot( deltaVelocity );
+
+		// HACK: debug trap
+		float v = realObjA->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+		if( v >= 100.0f )
+			const char *breakpoint = "oscillated accelleration?";
+
+		// HACK: debug trap
+		v = realObjB->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+		if( v >= 100.0f )
+			const char *breakpoint = "oscillated accelleration?";
 
 		static const Math::Float velocity_norm_threshold_interrupt_weapon = 3600.0f; // 60 m/s deltaVelocity
 		if( velocityNorm >= velocity_norm_threshold_interrupt_weapon )

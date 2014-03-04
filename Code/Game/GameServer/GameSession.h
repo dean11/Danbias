@@ -120,6 +120,7 @@ namespace DanBias
 		bool isRunning;
 		float logicFrameTime;
 		float networkFrameTime;
+		float accumulatedLogicTime, accumulatedNetworkTime;
 		Utility::WinTimer logicTimer;
 		Utility::WinTimer networkTimer;
 		GameDescription description;

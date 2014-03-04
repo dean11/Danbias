@@ -82,7 +82,7 @@ bool GameState::Init( SharedStateContent &shared )
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 100.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	// DEGUG KEYS
@@ -367,6 +367,8 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
+		this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
+		this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
 		auto playerObject = this->privData->players.begin();
 		for( ; playerObject != this->privData->players.end(); ++playerObject )
 		{
@@ -388,7 +390,7 @@ bool GameState::Release()
 		auto light = this->privData->lights->begin();
 		for( ; light != this->privData->lights->end(); ++light )
 		{
-			light->second->Render();
+			light->second->Release();
 		}
 
 		this->privData->staticObjects->clear();
@@ -430,7 +432,8 @@ bool GameState::Release()
 		statsUI = NULL;
 	}
 	currGameUI = NULL;
-	
+	Graphics::API::SetView(Math::Float4x4::identity);
+	Graphics::API::SetProjection(Math::Float4x4::null);
 	return true;
 }
 
@@ -523,6 +526,7 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 	}
 	decoded.pickup_ID;
 }
+
 void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 {
 	Protocol_ObjectDamage decoded(data);
@@ -547,10 +551,12 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 		}
 	}
 }
+
 void GameState::Gameplay_ObjectHealthStatus( CustomNetProtocol data )
 {
 
 }
+
 void GameState::Gameplay_ObjectPosition( CustomNetProtocol data )
 {
 	Protocol_ObjectPosition decoded(data);
@@ -571,6 +577,7 @@ void GameState::Gameplay_ObjectPosition( CustomNetProtocol data )
 		}
 
 		object->setPos( decoded.position );
+		
 		// RB DEBUG 
 		object->setRBPos ( decoded.position );  
 		// !RB DEBUG 
@@ -643,6 +650,14 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 		object->setPos( position );
 		object->setRot( rotation );
 		object->updateWorld();
+		if(object->GetLight()!=-1)
+		{
+			std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>::iterator light = privData->lights->find(object->GetLight());
+			if(light != privData->lights->end())
+			{
+				light->second->setPos(object->getPos());
+			}
+		}
 		// RB DEBUG 
 		object->setRBPos ( position );  
 		object->setRBRot ( rotation );  
@@ -1086,10 +1101,10 @@ void GameState::SetUp( DanBias::Client::C_Player* p)
 		xCrossPre.Normalize();
 		
 		//q.setRotation(xCrossPre, 3.1415);
-    }
+	}
 	else if (v1.Dot(v2) > 0.999999) 
 	{
-           q = Quaternion(Float3(0.0f), 1);
+		   q = Quaternion(Float3(0.0f), 1);
 	}
 	else
 	{

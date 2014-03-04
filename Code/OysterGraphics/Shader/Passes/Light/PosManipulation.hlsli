@@ -5,9 +5,12 @@
 //assumes ProperfloatTexCoords
 float3 ToVpos(int2 texCoord, float2 UV)
 {
-
+	//clamp(UV, float2(-1,-1), float2(1,1));
 	float4 ViewPos = float4(0,0,0,0);
 	// Get the depth value for this pixel
+	//texCoord = max(texCoord, uint2(0,0));
+	//texCoord = min(texCoord, DepthTexture.Length);
+
 	ViewPos.z= DepthTexture[texCoord].x;
 	//Get X/w
 	ViewPos.x = UV.x;

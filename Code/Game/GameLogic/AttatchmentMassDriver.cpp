@@ -111,20 +111,30 @@ void AttatchmentMassDriver::Update(float dt)
 	{
 		
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
-		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
-		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
-		up *= -0.3f;
-		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*2);
-		heldObject->OverrideGravity(pos, 1);
+		Oyster::Math::Float3 pos = ownerPos + owner->GetLookDir().GetNormalized()*3;
+		heldObject->OverrideGravity(pos, 0);
+	
+		Oyster::Math::Float3 lookDir = owner->GetLookDir().GetNormalized();
+		Oyster::Math::Float3 objDir = heldObject->GetState().centerPos - ownerPos;
+		Oyster::Math::Float3 crossTemp = lookDir.Cross(objDir.GetNormalized());
+		Oyster::Math::Float3 deltaPos = heldObject->GetState().centerPos - pos;
 
-		if((pos - heldObject->GetState().centerPos).GetMagnitude() > 0.001f)
+		crossTemp.Normalize();
+		crossTemp = objDir.Cross(crossTemp);
+		crossTemp.Normalize();
+
+		Oyster::Math::Float3 backToMeVelocity = 0.0f;
+
+		if(objDir.GetMagnitude() > 3.1f)
 		{
-			heldObject->SetLinearVelocity((pos - heldObject->GetState().centerPos)*200.0f);
+			backToMeVelocity = -objDir.GetNormalized()*deltaPos.GetMagnitude();
 		}
-		else
+		else if(objDir.GetMagnitude() < 2.9f)
 		{
-			heldObject->SetLinearVelocity(Oyster::Math::Float3(0.0f));
+			backToMeVelocity = objDir.GetNormalized()*deltaPos.GetMagnitude();
 		}
+
+		heldObject->SetLinearVelocity(crossTemp*10.0f*deltaPos.GetMagnitude() + backToMeVelocity + this->owner->GetRigidBody()->GetLinearVelocity());
 
 		if(currentEnergy < maxEnergy)
 		{
@@ -247,5 +257,6 @@ void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 
 	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos , 0.5);
 	Oyster::Physics::API::Instance().ApplyEffect(&hitSphere,this,AttemptPickUp);
+
 	return;
 }

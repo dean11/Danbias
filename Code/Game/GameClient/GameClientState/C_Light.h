@@ -21,6 +21,7 @@ namespace DanBias
 			Oyster::Math::Float3 getPos() const;
 			void setPos( Oyster::Math::Float3 newPos);
 			void Render();
+			void Release();
 			int GetId() const;
 		};
 	}
