@@ -788,6 +788,19 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	// update score board
 	((StatsUI*)this->statsUI)->updateDeatchScore( decoded.victimID, decoded.victimDeathCount ); 
 	((StatsUI*)this->statsUI)->updateKillScore( decoded.killerID, decoded.killerKillCount ); 
+
+	// print killer message
+	ColorDefines colors;
+
+	std::wstring message;
+	if (decoded.victimID == decoded.killerID)
+	{
+		message = colors.getColorName(decoded.killerID) + L"COMMITED SUICIDE";
+	}
+	else
+		message = colors.getColorName(decoded.killerID) + L"killed" + colors.getColorName(decoded.victimID);
+
+	((GamingUI*)this->gameUI)->SetKillMessage(message);
 }
 void GameState::Gameplay_PlayerScore( CustomNetProtocol data )
 {
