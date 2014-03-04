@@ -8,9 +8,9 @@ Game::PlayerData::PlayerData()
 	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,180,0);
 	Oyster::Math::Float height = 2.0f;
 	Oyster::Math::Float radius = 0.5f;
-	Oyster::Math::Float mass = 40;
+	Oyster::Math::Float mass = 70;
 	Oyster::Math::Float restitutionCoeff = 0.5f;
-	Oyster::Math::Float frictionCoeff_Static = 2.0f;
+	Oyster::Math::Float frictionCoeff_Static = 0.0f;
 	Oyster::Math::Float frictionCoeff_Dynamic = 0.0f;
 
 	//create rigid body
@@ -27,9 +27,9 @@ Game::PlayerData::PlayerData(int playerID,int teamID)
 	Oyster::Math::Float3 centerPosition = Oyster::Math::Float3(-50,180,0);
 	Oyster::Math::Float height = 2.0f;
 	Oyster::Math::Float radius = 0.5f;
-	Oyster::Math::Float mass = 40;
+	Oyster::Math::Float mass = 70;
 	Oyster::Math::Float restitutionCoeff = 0.5f;
-	Oyster::Math::Float frictionCoeff_Static = 2.0f;
+	Oyster::Math::Float frictionCoeff_Static = 0.0f;
 	Oyster::Math::Float frictionCoeff_Dynamic = 0.0f;
 
 	//create rigid body
