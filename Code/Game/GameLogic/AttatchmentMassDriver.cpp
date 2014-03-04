@@ -1,7 +1,7 @@
 #include "AttatchmentMassDriver.h"
 #include "PhysicsAPI.h"
 #include "GameLogicStates.h"
-
+#include "Game.h"
 using namespace GameLogic;
 
 
@@ -11,10 +11,20 @@ AttatchmentMassDriver::AttatchmentMassDriver(void)
 	this->owner = 0;
 	this->heldObject = NULL;
 	this->hasObject = false;
+	this->currentEnergy = StandardMaxEnergy;
+	this->maxEnergy = StandardMaxEnergy;
+	this->energyChange = 0;
+	this->rechargeRate = StandardrechargeRate;
+	this->force = Standardforce;
 }
 
 AttatchmentMassDriver::AttatchmentMassDriver(Player &owner)
 {
+	this->currentEnergy = StandardMaxEnergy;
+	this->maxEnergy = StandardMaxEnergy;
+	this->rechargeRate = StandardrechargeRate;
+	this->energyChange = 0;
+	this->force = Standardforce;
 	
 	this->owner = &owner;
 	this->heldObject = NULL;
@@ -35,39 +45,104 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	//switch case to determin what functionallity to use in the attatchment
 	switch (usage)
 	{
-	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		ForcePush(usage,dt);
-	break;
+	case WEAPON_USE_PRIMARY_PRESS:
+		//if(currentEnergy >= 9.0f)
+		{
+			currentEnergy -= 9.0f;
+			ForcePush(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
+		}
+		break;
 
-	case WEAPON_FIRE::WEAPON_USE_SECONDARY_PRESS:
-		ForcePull(usage,dt);
-	break;
-
-	case WEAPON_FIRE::WEAPON_USE_UTILLITY_PRESS:
-		ForceZip(usage,dt);
-	break;
-	}
+	case WEAPON_USE_SECONDARY_PRESS:
+		if(this->hasObject)
+		{
+			goto CASE_WEAPON_INTERRUPT;
+		}
+		else if( currentEnergy >= 1.0f )
+		{
+			
+			currentEnergy -= 1.0f;
 		
+			ForcePull(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+		
+		}
+		break;
+
+	case WEAPON_INTERRUPT:
+	CASE_WEAPON_INTERRUPT:
+		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+		this->hasObject = false;
+		this->heldObject = NULL;
+		break;
+
+	case WEAPON_USE_SECONDARY_RELEASE:
+		{
+			if (this->hasObject)	//Dummy check
+			{
+				//((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+				//this->hasObject = false;
+				//this->heldObject = NULL;
+			}
+		}
+		break;
+
+	case WEAPON_USE_UTILLITY_PRESS:
+		if(currentEnergy >= 90.0f)
+		{
+			currentEnergy -= 90.0f;
+			ForceZip(usage,dt);
+			// add CD 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
+		}
+		break;
+	}
 }
 
 void AttatchmentMassDriver::Update(float dt)
 {
 	
+
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
-		//Oyster::Physics::ICustomBody::State state;
-		//state = heldObject->GetState();
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
 		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
 		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
 		up *= -0.3f;
-		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*5);
-
-		//state.centerPos = pos;
+		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*2);
 		heldObject->SetPosition(pos);
+		heldObject->SetLinearVelocity(Oyster::Math::Float3::null);
 
-		//heldObject->SetState(state);
+		if(currentEnergy < maxEnergy)
+		{
+			currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
+			energyChange  += rechargeRate * 0.5f;
+		}
+		
+	}
+	else
+	{
+		if(currentEnergy < maxEnergy)
+		{
+			currentEnergy += rechargeRate;
+			energyChange  += rechargeRate * 0.5f;
+		}
+	}
+
+	if(currentEnergy > maxEnergy) 
+	{
+		currentEnergy = maxEnergy;
+		energyChange = 6;
+	}
+	
+	if(energyChange > 5)
+	{
+		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->owner, currentEnergy);
+		energyChange -= 5;
 	}
 }
 
@@ -82,28 +157,26 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	if(hasObject)
 	{
-		Oyster::Physics::API::Instance().ReleaseFromLimbo(heldObject);
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (400);
-		heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
-		
-		hasObject = false;
-		heldObject = NULL;
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force);
+		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
+		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+		this->hasObject = false;
+		this->heldObject = NULL;
 		return;
 	}
 
 	Oyster::Math::Float radius = 4;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 10;
+	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
-	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (400);
+	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.9f);
 
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 
-	
-
 	forcePushData args;
 	args.pushForce = pushForce;
+	args.p = this->owner;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
 
@@ -115,7 +188,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 ********************************************************/
 void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (1000);
+	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force);
 
 	this->owner->GetRigidBody()->ApplyImpulse(force);
 }
@@ -133,26 +206,32 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	//if no object has been picked up then suck objects towards you
 	Oyster::Math::Float radius = 4;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 10;
+	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
-	Oyster::Math::Float4 pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (100);
+	Oyster::Math::Float4 pullForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.3f);
 
-	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
+	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
-	args.pushForce = -pushForce;
+	args.pushForce = -pullForce;
+	args.p = this->owner;
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
-
-	if(hitCone) delete hitCone;
+	Oyster::Physics::API::Instance().ApplyEffect(&hitCone,&args,ForcePushAction);
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized()*5;
-	Oyster::Collision3D::Sphere *hitSphere = new Oyster::Collision3D::Sphere(pos,10);
+	//DEBUG:
+	MessageBeep(MB_ICONINFORMATION);
+	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized() * 1.5f;
 
-	Oyster::Physics::API::Instance().ApplyEffect(hitSphere,this,AttemptPickUp);
+	//Do ray test first!
+	//Oyster::Collision3D::Ray r(pos, owner->GetLookDir());
+	//Oyster::Physics::API::Instance().ApplyEffect(&r, this, AttemptPickUp);
 
-	if(hitSphere) delete hitSphere;
+	if(this->hasObject) return;
+
+	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos , 0.5);
+	Oyster::Physics::API::Instance().ApplyEffect(&hitSphere,this,AttemptPickUp);
+	return;
 }

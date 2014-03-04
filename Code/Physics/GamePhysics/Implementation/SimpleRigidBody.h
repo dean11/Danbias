@@ -29,7 +29,7 @@ namespace Oyster
 			void SetRotation(Math::Quaternion quaternion);
 			void SetRotation(Math::Float3 eulerAngles);
 			void SetRotation(::Oyster::Math::Float4x4 rotation);
-			void SetRotationAsAngularAxis(Math::Float4 angularAxis);
+			void AddRotationAroundY(::Oyster::Math::Float angle);
 			void SetAngularFactor(Math::Float factor);
 			void SetMass(Math::Float mass);
 
@@ -48,7 +48,7 @@ namespace Oyster
 			Math::Float3 GetGravity() const;
 			::Oyster::Math::Float3 GetLinearVelocity() const;
 
-			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss);
+			void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB);
 			void CallSubscription_Move();
 
 			btCollisionShape* GetCollisionShape() const;
@@ -58,19 +58,24 @@ namespace Oyster
 			void SetCustomTag( void *ref );
 			void* GetCustomTag() const;
 
-			
+			void OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce);
 
 			// Class specific
 			void SetCollisionShape(btCollisionShape* shape);
 			void SetMotionState(btDefaultMotionState* motionState);
 			void SetRigidBody(btRigidBody* rigidBody);
+			void SetPreviousVelocity(Math::Float3 velocity);
 
 			void PreStep(const btCollisionWorld* collisionWorld);
 
-			float GetLambda() const;
+			float GetLambdaUp() const;
+			float GetLambdaForward() const;
 
 			void MoveToLimbo();
 			void ReleaseFromLimbo();
+
+			bool IsGravityOverrided();
+			void SetOverrideGravity(bool overrideGravity);
 
 			private:
 
@@ -90,6 +95,10 @@ namespace Oyster
 			btVector3 raySource[2];
 			btVector3 rayTarget[2];
 			btScalar rayLambda[2];
+
+			int collisionFlags;
+
+			bool overrideGravity;
 		};
 	} 
 }

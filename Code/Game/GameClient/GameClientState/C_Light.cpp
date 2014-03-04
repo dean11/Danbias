@@ -33,5 +33,5 @@ int C_Light::GetId() const
 void C_Light::Render()
 {
 	// will be changed to new API 
-	Oyster::Graphics::API::AddLight(pointLightDesc);
+	Oyster::Graphics::API::AddLight(&pointLightDesc);
 }

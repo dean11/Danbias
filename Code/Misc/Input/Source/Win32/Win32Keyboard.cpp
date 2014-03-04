@@ -17,6 +17,7 @@ Win32Keyboard::Win32Keyboard(HWND target)
 	this->device.hwndTarget = target;
 	this->device.usUsage = RawInput_Usage_keyboard;
 	this->device.dwFlags = RIDEV_NOLEGACY;
+	this->writePos = 0;
 	memset(&this->keys[0], 0, sizeof(Win32Keyboard::Keys) * MAXKEYS);
 }
 Win32Keyboard::~Win32Keyboard()
@@ -66,10 +67,10 @@ void Win32Keyboard::Deactivate ()
 
 void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 {
-	if(!this->active)
-	{
-		return;
-	}
+	if(!this->active)	return;
+
+	static Struct::KeyboardEventData keyboardEventData;
+	memset(&keyboardEventData, 0, sizeof(Struct::KeyboardEventData));
 
 	bool isUp = (( keyboard.Flags & RI_KEY_BREAK) != 0);
 	SAKI key = SAKI_Unknown;
@@ -86,6 +87,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 			this->keys[key].isDown = false;
 			this->keys[key].isE0 = isE0;
 			this->keys[key].makecode = keyboard.MakeCode;
+
+			keyboardEventData.key = key;
+			keyboardEventData.sender = this;
+			keyboardEventData.state = Enum::ButtonState_Release;
+			InternalOnEvent(keyboardEventData);
 		}
 		//The key is pressed.
 		else /*if (k.Flags == RI_KEY_MAKE || k.Flags == (RI_KEY_MAKE | RI_KEY_E0) || k.Flags == (RI_KEY_MAKE | RI_KEY_E1))*/
@@ -93,6 +99,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 			if(this->keys[key].isDown)
 			{
 				this->InternalOnKeyDown(key);
+
+				keyboardEventData.key = key;
+				keyboardEventData.sender = this;
+				keyboardEventData.state = Enum::ButtonState_Down;
+				InternalOnEvent(keyboardEventData);
 			}
 			else
 			{
@@ -100,6 +111,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				this->keys[key].isDown = true;
 				this->keys[key].isE0 = isE0;
 				this->keys[key].makecode = keyboard.MakeCode;
+
+				keyboardEventData.key = key;
+				keyboardEventData.sender = this;
+				keyboardEventData.state = Enum::ButtonState_Press;
+				InternalOnEvent(keyboardEventData);
 			}
 		}
 	}
@@ -125,11 +141,19 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 		}
 		else if (this->keys[SAKI_Left].isDown)
 		{
-			this->writePos = std::max( this->writePos - 1, (wstring::size_type)0 );
+			this->writePos = std::max( ((int)this->writePos) - 1, (int)(wstring::size_type)0 );
 		}
 		else if (this->keys[SAKI_Right].isDown)
 		{
 			this->writePos = std::min( this->writePos + 1, this->textTarget->size() );
+		}
+		else if (this->keys[SAKI_Enter].isDown || this->keys[SAKI_NumpadEnter].isDown)
+		{
+			this->textTarget->insert( this->writePos, 1, '\n');
+		}
+		else if ( this->keys[SAKI_Tab].isDown )
+		{
+			this->textTarget->insert( this->writePos, 1, '\t');
 		}
 		else if (virtualKey && !isUp)
 		{
@@ -161,9 +185,11 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				else if(key == SAKI_0)		test = L'}';
 				else if(key == SAKI_Add)	test = L'\\';
 			}
+
 			this->textTarget->insert( this->writePos, 1, test);
 			++this->writePos;
 		}
+		
 	}
 }
 
@@ -236,7 +262,7 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
  
 		case VK_DELETE:
 			if (!isE0)	out_key = SAKI_NumpadDecimal;
-			 
+			else		out_key = SAKI_Delete;
 		break;
  
 		case VK_HOME:
@@ -256,24 +282,24 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
  
 		case VK_NEXT:
 			if (!isE0)	out_key = SAKI_Numpad3;
-			 
+			
 		break;
  
 		// the standard arrow keys will always have their e0 bit set, but the
 		// corresponding keys on the NUMPAD will not.
 		case VK_LEFT:
 			if (!isE0)	out_key = SAKI_Numpad4;
-			 
+			else		out_key = SAKI_Left;
 		break;
  
 		case VK_RIGHT:
 			if (!isE0)	out_key = SAKI_Numpad6;
-			 
+			else		out_key = SAKI_Right;
 		break;
  
 		case VK_UP:
 			if (!isE0)	out_key = SAKI_Numpad8;
-			 
+			 else		out_key = SAKI_Up;
 		break;
  
 		case VK_DOWN:

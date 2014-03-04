@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AttatchmentGun.h" />
     <ClInclude Include="AttatchmentMassDriver.h" />
     <ClInclude Include="AttatchmentSocket.h" />
     <ClInclude Include="CollisionManager.h" />
@@ -173,14 +174,19 @@
     <ClInclude Include="JumpPad.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="PickupSystem\Pickup.h" />
+    <ClInclude Include="PickupSystem\PickupHealth.h" />
+    <ClInclude Include="PickupSystem\PickupSystem.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portal.h" />
+    <ClInclude Include="SpawnPoint.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="Team.h" />
     <ClInclude Include="TeamManager.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AttatchmentGun.cpp" />
     <ClCompile Include="AttatchmentMassDriver.cpp" />
     <ClCompile Include="AttatchmentSocket.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -194,8 +200,12 @@
     <ClCompile Include="JumpPad.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PickupSystem\Pickup.cpp" />
+    <ClCompile Include="PickupSystem\PickupHealth.cpp" />
+    <ClCompile Include="PickupSystem\PickupSystem.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="SpawnPoint.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Team.cpp" />
     <ClCompile Include="TeamManager.cpp" />

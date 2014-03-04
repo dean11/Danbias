@@ -28,6 +28,8 @@ namespace DanBias
 			Oyster::Math::Float3 position; 
 			Oyster::Math::Quaternion rotation; 
 			Oyster::Math::Float3 scale; 
+			Oyster::Math::Float3 tint;
+			Oyster::Math::Float3 gtint;
 			bool visible; 
 		};
 
@@ -72,7 +74,7 @@ namespace DanBias
 
 			void SetTint(Oyster::Math::Float3);
 			void SetGlowTint(Oyster::Math::Float3);
-
+			void SetVisible(bool visible);
 
 			// RB DEBUG
 			void updateRBWorld();

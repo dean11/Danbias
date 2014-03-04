@@ -26,7 +26,15 @@ namespace GameLogic
 	namespace GameEvent
 	{
 		typedef void(*ObjectMovedFunction)(IObjectData* object);	// Callback method that recieves and object
-		typedef void(*ObjectDisabledFunction)(IObjectData* object, float seconds);	// Callback method that recieves and object
+		typedef void(*ObjectDisabledFunction)(IObjectData* object);	// Callback method that recieves and object
+		typedef void(*ObjectEnabledFunction)(IObjectData* object);	// Callback method that recieves and object
+		typedef void(*ObjectHpFunction)(IObjectData* object, float hp);	// Callback method that sends obj HP
+		typedef void(*ObjectRespawnedFunction)(IObjectData* object, Oyster::Math::Float3 spawnPos );	// Callback method that sends spawnPos
+		typedef void(*ObjectDeadFunction)(IObjectData* victim, int deatchCount, IObjectData* killer, int killCount, float seconds);	// Callback method that sends killer and death timer
+		typedef void(*PickupEventFunction)(IObjectData* player, int pickupEffectID );	// Callback method that sends killer and death timer
+		typedef void(*AnimationEventFunction)(IObjectData* player, int actionID );	// Callback method that sends killer and death timer
+		typedef void(*CollisionEventFunction)(IObjectData*object, int collisionID); 
+		typedef void(*WeaponEnergyFunction)(IObjectData*object, float energy); 
 		//etc...
 	};
 
@@ -85,7 +93,7 @@ namespace GameLogic
 			*	@param x: The relative x axis	
 			*	@param y: The relative y axis	
 			**/
-			virtual void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right) = 0;
+			virtual void SetLookDir(const Oyster::Math3D::Float3& lookDir) = 0;
 
 			/** Relative rotation around given axis
 			*	@param leftRadians: The relative amount of radians to turn
@@ -106,13 +114,20 @@ namespace GameLogic
 			* @return The current player state
 			********************************************************/
 			virtual PLAYER_STATE GetState() const = 0;
+
+			virtual int GetKills() const = 0;
+			virtual int GetDeaths() const = 0;
+			virtual void Inactivate() = 0;
+			virtual void Release() = 0;
 		};
 
 		class ILevelData :public IObjectData
 		{
 		public:
+			virtual void Update(float deltaTime)						= 0;
 			virtual int getNrOfDynamicObj()const						= 0;
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
+			virtual void AddPlayerToGame(IPlayerData *player)				= 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
@@ -169,13 +184,16 @@ namespace GameLogic
 		/**	Set a specific object event subscription callback
 		*	@param 
 		*/
-		virtual void SetSubscription(GameEvent::ObjectMovedFunction functionPointer) = 0;
-
-		/**	Set a specific object event subscription callback
-		*	@param 
-		*/
-		virtual void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
-
+		virtual void SetMoveSubscription(GameEvent::ObjectMovedFunction functionPointer) = 0;
+		virtual void SetDisableSubscription(GameEvent::ObjectDisabledFunction functionPointer) = 0;
+		virtual void SetEnableSubscription(GameEvent::ObjectEnabledFunction functionPointer) = 0;
+		virtual void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer) = 0;
+		virtual void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer) = 0;
+		virtual void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) = 0;
+		virtual void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) = 0;
+		virtual void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) = 0;
+		virtual void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) = 0;
+		virtual void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer) = 0;
 	};	
 }
 

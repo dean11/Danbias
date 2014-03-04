@@ -12,16 +12,15 @@
 using namespace GameLogic;
 using namespace Utility::DynamicMemory;
 using namespace Oyster::Physics;
-
+using namespace Oyster::Math;
 
 Level::Level(void)
 {
-	objID = 100; 
+	srand (time(NULL));
+	objIDCounter = 100; 
 }
 Level::~Level(void)
 {
-	delete this->levelObj;
-	this->levelObj = NULL;
 }
 Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 {
@@ -31,7 +30,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	{
 	case ObjectSpecialType_None: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 
 		}
 		break;
@@ -49,30 +48,30 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			float worldSize = ((WorldAttributes*)obj)->worldSize; 
 			float atmosphereSize = ((WorldAttributes*)obj)->atmoSphereSize; 
 
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
 	case ObjectSpecialType_Building: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
 	case ObjectSpecialType_Stone: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
 		}
 		break;
 	case ObjectSpecialType_StandardBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
 		}
 		break;
 	case ObjectSpecialType_RedExplosiveBox: 
 		{
 			Oyster::Math::Float dmg = 50; 
-			Oyster::Math::Float force = 50; 
-			Oyster::Math::Float radie = 50; 
-			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID++, dmg, force, radie);
+			Oyster::Math::Float force = 800; 
+			Oyster::Math::Float radie = 3; 
+			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg, force, radie);
 		}
 		break;
 	//case ObjectSpecialType_BlueExplosiveBox: 
@@ -81,59 +80,52 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
 		}
 		break;
 	case ObjectSpecialType_Spike: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
 		}
 		break;
 	case ObjectSpecialType_CrystalFormation: 
 		{
-			int dmg = 50; 
-			//gameObj = new Crystal(rigidBody);
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
+			int dmg = 30; 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
 	case ObjectSpecialType_CrystalShard: 
 		{
-			gameObj = new DynamicObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID);
+			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
 		}
 		break;
 	case ObjectSpecialType_JumpPad: 
 		{
-			float power = 500; //((JumpPadAttributes*)obj)->power; 
+			float power = ((JumpPadAttributes*)obj)->power; 
 			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
 			Oyster::Math::Float3 pushForce = dir * power; 
-			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID , pushForce);
+			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter , pushForce);
 		}
 		break;
 	case ObjectSpecialType_Portal: 
 		{
 			Oyster::Math::Float3 destination = ((PortalAttributes*)obj)->destination; 
-			gameObj = new Portal(rigidBody, (ObjectSpecialType)obj->specialTypeID, objID, destination);
-		}
-		break;
-	//case ObjectSpecialType_SpawnPoint: 
-		//{
-			// save 
-			
-		//}
-		break;
-	case ObjectSpecialType_Player: 
-		{
-			// should not be read from the lvl format
+			gameObj = new Portal(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, destination);
 		}
 		break;
 	case ObjectSpecialType_Generic:
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
+		}
+		break;
+	case ObjectSpecialType_PickupHealth:
+		{
+			gameObj = new PickupHealth(rigidBody, obj->specialTypeID, objIDCounter, ((PickupHealthAttributes*)obj)->spawnTime, ((PickupHealthAttributes*)obj)->healthValue);
 		}
 		break;
 	default:
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
 	}
@@ -203,6 +195,40 @@ ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
 	rigidBody = API::Instance().AddCollisionSphere( rigidBodyRadius , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.sphere.restitutionCoeff , obj->boundingVolume.sphere.frictionCoeffStatic , obj->boundingVolume.sphere.frictionCoeffDynamic);
 	return rigidBody;
 }
+ICustomBody* Level::InitRigidBodyMesh( const ObjectHeader* obj)
+{
+	ICustomBody* rigidBody = NULL;
+	Oyster::Math::Float3 rigidWorldPos;
+	Oyster::Math::Float4 rigidWorldRotation;
+	float rigidBodyMass;
+	float rigidBodyRadius;
+
+	//offset the rigidPosition from modelspace to worldspace;
+	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.cgMesh.position;
+	//scales the position so the collision geomentry is in the right place
+	rigidWorldPos = rigidWorldPos * obj->scale;
+
+	//offset the rigidRotation from modelspace to worldspace;
+	Oyster::Math::Quaternion worldPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->rotation[0],obj->rotation[1],obj->rotation[2]), obj->rotation[3]);
+	Oyster::Math::Quaternion physicsPosQuaternion = Oyster::Math::Quaternion(Oyster::Math::Float3(obj->boundingVolume.cgMesh.rotation[0],obj->boundingVolume.cgMesh.rotation[1],obj->boundingVolume.cgMesh.rotation[2]), obj->boundingVolume.cgMesh.rotation[3]);
+	Oyster::Math::Quaternion rigidWorldQuaternion = worldPosQuaternion * physicsPosQuaternion; 
+
+	rigidWorldRotation = Oyster::Math::Float4(rigidWorldQuaternion); 
+
+
+	//mass scaled
+	rigidBodyMass = obj->scale[0] * obj->scale[1] * obj->scale[2] * obj->boundingVolume.cgMesh.mass;
+
+	//Radius scaled
+	//rigidBodyRadius = (obj->scale[0]) * obj->boundingVolume.sphere.radius;
+	//rigidBodyRadius = (obj->scale[0] * obj->scale[1] * obj->scale[2]) * obj->boundingVolume.sphere.radius;
+
+	//create the rigid body
+	std::wstring fname = L"..\\Content\\Worlds\\cgf\\";
+	fname.append(obj->boundingVolume.cgMesh.filename);
+	rigidBody = API::Instance().AddTriangleMesh( fname , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.cgMesh.restitutionCoeff , obj->boundingVolume.cgMesh.frictionCoeffStatic , obj->boundingVolume.cgMesh.frictionCoeffDynamic);
+	return rigidBody;
+}
 bool Level::InitiateLevel(std::wstring levelPath)
 {
 	LevelLoader ll; 
@@ -216,7 +242,6 @@ bool Level::InitiateLevel(std::wstring levelPath)
 	std::string convertedLevelPath = converterX.to_bytes(levelPath);
 	objects = ll.LoadLevel(convertedLevelPath);
 
-
 	if(objects.size() == 0)
 		return false;
 
@@ -226,7 +251,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	for (int i = 0; i < objCount; i++)
 	{
-		++this->objID;
+		++this->objIDCounter;
 		ObjectTypeHeader* obj = objects.at(i);
 		switch (obj->typeID)
 		{
@@ -234,6 +259,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 			{
 				LevelMetaData* LevelObjData = ((LevelMetaData*)obj);
 				std::string levelName = LevelObjData->levelName;
+
 				// LevelObjData->worldSize;
 			}
 			break;
@@ -260,11 +286,21 @@ bool Level::InitiateLevel(std::wstring levelPath)
 					//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
 				}
 
+				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_CG_MESH)
+				{
+					rigidBody_Static = InitRigidBodyMesh(staticObjData);
+				}
+
 				if(rigidBody_Static != NULL)
 				{
 					// create game object
 					Object* staticGameObj = CreateGameObj(staticObjData, rigidBody_Static);
-					if(staticGameObj != NULL)
+					
+					if(staticObjData->specialTypeID == ObjectSpecialType_PickupHealth)
+					{
+						this->pickupSystem.CreatePickup((PickupHealth*)staticGameObj);
+					}
+					else if(staticGameObj != NULL)
 					{
 						this->staticObjects.Push((StaticObject*)staticGameObj);
 					}
@@ -315,77 +351,13 @@ bool Level::InitiateLevel(std::wstring levelPath)
 				pos.x = ((SpawnPointAttributes*)obj)->position[0];
 				pos.y = ((SpawnPointAttributes*)obj)->position[1];
 				pos.z = ((SpawnPointAttributes*)obj)->position[2];
-				spawnPoints.Push(pos);
+				spawnPoints.addSpawnPos(pos);
 			}
 		default:
 			break;
 		}
 	}
-	return true;
-}
-bool Level::InitiateLevel(float radius)
-{
-	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
-	API::Instance().SetGravity(200);
-	int idCount = 100;
-	// add level sphere
-	ICustomBody* rigidBody = API::Instance().AddCollisionSphere(599.2f, Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
 
-	levelObj = new StaticObject(rigidBody, LevelCollisionAfter, ObjectSpecialType_World, idCount++);
-
-	//this->levelObj->objectID = idCount++;
-	rigidBody->SetCustomTag(levelObj);
-
-	
-	ICustomBody* rigidBody_TestBox;
-
-	int nrOfBoxex = 5;
-	int offset = 0;
-	for(int i =0; i< nrOfBoxex; i ++)
-	{
-		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(0.0f, 605.0f + i*5.0f, 10.0f), 5.0f, 0.5f, 0.8f, 0.6f);
-
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox, Object::DefaultOnCollision, ObjectSpecialType_StandardBox, idCount++));
-	}
-	/*offset += nrOfBoxex;
-	for(int i =0; i< nrOfBoxex; i ++)
-	{
-		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0,5, -605 -( i*5)), 5);
-
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultOnCollision, OBJECT_TYPE::OBJECT_TYPE_BOX));
-		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);
-		
-	}
-	offset += nrOfBoxex;
-	for(int i =0; i< nrOfBoxex; i ++)
-	{
-		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(200, 620 + ( i*7), 0), 5);
-
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultOnCollision, OBJECT_TYPE::OBJECT_TYPE_BOX));
-		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i+offset]);	
-	}
-	offset += nrOfBoxex;
-	for(int i =0; i< nrOfBoxex; i ++)
-	{
-		rigidBody_TestBox = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(5, 605 + i*5, 0), 5);
-
-		this->dynamicObjects.Push(new DynamicObject(rigidBody_TestBox,Object::DefaultCollisionBefore, Object::DefaultOnCollision, OBJECT_TYPE::OBJECT_TYPE_BOX));
-		rigidBody_TestBox->SetCustomTag(this->dynamicObjects[i]);
-		
-	}*/
-	
-	// add crystal
-	ICustomBody* rigidBody_Crystal = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.5f, 0.5f, 0.5f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(10.0f, 605.0f, 0.0f), 5.0f, 0.5f, 0.8f, 0.6f);
-	this->dynamicObjects.Push(new DynamicObject(rigidBody_Crystal, Object::DefaultOnCollision, ObjectSpecialType_StandardBox, idCount++));
-
-	// add house
-	ICustomBody* rigidBody_House =API::Instance().AddCollisionBox(Oyster::Math::Float3(20.0f, 20.0f, 20.0f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(-50.0f, 590.0f, 0.0f), 0.0f, 0.5f, 0.8f, 0.6f);
-	this->staticObjects.Push(new StaticObject(rigidBody_House, Object::DefaultOnCollision, ObjectSpecialType_Generic, idCount++));
-
-	// add jumppad
-
-	ICustomBody* rigidBody_Jumppad = API::Instance().AddCollisionBox(Oyster::Math::Float3(1.0f, 1.0f, 1.0f), Oyster::Math::Float4(0.0f, 0.0f, 0.0f, 1.0f), Oyster::Math::Float3(4.0f, 600.3f, 0.0f), 5.0f, 0.5f, 0.8f, 0.6f);
-	this->staticObjects.Push(new JumpPad(rigidBody_Jumppad, ObjectSpecialType_JumpPad,idCount++ ,Oyster::Math::Float3(0,2000,0)));
 	return true;
 }
 
@@ -393,7 +365,30 @@ void Level::AddPlayerToTeam(Player *player, int teamID)
 {
 	this->teamManager.AddPlayerToTeam(player,teamID);
 }
-
+void Level::AddPlayerToGame(Player *player)
+{
+	player->ResetPlayer(spawnPoints.getSpawnPos());
+	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
+	{
+		if (!this->playerObjects[i])
+		{
+			this->playerObjects[i] = player;
+			return;
+		}
+	}
+	// if no free space, allocate a new spot
+	this->playerObjects.Push(player);
+}
+void Level::RemovePlayerFromGame(Player *player)
+{
+	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
+	{
+		if ((Player*)this->playerObjects[i] == player)
+		{
+			this->playerObjects[i] =  nullptr;
+		}
+	}
+}
 void Level::CreateTeam(int teamSize)
 {
 	this->teamManager.CreateTeam(teamSize);
@@ -401,9 +396,85 @@ void Level::CreateTeam(int teamSize)
 
 void Level::RespawnPlayer(Player *player)
 {
-	this->teamManager.RespawnPlayerRandom(player);
+	//this->teamManager.RespawnPlayerRandom(player);
+	player->Respawn(spawnPoints.getSpawnPos());
 }
+void Level::Update(float deltaTime)
+{
+	// update lvl-things
+	
 
+	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
+	{
+		if(this->playerObjects[i])
+		{
+			// TODO check against gameMode win condition
+			if(this->playerObjects[i]->GetKills() > 30 )
+			{
+				// winner 
+			}
+			if(this->playerObjects[i]->getAffectingPlayer() != NULL)
+			{
+			
+			}
+
+			if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
+			{
+				// true when timer reaches 0 
+				if(this->playerObjects[i]->deathTimerTick(deltaTime))
+					RespawnPlayer(this->playerObjects[i]);
+			}
+			else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
+			{
+				this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
+				Player* killer = this->playerObjects[i]->getAffectingPlayer();
+				if(!killer) //if there is no killer then you committed suicide
+				{
+					killer = this->playerObjects[i];
+					// suicide penalty 
+				}
+				else
+					killer->AddKill();
+
+				this->playerObjects[i]->AddDeath();
+
+
+				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->GetDeath(), killer, killer->GetKills(), DEATH_TIMER); // add killer ID
+
+			}
+		}
+	}
+
+	for(int i = 0; i < dynamicObjects.Size(); i++)
+	{
+		if(dynamicObjects[i]->getAffectingPlayer() != NULL)
+		{
+			Oyster::Math::Float vel = dynamicObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+
+			if(vel <= 0.1f) // is barely moving
+			{
+				//set the tag AffectedBy to NULL
+				dynamicObjects[i]->RemoveAffectedBy();
+			}
+		}
+	}
+
+	for(int i = 0; i < playerObjects.Size(); i++)
+	{
+		if(playerObjects[i]->getAffectingPlayer() != NULL)
+		{
+			Oyster::Math::Float vel = playerObjects[i]->GetRigidBody()->GetLinearVelocity().GetMagnitude();
+
+			if(vel <= 0.1f) // is barely moving
+			{
+				//set the tag AffectedBy to NULL
+				playerObjects[i]->RemoveAffectedBy();
+			}
+		}
+	}
+
+	this->pickupSystem.Update();
+}
 int Level::getNrOfDynamicObj()
 {
 	return this->dynamicObjects.Size(); 
@@ -417,10 +488,23 @@ Object* Level::GetObj( int ID) const
 	}
 	return NULL;
 }
+
 void Level::PhysicsOnMoveLevel(const ICustomBody *object)
 {
 	// function call from physics update when object was moved
 	Object* temp = (Object*)object->GetCustomTag();
 	((Game*)&Game::Instance())->onMoveFnc(temp);
-	
 }
+Utility::DynamicMemory::DynamicArray<Player*>			Level::GetPlayers()
+{
+	return this->playerObjects;
+}
+Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<StaticObject>>	Level::GetStaticObjects()
+{
+	return this->staticObjects;
+}
+Utility::DynamicMemory::DynamicArray<Utility::DynamicMemory::SmartPointer<DynamicObject>>	Level::GetDynamicObject()
+{
+	return this->dynamicObjects;
+}
+

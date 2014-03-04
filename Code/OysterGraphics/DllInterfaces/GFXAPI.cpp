@@ -7,7 +7,10 @@
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
 #include "../Render/GuiRenderer.h"
+#include "Utilities.h" // need StaticArray::NumElementsOf
 #include <vld.h>
+
+using ::Utility::StaticArray::NumElementsOf;
 
 namespace Oyster
 {
@@ -15,10 +18,11 @@ namespace Oyster
 	{
 		namespace
 		{
-			Math::Float4x4 View;
+			Math::Float4x4 View = Math::Float4x4::identity;
 			Math::Float4x4 Projection;
-			std::vector<Definitions::Pointlight> Lights;
+			std::vector<Definitions::Pointlight*> Lights;
 			float deltaTime;
+			int MostModel;
 #ifdef _DEBUG
 			Model::Model* cube;
 			Model::Model* sphere;
@@ -29,13 +33,14 @@ namespace Oyster
 #endif
 		}
 
-		API::State API::Init(HWND Window, bool MSAA_Quality, bool Fullscreen, API::Option o)
+		API::State API::Init(HWND Window, bool MSAA_Quality, API::Option o)
 		{
-			Core::resolution = o.Resolution;
+			Core::resolution = o.resolution;
 			Core::modelPath = o.modelPath;
 			Core::texturePath = o.texturePath;
+			Core::fullscreen = o.fullscreen;
 
-			if(Core::Init::FullInit(Window, MSAA_Quality, Fullscreen) == Core::Init::Fail)
+			if(Core::Init::FullInit(Window, MSAA_Quality, o.fullscreen) == Core::Init::Fail)
 			{
 				return API::Fail;
 			}
@@ -43,7 +48,9 @@ namespace Oyster
 			Render::Resources::Init();
 
 			Definitions::PostData pd;
-			pd.Amb = o.AmbientValue;
+			Core::amb = pd.Amb = o.ambientValue;
+			Core::gGTint = pd.GlowTint = o.globalGlowTint;
+			Core::gTint = pd.Tint = o.globalTint;
 
 			void* data = Render::Resources::Post::Data.Map();
 			memcpy(data,&pd,sizeof(Definitions::PostData));
@@ -57,9 +64,11 @@ namespace Oyster
 			debugSRV = (ID3D11ShaderResourceView*)API::CreateTexture(L"color_white.png");
 
 			cube = CreateModel(L"generic_cube.dan");
-			cube->Tint = Math::Float3(0.0f,0.0f,1.0f);
+			cube->Tint = Math::Float3(1.0f,0.0f,0.0f);
+			cube->Instanced = false;
 			sphere = CreateModel(L"generic_sphere.dan");
 			sphere->Tint = Math::Float3(1.0f,0.5f,182/255.0f);
+			sphere->Instanced = false;
 
 
 			D3D11_RASTERIZER_DESC desc;
@@ -122,15 +131,62 @@ namespace Oyster
 			Core::texturePath = option.texturePath;
 			
 			Definitions::PostData pd;
-			pd.Amb = option.AmbientValue;
-			pd.Tint = option.GlobalTint;
-			pd.GlowTint = option.GlobalGlowTint;
+			pd.Amb = option.ambientValue;
+			pd.Tint = option.globalTint;
+			pd.GlowTint = option.globalGlowTint;
+
+			Core::amb = option.ambientValue;
+			Core::gTint = option.globalTint;
+			Core::gGTint = option.globalGlowTint;
 
 			void* data = Render::Resources::Post::Data.Map();
-			memcpy(data,&pd,sizeof(Definitions::PostData));
-			Render::Resources::Post::Data.Unmap();
+			if(data)
+			{
+				memcpy(data,&pd,sizeof(Definitions::PostData));
+				Render::Resources::Post::Data.Unmap();
 
-			return API::Sucsess;
+				if(option.resolution != Core::resolution || option.fullscreen != Core::fullscreen)
+				{
+					//RESIZE
+					Core::Init::ReInitialize(false,option.fullscreen,option.resolution);
+					Core::fullscreen = option.fullscreen;
+					Core::resolution = option.resolution;
+				}
+				return API::Sucsess;
+			}
+
+			return API::Fail;
+		}
+
+		void API::BeginLoadingModels()
+		{
+		}
+
+		void API::EndLoadingModels()
+		{
+			//TODO finalize instance buffers and create rendering map;
+			int maxModels = 0;
+			for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+			{
+				if((*i).second->Models > maxModels)
+				{
+					maxModels = (*i).second->Models;
+				}
+				if( (*i).second->rid != nullptr)
+					delete (*i).second->rid;
+				(*i).second->rid = new Definitions::RenderInstanceData[(*i).second->Models+1];
+			}
+
+			Core::Buffer::BUFFER_INIT_DESC desc;
+			
+
+			desc.ElementSize = sizeof(Definitions::RenderInstanceData);
+			desc.Type = Core::Buffer::VERTEX_BUFFER;
+			desc.Usage = Core::Buffer::BUFFER_CPU_WRITE_DISCARD;
+			desc.InitData = 0;
+			desc.NumElements = maxModels+1;
+			Render::Resources::Gather::InstancedData.~Buffer();
+			Render::Resources::Gather::InstancedData.Init(desc);
 		}
 
 		//returns null for invalid filenames
@@ -139,9 +195,11 @@ namespace Oyster
 			Model::Model* m = new Model::Model();
 			m->WorldMatrix = Oyster::Math::Float4x4::identity;
 			m->Visible = true;
-			m->Animation.AnimationPlaying = NULL;
+			m->Animation[0].AnimationPlaying = nullptr;
+			m->Animation[1].AnimationPlaying = nullptr;
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
+			m->Instanced = true;
 			m->info = (Model::ModelInfo*)Core::loader.LoadResource((Core::modelPath + filename).c_str(),Oyster::Graphics::Loading::LoadDAN, Oyster::Graphics::Loading::UnloadDAN);
 
 			Model::ModelInfo* mi = (Model::ModelInfo*)m->info;
@@ -152,6 +210,18 @@ namespace Oyster
 				delete mi;
 				return NULL;
 			}
+			
+			if(!m->info->Animated)
+			{
+				if(Core::loader.GetResourceCount(m->info) == 1)
+				{
+					Render::Resources::RenderData[m->info] = new Render::Resources::ModelDataWrapper();
+				}
+				else
+				{
+					Render::Resources::RenderData[m->info]->Models++;
+				}
+			}
 
 			return m;
 		}
@@ -161,6 +231,8 @@ namespace Oyster
 			if(model==NULL)
 				return;
 			Model::ModelInfo* info = (Model::ModelInfo*)model->info;
+			model->Animation[0].AnimationPlaying = nullptr;
+			model->Animation[1].AnimationPlaying = nullptr;
 			delete model;
 			Core::loader.ReleaseResource(info);
 		}
@@ -187,11 +259,29 @@ namespace Oyster
 			SAFE_RELEASE(Core::deviceContext);
 			SAFE_RELEASE(Core::device);
 
+			for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+			{
+				SAFE_DELETE((*i).second->rid);
+				SAFE_DELETE((*i).second);
+			}
+
 		}
 
-		void API::AddLight(Definitions::Pointlight light)
+		void API::AddLight(Definitions::Pointlight* light)
 		{
 			Lights.push_back(light);
+		}
+
+		void API::RemoveLight(Definitions::Pointlight* light)
+		{
+			for(int i=0;i<Lights.size();++i)
+			{
+				if(Lights[i]==light)
+				{
+					Lights[i] = Lights[Lights.size()-1];
+					Lights.pop_back();
+				}
+			}
 		}
 
 		void API::ClearLights()
@@ -208,9 +298,8 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
+			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
 			Core::deviceContext->RSSetState(wire);
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::Pass.RTV.size(),&Render::Resources::Gather::Pass.RTV[0],NULL);
 		}
 
 		void API::RenderDebugCube(Math::Matrix world)
@@ -249,10 +338,14 @@ namespace Oyster
 		API::Option API::GetOption()
 		{
 			Option o;
-			o.BytesUsed = Core::UsedMem;
+			o.bytesUsed = Core::UsedMem;
 			o.modelPath = Core::modelPath;
 			o.texturePath = Core::texturePath;
-			o.Resolution = Core::resolution;
+			o.resolution = Core::resolution;
+			o.fullscreen = Core::fullscreen;
+			o.ambientValue = Core::amb;
+			o.globalGlowTint = Core::gGTint;
+			o.globalTint = Core::gTint;
 			return o;
 		}
 
@@ -276,15 +369,62 @@ namespace Oyster
 			Core::loader.ReleaseResource(tex);
 		}
 
-		float API::PlayAnimation(Model::Model* m, std::wstring name,bool looping)
+		float API::PlayAnimation( Model::Model* m, const std::wstring &name, bool looping )
 		{
-			if(m==NULL)
-				return 0;
-			m->Animation.AnimationPlaying = &(*m->info->Animations.find(name)).second;
-			m->Animation.AnimationTime=0;
-			m->Animation.LoopAnimation = looping;
-			return (float)m->Animation.AnimationPlaying->duration;
+			if( m )
+			{
+				if( m->numOccupiedAnimationSlots < NumElementsOf(m->Animation) )
+				{
+					auto animBlueprint = m->info->Animations.find(name);
+					if( animBlueprint != m->info->Animations.end() )
+					{
+						Model::AnimationData *animationSlot = &m->Animation[m->numOccupiedAnimationSlots]; // memory renaming for readability
+						++m->numOccupiedAnimationSlots;
+
+						animationSlot->AnimationPlaying	= &(animBlueprint->second);
+						animationSlot->AnimationTime	= 0.0f;
+						animationSlot->LoopAnimation	= looping;
+
+						return (float)animationSlot->AnimationPlaying->duration;
+					}
+				}
+			}
+			return 0.0f;
 		}
+
+		void API::StopAnimation( Model::Model* m, const std::wstring &name )
+		{
+			if( m )
+			{
+				if( m->numOccupiedAnimationSlots < NumElementsOf(m->Animation) )
+				{
+					auto animBlueprint = m->info->Animations.find(name);
+					if( animBlueprint != m->info->Animations.end() )
+					{
+						for( int i = 0; i < NumElementsOf(m->Animation); ++i )
+						{
+							if( m->Animation[i].AnimationPlaying == &animBlueprint->second )
+							{
+								--m->numOccupiedAnimationSlots;
+								if( i < m->numOccupiedAnimationSlots )
+								{
+									m->Animation[i] = m->Animation[m->numOccupiedAnimationSlots];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		void API::StopAllAnimations( Model::Model* m )
+		{
+			if( m )
+			{
+				m->numOccupiedAnimationSlots = 0;
+			}
+		}
+
 
 		void API::Update(float dt)
 		{

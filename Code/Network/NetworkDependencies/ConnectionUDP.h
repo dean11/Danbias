@@ -22,18 +22,23 @@ namespace Oyster
 			virtual int InitiateServer( unsigned short port );
 			virtual int InitiateClient();
 
-			virtual int InitiateBroadcast(unsigned short port);
+			virtual int InitiateBroadcastServer(unsigned short port, const char serverName[]);
+			virtual int InitiateBroadcastClient(unsigned short port);
 
 			virtual int Send ( OysterByte &byte );
 			virtual int Recieve( OysterByte &byte );
 
 			virtual int Connect( unsigned short port, const char serverName[] );
 
+			//Doesn't do anything now.
+			virtual int Reconnect() { return 0; }
+
 			virtual int Disconnect();
 
 			bool IsSending();
 			bool IsConnected();
 			int GetIpSize();
+			int GetSocket();
 
 			int SetBlockingMode( bool blocking );
 

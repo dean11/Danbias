@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	this->m_position = Oyster::Math::Float3(0, 600, 0);
+	this->m_position = Oyster::Math::Float3(0, 0, 0);
 	this->mRight = Oyster::Math::Float3(1, 0, 0);
 	this->mUp = Oyster::Math::Float3(0, 1, 0);
 	this->mLook = Oyster::Math::Float3(0, 0, 1);

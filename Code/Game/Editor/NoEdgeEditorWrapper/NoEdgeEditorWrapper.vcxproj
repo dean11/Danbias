@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BF690BE7-7D4C-455D-92C4-5C66CF863B2B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>NoEdgeEditorWrapper</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath);$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Network\NetworkAPI;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories);$(SolutionDir)Physics\OysterPhysics3D</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformShortName)D</TargetName>
+    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath);$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Network\NetworkAPI;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories);$(SolutionDir)Physics\OysterPhysics3D</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
+    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath);$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Network\NetworkAPI;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories);$(SolutionDir)Physics\OysterPhysics3D</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\Bin\DLL\</OutDir>
+    <IntDir>$(SolutionDir)..\Obj\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformShortName)</TargetName>
+    <IncludePath>C:\Program Files %28x86%29\Visual Leak Detector\include;$(IncludePath);$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\GamePhysics;$(SolutionDir)Network\NetworkAPI;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;%(AdditionalIncludeDirectories);$(SolutionDir)Physics\OysterPhysics3D</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NOEDGE_EDITOR_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\;$(SolutionDir)Network\;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Game\LevelLoader;$(SolutionDir)Misc\;$(SolutionDir)Game\GameClient\GameClientState</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>GamePhysics_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameLogic_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy “$(WindowsSdkDir)redist\d3d\x86\D3DCompile*.DLL” “$(TargetDir)”</Command>
+      <Outputs>$(TargetDir)D3DCompile_46.DLL</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NOEDGE_EDITOR_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\;$(SolutionDir)Network\;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Game\LevelLoader;$(SolutionDir)Misc\;$(SolutionDir)Game\GameClient\GameClientState</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <DelayLoadDLLs>GamePhysics_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameLogic_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy “$(WindowsSdkDir)redist\d3d\x64\D3DCompile*.DLL” “$(TargetDir)”</Command>
+      <Outputs>$(TargetDir)D3DCompile_46.DLL</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NOEDGE_EDITOR_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\;$(SolutionDir)Network\;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Game\LevelLoader;$(SolutionDir)Misc\;$(SolutionDir)Game\GameClient\GameClientState</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <DelayLoadDLLs>GamePhysics_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;GameLogic_$(PlatformShortName).dll;GameClient_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy “$(WindowsSdkDir)redist\d3d\x86\D3DCompile*.DLL” “$(TargetDir)”</Command>
+      <Outputs>$(TargetDir)D3DCompile_46.DLL</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NOEDGE_EDITOR_DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)OysterGraphics;$(SolutionDir)Game\;$(SolutionDir)Physics\;$(SolutionDir)Network\;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Utilities;$(SolutionDir)Physics\OysterPhysics3D;$(SolutionDir)Game\LevelLoader;$(SolutionDir)Misc\;$(SolutionDir)Game\GameClient\GameClientState</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <DelayLoadDLLs>GamePhysics_$(PlatformShortName).dll;OysterGraphics_$(PlatformShortName).dll;GameLogic_$(PlatformShortName).dll;GameClient_$(PlatformShortName).dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy “$(WindowsSdkDir)redist\d3d\x64\D3DCompile*.DLL” “$(TargetDir)”</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$(TargetDir)D3DCompile_46.DLL</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Entity\Header\EntityProjectile.h" />
+    <ClInclude Include="Entity\Header\Entity.h" />
+    <ClInclude Include="Entity\Header\EntityWorld.h" />
+    <ClInclude Include="Entity\Header\IncludeEntity.h" />
+    <ClInclude Include="Entity\Header\EntityLight.h" />
+    <ClInclude Include="Entity\Header\EntityInteractive.h" />
+    <ClInclude Include="Entity\Header\EntityBuilding.h" />
+    <ClInclude Include="Entity\NoEdgeTypes.h" />
+    <ClInclude Include="NoEdgeEditorWrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Entity\Implementation\Entity.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityLight.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityInteractive.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityBuilding.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityProjectile.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityWorld.cpp" />
+    <ClCompile Include="IO\LevelReader.cpp" />
+    <ClCompile Include="NoEdgeEditorWrapper_Impl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Misc\Input\Input.vcxproj">
+      <Project>{7e3990d2-3d94-465c-b58d-64a74b3ecf9b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Misc\OysterMath\OysterMath.vcxproj">
+      <Project>{f10cbc03-9809-4cba-95d8-327c287b18ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Misc\Utilities\Utilities.vcxproj">
+      <Project>{2ec4dded-8f75-4c86-a10b-e1e8eb29f3ee}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Misc\WindowManager\WindowManager.vcxproj">
+      <Project>{35aea3c0-e0a7-4e1e-88cd-514aa5a442b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\OysterGraphics\OysterGraphics.vcxproj">
+      <Project>{0ec83e64-230e-48ef-b08c-6ac9651b4f82}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Physics\GamePhysics\GamePhysics.vcxproj">
+      <Project>{c4c76a8d-44c5-4452-9f61-39c7e01cbdb4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Physics\OysterPhysics3D\OysterPhysics3D.vcxproj">
+      <Project>{3ea5f14d-2a71-4588-a69d-87c4571c580f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GameClient\GameClient.vcxproj">
+      <Project>{2a1bc987-af42-4500-802d-89cd32fc1309}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GameLogic\GameLogic.vcxproj">
+      <Project>{b1195bb9-b3a5-47f0-906c-8dea384d1520}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\LevelLoader\LevelLoader.vcxproj">
+      <Project>{6391e709-d9fa-4fef-a3b9-4343db5a0c63}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -28,19 +28,25 @@ namespace Oyster
 			{
 				std::wstring modelPath, texturePath;
 				//between 0-1
-				float AmbientValue;
+				float ambientValue;
 
-				Math::Float3 GlobalTint;
-				Math::Float3 GlobalGlowTint;
+				Math::Float3 globalTint;
+				Math::Float3 globalGlowTint;
 
-				Math::Float2 Resolution;
+				Math::Float2 resolution;
 
 				//Bytes on the GPU
-				int BytesUsed;
+				int bytesUsed;
+
+				bool fullscreen;
 			};
 			typedef void* Texture;
 
-			static State Init(HWND Window, bool MSAA_Quality, bool Fullscreen, Option options);
+			static State Init(HWND Window, bool MSAA_Quality, Option options);
+
+			static void BeginLoadingModels();
+
+			static void EndLoadingModels();
 
 			static State ReloadShaders();
 
@@ -96,7 +102,9 @@ namespace Oyster
 			static void DeleteTexture(Texture);
 
 			//! @brief adds a light to the scene
-			static void AddLight(const Definitions::Pointlight light);
+			static void AddLight(Definitions::Pointlight* light);
+
+			static void RemoveLight(Definitions::Pointlight* light);
 			//! @brief removes all lights from the scene
 			static void ClearLights();
 
@@ -107,7 +115,13 @@ namespace Oyster
 			static Option GetOption();
 
 			//! @brief Starts an animation and returns the time of the animation
-			static float PlayAnimation(Model::Model* model, std::wstring name, bool looping = false);
+			static float PlayAnimation(Model::Model* model, const std::wstring &name, bool looping = false);
+
+			//! @brief Stops an animation of model
+			static void StopAnimation(Model::Model* model, const std::wstring &name);
+
+			//! @brief Stops all animations of model
+			static void StopAllAnimations(Model::Model* model);
 
 			//! @brief Moves all animating models forward the specified time;
 			static void Update(float deltaTime);

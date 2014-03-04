@@ -14,6 +14,7 @@
 
 #define NOMINMAX
 #include <Windows.h>
+#include <vld.h>
 
 namespace DanBias
 {

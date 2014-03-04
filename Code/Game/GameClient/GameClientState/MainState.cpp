@@ -9,6 +9,7 @@
 
 #include "EventHandler\EventHandler.h"
 #include "Buttons\ButtonRectangle.h"
+#include "Buttons\ButtonEllipse.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -31,6 +32,7 @@ struct MainState::MyData
 };
 
 void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e );
+void OnButtonInteract_Settings( Oyster::Event::ButtonEvent<MainState*>& e );
 void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e );
 void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<MainState*>& e );
 
@@ -53,22 +55,25 @@ bool MainState::Init( SharedStateContent &shared )
 	this->privData->mousePos = Float3( 0.0f );
 
 	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
-	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor_md.png" );
+	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor.png" );
 
 	// create buttons
 	ButtonRectangle<MainState*> *button;
-	Float4 TextCol = Float4(1.0f,0.0f,1.0f,1.0f);
-	Float4 BackCol = Float4(1.0f,1.0f,1.0f,0.5f);
-	Float4 HoverCol = Float4(0.0f,1.0f,0.0f,1.0f);
-	Float4 PressCol = Float4(0.0f,0.0f,1.0f,1.0f);
+	Float4 TextCol = Float4(0.1f,0.1f,0.1f,1.0f);
+	Float4 BackCol = Float4(1.0f);
+	Float4 HoverCol = Float4(1.2f);
+	Float4 PressCol = Float4(1.5f);
 	
-	button = new ButtonRectangle<MainState*>( L"color_white.png", L"Create",TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f));
+	//button = new ButtonRectangle<MainState*>( L"color_white.png", L"Create",TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f));
+	//this->privData->guiElements.AddButton( button );
+
+	button = new ButtonRectangle<MainState*>( L"noedge-btn-lan.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Join, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.5f, 0.18f));
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"color_white.png", L"Join", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.1f));
+	button = new ButtonRectangle<MainState*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Settings, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.5f, 0.18f));
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"color_white.png", L"Quit", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.1f));
+	button = new ButtonRectangle<MainState*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.5f, 0.18f));
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
@@ -98,8 +103,12 @@ bool MainState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.01f), Float4(1.0f) );
-	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(63.0f/255.0f,73.0f/255.0f,127.0f/255.0f,0.6f) );
+	if(this->privData->mouseInput->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
+		Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f), Float4(1.0f) );
+	else
+		Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
+
+	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(0.0f, 0.0f, 0.0f, 1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
@@ -134,6 +143,17 @@ void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		break;
+	default: break;
+	}
+}
+
+void OnButtonInteract_Settings( Oyster::Event::ButtonEvent<MainState*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		//e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
 		break;
 	default: break;
 	}

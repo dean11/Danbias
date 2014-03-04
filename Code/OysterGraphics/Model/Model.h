@@ -19,6 +19,7 @@ namespace Oyster
 				float AnimationTime;
 				bool LoopAnimation;
 			};
+
 			struct Model
 			{
 				ModelInfo* info;
@@ -26,10 +27,14 @@ namespace Oyster
 				Oyster::Math::Float3 Tint;
 				Oyster::Math::Float3 GlowTint;
 				bool Visible;
-				AnimationData Animation;
+				bool Instanced;
+				AnimationData Animation[4];
+				int numOccupiedAnimationSlots;
+
+				Model() { this->numOccupiedAnimationSlots = 0; }
+				~Model() { }
 			};
 		}
-		
 	};
 };
 

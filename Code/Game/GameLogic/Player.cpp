@@ -6,206 +6,143 @@
 
 using namespace GameLogic;
 using namespace Oyster::Physics;
+using namespace Oyster::Math3D;
+using namespace Utility::Value;
+
 const float MOVE_FORCE = 30;
 const float KEY_TIMER = 0.03f;
+const float AFFECTED_TIMER = 1.0f;
+
+// movement properties
+const Float dampening_factor = 0.2f,
+			forward_velocity = 20.0f,
+			backward_velocity = 15.0f,
+			strafe_velocity = 17.5f,
+			jump_velocity = 20.0f;
+
 Player::Player()
 	:DynamicObject()
 {
-
+	Player::initPlayerData();
+	this->weapon = NULL;
+	this->teamID = -1; 
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
-	weapon = new Weapon(2,this);
-
-	this->life = 100;
+	this->weapon = new Weapon(2,this);
+	Player::initPlayerData();
 	this->teamID = teamID;
-	this->playerState = PLAYER_STATE_IDLE;
-	this->lookDir = Oyster::Math::Float3(0,0,-1);
-	key_forward = 0;
-	key_backward = 0;
-	key_strafeRight = 0;
-	key_strafeLeft = 0;
-	key_jump = 0;
-	invincibleCooldown = 0;
-
-	this->previousPosition = Oyster::Math::Float3(0,0,0);
-
-	this->moveDir = Oyster::Math::Float3(0,0,0);
-	this->moveSpeed = 100;
-	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
-
-	this->rotationUp = 0;
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
-	weapon = new Weapon(2,this);
-
-	this->life = 100;
+	this->weapon = new Weapon(2,this);
+	Player::initPlayerData();
 	this->teamID = teamID;
-	this->playerState = PLAYER_STATE_IDLE;
-	this->lookDir = Oyster::Math::Float3(0,0,-1);
-	key_forward = 0;
-	key_backward = 0;
-	key_strafeRight = 0;
-	key_strafeLeft = 0;
-	key_jump = 0;
-	invincibleCooldown = 0;
-
-	this->previousPosition = Oyster::Math::Float3(0,0,0);
-	this->moveDir = Oyster::Math::Float3(0,0,0);
-	this->moveSpeed = 20;
-	this->previousMoveSpeed = Oyster::Math::Float3(0,0,0);
-
-	this->rotationUp = 0;
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
 }
 
 Player::~Player(void)
 {
-	if(weapon)
+	if(this->weapon)
 	{
-		delete weapon;
-		weapon = NULL;
+		delete this->weapon;
+		this->weapon = NULL;
 	}	
+}
+void Player::initPlayerData()
+{
+	this->playerStats.hp = MAX_HP;
+	this->playerStats.movementSpeed = BASIC_SPEED;
+	this->playerState			= PLAYER_STATE_IDLE;
+	this->lookDir				= Oyster::Math::Float3(0,0,-1);
+
+	this->key_forward			= 0;
+	this->key_backward			= 0;
+	this->key_strafeRight		= 0;
+	this->key_strafeLeft		= 0;
+	this->key_jump				= 0;
+	this->RecentlyAffected		= 0;
+	this->deathTimer			= 0;
+
+	this->rotationUp = 0;
+
+	ICustomBody::State state;
+	this->rigidBody->GetState( state );
+	state.staticFrictionCoeff = 0.0f;
+	state.dynamicFrictionCoeff = 0.0f;
+	this->rigidBody->SetState( state );
 }
 
 void Player::BeginFrame()
 {
-	//weapon->Update(0.002f); 
-	//Object::BeginFrame();
-
-	Oyster::Math::Float maxSpeed = 30;
-
-	// Rotate player accordingly
-	this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
-	Oyster::Math::Quaternion firstUp = this->rigidBody->GetState().quaternion;
-	this->rigidBody->SetRotationAsAngularAxis(Oyster::Math3D::Float4(this->rigidBody->GetState().centerPos.GetNormalized(), this->rotationUp));
-	Oyster::Math::Quaternion secondTurn = this->rigidBody->GetState().quaternion;
-
-	this->rigidBody->SetRotation(secondTurn*firstUp);
-	
-	// Direction data
-	Oyster::Math::Float4x4 xform;
-	xform = this->rigidBody->GetState().GetOrientation();
-
-	Oyster::Math::Float3 forwardDir = xform.v[2];
-	Oyster::Math::Float3 upDir = xform.v[1];
-	Oyster::Math::Float3 rightDir = xform.v[0];
-	forwardDir.Normalize();
-	upDir.Normalize();
-	rightDir.Normalize();
-
-	// Previous velocities data
-	Oyster::Math::Float3 linearVelocity = this->rigidBody->GetLinearVelocity();
-	Oyster::Math::Float3 forwardVelocity = linearVelocity*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z));
-	Oyster::Math::Float forwardSpeed = (linearVelocity*forwardDir).GetLength();
-	Oyster::Math::Float3 rightVelocity = linearVelocity*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z));
-	Oyster::Math::Float rightSpeed = (linearVelocity*rightDir).GetLength();
-	Oyster::Math::Float3 upVelocity = linearVelocity*Oyster::Math::Float3(fabs(upDir.x), fabs(upDir.y), fabs(upDir.z));
-
-	// Walking data
-	Oyster::Math::Float3 walkDirection = Oyster::Math::Float3(0.0, 0.0, 0.0);
-	Oyster::Math::Float walkSpeed = this->moveSpeed*0.2f;
-
-	// Check for input
-	if(key_forward > 0.001)
+	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		key_forward -= gameInstance->GetFrameTime();
-		walkDirection += forwardDir;
-	}
-	if(key_backward > 0.001)
-	{
-		key_backward -= gameInstance->GetFrameTime();
-		walkDirection -= forwardDir;
-	}
-	if(key_strafeRight > 0.001)
-	{
-		key_strafeRight -= gameInstance->GetFrameTime();
-		walkDirection += rightDir;
-	}
-	if(key_strafeLeft > 0.001)
-	{
-		key_strafeLeft -= gameInstance->GetFrameTime();
-		walkDirection -= rightDir;
-	}
-	
-	// Dampen velocity if certain keys are not pressed
-	if(key_jump <= 0.001 && this->rigidBody->GetLambda() < 0.9f)
-	{
-		if(key_forward <= 0.001 && key_backward <= 0.001)
+		this->weapon->Update(0.002f);
+
+		// Rotate player accordingly
+		this->rigidBody->AddRotationAroundY(this->rotationUp);
+		this->rigidBody->SetUp(this->rigidBody->GetState().centerPos.GetNormalized());
+		this->rotationUp = 0;
+
+		ICustomBody::State state;
+		this->rigidBody->GetState( state );
+
+		// Direction data
+		Float4x4 rotation = state.GetRotation();
+		Float3 &forwardDir = rotation.v[2].xyz;
+		Float3 &upDir = rotation.v[1].xyz;
+		Float3 &rightDir = rotation.v[0].xyz;
+
+		if( this->IsWalking() )
 		{
-			forwardVelocity *= Oyster::Math::Float3(0.2f*fabs(forwardDir.x), 0.2f*fabs(forwardDir.y), 0.2f*fabs(forwardDir.z));
-		}
-		if(key_strafeRight <= 0.001 && key_strafeLeft <= 0.001)
-		{
-			rightVelocity *= Oyster::Math::Float3(0.2f*fabs(rightDir.x), 0.2f*fabs(rightDir.y), 0.2f*fabs(rightDir.z));
-		}
-	}
-	
-	// Walk if walkdirection is something
-	if(walkDirection != Oyster::Math::Float3::null)
-	{
-		walkDirection.Normalize();
+			this->UpdateMovement( rotation, state );
 
-		// If on the ground, accelerate normally
-		if(this->rigidBody->GetLambda() < 0.9f)
-		{
-			if(forwardSpeed < maxSpeed)
-			{
-				forwardVelocity += walkDirection*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z)) * walkSpeed;
+			if( this->key_jump > 0.001f )
+			{ // process jumping
+				this->rigidBody->ApplyImpulse( upDir * jump_velocity * state.mass );
+
+				if( this->playerState != PLAYER_STATE::PLAYER_STATE_JUMPING )
+				{
+					this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Jump );
+					this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+				}
 			}
-			if(rightSpeed < maxSpeed)
-			{
-				rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), abs(rightDir.y), fabs(rightDir.z)) * walkSpeed;
+			else if( this->playerState != PLAYER_STATE::PLAYER_STATE_WALKING )
+			{ // if is walking and not attempting to jump. Play walking animation
+				this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Walk );
+				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			}
 		}
-		// If in the air, accelerate slower
-		if(this->rigidBody->GetLambda() >= 0.9f)
+		else if( this->IsJumping() )
 		{
-			if(forwardSpeed < maxSpeed)
-			{
-				forwardVelocity += walkDirection*Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z)) * walkSpeed*0.2f;
-			}
-			if(rightSpeed < maxSpeed)
-			{
-				rightVelocity += walkDirection*Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z)) * walkSpeed*0.2f;
-			}
+			this->UpdateMovement( rotation, state );
 		}
-	}
-
-	// Adjust velocities so no squaring occurs
-	forwardVelocity *= Oyster::Math::Float3(fabs(forwardDir.x), fabs(forwardDir.y), fabs(forwardDir.z));
-	rightVelocity *= Oyster::Math::Float3(fabs(rightDir.x), fabs(rightDir.y), fabs(rightDir.z));
-	upVelocity *= Oyster::Math::Float3(fabs(upDir.x), fabs(upDir.y), fabs(upDir.z)); 
-
-	this->rigidBody->SetLinearVelocity(forwardVelocity+rightVelocity+upVelocity);
-
-	//Jump
-	if(key_jump > 0.001)
-	{
-		this->key_jump -= this->gameInstance->GetFrameTime();
-		if(this->rigidBody->GetLambda() < 0.9f)
+		else if( this->IsIdle() && this->playerState != PLAYER_STATE_IDLE )
 		{
-			Oyster::Math::Float3 up = this->rigidBody->GetState().centerPos.GetNormalized();
-			this->rigidBody->ApplyImpulse(up*this->rigidBody->GetState().mass*20);
-			this->playerState = PLAYER_STATE::PLAYER_STATE_JUMPING;
+			this->gameInstance->onActionEventFnc( this, PlayerAction::PlayerAction_Idle );
+			this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 		}
+
+		Float frameTime = gameInstance->GetFrameTime();
+		this->key_forward = Max( this->key_forward - frameTime, 0.0f );
+		this->key_backward = Max( this->key_backward - frameTime, 0.0f );
+		this->key_strafeRight = Max( this->key_strafeRight - frameTime, 0.0f );
+		this->key_strafeLeft = Max( this->key_strafeLeft - frameTime, 0.0f );
+		this->key_jump = Max( this->key_jump - frameTime, 0.0f );
 	}
-
-	
-	
-
-	//this->weapon->Update(0.01f);
 }
 
 void Player::EndFrame()
 {
-	
-	//Object::EndFrame();	
-
 }
 
 void Player::Move(const PLAYER_MOVEMENT &movement)
@@ -258,16 +195,19 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 
 void Player::Respawn(Oyster::Math::Float3 spawnPoint)
 { 
-	this->life = 100;
-	this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
-	this->lookDir = Oyster::Math::Float4(1,0,0);
-	this->rigidBody->SetPosition(spawnPoint);
+	if( this->playerState == PLAYER_STATE_DEAD) 
+	{
+		Player::initPlayerData();
+		this->rigidBody->SetPosition(spawnPoint);
+		this->gameInstance->onRespawnFnc( this, spawnPoint);
+		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+	}
 }
 
-void Player::Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)
+void Player::SetLookDir(const Oyster::Math3D::Float3& lookDir)
 {
 	// this is the camera right vector
-	this->lookDir = lookDir;
+	this->lookDir = -lookDir;
 
 }
 void Player::TurnLeft(Oyster::Math3D::Float deltaRadians)
@@ -282,17 +222,28 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_WALKING);
+	return (this->rigidBody->GetLambdaUp() < 0.6f);
 }
 bool Player::IsJumping()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_JUMPING);
+	return (this->rigidBody->GetLambdaUp() >= 0.6f);
 }
 bool Player::IsIdle()
 {
-	return (this->playerState == PLAYER_STATE::PLAYER_STATE_IDLE);
+	return (this->rigidBody->GetLambdaUp() < 0.6f && this->rigidBody->GetLinearVelocity().GetMagnitude() < 0.1f);
 }
 
+void Player::Inactivate()
+{
+	//this->
+}
+void Player::ResetPlayer( Oyster::Math::Float3 spawnPos)
+{
+	Player::initPlayerData();
+	this->rigidBody->SetPosition(spawnPos);
+	this->playerScore.killScore = 0;
+	this->playerScore.deathScore = 0;
+}
 Oyster::Math::Float3 Player::GetPosition() const
 {
 	return (Oyster::Math::Float3) this->rigidBody->GetState().centerPos;
@@ -313,16 +264,104 @@ PLAYER_STATE Player::GetState() const
 {
 	return this->playerState;
 }
-
+void Player::AddKill()
+{
+	this->playerScore.killScore++;
+}
+void Player::AddDeath()
+{
+	this->playerScore.deathScore++;
+}
+int Player::GetKills() const
+{
+	return this->playerScore.killScore;
+}
+int Player::GetDeath() const
+{
+	return this->playerScore.deathScore;
+}
 void Player::DamageLife(int damage)
 {
-	this->life -= damage;
-	this->life = 0;
-
-	if(this->life <= 0)
+	if(damage != 0)
 	{
-		this->life = 0;
-		playerState = PLAYER_STATE_DEAD;
-		this->gameInstance->onDisableFnc(this, 0.0f);
+		this->playerStats.hp -= damage;
+
+		if(this->playerStats.hp > 100)
+			this->playerStats.hp = 100;
+
+		// send hp to client
+		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+
+		if(this->playerStats.hp <= 0)
+		{
+			this->playerStats.hp = 0;
+			this->playerState = PLAYER_STATE_DIED;
+		}
 	}
+}
+
+bool Player::deathTimerTick(float dt)
+{
+	this->deathTimer -= dt;
+	if( this->deathTimer <= 0)
+	{
+		return true;
+	}
+	return false;
+}
+void Player::setDeathTimer(float deathTimer)
+{
+	this->deathTimer = deathTimer;
+	this->playerState = PLAYER_STATE_DEAD;
+}
+
+void Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBody::State &state )
+{
+	const Float3 &rightDir = orientationMatrix.v[0].xyz,
+				 &upDir = orientationMatrix.v[1].xyz,
+				 &forwardDir = orientationMatrix.v[2].xyz;
+
+	// preserve up/down movement
+	Float3 movementAccumulator = NormalProjection( this->rigidBody->GetLinearVelocity(), upDir );
+
+	{ // process forward/backward
+		Float3 forwardVelocity = 0.0f;
+		bool isNotMovingForwardOrBackward = true;
+		if( this->key_forward > 0.001f )
+		{
+			forwardVelocity += forwardDir * forward_velocity;
+			isNotMovingForwardOrBackward = false;
+		}
+		if( this->key_backward > 0.001f )
+		{
+			forwardVelocity -= forwardDir * backward_velocity;
+			isNotMovingForwardOrBackward = false;
+		}
+		if( isNotMovingForwardOrBackward )
+		{ // dampen forward/backward velocity if not running forward/backward
+			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * dampening_factor;
+		}
+		movementAccumulator += forwardVelocity;
+	}
+	{ // process strafe right/left
+		Float3 strafeVelocity = 0.0f;
+		bool isNotStrafing = true;
+		if( this->key_strafeRight > 0.001f )
+		{
+			strafeVelocity = rightDir * strafe_velocity;
+			isNotStrafing = false;
+		}
+		if( this->key_strafeLeft > 0.001f )
+		{
+			strafeVelocity -= rightDir * strafe_velocity;
+			isNotStrafing = false;
+		}
+		if( isNotStrafing )
+		{ // dampen right/left strafe velocity if not strafing
+			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * dampening_factor;
+		}
+		movementAccumulator += strafeVelocity;
+	}
+
+	this->rigidBody->SetLinearVelocity( movementAccumulator );
 }

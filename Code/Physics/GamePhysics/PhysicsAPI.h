@@ -106,6 +106,10 @@ namespace Oyster
 			 ********************************************************/
 			virtual void ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect) = 0;
 
+			virtual ICustomBody* RayClosestObjectNotMe(ICustomBody* self, Oyster::Math::Float3 origin, Oyster::Math::Float3 target) = 0;
+
+			virtual ICustomBody* Intersect(Oyster::Math::Float3 origin, Oyster::Math::Float3 target) = 0;
+
 		protected:
 			virtual ~API() {}
 		};
@@ -126,7 +130,7 @@ namespace Oyster
 
 			
 			typedef SubscriptMessage (*EventAction_BeforeCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
-			typedef void (*EventAction_AfterCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter, ::Oyster::Math::Float kineticEnergyLoss );
+			typedef void (*EventAction_AfterCollisionResponse)( const ICustomBody *proto, const ICustomBody *deuter );
 			typedef void (*EventAction_Move)( const ICustomBody *object );
 			typedef Struct::CustomBodyState State;
 
@@ -147,7 +151,7 @@ namespace Oyster
 			virtual void SetRotation(::Oyster::Math::Quaternion quaternion) = 0;
 			virtual void SetRotation(::Oyster::Math::Float3 eulerAngles) = 0;
 			virtual void SetRotation(::Oyster::Math::Float4x4 rotation) = 0;
-			virtual void SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis) = 0;
+			virtual void AddRotationAroundY(::Oyster::Math::Float angle) = 0;
 			virtual void SetAngularFactor(::Oyster::Math::Float factor) = 0;
 			virtual void SetMass(::Oyster::Math::Float mass) = 0;
 
@@ -166,7 +170,7 @@ namespace Oyster
 			virtual ::Oyster::Math::Float3 GetGravity() const = 0;
 			virtual ::Oyster::Math::Float3 GetLinearVelocity() const = 0;
 
-			virtual void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Math::Float kineticEnergyLoss) = 0;
+			virtual void CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB) = 0;
 			virtual void CallSubscription_Move() = 0;
 
 			virtual void MoveToLimbo() = 0;
@@ -185,7 +189,10 @@ namespace Oyster
 			 ********************************************************/
 			virtual void SetCustomTag( void *ref ) = 0;
 
-			virtual float GetLambda() const = 0;
+			virtual float GetLambdaUp() const = 0;
+			virtual float GetLambdaForward() const = 0;
+
+			virtual void OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce) = 0;
 		};
 	}
 }

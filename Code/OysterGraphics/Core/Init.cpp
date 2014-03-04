@@ -11,12 +11,12 @@ namespace Oyster
 			if(Core::deviceContext)
 			{
 				Core::deviceContext->Release();
-				delete Core::deviceContext;
+				//delete Core::deviceContext;
 			}
 			if(Core::device)
 			{
 				Core::device->Release();
-				delete Core::device;
+				//delete Core::device;
 			}
 			
 
@@ -110,8 +110,8 @@ namespace Oyster
 			if(Core::swapChain)
 			{
 				Core::swapChain->Release();
-				Core::UsedMem -= desc.BufferDesc.Height * desc.BufferDesc.Width * 16;
-				delete Core::swapChain;
+				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
+				//delete Core::swapChain;
 			}
 
 	
@@ -168,7 +168,7 @@ namespace Oyster
 			}
 
 			dxgiFactory->Release();
-			Core::UsedMem += desc.BufferDesc.Height * desc.BufferDesc.Width * 16;
+			Core::UsedMem += desc.BufferDesc.Height * desc.BufferDesc.Width * 4;
 			return Init::Success;
 		}
 
@@ -188,8 +188,8 @@ namespace Oyster
 			if(Core::depthStencil)
 			{
 				Core::depthStencil->Release();
-				Core::UsedMem -= desc.Height * desc.Width * 4;
-				delete Core::depthStencil;
+				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
+				//delete Core::depthStencil;
 			}
 
 			//Check and Set multiSampling
@@ -259,7 +259,7 @@ namespace Oyster
 			if(Core::backBufferRTV)
 			{
 				Core::backBufferRTV->Release();
-				delete Core::backBufferRTV;
+				//delete Core::backBufferRTV;
 			}
 			if(FAILED(Core::device->CreateRenderTargetView(backBuffer,0,&Core::backBufferRTV)))
 			{
@@ -270,7 +270,7 @@ namespace Oyster
 			if(Core::backBufferUAV)
 			{
 				Core::backBufferUAV->Release();
-				delete Core::backBufferUAV;
+				//delete Core::backBufferUAV;
 			}
 			if(FAILED(Core::device->CreateUnorderedAccessView(backBuffer,0,&Core::backBufferUAV)))
 			{
@@ -327,12 +327,16 @@ namespace Oyster
 				return Init::Fail;
 			}
 
+			
+			Core::window = Window;
+			Core::fullscreen = Fullscreen;
+
 			return Init::Success;
 		}
 
-		Core::Init::State Core::Init::ReInitialize(HWND Window, bool MSAA_Quality, bool Fullscreen)
+		Core::Init::State Core::Init::ReInitialize(bool MSAA_Quality, bool Fullscreen, Math::Float2 Size)
 		{
-			if(Init::CreateSwapChain(Window, 1, MSAA_Quality, Fullscreen, Core::resolution) == Init::Fail)
+			if(Init::CreateSwapChain(Core::window, 1, MSAA_Quality, Fullscreen, Size) == Init::Fail)
 			{
 				return Init::Fail;
 			}

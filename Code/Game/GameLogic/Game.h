@@ -40,12 +40,14 @@ namespace GameLogic
 			Oyster::Math::Float3 GetScale()																override;
 			Oyster::Math::Float4x4 GetOrientation()														override; 
 			int GetID() const																			override;
-			void Rotate(const Oyster::Math3D::Float3& lookDir, const Oyster::Math3D::Float3& right)		override;
+			int GetKills() const override;
+			int GetDeaths() const override;
+			void SetLookDir(const Oyster::Math3D::Float3& lookDir)		override;
 			void TurnLeft(Oyster::Math3D::Float deltaLeftRadians )										override;
 			ObjectSpecialType GetObjectType()	const													override;
-
-
-
+			void Inactivate()																			override;
+			void Release()																				override;
+			Player* GetPlayer();
 			Player *player;
 		};
 
@@ -63,7 +65,8 @@ namespace GameLogic
 			int getNrOfDynamicObj()const							override;
 			IObjectData* GetObjectAt(int ID) const					override;
 			void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& mem) const override;
-
+			void Update(float deltaTime);
+			void AddPlayerToGame(IPlayerData *player);
 			Level *level;
 		};
 
@@ -78,22 +81,39 @@ namespace GameLogic
 		bool NewFrame()																									override;
 		void SetFPS( int FPS )																							override;
 		void SetFrameTimeLength( float seconds )																		override;
-		void SetSubscription(GameEvent::ObjectMovedFunction functionPointer)											override;
-		void SetSubscription(GameEvent::ObjectDisabledFunction functionPointer)											override;
+		void SetMoveSubscription(GameEvent::ObjectMovedFunction functionPointer) 										override;
+		void SetDisableSubscription(GameEvent::ObjectDisabledFunction functionPointer) 									override;
+		void SetEnableSubscription(GameEvent::ObjectEnabledFunction functionPointer) 									override;
+		void SetHpSubscription(GameEvent::ObjectHpFunction functionPointer) 											override;
+		void SetRespawnSubscription(GameEvent::ObjectRespawnedFunction functionPointer) 								override;
+		void SetDeadSubscription(GameEvent::ObjectDeadFunction functionPointer) 										override;
+		void SetActionSubscription(GameEvent::AnimationEventFunction functionPointer) 									override;
+		void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) 										override;
+		void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) 										override;
+		void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer)						override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
 
 		static void PhysicsOnMove(const Oyster::Physics::ICustomBody *object);
 		static void PhysicsOnDestroy(::Utility::DynamicMemory::UniquePointer<Oyster::Physics::ICustomBody> proto);
+		static void PhysicsOnDead(const Oyster::Physics::ICustomBody *object);
 
 		Utility::DynamicMemory::DynamicArray<PlayerData*> players;
 		LevelData* level;
 		float frameTime;
 		bool initiated;
-		GameEvent::ObjectDisabledFunction onDisableFnc;
-		GameEvent::ObjectMovedFunction onMoveFnc;
 
+		GameEvent::ObjectMovedFunction		onMoveFnc;
+		GameEvent::ObjectDisabledFunction	onDisableFnc;
+		GameEvent::ObjectEnabledFunction	onEnableFnc;
+		GameEvent::ObjectHpFunction			onDamageTakenFnc;
+		GameEvent::ObjectRespawnedFunction 	onRespawnFnc;
+		GameEvent::ObjectDeadFunction		onDeadFnc;
+		GameEvent::AnimationEventFunction	onActionEventFnc;
+		GameEvent::PickupEventFunction		onPickupEventFnc;
+		GameEvent::CollisionEventFunction	onCollisionEventFnc;
+		GameEvent::WeaponEnergyFunction		onEnergyUpdateFnc;
 	};	
 }
 

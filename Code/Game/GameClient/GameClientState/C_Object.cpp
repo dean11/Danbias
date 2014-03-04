@@ -30,6 +30,8 @@ bool C_Object::Init(ModelInitData modelInit)
 	if(model == NULL)
 		return false;
 	model->Visible = modelInit.visible;
+	model->Tint = modelInit.tint;
+	model->GlowTint = modelInit.gtint;
 	updateWorld();
 	return true;
 }
@@ -91,7 +93,10 @@ void C_Object::Render()
 {
 	if( this->model )
 	{
-		Oyster::Graphics::API::RenderModel(model);
+		if(this->model->Visible)
+		{
+			Oyster::Graphics::API::RenderModel(model);
+		}
 	}
 }
 void C_Object::Release()
@@ -123,7 +128,10 @@ void C_Object::SetGlowTint(Oyster::Math::Float3 tint)
 	model->GlowTint = tint;
 }
 
-
+void C_Object::SetVisible(bool visible)
+{
+	model->Visible = visible;
+}
 
 ////////////////////////////////////////////////
 // RB DEBUG

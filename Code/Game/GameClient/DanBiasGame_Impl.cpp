@@ -9,13 +9,13 @@
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
 #include "GameClientState\NetLoadState.h"
+#include "Utilities.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
-#include <GameServerAPI.h>
+//#include <GameServerAPI.h>
 
 #include "../WindowManager/WindowShell.h"
 #include "WinTimer.h"
-#include "vld.h"
 
 #include "EventHandler/EventHandler.h"
 
@@ -51,17 +51,16 @@ namespace DanBias
 
 		DanBiasGamePrivateData()
 		{
-			this->sharedStateContent.network		= nullptr;
-			this->sharedStateContent.mouseDevice	= nullptr;
-			this->sharedStateContent.keyboardDevice	= nullptr;
-			this->serverOwner						= false;
-			this->capFrame							= 0;
+			this->sharedStateContent.network			= nullptr;
+			this->sharedStateContent.mouseDevice		= nullptr;
+			this->sharedStateContent.keyboardDevice		= nullptr;
+			this->sharedStateContent.mouseSensitivity	= Utility::Value::Radian( 0.6f );
+			this->serverOwner							= false;
+			this->capFrame								= 0;
 		}
 
 		~DanBiasGamePrivateData()
 		{
-			//SafeDeleteInstance( this->sharedStateContent.mouseDevice );
-			//SafeDeleteInstance( this->sharedStateContent.keyboardDevice );
 		}
 	} data;
 }
@@ -115,7 +114,6 @@ namespace DanBias
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
-			Graphics::API::Update( dt );
 			
 			data.capFrame += dt;
 			if(data.capFrame > 0.03f)
@@ -127,6 +125,8 @@ namespace DanBias
 				case Result_error:		return DanBiasClientReturn_Error;
 				default:				break;
 				}
+				
+				Graphics::API::Update( data.capFrame );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
 				data.capFrame -= 0.03f; 
@@ -149,14 +149,16 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	HRESULT DanBiasGame::InitDirect3D()
 	{
-		Oyster::Graphics::API::Option p;
-		p.modelPath = L"..\\Content\\Models\\";
-		p.texturePath = L"..\\Content\\Textures\\";
-		p.Resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
-		//! @todo fix proper amb value
-		p.AmbientValue = 1.3f;
+		Oyster::Graphics::API::Option gfxOp;
+		gfxOp.modelPath = L"..\\Content\\Models\\";
+		gfxOp.texturePath = L"..\\Content\\Textures\\";
+		gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
+		gfxOp.ambientValue = 0.5f;
+		gfxOp.fullscreen = false;
+		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
+		gfxOp.globalTint = Math::Float3(1.0f, 1.0f, 1.0f);
 
-		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, false, p) != Oyster::Graphics::API::Sucsess)
+		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, gfxOp) != Oyster::Graphics::API::Sucsess)
 			return E_FAIL;
 		return S_OK;
 	}
@@ -185,43 +187,48 @@ namespace DanBias
 	
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
-		if( data.serverOwner )
+		/*if( data.serverOwner )
 		{
-			DanBias::GameServerAPI::ServerUpdate();
+		DanBias::GameServerAPI::ServerUpdate();
 		}
-
+		*/
 		DanBias::Client::GameClientState::ClientState state = DanBias::Client::GameClientState::ClientState_Same;
-
 		state = data.state->Update( deltaTime );
 
 		if( state != Client::GameClientState::ClientState_Same )
 		{
 			bool stateChanged = false;
-			data.state->Release();
-
+			
 			switch (state)
 			{
 			case Client::GameClientState::ClientState_Main:
+				data.networkClient.Disconnect();
+				data.state->Release();
 				data.state = new Client::MainState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Lan:
+				data.state->Release();
 				data.state = new Client::LanMenuState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Lobby:
+				data.state->Release();
 				data.state = new Client::LobbyState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_LobbyCreate:
+				data.state->Release();
 				data.state = new Client::LobbyAdminState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Game:
+				data.state->Release();
 				data.state = new Client::GameState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_NetLoad:
+				data.state->Release();
 				data.state = new Client::NetLoadState();
 				stateChanged = true;
 				break;
@@ -254,12 +261,12 @@ namespace DanBias
 			data.networkClient.Disconnect();
 
 		data.state = nullptr;
-		SafeDeleteInstance( data.sharedStateContent.network );
 
+		Input::InputManager::DestroyInputManager();
 		EventHandler::Instance().Clean();
 		Graphics::API::Clean();
 
-		GameServerAPI::ServerStop();
+		//GameServerAPI::ServerStop();
 
 		return S_OK;
 	}	

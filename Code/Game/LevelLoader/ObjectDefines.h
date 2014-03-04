@@ -42,6 +42,7 @@ namespace GameLogic
 		ObjectSpecialType_Player,
 		ObjectSpecialType_Generic,
 		
+		ObjectSpecialType_PickupHealth,
 
 		ObjectSpecialType_Count,
 		ObjectSpecialType_Unknown  = -1
@@ -52,6 +53,7 @@ namespace GameLogic
 		CollisionGeometryType_Box,
 		CollisionGeometryType_Sphere,
 		CollisionGeometryType_Cylinder,
+		CollisionGeometryType_CG_MESH,
 
 		CollisionGeometryType_Count,
 		CollisionGeometryType_Unknown = -1
@@ -91,6 +93,33 @@ namespace GameLogic
 		WorldSize_Unknown = -1
 	};
 
+	enum PlayerAction
+	{
+		PlayerAction_Jump = 0,
+		PlayerAction_Walk = 1,
+		PlayerAction_Idle = 2,
+	};
+	// continue ID counting from playerAction
+	enum WeaponAction
+	{
+		WeaponAction_PrimaryShoot		= 3,
+		WeaponAction_SecondaryShoot		= 4,
+		WeaponAction_UtilityActivate	= 5,
+		WeaponAction_Reload				= 6, 
+		WeaponAction_EnergyDepleted		= 7,
+
+	};
+
+	// TODO: add more collision Events
+	enum CollisionEvent
+	{
+		CollisionEvent_BasicCollision,
+	};
+	enum PickupType
+	{
+		PickupType_Health,
+		PickupType_SpeedBoost
+	};
 
 	/************************************
 				Structs
@@ -161,6 +190,11 @@ namespace GameLogic
 			float radius;
 		};
 
+		struct BoundingVolumeCGMesh : public BoundingVolumeBase
+		{
+			wchar_t filename[128];
+		};
+
 		struct BoundingVolume
 		{
 			CollisionGeometryType geoType;
@@ -169,9 +203,9 @@ namespace GameLogic
 				LevelLoaderInternal::BoundingVolumeBox box;
 				LevelLoaderInternal::BoundingVolumeSphere sphere;
 				LevelLoaderInternal::BoundingVolumeCylinder cylinder;
+				LevelLoaderInternal::BoundingVolumeCGMesh cgMesh;
 			};
 		};
-
 	}
 
 	struct LevelMetaData : public ObjectTypeHeader
@@ -240,7 +274,11 @@ namespace GameLogic
 		float skySize;
 	};
 
-	
+	struct PickupHealthAttributes : public ObjectHeader
+	{
+		float spawnTime;
+		float healthValue;
+	};
 
 	
 
@@ -253,8 +291,10 @@ namespace GameLogic
 		LightType lightType;	//Is not used right now
 		float color[3];
 		float position[3];
-		float raduis;
+		float radius;
 		float intensity;
+
+		virtual ~BasicLight(){}
 	};
 	/* We only support pointlight right now.
 	struct PointLight : public BasicLight

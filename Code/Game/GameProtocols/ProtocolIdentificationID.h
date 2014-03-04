@@ -20,6 +20,7 @@
 #define protocol_GeneralMIN								100
 #define protocol_General_Status						100
 #define protocol_General_Text						101
+#define protocol_Broadcast_Test							102
 #define protocol_GeneralMAX								199
 
 
@@ -51,6 +52,7 @@
 #define protocol_Gameplay_PlayerChangeWeapon		305
 #define protocol_Gameplay_PlayerShot				306
 #define protocol_Gameplay_PlayerJump				307
+#define protocol_Gameplay_PlayerScore				308
 
 #define protocol_Gameplay_ObjectPickup				350
 #define protocol_Gameplay_ObjectDamage				351
@@ -62,15 +64,17 @@
 #define protocol_Gameplay_ObjectEnabled				357
 #define protocol_Gameplay_ObjectDisabled			358
 #define protocol_Gameplay_ObjectCreate				359
-#define protocol_Gameplay_ObjectCreatePlayer		360
-#define protocol_Gameplay_ObjectJoinTeam			361
-#define protocol_Gameplay_ObjectLeaveTeam			362
-#define protocol_Gameplay_ObjectWeaponCooldown		363
-#define protocol_Gameplay_ObjectWeaponEnergy		364
-#define protocol_Gameplay_ObjectRespawn				365
-#define protocol_Gameplay_ObjectDie					366
-//Disconnect
-#define protocol_Gameplay_ObjectDisconnectPlayer	367
+#define protocol_Gameplay_ObjectDelete				360
+#define protocol_Gameplay_ObjectCreatePlayer		361
+#define protocol_Gameplay_ObjectJoinTeam			362
+#define protocol_Gameplay_ObjectLeaveTeam			363
+#define protocol_Gameplay_ObjectWeaponCooldown		364
+#define protocol_Gameplay_ObjectWeaponEnergy		365
+#define protocol_Gameplay_ObjectRespawn				366
+#define protocol_Gameplay_ObjectDie					367
+#define protocol_Gameplay_ObjectDisconnectPlayer	368
+#define protocol_Gameplay_ObjectAction				369
+#define protocol_Gameplay_ObjectCollision			370
 #define protocol_GameplayMAX							399
 
 

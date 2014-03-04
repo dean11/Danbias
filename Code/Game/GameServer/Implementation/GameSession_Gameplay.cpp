@@ -29,10 +29,10 @@ using namespace DanBias;
 			float dt = (float)this->logicTimer.getElapsedSeconds();
 			if( dt >= this->logicFrameTime )
 			{
+				this->logicTimer.reset();
+
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
-
-				this->logicTimer.reset();
 			}
 		}
 
@@ -79,7 +79,9 @@ using namespace DanBias;
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend:
 				if(this->gClients[temp]->IncrementFailedProtocol() >= 5/*client->threshold*/)
+				{
 					this->gClients[temp]->Invalidate();
+				}
 			break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
 				this->ParseProtocol(e.args.data.protocol, cl);
@@ -90,9 +92,11 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] )
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid())
 			{
 				this->gClients[i]->UpdateClient();
+				if(this->gClients[i]->IsInvalid())
+					this->gClients[i] = 0;
 			}
 		}
 	}
@@ -101,7 +105,7 @@ using namespace DanBias;
 		bool returnValue = false;
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i])
+			if(this->gClients[i] && !this->gClients[i]->IsReady())
 			{
 				this->gClients[i]->GetClient()->Send(message);
 				returnValue = true;
@@ -115,7 +119,7 @@ using namespace DanBias;
 	{
 		for (unsigned int i = 0; i < this->gClients.Size(); i++)
 		{
-			if(this->gClients[i] && this->gClients[i]->GetClient()->GetID() == ID)
+			if(this->gClients[i] && !this->gClients[i]->IsInvalid() && this->gClients[i]->GetClient()->GetID() == ID)
 			{
 				this->gClients[i]->GetClient()->Send(protocol);
 				return true;
@@ -143,17 +147,49 @@ using namespace DanBias;
 
 			Oyster::Math::Float3 temp = movedObject->GetPosition();
 
-			if(temp.x < -300)
-				id = 0;
-
 			GameSession::gameSession->Send(p.GetProtocol());
 		//}	
 	}
-	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject, float seconds )
+	void GameSession::ObjectDisabled( GameLogic::IObjectData* movedObject )
 	{
-		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID(), seconds).GetProtocol());
+		GameSession::gameSession->Send(Protocol_ObjectDisable(movedObject->GetID()).GetProtocol());
 	}
-
+	void GameSession::ObjectEnabled( GameLogic::IObjectData* movedObject )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectEnable(movedObject->GetID()).GetProtocol());
+	}
+	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDamage(movedObject->GetID(), hp).GetProtocol());
+	}
+	void GameSession::ObjectRespawned( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectRespawn(movedObject->GetID(), spawnPos).GetProtocol());
+	}
+	void GameSession::ObjectDead( IObjectData* victim, int deatchCount, IObjectData* killer, int killCount, float seconds )
+	{
+		GameSession::gameSession->Send(Protocol_ObjectDie(victim->GetID(), deatchCount, killer->GetID(), killCount, seconds).GetProtocol());
+	}
+	void GameSession::PickupEvent( GameLogic::IObjectData* movedObject, int pickupEffectID )
+	{
+		// send pickup protocol
+		GameSession::gameSession->Send(Protocol_ObjectPickup(movedObject->GetID(), pickupEffectID).GetProtocol());
+	}
+	void GameSession::ActionEvent( GameLogic::IObjectData* movedObject , int actionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectAction(movedObject->GetID(), actionID).GetProtocol());
+	}
+	void GameSession::CollisionEvent( GameLogic::IObjectData* movedObject , int collisionID )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectCollision(movedObject->GetID(), collisionID).GetProtocol());
+	}
+	void GameSession::EnergyUpdate( GameLogic::IObjectData* movedObject , float energy )
+	{
+		// send action protocol
+		GameSession::gameSession->Send(Protocol_ObjectWeaponEnergy(movedObject->GetID(), energy).GetProtocol());
+	}
 //*****************************************************//
 //****************** Protocol methods *****************//
 //******************************************************************************************************************//
@@ -180,7 +216,6 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_PlayerShot:					this->Gameplay_PlayerShot				( Protocol_PlayerShot			(p), c );
 			break;
-		
 			case protocol_Gameplay_ObjectPickup:				this->Gameplay_ObjectPickup				( Protocol_ObjectPickup			(p), c );
 			break;
 			case protocol_Gameplay_ObjectDamage:				this->Gameplay_ObjectDamage				( Protocol_ObjectDamage			(p), c );
@@ -193,7 +228,6 @@ using namespace DanBias;
 			break;
 			case protocol_Gameplay_ObjectCreate:				this->Gameplay_ObjectCreate				( Protocol_ObjectCreate			(p), c );
 			break;
-
 			case protocol_General_Status:						this->General_Status					( Protocol_General_Status		(p), c );
 			break;
 			case protocol_General_Text:							this->General_Text						( Protocol_General_Text			(p), c );
@@ -224,6 +258,7 @@ using namespace DanBias;
 	void GameSession::Gameplay_PlayerLeftTurn			( Protocol_PlayerLeftTurn& p, DanBias::GameClient* c )
 	{
 		c->GetPlayer()->TurnLeft( p.deltaRadian );
+		c->GetPlayer()->SetLookDir( p.lookdir ) ;
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
@@ -231,13 +266,22 @@ using namespace DanBias;
 	}
 	void GameSession::Gameplay_PlayerShot				( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{ 
-		if(p.secondaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
-		if(p.primaryPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
-		
-		if(p.utilityPressed)	c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
+		switch (p.value)
+		{
+			case Protocol_PlayerShot::ShootValue_PrimaryPress:			c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_PRESS);
+			break;
+			case Protocol_PlayerShot::ShootValue_PrimaryRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_PRIMARY_RELEASE);
+			break;
+			case Protocol_PlayerShot::ShootValue_SecondaryPress:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_PRESS);
+			break;
+			case Protocol_PlayerShot::ShootValue_SecondaryRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_SECONDARY_RELEASE);
+			break;
+			case Protocol_PlayerShot::ShootValue_UtilityPress:			c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_PRESS);
+			break;
+			case Protocol_PlayerShot::ShootValue_UtilityRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_RELEASE);
+			break;
+		}
 	}
-	
-	
 	void GameSession::Gameplay_ObjectPickup				( Protocol_ObjectPickup& p, DanBias::GameClient* c )
 	{
 

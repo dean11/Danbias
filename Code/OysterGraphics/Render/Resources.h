@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Core/Core.h"
+#include "../Model/ModelInfo.h"
+#include "../Definitions/GraphicalDefinition.h"
 
 namespace Oyster
 {
@@ -11,10 +13,18 @@ namespace Oyster
 				class Resources
 				{
 				public:
+					struct ModelDataWrapper
+					{
+						Definitions::RenderInstanceData* rid;
+						int Models;
+					};
+
+					
+					static std::map<Model::ModelInfo*, ModelDataWrapper*> RenderData;
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
-					static const int MaxLightSize = 100;
+					static const int MaxLightSize = 1024;
 
 					//! GBuffers
 					//! 0 = Diffuse + Glow
@@ -44,9 +54,11 @@ namespace Oyster
 
 					struct Gather
 					{
-						static Core::PipelineManager::RenderPass Pass;
+						static Core::PipelineManager::RenderPass AnimatedPass;
+						static Core::PipelineManager::RenderPass InstancedPass;
 						static Core::Buffer ModelData;
 						static Core::Buffer AnimationData;
+						static Core::Buffer InstancedData;
 					};
 
 					struct Light
@@ -58,6 +70,13 @@ namespace Oyster
 
 						static ID3D11ShaderResourceView* SSAOKernel;
 						static ID3D11ShaderResourceView* SSAORandom;
+
+						static ID3D11ShaderResourceView* Up;
+						static ID3D11ShaderResourceView* Down;
+						static ID3D11ShaderResourceView* Left;
+						static ID3D11ShaderResourceView* Right;
+						static ID3D11ShaderResourceView* Front;
+						static ID3D11ShaderResourceView* Back;
 					};
 
 					struct Gui
@@ -96,6 +115,7 @@ namespace Oyster
 
 					static Core::Init::State Init();
 					static Core::Init::State InitShaders();
+					static Core::Init::State ReInitViews(Math::Float2);
 					static Core::Init::State InitRenderStates();
 					static Core::Init::State InitBuffers();
 					static Core::Init::State InitViews();

@@ -152,6 +152,10 @@ void Win32Mouse::Deactivate ()
 
 void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 {
+	static MouseEventData mouseEventData;
+	memset(&mouseEventData, 0, sizeof(MouseEventData));
+
+
 	bool isUp = true;
 	Enum::SAMI btn = Enum::SAMI_Unknown;
 	int delta = 0;
@@ -167,23 +171,50 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		ContainPoint(this->pixelPos, this->windowSize);
 
 		InternalOnMove(this->pixelPos, velocity);
+
+		GetNormalizedPosition( mouseEventData.normalizedPos );
+		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.velocity			= velocity;
+		mouseEventData.buttonState		= Enum::ButtonState_Unknown;
+		mouseEventData.scrollDelta		= 0;
+		mouseEventData.sender			= this;
+		mouseEventData.type				= SAMI::SAMI_MouseMove;
+		
+		InternalOnEvent(mouseEventData);
 	}
 
 	if(delta != 0)
 	{
 		InternalOnScroll(delta);
+
+		GetNormalizedPosition( mouseEventData.normalizedPos );
+		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.buttonState		= Enum::ButtonState_Unknown;
+		mouseEventData.scrollDelta		= delta;
+		mouseEventData.sender			= this;
+		mouseEventData.type				= SAMI::SAMI_MouseScroll;
+		
+		InternalOnEvent(mouseEventData);
 	}
 
 
 	if(btn == SAMI_Unknown) return;
 
-	this->buttons[btn].isDown = !isUp;
 	this->buttons[btn].makeCode = makeCode;
 
 	//The btn is released.
 	if(isUp)
 	{
+		this->buttons[btn].isDown = false;
 		InternalOnBtnRelease(btn);
+
+		GetNormalizedPosition( mouseEventData.normalizedPos );
+		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.buttonState		= Enum::ButtonState_Release;
+		mouseEventData.type				= btn;
+		mouseEventData.sender			= this;
+		
+		InternalOnEvent(mouseEventData);
 	}
 	//The btn is pressed.
 	else
@@ -191,11 +222,29 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		//The btn is down since last frame
 		if(this->buttons[btn].isDown)
 		{
+			this->buttons[btn].isDown = true;
 			InternalOnBtnDown(btn);
+
+			GetNormalizedPosition( mouseEventData.normalizedPos );
+			mouseEventData.pixelPos			= this->pixelPos;
+			mouseEventData.buttonState		= Enum::ButtonState_Down;
+			mouseEventData.type				= btn;
+			mouseEventData.sender			= this;
+		
+			InternalOnEvent(mouseEventData);
 		}
 		else
 		{
+			this->buttons[btn].isDown = true;
 			InternalOnBtnPress(btn);
+
+			GetNormalizedPosition( mouseEventData.normalizedPos );
+			mouseEventData.pixelPos			= this->pixelPos;
+			mouseEventData.buttonState		= Enum::ButtonState_Press;
+			mouseEventData.type				= btn;
+			mouseEventData.sender			= this;
+		
+			InternalOnEvent(mouseEventData);
 		}
 	}
 }
@@ -231,6 +280,22 @@ bool Win32Mouse::Create()
 	}
 
 	return false;
+}
+void Win32Mouse::ToggleDefault( bool toggler )
+{
+	if( toggler )
+	{
+		SetCursorPos(this->winCursPos.x, this->winCursPos.y);
+		ShowCursor(TRUE);
+	}
+	else
+	{
+		POINT p;
+		GetCursorPos(&p);
+		this->winCursPos.x = p.x;
+		this->winCursPos.y = p.y;
+		ShowCursor(FALSE);
+	}
 }
 
 

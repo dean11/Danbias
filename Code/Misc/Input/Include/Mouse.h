@@ -38,12 +38,30 @@ namespace Input
 			SAMI_MouseBtnX18,
 			SAMI_MouseBtnX19,
 			SAMI_MouseBtnX20,
+			SAMI_MouseMove,
+			SAMI_MouseScroll,
 			SAMI_Unknown,
+		};
+	}
+	//-----------------------------------------------------------------------------------------------------------------------------
+	namespace Struct
+	{
+		struct MouseEventData
+		{
+			Enum::SAMI type;
+			Enum::ButtonState buttonState;
+			Struct::SAIPointInt2D pixelPos;
+			Struct::SAIPointFloat2D normalizedPos;
+			Struct::SAIPointInt2D velocity;
+			Mouse* sender;
+			int scrollDelta;
+			void* tag;
 		};
 	}
 	//-----------------------------------------------------------------------------------------------------------------------------
 	namespace Typedefs
 	{
+		typedef void(*OnMouseCallback)( const Struct::MouseEventData& eventData );
 		typedef void(*OnMousePressCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseDownCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseReleaseCallback)(Enum::SAMI btn, Mouse* sender);
@@ -60,6 +78,7 @@ namespace Input
 		class MouseEvent
 		{
 		public:
+			virtual void OnMouse				( const Struct::MouseEventData& eventData )							{ }
 			virtual void OnMousePress			( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseDown			( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseRelease			( Enum::SAMI key, Mouse* sender )							{ }
@@ -82,23 +101,27 @@ namespace Input
 		virtual bool IsActive() override		= 0;
 
 	public: /* global subscribe callback functions */
-		void AddOnMousePressCallback( Typedefs::OnMousePressCallback func);
-		void AddOnMouseDownCallback( Typedefs::OnMouseDownCallback func );
-		void AddOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func );
-		void AddOnMouseMovePixelPosCallback( Typedefs::OnMouseMovePixelPosCallback func );
-		void AddOnMouseMoveVelocityCallback( Typedefs::OnMouseMoveVelocityCallback func );
-		void AddOnMouseScrollCallback( Typedefs::OnMouseScrollCallback func );
+		void AddMouseEvent(MouseEvent* object);
+		void RemoveMouseEvent(MouseEvent* object);
+		void operator+= (MouseEvent* object);
+		void operator-= (MouseEvent* object);
 
+	public: /* global subscribe callback functions */
+		void AddOnMouseCallback( Typedefs::OnMouseCallback func, void* tag);
+		void AddOnMousePressCallback( Typedefs::OnMousePressCallback func, void* tag);
+		void AddOnMouseDownCallback( Typedefs::OnMouseDownCallback func, void* tag );
+		void AddOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func, void* tag );
+		void AddOnMouseMovePixelPosCallback( Typedefs::OnMouseMovePixelPosCallback func, void* tag );
+		void AddOnMouseMoveVelocityCallback( Typedefs::OnMouseMoveVelocityCallback func, void* tag );
+		void AddOnMouseScrollCallback( Typedefs::OnMouseScrollCallback func, void* tag );
+
+		void RemoveOnMouseCallback( Typedefs::OnMouseCallback func);
 		void RemoveOnMousePressCallback( Typedefs::OnMousePressCallback func);
 		void RemoveOnMouseDownCallback( Typedefs::OnMouseDownCallback func );
 		void RemoveOnMouseReleaseCallback( Typedefs::OnMouseReleaseCallback func );
 		void RemoveOnMouseMovePixelPosCallback( Typedefs::OnMouseMovePixelPosCallback  func );
 		void RemoveOnMouseMoveVelocityCallback( Typedefs::OnMouseMoveVelocityCallback  func );
 		void RemoveOnMouseScrollCallback( Typedefs::OnMouseScrollCallback func );
-
-	public:
-		void operator+= (MouseEvent* object);
-		void operator-= (MouseEvent* object);
 
 		void SetPixelPos(int x, int y);
 		void ToggleCursor(bool toggler);
@@ -111,6 +134,7 @@ namespace Input
 		virtual ~Mouse();
 
 	protected:
+		void InternalOnEvent(Struct::MouseEventData & data);
 		void InternalOnBtnPress(Enum::SAMI key);
 		void InternalOnBtnDown(Enum::SAMI key);
 		void InternalOnBtnRelease(Enum::SAMI key);
@@ -127,7 +151,6 @@ namespace Input
 		
 		bool						isCurorLocked;
 		int							wheelDelta;
-		Enum::InputOptionType		inputMode;
 	};
 }
 

@@ -156,6 +156,29 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 							objects.push_back(header);
 							break;
 						}
+
+						case ObjectSpecialType_PickupHealth:
+						{
+							PickupHealthAttributes* header = new PickupHealthAttributes;
+							ParseObject(&buffer[counter], *header, counter, loadCgf);
+
+							ParseObject(&buffer[counter], &header->spawnTime, 4);
+							counter += 4;
+
+							ParseObject(&buffer[counter], &header->healthValue, 4);
+							counter += 4;
+							
+							// DEBUG
+							header->position[1] = 150;
+							header->spawnTime = 5;
+							header->boundingVolume.box.mass = 0;
+							header->typeID = ObjectType_Static;
+							header->healthValue = 50;
+							// !DEBUG
+
+							objects.push_back(header);
+							break;
+						}
 						//this is a hotfix, fix so you only load the relevant data when the file is updated
 						default:
 							//Couldn't find specialType
@@ -166,16 +189,17 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 			
 				case ObjectType_Light:
 				{
-					LightType lightType;
+					//LightType lightType;
 
 					//Get Light type
-					ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
+					//ParseObject(&buffer[counter+4], &lightType, sizeof(lightType));
 
 					//We only support PointLight for now.
 					BasicLight* header = new BasicLight;
-					ParseObject(&buffer[counter], header, sizeof(*header));
-					counter += sizeof(*header);
+					
+					ParseLight(&buffer[counter], *header, counter);
 					objects.push_back(header);
+
 					/*switch(lightType)
 					{
 					case LightType_PointLight:
@@ -208,6 +232,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					}
 					break;*/
 				}
+				break;
 				default:
 					//Couldn't find typeID. FAIL!!!!!!
 					break;

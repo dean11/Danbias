@@ -239,13 +239,25 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shader\Passes\Gather\GatherInstPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\Passes\Gather\GatherInstVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shader\Passes\Light\LightPass.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
     </FxCompile>
-    <FxCompile Include="Shader\Passes\Gather\GatherPixel.hlsl">
+    <FxCompile Include="Shader\Passes\Gather\GatherAnimPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -281,7 +293,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Shader\Passes\Gather\GatherVertex.hlsl">
+    <FxCompile Include="Shader\Passes\Gather\GatherAnimVertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -328,13 +340,16 @@
   <ItemGroup>
     <None Include="Shader\Passes\2D\Header.hlsli" />
     <None Include="Shader\Passes\2D\Text\Header.hlsli" />
+    <None Include="Shader\Passes\Gather\InstHeader.hlsli" />
     <None Include="Shader\Passes\Light\Defines.hlsli" />
-    <None Include="Shader\Passes\Gather\Header.hlsli" />
+    <None Include="Shader\Passes\Gather\AnimHeader.hlsli" />
     <None Include="Shader\Passes\Light\LightCalc.hlsli" />
     <None Include="Shader\Passes\Light\PosManipulation.hlsli" />
+    <None Include="Shader\Passes\Light\ReadSky.hlsli" />
     <None Include="Shader\Passes\Light\SSAO.hlsli" />
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
     <None Include="Shader\Passes\Blur\BlurSharedData.hlsli" />
+    <None Include="Shader\Passes\Light\TileCulling.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\OysterMath\OysterMath.vcxproj">

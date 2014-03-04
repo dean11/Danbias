@@ -21,15 +21,9 @@ namespace Input
 		{
 			SAIType_Keyboard,
 			SAIType_Mouse,
-			//SAIType_ApplicationKeyboard,
 			SAIType_futureExample1,
 			SAIType_futureExample2,
 			SAIType_futureExample3,
-		};
-		enum InputOptionType
-		{
-			InputOptionType_RawInput,
-			InputOptionType_PlatformDefault,
 		};
 		enum ButtonState
 		{
@@ -37,6 +31,7 @@ namespace Input
 			ButtonState_Down,			// When the button is held down
 			ButtonState_Release,		// When button is released (once)
 			ButtonState_Up,				// Default state, will not be proccesed as a callback!
+			ButtonState_Unknown,
 		};
 	}
 	/*********************************************************************/

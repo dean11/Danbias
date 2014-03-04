@@ -1,4 +1,5 @@
 #include "Weapon.h"
+#include "AttatchmentGun.h"
 #include "AttatchmentMassDriver.h"
 #include "Player.h"
 
@@ -30,11 +31,18 @@ Weapon::Weapon(int MaxNrOfSockets,Player *owner)
 	selectedAttatchment = 0;
 
 	//give the weapon a massdriver on socket 0
-		IAttatchment *mD = new AttatchmentMassDriver(*owner);
-		attatchmentSockets[0]->SetAttatchment(mD);
-		this->currentNrOfAttatchments = 1;
-		SelectAttatchment(0);
+	IAttatchment *mD = new AttatchmentMassDriver(*owner);
+	attatchmentSockets[0]->SetAttatchment(mD);
+	this->currentNrOfAttatchments = 1;
+	SelectAttatchment(0);
 	//give the weapon a massdriver on socket 0
+
+	//give the weapon a normal gun on socket 1
+	IAttatchment *gun = new AttatchmentGun(*owner);
+	attatchmentSockets[1]->SetAttatchment(gun);
+	this->currentNrOfAttatchments = 2;
+
+	//give the weapon a normal gun on socket 1
 }
 
 

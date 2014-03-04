@@ -20,6 +20,32 @@ namespace GameLogic
 			memcpy(header, buffer, size);
 		}
 
+		void ParseLight(char* buffer, BasicLight& header, int& size)
+		{
+			int start = 0;
+			memcpy(&header.typeID, &buffer[start], 4);
+			start += 4;
+
+			memcpy(&header.lightType, &buffer[start], 4);
+			start += 4;
+			
+			memcpy(&header.color, &buffer[start], 12);
+			start += 12;
+			
+			memcpy(&header.position, &buffer[start], 12);
+			start += 12;
+			
+			memcpy(&header.radius, &buffer[start], 4);
+			start += 4;
+			
+			memcpy(&header.intensity, &buffer[start], 4);
+			start += 4;
+
+			size += start;
+
+			//memcpy(&header, buffer, size);
+		}
+
 		void ParseObject(char* buffer, ObjectHeader& header, int& size, bool loadCgf)
 		{
 			char tempName[128];
@@ -171,6 +197,22 @@ namespace GameLogic
 			case CollisionGeometryType_Cylinder:
 				memcpy(&volume.cylinder, &buf[start], sizeof(volume.cylinder));
 				start += sizeof(volume.cylinder);
+				break;
+
+			case CollisionGeometryType_CG_MESH:
+				{
+					memcpy(&volume.cgMesh, &buf[start], sizeof(float)*12);
+					start += sizeof(float)*12;
+					memcpy(&tempSize, &buf[start], sizeof(tempSize));
+					start += 4;
+					memcpy(&tempName, &buf[start], tempSize);
+					tempName[tempSize] = '\0';
+
+					//convert from char[] to wchar_t[]
+					mbstowcs_s(NULL, volume.cgMesh.filename, tempSize+1, tempName, _TRUNCATE);
+
+					start += tempSize;
+				}
 				break;
 
 			default:

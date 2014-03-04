@@ -22,8 +22,12 @@ SimpleRigidBody::SimpleRigidBody()
 	this->state.restitutionCoeff = 0.0f;
 	this->state.reach = Float3(0.0f, 0.0f, 0.0f);
 
+	this->collisionFlags = 0;
+
 	this->afterCollision = NULL;
 	this->onMovement = NULL;
+
+	this->overrideGravity = false;
 
 	this->customTag = nullptr;
 }
@@ -61,7 +65,8 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 	this->rigidBody->setFriction(state.staticFrictionCoeff);
 	this->rigidBody->setRestitution(state.restitutionCoeff);
 	btVector3 fallInertia(0, 0, 0);
-	collisionShape->calculateLocalInertia(state.mass, fallInertia);
+	if(state.mass != 0)
+		collisionShape->calculateLocalInertia(state.mass, fallInertia);
 	this->rigidBody->setMassProps(state.mass, fallInertia);
 
 	this->state = state;
@@ -70,6 +75,7 @@ void SimpleRigidBody::SetState( const SimpleRigidBody::State &state )
 void SimpleRigidBody::ApplyImpulse(Float3 impulse)
 {
 	this->rigidBody->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+	this->rigidBody->setActivationState(ACTIVE_TAG);
 }
 
 void SimpleRigidBody::SetCollisionShape(btCollisionShape* shape)
@@ -85,7 +91,7 @@ void SimpleRigidBody::SetMotionState(btDefaultMotionState* motionState)
 void SimpleRigidBody::SetRigidBody(btRigidBody* rigidBody)
 {
 	this->rigidBody = rigidBody;
-	
+	this->collisionFlags = rigidBody->getCollisionFlags();
 }
 
 void SimpleRigidBody::SetSubscription(EventAction_AfterCollisionResponse function)
@@ -161,30 +167,19 @@ void SimpleRigidBody::SetRotation(::Oyster::Math::Float4x4 rotation)
 	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
 }
 
-void SimpleRigidBody::SetRotationAsAngularAxis(::Oyster::Math::Float4 angularAxis)
+void SimpleRigidBody::AddRotationAroundY(::Oyster::Math::Float angle)
 {
-	if(angularAxis.xyz.GetMagnitude() == 0)
-	{
-		return;
-	}
-
-	float s = sin(angularAxis.w/2);
-	float x = angularAxis.x * s;
-	float y = angularAxis.y * s;
-	float z = angularAxis.z * s;
-	float w = cos(angularAxis.w/2);
-
 	btTransform trans;
-	btVector3 vector(angularAxis.x, angularAxis.y, angularAxis.z);
-	btQuaternion quaternion(x,y,z,w);
+	btQuaternion quaternion;
 
 	trans = this->rigidBody->getWorldTransform();
-	trans.setRotation(quaternion);
+
+	quaternion = btQuaternion(trans.getBasis().getColumn(1), angle);
+	trans.setRotation(quaternion*trans.getRotation());
 	this->rigidBody->setWorldTransform(trans);
 
 	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
 }
-
 void SimpleRigidBody::SetAngularFactor(Float factor)
 {
 	this->rigidBody->setAngularFactor(factor);
@@ -193,7 +188,8 @@ void SimpleRigidBody::SetAngularFactor(Float factor)
 void SimpleRigidBody::SetMass(Float mass)
 {
 	btVector3 fallInertia(0, 0, 0);
-	collisionShape->calculateLocalInertia(mass, fallInertia);
+	if(mass != 0)
+		collisionShape->calculateLocalInertia(mass, fallInertia);
 	this->rigidBody->setMassProps(mass, fallInertia);
 	this->state.mass = mass;
 }
@@ -243,23 +239,45 @@ void SimpleRigidBody::SetUpAndForward(::Oyster::Math::Float3 up, ::Oyster::Math:
 
 void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
 {
-	Float3 vector = Float3(0, 1, 0).Cross(up);
-
-	if(vector == Float3::null)
-	{
-		return;
-	}
-
-	Float sine = vector.GetLength();
-	Float cosine = acos(Float3(0, 1, 0).Dot(up));
-
-	btQuaternion quaternion(btVector3(vector.x, vector.y, vector.z),cosine);
-
+	btQuaternion newRotation;
 	btTransform trans;
 	trans = this->rigidBody->getWorldTransform();
-	trans.setRotation(quaternion);
+
+	btVector3 v1 = trans.getBasis().getColumn(1);
+	btVector3 v2(up.x, up.y, up.z);
+
+	btQuaternion q;
+	btVector3 a = v1.cross(v2);
+
+	if (v1.dot(v2) < -0.999999)
+	{
+		btVector3 xCrossPre = btVector3(1, 0 ,0).cross(v1);
+		if(xCrossPre.length() < 0.000001)
+			xCrossPre = btVector3(0, 1 ,0).cross(v1);
+		xCrossPre.normalize();
+		q.setRotation(xCrossPre, 3.1415);
+	}
+	else if (v1.dot(v2) > 0.999999)
+	{
+		q = btQuaternion(0, 0, 0, 1);
+	}
+	else
+	{
+		q.setX(a.x());
+		q.setY(a.y());
+		q.setZ(a.z());
+
+		q.setW(1 + v1.dot(v2));
+
+		q.normalize();
+	}
+
+	newRotation = q*trans.getRotation();
+
+	trans.setRotation(newRotation);
 	this->rigidBody->setWorldTransform(trans);
-	this->state.quaternion = Quaternion(Float3(quaternion.x(), quaternion.y(), quaternion.z()), quaternion.w());
+
+	this->state.quaternion = Quaternion(Float3(newRotation.x(), newRotation.y(), newRotation.z()), newRotation.w());
 }
 
 Float4x4 SimpleRigidBody::GetRotation() const
@@ -298,17 +316,36 @@ Float3 SimpleRigidBody::GetGravity() const
 	btVector3 gravity = this->rigidBody->getGravity();
 	return Float3(gravity.x(), gravity.y(), gravity.z());
 }
+
 Float3 SimpleRigidBody::GetLinearVelocity() const
 {
 	btVector3 linearVelocity = this->rigidBody->getLinearVelocity();
 	return Float3(linearVelocity.x(), linearVelocity.y(), linearVelocity.z());
 }
 
+void SimpleRigidBody::OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce)
+{
+	this->overrideGravity = true;
+	if(this->state.centerPos - point != Float3::null)
+		this->SetGravity(-(this->state.centerPos - point).GetNormalized()*gravityForce);
+	this->rigidBody->setDamping(1 - (this->state.centerPos - point).GetMagnitude(), 0);
+	//this->rigidBody->
+}
 
-void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB, Oyster::Math::Float kineticEnergyLoss)
+void SimpleRigidBody::SetOverrideGravity(bool overrideGravity)
+{
+	this->overrideGravity = overrideGravity;
+}
+
+bool SimpleRigidBody::IsGravityOverrided()
+{
+	return this->overrideGravity;
+}
+
+void SimpleRigidBody::CallSubscription_AfterCollisionResponse(ICustomBody* bodyA, ICustomBody* bodyB)
 {
 	if(this->afterCollision)
-		this->afterCollision(bodyA, bodyB, kineticEnergyLoss);
+		this->afterCollision(bodyA, bodyB);
 }
 
 void SimpleRigidBody::CallSubscription_Move()
@@ -348,29 +385,25 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 {
 	btTransform xform;
 	xform = this->rigidBody->getWorldTransform ();
-	Float3 normalDown = -this->state.centerPos.GetNormalized();
-	btVector3 down(normalDown.x, normalDown.y, normalDown.z);
-	btVector3 forward = xform.getBasis()[2];
-	down.normalize ();
+	//Float3 normalDown = -xform.getBasis().getColumn(1);
+	btVector3 down(-xform.getBasis().getColumn(1));
+	btVector3 forward(xform.getBasis().getColumn(2));
+	down.normalize();
 	forward.normalize();
 
 	this->raySource[0] = xform.getOrigin();
 	this->raySource[1] = xform.getOrigin();
 
-	if(this->state.reach.y < 1.0f)
-
-
-	Float angle = acos(Float3(0, 1, 0).Dot(this->state.centerPos.GetNormalized()));
-	//down.setZ(-down.z());
-	btVector3 targetPlus = down * this->state.reach.y * btScalar(1.1);
-
 	if(this->state.mass == 40)
 	{
-		const char* breakpoint = "STOP";
+		const char* breakPoint = "STOP!";
 	}
 
+	btVector3 targetPlus = down*this->state.reach.y*btScalar(1.1);
+
 	this->rayTarget[0] = this->raySource[0] + targetPlus;
-	this->rayTarget[1] = this->raySource[1] + forward * this->state.reach.y * btScalar(1.1);
+	targetPlus = this->raySource[1] + forward*this->state.reach.z*btScalar(1.1);
+	this->rayTarget[1] = btVector3(targetPlus.x(), targetPlus.y(), targetPlus.z());
 
 	class ClosestNotMe : public btCollisionWorld::ClosestRayResultCallback
 	{
@@ -401,6 +434,10 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 		if (rayCallback.hasHit())
 		{
 			this->rayLambda[i] = rayCallback.m_closestHitFraction;
+			if(i == 1 && this->state.mass == 40)
+			{
+				btVector3 hitNormal = rayCallback.m_hitNormalWorld;
+			}
 		} 
 		else 
 		{
@@ -409,9 +446,14 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 	}
 }
 
-float SimpleRigidBody::GetLambda() const
+float SimpleRigidBody::GetLambdaUp() const
 {
 	return this->rayLambda[0];
+}
+
+float SimpleRigidBody::GetLambdaForward() const
+{
+	return this->rayLambda[1];
 }
 
 void SimpleRigidBody::MoveToLimbo()
@@ -421,5 +463,10 @@ void SimpleRigidBody::MoveToLimbo()
 
 void SimpleRigidBody::ReleaseFromLimbo()
 {
-	this->rigidBody->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	this->rigidBody->setCollisionFlags(this->collisionFlags);
+}
+
+void SimpleRigidBody::SetPreviousVelocity(::Oyster::Math::Float3 velocity)
+{
+	this->state.previousVelocity = velocity;
 }

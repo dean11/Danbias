@@ -16,7 +16,7 @@ cbuffer Size : register(b0)
 [numthreads(16, 16, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-	float SSAO = 0;
+	float SSAO = Ambient[DTid.xy/2].w;
 	for(int x = 0; x < 4; ++x)
 	{
 		for(int y = 0; y < 4; ++y)
@@ -44,4 +44,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	//Output[DTid.xy] = float4(Ambient[DTid.xy/2 + uint2(Output.Length*0.5f)].xyz,1);
 	//Output[DTid.xy] = SSAO * float4(1,1,1,1);
 	//Output[DTid.xy] = Ambient[DTid.xy];
+	//Output[DTid.xy] = Diffuse[DTid.xy];
 }

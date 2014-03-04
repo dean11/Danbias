@@ -20,6 +20,8 @@ namespace DanBias
 			virtual bool Render();
 			virtual bool Release();
 			void ChangeState( ClientState next );
+			
+			virtual const NetEvent & DataRecieved( const NetEvent &message );
 
 		private:
 			struct MyData;

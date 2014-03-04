@@ -35,9 +35,10 @@ namespace Oyster
 			{
 				Math::Float4x4 InvProj;
 				Math::Float4x4 Proj;
-				Math::Float2 Pixels;
+				float FoV;
 				int Lights;
 				float SSAORadius;
+				float pad;
 				Oyster::Math::Float4x4 View;
 			};
 
@@ -89,6 +90,14 @@ namespace Oyster
 				Math::Float PAD;
 				Math::Float3 GlowTint;
 				Math::Float PAD2;
+			};
+
+			struct RenderInstanceData
+			{
+				Math::Matrix WV;
+				Math::Matrix WVP;
+				Math::Float3 Tint;
+				Math::Float3 GTint;
 			};
 		}
 	}
