@@ -251,7 +251,7 @@ namespace Oyster
 				}
 
 				Core::PipelineManager::SetRenderPass(Resources::Light::Pass);
-
+				
 				Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 				BlurGlow();

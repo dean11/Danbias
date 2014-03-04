@@ -252,7 +252,7 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 				//e.owner->sharedData->sound->Toggle(e.owner->options.toggleSound);
 				Graphics::API::Option op = Graphics::API::GetOption();
 				op.fullscreen = e.owner->options.toogleFullScreen;
-				op.fullscreen = true;
+				//op.fullscreen = true;
 				op.resolution = e.owner->options.resolution;
 
 

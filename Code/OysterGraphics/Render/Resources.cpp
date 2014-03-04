@@ -261,7 +261,7 @@ namespace Oyster
 					}
 
 					//Release Views
-					for(int i = 0; i < GBufferSize; ++i)
+					for(int i = 0; i < LBufferSize; ++i)
 					{
 						SAFE_RELEASE(LBufferUAV[i]);
 						SAFE_RELEASE(LBufferSRV[i]);
@@ -315,9 +315,6 @@ namespace Oyster
 					//Reset Passes--------------------------------------------------------------------------
 
 					//Geometry
-					Gather::AnimatedPass.CBuffers.Vertex[0] = Gather::AnimationData;
-					Gather::AnimatedPass.CBuffers.Vertex[1] = Gather::ModelData;
-					Gather::AnimatedPass.CBuffers.Pixel[0] = Color;
 					for(int i = 0; i<GBufferSize;++i)
 					{
 						Gather::AnimatedPass.RTV[i] = GBufferRTV[i];
@@ -339,16 +336,6 @@ namespace Oyster
 						Light::Pass.SRV.Compute[i] = GBufferSRV[i];
 					}
 					Light::Pass.SRV.Compute[3] = Core::depthStencilUAV;
-					//to remove?
-					Light::Pass.SRV.Compute[4] = Light::PointLightView;
-					Light::Pass.SRV.Compute[5] = Light::SSAOKernel;
-					Light::Pass.SRV.Compute[6] = Light::SSAORandom;
-					Light::Pass.SRV.Compute[7] = Light::Up;
-					Light::Pass.SRV.Compute[8] = Light::Down;
-					Light::Pass.SRV.Compute[9] = Light::Left;
-					Light::Pass.SRV.Compute[10] = Light::Right;
-					Light::Pass.SRV.Compute[11] = Light::Front;
-					Light::Pass.SRV.Compute[12] = Light::Back;
 					//Post Pass
 					for(int i = 0; i<LBufferSize;++i)
 					{
@@ -364,7 +351,6 @@ namespace Oyster
 					Blur::VertPass.SRV.Compute[0] = Blur::BufferSRV;
 					Blur::VertPass.UAV.Compute[0] = LBufferUAV[2];
 					//Text Pass
-					Gui::Text::Pass.SRV.Pixel[0] = Gui::Text::Font;
 					Gui::Text::Pass.RTV[0] = GBufferRTV[2];
 					Gui::Text::Pass.depth = Gui::depth;
 					
@@ -501,7 +487,7 @@ namespace Oyster
 
 				Core::Init::State Resources::InitPasses()
 				{
-#pragma region Animated Pass
+					#pragma region Animated Pass Setup
 					Gather::AnimatedPass.Shaders.Pixel = GetShader::Pixel(L"AGather");
 					Gather::AnimatedPass.Shaders.Vertex = GetShader::Vertex(L"AGather");
 
@@ -528,9 +514,9 @@ namespace Oyster
 						Gather::AnimatedPass.RTV.push_back(GBufferRTV[i]);
 					}
 					Gather::AnimatedPass.depth = Core::depthStencil;
-#pragma endregion
+					#pragma endregion
 
-#pragma region Instanced Pass
+					#pragma region Instanced Pass Setup
 					Gather::InstancedPass.Shaders.Pixel = GetShader::Pixel(L"IGather");
 					Gather::InstancedPass.Shaders.Vertex = GetShader::Vertex(L"IGather");
 
@@ -670,9 +656,9 @@ namespace Oyster
 						Gather::InstancedPass.RTV.push_back(GBufferRTV[i]);
 					}
 					Gather::InstancedPass.depth = Core::depthStencil;
-#pragma endregion
+					#pragma endregion
 
-#pragma region Light Pass Setup
+					#pragma region Light Pass Setup
 					Light::Pass.Shaders.Compute = GetShader::Compute(L"LightPass");
 					for(int i = 0; i<LBufferSize;++i)
 					{
@@ -693,9 +679,9 @@ namespace Oyster
 					Light::Pass.SRV.Compute.push_back(Light::Right);
 					Light::Pass.SRV.Compute.push_back(Light::Front);
 					Light::Pass.SRV.Compute.push_back(Light::Back);
-#pragma endregion
+					#pragma endregion
 
-#pragma region Post Pass Setup
+					#pragma region Post Pass Setup
 					Post::Pass.Shaders.Compute = GetShader::Compute(L"PostPass");
 					for(int i = 0; i<LBufferSize;++i)
 					{
@@ -705,9 +691,9 @@ namespace Oyster
 					Post::Pass.CBuffers.Compute.push_back(Post::Data);
 					Post::Pass.RenderStates.SampleCount = 1;
 					Post::Pass.RenderStates.SampleState = RenderStates::ss;
-#pragma endregion
+					#pragma endregion
 
-#pragma region GUI Pass Setup
+					#pragma region GUI Pass Setup
 					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
 					Gui::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
@@ -730,9 +716,9 @@ namespace Oyster
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
 					Gui::Pass.RenderStates.DepthStencil = RenderStates::dsState;
-#pragma endregion
+					#pragma endregion
 
-#pragma region Blur Pass Setup
+					#pragma region Blur Pass Setup
 					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
 					Blur::VertPass.Shaders.Compute = GetShader::Compute(L"BlurVert");
 
@@ -748,9 +734,9 @@ namespace Oyster
 
 					Blur::HorPass.CBuffers.Compute.push_back(Blur::Data);
 					Blur::VertPass.CBuffers.Compute.push_back(Blur::Data);
-#pragma endregion
+					#pragma endregion
 
-#pragma region //2DText Pass Setup
+					#pragma region //2DText Pass Setup
 					Gui::Text::Pass.Shaders.Vertex = GetShader::Vertex(L"2DText");
 					Gui::Text::Pass.Shaders.Geometry = GetShader::Geometry(L"2DText");
 					Gui::Text::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
@@ -776,7 +762,7 @@ namespace Oyster
 					Gui::Text::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Text::Pass.RenderStates.BlendState = RenderStates::bs;
 					Gui::Text::Pass.RenderStates.DepthStencil = RenderStates::dsState;
-#pragma endregion
+					#pragma endregion
 
 					return Core::Init::Success;
 				}
