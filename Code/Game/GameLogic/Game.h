@@ -33,6 +33,7 @@ namespace GameLogic
 
 			void Move(const PLAYER_MOVEMENT &movement)													override;
 			void UseWeapon(const WEAPON_FIRE &usage)													override;
+			void SelectWeaponAttatchment( int socketID )												override;
 			int GetTeamID() const																		override;
 			PLAYER_STATE GetState() const																override;
 			Oyster::Math::Float3 GetPosition()															override;

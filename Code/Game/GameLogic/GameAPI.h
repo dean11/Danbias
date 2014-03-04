@@ -106,7 +106,7 @@ namespace GameLogic
 			* @param Usage: enum value on what kind of action is to be taken
 			********************************************************/
 			virtual void UseWeapon(const WEAPON_FIRE &usage) = 0;
-
+			virtual void SelectWeaponAttatchment( int socketID) = 0;
 			/***/
 			virtual int GetTeamID() const = 0;
 

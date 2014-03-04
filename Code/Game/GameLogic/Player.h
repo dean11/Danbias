@@ -56,7 +56,7 @@ namespace GameLogic
 		* @param fireInput: enum value on what kind of action is to be taken
 		********************************************************/
 		void UseWeapon(const WEAPON_FIRE &usage);
-
+		void SelectWeaponAttatchment( int socketID );
 		/********************************************************
 		* Respawns the player, this resets several stats and settings on the player
 		* @param spawnPoint: the coordinate in the world where the player is to spawn
