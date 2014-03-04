@@ -45,6 +45,7 @@ Float2 WStrToFloat2(std::wstring str)
 	Utility::String::Split(s, str, L"x");
 	val.x = _wtof(s[0].c_str());
 	val.y = _wtof(s[1].c_str());
+	s.clear();
 	return val;
 }
 
@@ -79,11 +80,11 @@ bool OptionState::Init( SharedStateContent &shared )
 	Float4 HoverCol = Float4(1.2f);
 	Float4 PressCol = Float4(1.5f);
 	
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((int)ButtonType_FullScreen);
 
-	fScreenBtnToggle = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOff.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
+	fScreenBtnToggle = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOff.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
 	this->guiElements.AddButton( fScreenBtnToggle );
 	fScreenBtnToggle->SetUserData((int)ButtonType_FullScreen);
 
@@ -137,18 +138,19 @@ bool OptionState::Render()
 {
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
-
+	
 	
 	if(this->sharedData->mouseDevice->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
 		Graphics::API::RenderGuiElement( this->sharedData->mouseCursor, this->musOrientation, Float2(0.15f), Float4(1.0f) );
 	else
 		Graphics::API::RenderGuiElement( this->sharedData->mouseCursor, this->musOrientation, Float2(0.15f, 0.24f), Float4(1.0f) );
-
+	
 	Graphics::API::RenderGuiElement( this->sharedData->background, Float3(0.5f, 0.5f, 0.9f), Float2(1.0f), Float4(0.0f, 0.0f, 0.0f, 1.0f) );
 		this->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
-		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.5f, 0.4f, 0.5f), Float2(0.3f, 0.18f), 10.0f);
+		Graphics::API::RenderText(L"Full Screen" , Float3(0.33f, 0.14f, 0.1f), Float2(0.5f, 0.24f), 0.034f);
+		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.36f, 0.36f, 0.1f), Float2(0.3f, 0.18f), 0.034f);
 		this->guiElements.RenderText();
 
 	Graphics::API::EndFrame();
@@ -228,7 +230,11 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 		case DanBias::Client::OptionState::ButtonType_FlipResLeft:
 			if(e.state == ButtonState_Released)
 			{
-				e.owner->options.currentRes = (e.owner->options.currentRes - 1) % Utility::StaticArray::NumElementsOf(resolution);
+				int a = (e.owner->options.currentRes - 1);
+				static const int b = (int)Utility::StaticArray::NumElementsOf(resolution);
+				
+				e.owner->options.currentRes = a % b;
+				if(e.owner->options.currentRes < 0) e.owner->options.currentRes = b - 1;
 				e.owner->options.resolution = WStrToFloat2( resolution[e.owner->options.currentRes] );
 			}
 		break;
