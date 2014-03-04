@@ -360,10 +360,10 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	return true;
 }
-bool Level::InitiateGameMode(float endTimer, int endKillScore)
+bool Level::InitiateGameMode(float maxTimeSec, int endKillScore)
 {
 	GameModeType::EndConditions end;
-	end.endTimer = endTimer; 
+	end.endTimeSec = maxTimeSec; 
 	end.killCount = endKillScore; 
 	this->gameMode.initGameMode(end);
 	return true;
