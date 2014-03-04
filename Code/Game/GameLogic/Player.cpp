@@ -75,6 +75,8 @@ void Player::initPlayerData()
 	this->key_jump				= 0.0f;
 	this->RecentlyAffected		= 0.0f;
 	this->deathTimer			= 0.0f;
+	this->stunTimer				= 0.0f;
+	this->haveRecoveredFromStun = true;
 
 	this->rotationUp = 0.0f;
 
@@ -111,7 +113,7 @@ void Player::BeginFrame()
 
 		if( this->IsWalking() )
 		{
-			haveMoved = this->UpdateMovement( rotation, state );
+			haveMoved = this->UpdateMovement( rotation, state, true );
 
 			if( this->key_jump > 0.001f )
 			{ // process jumping
@@ -133,7 +135,7 @@ void Player::BeginFrame()
 		}
 		else if( this->IsJumping() )
 		{
-			haveMoved = this->UpdateMovement( rotation, state );
+			haveMoved = this->UpdateMovement( rotation, state, false );
 			isGrounded = false;
 		}
 		
@@ -149,6 +151,7 @@ void Player::BeginFrame()
 		this->key_strafeRight = Max( this->key_strafeRight - frameTime, 0.0f );
 		this->key_strafeLeft = Max( this->key_strafeLeft - frameTime, 0.0f );
 		this->key_jump = Max( this->key_jump - frameTime, 0.0f );
+		this->stunTimer = Max( this->stunTimer - frameTime, 0.0f );
 	}
 	else
 	{
@@ -259,6 +262,15 @@ bool Player::IsIdle()
 	return ( this->rigidBody->GetLambdaUp() < 0.7f && v.Dot( v ) < 0.0001f );
 }
 
+bool Player::IsStunned( bool struggled )
+{
+	if( struggled && this->stunTimer == 0.0f )
+	{
+		this->haveRecoveredFromStun = true;
+	}
+	return !this->haveRecoveredFromStun;
+}
+
 void Player::Inactivate()
 {
 	//this->
@@ -317,6 +329,12 @@ int Player::GetDeath() const
 	return this->playerScore.deathScore;
 }
 
+void Player::Stun( float duration )
+{
+	this->stunTimer = duration;
+	this->haveRecoveredFromStun = false;
+}
+
 void Player::DamageLife( int damage )
 {
 	// don't take dmg while dead
@@ -358,7 +376,7 @@ void Player::setDeathTimer( float deathTimer )
 	this->playerState = PLAYER_STATE_DEAD;
 }
 
-bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBody::State &state )
+bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBody::State &state, bool isGrounded )
 {
 	const Float3 &rightDir = orientationMatrix.v[0].xyz,
 				 &upDir = orientationMatrix.v[1].xyz,
@@ -375,9 +393,10 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 		
 		if( this->key_forward > 0.001f )
 		{
-			forwardVelocity += forwardDir * forward_velocity;
+			forwardVelocity = forwardDir * forward_velocity;
 			isNotMovingForwardOrBackward = false;
 		}
+
 		if( this->key_backward > 0.001f )
 		{
 			forwardVelocity -= forwardDir * backward_velocity;
@@ -386,7 +405,9 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 
 		if( isNotMovingForwardOrBackward )
 		{ // dampen forward/backward velocity if not running forward/backward
-			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * dampening_factor;
+			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir );
+			if( isGrounded )
+				forwardVelocity *= dampening_factor;
 		}
 		else
 		{
@@ -413,7 +434,9 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 
 		if( isNotStrafing )
 		{ // dampen right/left strafe velocity if not strafing
-			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * dampening_factor;
+			strafeVelocity = NormalProjection( state.previousVelocity, rightDir );
+			if( isGrounded )
+				strafeVelocity *= dampening_factor;
 		}
 		else
 		{
@@ -423,6 +446,10 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 		movementAccumulator += strafeVelocity;
 	}
 
-	this->rigidBody->SetLinearVelocity( movementAccumulator );
+	if( this->IsStunned(haveMoved) )
+		return false;
+
+	if( isGrounded || haveMoved )
+		this->rigidBody->SetLinearVelocity( movementAccumulator );
 	return haveMoved;
 }
