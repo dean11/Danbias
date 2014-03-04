@@ -66,11 +66,6 @@ bool GamingUI::Init()
 	this->weapons.push_back(w1);
 
 	this->sharedData = sharedData;
-	// setting input mode to all raw
-	this->sharedData->keyboardDevice->Activate();
-	this->sharedData->keyboardDevice->AddKeyboardEvent(this);
-	this->sharedData->mouseDevice->Activate();
-	this->sharedData->mouseDevice->AddMouseEvent(this);
 
 	return true; 
 }
@@ -111,10 +106,6 @@ void GamingUI::RenderText()
 
 bool GamingUI::Release()
 {
-	//Release as input event
-	this->sharedData->keyboardDevice->RemoveKeyboardEvent(this);
-	this->sharedData->mouseDevice->RemoveMouseEvent(this);
-
 	// TODO: Release UI components here.
 	if(this->hp)		delete this->hp;
 	if(this->energy)	delete this->energy;
