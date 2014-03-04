@@ -580,7 +580,7 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 			if(currGameUI == gameUI)
 			{
 				// set given players HP 
-				((GamingUI*)currGameUI)->SetHPtext(std::to_wstring(decoded.healthLost));
+				((GamingUI*)currGameUI)->SetHPtext(std::to_wstring((int)decoded.healthLost));
 			}
 		}
 	}

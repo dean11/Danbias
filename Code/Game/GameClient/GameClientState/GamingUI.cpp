@@ -47,8 +47,8 @@ bool GamingUI::Init()
 	Float2 size = Oyster::Graphics::API::GetOption().resolution;
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), 0.05f, Float4(1,0,0,1));
-	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.1f,0.1f), 0.05f, Float4(1,1,0,1));
+	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.3f,0.1f), 0.05f, Float4(1,0,0,1));
+	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.3f,0.1f), 0.05f, Float4(1,1,0,1));
 	this->maxMessageCount = 3;
 	
 	this->message_Timer = 0;
