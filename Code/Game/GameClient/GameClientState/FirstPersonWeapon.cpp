@@ -19,6 +19,8 @@ Coil::~Coil()
 
 bool Coil::Init()
 {
+	if(!this->model) return false;
+
 	this->model->GlowTint = minGlow;
 	return true;
 }
@@ -37,6 +39,7 @@ void Coil::SetRotate(float angle)
 
 void Coil::Update()
 {
+	if(!this->model) return;
 	//Create world matrix
 	//Oyster::Math3D::Float4x4 rotTrans = Oyster::Math3D::TranslationMatrix(-offsetPosition);
 	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
@@ -146,8 +149,8 @@ bool FirstPersonWeapon::Init()
 	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0, 0, 0), 1);
 	modelData.id = -1;
 
-	((C_Object*)base)->Init(modelData);
-	base->Init();
+	if(((C_Object*)base)->Init(modelData))
+		base->Init();
 
 	modelData.modelPath = L"wpn_massdriver_high_coil.dan";
 	modelData.visible = true;
@@ -158,22 +161,22 @@ bool FirstPersonWeapon::Init()
 	Float3 off = 1.0f;
 
 	((C_Object*)coil[0])->Init(modelData);
-	coil[0]->SetOffsetPosition(Oyster::Math::Float3(0, 0.460931031166, 0) * off);
+	coil[0]->SetOffsetPosition(Oyster::Math::Float3(0.0f, 0.460931031166f, 0.0f) * off);
 
 	((C_Object*)coil[1])->Init(modelData);
-	coil[1]->SetOffsetPosition(Oyster::Math::Float3(0.397489709703, 0.230752453198, 0.0) * off);
+	coil[1]->SetOffsetPosition(Oyster::Math::Float3(0.397489709703f, 0.230752453198, 0.0f) * off);
 
 	((C_Object*)coil[2])->Init(modelData);
-	coil[2]->SetOffsetPosition(Oyster::Math::Float3(0.397489709703, -0.229263727694, 0.0) * off);
+	coil[2]->SetOffsetPosition(Oyster::Math::Float3(0.397489709703f, -0.229263727694f, 0.0f) * off);
 
 	((C_Object*)coil[3])->Init(modelData);
-	coil[3]->SetOffsetPosition(Oyster::Math::Float3(0.0, -0.459221058447, 0.0) * off);
+	coil[3]->SetOffsetPosition(Oyster::Math::Float3(0.0f, -0.459221058447f, 0.0f) * off);
 
 	((C_Object*)coil[4])->Init(modelData);
-	coil[4]->SetOffsetPosition(Oyster::Math::Float3(-0.397058802324, -0.232241178703, 0.0) * off);
+	coil[4]->SetOffsetPosition(Oyster::Math::Float3(-0.397058802324f, -0.232241178703f, 0.0f) * off);
 
 	((C_Object*)coil[5])->Init(modelData);
-	coil[5]->SetOffsetPosition(Oyster::Math::Float3(-0.397489709703, 0.230752453198, 0.0) * off);
+	coil[5]->SetOffsetPosition(Oyster::Math::Float3(-0.397489709703f, 0.230752453198f, 0.0f) * off);
 
 	for(int i = 0; i < 6; i++)
 	{
@@ -208,6 +211,8 @@ void FirstPersonWeapon::Shoot()
 
 void FirstPersonWeapon::Update(Oyster::Math::Matrix viewMatrix, Oyster::Math::Float3 look)
 {
+	if(!this->model) return;
+
 	static int steps = 0;
 	if(rotate)
 	{

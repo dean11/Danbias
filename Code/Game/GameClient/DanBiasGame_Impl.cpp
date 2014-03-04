@@ -79,8 +79,8 @@ namespace DanBias
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x		= 1280;
-		winDesc.windowSize.y		= 720;
+		winDesc.windowSize.x		= 1200;
+		winDesc.windowSize.y		= 600;
 		winDesc.windowProcCallback	= WindowCallBack;
 
 		if(! data.window->CreateWin(winDesc) )
@@ -171,9 +171,9 @@ namespace DanBias
 		gfxOp.modelPath = L"..\\Content\\Models\\";
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
 		gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
-		gfxOp.ambientValue = 0.5f;
+		gfxOp.ambientValue = 0.2f;
 		gfxOp.fullscreen = false;
-		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
+		gfxOp.globalGlowTint = Math::Float3(2.0f, 2.0f, 2.0f);
 		gfxOp.globalTint = Math::Float3(1.0f, 1.0f, 1.0f);
 
 		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, gfxOp) != Oyster::Graphics::API::Sucsess)

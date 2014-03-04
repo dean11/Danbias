@@ -28,7 +28,7 @@ namespace DanBias { namespace Client
 		void SetEnergyText( std::wstring energy );
 		void SetKillMessage( std::wstring killerMessage );
 		void ChangeState( UIState next );
-
+		void StopGamingUI();
 	private: /* Overidden mouse methods */
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
 		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
@@ -41,7 +41,7 @@ namespace DanBias { namespace Client
 	private:
 		struct WeaponData
 		{
-			Utility::DynamicMemory::SmartPointer<Plane_UI> crossair;
+			Utility::DynamicMemory::SmartPointer<Plane_UI> crosshair;
 			int id;
 		};
 
@@ -54,6 +54,7 @@ namespace DanBias { namespace Client
 		Text_UI* energy;
 		Text_UI** killMessages;
 		int maxMessageCount;
+		float message_Timer;
 		
 		std::vector<WeaponData> weapons;
 		int currentWeapon;
