@@ -274,8 +274,7 @@ bool GameState::Render()
 
 	Oyster::Graphics::API::NewFrame();
 	
-	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
-	this->privData->weapon->Render();
+	
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -374,6 +373,10 @@ bool GameState::Render()
 #endif //!RB DEBUG 
 
 	Oyster::Graphics::API::StartGuiRender();
+
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
+	this->privData->weapon->Render();
+
 	// render gui elemnts
 	if(currGameUI->HaveGUIRender())
 		currGameUI->RenderGUI();
