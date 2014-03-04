@@ -28,7 +28,7 @@ namespace DanBias { namespace Client
 		void SetEnergyText( std::wstring energy );
 		void SetKillMessage( std::wstring killerMessage );
 		void ChangeState( UIState next );
-
+		void StopGamingUI();
 	private: /* Overidden mouse methods */
 		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override	{ }
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;

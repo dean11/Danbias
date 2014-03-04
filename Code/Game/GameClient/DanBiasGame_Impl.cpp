@@ -80,7 +80,7 @@ namespace DanBias
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
 		winDesc.windowSize.x		= 1200;
-		winDesc.windowSize.y		= 800;
+		winDesc.windowSize.y		= 600;
 		winDesc.windowProcCallback	= WindowCallBack;
 
 		if(! data.window->CreateWin(winDesc) )
