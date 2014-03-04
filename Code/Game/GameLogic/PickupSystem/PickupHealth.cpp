@@ -3,10 +3,10 @@
 
 using namespace GameLogic;
 
-PickupHealth::PickupHealth(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type, int objectID, Oyster::Math::Float spawnTime, Oyster::Math::Float healthValue)
-	: Pickup(rigidBody, Pickup::PickupCollision, type, objectID, spawnTime)
+PickupHealth::PickupHealth(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type, int objectID)
+	: Pickup(rigidBody, Pickup::PickupCollision, type, objectID, 5)
 {
-	this->hpValue = healthValue;
+	this->hpValue = 50;
 }
 
 PickupHealth::~PickupHealth()

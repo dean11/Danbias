@@ -120,7 +120,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_PickupHealth:
 		{
-			gameObj = new PickupHealth(rigidBody, obj->specialTypeID, objIDCounter, ((PickupHealthAttributes*)obj)->spawnTime, ((PickupHealthAttributes*)obj)->healthValue);
+			gameObj = new PickupHealth(rigidBody, obj->specialTypeID, objIDCounter);
 		}
 		break;
 	default:

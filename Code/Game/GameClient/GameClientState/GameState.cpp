@@ -37,6 +37,7 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
 
 	//C_Player player;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
@@ -76,6 +77,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
+	this->privData->pickups = &shared.pickups;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
@@ -236,6 +238,18 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	// DEBUG keybindings
 	ReadKeyInput();
 
+	//Rotate pickups
+	auto staticObject = this->privData->pickups->begin();
+	for( ; staticObject != this->privData->pickups->end(); ++staticObject )
+	{
+		Quaternion rot = staticObject->second->getRotation();
+		rot *= Quaternion(Float3(0, 1, 0), 1000 * deltaTime).Normalize(); 
+		rot.Normalize();
+		staticObject->second->setRot(rot);
+		staticObject->second->updateWorld();
+	}
+	//!Rotate pickups
+
 	return this->privData->nextState;
 }
 
@@ -263,7 +277,10 @@ bool GameState::Render()
 	auto staticObject = this->privData->staticObjects->begin();
 	for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 	{
-		staticObject->second->Render();
+		if(staticObject->second)
+		{
+			staticObject->second->Render();
+		}
 	}
 
 	auto dynamicObject = this->privData->dynamicObjects->begin();
@@ -272,6 +289,16 @@ bool GameState::Render()
 		if( dynamicObject->second )
 		{
 			dynamicObject->second->Render();
+
+		}
+	}
+
+	auto pickup = this->privData->pickups->begin();
+	for( ; pickup != this->privData->pickups->end(); ++pickup )
+	{
+		if( pickup->second )
+		{
+			pickup->second->Render();
 
 		}
 	}
@@ -372,11 +399,18 @@ bool GameState::Release()
 		{
 			dynamicObject->second = nullptr;
 		}
-
+		
+		/*
 		auto light = this->privData->lights->begin();
 		for( ; light != this->privData->lights->end(); ++light )
 		{
 			light->second->Render();
+		}*/
+
+		auto pickup = this->privData->pickups->begin();
+		for( ; pickup != this->privData->pickups->end(); ++pickup )
+		{
+			pickup->second = nullptr;
 		}
 
 		this->privData->staticObjects->clear();
@@ -645,6 +679,11 @@ void GameState::Gameplay_ObjectEnabled( CustomNetProtocol data )
 		{
 			//If it is a static object
 			object = (*this->privData->staticObjects)[decoded.objectID];
+
+			if(!object)
+			{
+				object = (*this->privData->pickups)[decoded.objectID];
+			}
 		}
 	}
 
@@ -667,6 +706,11 @@ void GameState::Gameplay_ObjectDisabled( CustomNetProtocol data )
 		{
 			//If it is a static object
 			object = (*this->privData->staticObjects)[decoded.objectID];
+
+			if(!object)
+			{
+				object = (*this->privData->pickups)[decoded.objectID];
+			}
 		}
 	}
 

@@ -25,6 +25,7 @@ struct NetLoadState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *staticObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
 
 	bool loading;
 };
@@ -52,6 +53,7 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	this->privData->dynamicObjects	= &shared.dynamicObjects;
 	this->privData->staticObjects	= &shared.staticObjects;
 	this->privData->lights			= &shared.lights;
+	this->privData->pickups			= &shared.pickups;
 
 	this->privData->loading = false;
 
@@ -233,7 +235,11 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			}
 			// !RB DEBUG 
 
-			if(oth->typeID == ObjectType::ObjectType_Static)
+			if(oh->specialTypeID == ObjectSpecialType_PickupHealth)
+			{
+				(*this->privData->pickups)[ID] = (C_StaticObj*)object;
+			}
+			else if(oth->typeID == ObjectType::ObjectType_Static)
 			{
 				(*this->privData->staticObjects)[ID] = (C_StaticObj*)object;
 			}
