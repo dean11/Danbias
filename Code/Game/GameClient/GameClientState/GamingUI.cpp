@@ -239,3 +239,10 @@ void GamingUI::ChangeState( UIState next )
 {
 	this->nextState = next;
 }
+void GamingUI::StopGamingUI()
+{
+	this->key_backward		= false;
+	this->key_forward		= false;
+	this->key_strafeLeft	= false;
+	this->key_strafeRight	= false;
+}
