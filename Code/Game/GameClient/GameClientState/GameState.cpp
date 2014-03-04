@@ -800,6 +800,7 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	if( this->privData->myId == decoded.victimID )
 	{
 		this->currGameUI =  this->respawnUI;
+		((GamingUI*)this->gameUI)->StopGamingUI();
 		this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
 		this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		// set countdown 

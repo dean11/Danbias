@@ -14,8 +14,9 @@
 #include "PickupSystem/PickupHealth.h"
 
 using namespace Oyster;
-
 using namespace GameLogic;
+
+const float default_jump_pad_stun_duration = 1.0f;
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
 	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage);
@@ -25,7 +26,7 @@ using namespace GameLogic;
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		Object *realObjA = ((Object*)(objA->GetCustomTag()));
+		Object *realObjA = (Object*)objA->GetCustomTag();
 		Player *player;
 		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
 
@@ -33,7 +34,7 @@ using namespace GameLogic;
 			return;
 		if(!realObjB)		
 			return;
-
+		
 		//check who is player and who is the object
 		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
 		{
@@ -79,7 +80,11 @@ using namespace GameLogic;
 			SendObjectFlying(*obj, jumpPad->pushForce);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
-			SendObjectFlying(*obj, jumpPad->pushForce);
+			{
+				Player *player = (Player*)realObj;
+				player->Stun( default_jump_pad_stun_duration );
+				SendObjectFlying(*obj, jumpPad->pushForce);
+			}
 			break;
 		}
 	}
