@@ -91,7 +91,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_CrystalFormation: 
 		{
 			int dmg = 30; 
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg); 
 		}
 		break;
 	case ObjectSpecialType_CrystalShard: 
@@ -360,10 +360,10 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 	return true;
 }
-bool Level::InitiateGameMode(float endTimer, int endKillScore)
+bool Level::InitiateGameMode(float maxTimeSec, int endKillScore)
 {
 	GameModeType::EndConditions end;
-	end.endTimer = endTimer; 
+	end.endTimeSec = maxTimeSec; 
 	end.killCount = endKillScore; 
 	this->gameMode.initGameMode(end);
 	return true;

@@ -36,7 +36,7 @@ namespace GameLogic
 		* @param levelPath: Path to a file that contains all information on the level
 		********************************************************/
 		bool InitiateLevel(std::wstring levelPath);
-		bool InitiateGameMode(float endTimer, int endKillScore);
+		bool InitiateGameMode(float maxTimeSec, int endKillScore);
 		Oyster::Physics::ICustomBody* InitRigidBodyCube( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodySphere( const ObjectHeader* obj);
 		Oyster::Physics::ICustomBody* InitRigidBodyMesh( const ObjectHeader* obj);
