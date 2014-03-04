@@ -146,14 +146,14 @@ namespace GameLogic
 		{
 			weaponId = p[1].value.netShort;
 		}
-		Protocol_PlayerChangeWeapon(int objectID, short pickupID)
+		Protocol_PlayerChangeWeapon(int weaponID)
 		{
 			this->protocol[0].value = protocol_Gameplay_PlayerChangeWeapon;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 									
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
 			
-			weaponId = objectID;
+			weaponId = weaponID;
 
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
