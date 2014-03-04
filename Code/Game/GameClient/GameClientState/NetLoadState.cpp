@@ -26,7 +26,7 @@ struct NetLoadState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
-	::Utility::DynamicMemory::SmartPointer<FirstPersonWeapon> weapon;
+	FirstPersonWeapon* weapon;
 
 	bool loading;
 };
@@ -162,7 +162,6 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		}
 	}
 
-	//this->privData->weapon = new FirstPersonWeapon;
 	this->privData->weapon->Init();
 
 	Graphics::API::EndLoadingModels();

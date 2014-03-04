@@ -28,7 +28,7 @@ namespace DanBias { namespace Client
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> lights;
 		::Oyster::Network::NetworkClient *network;
 
-		::Utility::DynamicMemory::SmartPointer<FirstPersonWeapon> weapon;
+		FirstPersonWeapon* weapon;
 
 		::Input::Mouse *mouseDevice;
 		::Input::Keyboard *keyboardDevice;
