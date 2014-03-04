@@ -94,17 +94,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					{
 						//there is no difference when parsing these specialTypes.
 						case ObjectSpecialType_PickupHealth:
-							{
-								ObjectHeader* header = new ObjectHeader;
-								ParseObject(&buffer[counter], *header, counter, loadCgf);
-								objects.push_back(header);
-								header->boundingVolume.box.mass = 0;
-								header->typeID = ObjectType_Static;
-
-								header->position[1] = 151.0f;
-
-								break;
-							}
 						case ObjectSpecialType_CrystalShard:
 						case ObjectSpecialType_CrystalFormation:
 						case ObjectSpecialType_Spike:
