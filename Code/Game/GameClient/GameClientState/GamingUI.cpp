@@ -122,6 +122,7 @@ void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )
 	{
 		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
 			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
+			this->sharedData->weapon->Shoot();
 		break;
 		case ::Input::Enum::SAMI_MouseRightBtn:
 			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryPress) );

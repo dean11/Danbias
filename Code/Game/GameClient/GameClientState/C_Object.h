@@ -35,7 +35,7 @@ namespace DanBias
 
 		class C_Object
 		{
-		private:
+		protected:
 			Oyster::Math::Float4x4 world; 
 			Oyster::Math::Float3 position; 
 			Oyster::Math::Quaternion rotation; 

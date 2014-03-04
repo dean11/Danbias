@@ -42,6 +42,8 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
 	Camera_FPSV2 camera;
 
+	FirstPersonWeapon* weapon;
+
 	int myId;
 
 } privData;
@@ -76,6 +78,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
+	this->privData->weapon = shared.weapon;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
@@ -177,6 +180,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
 	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+
 	switch (UIstate)
 	{
 	case DanBias::Client::GameStateUI::UIState_shut_down:
@@ -244,6 +248,9 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView( this->privData->camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
+	
+	this->privData->weapon->Update(this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook());
+	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -382,6 +389,12 @@ bool GameState::Release()
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
+
+		if(this->privData->weapon)
+		{
+			delete this->privData->weapon;
+			this->privData->weapon = nullptr;
+		}
 
 		privData = NULL;
 	}
