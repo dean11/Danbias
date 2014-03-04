@@ -32,7 +32,6 @@ namespace DanBias { namespace Client
 		Text_UI* nameText;
 		Text_UI* killText;
 		Text_UI* deathText;
-		std::string s;
 
 		int * id; 
 		Text_UI** names;

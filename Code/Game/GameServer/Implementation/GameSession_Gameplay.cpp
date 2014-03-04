@@ -26,13 +26,14 @@ using namespace DanBias;
 	{
 		if(this->isRunning)
 		{
-			float dt = (float)this->logicTimer.getElapsedSeconds();
-			if( dt >= this->logicFrameTime )
+			this->accumulatedLogicTime += (float)this->logicTimer.getElapsedSeconds();
+			while( this->accumulatedLogicTime >= this->logicFrameTime )
 			{
 				this->logicTimer.reset();
 
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
+				this->accumulatedLogicTime -= this->logicFrameTime;
 			}
 		}
 
@@ -283,7 +284,7 @@ using namespace DanBias;
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
-
+		c->GetPlayer()->SelectWeaponAttatchment(p.weaponId);
 	}
 	void GameSession::Gameplay_PlayerShot				( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{ 

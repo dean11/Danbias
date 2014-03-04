@@ -36,8 +36,10 @@ GameSession::GameSession()
 	this->isCreated = false;
 	this->isRunning = false;
 	this->gameSession = this;
-	this->logicFrameTime = DELTA_TIME_60;
+	this->logicFrameTime = DELTA_TIME_120;
 	this->networkFrameTime = DELTA_TIME_60;
+	this->accumulatedLogicTime =
+	this->accumulatedNetworkTime = 0.0f;
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 
@@ -236,9 +238,17 @@ bool GameSession::Join(gClient gameClient)
 												Utility::String::WStringToString(this->gClients[i]->GetCharacter(), std::string()));
 				nwClient->Send(p1);
 
+				// Send player score
 				Protocol_PlayerScore oldPlayerScore(temp->GetID(), temp->GetKills(), temp->GetDeaths());
 				nwClient->Send(oldPlayerScore);
 
+				// Send players current animation ID
+				if (temp->GetState() == PLAYER_STATE_JUMPING ||	temp->GetState() == PLAYER_STATE_WALKING || temp->GetState() == PLAYER_STATE_IDLE )
+				{
+					Protocol_ObjectAction oldPlayerAction(temp->GetID(), temp->GetState());
+					nwClient->Send(oldPlayerAction);
+				}
+			
 				// new player
 				temp = playerData;
 				Protocol_ObjectCreatePlayer p2(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 

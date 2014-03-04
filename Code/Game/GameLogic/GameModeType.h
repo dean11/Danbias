@@ -21,12 +21,12 @@ namespace GameLogic
 			struct EndConditions
 			{
 				float timer; 
-				float endTimer;
+				float endTimeSec;
 				int killCount;
 
 				EndConditions()
 				{
-					this->endTimer = 30000;
+					this->endTimeSec = 30000;
 					this->killCount = 5;
 					this->timer = 0;
 				}

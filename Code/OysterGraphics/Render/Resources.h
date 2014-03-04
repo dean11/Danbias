@@ -70,6 +70,13 @@ namespace Oyster
 
 						static ID3D11ShaderResourceView* SSAOKernel;
 						static ID3D11ShaderResourceView* SSAORandom;
+
+						static ID3D11ShaderResourceView* Up;
+						static ID3D11ShaderResourceView* Down;
+						static ID3D11ShaderResourceView* Left;
+						static ID3D11ShaderResourceView* Right;
+						static ID3D11ShaderResourceView* Front;
+						static ID3D11ShaderResourceView* Back;
 					};
 
 					struct Gui

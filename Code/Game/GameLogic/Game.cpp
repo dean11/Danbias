@@ -209,7 +209,7 @@ bool Game::Initiate()
 {
 	API::Instance().Init();
 	//API::Instance().SetSubscription(Game::PhysicsOnDestroy);
-	//API::Instance().SetFrameTimeLength(this->frameTime);
+	API::Instance().SetTimeStep(this->frameTime);
 	this->initiated = true;
 	return true;
 }

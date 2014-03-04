@@ -26,8 +26,9 @@ namespace DanBias { namespace Client
 		bool Release();
 		void SetHPtext( std::wstring hp );
 		void SetEnergyText( std::wstring energy );
+		void SetKillMessage( std::wstring killerMessage );
 		void ChangeState( UIState next );
-
+		void StopGamingUI();
 	private: /* Overidden mouse methods */
 		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override	{ }
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
@@ -49,7 +50,10 @@ namespace DanBias { namespace Client
 		// TODO add multiple UI elements
 		Text_UI* hp;
 		Text_UI* energy;
-		Plane_UI* plane;
+		Text_UI** killMessages;
+		int maxMessageCount;
+		float message_Timer;
+		Plane_UI* crosshair;
 
 		bool key_forward;
 		bool key_backward;
