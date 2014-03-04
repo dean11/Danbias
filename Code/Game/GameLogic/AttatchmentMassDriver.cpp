@@ -13,7 +13,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(void)
 	this->hasObject = false;
 	this->currentEnergy = StandardMaxEnergy;
 	this->maxEnergy = StandardMaxEnergy;
-	this->energyChange = 0;
+	this->oldEnergy = 0;
 	this->rechargeRate = StandardrechargeRate;
 	this->force = Standardforce;
 }
@@ -23,7 +23,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(Player &owner)
 	this->currentEnergy = StandardMaxEnergy;
 	this->maxEnergy = StandardMaxEnergy;
 	this->rechargeRate = StandardrechargeRate;
-	this->energyChange = 0;
+	this->oldEnergy = 0;
 	this->force = Standardforce;
 	
 	this->owner = &owner;
@@ -139,7 +139,6 @@ void AttatchmentMassDriver::Update(float dt)
 		if(currentEnergy < maxEnergy)
 		{
 			currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
-			energyChange  += rechargeRate * 0.5f;
 		}
 		
 	}
@@ -148,25 +147,22 @@ void AttatchmentMassDriver::Update(float dt)
 		if(currentEnergy < maxEnergy)
 		{
 			currentEnergy += rechargeRate;
-			energyChange  += rechargeRate * 0.5f;
 		}
 	}
 
 	if(currentEnergy > maxEnergy) 
 	{
 		currentEnergy = maxEnergy;
-		energyChange = 6;
 	}
 	else if(currentEnergy < 0.0f)
 	{
 		currentEnergy = 0.0f;
-		energyChange = 6;
 	}
 	
-	if(energyChange > 5)
+	if(oldEnergy != currentEnergy)
 	{
 		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->owner, currentEnergy);
-		energyChange -= 5;
+		oldEnergy = currentEnergy;
 	}
 }
 
@@ -193,6 +189,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+
+	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
 
 	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.9f);
 
@@ -232,6 +230,8 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+
+	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
 
 	Oyster::Math::Float4 pullForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.3f);
 

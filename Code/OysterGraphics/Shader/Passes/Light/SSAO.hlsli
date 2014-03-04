@@ -1,7 +1,7 @@
 #include "Defines.hlsli"
 #include "PosManipulation.hlsli"
 
-static float Radius = 1;
+
 
 float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 {
@@ -14,7 +14,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 	float3 tangent = float3( normalize(rnd.xyz - (normal * dot(rnd.xyz, normal))));
 	float3 biTangent = float3( cross(tangent.xyz, normal));
 
-	float3x3 tbn = float3x3(tangent, biTangent, normal);
+	float3x3 tbn = transpose(float3x3(tangent, biTangent, normal));
 
 	for( uint i = 0; i < SSAOKernel.Length.x; ++i )
 	{
@@ -22,7 +22,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 		//take sample from localspace to viewspace
 
 		float3 sampled = mul(tbn, SSAOKernel[i].xyz);
-		sampled = sampled * Radius + pos;
+		sampled = sampled * SSAORadius + pos;
 
 		//project sample to get uv.xy
 		float4 ProjOffset = float4(sampled,1);
@@ -42,7 +42,7 @@ float GetSSAO(float3 pos, float2 uv, int2 texCoord2, uint2 rndID)
 		float sampleDepth = ViewPos.z;
 
 		//compare to depth from sample
-		float rangeCheck = (abs(pos.z - sampleDepth) > Radius) ? 1.0f : 0.0f;
+		float rangeCheck = (abs(pos.z - sampleDepth) < SSAORadius) ? 1.0f : 0.0f;
 		occlusion += (sampleDepth <= sampled.z ? 1.0f : 0.0f) * rangeCheck;
 		//occlusion += rangeCheck;
 
