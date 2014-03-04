@@ -808,7 +808,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 
 	if( player )
 	{
-		if( this->privData->myId == decoded.objectID )
+		if( this->privData->myId != decoded.objectID )
 		{
 			// my player animation
 			switch (decoded.animationID)
@@ -844,6 +844,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				player->playAnimation(L"movement", true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:

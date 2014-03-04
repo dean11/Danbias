@@ -129,7 +129,7 @@ namespace Oyster
 						(
 							*info, deltaTime,
 							models[i].Animation,
-							::Utility::StaticArray::NumElementsOf( models[i].Animation ),
+							models[i].numOccupiedAnimationSlots,
 							SkinTransform, BoneAnimated, BoneAbsAnimated
 						);
 
