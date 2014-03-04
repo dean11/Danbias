@@ -85,6 +85,7 @@ void Player::initPlayerData()
 	//this->rigidBody->SetRotation(q)
 	state.staticFrictionCoeff = 0.0f;
 	state.dynamicFrictionCoeff = 0.0f;
+	state.restitutionCoeff = 0.0f;
 	this->rigidBody->SetState( state );
 }
 
