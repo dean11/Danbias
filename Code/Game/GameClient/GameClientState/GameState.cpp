@@ -103,6 +103,8 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
+	this->privData->mouseInput->SetSensitivity(1.7f);
+
 	// create UI states
 	this->gameUI = new GamingUI(&shared, &this->privData->camera);
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);

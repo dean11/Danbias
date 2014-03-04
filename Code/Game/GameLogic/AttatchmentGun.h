@@ -9,8 +9,8 @@
 
 namespace GameLogic
 {
-	const Oyster::Math::Float standardDamage = 40.0f;
-	const Oyster::Math::Float standardCooldown = 0.5f;
+	const Oyster::Math::Float standardDamage = 16.0f;
+	const Oyster::Math::Float standardCooldown = 0.2f;
 	
 	class AttatchmentGun : public IAttatchment
 	{

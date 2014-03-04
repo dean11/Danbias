@@ -58,7 +58,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	case WEAPON_USE_SECONDARY_PRESS:
 		if(this->hasObject)
 		{
-			goto CASE_WEAPON_INTERRUPT;
+			//goto CASE_WEAPON_INTERRUPT;
 		}
 		else if( currentEnergy >= 1.0f )
 		{

@@ -294,3 +294,8 @@ void FirstPersonWeapon::Render()
 	for(int i = 0; i < 6; i++)
 		coil[i]->Render();
 }
+
+void FirstPersonWeapon::SetRotationSpeed(float speed)
+{
+	this->smallStepRotation = speed;
+}
