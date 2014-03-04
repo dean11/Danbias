@@ -15,9 +15,9 @@ const float AFFECTED_TIMER = 1.0f;
 
 // movement properties
 const Float dampening_factor = 0.2f,
-			forward_velocity = 50.0f,
-			backward_velocity = 25.0f,
-			strafe_velocity = 40.0f,
+			forward_velocity = 30.0f,
+			backward_velocity = 20.0f,
+			strafe_velocity = 25.0f,
 			jump_velocity = 25.0f;
 
 Player::Player()
