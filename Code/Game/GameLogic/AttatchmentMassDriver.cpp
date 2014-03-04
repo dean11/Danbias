@@ -91,9 +91,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_UTILLITY_PRESS:
-		if(currentEnergy >= 90.0f)
+		if(currentEnergy >= 4.0f)
 		{
-			currentEnergy -= 90.0f;
+			currentEnergy -= 4.0f;
 			ForceZip(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
@@ -235,13 +235,7 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	//DEBUG:
-	MessageBeep(MB_ICONINFORMATION);
 	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized() * 1.5f;
-
-	//Do ray test first!
-	//Oyster::Collision3D::Ray r(pos, owner->GetLookDir());
-	//Oyster::Physics::API::Instance().ApplyEffect(&r, this, AttemptPickUp);
 
 	if(this->hasObject) return;
 

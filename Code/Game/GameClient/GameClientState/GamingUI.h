@@ -30,18 +30,20 @@ namespace DanBias { namespace Client
 		void ChangeState( UIState next );
 
 	private: /* Overidden mouse methods */
-		void OnMouse				( const Input::Struct::MouseEventData& eventData )						override	{ }
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
-		void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender )							override	{ }
 		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
-		void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override	{ }
 		void OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override;
-		void OnMouseScroll			( int delta, Input::Mouse* sender )										override	{ }
+		void OnMouseScroll			( int delta, Input::Mouse* sender )										override;
 
-		void OnKeyEvent				( const Input::Struct::KeyboardEventData& eventData)					override	{  }
 		void OnKeyPress				( Input::Enum::SAKI key, Input::Keyboard* sender)						override;
-		void OnKeyDown				( Input::Enum::SAKI key, Input::Keyboard* sender)						override	{  }
 		void OnKeyRelease			( Input::Enum::SAKI key, Input::Keyboard* sender)						override;
+
+	private:
+		struct WeaponData
+		{
+			Utility::DynamicMemory::SmartPointer<Plane_UI> crossair;
+			int id;
+		};
 
 	private:
 		SharedStateContent *sharedData;
@@ -52,12 +54,14 @@ namespace DanBias { namespace Client
 		Text_UI* energy;
 		Text_UI** killMessages;
 		int maxMessageCount;
-		Plane_UI* corsair;
-
+		
+		std::vector<WeaponData> weapons;
+		int currentWeapon;
 		bool key_forward;
 		bool key_backward;
 		bool key_strafeRight;
 		bool key_strafeLeft;
+		bool mouse_secondDown;
 
 		GamingUI();
 		void ReadKeyInput();
