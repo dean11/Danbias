@@ -122,6 +122,7 @@ void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )
 	{
 		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
 			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
+			this->sharedData->weapon->Shoot();
 		break;
 		case ::Input::Enum::SAMI_MouseRightBtn:
 			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryPress) );
@@ -171,6 +172,12 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_Space:	this->sharedData->network->Send( Protocol_PlayerJump() );
 		break;
+		// swap weapon to massDriver
+		case SAKI_1:		this->sharedData->network->Send( Protocol_PlayerChangeWeapon( 0 ) );
+			break; 
+		// swap weapon to shooting weapon
+		case SAKI_2:		this->sharedData->network->Send( Protocol_PlayerChangeWeapon( 1 ) );
+			break;
 		case SAKI_Escape:	this->nextState = GameStateUI::UIState_inGameMeny;
 		break;
 	}

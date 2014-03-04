@@ -53,6 +53,10 @@ void Game::PlayerData::UseWeapon(const WEAPON_FIRE &usage)
 {
 	this->player->UseWeapon(usage);
 }
+void Game::PlayerData::SelectWeaponAttatchment(int socketID)
+{
+	this->player->SelectWeaponAttatchment(socketID);
+}
 Oyster::Math::Float3 Game::PlayerData::GetPosition()
 {
 	return this->player->GetPosition();

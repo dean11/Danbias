@@ -283,7 +283,7 @@ using namespace DanBias;
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
-
+		c->GetPlayer()->SelectWeaponAttatchment(p.weaponId);
 	}
 	void GameSession::Gameplay_PlayerShot				( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{ 

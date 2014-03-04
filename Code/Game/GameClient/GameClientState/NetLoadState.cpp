@@ -26,6 +26,8 @@ struct NetLoadState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 
+	FirstPersonWeapon* weapon;
+
 	bool loading;
 };
 
@@ -52,6 +54,9 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	this->privData->dynamicObjects	= &shared.dynamicObjects;
 	this->privData->staticObjects	= &shared.staticObjects;
 	this->privData->lights			= &shared.lights;
+
+	shared.weapon = new FirstPersonWeapon;
+	this->privData->weapon			= shared.weapon;
 
 	this->privData->loading = false;
 
@@ -156,6 +161,8 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		default: break;
 		}
 	}
+
+	this->privData->weapon->Init();
 
 	Graphics::API::EndLoadingModels();
 
