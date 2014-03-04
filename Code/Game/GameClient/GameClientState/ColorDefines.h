@@ -22,16 +22,16 @@ namespace DanBias
 		ColorDefines::ColorDefines()
 		{
 			// TODO make nice colors 
-			tintColor[0] = Oyster::Math::Float3( 0.3f, 0.0f, 0.0f ); 
-			tintColor[1] = Oyster::Math::Float3( 0.3f, 0.0f, 0.0f );
-			tintColor[2] = Oyster::Math::Float3( 0.3f, 0.0f, 0.0f );
-			tintColor[3] = Oyster::Math::Float3( 0.0f, 0.3f, 0.0f );
-			tintColor[4] = Oyster::Math::Float3( 0.0f, 0.3f, 0.0f );
-			tintColor[5] = Oyster::Math::Float3( 0.0f, 0.3f, 0.0f );
-			tintColor[6] = Oyster::Math::Float3( 0.0f, 0.0f, 0.3f );
-			tintColor[7] = Oyster::Math::Float3( 0.0f, 0.0f, 0.3f );
-			tintColor[8] = Oyster::Math::Float3( 0.0f, 0.0f, 0.3f );
-			tintColor[9] = Oyster::Math::Float3( 0.0f, 0.0f, 0.5f );
+			tintColor[0] = Oyster::Math::Float3( 0.3f, 0.7f, 0.7f ); 
+			tintColor[1] = Oyster::Math::Float3( 0.3f, 0.7f, 0.7f );
+			tintColor[2] = Oyster::Math::Float3( 0.3f, 0.7f, 0.7f );
+			tintColor[3] = Oyster::Math::Float3( 0.7f, 0.3f, 0.7f );
+			tintColor[4] = Oyster::Math::Float3( 0.7f, 0.3f, 0.7f );
+			tintColor[5] = Oyster::Math::Float3( 0.7f, 0.3f, 0.7f );
+			tintColor[6] = Oyster::Math::Float3( 0.7f, 0.7f, 0.3f );
+			tintColor[7] = Oyster::Math::Float3( 0.7f, 0.7f, 0.3f );
+			tintColor[8] = Oyster::Math::Float3( 0.7f, 0.7f, 0.3f );
+			tintColor[9] = Oyster::Math::Float3( 0.7f, 0.7f, 0.5f );
 
 			glowTintColor[0] = Oyster::Math::Float3( 0.8f, 0.0f, 0.0f );
 			glowTintColor[1] = Oyster::Math::Float3( 0.0f, 0.8f, 0.0f );

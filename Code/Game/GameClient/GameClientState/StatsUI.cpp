@@ -20,9 +20,9 @@ StatsUI::~StatsUI() { /* Do nothing */ }
 bool StatsUI::Init( int maxNrOfPlayers )
 {
 	this->textDepth = 0.2f;
-	this->nameMargin = 0.25f;
-	this->killsMargin = 0.45f;
-	this->deathMargin = 0.6f; 
+	this->nameMargin = 0.15f;
+	this->killsMargin = 0.3f;
+	this->deathMargin = 0.5f; 
 	this->lineSpacing = 0.05f;
 	this->textHeightPos = 0.3;
 	this->textHeight = 0.1f;
@@ -33,9 +33,9 @@ bool StatsUI::Init( int maxNrOfPlayers )
 
 	// black background
 	this->backGround = new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0,0,0,0.5));
-	this->nameText = new Text_UI(L"name", Float3(nameMargin, textHeightPos-lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->killText = new Text_UI(L"kill", Float3(killsMargin, textHeightPos-lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->deathText = new Text_UI(L"death", Float3(deathMargin, textHeightPos-lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->nameText = new Text_UI(L"Name", Float3(0.15f, textHeightPos - lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->killText = new Text_UI(L"Kills", Float3(0.4f, textHeightPos - lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->deathText = new Text_UI(L"Deaths", Float3(0.6f, textHeightPos - lineSpacing, textDepth), Float2(textWidth, textHeight));
 
 	this->id = new int[maxNrOfPlayers];
 	this->names	=  new Text_UI*[maxNrOfPlayers];
@@ -79,9 +79,9 @@ void StatsUI::RenderText()
 	for( int i = 0; i< nrOfPlayers; i++)
 	{
 		offset += 0.05;
-		this->names[i]->RenderText(Float3(nameMargin, offset, textDepth), Float2(textWidth, textHeight)); 
-		this->kills[i]->RenderText(Float3(killsMargin, offset, textDepth), Float2(textWidth, textHeight));
-		this->death[i]->RenderText(Float3(deathMargin, offset, textDepth), Float2(textWidth, textHeight));
+		this->names[i]->RenderText(Float3(nameMargin, offset, textDepth)); 
+		this->kills[i]->RenderText(Float3(killsMargin, offset, textDepth));
+		this->death[i]->RenderText(Float3(deathMargin, offset, textDepth));
 	}
 }
 

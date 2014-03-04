@@ -353,6 +353,11 @@ bool GameState::Render()
 			statsUI->RenderText();
 	}
 
+	if( this->gameOver )
+	{
+		Oyster::Graphics::API::RenderText( L"GAME OVER", Float3(0.2f,0.1f,0.1f), Float2(0.6f,0.1f), 0.1f);
+		Oyster::Graphics::API::RenderText( L"press 'ESC' to continue", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
+	}
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
@@ -481,7 +486,7 @@ void GameState::ReadKeyInput()
 	{
 		if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Escape) )
 		{
-			this->currGameUI = inGameMeny;
+			this->privData->nextState = ClientState_Main; 
 		}
 		this->renderStats = true;
 	}
