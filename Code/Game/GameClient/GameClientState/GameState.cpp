@@ -42,6 +42,8 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
 	Camera_FPSV2 camera;
 
+	FirstPersonWeapon* weapon;
+
 	int myId;
 
 } privData;
@@ -76,6 +78,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->staticObjects = &shared.staticObjects;
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
+	this->privData->weapon = shared.weapon;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
@@ -154,7 +157,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( p->getPos() );
-			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.8f * p->getScale().y, 0.0f) );
+			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.45f * p->getScale().y, 0.0f) );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
 		#ifdef _CAMERA_DEBUG
@@ -177,6 +180,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
 	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+
 	switch (UIstate)
 	{
 	case DanBias::Client::GameStateUI::UIState_shut_down:
@@ -244,6 +248,9 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView( this->privData->camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
+	
+	this->privData->weapon->Update(this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook());
+	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -382,6 +389,12 @@ bool GameState::Release()
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
+
+		if(this->privData->weapon)
+		{
+			delete this->privData->weapon;
+			this->privData->weapon = nullptr;
+		}
 
 		privData = NULL;
 	}
@@ -808,7 +821,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 
 	if( player )
 	{
-		if( this->privData->myId == decoded.objectID )
+		if( this->privData->myId != decoded.objectID )
 		{
 			// my player animation
 			switch (decoded.animationID)
@@ -820,6 +833,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				player->playAnimation(L"movement", true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
@@ -844,6 +858,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				player->playAnimation(L"movement", true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
+				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:

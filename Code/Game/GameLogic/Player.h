@@ -56,7 +56,7 @@ namespace GameLogic
 		* @param fireInput: enum value on what kind of action is to be taken
 		********************************************************/
 		void UseWeapon(const WEAPON_FIRE &usage);
-
+		void SelectWeaponAttatchment( int socketID );
 		/********************************************************
 		* Respawns the player, this resets several stats and settings on the player
 		* @param spawnPoint: the coordinate in the world where the player is to spawn
@@ -107,7 +107,7 @@ namespace GameLogic
 		void Jump();
 		void initPlayerData();
 
-		void UpdateMovement( const ::Oyster::Math::Float4x4 &rotationMatrix, const ::Oyster::Physics::ICustomBody::State &state );
+		bool UpdateMovement( const ::Oyster::Math::Float4x4 &rotationMatrix, const ::Oyster::Physics::ICustomBody::State &state );
 
 	private:
 		int teamID;

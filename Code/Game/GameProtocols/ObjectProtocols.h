@@ -35,7 +35,7 @@ namespace GameLogic
 		}
 		Protocol_ObjectPickup(int objectID, short pickupID)
 		{
-			this->protocol[0].value = protocol_Gameplay_ObjectPosition;
+			this->protocol[0].value = protocol_Gameplay_ObjectPickup;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 									
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
