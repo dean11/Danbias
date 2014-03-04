@@ -16,20 +16,26 @@
 #include "C_Light.h"
 #include "NetworkClient.h"
 #include "Input.h"
+#include "FirstPersonWeapon.h"
+#include "DllInterfaces\GFXAPI.h"
 
 namespace DanBias { namespace Client
 {
 	struct SharedStateContent
 	{
 	public:
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> staticObjects;
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> dynamicObjects;
-		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> lights;
-		::Oyster::Network::NetworkClient *network;
 
-		::Input::Mouse *mouseDevice;
-		::Input::Keyboard *keyboardDevice;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>>	staticObjects;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>>	dynamicObjects;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>		lights;
 
+		FirstPersonWeapon* weapon;
+
+		Oyster::Graphics::API::Texture		background;
+		::Oyster::Network::NetworkClient	*network;
+		::Input::Keyboard					*keyboardDevice;
+		::Input::Mouse						*mouseDevice;
+		::Oyster::Graphics::API::Texture	mouseCursor;
 		float mouseSensitivity;
 	};
 } }

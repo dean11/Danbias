@@ -29,12 +29,10 @@ struct  LanMenuState::MyData
 {
 	MyData(){}
 
+	SharedStateContent *sharedData;
+
 	GameClientState::ClientState nextState;
-	NetworkClient *nwClient;
-	::Input::Mouse *mouseInput;
-	::Input::Keyboard *keyboardInput;
 	Float3 mousePos;
-	Graphics::API::Texture background, mouseCursor;
 	EventButtonCollection guiElements;
 
 	TextField<LanMenuState*> *connectIP;
@@ -59,13 +57,8 @@ bool LanMenuState::Init( SharedStateContent &shared )
 {
 	this->privData = new MyData();
 
+	this->privData->sharedData = &shared;
 	this->privData->nextState = GameClientState::ClientState_Same;
-	this->privData->nwClient = shared.network;
-	this->privData->mouseInput = shared.mouseDevice;
-	this->privData->keyboardInput = shared.keyboardDevice;
-
-	this->privData->background = Graphics::API::CreateTexture( L"color_white.png" );
-	this->privData->mouseCursor = Graphics::API::CreateTexture( L"cursor.png" );
 
 	// create guiElements
 	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
@@ -91,10 +84,10 @@ bool LanMenuState::Init( SharedStateContent &shared )
 
 	this->privData->connectPort = 15151;
 
-	this->privData->keyboardInput->BindTextTarget( &(*this->privData->connectIP)[0] );
-	this->privData->keyboardInput->Activate();
+	this->privData->sharedData->keyboardDevice->BindTextTarget( &(*this->privData->connectIP)[0] );
+	this->privData->sharedData->keyboardDevice->Activate();
 
-	if(!this->privData->nwClient->StartListeningForBroadcasting(this->privData->connectPort))
+	if(!this->privData->sharedData->network->StartListeningForBroadcasting(this->privData->connectPort))
 	{
 		return false;
 	}
@@ -107,15 +100,15 @@ GameClientState::ClientState LanMenuState::Update( float deltaTime )
 	MouseInput mouseState;
 	{
 		::Input::Struct::SAIPointFloat2D pos;
-		this->privData->mouseInput->GetNormalizedPosition( pos );
+		this->privData->sharedData->mouseDevice->GetNormalizedPosition( pos );
 
 		this->privData->mousePos.x = mouseState.x = pos.x;
 		this->privData->mousePos.y = mouseState.y = pos.y;
-		mouseState.mouseButtonPressed = this->privData->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+		mouseState.mouseButtonPressed = this->privData->sharedData->mouseDevice->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
 	EventHandler::Instance().Update( mouseState );
 
-	this->privData->nwClient->Update();
+	this->privData->sharedData->network->Update();
 
 	return this->privData->nextState;
 }
@@ -126,8 +119,8 @@ bool LanMenuState::Render( )
 
 	Graphics::API::StartGuiRender();
 
-	Graphics::API::RenderGuiElement( this->privData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
-	Graphics::API::RenderGuiElement( this->privData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->sharedData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
+	Graphics::API::RenderGuiElement( this->privData->sharedData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
@@ -141,7 +134,7 @@ bool LanMenuState::Release()
 {
 	if(privData)
 	{
-		this->privData->nwClient->StopListeningForBroadcasting();
+		this->privData->sharedData->network->StopListeningForBroadcasting();
 	}
 
 	privData = NULL;
@@ -154,13 +147,13 @@ void LanMenuState::ChangeState( ClientState next )
 	{
 	case GameClientState::ClientState_NetLoad:
 		// attempt to connect to lobby
-		if( !this->privData->nwClient->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
+		if( !this->privData->sharedData->network->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
 			return;
 		break;
 	default: break;
 	}
 
-	this->privData->keyboardInput->ReleaseTextTarget();
+	this->privData->sharedData->keyboardDevice->ReleaseTextTarget();
 
 	this->privData->nextState = next;
 }
@@ -192,7 +185,7 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
 	{ // TODO: Reconnect
 		const char *breakpoint = "temp trap";
-		this->privData->nwClient->Disconnect();
+		this->privData->sharedData->network->Disconnect();
 		this->ChangeState( GameClientState::ClientState_Main );
 	}
 
