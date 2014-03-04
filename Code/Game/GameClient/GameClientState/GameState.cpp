@@ -157,7 +157,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		{
 			this->privData->myId = id;
 			this->privData->camera.SetPosition( p->getPos() );
-			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.8f * p->getScale().y, 0.0f) );
+			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.45f * p->getScale().y, 0.0f) );
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
 		#ifdef _CAMERA_DEBUG
