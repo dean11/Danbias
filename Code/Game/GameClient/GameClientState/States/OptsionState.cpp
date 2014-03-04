@@ -58,7 +58,16 @@ OptionState::OptionState()
 	Graphics::API::Option op = Graphics::API::GetOption();
 	this->options.toogleFullScreen = op.fullscreen;
 	this->options.resolution = op.resolution;
-	
+	std::wstring c = Float2ToStr(this->options.resolution);
+
+	for (unsigned int i = 0; i < Utility::StaticArray::NumElementsOf(resolution); i++)
+	{
+		if( resolution[i] == c )
+		{
+			this->options.currentRes = i;
+			break;
+		}
+	}
 }
 OptionState::~OptionState()
 {
@@ -196,16 +205,16 @@ void OptionState::OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate,
 void OptionState::OnMouseScroll			( int delta, Input::Mouse* sender )
 {
 }
-void OptionState::OnKeyEvent			(const Input::Struct::KeyboardEventData& eventData)
+void OptionState::OnKeyEvent			( const Input::Struct::KeyboardEventData& eventData)
 {
 }
-void OptionState::OnKeyPress			(Input::Enum::SAKI key, Input::Keyboard* sender)
+void OptionState::OnKeyPress			( Input::Enum::SAKI key, Input::Keyboard* sender)
 {
 }
-void OptionState::OnKeyDown				(Input::Enum::SAKI key, Input::Keyboard* sender)
+void OptionState::OnKeyDown				( Input::Enum::SAKI key, Input::Keyboard* sender)
 {
 }
-void OptionState::OnKeyRelease			(Input::Enum::SAKI key, Input::Keyboard* sender)
+void OptionState::OnKeyRelease			( Input::Enum::SAKI key, Input::Keyboard* sender)
 {
 	if(key == Input::Enum::SAKI_Escape)
 		this->nextState = GameClientState::ClientState_Main;
@@ -252,7 +261,6 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 				//e.owner->sharedData->sound->Toggle(e.owner->options.toggleSound);
 				Graphics::API::Option op = Graphics::API::GetOption();
 				op.fullscreen = e.owner->options.toogleFullScreen;
-				//op.fullscreen = true;
 				op.resolution = e.owner->options.resolution;
 
 

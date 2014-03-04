@@ -80,6 +80,7 @@ namespace GameLogic
 		bool IsWalking();
 		bool IsJumping();
 		bool IsIdle();
+		bool IsStunned( bool struggled = false );
 
 		void Inactivate();
 		void ResetPlayer( Oyster::Math::Float3 spawnPos);
@@ -95,6 +96,7 @@ namespace GameLogic
 		void AddDeath();
 		int GetKills() const;
 		int GetDeath() const;
+		void Stun( float duration );
 		void DamageLife(int damage);
 		void setDeathTimer(float deathTimer);
 		bool deathTimerTick(float dt);
@@ -107,7 +109,7 @@ namespace GameLogic
 		void Jump();
 		void initPlayerData();
 
-		bool UpdateMovement( const ::Oyster::Math::Float4x4 &rotationMatrix, const ::Oyster::Physics::ICustomBody::State &state );
+		bool UpdateMovement( const ::Oyster::Math::Float4x4 &rotationMatrix, const ::Oyster::Physics::ICustomBody::State &state, bool isGrounded );
 
 	private:
 		int teamID;
@@ -123,9 +125,9 @@ namespace GameLogic
 
 		Oyster::Math::Float rotationUp;
 
-		float deathTimer;
+		float deathTimer, stunTimer;
 
-		bool hasTakenDamage;
+		bool hasTakenDamage, haveRecoveredFromStun;
 		Oyster::Math::Float RecentlyAffected;
 		PlayerStats playerStats;
 		PlayerScore playerScore;
