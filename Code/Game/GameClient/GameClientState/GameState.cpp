@@ -151,13 +151,13 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 		// set color tint
 		ColorDefines colors;
-		p->SetTint(colors.getTintColor(id));
+		p->SetTint(colors.getTintColor(id)*5);
 		p->SetGlowTint(colors.getGlowColor(id));
 		
 		Graphics::Definitions::Pointlight pl;
 		pl.Pos = p->getPos();
-		pl.Bright = 0.6f;
-		pl.Radius = 100;
+		pl.Bright = 0.4f;
+		pl.Radius = 50;
 		pl.Color = p->GetGlowTint();
 		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
 		p->SetLight(p->GetId());
