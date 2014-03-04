@@ -11,7 +11,7 @@
 
 namespace DanBias { namespace Client
 {
-	class GamingUI : public GameStateUI, Input::Mouse::MouseEvent, Input::Keyboard::KeyboardEvent
+	class GamingUI : public GameStateUI
 	{
 	public:
 		GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera );
