@@ -249,7 +249,7 @@ bool GameState::Render()
 
 	Oyster::Graphics::API::NewFrame();
 	
-	this->privData->weapon->Update(this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook());
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
 	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
@@ -471,6 +471,7 @@ void GameState::ReadKeyInput()
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		this->renderStats = true;
+		this->privData->weapon->Shoot();
 	} 
 	else 
 	{
