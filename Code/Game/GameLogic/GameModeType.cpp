@@ -28,7 +28,7 @@ bool GameModeType::TimeExit()
 	}
 	return false;
 }
-int GameModeType::EndConditionMet( Utility::DynamicMemory::DynamicArray<Player*> players )
+int GameModeType::EndConditionMet( Utility::DynamicMemory::DynamicArray<Player*>& players )
 {
 	int winnerID = -1; 
 	int highetsScore = 0;
