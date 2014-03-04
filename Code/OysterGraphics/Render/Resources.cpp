@@ -268,6 +268,13 @@ namespace Oyster
 						Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
 					}
 
+					SAFE_RELEASE(Gui::depth);
+					Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
+
+					SAFE_RELEASE(Blur::BufferSRV);
+					SAFE_RELEASE(Blur::BufferUAV);
+					Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
+
 					Core::resolution = size;
 
 					//Create Views
@@ -284,6 +291,83 @@ namespace Oyster
 					//Blur
 					Core::Init::CreateLinkedShaderResourceFromTexture(NULL,&Blur::BufferSRV,&Blur::BufferUAV);
 
+					//GUI
+					//create Depth Buffer
+					D3D11_TEXTURE2D_DESC dTDesc;
+					dTDesc.MipLevels=1;
+					dTDesc.ArraySize=1;
+					dTDesc.Format = DXGI_FORMAT_D32_FLOAT;
+					dTDesc.Usage = D3D11_USAGE_DEFAULT;
+					dTDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+					dTDesc.CPUAccessFlags=0;
+					dTDesc.MiscFlags=0;
+					dTDesc.Height = (UINT)Core::resolution.y;
+					dTDesc.Width = (UINT)Core::resolution.x;
+					dTDesc.SampleDesc.Count=1;
+					dTDesc.SampleDesc.Quality=0;
+
+					ID3D11Texture2D* depthstencil;
+					Core::device->CreateTexture2D(&dTDesc,0,&depthstencil);
+					Core::UsedMem += dTDesc.Height * dTDesc.Width * 4;
+					Core::device->CreateDepthStencilView(depthstencil,NULL,&Gui::depth);
+					depthstencil->Release();
+
+					//Reset Passes--------------------------------------------------------------------------
+
+					//Geometry
+					Gather::AnimatedPass.CBuffers.Vertex[0] = Gather::AnimationData;
+					Gather::AnimatedPass.CBuffers.Vertex[1] = Gather::ModelData;
+					Gather::AnimatedPass.CBuffers.Pixel[0] = Color;
+					for(int i = 0; i<GBufferSize;++i)
+					{
+						Gather::AnimatedPass.RTV[i] = GBufferRTV[i];
+					}
+					Gather::AnimatedPass.depth = Core::depthStencil;
+					//Instanced Geometry
+					for(int i = 0; i<GBufferSize;++i)
+					{
+						Gather::InstancedPass.RTV[i]  = GBufferRTV[i];
+					}
+					Gather::InstancedPass.depth = Core::depthStencil;
+					//Light Pass
+					for(int i = 0; i<LBufferSize;++i)
+					{
+						Light::Pass.UAV.Compute[i] = LBufferUAV[i];
+					}
+					for(int i = 0; i<GBufferSize;++i)
+					{
+						Light::Pass.SRV.Compute[i] = GBufferSRV[i];
+					}
+					Light::Pass.SRV.Compute[3] = Core::depthStencilUAV;
+					//to remove?
+					Light::Pass.SRV.Compute[4] = Light::PointLightView;
+					Light::Pass.SRV.Compute[5] = Light::SSAOKernel;
+					Light::Pass.SRV.Compute[6] = Light::SSAORandom;
+					Light::Pass.SRV.Compute[7] = Light::Up;
+					Light::Pass.SRV.Compute[8] = Light::Down;
+					Light::Pass.SRV.Compute[9] = Light::Left;
+					Light::Pass.SRV.Compute[10] = Light::Right;
+					Light::Pass.SRV.Compute[11] = Light::Front;
+					Light::Pass.SRV.Compute[12] = Light::Back;
+					//Post Pass
+					for(int i = 0; i<LBufferSize;++i)
+					{
+						Post::Pass.SRV.Compute[i] = LBufferSRV[i];
+					}
+					Post::Pass.UAV.Compute[0] = Core::backBufferUAV;
+					//GUI Pass
+					Gui::Pass.RTV[0] = GBufferRTV[2];
+					Gui::Pass.depth = Gui::depth;
+					//Blur Pass 
+					Blur::HorPass.SRV.Compute[0] = LBufferSRV[2]; 
+					Blur::HorPass.UAV.Compute[0] = Blur::BufferUAV;
+					Blur::VertPass.SRV.Compute[0] = Blur::BufferSRV;
+					Blur::VertPass.UAV.Compute[0] = LBufferUAV[2];
+					//Text Pass
+					Gui::Text::Pass.SRV.Pixel[0] = Gui::Text::Font;
+					Gui::Text::Pass.RTV[0] = GBufferRTV[2];
+					Gui::Text::Pass.depth = Gui::depth;
+					
 					return Core::Init::State::Success;
 				}
 
@@ -417,8 +501,6 @@ namespace Oyster
 
 				Core::Init::State Resources::InitPasses()
 				{
-
-					////---------------- Geometry Pass Setup ----------------------------
 #pragma region Animated Pass
 					Gather::AnimatedPass.Shaders.Pixel = GetShader::Pixel(L"AGather");
 					Gather::AnimatedPass.Shaders.Vertex = GetShader::Vertex(L"AGather");
@@ -590,7 +672,7 @@ namespace Oyster
 					Gather::InstancedPass.depth = Core::depthStencil;
 #pragma endregion
 
-					////---------------- Light Pass Setup ----------------------------
+#pragma region Light Pass Setup
 					Light::Pass.Shaders.Compute = GetShader::Compute(L"LightPass");
 					for(int i = 0; i<LBufferSize;++i)
 					{
@@ -611,8 +693,9 @@ namespace Oyster
 					Light::Pass.SRV.Compute.push_back(Light::Right);
 					Light::Pass.SRV.Compute.push_back(Light::Front);
 					Light::Pass.SRV.Compute.push_back(Light::Back);
+#pragma endregion
 
-					////---------------- Post Pass Setup ----------------------------
+#pragma region Post Pass Setup
 					Post::Pass.Shaders.Compute = GetShader::Compute(L"PostPass");
 					for(int i = 0; i<LBufferSize;++i)
 					{
@@ -622,8 +705,9 @@ namespace Oyster
 					Post::Pass.CBuffers.Compute.push_back(Post::Data);
 					Post::Pass.RenderStates.SampleCount = 1;
 					Post::Pass.RenderStates.SampleState = RenderStates::ss;
+#pragma endregion
 
-					////---------------- GUI Pass Setup ----------------------------
+#pragma region GUI Pass Setup
 					Gui::Pass.Shaders.Vertex = GetShader::Vertex(L"2D");
 					Gui::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
 					Gui::Pass.Shaders.Geometry = GetShader::Geometry(L"2D");
@@ -646,8 +730,9 @@ namespace Oyster
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
 					Gui::Pass.RenderStates.DepthStencil = RenderStates::dsState;
+#pragma endregion
 
-					////---------------- Blur Pass Setup ----------------------------
+#pragma region Blur Pass Setup
 					Blur::HorPass.Shaders.Compute = GetShader::Compute(L"BlurHor");
 					Blur::VertPass.Shaders.Compute = GetShader::Compute(L"BlurVert");
 
@@ -663,8 +748,9 @@ namespace Oyster
 
 					Blur::HorPass.CBuffers.Compute.push_back(Blur::Data);
 					Blur::VertPass.CBuffers.Compute.push_back(Blur::Data);
+#pragma endregion
 
-					////---------------- 2DText Pass Setup ----------------------------
+#pragma region //2DText Pass Setup
 					Gui::Text::Pass.Shaders.Vertex = GetShader::Vertex(L"2DText");
 					Gui::Text::Pass.Shaders.Geometry = GetShader::Geometry(L"2DText");
 					Gui::Text::Pass.Shaders.Pixel = GetShader::Pixel(L"2D");
@@ -690,6 +776,7 @@ namespace Oyster
 					Gui::Text::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Text::Pass.RenderStates.BlendState = RenderStates::bs;
 					Gui::Text::Pass.RenderStates.DepthStencil = RenderStates::dsState;
+#pragma endregion
 
 					return Core::Init::Success;
 				}

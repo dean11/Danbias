@@ -149,8 +149,10 @@ namespace Oyster
 				{
 					//RESIZE
 					Core::Init::ReInitialize(false,option.fullscreen,option.resolution);
+					Render::Resources::ReInitViews(option.resolution);
 					Core::fullscreen = option.fullscreen;
 					Core::resolution = option.resolution;
+					Render::Preparations::Basic::SetViewPort();
 				}
 				return API::Sucsess;
 			}

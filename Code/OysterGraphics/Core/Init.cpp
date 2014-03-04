@@ -111,7 +111,7 @@ namespace Oyster
 			{
 				Core::swapChain->Release();
 				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
-				delete Core::swapChain;
+				//delete Core::swapChain;
 			}
 
 	
@@ -189,7 +189,7 @@ namespace Oyster
 			{
 				Core::depthStencil->Release();
 				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
-				delete Core::depthStencil;
+				//delete Core::depthStencil;
 			}
 
 			//Check and Set multiSampling
@@ -259,7 +259,7 @@ namespace Oyster
 			if(Core::backBufferRTV)
 			{
 				Core::backBufferRTV->Release();
-				delete Core::backBufferRTV;
+				//delete Core::backBufferRTV;
 			}
 			if(FAILED(Core::device->CreateRenderTargetView(backBuffer,0,&Core::backBufferRTV)))
 			{
@@ -270,7 +270,7 @@ namespace Oyster
 			if(Core::backBufferUAV)
 			{
 				Core::backBufferUAV->Release();
-				delete Core::backBufferUAV;
+				//delete Core::backBufferUAV;
 			}
 			if(FAILED(Core::device->CreateUnorderedAccessView(backBuffer,0,&Core::backBufferUAV)))
 			{
@@ -341,7 +341,7 @@ namespace Oyster
 				return Init::Fail;
 			}
 
-			if(Init::CreateDepthStencil(MSAA_Quality, Core::resolution) == Init::Fail)
+			if(Init::CreateDepthStencil(MSAA_Quality, Size) == Init::Fail)
 			{
 				return Init::Fail;
 			}
@@ -351,7 +351,12 @@ namespace Oyster
 				return Init::Fail;
 			}
 
-			if(Init::CreateViewPort(Oyster::Math::Float2::null, Core::resolution) == Init::Fail)
+			if(Init::CreateDepthStencil(MSAA_Quality, Size) == Init::Fail)
+			{
+				return Init::Fail;
+			}
+
+			if(Init::CreateViewPort(Oyster::Math::Float2::null, Size) == Init::Fail)
 			{
 				return Init::Fail;
 			}
