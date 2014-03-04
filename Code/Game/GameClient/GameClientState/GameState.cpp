@@ -249,7 +249,7 @@ bool GameState::Render()
 
 	Oyster::Graphics::API::NewFrame();
 	
-	this->privData->weapon->Update(this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook());
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
 	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
@@ -353,6 +353,11 @@ bool GameState::Render()
 			statsUI->RenderText();
 	}
 
+	if( this->gameOver )
+	{
+		Oyster::Graphics::API::RenderText( L"GAME OVER", Float3(0.2f,0.1f,0.1f), Float2(0.6f,0.1f), 0.1f);
+		Oyster::Graphics::API::RenderText( L"press 'ESC' to continue", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
+	}
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }
@@ -471,6 +476,7 @@ void GameState::ReadKeyInput()
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		this->renderStats = true;
+		this->privData->weapon->Shoot();
 	} 
 	else 
 	{
@@ -481,7 +487,7 @@ void GameState::ReadKeyInput()
 	{
 		if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Escape) )
 		{
-			this->currGameUI = inGameMeny;
+			this->privData->nextState = ClientState_Main; 
 		}
 		this->renderStats = true;
 	}
@@ -782,6 +788,19 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	// update score board
 	((StatsUI*)this->statsUI)->updateDeatchScore( decoded.victimID, decoded.victimDeathCount ); 
 	((StatsUI*)this->statsUI)->updateKillScore( decoded.killerID, decoded.killerKillCount ); 
+
+	// print killer message
+	ColorDefines colors;
+
+	std::wstring message;
+	if (decoded.victimID == decoded.killerID)
+	{
+		message = colors.getColorName(decoded.killerID) + L"COMMITED SUICIDE";
+	}
+	else
+		message = colors.getColorName(decoded.killerID) + L"killed" + colors.getColorName(decoded.victimID);
+
+	((GamingUI*)this->gameUI)->SetKillMessage(message);
 }
 void GameState::Gameplay_PlayerScore( CustomNetProtocol data )
 {
