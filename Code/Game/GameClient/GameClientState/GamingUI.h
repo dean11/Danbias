@@ -52,7 +52,8 @@ namespace DanBias { namespace Client
 		Text_UI* energy;
 		Text_UI** killMessages;
 		int maxMessageCount;
-		Plane_UI* corsair;
+		float message_Timer;
+		Plane_UI* crosshair;
 
 		bool key_forward;
 		bool key_backward;

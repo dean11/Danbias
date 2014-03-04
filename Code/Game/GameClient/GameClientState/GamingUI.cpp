@@ -16,7 +16,7 @@ GamingUI::GamingUI() :
 	/* Should never be called! */
 	this->sharedData		= nullptr;
 	this->camera			= nullptr;
-	this->corsair				= nullptr;
+	this->crosshair			= nullptr;
 	this->energy			= nullptr;
 	this->hp				= nullptr;
 	this->key_backward		= false;
@@ -31,7 +31,7 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) :
 {
 	this->sharedData		= shared;
 	this->camera			= camera;
-	this->corsair			= nullptr;
+	this->crosshair			= nullptr;
 	this->hp				= nullptr;
 	this->energy			= nullptr;
 	this->key_backward		= false;
@@ -47,15 +47,17 @@ bool GamingUI::Init()
 	Float2 size = Oyster::Graphics::API::GetOption().resolution;
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), 0.5f, Float4(1,0,0,1));
-	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.1f,0.1f), 0.5f, Float4(1,1,0,1));
+	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), 0.05f, Float4(1,0,0,1));
+	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.1f,0.1f), 0.05f, Float4(1,1,0,1));
 	this->maxMessageCount = 3;
+	
+	this->message_Timer = 0;
 	this->killMessages = new Text_UI*[maxMessageCount];
-	this->killMessages[0] = new Text_UI(L"", Float3(0.02f,0.05f,0.1f), Float2(0.3f,0.1f), 0.35f, Float4(1,0.5,0,1));
-	this->killMessages[1] = new Text_UI(L"", Float3(0.02f,0.1f,0.1f), Float2(0.3f,0.1f), 0.35f, Float4(1,0.5,0,1));
-	this->killMessages[2] = new Text_UI(L"", Float3(0.02f,0.15f,0.1f), Float2(0.3f,0.1f), 0.35f, Float4(1,0.5,0,1));
+	this->killMessages[0] = new Text_UI(L"", Float3(0.02f,0.05f,0.1f), Float2(0.8f,0.1f), 0.035f, Float4(1,0.5,0,1));
+	this->killMessages[1] = new Text_UI(L"", Float3(0.02f,0.1f,0.1f), Float2(0.8f,0.1f), 0.035f, Float4(1,0.5,0,1));
+	this->killMessages[2] = new Text_UI(L"", Float3(0.02f,0.15f,0.1f), Float2(0.8f,0.1f), 0.035f, Float4(1,0.5,0,1));
 
-	this->corsair	= new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
+	this->crosshair	= new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
 
 	this->sharedData = sharedData;
 	// setting input mode to all raw
@@ -69,6 +71,7 @@ bool GamingUI::Init()
 GameStateUI::UIState GamingUI::Update( float deltaTime )
 {
 	ReadKeyInput();
+	this->message_Timer = Max( this->message_Timer - deltaTime, 0.0f );
 	return this->nextState;
 }
 
@@ -84,16 +87,19 @@ bool GamingUI::HaveTextRender() const
 
 void GamingUI::RenderGUI() 
 {
-	this->corsair->RenderTexture();
+	this->crosshair->RenderTexture();
 }
 
 void GamingUI::RenderText() 
 {
 	this->hp->RenderText();
 	this->energy->RenderText();
-	for (int i = 0; i < maxMessageCount; i++)
+	if(this->message_Timer > 0)
 	{
-		this->killMessages[i]->RenderText();
+		for (int i = 0; i < maxMessageCount; i++)
+		{
+			this->killMessages[i]->RenderText();
+		}
 	}
 }
 
@@ -104,7 +110,7 @@ bool GamingUI::Release()
 	this->sharedData->mouseDevice->RemoveMouseEvent(this);
 
 	// TODO: Release UI components here.
-	if(this->corsair) 	delete this->corsair;
+	if(this->crosshair) 	delete this->crosshair;
 	if(this->hp)		delete this->hp;
 	if(this->energy)	delete this->energy;
 	for (int i = 0; i < maxMessageCount; i++)
@@ -131,6 +137,7 @@ void GamingUI::SetKillMessage( std::wstring killerMessage )
 	this->killMessages[2]->setText( this->killMessages[1]->getText());
 	this->killMessages[1]->setText( this->killMessages[0]->getText());
 	this->killMessages[0]->setText( killerMessage);
+	this->message_Timer = 2;
 }
 void GamingUI::ReadKeyInput()
 {
