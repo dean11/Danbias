@@ -3,10 +3,11 @@
 
 #include "Utilities.h"
 #include "NetworkClient.h"
+#include "Input.h"
 
 namespace DanBias { namespace Client
 {
-	class GameStateUI
+	class GameStateUI : public Input::Mouse::MouseEvent, Input::Keyboard::KeyboardEvent
 	{
 	public:
 		enum UIState

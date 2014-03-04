@@ -60,11 +60,6 @@ bool GamingUI::Init()
 	this->crosshair	= new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
 
 	this->sharedData = sharedData;
-	// setting input mode to all raw
-	this->sharedData->keyboardDevice->Activate();
-	this->sharedData->keyboardDevice->AddKeyboardEvent(this);
-	this->sharedData->mouseDevice->Activate();
-	this->sharedData->mouseDevice->AddMouseEvent(this);
 
 	return true; 
 }
@@ -105,10 +100,6 @@ void GamingUI::RenderText()
 
 bool GamingUI::Release()
 {
-	//Release as input event
-	this->sharedData->keyboardDevice->RemoveKeyboardEvent(this);
-	this->sharedData->mouseDevice->RemoveMouseEvent(this);
-
 	// TODO: Release UI components here.
 	if(this->crosshair) 	delete this->crosshair;
 	if(this->hp)		delete this->hp;
