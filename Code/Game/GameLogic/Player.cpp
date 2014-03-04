@@ -150,6 +150,11 @@ void Player::BeginFrame()
 		this->key_strafeLeft = Max( this->key_strafeLeft - frameTime, 0.0f );
 		this->key_jump = Max( this->key_jump - frameTime, 0.0f );
 	}
+	else
+	{
+		// can't be moved while dead
+		this->rigidBody->SetLinearVelocity( 0.0f );
+	}
 }
 
 void Player::EndFrame() { }
@@ -314,21 +319,25 @@ int Player::GetDeath() const
 
 void Player::DamageLife( int damage )
 {
-	if( damage != 0 )
+	// don't take dmg while dead
+	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		this->playerStats.hp -= damage;
-
-		if( this->playerStats.hp > 100.0f )
-			this->playerStats.hp = 100.0f;
-
-		// send hp to client
-		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
-
-		if( this->playerStats.hp <= 0.0f )
+		if( damage != 0 )
 		{
-			this->playerStats.hp = 0.0f;
-			this->playerState = PLAYER_STATE_DIED;
-			this->rigidBody->SetLinearVelocity( 0.0f );
+			this->playerStats.hp -= damage;
+
+			if( this->playerStats.hp > 100.0f )
+				this->playerStats.hp = 100.0f;
+
+			// send hp to client
+			this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+
+			if( this->playerStats.hp <= 0.0f )
+			{
+				this->playerStats.hp = 0.0f;
+				this->playerState = PLAYER_STATE_DIED;
+				this->rigidBody->SetLinearVelocity( 0.0f );
+			}
 		}
 	}
 }
