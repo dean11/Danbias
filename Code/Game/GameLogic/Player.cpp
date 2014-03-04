@@ -204,6 +204,11 @@ void Player::UseWeapon(const WEAPON_FIRE &usage)
 	this->weapon->Use(usage,gameInstance->GetFrameTime());
 }
 
+void Player::SelectWeaponAttatchment( int socketID )
+{
+	this->weapon->SelectAttatchment( socketID );
+}
+
 void Player::Respawn( Float3 spawnPoint )
 { 
 	if( this->playerState == PLAYER_STATE_DEAD) 
