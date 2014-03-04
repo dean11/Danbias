@@ -328,7 +328,7 @@ void SimpleRigidBody::OverrideGravity(const ::Oyster::Math::Float3& point, const
 	this->overrideGravity = true;
 	if(this->state.centerPos - point != Float3::null)
 		this->SetGravity(-(this->state.centerPos - point).GetNormalized()*gravityForce);
-	this->rigidBody->setDamping(1 - (this->state.centerPos - point).GetMagnitude(), 0);
+	//this->rigidBody->setDamping(1 - (this->state.centerPos - point).GetMagnitude(), 0);
 	//this->rigidBody->
 }
 
