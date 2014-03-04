@@ -22,7 +22,7 @@ void GameModeType::Update( float deltaTime)
 }
 bool GameModeType::TimeExit()
 {
-	if( this->endConditions.timer > this->endConditions.endTimer )
+	if( this->endConditions.timer > this->endConditions.endTimeSec )
 	{
 		return true;
 	}
@@ -49,7 +49,7 @@ int GameModeType::EndConditionMet( Utility::DynamicMemory::DynamicArray<Player*>
 	}
 
 	// if timer ends, the person with the highest score is the winner
-	if( this->endConditions.timer > this->endConditions.endTimer )
+	if( this->endConditions.timer > this->endConditions.endTimeSec )
 	{
 		return highetsScoreID;
 	}

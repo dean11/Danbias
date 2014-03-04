@@ -184,6 +184,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
+	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
+
 	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.9f);
 
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
@@ -222,6 +224,8 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+
+	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
 
 	Oyster::Math::Float4 pullForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.3f);
 
