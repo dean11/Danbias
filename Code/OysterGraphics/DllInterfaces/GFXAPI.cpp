@@ -144,15 +144,19 @@ namespace Oyster
 			{
 				memcpy(data,&pd,sizeof(Definitions::PostData));
 				Render::Resources::Post::Data.Unmap();
-
-				if(option.resolution != Core::resolution || option.fullscreen != Core::fullscreen)
+				Math::Float2 test = Core::resolution;
+				if(option.resolution != Core::resolution)
 				{
 					//RESIZE
 					Core::Init::ReInitialize(false,option.fullscreen,option.resolution);
 					Render::Resources::ReInitViews(option.resolution);
-					Core::fullscreen = option.fullscreen;
 					Core::resolution = option.resolution;
 					Render::Preparations::Basic::SetViewPort();
+				}
+				if(option.fullscreen != Core::fullscreen)
+				{
+					Core::swapChain->SetFullscreenState(option.fullscreen, NULL);
+					Core::fullscreen = option.fullscreen;
 				}
 				return API::Sucsess;
 			}
@@ -241,6 +245,7 @@ namespace Oyster
 
 		void API::Clean()
 		{
+			Core::swapChain->SetFullscreenState(FALSE, NULL);
 #ifdef _DEBUG
 			DeleteModel(cube);
 			DeleteModel(sphere);
