@@ -471,7 +471,6 @@ void GameState::ReadKeyInput()
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		this->renderStats = true;
-		this->privData->weapon->Shoot();
 	} 
 	else 
 	{
