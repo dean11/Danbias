@@ -91,7 +91,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_CrystalFormation: 
 		{
 			int dmg = 30; 
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg); 
 		}
 		break;
 	case ObjectSpecialType_CrystalShard: 
