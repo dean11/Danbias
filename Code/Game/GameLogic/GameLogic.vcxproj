@@ -175,6 +175,7 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PickupSystem\Pickup.h" />
+    <ClInclude Include="PickupSystem\PickupEnergy.h" />
     <ClInclude Include="PickupSystem\PickupHealth.h" />
     <ClInclude Include="PickupSystem\PickupSystem.h" />
     <ClInclude Include="Player.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PickupSystem\Pickup.cpp" />
+    <ClCompile Include="PickupSystem\PickupEnergy.cpp" />
     <ClCompile Include="PickupSystem\PickupHealth.cpp" />
     <ClCompile Include="PickupSystem\PickupSystem.cpp" />
     <ClCompile Include="Player.cpp" />

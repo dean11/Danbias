@@ -190,7 +190,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
-	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
+	pos += look * ((lenght*0.50));	//Move the cone to start at the player.
 
 	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.9f);
 

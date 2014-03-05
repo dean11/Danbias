@@ -27,7 +27,7 @@ namespace GameLogic
 	enum ObjectSpecialType
 	{
 		ObjectSpecialType_None,
-		ObjectSpecialType_Sky,
+		ObjectSpecialType_Generic,
 		ObjectSpecialType_World,		//Always the main celestial body
 		ObjectSpecialType_Building,
 		ObjectSpecialType_Stone,
@@ -40,10 +40,11 @@ namespace GameLogic
 		ObjectSpecialType_JumpPad,
 		ObjectSpecialType_Portal,
 		ObjectSpecialType_PickupHealth,
+		ObjectSpecialType_PickupEnergy,
 		
+
 		
 		ObjectSpecialType_Player,
-		ObjectSpecialType_Generic,
 
 		ObjectSpecialType_Count,
 		ObjectSpecialType_Unknown  = -1

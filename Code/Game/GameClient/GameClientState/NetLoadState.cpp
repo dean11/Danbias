@@ -289,7 +289,7 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			}
 			// !RB DEBUG 
 
-			if(oh->specialTypeID == ObjectSpecialType_PickupHealth)
+			if(oh->specialTypeID == ObjectSpecialType_PickupHealth || oh->specialTypeID == ObjectSpecialType_PickupEnergy)
 			{
 				(*this->privData->pickups)[ID] = (C_StaticObj*)object;
 			}
