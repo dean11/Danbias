@@ -13,6 +13,7 @@
 #include "RespawnUI.h"
 #include "StatsUI.h"
 #include "IngameMenyUI.h"
+#include "InGameOptionsUI.h"
 #include <ObjectDefines.h>
 #include "ColorDefines.h"
 
@@ -111,9 +112,11 @@ bool GameState::Init( SharedStateContent &shared )
 	this->respawnUI = new RespawnUI( &shared );
 	this->statsUI = new StatsUI( &shared );
 	this->inGameMeny = new IngameMenyUI( &shared );
-	((GamingUI*)gameUI)->Init();
-	((RespawnUI*)respawnUI)->Init();
-	((IngameMenyUI*)inGameMeny)->Init();
+	this->inGameOptions = new InGameOptionsUI( &shared );
+	((GamingUI*)this->gameUI)->Init();
+	((RespawnUI*)this->respawnUI)->Init();
+	((IngameMenyUI*)this->inGameMeny)->Init();
+	((InGameOptionsUI*)this->inGameOptions)->Init();
 
 	this->uiStack[0] = this->gameUI;
 	this->uiStackTop = 0;
@@ -230,10 +233,16 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 
 		}
 		break;
-	case GameStateUI::UIState_in_game_meny:
+	case GameStateUI::UIState_ingame_meny:
 		{
 			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
 			this->UIstackPush( this->inGameMeny );
+		}
+		break;
+	case GameStateUI::UIState_ingame_options:
+		{
+			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
+			this->UIstackPush( this->inGameOptions );
 		}
 		break;
 	case GameStateUI::UIState_resume_game:
@@ -468,6 +477,12 @@ bool GameState::Release()
 		inGameMeny->Release();
 		delete inGameMeny;
 		inGameMeny = NULL;
+	}
+	if(inGameOptions)
+	{
+		inGameOptions->Release();
+		delete inGameOptions;
+		inGameOptions = NULL;
 	}
 	if(statsUI)
 	{

@@ -273,7 +273,7 @@ void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_E:		this->key_zipDown = false;
 		break;
-		case SAKI_Escape:	this->nextState = GameStateUI::UIState_in_game_meny;
+		case SAKI_Escape:	this->nextState = UIState_ingame_meny;
 		break;
 	}
 

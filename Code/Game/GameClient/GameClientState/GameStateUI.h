@@ -18,7 +18,8 @@ namespace DanBias { namespace Client
 			UIState_gaming,
 			UIState_main_menu,
 			UIState_shut_down,
-			UIState_in_game_meny,
+			UIState_ingame_meny,
+			UIState_ingame_options,
 			UIState_resume_game,
 			UIState_match_end
 		};

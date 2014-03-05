@@ -35,6 +35,7 @@ IngameMenyUI::IngameMenyUI( SharedStateContent* shared ) :
 
 IngameMenyUI::~IngameMenyUI() { }
 void OnButtonInteract_InGame_Exit( Oyster::Event::ButtonEvent<IngameMenyUI*>& e );
+void OnButtonInteract_InGame_Options( Oyster::Event::ButtonEvent<IngameMenyUI*>& e );
 void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& e );
 
 bool IngameMenyUI::Init()
@@ -44,6 +45,7 @@ bool IngameMenyUI::Init()
 	// add textures and text
 	this->background	= new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0,0,0,0.5));
 	this->mouseCursor	= new Plane_UI(L"cursor.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f));
+	
 	ButtonRectangle<IngameMenyUI*> *button;
 	Float4 TextCol = Float4(0.1f,0.1f,0.1f,1.0f);
 	Float4 BackCol = Float4(0.6f, 0.6f, 0.6f, 1.0f);
@@ -52,6 +54,10 @@ bool IngameMenyUI::Init()
 	
 	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.3f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
+
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Options, this, Float3(0.5f, 0.45f, 0.2f), Float2(0.5f, 0.18f));
+	menyButtons.AddButton( button );
+
 	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
 
@@ -65,26 +71,6 @@ bool IngameMenyUI::Init()
 	//this->mouseInput->AddMouseEvent(this);
 
 	return true; 
-}
-void OnButtonInteract_InGame_Exit( Oyster::Event::ButtonEvent<IngameMenyUI*>& e )
-{
-	switch( e.state )
-	{
-	case ButtonState_Released:
-		e.owner->ChangeState( GameStateUI::UIState_main_menu );
-		break;
-	default: break;
-	}
-}
-void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& e )
-{
-	switch( e.state )
-	{
-	case ButtonState_Released:
-		e.owner->ChangeState( GameStateUI::UIState_resume_game );
-		break;
-	default: break;
-	}
 }
 
 GameStateUI::UIState IngameMenyUI::Update( float deltaTime )
@@ -186,5 +172,38 @@ void IngameMenyUI::OnKeyRelease( SAKI key, Keyboard* sender )
 	if( key == SAKI_Escape )
 	{
 		this->ChangeState( UIState_previous );
+	}
+}
+
+void OnButtonInteract_InGame_Exit( Oyster::Event::ButtonEvent<IngameMenyUI*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameStateUI::UIState_main_menu );
+		break;
+	default: break;
+	}
+}
+
+void OnButtonInteract_InGame_Options( Oyster::Event::ButtonEvent<IngameMenyUI*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameStateUI::UIState_ingame_options );
+		break;
+	default: break;
+	}
+}
+
+void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& e )
+{
+	switch( e.state )
+	{
+	case ButtonState_Released:
+		e.owner->ChangeState( GameStateUI::UIState_resume_game );
+		break;
+	default: break;
 	}
 }
