@@ -43,6 +43,8 @@ namespace DanBias { namespace Client
 		Plane_UI* background;
 		EventButtonCollection menyButtons;
 
+		// HACK remove this later
+		Text_UI* debugOutput; 
 		IngameMenyUI();
 		void ReadKeyInput();
 	};
