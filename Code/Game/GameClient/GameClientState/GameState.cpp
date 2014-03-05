@@ -426,6 +426,7 @@ bool GameState::Release()
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
+
 		this->privData->pickups->clear();
 
 		if(this->privData->weapon)
@@ -433,6 +434,7 @@ bool GameState::Release()
 			delete this->privData->weapon;
 			this->privData->weapon = nullptr;
 		}
+
 
 		privData = NULL;
 	}
