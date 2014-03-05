@@ -133,7 +133,7 @@ void GamingUI::SetKillMessage( std::wstring killerMessage )
 	this->killMessages[2]->setText( this->killMessages[1]->getText());
 	this->killMessages[1]->setText( this->killMessages[0]->getText());
 	this->killMessages[0]->setText( killerMessage);
-	this->message_Timer = 2;
+	this->message_Timer = 5;
 }
 void GamingUI::ReadKeyInput()
 {

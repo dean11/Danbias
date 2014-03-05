@@ -858,10 +858,26 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	std::wstring message;
 	if (decoded.victimID == decoded.killerID)
 	{
-		message = colors.getColorName(decoded.killerID) + L" committed suicide";
+		if (decoded.victimID == this->privData->myId)
+		{
+			message =  L"You committed suicide";
+		}
+		else
+			message = colors.getColorName(decoded.killerID) + L" committed suicide";
 	}
 	else
-		message = colors.getColorName(decoded.killerID) + L" killed " + colors.getColorName(decoded.victimID);
+	{
+		if (decoded.victimID == this->privData->myId)
+		{
+			message = L"You were killed by " + colors.getColorName(decoded.killerID);
+		}
+		else if (decoded.killerID == this->privData->myId)
+		{
+			message = L"You killed " + colors.getColorName(decoded.victimID);
+		}
+		else
+			message = colors.getColorName(decoded.killerID) + L" killed " + colors.getColorName(decoded.victimID);
+	}
 
 	((GamingUI*)this->gameUI)->SetKillMessage(message);
 }
