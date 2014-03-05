@@ -97,7 +97,7 @@ namespace GameLogic
 		int GetKills() const;
 		int GetDeath() const;
 		void Stun( float duration );
-		void DamageLife(int damage);
+		void DamageLife(float damage);
 		void setDeathTimer(float deathTimer);
 		bool deathTimerTick(float dt);
 

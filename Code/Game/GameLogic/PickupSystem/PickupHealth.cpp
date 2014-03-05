@@ -18,5 +18,5 @@ void PickupHealth::OnCollision(Player *player)
 	((Game*)&Game::Instance())->onDisableFnc(this);
 
 	this->active = false;
-	player->DamageLife(-hpValue);
+	player->DamageLife((float)-hpValue);
 }
