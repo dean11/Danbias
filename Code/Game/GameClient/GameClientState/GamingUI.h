@@ -54,8 +54,8 @@ namespace DanBias { namespace Client
 
 			void Activate(GamingUI* ui)
 			{
-				ui->sharedData->weapon->SetRotationSpeed( rotationSpeed );
-				ui->sharedData->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
+				ui->shared->weapon->SetRotationSpeed( rotationSpeed );
+				ui->shared->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
 			}
 		};
 
