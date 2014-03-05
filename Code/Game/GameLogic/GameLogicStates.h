@@ -44,7 +44,7 @@ namespace GameLogic
 
 	struct forcePushData
 	{
-		Oyster::Math::Float3 pushForce;
+		Oyster::Math::Float pushForce;
 		Player *p;
 	};
 	struct firedBullet
