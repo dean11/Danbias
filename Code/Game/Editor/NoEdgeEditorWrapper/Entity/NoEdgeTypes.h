@@ -35,15 +35,15 @@ enum NoEdgeType_Interactive
 	NoEdgeType_Interactive_SpawnPoint,
 	NoEdgeType_Interactive_JumpPad,
 	NoEdgeType_Interactive_Portal,
-	NoEdgeType_Interactive_RedExplosiveBox,
+	NoEdgeType_Interactive_ExplosiveBox,
 
 	NoEdgeType_Interactive_Count,
 	NoEdgeType_Interactive_Unknown  = -1
 };
 enum NoEdgeType_Buildings
 {
-	NoEdgeType_Buildings_Building,
-	NoEdgeType_Buildings_CrystalFormation,
+	NoEdgeType_Buildings_Building1,
+	NoEdgeType_Buildings_Building2,
 	
 	NoEdgeType_Buildings_Count,
 	NoEdgeType_Buildings_Unknown  = -1
@@ -54,6 +54,22 @@ enum NoEdgeType_Light
 	
 	NoEdgeType_Light_Count,
 	NoEdgeType_Light_Unknown  = -1
+};
+enum NoEdgeType_HazardEnv
+{
+	NoEdgeType_HazardEnv_CrystalFormation1,
+
+	NoEdgeType_HazardEnv_Count,
+	NoEdgeType_HazardEnv_Unknown  = -1
+};
+enum NoEdgeType_Pickup
+{
+	NoEdgeType_Pickup_HealthPackSmal,
+	NoEdgeType_Pickup_HealthPackMedium,
+	NoEdgeType_Pickup_HealthPackLarge,
+
+	NoEdgeType_Pickup_Count,
+	NoEdgeType_Pickup_Unknown  = -1
 };
 
 #endif // !EDITOR_NOEDGETYPE_H

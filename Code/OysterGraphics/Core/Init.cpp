@@ -11,12 +11,12 @@ namespace Oyster
 			if(Core::deviceContext)
 			{
 				Core::deviceContext->Release();
-				//delete Core::deviceContext;
+				delete Core::deviceContext;
 			}
 			if(Core::device)
 			{
 				Core::device->Release();
-				//delete Core::device;
+				delete Core::device;
 			}
 			
 
@@ -97,7 +97,7 @@ namespace Oyster
 			desc.Windowed=!Fullscreen;
 			desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_UNORDERED_ACCESS;
 			desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			desc.Flags=0;
+			desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 			desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 			desc.BufferDesc.Scaling = DXGI_MODE_SCALING_CENTERED;
@@ -188,6 +188,7 @@ namespace Oyster
 			if(Core::depthStencil)
 			{
 				Core::depthStencil->Release();
+				Core::depthStencilUAV->Release();
 				Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
 				//delete Core::depthStencil;
 			}
@@ -234,6 +235,7 @@ namespace Oyster
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			if(FAILED(Core::device->CreateShaderResourceView(depthstencil,&srvDesc,&Core::depthStencilUAV)))
 			{
+				Core::depthStencil->Release();
 				depthStencil->Release();
 				return Init::Fail;
 			}
@@ -341,7 +343,7 @@ namespace Oyster
 				return Init::Fail;
 			}
 
-			if(Init::CreateDepthStencil(MSAA_Quality, Core::resolution) == Init::Fail)
+			if(Init::CreateDepthStencil(MSAA_Quality, Size) == Init::Fail)
 			{
 				return Init::Fail;
 			}
@@ -351,7 +353,12 @@ namespace Oyster
 				return Init::Fail;
 			}
 
-			if(Init::CreateViewPort(Oyster::Math::Float2::null, Core::resolution) == Init::Fail)
+			if(Init::CreateDepthStencil(MSAA_Quality, Size) == Init::Fail)
+			{
+				return Init::Fail;
+			}
+
+			if(Init::CreateViewPort(Oyster::Math::Float2::null, Size) == Init::Fail)
 			{
 				return Init::Fail;
 			}

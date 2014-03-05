@@ -8,17 +8,20 @@ EntityBuilding::EntityBuilding( NoEdgeType_Buildings gameType, Float3 position )
 {
 	Entity::EntityInitDesc d;
 	d.mesh.modelPath = L"";
+	d.rigidBody.cgfFile = L"";
 	d.general.position = position;
 	d.general.rotation = Quaternion::identity;
 	d.general.scale = Float3(1.0f);
 
 	switch (gameType)
 	{
-		case NoEdgeType_Buildings_Building:
-			d.mesh.modelPath = L"generic_sphere.dan";
+		case NoEdgeType_Buildings_Building1:
+			d.mesh.modelPath = L"structure_corporation.dan";
+			d.rigidBody.cgfFile = L"structure_corporation.cgf";
 		break;
-		case NoEdgeType_Buildings_CrystalFormation:
-			d.mesh.modelPath = L"generic_sphere.dan";
+		case NoEdgeType_Buildings_Building2:
+			d.mesh.modelPath = L"structure_platform.dan";
+			d.rigidBody.cgfFile = L"structure_platform.cgf";
 		break;
 
 		default:

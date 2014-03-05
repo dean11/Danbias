@@ -238,18 +238,16 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 
 ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
+	btBulletWorldImporter bulletFile(0);
+
+	std::string bulletPath = ::Utility::String::WStringToString(fileName, std::string());
+
+	// Add collision shape
+	if(!bulletFile.loadFile(bulletPath.c_str())) return 0;
+
 	SimpleRigidBody* body = new SimpleRigidBody;
 	SimpleRigidBody::State state;
 
-	btBulletWorldImporter bulletFile(0);
-
-	typedef std::codecvt_utf8<wchar_t> convert_typeX;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-	std::string bulletPath = converterX.to_bytes(fileName);
-
-	// Add collision shape
-	bulletFile.loadFile(bulletPath.c_str());
 	btCollisionShape* collisionShape = bulletFile.getCollisionShapeByIndex(0);
 	body->SetCollisionShape(collisionShape);
 

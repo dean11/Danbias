@@ -71,7 +71,7 @@ namespace Oyster
 					for(int i=0; i < numLights; ++i)
 					{
 						plData[i].Pos =  (View * Math::Float4(Lights[i]->Pos,1)).xyz;
-						plData[i].Radius = Lights[i]->Bright * 10;
+						plData[i].Radius = Lights[i]->Radius;
 						plData[i].Color = Lights[i]->Color;
 						plData[i].Bright = Lights[i]->Bright;
 					}
@@ -251,7 +251,7 @@ namespace Oyster
 				}
 
 				Core::PipelineManager::SetRenderPass(Resources::Light::Pass);
-
+				
 				Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 				BlurGlow();

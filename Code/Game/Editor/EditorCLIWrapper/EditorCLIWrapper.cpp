@@ -21,7 +21,8 @@ namespace System { namespace Windows { namespace Interop
 		d.mainOptions.height = desc.mainOptions.height;
 		d.mainOptions.width = desc.mainOptions.width;
 		HWND win = (HWND)desc.mainOptions.renderWindow.ToPointer();
-		
+		d.mainOptions.renderWindow = win;
+
 		if(!NoEdgeEditorWrapper::Initiate(d))	return EditorReturnCode::EditorReturnCode_Error;
 
 		return EditorReturnCode::EditorReturnCode_Sucess;
@@ -48,9 +49,9 @@ namespace System { namespace Windows { namespace Interop
 		NoEdgeEditorWrapper::OnResize(width, height);
 	}
 
-	GameWorld^ EditorCLIWrapper::CreateWorld()
+	GamePlanet^ EditorCLIWrapper::CreatePlanet()
 	{
-		GameWorld ^e = gcnew GameWorld( new NoEdgeEditorWrapper::NoEdgeWorld( NoEdgeEditorWrapper::CreateWorldEntity() ) );
+		GamePlanet ^e = gcnew GamePlanet( new NoEdgeEditorWrapper::NoEdgePlanet( NoEdgeEditorWrapper::CreatePlanetEntity() ) );
 
 		return e;
 	}
@@ -78,49 +79,61 @@ namespace System { namespace Windows { namespace Interop
 		
 		return e;
 	}
+	GameEntity^ EditorCLIWrapper::CreateEntity(EnumBridge::NoEdgeType_Pickup object)
+	{
+		GameEntity ^e = gcnew GameEntity(new NoEdgeEditorWrapper::NoEdgeEntity( NoEdgeEditorWrapper::CreateEntity((NoEdgeType_Pickup)object) ));
+		
+		return e;
+	}
+	GameEntity^ EditorCLIWrapper::CreateEntity(EnumBridge::NoEdgeType_HazardEnv object)
+	{
+		GameEntity ^e = gcnew GameEntity(new NoEdgeEditorWrapper::NoEdgeEntity( NoEdgeEditorWrapper::CreateEntity((NoEdgeType_HazardEnv)object) ));
+		
+		return e;
+	}
 
 
 #pragma region GameWorld
 
-	GameWorld::GameWorld(NoEdgeEditorWrapper::NoEdgeWorld* w)
+	GamePlanet::GamePlanet(NoEdgeEditorWrapper::NoEdgePlanet* w)
 	{
-		this->world = w;
+		this->planet = w;
 	}
-	GameWorld::~GameWorld()
+	GamePlanet::~GamePlanet()
 	{
-		this->!GameWorld();
+		this->!GamePlanet();
 	}
-	GameWorld::!GameWorld()
+	GamePlanet::!GamePlanet()
 	{
-		this->world->Release();
+		this->planet->Release();
 	}
-	void GameWorld::SetPosition(float v[3])
+	void GamePlanet::SetPosition(float v[3])
 	{
-		this->world->SetPosition(v);
+		this->planet->SetPosition(v);
 	}
-	void GameWorld::SetRotation(float v[3])
+	void GamePlanet::SetRotation(float v[3])
 	{
-		this->world->SetRotation(v);
+		this->planet->SetRotation(v);
 	}
-	void GameWorld::SetScale(float v[3])
+	void GamePlanet::SetScale(float v[3])
 	{
-		this->world->SetScale(v);
+		this->planet->SetScale(v);
 	}
-	void GameWorld::GetPosition(float v[3])
+	void GamePlanet::GetPosition(float v[3])
 	{
-		this->world->GetPosition(v);
+		this->planet->GetPosition(v);
 	}
-	void GameWorld::GetRotation(float v[3])
+	void GamePlanet::GetRotation(float v[3])
 	{
-		this->world->GetRotation(v);
+		this->planet->GetRotation(v);
 	}
-	void GameWorld::GetScale(float v[3])
+	void GamePlanet::GetScale(float v[3])
 	{
-		this->world->GetScale(v);
+		this->planet->GetScale(v);
 	}
-	void GameWorld::Release()
+	void GamePlanet::Release()
 	{
-		this->world->Release();
+		this->planet->Release();
 	}
 
 #pragma endregion

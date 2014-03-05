@@ -35,7 +35,7 @@ namespace EditorUI
     public partial class NoEdge : Form
     {
         EditorCLIWrapper editor;
-        List<GameWorld> planets;
+        List<GamePlanet> planets;
         List<GameEntity> entities;
 
         public NoEdge()
@@ -46,7 +46,7 @@ namespace EditorUI
 
             this.editor = new EditorCLIWrapper();
             this.entities = new List<GameEntity>();
-            this.planets = new List<GameWorld>();
+            this.planets = new List<GamePlanet>();
         }
         void NoEdge_ResizeEnd(object sender, EventArgs e)
         {
@@ -91,15 +91,15 @@ namespace EditorUI
             TreeNode node;
             EntityData data;
 
-            data = new EntityData(NoEdgeType.NoEdgeType_Building, (int)NoEdgeType_Buildings.Building, NoEdgeType_Buildings.Building.ToString());
+            data = new EntityData(NoEdgeType.NoEdgeType_Building, (int)NoEdgeType_Buildings.CorporateBuilding, NoEdgeType_Buildings.CorporateBuilding.ToString());
             node = new TreeNode(data.text);
             node.Tag = data;
             buildings.Add(node);
 
-            data = new EntityData(NoEdgeType.NoEdgeType_Building, (int)NoEdgeType_Buildings.CrystalFormation, NoEdgeType_Buildings.CrystalFormation.ToString());
-            node = new TreeNode(data.text);
-            node.Tag = data;
-            buildings.Add(node);
+            //data = new EntityData(NoEdgeType.NoEdgeType_Building, (int)NoEdgeType_Buildings.CrystalFormation, NoEdgeType_Buildings.CrystalFormation.ToString());
+            //node = new TreeNode(data.text);
+            //node.Tag = data;
+            //buildings.Add(node);
 
             TreeNode temp = new TreeNode("Building", buildings.ToArray());
             temp.ImageIndex = -1;
@@ -127,7 +127,7 @@ namespace EditorUI
             node.Tag = data;
             interactive.Add(node);
 
-            data = new EntityData(NoEdgeType.NoEdgeType_Interactive, (int)NoEdgeType_Interactive.RedExplosiveBox, NoEdgeType_Interactive.RedExplosiveBox.ToString());
+            data = new EntityData(NoEdgeType.NoEdgeType_Interactive, (int)NoEdgeType_Interactive.ExplosiveBox, NoEdgeType_Interactive.ExplosiveBox.ToString());
             node = new TreeNode(data.text);
             node.Tag = data;
             interactive.Add(node);
@@ -190,6 +190,38 @@ namespace EditorUI
             temp.StateImageIndex = -1;
             this.treeView_Entities.Nodes.Add(temp);
         }
+        private void AddTypeHazardous()
+        {
+            List<TreeNode> hazard = new List<TreeNode>();
+            TreeNode node;
+            EntityData data;
+
+            data = new EntityData(NoEdgeType.NoEdgeType_HazardEnv, (int)NoEdgeType_HazardEnv.CrystalFormation1, NoEdgeType_HazardEnv.CrystalFormation1.ToString());
+            node = new TreeNode(data.text);
+            node.Tag = data;
+            hazard.Add(node);
+            
+            TreeNode temp = new TreeNode("Hazardous Environment", hazard.ToArray());
+            temp.ImageIndex = -1;
+            temp.StateImageIndex = -1;
+            this.treeView_Entities.Nodes.Add(temp);
+        }
+        private void AddTypePickup()
+        {
+           List<TreeNode> pick = new List<TreeNode>();
+           TreeNode node;
+           EntityData data;
+
+           data = new EntityData(NoEdgeType.NoEdgeType_Pickup, (int)NoEdgeType_Pickup.HealthPackMedium, NoEdgeType_Pickup.HealthPackMedium.ToString());
+           node = new TreeNode(data.text);
+           node.Tag = data;
+           pick.Add(node);
+
+           TreeNode temp = new TreeNode("Light", pick.ToArray());
+           temp.ImageIndex = -1;
+           temp.StateImageIndex = -1;
+           this.treeView_Entities.Nodes.Add(temp);
+        }
         private void InitiateEntityList()
         {
             string [] thumbs = Directory.GetFiles("..\\Content\\Textures\\edit");
@@ -220,10 +252,17 @@ namespace EditorUI
                 UpdateCore();
             }
 
-            this.editor.Release();
-            for (int i = 0; i < this.entities.Count; i++)
+            try
             {
-                //this.entities[i].Release();
+                this.editor.Release();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            finally
+            {
+                this.Dispose();
             }
         }
 
@@ -272,7 +311,7 @@ namespace EditorUI
                         break;
                     case NoEdgeType.NoEdgeType_World:
                         {
-                            GameWorld world = this.editor.CreateWorld();
+                            GamePlanet world = this.editor.CreatePlanet();
                             this.planets.Add(world);
                         }
                         break;

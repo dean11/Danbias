@@ -8,12 +8,6 @@
 
 namespace System { namespace Windows { namespace Interop
 {
-	public enum class NoEdgeType_Collision
-	{
-		NoEdgeType_Collision_Box,
-		NoEdgeType_Collision_Sphere,
-		NoEdgeType_Collision_Cylinder,
-	};
 	namespace EnumBridge
 	{
 		public enum class NoEdgeType
@@ -22,34 +16,45 @@ namespace System { namespace Windows { namespace Interop
 			NoEdgeType_Projectile,
 			NoEdgeType_Interactive,
 			NoEdgeType_Building,
+			NoEdgeType_HazardEnv,
 			NoEdgeType_Light,
+			NoEdgeType_Pickup,
 		};
 	
 		public enum class NoEdgeType_Projectiles
 		{
-			Stone			= NoEdgeType_Projectiles_Stone,
-			StandardBox		= NoEdgeType_Projectiles_StandardBox,
-			SpikeBox		= NoEdgeType_Projectiles_SpikeBox,
-			Spike			= NoEdgeType_Projectiles_Spike,
-			CrystalShard	= NoEdgeType_Projectiles_CrystalShard,
+			Stone				= NoEdgeType_Projectiles_Stone,
+			StandardBox			= NoEdgeType_Projectiles_StandardBox,
+			SpikeBox			= NoEdgeType_Projectiles_SpikeBox,
+			Spike				= NoEdgeType_Projectiles_Spike,
+			CrystalShard		= NoEdgeType_Projectiles_CrystalShard,
 		};
 		public enum class NoEdgeType_Interactive
 		{
-			SpawnPoint		= NoEdgeType_Interactive_SpawnPoint,
-			JumpPad			= NoEdgeType_Interactive_JumpPad,
-			Portal			= NoEdgeType_Interactive_Portal,
-			RedExplosiveBox	= NoEdgeType_Interactive_RedExplosiveBox,
+			SpawnPoint			= NoEdgeType_Interactive_SpawnPoint,
+			JumpPad				= NoEdgeType_Interactive_JumpPad,
+			Portal				= NoEdgeType_Interactive_Portal,
+			ExplosiveBox		= NoEdgeType_Interactive_ExplosiveBox,
 		};
 		public enum class NoEdgeType_Buildings
 		{
-			Building			= NoEdgeType_Buildings_Building,
-			CrystalFormation	= NoEdgeType_Buildings_CrystalFormation,
+			CorporateBuilding	= NoEdgeType_Buildings_Building1,
+			Platform			= NoEdgeType_Buildings_Building2,
 		};
 		public enum class NoEdgeType_Light
 		{
 			PointLight				= NoEdgeType_Light_PointLight,
 		};
+		public enum class NoEdgeType_HazardEnv
+		{
+			CrystalFormation1		= NoEdgeType_HazardEnv_CrystalFormation1,
+		};
+		public enum class NoEdgeType_Pickup
+		{
+			HealthPackMedium	= NoEdgeType_Pickup_HealthPackMedium,
+		};
 	}
+
 	public enum class EditorReturnCode
 	{
 		EditorReturnCode_Error,
@@ -66,12 +71,12 @@ namespace System { namespace Windows { namespace Interop
 		} mainOptions;
 	};
 
-	public ref class GameWorld
+	public ref class GamePlanet
 	{
 	public:
-		GameWorld(NoEdgeEditorWrapper::NoEdgeWorld* e);
-		~GameWorld();
-		!GameWorld();
+		GamePlanet(NoEdgeEditorWrapper::NoEdgePlanet* e);
+		~GamePlanet();
+		!GamePlanet();
 
 	public:
 		void SetPosition(float v[3]);
@@ -85,7 +90,7 @@ namespace System { namespace Windows { namespace Interop
 		void Release();
 
 	private:
-		NoEdgeEditorWrapper::NoEdgeWorld *world;
+		NoEdgeEditorWrapper::NoEdgePlanet *planet;
 	};
 
 	public ref class GameEntity
@@ -136,11 +141,13 @@ namespace System { namespace Windows { namespace Interop
 
 		void OnResize( int width, int height );
 
-		GameWorld^ CreateWorld();
+		GamePlanet^ CreatePlanet();
 		GameEntity^ CreateEntity(EnumBridge::NoEdgeType_Buildings object);
 		GameEntity^ CreateEntity(EnumBridge::NoEdgeType_Interactive object);
 		GameEntity^ CreateEntity(EnumBridge::NoEdgeType_Light object);
 		GameEntity^ CreateEntity(EnumBridge::NoEdgeType_Projectiles object);
+		GameEntity^ CreateEntity(EnumBridge::NoEdgeType_Pickup object);
+		GameEntity^ CreateEntity(EnumBridge::NoEdgeType_HazardEnv object);
 	};
 
 } } }

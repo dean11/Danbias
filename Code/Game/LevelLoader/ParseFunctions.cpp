@@ -5,6 +5,7 @@
 #include "ParseFunctions.h"
 #include "Loader.h"
 #include <string>
+#include "Utilities.h"
 
 using namespace GameLogic::LevelFileLoader;
 using namespace GameLogic;
@@ -218,6 +219,63 @@ namespace GameLogic
 			default:
 				break;
 			}
+		}
+
+		bool ParseCGF(std::wstring& pathToCgf, LevelLoaderInternal::BoundingVolume& volume)
+		{
+			int start = 0;
+			int tempSize = 0;
+			char tempName[128];
+			int dummy;
+			Loader loader;
+
+			char* buf = loader.LoadFile( Utility::String::WStringToString(pathToCgf, std::string()), dummy);
+			if(!buf) return false;
+
+			start = 0;
+			LevelLoaderInternal::FormatVersion version;
+			memcpy(&version, &buf[0], sizeof(version));
+			start += 8;
+
+			memcpy(&volume.geoType, &buf[start], sizeof(volume.geoType));
+
+			switch(volume.geoType)
+			{
+			case CollisionGeometryType_Box:
+				memcpy(&volume.box, &buf[start], sizeof(volume.box));
+				start += sizeof(volume.box);
+				break;
+
+			case CollisionGeometryType_Sphere:
+				memcpy(&volume.sphere, &buf[start], sizeof(volume.sphere));
+				start += sizeof(volume.sphere);
+				break;
+
+			case CollisionGeometryType_Cylinder:
+				memcpy(&volume.cylinder, &buf[start], sizeof(volume.cylinder));
+				start += sizeof(volume.cylinder);
+				break;
+
+			case CollisionGeometryType_CG_MESH:
+				{
+					memcpy(&volume.cgMesh, &buf[start], sizeof(float)*12);
+					start += sizeof(float)*12;
+					memcpy(&tempSize, &buf[start], sizeof(tempSize));
+					start += 4;
+					memcpy(&tempName, &buf[start], tempSize);
+					tempName[tempSize] = '\0';
+
+					//convert from char[] to wchar_t[]
+					mbstowcs_s(NULL, volume.cgMesh.filename, tempSize+1, tempName, _TRUNCATE);
+
+					start += tempSize;
+				}
+				break;
+
+			default:
+				break;
+			}
+			return true;
 		}
 	}
 }

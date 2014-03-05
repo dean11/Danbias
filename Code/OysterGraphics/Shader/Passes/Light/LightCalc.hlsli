@@ -22,7 +22,7 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 	float3 v  = reflect(-lightVec, normalSpec.xyz);
 	float specFactor = pow(max(dot(v,normalize(-pos)), 0.0f),normalSpec.w);
 	//Check att later
-	float att = max( 0, 1 - ((d * d) / pl.Radius));
+	float att = max( 0, 1 - ((d ) / pl.Radius));
 	//fix Ilum calcs instead of PhongBlinn
 	output.Diffuse = pl.Bright * att * diffFactor *  pl.Color;
 	output.Specular = pl.Bright * att * specFactor * pl.Color;

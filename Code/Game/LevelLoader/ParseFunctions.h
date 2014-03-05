@@ -22,6 +22,7 @@ namespace GameLogic
 		void ParseObject(char* buffer, ObjectHeader& header, int& size , bool loadCgf);
 		void ParseLevelMetaData(char* buffer, LevelMetaData &header, int &size);
 		void ParseBoundingVolume(char* buffer, LevelLoaderInternal::BoundingVolume& volume, int &size);
+		bool ParseCGF(std::wstring& pathToCgf, LevelLoaderInternal::BoundingVolume& volume);
 	}
 }
 

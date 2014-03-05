@@ -189,23 +189,29 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Entity\Header\EntityHazardousEnvironment.h" />
+    <ClInclude Include="Entity\Header\EntityPickup.h" />
     <ClInclude Include="Entity\Header\EntityProjectile.h" />
     <ClInclude Include="Entity\Header\Entity.h" />
-    <ClInclude Include="Entity\Header\EntityWorld.h" />
+    <ClInclude Include="Entity\Header\EntityPlanet.h" />
     <ClInclude Include="Entity\Header\IncludeEntity.h" />
     <ClInclude Include="Entity\Header\EntityLight.h" />
     <ClInclude Include="Entity\Header\EntityInteractive.h" />
     <ClInclude Include="Entity\Header\EntityBuilding.h" />
+    <ClInclude Include="Entity\Header\EntityAtmosphere.h" />
+    <ClInclude Include="EditorDefault.h" />
     <ClInclude Include="Entity\NoEdgeTypes.h" />
     <ClInclude Include="NoEdgeEditorWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entity\Implementation\Entity.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityHazardousEnvironment.cpp" />
     <ClCompile Include="Entity\Implementation\EntityLight.cpp" />
     <ClCompile Include="Entity\Implementation\EntityInteractive.cpp" />
     <ClCompile Include="Entity\Implementation\EntityBuilding.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityPickup.cpp" />
     <ClCompile Include="Entity\Implementation\EntityProjectile.cpp" />
-    <ClCompile Include="Entity\Implementation\EntityWorld.cpp" />
+    <ClCompile Include="Entity\Implementation\EntityPlanet.cpp" />
     <ClCompile Include="IO\LevelReader.cpp" />
     <ClCompile Include="NoEdgeEditorWrapper_Impl.cpp" />
   </ItemGroup>

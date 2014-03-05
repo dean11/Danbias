@@ -2,18 +2,19 @@
 #include "DllInterfaces\GFXAPI.h"
 #include "GameLogic\Game.h"
 #include "GamePhysics\PhysicsAPI.h"
-#include "WindowManager\WindowShell.h"
 #include "Camera_BasicV2.h"
 #include "Camera.h"
 #include "..\NoEdgeEditorWrapper.h"
 #include "LevelLoader.h"
-
 #include "Entity\Header\IncludeEntity.h"
+#include "EditorDefault.h"
+#include "Utilities.h"
 
+#include <fstream>
 #include <map>
 #define NOMINMAX
 #include <windowsx.h>
-#include <fstream>
+
 
 #define NOEDGECLASSNAME L"NoEdgeEditorRenderWin"
 const wchar_t *WINDOW_CLASS_NAME = L"NOEDGERENDERWIN";
@@ -33,12 +34,12 @@ struct NoEdgeHistory
 struct EditorData
 {
 	Camera*											currentCam;
-	vector<Camera>									cameras;
+	Utility::DynamicMemory::DynamicArray<Camera*>	cameras;
 
-	NoEdgeEditorWrapper::NoEdgeEntity				focusedEntity;
-	Entity*											stickieEntity;
+	Entity*											focusedEntity;
+	Entity*											createdEntity;
 
-	vector<NoEdgeEditorWrapper::NoEdgeWorld>		entityWorld;
+	vector<NoEdgeEditorWrapper::NoEdgePlanet>		entityPlanet;
 	vector<NoEdgeEditorWrapper::NoEdgeEntity>		entityInteractive;
 	vector<NoEdgeEditorWrapper::NoEdgeEntity>		entityBuilding;
 	vector<NoEdgeEditorWrapper::NoEdgeEntity>		entityProjectile;
@@ -53,15 +54,51 @@ struct EditorData
 	int												entityCount;
 
 	EditorData()
+		:focusedEntity(0)
 	{
-		cameraSpeed			= 1;
-		currentCam			= 0;
-		renderWin			= 0;
-		keyAlt				= 0;
-		keyShift			= 0;
-		keyCtrl				= 0;
-		entityCount			= 0;
-		memset(&prevMousePos, 0, sizeof(POINT));
+		this->cameraSpeed			= 1;
+		this->currentCam			= 0;
+		this->renderWin				= 0;
+		this->keyAlt				= 0;
+		this->keyShift				= 0;
+		this->keyCtrl				= 0;
+		this->entityCount			= 0;
+		this->focusedEntity			= 0;
+		memset(&this->prevMousePos, 0, sizeof(POINT));
+	}
+	~EditorData()
+	{
+		ReleaseMembers();
+	}
+	void ReleaseMembers()
+	{
+		for (unsigned int i = 0; i < entityPlanet.size(); i++)
+			entityPlanet[i].Release();
+		for (unsigned int i = 0; i < entityBuilding.size(); i++)
+			entityBuilding[i].Release();
+		for (unsigned int i = 0; i < entityInteractive.size(); i++)
+			entityInteractive[i].Release();
+		for (unsigned int i = 0; i < entityLight.size(); i++)
+			entityLight[i].Release();
+		for (unsigned int i = 0; i < entityProjectile.size(); i++)
+			entityProjectile[i].Release();
+		//for (unsigned int i = 0; i < cameras.Size(); i++)
+		//	delete cameras[i];
+
+		currentCam = 0;
+		cameras.Clear();
+		createdEntity = 0;
+		entityPlanet.clear();
+		entityInteractive.clear();
+		entityBuilding.clear();
+		entityProjectile.clear();
+		entityLight.clear();
+		renderWin = 0;
+		keyAlt = 0;
+		keyShift = 0;
+		keyCtrl = 0;
+		cameraSpeed = 0.0f;
+		entityCount = 0;
 	}
 
 } data;
@@ -76,7 +113,7 @@ bool NoEdgeEditorWrapper::InitiateWindow(EditorInitDesc& desc)
 	wc.lpfnWndProc		= NoEdgeEditorWrapper::NoEdgeMsgCallback; 
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= 0;
-	wc.hInstance		= 0;//(HINSTANCE)GetModuleHandle(0);
+	wc.hInstance		= (HINSTANCE)GetModuleHandle(0);
 	wc.hIcon			= 0;
 	wc.hCursor			= 0;
 	wc.hbrBackground	= 0;
@@ -93,15 +130,16 @@ bool NoEdgeEditorWrapper::InitiateWindow(EditorInitDesc& desc)
 	rectW.top					= 0;
 	rectW.right					= width;
 	rectW.bottom				= height;
-	unsigned int styleW			= WS_VISIBLE; 
+	unsigned int styleW			= WS_CHILD | WS_VISIBLE; 
 		
 	data.renderWin = CreateWindowExW(	
 										0, wc.lpszClassName, 0, styleW,
 										rectW.left, rectW.top, rectW.right-rectW.left, rectW.bottom-rectW.top,
-										0, 0, wc.hInstance, 0);
+										desc.mainOptions.renderWindow, 0, wc.hInstance, 0);
 	
+	if(!data.renderWin)
 	{
-		DWORD err = GetLastError();
+		printf("Failed to initiate window! Error code [%i]\n", GetLastError());
 		return false;
 	}
 	
@@ -110,8 +148,8 @@ bool NoEdgeEditorWrapper::InitiateWindow(EditorInitDesc& desc)
 bool NoEdgeEditorWrapper::Initiate3D(EditorInitDesc& desc)
 {
 	Oyster::Graphics::API::Option gfxOp;
-	gfxOp.modelPath = L"..\\Content\\Models\\";
-	gfxOp.texturePath = L"..\\Content\\Textures\\";
+	gfxOp.modelPath = Default::String::DEFAULT_MESH_PATH;
+	gfxOp.texturePath = Default::String::DEFAULT_TEXTURE_PATH;
 	gfxOp.resolution = Oyster::Math::Float2( (float)desc.mainOptions.width, (float)desc.mainOptions.height );
 	gfxOp.ambientValue = 0.5f;
 	gfxOp.fullscreen = false;
@@ -129,14 +167,13 @@ bool NoEdgeEditorWrapper::InitiatePhysic(EditorInitDesc& desc)
 	Physics::API::Instance().SetTimeStep(1.0f/120.0f);
 	return true;
 }
-
 bool NoEdgeEditorWrapper::InitiateDefault(EditorInitDesc& desc)
 {
 	Graphics::API::BeginLoadingModels();
 	{
 		for (int i = 0; i < 10; i++)
 		{
-			NoEdgeEntity e(new EntityBuilding( NoEdgeType_Buildings_Building, Float3(-10.0f + i*2, 4.0f, 10.0f) ));
+			NoEdgeEntity e(new EntityBuilding( NoEdgeType_Buildings_Building1, Float3(-10.0f + i*2, 4.0f, 10.0f) ));
 		
 			data.entityBuilding.push_back(e);
 			data.entityCount++;
@@ -154,8 +191,8 @@ bool NoEdgeEditorWrapper::InitiateDefault(EditorInitDesc& desc)
 	
 		Graphics::API::Option gfxOp = Graphics::API::GetOption();
 		Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
-		data.cameras.push_back(Camera());
-		data.currentCam = &data.cameras[data.cameras.size() - 1];
+		data.cameras.Push(new Camera());
+		data.currentCam = data.cameras[data.cameras.Size() - 1];
 		data.currentCam->SetLens( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 1000.0f );
 		Graphics::API::SetProjection( data.currentCam->Proj() );
 		Graphics::API::SetView( data.currentCam->View() );
@@ -168,18 +205,15 @@ bool NoEdgeEditorWrapper::Initiate(EditorInitDesc& desc)
 {
 	memset(&data.prevMousePos, 0, sizeof(POINT));
 
-	WindowShell::WINDOW_INIT_DESC d;
-	d.parent = desc.mainOptions.renderWindow;
-	d.windowSize = cPOINT(desc.mainOptions.width, desc.mainOptions.height);
-	if(!WindowShell::CreateWin(d)) return false;
-
-	//if(!InitiateWindow(desc))	return false;
-	//if(!Initiate3D(desc))		return false;
-	//if(!InitiatePhysic(desc))	return false;
-	//if(!InitiateDefault(desc))	return false;
+	if(!InitiateWindow(desc))	return false;
+	if(!Initiate3D(desc))		return false;
+	if(!InitiatePhysic(desc))	return false;
+	if(!InitiateDefault(desc))	return false;
 
 	return true;
 }
+
+
 bool NoEdgeEditorWrapper::Frame()
 {
 	if(! data.renderWin ) return false;
@@ -191,23 +225,8 @@ bool NoEdgeEditorWrapper::Frame()
 
 void NoEdgeEditorWrapper::Release()
 {
+	data.ReleaseMembers();
 	Graphics::API::Clean();
-	for (unsigned int i = 0; i < data.entityBuilding.size(); i++)
-	{
-		data.entityBuilding[i].Release();
-	}
-	for (unsigned int i = 0; i < data.entityInteractive.size(); i++)
-	{
-		data.entityInteractive[i].Release();
-	}
-	for (unsigned int i = 0; i < data.entityLight.size(); i++)
-	{
-		data.entityLight[i].Release();
-	}
-	for (unsigned int i = 0; i < data.entityProjectile.size(); i++)
-	{
-		data.entityProjectile[i].Release();
-	}
 
 	UnregisterClass( NOEDGECLASSNAME,  GetModuleHandle(0) );
 }
@@ -219,62 +238,60 @@ void NoEdgeEditorWrapper::OnResize( int width, int height )
 	Graphics::API::SetOptions(o);
 }
 
-NoEdgeEditorWrapper::NoEdgeWorld NoEdgeEditorWrapper::CreateWorldEntity()
+NoEdgeEditorWrapper::NoEdgePlanet NoEdgeEditorWrapper::CreatePlanetEntity()
 {
 	if(! data.renderWin ) return false;
-	NoEdgeEditorWrapper::NoEdgeWorld val(new EntityWorld( data.currentCam->GetPosition() ));
-
-	data.entityWorld.push_back(val);
-	data.entityCount++;
-	
+	NoEdgeEditorWrapper::NoEdgePlanet val(new EntityPlanet( data.currentCam->GetPosition() ));
+	data.entityPlanet.push_back(val);
 	return val;
 }
 NoEdgeEditorWrapper::NoEdgeEntity NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Buildings objectType)
 {
 	if(! data.renderWin ) return false;
-	data.stickieEntity = new EntityBuilding( objectType, data.currentCam->GetPosition() + (data.currentCam->View().v[1].xyz * 3 ));
-	//NoEdgeEditorWrapper::NoEdgeEntity val( );
-	//
-	//data.entityBuilding.push_back(val);
-	//data.entityCount++;
+	data.createdEntity = new EntityBuilding( objectType, Float3(0.0f));
 	
-	return NoEdgeEditorWrapper::NoEdgeEntity();
+	return NoEdgeEditorWrapper::NoEdgeEntity(0);
 }
 NoEdgeEditorWrapper::NoEdgeEntity NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Interactive objectType)
 {
 	if(! data.renderWin ) return false;
-	NoEdgeEntity val(new EntityInteractive( objectType ));
+	data.createdEntity = (new EntityInteractive( objectType ));
 
-	data.entityInteractive.push_back(val);
-	data.entityCount++;
-	
-	return val;
+	return NoEdgeEditorWrapper::NoEdgeEntity(0);
 }
 NoEdgeEditorWrapper::NoEdgeLight NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Light objectType)
 {
 	if(! data.renderWin ) return false;
-	NoEdgeLight val( new EntityLight(objectType));
+	data.createdEntity = ( new EntityLight(objectType));
 
-	data.entityLight.push_back(val);
-	data.entityCount++;
-	
-	return val;
+	return NoEdgeEditorWrapper::NoEdgeLight(0);
 }
 NoEdgeEditorWrapper::NoEdgeEntity NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Projectiles objectType)
 {
 	if(! data.renderWin ) return false;
-	NoEdgeEntity val(new EntityProjectile(objectType));
+	data.createdEntity = (new EntityProjectile(objectType));
 	
-	data.entityProjectile.push_back(val);
-	data.entityCount++;
+	return NoEdgeEditorWrapper::NoEdgeEntity(0);
+}
+NoEdgeEditorWrapper::NoEdgeEntity NoEdgeEditorWrapper::CreateEntity(NoEdgeType_HazardEnv objectType)
+{
+	if(! data.renderWin ) return false;
+	data.createdEntity = new EntityHazardousEnvironment(objectType, Float3(0.0f));
 	
-	return val;
+	return NoEdgeEditorWrapper::NoEdgeEntity(0);
+}
+NoEdgeEditorWrapper::NoEdgeEntity NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Pickup objectType)
+{
+	if(! data.renderWin ) return false;
+	data.createdEntity = new EntityPickup(objectType);
+	
+	return NoEdgeEditorWrapper::NoEdgeEntity(0);
 }
 
 
 void NoEdgeEditorWrapper::Update()
 {
-	if(data.stickieEntity)		data.stickieEntity->Update();
+	if(data.createdEntity)		data.createdEntity->Update();
 
 	for (unsigned int i = 0; i < data.entityBuilding.size(); i++)
 	{
@@ -312,7 +329,7 @@ void NoEdgeEditorWrapper::Render()
 
 	Graphics::API::NewFrame();
 	{
-		if(data.stickieEntity)		data.stickieEntity->Render();
+		if(data.createdEntity)		data.createdEntity->Render();
 
 		static Utility::DynamicMemory::DynamicArray<Oyster::Graphics::Model::Model> meshes;
 		int tot = 0;
@@ -332,64 +349,40 @@ void NoEdgeEditorWrapper::Render()
 	
 		if(meshes.Size() > 0)
 			Graphics::API::RenderScene(&meshes[0], tot);
+
+		//Render focused object
+		if(data.focusedEntity)
+		{
+			Oyster::Graphics::API::StartRenderWireFrame();
+				data.focusedEntity->Render();
+		}
 	}
 	Graphics::API::EndFrame();
 }
 
 Entity* NoEdgeEditorWrapper::PickObject(int x, int y)
 {
-	Entity* val = 0;
-
-	float farZ = data.currentCam->GetFarZ();
-	float pointX, pointY;
-	Matrix inverseViewMatrix, worldMatrix, translateMatrix, inverseWorldMatrix;
-	Oyster::Collision3D::Ray ray;
-	Oyster::Collision3D::Ray rayo;
-	Float3 rayOrigin, rayDirection;
-	
 	Graphics::API::Option op = Graphics::API::GetOption();
+	Entity* val = 0;
+	float farZ = data.currentCam->GetFarZ();
+	Matrix projMat = data.currentCam->Proj();
+	Oyster::Collision3D::Ray ray;
+	Float3 rayOrigin, rayDirection;
+	float w = op.resolution.x;
+	float h = op.resolution.y;
+	float vx = (+2.0f * x / w - 1.0f) / projMat.m11;
+	float vy = (-2.0f * y / h + 1.0f) / projMat.m22;
 
-	// Move the mouse cursor coordinates into the -1 to +1 range.
-	pointX = ((2.0f * (float)data.prevMousePos.x) / (float)op.resolution.x) - 1.0f;
-	pointY = (((2.0f * (float)data.prevMousePos.x) / (float)op.resolution.y) - 1.0f) * -1.0f;
+	ray.direction = Float3(vx, vy, 1.0f);
+	ICustomBody* temp = Physics::API::Instance().Intersect(ray.origin.xyz, ray.direction.xyz * farZ);
 
-	pointX /= data.currentCam->Proj().m11;
-	pointY /= data.currentCam->Proj().m22;
-
-	// Get the inverse of the view matrix.
-	Matrix inv = data.currentCam->View().GetInverse();
-	// Calculate the direction of the picking ray in view space.
-	ray.direction.x = (pointX * inv.m11) + (pointY * inv.m21) + inv.m31;
-	ray.direction.y = (pointX * inv.m12) + (pointY * inv.m22) + inv.m32;
-	ray.direction.z = (pointX * inv.m13) + (pointY * inv.m23) + inv.m33;
-
-	// Get the origin of the picking ray which is the position of the camera.
-	//ray.origin = data.currentCam->GetPosition();
-
-	ICustomBody* temp = Physics::API::Instance().Intersect(ray.origin.xyz, ray.direction.xyz);
 	if(temp)
 	{
-		Entity* e = (Entity*)temp->GetCustomTag();
-		
-		switch (e->GetEntityType())
-		{
-			case Entity::EntityType_Building:
-			{
-				
-			} break;
-			case Entity::EntityType_Interactive:
-			{
-			} break;
-			case Entity::EntityType_Light:
-			{
-			} break;
-			case Entity::EntityType_Projectiles:
-			{
-			} break;
-			case Entity::EntityType_World:
-			{
-			} break;
-		}
+		data.focusedEntity = (Entity*)temp->GetCustomTag();
+	}
+	else
+	{
+		data.focusedEntity = 0;
 	}
 	return val;
 }
@@ -407,7 +400,6 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 			POINT p;
 			p.x = GET_X_LPARAM(l); 
 			p.y = GET_Y_LPARAM(l); 
-			ScreenToClient(hwnd, &p);
 			Entity* pic = NoEdgeEditorWrapper::PickObject(p.x, p.y);
 			if(pic)
 			{
@@ -419,13 +411,13 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 			return FALSE;
 		case WM_RBUTTONDOWN:
 			SetFocus(hwnd);
-			if(data.stickieEntity)
+			if(data.createdEntity)
 			{
-				data.stickieEntity->Release();
-				data.stickieEntity = 0;
+				data.createdEntity->Release();
+				data.createdEntity = 0;
 			}
 			
-			data.focusedEntity.Release();
+			data.focusedEntity = 0;
 			
 			return FALSE;
 		case WM_LBUTTONDBLCLK:
@@ -435,10 +427,10 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 		case WM_RBUTTONDBLCLK:
 			return FALSE;
 		case WM_LBUTTONUP:
-			if(data.stickieEntity)
+			if(data.createdEntity)
 			{
-				data.focusedEntity = NoEdgeEntity(data.stickieEntity);
-				switch (data.stickieEntity->GetEntityType())
+					data.focusedEntity = data.createdEntity;
+				switch (data.createdEntity->GetEntityType())
 				{
 				case Entity::EntityType_Building:
 					data.entityBuilding.push_back(data.focusedEntity);
@@ -456,7 +448,7 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 				//	data.entityWorld.push_back(data.focusedEntity);
 				//break;
 				}
-				data.stickieEntity = 0;
+				data.createdEntity = 0;
 			}
 			return FALSE;
 		case WM_MBUTTONUP:
@@ -470,12 +462,11 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 			int delta = GET_WHEEL_DELTA_WPARAM(w);
 			POINT p;
 			p.x = GET_X_LPARAM(l); 
-			p.y = GET_Y_LPARAM(l); 
-			ScreenToClient(hwnd, &p);
+			p.y = GET_Y_LPARAM(l);
 
-			if(data.stickieEntity)
+			if(data.createdEntity)
 			{
-				data.stickieEntity->SetPosition(Float3((float)data.prevMousePos.x, (float)data.prevMousePos.y, data.stickieEntity->GetPosition().z));
+				data.createdEntity->SetPosition(Float3((float)data.prevMousePos.x, (float)data.prevMousePos.y, data.createdEntity->GetPosition().z));
 			}
 			if(data.keyAlt)
 			{
@@ -680,20 +671,21 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 	}
 	NoEdgeEditorWrapper::NoEdgeEntity::NoEdgeEntity(Entity* ent)
 	{  
+	
 		this->entity = ent;
+
+		if(! ent ) return;
+
 		this->reference = new int(1);
 	}
-	NoEdgeEditorWrapper::NoEdgeEntity::NoEdgeEntity()
-	{  
-		this->entity = 0;
-		this->reference = 0;
-	}
+	
 
 #pragma endregion
 
 #pragma region NoEdgeWorld
 
-	NoEdgeEditorWrapper::NoEdgeWorld::NoEdgeWorld(const NoEdgeWorld& obj)
+	NoEdgeEditorWrapper::NoEdgePlanet::NoEdgePlanet(const NoEdgePlanet& obj)
+		:NoEdgeEditorWrapper::NoEdgeEntity(obj)
 	{
 		this->reference = obj.reference;
 		this->entity = obj.entity;
@@ -703,65 +695,28 @@ LRESULT CALLBACK NoEdgeEditorWrapper::NoEdgeMsgCallback(HWND hwnd, UINT m, WPARA
 			(*(this->reference))++;
 		}
 	}
-	const NoEdgeEditorWrapper::NoEdgeWorld& NoEdgeEditorWrapper::NoEdgeWorld::operator=(const NoEdgeEditorWrapper::NoEdgeWorld& obj)
-	{
-		this->Release();
-
-		this->reference = obj.reference;
-		this->entity = obj.entity;
-
-		if(this->reference)
-		{
-			(*(this->reference))++;
-		}
-		return *this;
-	}
-	NoEdgeEditorWrapper::NoEdgeWorld::~NoEdgeWorld()
-	{
-		Release();
-	}
-	NoEdgeEditorWrapper::NoEdgeWorld::NoEdgeWorld(Entity* ent)
-	{  
-		this->entity = ent;
-		this->reference = new int(1);
-	}
+	const NoEdgeEditorWrapper::NoEdgePlanet& NoEdgeEditorWrapper::NoEdgePlanet::operator=(const NoEdgeEditorWrapper::NoEdgePlanet& obj)
+	{ return *this; }
+	NoEdgeEditorWrapper::NoEdgePlanet::~NoEdgePlanet()
+	{ }
+	NoEdgeEditorWrapper::NoEdgePlanet::NoEdgePlanet(Entity* ent)
+		:NoEdgeEditorWrapper::NoEdgeEntity(ent)
+	{ }
 
 #pragma endregion
 
 #pragma region NoEdgeLight
 
 	NoEdgeEditorWrapper::NoEdgeLight::NoEdgeLight(const NoEdgeLight& obj)
-	{
-		this->reference = obj.reference;
-		this->entity = obj.entity;
-
-		if(this->reference)
-		{
-			(*(this->reference))++;
-		}
-	}
+		:NoEdgeEditorWrapper::NoEdgeEntity(obj)
+	{ }
 	const NoEdgeEditorWrapper::NoEdgeLight& NoEdgeEditorWrapper::NoEdgeLight::operator=(const NoEdgeEditorWrapper::NoEdgeLight& obj)
-	{
-		this->Release();
-
-		this->reference = obj.reference;
-		this->entity = obj.entity;
-
-		if(this->reference)
-		{
-			(*(this->reference))++;
-		}
-		return *this;
-	}
+	{ return *this; }
 	NoEdgeEditorWrapper::NoEdgeLight::~NoEdgeLight()
-	{
-		Release();
-	}
+	{ }
 	NoEdgeEditorWrapper::NoEdgeLight::NoEdgeLight(Entity* ent)
-	{  
-		this->entity = ent;
-		this->reference = new int(1);
-	}
+		:NoEdgeEditorWrapper::NoEdgeEntity(ent)
+	{ }
 
 #pragma endregion
 
@@ -846,15 +801,15 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 		{
 			case ObjectSpecialType_Sky:
 			{
-				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Buildings_Building);
+				//NoEdgeEditorWrapper::CreateAtmosphereEntity();
 			} break;
 			case ObjectSpecialType_World:		//Always the main celestial body
 			{
-				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Buildings_Building);
+				NoEdgeEditorWrapper::CreatePlanetEntity();
 			} break;
 			case ObjectSpecialType_Building:
 			{
-				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Buildings_Building);
+				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Buildings_Building1);
 			} break;
 			case ObjectSpecialType_Stone:
 			{
@@ -866,7 +821,7 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 			} break;
 			case ObjectSpecialType_RedExplosiveBox:
 			{
-				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Interactive_RedExplosiveBox);
+				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Interactive_ExplosiveBox);
 			}break;
 			case ObjectSpecialType_SpikeBox:
 			{
@@ -878,7 +833,7 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 			} break;
 			case ObjectSpecialType_CrystalFormation:
 			{
-				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Buildings_CrystalFormation);
+				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_HazardEnv_CrystalFormation1);
 			} break;
 			case ObjectSpecialType_CrystalShard:
 			{
@@ -898,7 +853,7 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 			} break;
 			case ObjectSpecialType_PickupHealth:
 			{
-				//NoEdgeEditorWrapper::CreateEntity(NoEdgeType_);
+				NoEdgeEditorWrapper::CreateEntity(NoEdgeType_Pickup_HealthPackMedium);
 			} break;
 	
 		}

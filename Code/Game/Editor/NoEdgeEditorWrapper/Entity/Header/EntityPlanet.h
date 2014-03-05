@@ -3,11 +3,11 @@
 
 #include "Entity.h"
 
-class EntityWorld	:public Entity
+class EntityPlanet	:public Entity
 {
 public:
-	 EntityWorld( Oyster::Math::Float3 position );
-	~EntityWorld(  );
+	 EntityPlanet( Oyster::Math::Float3 position );
+	~EntityPlanet(  );
 
 private:
 

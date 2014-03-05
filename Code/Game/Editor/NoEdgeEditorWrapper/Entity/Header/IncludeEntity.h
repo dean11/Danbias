@@ -6,6 +6,9 @@
 #include "EntityLight.h"
 #include "EntityInteractive.h"
 #include "EntityBuilding.h"
-#include "EntityWorld.h"
+#include "EntityPlanet.h"
+#include "EntityHazardousEnvironment.h"
+#include "EntityPickup.h"
+#include "EntityAtmosphere.h"
 
 #endif // !EDITOR_ENTITYINCLUDE_H

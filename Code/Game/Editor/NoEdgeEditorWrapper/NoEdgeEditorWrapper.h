@@ -53,8 +53,6 @@ public:
 		~NoEdgeEntity();
 		
 	protected:
-		
-		NoEdgeEntity();
 		NoEdgeEntity(Entity* ent);
 		Entity* operator->() { return entity; }
 		operator bool() { return this->reference != 0; }
@@ -64,15 +62,15 @@ public:
 		int* reference;
 	};
 
-	class NOEDGE_EDITOR_DLL NoEdgeWorld :public NoEdgeEntity
+	class NOEDGE_EDITOR_DLL NoEdgePlanet :public NoEdgeEntity
 	{
 	public:
-		NoEdgeWorld(const NoEdgeWorld& obj);
-		const NoEdgeWorld& operator=(const NoEdgeWorld& obj);
-		~NoEdgeWorld();
+		NoEdgePlanet(const NoEdgePlanet& obj);
+		const NoEdgePlanet& operator=(const NoEdgePlanet& obj);
+		~NoEdgePlanet();
 		
 	private:
-		NoEdgeWorld(Entity* ent);
+		NoEdgePlanet(Entity* ent);
 		friend class NoEdgeEditorWrapper;
 	};
 
@@ -124,11 +122,13 @@ public:
 	//static void OnEntityCreate(
 
 public: /* Entity */
-	static NoEdgeWorld		CreateWorldEntity();
+	static NoEdgePlanet		CreatePlanetEntity();
 	static NoEdgeLight		CreateEntity(NoEdgeType_Light objectType);
 	static NoEdgeEntity		CreateEntity(NoEdgeType_Buildings objectType);
 	static NoEdgeEntity		CreateEntity(NoEdgeType_Interactive objectType);
 	static NoEdgeEntity		CreateEntity(NoEdgeType_Projectiles objectType);
+	static NoEdgeEntity		CreateEntity(NoEdgeType_HazardEnv objectType);
+	static NoEdgeEntity		CreateEntity(NoEdgeType_Pickup objectType);
 
 private: /* Map import */
 	static void ImportGameObject( NamespaceForward* oth, int ID);
