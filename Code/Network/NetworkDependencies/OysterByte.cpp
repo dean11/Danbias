@@ -5,7 +5,7 @@ using namespace Oyster::Network;
 OysterByte::OysterByte()
 {
 	size = 0;
-	capacity = 10;
+	capacity = 1400;
 	byteArray = new unsigned char[capacity];
 }
 

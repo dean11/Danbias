@@ -31,13 +31,6 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_None: 
 		{
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
-
-		}
-		break;
-	case ObjectSpecialType_Sky: 
-		{
-			float skySize = ((SkyAttributes*)obj)->skySize; 
-			//gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	case ObjectSpecialType_World: 
