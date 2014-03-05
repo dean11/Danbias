@@ -96,6 +96,7 @@ namespace Oyster
 		void API::SetView(const Math::Float4x4& view)
 		{
 			View = view;
+			//View.v[0] = -View.v[0];
 		}
 
 		void API::NewFrame()
