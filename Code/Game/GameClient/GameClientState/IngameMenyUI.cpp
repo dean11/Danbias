@@ -1,6 +1,8 @@
 #include "IngameMenyUI.h"
 #include <Protocols.h>
 #include "Utilities.h"
+// Debug
+
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
@@ -54,6 +56,9 @@ bool IngameMenyUI::Init()
 	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
 
+	// HACK remove this later
+	this->debugOutput 	= new Text_UI(L"", Float3(0.2f,0.8f,0.1f), Float2(0.3f,0.1f), 0.05f);
+
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &menyButtons );
 
@@ -94,6 +99,9 @@ GameStateUI::UIState IngameMenyUI::Update( float deltaTime )
 		this->mousePos.y = mouseState.y = pos.y;
 		mouseState.mouseButtonPressed = this->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
+
+	this->debugOutput->setText(std::to_wstring(Oyster::Graphics::API::GetOption().bytesUsed));
+
 	EventHandler::Instance().Update( mouseState );
 	return this->nextState;
 }
@@ -121,7 +129,7 @@ void IngameMenyUI::RenderGUI()
 
 void IngameMenyUI::RenderText() 
 {
-	//this->menyButtons.RenderText();
+	this->debugOutput->RenderText();
 }
 
 bool IngameMenyUI::Release()
@@ -132,6 +140,8 @@ bool IngameMenyUI::Release()
 	// TODO: Release UI components here.
 	if(this->background) 	delete this->background;
 	if(this->mouseCursor) 	delete this->mouseCursor;
+
+	if(this->debugOutput) 	delete this->debugOutput;
 
 	EventHandler::Instance().ReleaseCollection( &this->menyButtons );
 	this->mouseInput = 0;
