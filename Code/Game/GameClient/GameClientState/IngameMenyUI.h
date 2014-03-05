@@ -15,7 +15,7 @@
 using namespace ::Oyster::Event;
 namespace DanBias { namespace Client
 {
-	class IngameMenyUI : public GameStateUI, Input::Mouse::MouseEvent, Input::Keyboard::KeyboardEvent
+	class IngameMenyUI : public GameStateUI
 	{
 	public:
 		IngameMenyUI( SharedStateContent* shared );

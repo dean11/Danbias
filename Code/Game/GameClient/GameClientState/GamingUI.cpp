@@ -49,8 +49,8 @@ bool GamingUI::Init()
 	Float2 size = Oyster::Graphics::API::GetOption().resolution;
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.1f,0.1f), 0.05f, Float4(1,0,0,1));
-	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.1f,0.1f), 0.05f, Float4(1,1,0,1));
+	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.3f,0.1f), 0.05f, Float4(1,0,0,1));
+	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.3f,0.1f), 0.05f, Float4(1,1,0,1));
 	this->maxMessageCount = 3;
 	
 	this->message_Timer = 0;
@@ -66,11 +66,6 @@ bool GamingUI::Init()
 	this->weapons.push_back(w1);
 
 	this->sharedData = sharedData;
-	// setting input mode to all raw
-	this->sharedData->keyboardDevice->Activate();
-	this->sharedData->keyboardDevice->AddKeyboardEvent(this);
-	this->sharedData->mouseDevice->Activate();
-	this->sharedData->mouseDevice->AddMouseEvent(this);
 
 	return true; 
 }
@@ -111,10 +106,6 @@ void GamingUI::RenderText()
 
 bool GamingUI::Release()
 {
-	//Release as input event
-	this->sharedData->keyboardDevice->RemoveKeyboardEvent(this);
-	this->sharedData->mouseDevice->RemoveMouseEvent(this);
-
 	// TODO: Release UI components here.
 	if(this->hp)		delete this->hp;
 	if(this->energy)	delete this->energy;
@@ -142,7 +133,7 @@ void GamingUI::SetKillMessage( std::wstring killerMessage )
 	this->killMessages[2]->setText( this->killMessages[1]->getText());
 	this->killMessages[1]->setText( this->killMessages[0]->getText());
 	this->killMessages[0]->setText( killerMessage);
-	this->message_Timer = 2;
+	this->message_Timer = 5;
 }
 void GamingUI::ReadKeyInput()
 {

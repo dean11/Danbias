@@ -24,6 +24,7 @@ using namespace ::GameLogic;
 using namespace ::Utility::DynamicMemory;
 using namespace ::Utility::String;
 using namespace ::Utility::Value;
+using namespace ::Utility::StaticArray;
 
 //#define _CAMERA_DEBUG
 struct  GameState::MyData
@@ -108,10 +109,14 @@ bool GameState::Init( SharedStateContent &shared )
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
 	this->statsUI = new StatsUI();
 	this->inGameMeny = new IngameMenyUI(&shared);
-	this->currGameUI = gameUI; 
 	((GamingUI*)gameUI)->Init();
 	((RespawnUI*)respawnUI)->Init();
 	((IngameMenyUI*)inGameMeny)->Init();
+
+	this->uiStack[0] = this->gameUI;
+	this->uiStackTop = 0;
+	this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->gameUI );
+	this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->gameUI );
 
 	// HACK hardcoded max nr of players
 	((StatsUI*)statsUI)->Init(10);
@@ -192,7 +197,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 
 GameClientState::ClientState GameState::Update( float deltaTime )
 {
-	GameStateUI::UIState UIstate = this->currGameUI->Update( deltaTime );
+	GameStateUI::UIState UIstate = this->UIstackUpdate( deltaTime );
 
 	switch (UIstate)
 	{
@@ -214,36 +219,22 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 			// disconnect 
 
 			// inactivate MenyInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
-			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
-			// activate GameInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+			this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+			this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
+
 		}
 		break;
 	case GameStateUI::UIState_inGameMeny:
 		{
-			// turn off gameInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
-			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
-			this->currGameUI = inGameMeny;
-			// activate menyInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
+			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
+			this->UIstackPush( this->inGameMeny );
 		}
 		break;
 	case GameStateUI::UIState_resumeGame:
 		{
-			// inactivate MenyInput
-			this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(IngameMenyUI*)this->inGameMeny);
-			this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(IngameMenyUI*)this->inGameMeny);
-			this->currGameUI->ChangeState(DanBias::Client::GameStateUI::UIState_same);
-			this->currGameUI = gameUI;
-			// activate GameInput
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
+			this->UIstackPop();
 		}
 		break;
 	
@@ -372,22 +363,24 @@ bool GameState::Render()
 		}
 #endif //!RB DEBUG 
 
+	// render gui elements
 	Oyster::Graphics::API::StartGuiRender();
+	this->UIstackRenderGUI();
+
 
 	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
 	this->privData->weapon->Render();
 
-	// render gui elemnts
-	if(currGameUI->HaveGUIRender())
-		currGameUI->RenderGUI();
 	if(renderStats)
 	{	
 		if(statsUI->HaveGUIRender())
 			statsUI->RenderGUI();
 	}
+
+	// render gui text
 	Oyster::Graphics::API::StartTextRender();
-	if(currGameUI->HaveTextRender())
-		currGameUI->RenderText();
+	this->UIstackRenderText();
+
 	if(renderStats)
 	{	
 		if(statsUI->HaveTextRender())
@@ -408,8 +401,9 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
-		this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->currGameUI);
-		this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->currGameUI);
+		this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+		this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+
 		auto playerObject = this->privData->players.begin();
 		for( ; playerObject != this->privData->players.end(); ++playerObject )
 		{
@@ -479,7 +473,7 @@ bool GameState::Release()
 		delete statsUI;
 		statsUI = NULL;
 	}
-	currGameUI = NULL;
+	
 	Graphics::API::SetView(Math::Float4x4::identity);
 	Graphics::API::SetProjection(Math::Float4x4::null);
 	return true;
@@ -590,12 +584,8 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 	{
 		if( this->privData->myId == decoded.objectID )
 		{
-			// show that you took dmg
-			if(currGameUI == gameUI)
-			{
-				// set given players HP 
-				((GamingUI*)currGameUI)->SetHPtext(std::to_wstring(decoded.healthLost));
-			}
+			// set given players HP 
+			((GamingUI*)this->UIstackPeek())->SetHPtext( ::std::to_wstring((int)decoded.healthLost) );
 		}
 	}
 }
@@ -847,10 +837,9 @@ void GameState::Gameplay_ObjectRespawn( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			this->privData->camera.SetPosition( decoded.position );
-			this->currGameUI =  this->gameUI;
-			this->privData->mouseInput->AddMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
-			this->privData->keyboardInput->AddKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+			this->UIstackRemove( this->respawnUI );
 		}
+
 		object->setPos( decoded.position );
 		object->updateWorld();
 		// RB DEBUG 
@@ -865,12 +854,17 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	Protocol_ObjectDie decoded(data);
 	if( this->privData->myId == decoded.victimID )
 	{
-		this->currGameUI =  this->respawnUI;
+		GameStateUI * topStacked = this->UIstackPop();
+		this->UIstackPush( this->respawnUI );
+		
+		if( topStacked != this->gameUI )
+		{
+			this->UIstackPush( topStacked );
+		}
+
 		((GamingUI*)this->gameUI)->StopGamingUI();
-		this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
-		this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
 		// set countdown 
-		((RespawnUI*)currGameUI)->SetCountdown( decoded.seconds );
+		((RespawnUI*)this->respawnUI)->SetCountdown( decoded.seconds );
 		
 	}
 	// update score board
@@ -883,10 +877,26 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	std::wstring message;
 	if (decoded.victimID == decoded.killerID)
 	{
-		message = colors.getColorName(decoded.killerID) + L" committed suicide";
+		if (decoded.victimID == this->privData->myId)
+		{
+			message =  L"You committed suicide";
+		}
+		else
+			message = colors.getColorName(decoded.killerID) + L" committed suicide";
 	}
 	else
-		message = colors.getColorName(decoded.killerID) + L" killed " + colors.getColorName(decoded.victimID);
+	{
+		if (decoded.victimID == this->privData->myId)
+		{
+			message = L"You were killed by " + colors.getColorName(decoded.killerID);
+		}
+		else if (decoded.killerID == this->privData->myId)
+		{
+			message = L"You killed " + colors.getColorName(decoded.victimID);
+		}
+		else
+			message = colors.getColorName(decoded.killerID) + L" killed " + colors.getColorName(decoded.victimID);
+	}
 
 	((GamingUI*)this->gameUI)->SetKillMessage(message);
 }
@@ -1140,6 +1150,137 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 	}
 
 	return message;
+}
+
+void GameState::UIstackPush( GameStateUI *ui )
+{
+	if( !ui )
+		return;
+
+	GameStateUI *previous = this->UIstackPeek();
+
+	++this->uiStackTop;
+	if( this->uiStackTop >= NumElementsOf(this->uiStack) )
+	{
+		--this->uiStackTop;
+	}
+	else
+	{
+		this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)previous );
+		this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)previous );
+
+		this->uiStack[this->uiStackTop] = ui;
+
+		this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+		this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+	}
+}
+
+GameStateUI * GameState::UIstackPop()
+{
+	GameStateUI *previous = this->UIstackPeek();
+	this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+	this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+
+	if( this->uiStackTop > 0 )
+	{
+		--this->uiStackTop;
+	}
+	else
+	{
+		this->UIstackClear();
+	}
+
+	this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+	this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+
+	return previous;
+}
+
+void GameState::UIstackRemove( GameStateUI *ui )
+{
+	if( ui == this->UIstackPeek() )
+	{
+		this->UIstackPop();
+	}
+	else
+	{
+		bool isFound = false;
+		for( int i = 0; i < this->uiStackTop; ++i )
+		{
+			if( !isFound && ui == this->uiStack[i] )
+			{
+				isFound = true;
+			}
+			if( isFound )
+			{
+				this->uiStack[i] = this->uiStack[i+1];
+			}
+		}
+		if( isFound )
+			--this->uiStackTop;
+	}
+}
+
+GameStateUI * GameState::UIstackPeek()
+{
+	return this->uiStack[this->uiStackTop];
+}
+
+void GameState::UIstackSet( GameStateUI *ui )
+{
+	if( ui )
+	{
+		this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+		this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+
+		this->uiStack[0] = ui;
+		this->uiStackTop = 0;
+
+		this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+		this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+	}
+	else this->UIstackClear();
+}
+
+void GameState::UIstackClear()
+{
+	this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+	this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+
+	this->uiStack[0] = this->gameUI;
+	this->uiStackTop = 0;
+
+	this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+	this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+}
+
+GameStateUI::UIState GameState::UIstackUpdate( float deltaTime )
+{
+	GameStateUI::UIState message;
+	for( int i = 0; i <= this->uiStackTop; ++i )
+	{
+		message = uiStack[i]->Update( deltaTime );
+	}
+	return message;
+}
+
+void GameState::UIstackRenderGUI()
+{
+	for( int i = 0; i <= this->uiStackTop; ++i )
+	{
+		if( uiStack[i]->HaveGUIRender() )
+			uiStack[i]->RenderGUI();
+	}
+}
+
+void GameState::UIstackRenderText()
+{
+	for( int i = 0; i <= this->uiStackTop; ++i )
+	{
+		if( uiStack[i]->HaveTextRender() )
+			uiStack[i]->RenderText();
+	}
 }
 
 /* :HACK! */
