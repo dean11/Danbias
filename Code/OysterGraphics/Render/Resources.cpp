@@ -61,7 +61,7 @@ namespace Oyster
 
 				ID3D11RasterizerState* Resources::RenderStates::rs = NULL;
 				ID3D11SamplerState** Resources::RenderStates::ss = new ID3D11SamplerState*[1];
-				ID3D11DepthStencilState* Resources::RenderStates::dsState = NULL;
+				ID3D11DepthStencilState* Resources::RenderStates::dsState[2];
 				ID3D11BlendState* Resources::RenderStates::bs = NULL;
 
 				ID3D11ShaderResourceView* Resources::Gui::Text::Font = NULL;
@@ -75,6 +75,7 @@ namespace Oyster
 				ID3D11ShaderResourceView* Resources::Light::Back = NULL;
 
 				std::map<Model::ModelInfo*, Resources::ModelDataWrapper*> Resources::RenderData = std::map<Model::ModelInfo*, Resources::ModelDataWrapper*>();
+				std::map<Model::ModelInfo*, Resources::ModelDataWrapper*> Resources::NoDepthData = std::map<Model::ModelInfo*, Resources::ModelDataWrapper*>();
 #pragma endregion
 
 
@@ -229,7 +230,11 @@ namespace Oyster
 					ddesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 					
-					Core::device->CreateDepthStencilState(&ddesc,&RenderStates::dsState);
+					Core::device->CreateDepthStencilState(&ddesc,&RenderStates::dsState[0]);
+
+					ddesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+
+					Core::device->CreateDepthStencilState(&ddesc,&RenderStates::dsState[1]);
 
 					D3D11_BLEND_DESC bdesc;
 					bdesc.AlphaToCoverageEnable = true;
@@ -475,12 +480,12 @@ namespace Oyster
 					Core::device->CreateDepthStencilView(depthstencil,NULL,&Gui::depth);
 					depthstencil->Release();
 
-					Light::Up = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"sky_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Down = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"sky_down.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Left = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"sky_left.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Right = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"sky_right.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Front = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"sky_front.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Back = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"sky_back.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Up = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Down = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_down.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Left = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_left.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Right = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_right.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Front = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_front.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Back = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_back.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
 
 					return Core::Init::Success;
 				}
@@ -508,7 +513,7 @@ namespace Oyster
 					Gather::AnimatedPass.RenderStates.Rasterizer = RenderStates::rs;
 					Gather::AnimatedPass.RenderStates.SampleCount = 1;
 					Gather::AnimatedPass.RenderStates.SampleState = RenderStates::ss;
-					Gather::AnimatedPass.RenderStates.DepthStencil = RenderStates::dsState;
+					Gather::AnimatedPass.RenderStates.DepthStencil = RenderStates::dsState[0];
 					for(int i = 0; i<GBufferSize;++i)
 					{
 						Gather::AnimatedPass.RTV.push_back(GBufferRTV[i]);
@@ -650,7 +655,7 @@ namespace Oyster
 					Gather::InstancedPass.RenderStates.Rasterizer = RenderStates::rs;
 					Gather::InstancedPass.RenderStates.SampleCount = 1;
 					Gather::InstancedPass.RenderStates.SampleState = RenderStates::ss;
-					Gather::InstancedPass.RenderStates.DepthStencil = RenderStates::dsState;
+					Gather::InstancedPass.RenderStates.DepthStencil = RenderStates::dsState[0];
 					for(int i = 0; i<GBufferSize;++i)
 					{
 						Gather::InstancedPass.RTV.push_back(GBufferRTV[i]);
@@ -715,7 +720,7 @@ namespace Oyster
 					Gui::Pass.RenderStates.SampleCount = 1;
 					Gui::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Pass.RenderStates.BlendState = RenderStates::bs;
-					Gui::Pass.RenderStates.DepthStencil = RenderStates::dsState;
+					Gui::Pass.RenderStates.DepthStencil = RenderStates::dsState[0];
 					#pragma endregion
 
 					#pragma region Blur Pass Setup
@@ -761,7 +766,7 @@ namespace Oyster
 					Gui::Text::Pass.RenderStates.SampleCount = 1;
 					Gui::Text::Pass.RenderStates.SampleState = RenderStates::ss;
 					Gui::Text::Pass.RenderStates.BlendState = RenderStates::bs;
-					Gui::Text::Pass.RenderStates.DepthStencil = RenderStates::dsState;
+					Gui::Text::Pass.RenderStates.DepthStencil = RenderStates::dsState[0];
 					#pragma endregion
 
 					return Core::Init::Success;

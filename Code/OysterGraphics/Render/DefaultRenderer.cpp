@@ -82,6 +82,10 @@ namespace Oyster
 				{
 					(*i).second->Models=0;
 				}
+				for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
+				{
+					(*i).second->Models=0;
+				}
 
 				Core::PipelineManager::SetRenderPass(Resources::Gather::AnimatedPass);
 			}
@@ -106,8 +110,14 @@ namespace Oyster
 
 						rid.Tint = models[i].Tint;
 						rid.GTint = models[i].GlowTint;
-
-						Resources::RenderData[info]->rid[Resources::RenderData[info]->Models++] = rid;
+						if(models[i].IgnoreDepth)
+						{
+							Resources::NoDepthData[info]->rid[Resources::NoDepthData[info]->Models++] = rid;
+						}
+						else
+						{
+							Resources::RenderData[info]->rid[Resources::RenderData[info]->Models++] = rid;
+						}
 					}
 					else
 					{
@@ -246,6 +256,13 @@ namespace Oyster
 				Resources::Gather::InstancedData.Apply(1);
 
 				for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+				{
+					RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
+				}
+
+				Core::deviceContext->OMSetDepthStencilState(Resources::RenderStates::dsState[1], NULL);
+
+				for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
 				{
 					RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
 				}

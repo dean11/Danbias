@@ -21,6 +21,7 @@ namespace Oyster
 
 					
 					static std::map<Model::ModelInfo*, ModelDataWrapper*> RenderData;
+					static std::map<Model::ModelInfo*, ModelDataWrapper*> NoDepthData;
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
@@ -48,7 +49,7 @@ namespace Oyster
 					{
 						static ID3D11RasterizerState* rs;
 						static ID3D11SamplerState** ss;
-						static ID3D11DepthStencilState* dsState;
+						static ID3D11DepthStencilState* dsState[2];
 						static ID3D11BlendState* bs;
 					};
 
