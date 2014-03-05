@@ -32,6 +32,8 @@ ID3D11ShaderResourceView* Core::srvNULL[16] = {0};
 ID3D11RenderTargetView* Core::rtvNULL[8] = {0};
 ID3D11UnorderedAccessView* Core::uavNULL[8] = {0};
 
+std::map<ID3D11ShaderResourceView*,int> Core::TexSize;
+
 int Core::UsedMem = 0;
 Oyster::Math::Float2 Core::resolution = Oyster::Math::Float2::null;
 std::wstring Core::modelPath;

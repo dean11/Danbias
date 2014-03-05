@@ -345,7 +345,7 @@ namespace Oyster
 		API::Option API::GetOption()
 		{
 			Option o;
-			o.bytesUsed = Core::UsedMem;
+			o.bytesUsed = Core::UsedMem/(1024*1024);
 			o.modelPath = Core::modelPath;
 			o.texturePath = Core::texturePath;
 			o.resolution = Core::resolution;
