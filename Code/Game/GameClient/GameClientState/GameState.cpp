@@ -15,7 +15,6 @@
 #include "IngameMenyUI.h"
 #include <ObjectDefines.h>
 #include "ColorDefines.h"
-#include "AudioAPI.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -45,9 +44,6 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
 	Camera_FPSV2 camera;
 
-	Sound::SoundData* testSound;
-
-
 	FirstPersonWeapon* weapon;
 
 	int myId;
@@ -76,10 +72,6 @@ bool GameState::Init( SharedStateContent &shared )
 	// and there is content in shared.dynamicObjects and shared.staticObjects
 
 	this->privData = new MyData();
-
-	Sound::AudioAPI::Init();
-	this->privData->testSound = Sound::AudioAPI::Audio_CreateSound("level_background.mp3");
-	Sound::AudioAPI::Audio_PlaySound(this->privData->testSound);
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
@@ -434,9 +426,6 @@ bool GameState::Release()
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
-
-		delete this->privData->testSound;
-		Sound::AudioAPI::Shutdown();
 
 		this->privData->pickups->clear();
 

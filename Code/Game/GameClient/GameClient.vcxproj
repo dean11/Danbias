@@ -106,13 +106,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DANBIAS_GAME_DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;$(SolutionDir)Sound\;$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input\Include;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Misc\OysterMath;$(SolutionDir)Misc\Input\Include;$(SolutionDir)OysterGraphics;$(SolutionDir)Misc\Utilities;$(SolutionDir)Game\LevelLoader</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>Sound_$(PlatformShortName)D.dll;NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>NetworkAPI_$(PlatformShortName)D.dll;OysterGraphics_$(PlatformShortName)D.dll;GameClient_$(PlatformShortName)D.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -192,9 +192,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\OysterGraphics\OysterGraphics.vcxproj">
       <Project>{0ec83e64-230e-48ef-b08c-6ac9651b4f82}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Sound\Sound.vcxproj">
-      <Project>{34d6295a-00dd-4b1a-8258-97da2818ec26}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GameServer\GameServer.vcxproj">
       <Project>{143bd516-20a1-4890-a3e4-f8bfd02220e7}</Project>

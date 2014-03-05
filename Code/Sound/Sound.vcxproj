@@ -112,10 +112,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;d;$(SolutionDir)\Misc\Utilities;$(SolutionDir)\Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;$(SolutionDir)\Misc\Utilities;$(SolutionDir)\Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SOUND_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)Sound\Dependencies\Lib\FMod\fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>fmodex.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,12 +128,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;d;$(SolutionDir)\Misc\Utilities;$(SolutionDir)\Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;$(SolutionDir)\Misc\Utilities;$(SolutionDir)\Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SOUND_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)Sound\Dependencies\Lib\FMod\fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>fmodex.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,12 +146,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;d;$(SolutionDir)\Misc\Utilities;$(SolutionDir)\Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Sound\Dependencies\Include\FMod;$(SolutionDir)\Misc\Utilities;$(SolutionDir)\Misc\OysterMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SOUND_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)Sound\Dependencies\Lib\FMod\fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>fmodex.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -155,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="AudioAPI.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\OysterMath\OysterMath.vcxproj">

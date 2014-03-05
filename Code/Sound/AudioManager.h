@@ -1,15 +1,9 @@
 #ifndef AUDIOCLASS_H
 #define AUDIOCLASS_H
 #define NOMINMAX
-//#if defined(_WIN64)
-//#pragma comment(lib, "Dependencies/Lib/FMod/fmodex64_vc.lib")
-//#else
-//#pragma comment(lib, "Dependencies/Lib/FMod/fmodex_vc.lib")
-//#endif
-//#include "fmod.hpp"
 #include "fmod.hpp"
 #include "fmod_errors.h"
-//#include <FMod/fmod.hpp>
+#include "AudioAPI.h"
 #include "OysterMath.h"
 #include <map>
 
@@ -53,11 +47,14 @@ namespace Sound
 		SOUNDLEVEL_COUNT
 	};
 
-	struct SoundData
+	struct SoundData : Isound
 	{
 		FMOD::Sound* sound;
 		FMOD::Channel* channel;
 		SoundType soundType;
+
+	public:
+		void Play_Sound() override;
 	};
 
 	class AudioManager

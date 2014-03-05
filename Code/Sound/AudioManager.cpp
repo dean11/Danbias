@@ -1,19 +1,15 @@
 #include "AudioManager.h"
 
-
-#if defined (_DEBUG) || defined (DEBUG)
-#include <iostream>
-#define C_PRINT(STR)\
-	std::cout << STR
-#else
-#define C_PRINT
-#endif
-
 using namespace Sound;
 const int   INTERFACE_UPDATETIME = 50;      // 50ms update for interface
 const float DISTANCEFACTOR = 1.0f;          // Units per meter.  I.e feet would = 3.28.  centimeters would = 100.
 bool AudioManager::instanceFlag = false;
 AudioManager* AudioManager::single = NULL;
+
+void SoundData::Play_Sound()
+{
+	AudioManager::self()->Play_Sound(this);
+}
 
 AudioManager* AudioManager::self()
 {
