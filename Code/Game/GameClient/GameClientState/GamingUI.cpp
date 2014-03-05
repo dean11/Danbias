@@ -294,6 +294,8 @@ void GamingUI::StopGamingUI()
 	this->key_forward		= false;
 	this->key_strafeLeft	= false;
 	this->key_strafeRight	= false;
+	this->key_zipDown		= false;
+	this->mouse_firstDown	= false;
 	this->mouse_secondDown	= false;
 }
 
