@@ -48,15 +48,15 @@ const float default_jump_pad_stun_duration = 1.0f;
 		switch (realObjB->GetObjectType())
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
-			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, 50.0f);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_StandardBox:
-			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, 50.0f);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
 			break;
 		case ObjectSpecialType::ObjectSpecialType_World:
-			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
+			PlayerVObject(*player,*realObjB, 100.0f);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
 			PlayerVLethalObject(*player,*realObjB, kineticEnergyLoss,realObjB->GetExtraDamageOnCollision());
@@ -195,7 +195,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
 
-	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
+	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float forceThreashHold)
 	{
 		//Collision between a player and a general static or dynamic object
 		//use kinetic energyloss of the collision in order too determin how much damage to take
@@ -212,7 +212,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 
 		Oyster::Math::Float damageDone = 0.0f;
-		Oyster::Math::Float forceThreashHold = 50.0f; //FIX: balance this
+		//Oyster::Math::Float forceThreashHold = 50.0f; //FIX: balance this
 
 		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{

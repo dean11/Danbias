@@ -5,8 +5,8 @@ using namespace Oyster::Math;
 
 Coil::Coil()
 {
-	maxGlow = Float3(2, 0, 0);
-	minGlow = Float3(0, 2, 2);
+	maxGlow = Float3(1, 0, 0);
+	minGlow = Float3(0, 1, 1);
 	increaseGlow = false;
 	percent = 0.01;
 	totalPercent = 0.0f;
@@ -40,6 +40,7 @@ void Coil::SetRotate(float angle)
 void Coil::Update()
 {
 	if(!this->model) return;
+
 	//Create world matrix
 	//Oyster::Math3D::Float4x4 rotTrans = Oyster::Math3D::TranslationMatrix(-offsetPosition);
 	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
@@ -49,10 +50,8 @@ void Coil::Update()
 	//rot = rotTrans * rot * rotTrans.GetInverse();
 	this->model->WorldMatrix = this->world * translation * scale;
 
-	this->model->Tint = this->model->GlowTint;
-
 	//Update glow color
-	Float3 colorChange = ((maxGlow - minGlow));
+	Float3 colorChange = (maxGlow - minGlow);
 
 	if(increaseGlow)
 	{
@@ -67,6 +66,7 @@ void Coil::Update()
 	if(totalPercent > 0.0f)
 	{
 		model->GlowTint -= colorChange * 0.005;
+
 		totalPercent -= 0.005;
 	}
 }
@@ -105,7 +105,6 @@ FirstPersonWeapon::FirstPersonWeapon()
 	{
 		coil[i] = new Coil;
 	}
-
 }
 
 FirstPersonWeapon::~FirstPersonWeapon()
@@ -133,8 +132,9 @@ bool FirstPersonWeapon::Init()
 	ModelInitData modelData;
 	modelData.modelPath = L"wpn_massdriver_high_cylinder.dan";
 	modelData.visible = true;
-	modelData.scale = Oyster::Math::Float3(0.7,0.7,0.7);
+	modelData.scale = Oyster::Math::Float3(1,1,0.6);
 	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0, 0, 0), 1);
+	modelData.tint = Float3(1.0f);
 	modelData.id = -1;
 
 	//Initial rotation on the entire weapon
@@ -181,7 +181,6 @@ bool FirstPersonWeapon::Init()
 	for(int i = 0; i < 6; i++)
 	{
 		coil[i]->Init();
-		//coil[i]->SetInitialRotation(initialRotation);
 	}
 
 	maxRotation = (2*Oyster::Math::pi) / 6;
@@ -262,9 +261,25 @@ void FirstPersonWeapon::Update(Oyster::Math::Matrix viewMatrix, Oyster::Math::Fl
 	
 	angular.xyz = Float3(0, 0, 1);
 	angular.w = -this->currentRotation;
+	
+	//Tried to use this instead of viewInverse directly
+	//It did no difference.
+	/*Oyster::Math3D::Float4x4 trans = Oyster::Math3D::TranslationMatrix(Float3(viewInverse.m14, viewInverse.m24, viewInverse.m34));
+	Quaternion asd;
+	asd.real = sqrt(1 + viewInverse.m11 + viewInverse.m22 + viewInverse.m33) / 2;
+	asd.imaginary[0] = (viewInverse.m32 - viewInverse.m23)/(4 * asd.real);
+	asd.imaginary[1] = (viewInverse.m13 - viewInverse.m31)/(4 * asd.real);
+	asd.imaginary[2] = (viewInverse.m21 - viewInverse.m12)/(4 * asd.real);
+	Oyster::Math3D::Float4x4 r = Oyster::Math3D::RotationMatrix(asd);
+	//qw= sqrt(1 + m00 + m11 + m22) /2
+	//qx = (m21 - m12)/( 4 *qw)
+	//qy = (m02 - m20)/( 4 *qw)
+	//qz = (m10 - m01)/( 4 *qw)
+	*/
+
 	Oyster::Math3D::Float4x4 rot2 = Oyster::Math3D::RotationMatrix(angular.w, angular.xyz);
 	Oyster::Math3D::Float4x4 rot = Oyster::Math3D::RotationMatrix(initialRotation.w, initialRotation.xyz);
-	Oyster::Math3D::Float4x4 translation2 = Oyster::Math3D::TranslationMatrix(Float3(1.1, -1.5, -0.5));
+	Oyster::Math3D::Float4x4 translation2 = Oyster::Math3D::TranslationMatrix(Float3(1.1, -1.5, 0));
 	Oyster::Math3D::Float4x4 translation = Oyster::Math3D::TranslationMatrix(2 * -look.GetNormalized());
 	Oyster::Math3D::Float4x4 scale = Oyster::Math3D::ScalingMatrix(this->scale);
 	//rot = rot * rot2;

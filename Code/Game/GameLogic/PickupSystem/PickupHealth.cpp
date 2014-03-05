@@ -4,7 +4,7 @@
 using namespace GameLogic;
 
 PickupHealth::PickupHealth(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type, int objectID)
-	: Pickup(rigidBody, Pickup::PickupCollision, type, objectID, 5)
+	: Pickup(rigidBody, Pickup::PickupCollision, type, objectID, 10)
 {
 	this->hpValue = 50;
 }

@@ -93,6 +93,8 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					switch(specialType)
 					{
 						//there is no difference when parsing these specialTypes.
+						case ObjectSpecialType_PickupEnergy:
+						case ObjectSpecialType_Generic:
 						case ObjectSpecialType_PickupHealth:
 						case ObjectSpecialType_CrystalShard:
 						case ObjectSpecialType_CrystalFormation:
@@ -142,18 +144,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 
 							ParseObject(&buffer[counter], &header->worldSize, 8);
 							counter += 8;
-							objects.push_back(header);
-							break;
-						}
-
-						case ObjectSpecialType_Sky:
-						{
-							loadCgf = false; 
-							SkyAttributes* header = new SkyAttributes;
-							ParseObject(&buffer[counter], *header, counter, loadCgf);
-
-							ParseObject(&buffer[counter], &header->skySize, 4);
-							counter += 4;
 							objects.push_back(header);
 							break;
 						}
