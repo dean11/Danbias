@@ -298,4 +298,5 @@ void FirstPersonWeapon::Render()
 void FirstPersonWeapon::SetRotationSpeed(float speed)
 {
 	this->smallStepRotation = speed;
+	//this->
 }

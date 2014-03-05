@@ -1144,7 +1144,7 @@ void GameState::UIstackPush( GameStateUI *ui )
 	GameStateUI *previous = this->UIstackPeek();
 
 	++this->uiStackTop;
-	if( this->uiStackTop >= NumElementsOf(this->uiStack) )
+	if( this->uiStackTop >= (int)NumElementsOf(this->uiStack) )
 	{
 		--this->uiStackTop;
 	}

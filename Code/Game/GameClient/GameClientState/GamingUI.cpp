@@ -73,13 +73,16 @@ bool GamingUI::Init()
 	w1.shootTimer = 0.0f;
 	w1.weaponGlobalCooldown = 0.5f;
 	w1.id = 0;
+	w1.rotationSpeed = 3.5f;
 	w1.crosshair = new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
-	sharedData->weapon->SetRotationSpeed(Utility::Value::Degree( w1.weaponGlobalCooldown ));
+	sharedData->weapon->SetRotationSpeed( w1.rotationSpeed );
+	//sharedData->weapon->SetRotationSpeed(Utility::Value::Degree( w1.weaponGlobalCooldown ));
 	this->weapons.push_back(w1);
 	WeaponData w2;
 	w2.shootTimer = 0.0f;
 	w2.weaponGlobalCooldown = 0.2f;
-	w2.id = 0;
+	w2.id = 1;
+	w2.rotationSpeed = 5.6f;
 	w2.crosshair = w1.crosshair;
 	this->weapons.push_back(w2);
 
@@ -218,18 +221,20 @@ void GamingUI::OnMouseScroll( int delta, Input::Mouse* sender )
 {
 	if(delta == -1)
 	{
-		this->currentWeapon = min ( this->currentWeapon + 1, this->weapons.size() - 1 );
+		this->currentWeapon = min ( this->currentWeapon + 1, (int)this->weapons.size() - 1 );
 		
-		sharedData->weapon->SetRotationSpeed( Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
-		this->sharedData->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
+		this->weapons[this->currentWeapon].Activate(this);
+
+		//sharedData->weapon->SetRotationSpeed( Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
+		//this->sharedData->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
 	}
 	else if(delta == 1)
 	{
 		int a = this->currentWeapon - 1;
 		this->currentWeapon = max( a, 0);
-
-		sharedData->weapon->SetRotationSpeed(Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
-		this->sharedData->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
+		this->weapons[this->currentWeapon].Activate(this);
+		//sharedData->weapon->SetRotationSpeed(Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
+		//this->sharedData->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
 	}
 }
 
@@ -250,11 +255,14 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 		case SAKI_Space:	this->sharedData->network->Send( Protocol_PlayerJump() );
 		break;
 		// swap weapon to massDriver
-		case SAKI_1:		this->sharedData->network->Send( Protocol_PlayerChangeWeapon( 0 ) );
-			break; 
+		case SAKI_1:
+			this->weapons[0].Activate(this);
+		break; 
 		// swap weapon to shooting weapon
-		case SAKI_2:		this->sharedData->network->Send( Protocol_PlayerChangeWeapon( 1 ) );
-			break;
+		case SAKI_2:	
+			this->currentWeapon = min( (int)this->weapons.size() , 1 );
+			this->weapons[this->currentWeapon].Activate(this);
+		break;
 		case SAKI_Escape:	this->nextState = GameStateUI::UIState_inGameMeny;
 		break;
 	}

@@ -8,6 +8,7 @@
 #include "Buttons\Plane_UI.h"
 #include "InputManager.h"
 #include "SharedStateContent.h"
+#include <Protocols.h>
 
 namespace DanBias { namespace Client
 {
@@ -41,11 +42,17 @@ namespace DanBias { namespace Client
 	private:
 		struct WeaponData
 		{
-
+			float rotationSpeed;
 			float weaponGlobalCooldown;
 			float shootTimer;
 			Utility::DynamicMemory::SmartPointer<Plane_UI> crosshair;
 			int id;
+
+			void Activate(GamingUI* ui)
+			{
+				ui->sharedData->weapon->SetRotationSpeed( rotationSpeed );
+				ui->sharedData->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
+			}
 		};
 
 	private:
