@@ -23,7 +23,6 @@ const float default_jump_pad_stun_duration = 1.0f;
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force);
 	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target);
 
-	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
 		Object *realObjA = (Object*)objA->GetCustomTag();
@@ -337,9 +336,13 @@ const float default_jump_pad_stun_duration = 1.0f;
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
-		
+		Oyster::Math::Float3 playerPos = ((forcePushData*)(args))->p->GetPosition();
+		Oyster::Math::Float3 targetPos = realObj->GetPosition();
+		Oyster::Math::Float3 forceDir = targetPos - playerPos;
+		Oyster::Math::Float pushForce = ((forcePushData*)(args))->pushForce;
+
 		obj->SetLinearVelocity(((forcePushData*)(args))->p->GetRigidBody()->GetLinearVelocity());
-		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
+		obj->ApplyImpulse(forceDir * pushForce);
 		
 
 		DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);
