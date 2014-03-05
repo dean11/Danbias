@@ -89,6 +89,15 @@ namespace GameLogic
 				start += tempSize;
 			}
 
+/*			if(header.boundingVolume.sphere.mass == 0)
+			{
+				header.typeID = ObjectType_Static;
+			}
+			else
+			{
+				header.typeID = ObjectType_Dynamic;
+			}
+			*/
 			size += start;
 		}
 

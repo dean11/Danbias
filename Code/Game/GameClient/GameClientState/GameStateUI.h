@@ -3,10 +3,11 @@
 
 #include "Utilities.h"
 #include "NetworkClient.h"
+#include "Input.h"
 
 namespace DanBias { namespace Client
 {
-	class GameStateUI
+	class GameStateUI : public Input::Mouse::MouseEvent, Input::Keyboard::KeyboardEvent
 	{
 	public:
 		enum UIState
@@ -17,8 +18,10 @@ namespace DanBias { namespace Client
 
 			UIState_main_menu,
 			UIState_shut_down,
-			UIStat_inGameMeny,
-			UIStat_resumeGame
+			UIState_inGameMeny,
+			UIState_resumeGame,
+			UIState_matchEnd,
+
 		};
 
 		typedef ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> NetEvent;

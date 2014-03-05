@@ -22,38 +22,38 @@ namespace DanBias
 		ColorDefines::ColorDefines()
 		{
 			// TODO make nice colors 
-			tintColor[0] = Oyster::Math::Float3( 0.3f, 0.0f, 0.0f ); 
-			tintColor[1] = Oyster::Math::Float3( 0.3f, 0.0f, 0.0f );
-			tintColor[2] = Oyster::Math::Float3( 0.3f, 0.0f, 0.0f );
-			tintColor[3] = Oyster::Math::Float3( 0.0f, 0.3f, 0.0f );
-			tintColor[4] = Oyster::Math::Float3( 0.0f, 0.3f, 0.0f );
-			tintColor[5] = Oyster::Math::Float3( 0.0f, 0.3f, 0.0f );
-			tintColor[6] = Oyster::Math::Float3( 0.0f, 0.0f, 0.3f );
-			tintColor[7] = Oyster::Math::Float3( 0.0f, 0.0f, 0.3f );
-			tintColor[8] = Oyster::Math::Float3( 0.0f, 0.0f, 0.3f );
-			tintColor[9] = Oyster::Math::Float3( 0.0f, 0.0f, 0.5f );
+			tintColor[0] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[1] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[2] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[3] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[4] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[5] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[6] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[7] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[8] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
+			tintColor[9] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); 
 
-			glowTintColor[0] = Oyster::Math::Float3( 0.8f, 0.0f, 0.0f );
-			glowTintColor[1] = Oyster::Math::Float3( 0.0f, 0.8f, 0.0f );
-			glowTintColor[2] = Oyster::Math::Float3( 0.0f, 0.0f, 0.8f );
-			glowTintColor[3] = Oyster::Math::Float3( 0.6f, 0.0f, 0.3f );
-			glowTintColor[4] = Oyster::Math::Float3( 0.0f, 0.6f, 0.6f );
-			glowTintColor[5] = Oyster::Math::Float3( 0.3f, 0.0f, 0.6f );
-			glowTintColor[6] = Oyster::Math::Float3( 0.3f, 0.0f, 0.6f );
-			glowTintColor[7] = Oyster::Math::Float3( 0.0f, 0.3f, 0.6f );
-			glowTintColor[8] = Oyster::Math::Float3( 0.0f, 0.6f, 0.3f );
-			glowTintColor[9] = Oyster::Math::Float3( 0.0f, 0.9f, 0.0f );
+			glowTintColor[0] = Oyster::Math::Float3( 0.78f, 0.0f, 1.0f ); // purple
+			glowTintColor[1] = Oyster::Math::Float3( 0.0f, 0.9f, 0.0f ); // green
+			glowTintColor[2] = Oyster::Math::Float3( 0.0f, 0.0f, 0.9f ); // blue 
+			glowTintColor[3] = Oyster::Math::Float3( 1.0f, 0.0f, 0.5f ); // pink
+			glowTintColor[4] = Oyster::Math::Float3( 1.0f, 1.0f, 0.0f ); // yellow
+			glowTintColor[5] = Oyster::Math::Float3( 1.0f, 0.4f, 0.0f ); // orange
+			glowTintColor[6] = Oyster::Math::Float3( 0.0f, 1.0f, 1.0f ); // cyan
+			glowTintColor[7] = Oyster::Math::Float3( 0.9f, 0.0f, 0.0f ); // red
+			glowTintColor[8] = Oyster::Math::Float3( 0.0f, 0.0f, 0.0f ); // white
+			glowTintColor[9] = Oyster::Math::Float3( 0.5f, 1.0f, 0.0f ); // lime
 
-			colorNames[0] = L"Mr.Red";
+			colorNames[0] = L"Mr. Purple";
 			colorNames[1] = L"Mr.Green";
 			colorNames[2] = L"Mr.Blue";
 			colorNames[3] = L"Mr.Pink";
-			colorNames[4] = L"Mr.Turquoise";
-			colorNames[5] = L"Mr.Something";
-			colorNames[6] = L"Mr.Something";
-			colorNames[7] = L"Mr.Something";
-			colorNames[8] = L"Mr.Something";
-			colorNames[9] = L"Mr.Something";	
+			colorNames[4] = L"Mr.Yellow";
+			colorNames[5] = L"Mr.Orange";
+			colorNames[6] = L"Mr.Cyan";
+			colorNames[7] = L"Mr.Red";
+			colorNames[8] = L"Mr.White";
+			colorNames[9] = L"Mr.Lime";	
 		}
 
 		ColorDefines::~ColorDefines()

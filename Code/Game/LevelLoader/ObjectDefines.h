@@ -39,10 +39,11 @@ namespace GameLogic
 		ObjectSpecialType_CrystalShard,
 		ObjectSpecialType_JumpPad,
 		ObjectSpecialType_Portal,
+		ObjectSpecialType_PickupHealth,
+		
+		
 		ObjectSpecialType_Player,
 		ObjectSpecialType_Generic,
-		
-		ObjectSpecialType_PickupHealth,
 
 		ObjectSpecialType_Count,
 		ObjectSpecialType_Unknown  = -1
@@ -273,13 +274,6 @@ namespace GameLogic
 	{
 		float skySize;
 	};
-
-	struct PickupHealthAttributes : public ObjectHeader
-	{
-		float spawnTime;
-		float healthValue;
-	};
-
 	
 
 	/************************************

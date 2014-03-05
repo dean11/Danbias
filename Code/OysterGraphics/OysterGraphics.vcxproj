@@ -345,9 +345,11 @@
     <None Include="Shader\Passes\Gather\AnimHeader.hlsli" />
     <None Include="Shader\Passes\Light\LightCalc.hlsli" />
     <None Include="Shader\Passes\Light\PosManipulation.hlsli" />
+    <None Include="Shader\Passes\Light\ReadSky.hlsli" />
     <None Include="Shader\Passes\Light\SSAO.hlsli" />
     <None Include="Shader\HLSL\SimpleDebug\Debug.hlsl" />
     <None Include="Shader\Passes\Blur\BlurSharedData.hlsli" />
+    <None Include="Shader\Passes\Light\TileCulling.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Misc\OysterMath\OysterMath.vcxproj">

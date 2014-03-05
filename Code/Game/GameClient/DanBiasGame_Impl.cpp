@@ -9,6 +9,7 @@
 #include "GameClientState\MainState.h"
 #include "GameClientState\LanMenuState.h"
 #include "GameClientState\NetLoadState.h"
+#include "GameClientState\States\OptionState.h"
 #include "Utilities.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
@@ -47,7 +48,7 @@ namespace DanBias
 		SharedStateContent sharedStateContent;
 
 		bool serverOwner;
-		float capFrame;
+		float capFrame_gameplay, capFrame_gfx;
 
 		DanBiasGamePrivateData()
 		{
@@ -56,7 +57,8 @@ namespace DanBias
 			this->sharedStateContent.keyboardDevice		= nullptr;
 			this->sharedStateContent.mouseSensitivity	= Utility::Value::Radian( 0.6f );
 			this->serverOwner							= false;
-			this->capFrame								= 0;
+			this->capFrame_gameplay						= 0;
+			this->capFrame_gfx							= 0;
 		}
 
 		~DanBiasGamePrivateData()
@@ -77,8 +79,8 @@ namespace DanBias
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x		= 1280;
-		winDesc.windowSize.y		= 720;
+		winDesc.windowSize.x		= 1200;
+		winDesc.windowSize.y		= 600;
 		winDesc.windowProcCallback	= WindowCallBack;
 
 		if(! data.window->CreateWin(winDesc) )
@@ -96,6 +98,13 @@ namespace DanBias
 
 		data.sharedStateContent.network = &data.networkClient;
 
+		if( (data.sharedStateContent.background = Graphics::API::CreateTexture( L"color_white.png" ) ) == 0)
+			printf("Failed to load the default background [color_white.png]\n");
+
+		
+		if( ( data.sharedStateContent.mouseCursor = Graphics::API::CreateTexture( L"cursor.png" ) ) == 0)
+			printf("Failed to load the mouse cursor [cursor.png]\n");
+
 		// Start in main menu state
 		data.state = new Client::MainState();
 
@@ -111,25 +120,34 @@ namespace DanBias
 		// Main message loop
 		while(data.window->Frame())
 		{
+			static const float gameplay_frame_periodicy = 1.0f / 30.0f,
+							   gfx_frame_periodicy = 1.0f / 60.0f;
+
 			float dt = (float)data.timer.getElapsedSeconds();
 			data.timer.reset();
 
 			
-			data.capFrame += dt;
-			if(data.capFrame > 0.03f)
+			data.capFrame_gameplay += dt;
+			data.capFrame_gfx += dt;
+
+			if( data.capFrame_gameplay >= gameplay_frame_periodicy )
 			{
-				switch( Update(data.capFrame) )
+				switch( Update(gameplay_frame_periodicy) )
 				{
 				case Result_continue:	break;
 					case Result_quit:	return DanBiasClientReturn_Success;
 				case Result_error:		return DanBiasClientReturn_Error;
 				default:				break;
 				}
-				
-				Graphics::API::Update( data.capFrame );
+				data.capFrame_gameplay -= gameplay_frame_periodicy; 
+			}
+
+			if( data.capFrame_gfx >= gfx_frame_periodicy )
+			{
+				Graphics::API::Update( gfx_frame_periodicy );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
-				data.capFrame -= 0.03f; 
+				data.capFrame_gfx -= gfx_frame_periodicy; 
 			}
 
 			if(data.networkClient.IsConnected())
@@ -153,9 +171,9 @@ namespace DanBias
 		gfxOp.modelPath = L"..\\Content\\Models\\";
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
 		gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
-		gfxOp.ambientValue = 0.5f;
+		gfxOp.ambientValue = 0.2f;
 		gfxOp.fullscreen = false;
-		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
+		gfxOp.globalGlowTint = Math::Float3(2.0f, 2.0f, 2.0f);
 		gfxOp.globalTint = Math::Float3(1.0f, 1.0f, 1.0f);
 
 		if(Oyster::Graphics::API::Init(data.window->GetHWND(), false, gfxOp) != Oyster::Graphics::API::Sucsess)
@@ -230,6 +248,11 @@ namespace DanBias
 			case Client::GameClientState::ClientState_NetLoad:
 				data.state->Release();
 				data.state = new Client::NetLoadState();
+				stateChanged = true;
+				break;
+			case Client::GameClientState::ClientState_Options:
+				data.state->Release();
+				data.state = new Client::OptionState();
 				stateChanged = true;
 				break;
 			case Client::GameClientState::ClientState_Quit:

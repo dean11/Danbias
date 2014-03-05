@@ -201,11 +201,15 @@ void Game::SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionP
 {
 	this->onEnergyUpdateFnc = functionPointer;
 }
+void Game::SetGameOverSubscription(GameEvent::EndGameFunction functionPointer) 
+{
+	this->onEndGameFnc = functionPointer;
+}
 bool Game::Initiate()
 {
 	API::Instance().Init();
 	//API::Instance().SetSubscription(Game::PhysicsOnDestroy);
-	//API::Instance().SetFrameTimeLength(this->frameTime);
+	API::Instance().SetTimeStep(this->frameTime);
 	this->initiated = true;
 	return true;
 }

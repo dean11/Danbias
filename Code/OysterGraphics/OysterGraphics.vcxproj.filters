@@ -123,5 +123,7 @@
     <None Include="Shader\Passes\2D\Text\Header.hlsli" />
     <None Include="Shader\Passes\Gather\AnimHeader.hlsli" />
     <None Include="Shader\Passes\Gather\InstHeader.hlsli" />
+    <None Include="Shader\Passes\Light\TileCulling.hlsli" />
+    <None Include="Shader\Passes\Light\ReadSky.hlsli" />
   </ItemGroup>
 </Project>

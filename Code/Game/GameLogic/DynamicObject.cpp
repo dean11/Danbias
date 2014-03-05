@@ -63,11 +63,6 @@ void DynamicObject::ReleaseDynamicObject()
 
 	this->isReleased = true;
 	this->isActive = false;
-	this->lookDirection = Float3::null;
-	this->forwardDirection = Float3::null;
-	this->scale = Float3::null;
-	this->extraDamageOnCollision = 0;
-
 }
 bool DynamicObject::IsReleased()
 {

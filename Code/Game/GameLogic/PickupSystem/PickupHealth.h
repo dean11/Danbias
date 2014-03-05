@@ -12,7 +12,7 @@ namespace GameLogic
 	class PickupHealth : public Pickup
 	{
 	public:
-		PickupHealth(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type, int objectID, Oyster::Math::Float spawnTime, Oyster::Math::Float HealthValue);
+		PickupHealth(Oyster::Physics::ICustomBody *rigidBody, ObjectSpecialType type, int objectID);
 		virtual ~PickupHealth();
 
 		

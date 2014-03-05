@@ -33,7 +33,7 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		GameServerAPI::GameSetGameName(L"DebugServer");
 		GameServerAPI::GameSetGameTime(15);
 		//GameServerAPI::GameSetMapName(L"sculpted_normal.bias");
-		GameServerAPI::GameSetMapName(L"erik_250.bias");
+		GameServerAPI::GameSetMapName(L"OfficialWorld_v1.bias");
 		GameServerAPI::GameSetMaxClients(10);
 		
 		if(GameServerAPI::GameStart(true))

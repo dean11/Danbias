@@ -34,7 +34,8 @@ namespace DanBias { namespace Client
 	private:
 		struct MyData;
 		::Utility::DynamicMemory::UniquePointer<MyData> privData;
-		GameStateUI *currGameUI, *gameUI, *respawnUI, *statsUI, *inGameMeny; 
+		GameStateUI *uiStack[4], *gameUI, *respawnUI, *statsUI, *inGameMeny;
+		int uiStackTop;
 
 		// DEGUG KEYS
 		bool key_Reload_Shaders;
@@ -42,6 +43,7 @@ namespace DanBias { namespace Client
 		bool renderWhireframe; 
 		bool key_showStats;
 		bool renderStats;
+		bool gameOver; 
 		// !DEGUG KEYS
 
 		void Gameplay_ObjectPickup( Oyster::Network::CustomNetProtocol data );
@@ -65,11 +67,20 @@ namespace DanBias { namespace Client
 		void Gameplay_ObjectDisconnectPlayer( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectAction( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectCollision( Oyster::Network::CustomNetProtocol data );
-
+		void General_GameOver( Oyster::Network::CustomNetProtocol data );
 		//:HACK!
 		//void OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;
 		//void SetUp( DanBias::Client::C_Player* p);
 
+		void UIstackPush( GameStateUI *ui );
+		GameStateUI * UIstackPop();
+		void UIstackRemove( GameStateUI *ui );
+		GameStateUI * UIstackPeek();
+		void UIstackSet( GameStateUI *ui );
+		void UIstackClear();
+		GameStateUI::UIState UIstackUpdate( float deltaTime );
+		void UIstackRenderGUI();
+		void UIstackRenderText();
 	};
 } }
 #endif

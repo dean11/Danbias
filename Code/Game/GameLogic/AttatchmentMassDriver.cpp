@@ -13,7 +13,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(void)
 	this->hasObject = false;
 	this->currentEnergy = StandardMaxEnergy;
 	this->maxEnergy = StandardMaxEnergy;
-	this->energyChange = 0;
+	this->oldEnergy = 0;
 	this->rechargeRate = StandardrechargeRate;
 	this->force = Standardforce;
 }
@@ -23,7 +23,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(Player &owner)
 	this->currentEnergy = StandardMaxEnergy;
 	this->maxEnergy = StandardMaxEnergy;
 	this->rechargeRate = StandardrechargeRate;
-	this->energyChange = 0;
+	this->oldEnergy = 0;
 	this->force = Standardforce;
 	
 	this->owner = &owner;
@@ -91,9 +91,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_UTILLITY_PRESS:
-		if(currentEnergy >= 90.0f)
+		if(currentEnergy >= 4.0f)
 		{
-			currentEnergy -= 90.0f;
+			currentEnergy -= 4.0f;
 			ForceZip(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
@@ -111,25 +111,34 @@ void AttatchmentMassDriver::Update(float dt)
 	{
 		
 		Oyster::Math::Float3 ownerPos = owner->GetPosition();
-		Oyster::Physics::ICustomBody::State ownerState =  owner->GetRigidBody()->GetState();
-		Oyster::Math::Float3  up = -ownerState.GetOrientation().v[2];
-		up *= -0.3f;
-		Oyster::Math::Float3 pos = ownerPos + (owner->GetLookDir().GetNormalized()*2);
-		heldObject->OverrideGravity(pos, 1);
+		Oyster::Math::Float3 pos = ownerPos + owner->GetLookDir().GetNormalized()*3;
+		heldObject->OverrideGravity(pos, 0);
+	
+		Oyster::Math::Float3 lookDir = owner->GetLookDir().GetNormalized();
+		Oyster::Math::Float3 objDir = heldObject->GetState().centerPos - ownerPos;
+		Oyster::Math::Float3 crossTemp = lookDir.Cross(objDir.GetNormalized());
+		Oyster::Math::Float3 deltaPos = heldObject->GetState().centerPos - pos;
 
-		if((pos - heldObject->GetState().centerPos).GetMagnitude() > 0.001f)
+		crossTemp.Normalize();
+		crossTemp = objDir.Cross(crossTemp);
+		crossTemp.Normalize();
+
+		Oyster::Math::Float3 backToMeVelocity = 0.0f;
+
+		if(objDir.GetMagnitude() > 3.1f)
 		{
-			heldObject->SetLinearVelocity((pos - heldObject->GetState().centerPos)*200.0f);
+			backToMeVelocity = -objDir.GetNormalized()*deltaPos.GetMagnitude();
 		}
-		else
+		else if(objDir.GetMagnitude() < 2.9f)
 		{
-			heldObject->SetLinearVelocity(Oyster::Math::Float3(0.0f));
+			backToMeVelocity = objDir.GetNormalized()*deltaPos.GetMagnitude();
 		}
+
+		heldObject->SetLinearVelocity(crossTemp*10.0f*deltaPos.GetMagnitude() + backToMeVelocity + this->owner->GetRigidBody()->GetLinearVelocity());
 
 		if(currentEnergy < maxEnergy)
 		{
 			currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
-			energyChange  += rechargeRate * 0.5f;
 		}
 		
 	}
@@ -138,25 +147,22 @@ void AttatchmentMassDriver::Update(float dt)
 		if(currentEnergy < maxEnergy)
 		{
 			currentEnergy += rechargeRate;
-			energyChange  += rechargeRate * 0.5f;
 		}
 	}
 
 	if(currentEnergy > maxEnergy) 
 	{
 		currentEnergy = maxEnergy;
-		energyChange = 6;
 	}
 	else if(currentEnergy < 0.0f)
 	{
 		currentEnergy = 0.0f;
-		energyChange = 6;
 	}
 	
-	if(energyChange > 5)
+	if(oldEnergy != currentEnergy)
 	{
 		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->owner, currentEnergy);
-		energyChange -= 5;
+		oldEnergy = currentEnergy;
 	}
 }
 
@@ -183,6 +189,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+
+	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
 
 	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.9f);
 
@@ -223,6 +231,8 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	Oyster::Math::Float lenght = 20;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
+	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
+
 	Oyster::Math::Float4 pullForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.3f);
 
 	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
@@ -235,17 +245,12 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	//DEBUG:
-	MessageBeep(MB_ICONINFORMATION);
 	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized() * 1.5f;
-
-	//Do ray test first!
-	//Oyster::Collision3D::Ray r(pos, owner->GetLookDir());
-	//Oyster::Physics::API::Instance().ApplyEffect(&r, this, AttemptPickUp);
 
 	if(this->hasObject) return;
 
 	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos , 0.5);
 	Oyster::Physics::API::Instance().ApplyEffect(&hitSphere,this,AttemptPickUp);
+
 	return;
 }

@@ -62,13 +62,13 @@ namespace Oyster
 			void SendEvent(ButtonState state);
 			
 			//Set
-			void SetEnabled(bool enable);
+			void SetEnabled(bool enable) override;
 			void SetUserData(void* data);
 			void SetEventFunc(EventFunc func);
 			void SetOwner(Owner owner);
 			
 			//Get
-			bool Enabled();
+			bool Enabled() override;
 			unsigned int GetID();
 			//EventFunc GetFunctionPointer();
 			Owner GetOwner();

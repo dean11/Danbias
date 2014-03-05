@@ -45,7 +45,7 @@ namespace Oyster
 			 * Public Method Implementations
 			 ********************************************************/
 
-			void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight* Lights, int numLights)
+			void DefaultRenderer::NewFrame(Oyster::Math::Float4x4 View, Oyster::Math::Float4x4 Projection, Definitions::Pointlight** Lights, int numLights)
 			{
 				Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,0));
 				Preparations::Basic::ClearDepthStencil(Resources::Gui::depth);
@@ -59,6 +59,7 @@ namespace Oyster
 				lc.Lights = numLights;
 				lc.View = View;
 				lc.Proj = Projection;
+				lc.FoV = Core::amb;
 				lc.SSAORadius = 3;
 
 				data = Resources::Light::LightConstantsData.Map();
@@ -69,10 +70,10 @@ namespace Oyster
 					Definitions::Pointlight* plData = (Definitions::Pointlight*)data;
 					for(int i=0; i < numLights; ++i)
 					{
-						plData[i].Pos =  (View * Math::Float4(Lights[i].Pos,1)).xyz;
-						plData[i].Radius = Lights[i].Radius;
-						plData[i].Color = Lights[i].Color;
-						plData[i].Bright = Lights[i].Bright;
+						plData[i].Pos =  (View * Math::Float4(Lights[i]->Pos,1)).xyz;
+						plData[i].Radius = Lights[i]->Bright * 10;
+						plData[i].Color = Lights[i]->Color;
+						plData[i].Bright = Lights[i]->Bright;
 					}
 					//memcpy(data, Lights, sizeof(Definitions::Pointlight) * numLights);
 				Resources::Light::PointLightsData.Unmap();
@@ -129,7 +130,7 @@ namespace Oyster
 						(
 							*info, deltaTime,
 							models[i].Animation,
-							::Utility::StaticArray::NumElementsOf( models[i].Animation ),
+							models[i].numOccupiedAnimationSlots,
 							SkinTransform, BoneAnimated, BoneAbsAnimated
 						);
 
@@ -250,7 +251,7 @@ namespace Oyster
 				}
 
 				Core::PipelineManager::SetRenderPass(Resources::Light::Pass);
-
+				
 				Core::deviceContext->Dispatch((UINT)((Core::resolution.x + 15U) / 16U), (UINT)((Core::resolution.y + 15U) / 16U), 1);
 
 				BlurGlow();

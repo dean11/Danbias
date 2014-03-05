@@ -1,6 +1,8 @@
 #include "IngameMenyUI.h"
 #include <Protocols.h>
 #include "Utilities.h"
+// Debug
+
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
@@ -45,14 +47,17 @@ bool IngameMenyUI::Init()
 	this->mouseCursor	= new Plane_UI(L"cursor.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f));
 	ButtonRectangle<IngameMenyUI*> *button;
 	Float4 TextCol = Float4(0.1f,0.1f,0.1f,1.0f);
-	Float4 BackCol = Float4(1.0f);
-	Float4 HoverCol = Float4(1.2f);
-	Float4 PressCol = Float4(1.5f);
+	Float4 BackCol = Float4(0.6f, 0.6f, 0.6f, 1.0f);
+	Float4 HoverCol = Float4(0.8f, 0.8f, 0.8f, 1.0f);
+	Float4 PressCol = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-lan.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.2f, 0.2f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.3f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.5f, 0.2f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
+
+	// HACK remove this later
+	this->debugOutput 	= new Text_UI(L"", Float3(0.2f,0.8f,0.1f), Float2(0.3f,0.1f), 0.05f);
 
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &menyButtons );
@@ -67,7 +72,7 @@ void OnButtonInteract_InGame_Exit( Oyster::Event::ButtonEvent<IngameMenyUI*>& e 
 	switch( e.state )
 	{
 	case ButtonState_Released:
-		e.owner->ChangeState( GameStateUI::UIState_shut_down );
+		e.owner->ChangeState( GameStateUI::UIState_main_menu );
 		break;
 	default: break;
 	}
@@ -77,7 +82,7 @@ void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& 
 	switch( e.state )
 	{
 	case ButtonState_Released:
-		e.owner->ChangeState( GameStateUI::UIStat_resumeGame );
+		e.owner->ChangeState( GameStateUI::UIState_resumeGame );
 		break;
 	default: break;
 	}
@@ -94,6 +99,9 @@ GameStateUI::UIState IngameMenyUI::Update( float deltaTime )
 		this->mousePos.y = mouseState.y = pos.y;
 		mouseState.mouseButtonPressed = this->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
+
+	this->debugOutput->setText(std::to_wstring(Oyster::Graphics::API::GetOption().bytesUsed));
+
 	EventHandler::Instance().Update( mouseState );
 	return this->nextState;
 }
@@ -121,7 +129,7 @@ void IngameMenyUI::RenderGUI()
 
 void IngameMenyUI::RenderText() 
 {
-	//this->menyButtons.RenderText();
+	this->debugOutput->RenderText();
 }
 
 bool IngameMenyUI::Release()
@@ -132,6 +140,8 @@ bool IngameMenyUI::Release()
 	// TODO: Release UI components here.
 	if(this->background) 	delete this->background;
 	if(this->mouseCursor) 	delete this->mouseCursor;
+
+	if(this->debugOutput) 	delete this->debugOutput;
 
 	EventHandler::Instance().ReleaseCollection( &this->menyButtons );
 	this->mouseInput = 0;

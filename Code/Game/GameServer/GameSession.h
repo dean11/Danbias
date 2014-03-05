@@ -96,7 +96,7 @@ namespace DanBias
 		void General_Status					( GameLogic::Protocol_General_Status& p, DanBias::GameClient* c );
 		void General_Text					( GameLogic::Protocol_General_Text& p, DanBias::GameClient* c );
 
-		//Callback method receiving from game logic
+	private:	//Callback method receiving from game logic
 		static void ObjectMove				( GameLogic::IObjectData* movedObject );
 		static void ObjectDisabled			( GameLogic::IObjectData* movedObject );
 		static void ObjectEnabled			( GameLogic::IObjectData* movedObject );
@@ -107,8 +107,9 @@ namespace DanBias
 		static void ActionEvent				( GameLogic::IObjectData* movedObject , int actionID );
 		static void CollisionEvent			( GameLogic::IObjectData* Object , int collisionID );
 		static void EnergyUpdate			( GameLogic::IObjectData* movedObject , float energy );
-		//Private member variables
-	private:
+		static void GameOver				(  );
+
+	private:	//Private member variables
 		Utility::DynamicMemory::DynamicArray<gClient> gClients;
 		gClient sessionOwner;
 		Oyster::Thread::OysterThread worker;
@@ -119,11 +120,12 @@ namespace DanBias
 		bool isRunning;
 		float logicFrameTime;
 		float networkFrameTime;
+		float accumulatedLogicTime, accumulatedNetworkTime;
 		Utility::WinTimer logicTimer;
 		Utility::WinTimer networkTimer;
 		GameDescription description;
 
-		//TODO: Remove this uggly hax
+		//TODO: Remove this uggly thing
 		static GameSession* gameSession;
 
 

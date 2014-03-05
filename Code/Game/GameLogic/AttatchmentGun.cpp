@@ -86,5 +86,8 @@ void AttatchmentGun::BulletCollision(Oyster::Physics::ICustomBody *obj)
 			return;
 		}
 		
+		
 		((Player*)realObj)->DamageLife(this->damage);
+
+		((Player*)realObj)->SetAffectedBy(*this->owner);
 	}

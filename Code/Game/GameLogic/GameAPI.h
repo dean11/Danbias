@@ -35,6 +35,7 @@ namespace GameLogic
 		typedef void(*AnimationEventFunction)(IObjectData* player, int actionID );	// Callback method that sends killer and death timer
 		typedef void(*CollisionEventFunction)(IObjectData*object, int collisionID); 
 		typedef void(*WeaponEnergyFunction)(IObjectData*object, float energy); 
+		typedef void(*EndGameFunction)(); 
 		//etc...
 	};
 
@@ -105,7 +106,7 @@ namespace GameLogic
 			* @param Usage: enum value on what kind of action is to be taken
 			********************************************************/
 			virtual void UseWeapon(const WEAPON_FIRE &usage) = 0;
-
+			virtual void SelectWeaponAttatchment( int socketID) = 0;
 			/***/
 			virtual int GetTeamID() const = 0;
 
@@ -129,6 +130,7 @@ namespace GameLogic
 			virtual IObjectData* GetObjectAt(int ID) const				= 0;
 			virtual void AddPlayerToGame(IPlayerData *player)			= 0;
 			virtual  void RemovePlayerFromGame(IPlayerData *player)			= 0;
+			virtual void InitGameMode(float maxTimeSec, int endKillScore) = 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
@@ -197,6 +199,7 @@ namespace GameLogic
 		virtual void SetPickupSubscription(GameEvent::PickupEventFunction functionPointer) = 0;
 		virtual void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) = 0;
 		virtual void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer) = 0;
+		virtual void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer) = 0;
 	};	
 }
 

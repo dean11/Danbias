@@ -20,7 +20,7 @@ C_Object::~C_Object()
 		this->Release();
 }
 
-bool C_Object::Init(ModelInitData modelInit)
+bool C_Object::Init(ModelInitData modelInit, int Light)
 {
 	position = modelInit.position;
 	rotation = modelInit.rotation;
@@ -30,6 +30,8 @@ bool C_Object::Init(ModelInitData modelInit)
 	if(model == NULL)
 		return false;
 	model->Visible = modelInit.visible;
+	model->Tint = modelInit.tint;
+	model->GlowTint = modelInit.gtint;
 	updateWorld();
 	return true;
 }
@@ -58,6 +60,14 @@ void C_Object::setPos(Oyster::Math::Float3 newPos)
 void C_Object::addPos(Oyster::Math::Float3 deltaPos)
 {
 	this->position += deltaPos;
+}
+int C_Object::GetLight()
+{
+	return this->light;
+}
+void C_Object::SetLight(int i)
+{
+	this->light = i;
 }
 Oyster::Math::Float3 C_Object::getPos() const
 {
