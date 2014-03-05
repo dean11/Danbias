@@ -75,6 +75,7 @@ using namespace DanBias;
 					printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 					this->gameInstance.RemovePlayer(this->gClients[temp]->GetPlayer());
 					this->gClients[temp]->Invalidate();
+					clientCount--;
 				}
 				break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolFailedToRecieve:
@@ -94,6 +95,7 @@ using namespace DanBias;
 					printf("\t(%i : %s) - EventType_ProtocolFailedToSend -> disconnecting\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
 					this->gameInstance.RemovePlayer(this->gClients[temp]->GetPlayer());
 					this->gClients[temp]->Invalidate();
+					clientCount--;
 				}
 				break;
 			case NetworkClient::ClientEventArgs::EventType_ProtocolRecieved:
