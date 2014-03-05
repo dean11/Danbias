@@ -127,6 +127,7 @@ Mouse::Mouse()
 	,	isCurorLocked(0)
 	,	pixelPos()
 	,	deltaPos()
+	,	sensitivity(1.0f)
 {
 }
 Mouse::~Mouse()
@@ -201,7 +202,7 @@ void Mouse::InternalOnBtnRelease(Enum::SAMI btn)
 		w = w->next;
 	}
 }
-void Mouse::InternalOnMove(Struct::SAIPointInt2D pixelPos, Struct::SAIPointInt2D velocity)
+void Mouse::InternalOnMove(Struct::SAIPointInt2D pixelPos, Struct::SAIPointFloat2D velocity)
 {
 	for (unsigned int i = 0; i < this->mouseSubscribers.size(); i++)
 	{
@@ -348,6 +349,10 @@ void Mouse::SetPixelPos(int x, int y)
 void Mouse::ToggleCursor(bool toggler)
 {
 	this->isCurorLocked = toggler;
+}
+void Mouse::SetSensitivity(float value)
+{
+	this->sensitivity = value;
 }
 
 

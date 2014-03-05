@@ -8,10 +8,11 @@
 #include "Buttons\Plane_UI.h"
 #include "InputManager.h"
 #include "SharedStateContent.h"
+#include <Protocols.h>
 
 namespace DanBias { namespace Client
 {
-	class GamingUI : public GameStateUI, Input::Mouse::MouseEvent, Input::Keyboard::KeyboardEvent
+	class GamingUI : public GameStateUI
 	{
 	public:
 		GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera );
@@ -32,7 +33,7 @@ namespace DanBias { namespace Client
 	private: /* Overidden mouse methods */
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
 		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
-		void OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )		override;
+		void OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D velocity, Input::Mouse* sender )		override;
 		void OnMouseScroll			( int delta, Input::Mouse* sender )										override;
 
 		void OnKeyPress				( Input::Enum::SAKI key, Input::Keyboard* sender)						override;
@@ -41,8 +42,17 @@ namespace DanBias { namespace Client
 	private:
 		struct WeaponData
 		{
+			float rotationSpeed;
+			float weaponGlobalCooldown;
+			float shootTimer;
 			Utility::DynamicMemory::SmartPointer<Plane_UI> crosshair;
 			int id;
+
+			void Activate(GamingUI* ui)
+			{
+				ui->sharedData->weapon->SetRotationSpeed( rotationSpeed );
+				ui->sharedData->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
+			}
 		};
 
 	private:
@@ -54,14 +64,20 @@ namespace DanBias { namespace Client
 		Text_UI* energy;
 		Text_UI** killMessages;
 		int maxMessageCount;
-		float message_Timer;
+		const float msg_Cooldown;
+		float msg_Timer;
+		const float zip_Cooldown;
+		float zip_Timer;
 		
 		std::vector<WeaponData> weapons;
 		int currentWeapon;
+
 		bool key_forward;
 		bool key_backward;
 		bool key_strafeRight;
 		bool key_strafeLeft;
+		bool key_zipDown;
+		bool mouse_firstDown;
 		bool mouse_secondDown;
 
 		GamingUI();

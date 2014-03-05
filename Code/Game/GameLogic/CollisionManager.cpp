@@ -23,7 +23,6 @@ const float default_jump_pad_stun_duration = 1.0f;
 	void SendObjectFlying(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 force);
 	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target);
 
-	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
 		Object *realObjA = (Object*)objA->GetCustomTag();
@@ -94,18 +93,39 @@ const float default_jump_pad_stun_duration = 1.0f;
 		obj.ApplyImpulse(force);
 	}
 
-	void Portal::PortalActivated(Oyster::Physics::ICustomBody *rigidBodyPortal, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
+	void Portal::PortalActivated(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		Portal *portal = (Portal*)(rigidBodyPortal->GetCustomTag());
+		Object *realObjA = (Object*)objA->GetCustomTag();
+		Portal *portal;
+		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
 
-		if(obj->GetState().mass == 0) return;
+		if(!realObjA)	
+			return;
+		if(!realObjB)		
+			return;
+		
+		//check who is player and who is the object
+		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		{
+			portal = (Portal*)realObjA;
+		}
+		else
+		{
+			portal = (Portal*)realObjB;
+			realObjB = realObjA;
+		}
+		if(realObjB->GetRigidBody()->GetState().mass == 0) return;
 
-		Teleport(*obj,portal->portalExit);
+
+
+		Teleport(*realObjB->GetRigidBody(),portal->portalExit);
+
 	}
 
 	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target)
 	{
 		obj.SetPosition(target);
+		
 	}
 
 	void ExplosiveCrate::ExplosiveCrateCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
@@ -156,14 +176,14 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 		Oyster::Math::Float3 explosionCenterPos = ExplosionSource->GetPosition();
 		Oyster::Math::Float3 hitObjectPos = obj->GetState().centerPos;
-		Oyster::Math::Float3 force = (((hitObjectPos- explosionCenterPos).GetNormalized()) * ExplosionSource->pushForceMagnitude);
+		Oyster::Math::Float3 force = (((hitObjectPos - explosionCenterPos).GetNormalized()) * ExplosionSource->pushForceMagnitude);
 
 
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
 		{
 			Player *hitPlayer = (Player*)realObj;
 			hitPlayer->DamageLife(ExplosionSource->extraDamageOnCollision);
-			realObj->GetRigidBody()->ApplyImpulse(force * 5);
+			realObj->GetRigidBody()->ApplyImpulse(-force * 20);
 			//do shredding damage
 		}
 
@@ -316,9 +336,13 @@ const float default_jump_pad_stun_duration = 1.0f;
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
-		
+		Oyster::Math::Float3 playerPos = ((forcePushData*)(args))->p->GetPosition();
+		Oyster::Math::Float3 targetPos = realObj->GetPosition();
+		Oyster::Math::Float3 forceDir = targetPos - playerPos;
+		Oyster::Math::Float pushForce = ((forcePushData*)(args))->pushForce;
+
 		obj->SetLinearVelocity(((forcePushData*)(args))->p->GetRigidBody()->GetLinearVelocity());
-		obj->ApplyImpulse(((forcePushData*)(args))->pushForce);
+		obj->ApplyImpulse(forceDir * pushForce);
 		
 
 		DynamicObject *dynamicObj = dynamic_cast<DynamicObject*>(realObj);

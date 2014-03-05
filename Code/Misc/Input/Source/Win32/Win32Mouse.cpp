@@ -8,7 +8,7 @@ using namespace Input::Enum;
 using namespace Input::Struct;
 using namespace Input::Typedefs;
 
-void MapButton(RAWMOUSE& rawMouse, bool &isUp, Enum::SAMI& btn, int& delta, Struct::SAIPointInt2D& vel, unsigned int& mcode)
+void MapButton(RAWMOUSE& rawMouse, bool &isUp, Enum::SAMI& btn, int& delta, Struct::SAIPointFloat2D& vel, unsigned int& mcode)
 {
 	if(rawMouse.lLastX != 0 || rawMouse.lLastY != 0)
 	{
@@ -159,12 +159,15 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 	bool isUp = true;
 	Enum::SAMI btn = Enum::SAMI_Unknown;
 	int delta = 0;
-	Struct::SAIPointInt2D velocity;
+	Struct::SAIPointFloat2D velocity;
 	unsigned int makeCode = 0;
 	MapButton(mouse, isUp, btn, delta, velocity, makeCode);
 
 	if(velocity.Length() != 0)
 	{
+		velocity.x *= this->sensitivity;
+		velocity.y *= this->sensitivity;
+
 		this->pixelPos.x += velocity.x;
 		this->pixelPos.y += velocity.y;
 
