@@ -37,7 +37,7 @@ int GameModeType::EndConditionMet( Utility::DynamicMemory::DynamicArray<Player*>
 	{
 		if(players[i])
 		{
-			if(players[i]->GetKills() > players[highetsScoreID]->GetKills() )
+			if(!players[highetsScoreID] || (players[i]->GetKills() > players[highetsScoreID]->GetKills() ) )
 			{
 				highetsScore = i;
 			}

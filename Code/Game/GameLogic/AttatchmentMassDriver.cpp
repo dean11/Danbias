@@ -58,7 +58,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	case WEAPON_USE_SECONDARY_PRESS:
 		if(this->hasObject)
 		{
-			goto CASE_WEAPON_INTERRUPT;
+			//goto CASE_WEAPON_INTERRUPT;
 		}
 		else if( currentEnergy >= 1.0f )
 		{
@@ -192,12 +192,11 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
 
-	pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.9f);
-
+	
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 
 	forcePushData args;
-	args.pushForce = pushForce;
+	args.pushForce = this->force;
 	args.p = this->owner;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
@@ -233,11 +232,9 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
 
-	Oyster::Math::Float4 pullForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force * 0.3f);
-
 	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
-	args.pushForce = -pullForce;
+	args.pushForce = -this->force;
 	args.p = this->owner;
 
 	Oyster::Physics::API::Instance().ApplyEffect(&hitCone,&args,ForcePushAction);

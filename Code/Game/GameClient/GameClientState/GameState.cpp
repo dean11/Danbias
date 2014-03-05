@@ -104,6 +104,8 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
+	this->privData->mouseInput->SetSensitivity(1.7f);
+
 	// create UI states
 	this->gameUI = new GamingUI( &shared, &this->privData->camera );
 	this->respawnUI = new RespawnUI( &shared );
@@ -146,6 +148,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	C_Player *p = new C_Player();
 	if( p->Init(modelData) )
 	{
+		
 		// RB DEBUG
 		p->InitRB( RBData );
 		// !RB DEBUG 
@@ -157,6 +160,16 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		p->SetTint(colors.getTintColor(id));
 		p->SetGlowTint(colors.getGlowColor(id));
 		
+		Graphics::Definitions::Pointlight pl;
+		pl.Pos = p->getPos();
+		pl.Bright = 0.6f;
+		pl.Radius = 100;
+		pl.Color = p->GetGlowTint();
+		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
+		p->SetLight(p->GetId());
+		(newLight)->Render();
+		(*this->privData->lights)[p->GetId()] = newLight;
+
 		(this->privData->players)[id] = p;
 		
 		if( isMyPlayer )
@@ -253,7 +266,8 @@ bool GameState::Render()
 
 	Oyster::Graphics::API::NewFrame();
 	
-	
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
+	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -355,9 +369,6 @@ bool GameState::Render()
 	Oyster::Graphics::API::StartGuiRender();
 	this->UIstackRenderGUI();
 
-
-	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
-	this->privData->weapon->Render();
 
 	if(renderStats)
 	{	
@@ -625,6 +636,14 @@ void GameState::Gameplay_ObjectScale( CustomNetProtocol data )
 		// RB DEBUG 
 		object->setRBScale ( decoded.scale );  
 		// !RB DEBUG 
+		if(object->GetLight()!=-1)
+		{
+			std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>::iterator light = privData->lights->find(object->GetLight());
+			if(light != privData->lights->end())
+			{
+				light->second->setPos(object->getPos());
+			}
+		}
 	}
 }
 void GameState::Gameplay_ObjectRotation( CustomNetProtocol data )
@@ -1139,7 +1158,7 @@ void GameState::UIstackPush( GameStateUI *ui )
 	GameStateUI *previous = this->UIstackPeek();
 
 	++this->uiStackTop;
-	if( this->uiStackTop >= NumElementsOf(this->uiStack) )
+	if( this->uiStackTop >= (int)NumElementsOf(this->uiStack) )
 	{
 		--this->uiStackTop;
 	}

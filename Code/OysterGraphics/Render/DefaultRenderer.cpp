@@ -71,7 +71,7 @@ namespace Oyster
 					for(int i=0; i < numLights; ++i)
 					{
 						plData[i].Pos =  (View * Math::Float4(Lights[i]->Pos,1)).xyz;
-						plData[i].Radius = Lights[i]->Bright * 10;
+						plData[i].Radius = Lights[i]->Radius;
 						plData[i].Color = Lights[i]->Color;
 						plData[i].Bright = Lights[i]->Bright;
 					}
