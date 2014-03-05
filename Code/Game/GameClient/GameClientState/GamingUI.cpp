@@ -256,8 +256,6 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 			this->currentWeapon = min( (int)this->weapons.size() , 1 );
 			this->weapons[this->currentWeapon].Activate(this);
 		break;
-		case SAKI_Escape:	this->nextState = GameStateUI::UIState_inGameMeny;
-		break;
 	}
 }
 void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
@@ -274,6 +272,8 @@ void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 		case SAKI_D:		this->key_strafeRight = false;
 		break;
 		case SAKI_E:		this->key_zipDown = false;
+		break;
+		case SAKI_Escape:	this->nextState = GameStateUI::UIState_in_game_meny;
 		break;
 	}
 

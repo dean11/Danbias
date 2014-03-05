@@ -81,7 +81,7 @@ void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& 
 	switch( e.state )
 	{
 	case ButtonState_Released:
-		e.owner->ChangeState( GameStateUI::UIState_resumeGame );
+		e.owner->ChangeState( GameStateUI::UIState_resume_game );
 		break;
 	default: break;
 	}
@@ -96,12 +96,13 @@ GameStateUI::UIState IngameMenyUI::Update( float deltaTime )
 
 		this->mousePos.x = mouseState.x = pos.x;
 		this->mousePos.y = mouseState.y = pos.y;
-		mouseState.mouseButtonPressed = this->shared->mouseDevice->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+		mouseState.mouseButtonPressed = false;
 	}
+	EventHandler::Instance().Update( mouseState );
 
+	// HACK: debug 
 	this->debugOutput->setText(std::to_wstring(Oyster::Graphics::API::GetOption().bytesUsed));
 
-	EventHandler::Instance().Update( mouseState );
 	return this->nextState;
 }
 
@@ -163,4 +164,27 @@ void IngameMenyUI::DeactivateInput()
 	this->render = false;
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
+}
+
+void IngameMenyUI::OnMouseRelease( SAMI key, Mouse* sender )
+{
+	if( sender == this->shared->mouseDevice && key == SAMI_MouseLeftBtn )
+	{
+		MouseInput mouseState;
+		{
+			mouseState.x = this->mousePos.x;
+			mouseState.y = this->mousePos.y;
+			mouseState.mouseButtonPressed = true;
+		}
+
+		EventHandler::Instance().Update( mouseState );
+	}
+}
+
+void IngameMenyUI::OnKeyRelease( SAKI key, Keyboard* sender )
+{
+	if( key == SAKI_Escape )
+	{
+		this->ChangeState( UIState_previous );
+	}
 }

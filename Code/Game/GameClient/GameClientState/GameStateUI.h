@@ -14,13 +14,13 @@ namespace DanBias { namespace Client
 		enum UIState
 		{
 			UIState_same,
+			UIState_previous,
 			UIState_gaming,
 			UIState_main_menu,
 			UIState_shut_down,
-			UIState_inGameMeny,
-			UIState_resumeGame,
-			UIState_matchEnd,
-
+			UIState_in_game_meny,
+			UIState_resume_game,
+			UIState_match_end
 		};
 
 		typedef ::Oyster::Network::NetEvent<::Oyster::Network::NetworkClient*, ::Oyster::Network::NetworkClient::ClientEventArgs> NetEvent;

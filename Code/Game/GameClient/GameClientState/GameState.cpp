@@ -211,6 +211,10 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 		break;
 	case DanBias::Client::GameStateUI::UIState_same:
 		break;
+	case DanBias::Client::GameStateUI::UIState_previous:
+		this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
+		this->UIstackPop();
+		break;
 	case DanBias::Client::GameStateUI::UIState_gaming:
 		break;
 	case DanBias::Client::GameStateUI::UIState_main_menu:
@@ -226,13 +230,13 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 
 		}
 		break;
-	case GameStateUI::UIState_inGameMeny:
+	case GameStateUI::UIState_in_game_meny:
 		{
 			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
 			this->UIstackPush( this->inGameMeny );
 		}
 		break;
-	case GameStateUI::UIState_resumeGame:
+	case GameStateUI::UIState_resume_game:
 		{
 			this->UIstackPeek()->ChangeState( DanBias::Client::GameStateUI::UIState_same );
 			this->UIstackPop();

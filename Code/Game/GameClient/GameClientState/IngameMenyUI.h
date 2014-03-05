@@ -33,11 +33,11 @@ namespace DanBias { namespace Client
 		void DeactivateInput();
 
 	private: /* Overidden mouse methods */
-		
+		void OnMouseRelease( Input::Enum::SAMI key, Input::Mouse* sender );
+		void OnKeyRelease( Input::Enum::SAKI key, Input::Keyboard* sender );
 
 	private:
-		// TODO add multiple UI 
-		Oyster::Math::Float3 mousePos;
+		::Oyster::Math::Float3 mousePos;
 		Plane_UI* mouseCursor;
 		Plane_UI* background;
 		EventButtonCollection menyButtons;
