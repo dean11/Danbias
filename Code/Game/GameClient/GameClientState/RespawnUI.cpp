@@ -6,19 +6,20 @@ using namespace ::Utility::Value;
 using namespace ::Oyster::Math;
 
 RespawnUI::RespawnUI() :
-	GameStateUI()
+	GameStateUI( nullptr )
 {
 	/* Should never be called! */
-	this->netClient = nullptr;
 	this->countDown = 0.0f;
+	this->text	= nullptr;
+	this->render = false;
 }
 
-RespawnUI::RespawnUI( NetworkClient *connection, float delay ) :
-	GameStateUI()
+RespawnUI::RespawnUI(  SharedStateContent* shared  ) :
+	GameStateUI( shared )
 {
-	this->netClient = connection;
-	this->countDown = delay;
+	this->countDown = 0.0f;
 	this->text	= nullptr;
+	this->render = false;
 }
 
 RespawnUI::~RespawnUI() { /* Do nothing */ }
@@ -39,12 +40,12 @@ GameStateUI::UIState RespawnUI::Update( float deltaTime )
 
 bool RespawnUI::HaveGUIRender() const
 {
-	return false; // TODO: change to true when we want UI elements like a crosshair
+	return false;
 }
 
 bool RespawnUI::HaveTextRender() const
 {
-	return true; // TODO: change to true when we want UI elements like a chat window
+	return this->render;
 }
 
 void RespawnUI::RenderGUI() 
@@ -60,6 +61,8 @@ void RespawnUI::RenderText()
 
 bool RespawnUI::Release()
 {
+	this->DeactivateInput();
+
 	if(this->text)
 		delete this->text;
 	if(this->deathCounter)
@@ -76,3 +79,16 @@ void RespawnUI::ChangeState( UIState next )
 	this->nextState = next;
 }
 
+void RespawnUI::ActivateInput()
+{
+	this->render = true;
+	this->shared->mouseDevice->AddMouseEvent( this );
+	this->shared->keyboardDevice->AddKeyboardEvent( this );
+}
+
+void RespawnUI::DeactivateInput()
+{
+	this->render = false;
+	this->shared->mouseDevice->RemoveMouseEvent( this );
+	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
+}

@@ -10,7 +10,7 @@ namespace DanBias { namespace Client
 	class StatsUI : public GameStateUI
 	{
 	public:
-		StatsUI();
+		StatsUI( SharedStateContent* shared );
 		virtual ~StatsUI();
 		bool Init( int maxNROfPlayers );
 
@@ -25,6 +25,9 @@ namespace DanBias { namespace Client
 		bool updateKillScore( int id, int kills);
 		bool updateDeatchScore( int id, int deaths); 
 		void ChangeState( UIState next );
+
+		void ActivateInput();
+		void DeactivateInput();
 
 	private:
 		// TODO add multiple UI elements
@@ -48,6 +51,9 @@ namespace DanBias { namespace Client
 		float textHeightPos; 
 		float textHeight;
 		float textWidth;
+		bool render;
+
+		StatsUI();
 	};
 } }
 

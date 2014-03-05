@@ -105,18 +105,17 @@ bool GameState::Init( SharedStateContent &shared )
 	}
 
 	// create UI states
-	this->gameUI = new GamingUI(&shared, &this->privData->camera);
-	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
-	this->statsUI = new StatsUI();
-	this->inGameMeny = new IngameMenyUI(&shared);
+	this->gameUI = new GamingUI( &shared, &this->privData->camera );
+	this->respawnUI = new RespawnUI( &shared );
+	this->statsUI = new StatsUI( &shared );
+	this->inGameMeny = new IngameMenyUI( &shared );
 	((GamingUI*)gameUI)->Init();
 	((RespawnUI*)respawnUI)->Init();
 	((IngameMenyUI*)inGameMeny)->Init();
 
 	this->uiStack[0] = this->gameUI;
 	this->uiStackTop = 0;
-	this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->gameUI );
-	this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->gameUI );
+	this->gameUI->ActivateInput();
 
 	// HACK hardcoded max nr of players
 	((StatsUI*)statsUI)->Init(10);
@@ -390,8 +389,7 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
-		this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
-		this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
+		this->UIstackPeek()->DeactivateInput();
 
 		auto playerObject = this->privData->players.begin();
 		for( ; playerObject != this->privData->players.end(); ++playerObject )
@@ -1147,21 +1145,16 @@ void GameState::UIstackPush( GameStateUI *ui )
 	}
 	else
 	{
-		this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)previous );
-		this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)previous );
-
+		previous->DeactivateInput();
 		this->uiStack[this->uiStackTop] = ui;
-
-		this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-		this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+		this->UIstackPeek()->ActivateInput();
 	}
 }
 
 GameStateUI * GameState::UIstackPop()
 {
 	GameStateUI *previous = this->UIstackPeek();
-	this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-	this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+	this->UIstackPeek()->DeactivateInput();
 
 	if( this->uiStackTop > 0 )
 	{
@@ -1172,8 +1165,7 @@ GameStateUI * GameState::UIstackPop()
 		this->UIstackClear();
 	}
 
-	this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-	this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+	this->UIstackPeek()->ActivateInput();
 
 	return previous;
 }
@@ -1212,28 +1204,24 @@ void GameState::UIstackSet( GameStateUI *ui )
 {
 	if( ui )
 	{
-		this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-		this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+		this->UIstackPeek()->DeactivateInput();
 
 		this->uiStack[0] = ui;
 		this->uiStackTop = 0;
 
-		this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-		this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+		this->UIstackPeek()->ActivateInput();
 	}
 	else this->UIstackClear();
 }
 
 void GameState::UIstackClear()
 {
-	this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-	this->privData->keyboardInput->RemoveKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+	this->UIstackPeek()->DeactivateInput();
 
 	this->uiStack[0] = this->gameUI;
 	this->uiStackTop = 0;
 
-	this->privData->mouseInput->AddMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
-	this->privData->keyboardInput->AddKeyboardEvent( (Input::Keyboard::KeyboardEvent*)this->UIstackPeek() );
+	this->UIstackPeek()->ActivateInput();
 }
 
 GameStateUI::UIState GameState::UIstackUpdate( float deltaTime )

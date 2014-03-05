@@ -3,7 +3,6 @@
 #include "Utilities.h"
 // Debug
 
-
 using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
 using namespace ::GameLogic;
@@ -14,24 +13,24 @@ using namespace ::Input::Enum;
 using namespace ::Oyster::Event;
 
 IngameMenyUI::IngameMenyUI() :
-	GameStateUI()
+	GameStateUI( nullptr )
 {
 	/* Should never be called! */
-	this->mouseInput		= nullptr;
 	this->mousePos			= Float3( 0.0f );
 	this->background		= nullptr;
 	this->mouseCursor		= nullptr;
 	this->nextState 		= GameStateUI::UIState_same;
+	this->render			= false;
 }
 
 IngameMenyUI::IngameMenyUI( SharedStateContent* shared ) :
-	GameStateUI()
+	GameStateUI( shared )
 {
-	this->mouseInput = shared->mouseDevice;
 	this->mousePos = Float3( 0.0f );
 	this->background		= nullptr;
 	this->mouseCursor		= nullptr;
 	this->nextState			= GameStateUI::UIState_same;
+	this->render			= false;
 }
 
 IngameMenyUI::~IngameMenyUI() { }
@@ -93,11 +92,11 @@ GameStateUI::UIState IngameMenyUI::Update( float deltaTime )
 	MouseInput mouseState;
 	{
 		::Input::Struct::SAIPointFloat2D pos;
-		this->mouseInput->GetNormalizedPosition( pos );
+		this->shared->mouseDevice->GetNormalizedPosition( pos );
 
 		this->mousePos.x = mouseState.x = pos.x;
 		this->mousePos.y = mouseState.y = pos.y;
-		mouseState.mouseButtonPressed = this->mouseInput->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
+		mouseState.mouseButtonPressed = this->shared->mouseDevice->IsBtnDown( ::Input::Enum::SAMI_MouseLeftBtn );
 	}
 
 	this->debugOutput->setText(std::to_wstring(Oyster::Graphics::API::GetOption().bytesUsed));
@@ -108,17 +107,17 @@ GameStateUI::UIState IngameMenyUI::Update( float deltaTime )
 
 bool IngameMenyUI::HaveGUIRender() const
 {
-	return true; 
+	return this->render; 
 }
 
 bool IngameMenyUI::HaveTextRender() const
 {
-	return true; 
+	return this->render; 
 }
 
 void IngameMenyUI::RenderGUI() 
 {
-	if(this->mouseInput->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
+	if(this->shared->mouseDevice->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
 		mouseCursor->RenderTexture( this->mousePos, Float2(0.15f));
 	else
 		mouseCursor->RenderTexture( this->mousePos, Float2(0.15f, 0.24) );
@@ -135,7 +134,7 @@ void IngameMenyUI::RenderText()
 bool IngameMenyUI::Release()
 {
 	//Release as input event
-	this->mouseInput->RemoveMouseEvent(this);
+	this->DeactivateInput();
 
 	// TODO: Release UI components here.
 	if(this->background) 	delete this->background;
@@ -144,15 +143,24 @@ bool IngameMenyUI::Release()
 	if(this->debugOutput) 	delete this->debugOutput;
 
 	EventHandler::Instance().ReleaseCollection( &this->menyButtons );
-	this->mouseInput = 0;
 	return true;
 }
 
-void IngameMenyUI::ReadKeyInput()
-{
-
-}
 void IngameMenyUI::ChangeState( UIState next )
 {
 	this->nextState = next;
+}
+
+void IngameMenyUI::ActivateInput()
+{
+	this->render = true;
+	this->shared->mouseDevice->AddMouseEvent( this );
+	this->shared->keyboardDevice->AddKeyboardEvent( this );
+}
+
+void IngameMenyUI::DeactivateInput()
+{
+	this->render = false;
+	this->shared->mouseDevice->RemoveMouseEvent( this );
+	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
 }
