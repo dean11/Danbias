@@ -574,7 +574,7 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			// set given players HP 
-			((GamingUI*)this->UIstackPeek())->SetHPtext( ::std::to_wstring(decoded.healthLost) );
+			((GamingUI*)this->UIstackPeek())->SetHPtext( ::std::to_wstring((int)decoded.healthLost) );
 		}
 	}
 }

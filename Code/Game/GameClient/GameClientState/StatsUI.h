@@ -33,7 +33,7 @@ namespace DanBias { namespace Client
 		Text_UI* killText;
 		Text_UI* deathText;
 
-		int * id; 
+		int * playerId; 
 		Text_UI** names;
 		Text_UI** kills;
 		Text_UI** death;
