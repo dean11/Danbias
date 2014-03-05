@@ -85,7 +85,7 @@ bool GameState::Init( SharedStateContent &shared )
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 100.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 200.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	// DEGUG KEYS
@@ -162,8 +162,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		
 		Graphics::Definitions::Pointlight pl;
 		pl.Pos = p->getPos();
-		pl.Bright = 0.6f;
-		pl.Radius = 100;
+		pl.Bright = 0.3f;
+		pl.Radius = 20;
 		pl.Color = p->GetGlowTint();
 		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
 		p->SetLight(p->GetId());

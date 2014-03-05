@@ -9,6 +9,7 @@ Core::Buffer::Buffer()
 
 Core::Buffer::~Buffer()
 {
+	Core::UsedMem -= (this->mElementCount * this->mElementSize);
 	SAFE_RELEASE(mBuffer);
 }
 
