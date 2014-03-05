@@ -22,11 +22,17 @@ namespace GameLogic
 		virtual void UseAttatchment(const WEAPON_FIRE &usage, float dt) = 0;
 		virtual void Update(float dt) = 0;
 
+		virtual Player* GetOwner()							{ return owner; }  
+		virtual Oyster::Math::Float GetCurrentVelocity()	{ return currentEnergy ? *currentEnergy : 0.0f; } 
+		virtual Oyster::Math::Float GetPreviousVelocity()	{ return previousEnergy ? *previousEnergy : 0.0f; } 
+		virtual Oyster::Math::Float IsModified()			{ return !((currentEnergy ? *currentEnergy : 0.0f) == (previousEnergy ? *previousEnergy : 0.0f)); } 
+
 	private:
 
 	protected:
 		Player *owner;
-
+		Oyster::Math::Float* currentEnergy;
+		Oyster::Math::Float* previousEnergy;
 	};
 }
 #endif

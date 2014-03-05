@@ -266,9 +266,6 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView( this->privData->camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
-	
-	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
-	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -313,6 +310,9 @@ bool GameState::Render()
 
 		}
 	}
+
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
+	this->privData->weapon->Render();
 
 #ifdef _DEBUG //RB DEBUG render wire frame 
 		if(this->renderWhireframe)
@@ -392,6 +392,7 @@ bool GameState::Render()
 		Oyster::Graphics::API::RenderText( L"GAME OVER", Float3(0.2f,0.1f,0.1f), Float2(0.6f,0.1f), 0.1f);
 		Oyster::Graphics::API::RenderText( L"press 'ESC' to continue", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
 	}
+
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }

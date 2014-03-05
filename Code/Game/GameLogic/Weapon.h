@@ -41,6 +41,8 @@ namespace GameLogic
 		int currentNrOfAttatchments;
 		IAttatchment *selectedAttatchment;
 		int selectedSocketID;
+		Oyster::Math::Float currentEnergy;
+		Oyster::Math::Float previousEnergy;
 	};
 
 }
