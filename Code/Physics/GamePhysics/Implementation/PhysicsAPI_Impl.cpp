@@ -93,7 +93,8 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btSphereShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(radius);
 
 	state.centerPos = position;
 	state.reach = Float3(radius, radius, radius);
@@ -134,7 +135,8 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btBoxShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(Min(halfSize.x, Min(halfSize.y, halfSize.z)));
 
 	state.centerPos = position;
 	state.reach = halfSize;
@@ -175,7 +177,8 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btCylinderShape*>(collisionShape)->setMargin(0.5f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(Min(halfSize.x, Min(halfSize.y, halfSize.z)));
 
 	state.centerPos = position;
 	state.reach = halfSize;
@@ -218,7 +221,8 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btCapsuleShape*>(collisionShape)->setMargin(0.2f);
+	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdSweptSphereRadius(Min(height, radius));
 
 	state.centerPos = position;
 	state.reach = Float3(radius, height, radius);
@@ -269,7 +273,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
+	//dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);

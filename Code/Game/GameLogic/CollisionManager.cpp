@@ -14,8 +14,9 @@
 #include "PickupSystem/PickupHealth.h"
 
 using namespace Oyster;
-
 using namespace GameLogic;
+
+const float default_jump_pad_stun_duration = 1.0f;
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss);
 	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage);
@@ -25,7 +26,7 @@ using namespace GameLogic;
 	//Physics::ICustomBody::SubscriptMessage
 	void Player::PlayerCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		Object *realObjA = ((Object*)(objA->GetCustomTag()));
+		Object *realObjA = (Object*)objA->GetCustomTag();
 		Player *player;
 		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
 
@@ -33,7 +34,7 @@ using namespace GameLogic;
 			return;
 		if(!realObjB)		
 			return;
-
+		
 		//check who is player and who is the object
 		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
 		{
@@ -49,29 +50,21 @@ using namespace GameLogic;
 		{
 		case ObjectSpecialType::ObjectSpecialType_Generic:
 			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
-			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
-		
 		case ObjectSpecialType::ObjectSpecialType_StandardBox:
 			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
-			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
-			//return Physics::ICustomBody::SubscriptMessage_none;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_World:
 			PlayerVObject(*player,*realObjB, kineticEnergyLoss);
-			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
-
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
 			PlayerVLethalObject(*player,*realObjB, kineticEnergyLoss,realObjB->GetExtraDamageOnCollision());
-			//player->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			break;
 		}
 		// send collision event message
 		((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_BasicCollision);
-		//return Physics::ICustomBody::SubscriptMessage_none;
 	}
 
 	void JumpPad::JumpPadActivated(Oyster::Physics::ICustomBody *rigidBodyJumpPad, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -87,7 +80,11 @@ using namespace GameLogic;
 			SendObjectFlying(*obj, jumpPad->pushForce);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
-			SendObjectFlying(*obj, jumpPad->pushForce);
+			{
+				Player *player = (Player*)realObj;
+				player->Stun( default_jump_pad_stun_duration );
+				SendObjectFlying(*obj, jumpPad->pushForce);
+			}
 			break;
 		}
 	}
@@ -113,8 +110,6 @@ using namespace GameLogic;
 
 	void ExplosiveCrate::ExplosiveCrateCollision(Oyster::Physics::ICustomBody *objA, Oyster::Physics::ICustomBody *objB, Oyster::Math::Float kineticEnergyLoss)
 	{
-		
-
 		Object *realObjA = ((Object*)(objA->GetCustomTag()));
 		Object *realObjB = (Object*)objB->GetCustomTag();
 		ExplosiveCrate* crate;
@@ -178,9 +173,7 @@ using namespace GameLogic;
 
 		ExplosionSource->GetRigidBody()->MoveToLimbo();
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
-
 	}
-
 
 	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss)
 	{
@@ -220,15 +213,9 @@ using namespace GameLogic;
 	
 	void PlayerVLethalObject(Player &player, Object &obj, Oyster::Math::Float kineticEnergyLoss, Oyster::Math::Float ExtraDamage)
 	{
-		Oyster::Math::Float damageDone = 0;
-		Oyster::Math::Float forceThreashHold = 200000;
-
-		if(kineticEnergyLoss > forceThreashHold) //should only take damage if the force is high enough
-		{
-			damageDone = (kineticEnergyLoss * 0.10f);
-			damageDone += ExtraDamage;
-			//player.DamageLife(damageDone);
-		}
+		PlayerVObject(player, obj, kineticEnergyLoss);
+		// always take extra DMG when in contact with leathal object
+		player.DamageLife(ExtraDamage);
 	}
 
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -248,16 +235,23 @@ using namespace GameLogic;
 			return;
 		}
 
-		Player *player = realObjA->getManipulatingPlayer();
-		if( player != nullptr )
-		{
-			player->UseWeapon( WEAPON_INTERRUPT );
-		}
+		Math::Float3 deltaVelocity = realObjA->GetRigidBody()->GetLinearVelocity() - realObjB->GetRigidBody()->GetLinearVelocity();
+		Math::Float velocityNorm = deltaVelocity.Dot( deltaVelocity );
 
-		player = realObjB->getManipulatingPlayer();
-		if( player != nullptr )
+		static const Math::Float velocity_norm_threshold_interrupt_weapon = 3600.0f; // 60 m/s deltaVelocity
+		if( velocityNorm >= velocity_norm_threshold_interrupt_weapon )
 		{
-			player->UseWeapon( WEAPON_INTERRUPT );
+			Player *player = realObjA->getManipulatingPlayer();
+			if( player != nullptr )
+			{
+				player->UseWeapon( WEAPON_INTERRUPT );
+			}
+
+			player = realObjB->getManipulatingPlayer();
+			if( player != nullptr )
+			{
+				player->UseWeapon( WEAPON_INTERRUPT );
+			}
 		}
 
 
@@ -296,10 +290,6 @@ using namespace GameLogic;
 				//realObjB is the winner and will change As ownership to B
 			}
 		}
-		
-
-
-
 	}
 
 	Oyster::Physics::ICustomBody::SubscriptMessage Player::PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)

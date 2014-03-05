@@ -131,25 +131,36 @@ namespace GameLogic
 	struct Protocol_PlayerChangeWeapon :public Oyster::Network::CustomProtocolObject
 	{
 		
-		int ID;
+		short weaponId;
 
 		Protocol_PlayerChangeWeapon()
 		{
 			this->protocol[0].value = protocol_Gameplay_PlayerChangeWeapon;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+									
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			
+			weaponId = -1;
 		}
 		Protocol_PlayerChangeWeapon(Oyster::Network::CustomNetProtocol& p)
 		{
-
+			weaponId = p[1].value.netShort;
 		}
-		const Protocol_PlayerChangeWeapon& operator=(Oyster::Network::CustomNetProtocol& val)
+		Protocol_PlayerChangeWeapon(int weaponID)
 		{
-			return *this;
+			this->protocol[0].value = protocol_Gameplay_PlayerChangeWeapon;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+									
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+			
+			weaponId = weaponID;
+
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
-			return protocol;
-		}
+			this->protocol[1].value = weaponId;
+			return protocol;		 
+		}	
 
 	private:
 		Oyster::Network::CustomNetProtocol protocol;

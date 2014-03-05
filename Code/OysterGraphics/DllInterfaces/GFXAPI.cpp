@@ -7,7 +7,10 @@
 #include "../FileLoader/GeneralLoader.h"
 #include "../Model/ModelInfo.h"
 #include "../Render/GuiRenderer.h"
+#include "Utilities.h" // need StaticArray::NumElementsOf
 #include <vld.h>
+
+using ::Utility::StaticArray::NumElementsOf;
 
 namespace Oyster
 {
@@ -15,9 +18,9 @@ namespace Oyster
 	{
 		namespace
 		{
-			Math::Float4x4 View;
+			Math::Float4x4 View = Math::Float4x4::identity;
 			Math::Float4x4 Projection;
-			std::vector<Definitions::Pointlight> Lights;
+			std::vector<Definitions::Pointlight*> Lights;
 			float deltaTime;
 			int MostModel;
 #ifdef _DEBUG
@@ -45,9 +48,9 @@ namespace Oyster
 			Render::Resources::Init();
 
 			Definitions::PostData pd;
-			pd.Amb = o.ambientValue;
-			pd.GlowTint = o.globalGlowTint;
-			pd.Tint = o.globalTint;
+			Core::amb = pd.Amb = o.ambientValue;
+			Core::gGTint = pd.GlowTint = o.globalGlowTint;
+			Core::gTint = pd.Tint = o.globalTint;
 
 			void* data = Render::Resources::Post::Data.Map();
 			memcpy(data,&pd,sizeof(Definitions::PostData));
@@ -141,13 +144,19 @@ namespace Oyster
 			{
 				memcpy(data,&pd,sizeof(Definitions::PostData));
 				Render::Resources::Post::Data.Unmap();
-
-				if(option.resolution != Core::resolution || option.fullscreen != Core::fullscreen)
+				Math::Float2 test = Core::resolution;
+				if(option.resolution != Core::resolution)
 				{
 					//RESIZE
 					Core::Init::ReInitialize(false,option.fullscreen,option.resolution);
-					Core::fullscreen = option.fullscreen;
+					Render::Resources::ReInitViews(option.resolution);
 					Core::resolution = option.resolution;
+					Render::Preparations::Basic::SetViewPort();
+				}
+				if(option.fullscreen != Core::fullscreen)
+				{
+					Core::swapChain->SetFullscreenState(option.fullscreen, NULL);
+					Core::fullscreen = option.fullscreen;
 				}
 				return API::Sucsess;
 			}
@@ -236,6 +245,7 @@ namespace Oyster
 
 		void API::Clean()
 		{
+			Core::swapChain->SetFullscreenState(FALSE, NULL);
 #ifdef _DEBUG
 			DeleteModel(cube);
 			DeleteModel(sphere);
@@ -264,9 +274,21 @@ namespace Oyster
 
 		}
 
-		void API::AddLight(Definitions::Pointlight light)
+		void API::AddLight(Definitions::Pointlight* light)
 		{
 			Lights.push_back(light);
+		}
+
+		void API::RemoveLight(Definitions::Pointlight* light)
+		{
+			for(int i=0;i<Lights.size();++i)
+			{
+				if(Lights[i]==light)
+				{
+					Lights[i] = Lights[Lights.size()-1];
+					Lights.pop_back();
+				}
+			}
 		}
 
 		void API::ClearLights()
@@ -357,20 +379,59 @@ namespace Oyster
 		float API::PlayAnimation( Model::Model* m, const std::wstring &name, bool looping )
 		{
 			if( m )
-			{ // nasty temp solution by Dan
-				static int fairSlotLooper = 0;
-				fairSlotLooper = (fairSlotLooper + 1) % 2; // & 3 ! same as n % 2	%2 works and does not chrash in delete models
-				auto temp = m->info->Animations.find(name);
-				if(temp != m->info->Animations.end())
+			{
+				if( m->numOccupiedAnimationSlots < NumElementsOf(m->Animation) )
 				{
-					m->Animation[fairSlotLooper].AnimationPlaying = &(temp->second);
-					m->Animation[fairSlotLooper].AnimationTime=0;
-					m->Animation[fairSlotLooper].LoopAnimation = looping;
-					return (float)m->Animation[fairSlotLooper].AnimationPlaying->duration;
+					auto animBlueprint = m->info->Animations.find(name);
+					if( animBlueprint != m->info->Animations.end() )
+					{
+						Model::AnimationData *animationSlot = &m->Animation[m->numOccupiedAnimationSlots]; // memory renaming for readability
+						++m->numOccupiedAnimationSlots;
+
+						animationSlot->AnimationPlaying	= &(animBlueprint->second);
+						animationSlot->AnimationTime	= 0.0f;
+						animationSlot->LoopAnimation	= looping;
+
+						return (float)animationSlot->AnimationPlaying->duration;
+					}
 				}
 			}
 			return 0.0f;
 		}
+
+		void API::StopAnimation( Model::Model* m, const std::wstring &name )
+		{
+			if( m )
+			{
+				if( m->numOccupiedAnimationSlots < NumElementsOf(m->Animation) )
+				{
+					auto animBlueprint = m->info->Animations.find(name);
+					if( animBlueprint != m->info->Animations.end() )
+					{
+						for( int i = 0; i < NumElementsOf(m->Animation); ++i )
+						{
+							if( m->Animation[i].AnimationPlaying == &animBlueprint->second )
+							{
+								--m->numOccupiedAnimationSlots;
+								if( i < m->numOccupiedAnimationSlots )
+								{
+									m->Animation[i] = m->Animation[m->numOccupiedAnimationSlots];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		void API::StopAllAnimations( Model::Model* m )
+		{
+			if( m )
+			{
+				m->numOccupiedAnimationSlots = 0;
+			}
+		}
+
 
 		void API::Update(float dt)
 		{

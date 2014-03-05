@@ -15,11 +15,10 @@ const Game *Object::gameInstance = (Game*)(&Game::Instance());
 
 Object::Object()
 {	
-	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.5f, 0.8f, 0.6f);
+	this->rigidBody = API::Instance().AddCollisionBox(Oyster::Math::Float3(0.0f, 0.0f, 0.0f), Oyster::Math::Float4(0, 0, 0, 1), Oyster::Math::Float3(0, 0, 0), 0, 0.0f, 0.0f, 0.0f);
 
 	this->type = ObjectSpecialType_Unknown;
 	this->objectID = -1;
-	this->scale = Float3(1.0f, 1.0f, 1.0f);
 }
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
@@ -30,9 +29,7 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody, void (*collisionFuncAfte
 	this->objectID = objectID;
 	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
-	this->scale = Float3(1.0f, 1.0f, 1.0f);
 }
-
 
 Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*collisionFuncAfter)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
 {
@@ -42,7 +39,6 @@ Object::Object(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICusto
 	this->objectID = objectID;
 	this->extraDamageOnCollision = 0;
 	this->rigidBody->SetCustomTag(this);
-	this->scale = Float3(1.0f, 1.0f, 1.0f);
 }
 
 Object::~Object(void)
@@ -50,13 +46,18 @@ Object::~Object(void)
 
 }
 
-
 void Object::SetOnCollision(OnCollisionCallback func)
 {
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(func));
 }
 
-
+Oyster::Math::Float3 Object::GetScale() 
+{
+	Oyster::Physics::ICustomBody::State state; 
+	state = this->rigidBody->GetState();
+	// HACK should return RB scale or something...
+	return Float3(1.0f, 1.0f, 1.0f);
+}
 Oyster::Math::Float3 Object::GetPosition() 
 {
 	Oyster::Physics::ICustomBody::State state; 

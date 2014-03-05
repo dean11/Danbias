@@ -93,6 +93,18 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					switch(specialType)
 					{
 						//there is no difference when parsing these specialTypes.
+						case ObjectSpecialType_PickupHealth:
+							{
+								ObjectHeader* header = new ObjectHeader;
+								ParseObject(&buffer[counter], *header, counter, loadCgf);
+								objects.push_back(header);
+								header->boundingVolume.box.mass = 0;
+								header->typeID = ObjectType_Static;
+
+								header->position[1] = 151.0f;
+
+								break;
+							}
 						case ObjectSpecialType_CrystalShard:
 						case ObjectSpecialType_CrystalFormation:
 						case ObjectSpecialType_Spike:
@@ -157,28 +169,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 							break;
 						}
 
-						case ObjectSpecialType_PickupHealth:
-						{
-							PickupHealthAttributes* header = new PickupHealthAttributes;
-							ParseObject(&buffer[counter], *header, counter, loadCgf);
-
-							ParseObject(&buffer[counter], &header->spawnTime, 4);
-							counter += 4;
-
-							ParseObject(&buffer[counter], &header->healthValue, 4);
-							counter += 4;
-							
-							// DEBUG
-							header->position[1] = 150;
-							header->spawnTime = 5;
-							header->boundingVolume.box.mass = 0;
-							header->typeID = ObjectType_Static;
-							header->healthValue = 50;
-							// !DEBUG
-
-							objects.push_back(header);
-							break;
-						}
 						//this is a hotfix, fix so you only load the relevant data when the file is updated
 						default:
 							//Couldn't find specialType

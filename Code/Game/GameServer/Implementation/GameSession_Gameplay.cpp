@@ -26,13 +26,14 @@ using namespace DanBias;
 	{
 		if(this->isRunning)
 		{
-			float dt = (float)this->logicTimer.getElapsedSeconds();
-			if( dt >= this->logicFrameTime )
+			this->accumulatedLogicTime += (float)this->logicTimer.getElapsedSeconds();
+			while( this->accumulatedLogicTime >= this->logicFrameTime )
 			{
 				this->logicTimer.reset();
 
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
+				this->accumulatedLogicTime -= this->logicFrameTime;
 			}
 		}
 
@@ -141,6 +142,7 @@ using namespace DanBias;
 	}
 
 
+
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
 		//float dt = (float)GameSession::gameSession->networkTimer.getElapsedSeconds();
@@ -202,10 +204,18 @@ using namespace DanBias;
 		// send action protocol
 		GameSession::gameSession->Send(Protocol_ObjectWeaponEnergy(movedObject->GetID(), energy).GetProtocol());
 	}
+	void GameSession::GameOver(  )
+	{
+		GameSession::gameSession->Send( Protocol_General_GameOver().GetProtocol() );
+		GameSession::gameSession->isRunning = false;
+	}
+
+
+
+
 //*****************************************************//
 //****************** Protocol methods *****************//
 //******************************************************************************************************************//
-
 	void GameSession::ParseProtocol(Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c)
 	{
 		//TODO: Update response timer
@@ -274,7 +284,7 @@ using namespace DanBias;
 	}
 	void GameSession::Gameplay_PlayerChangeWeapon		( Protocol_PlayerChangeWeapon& p, DanBias::GameClient* c )
 	{
-
+		c->GetPlayer()->SelectWeaponAttatchment(p.weaponId);
 	}
 	void GameSession::Gameplay_PlayerShot				( Protocol_PlayerShot& p, DanBias::GameClient* c )
 	{ 

@@ -216,6 +216,7 @@
     <ClCompile Include="GameClientState\C_obj\C_StaticObj.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_UIobject.cpp" />
     <ClCompile Include="DLLMain.cpp" />
+    <ClCompile Include="GameClientState\FirstPersonWeapon.cpp" />
     <ClCompile Include="GameClientState\GameClientState.cpp" />
     <ClCompile Include="GameClientState\GameState.cpp" />
     <ClCompile Include="GameClientState\GameStateUI.cpp" />
@@ -228,6 +229,7 @@
     <ClCompile Include="GameClientState\MainState.cpp" />
     <ClCompile Include="GameClientState\NetLoadState.cpp" />
     <ClCompile Include="GameClientState\RespawnUI.cpp" />
+    <ClCompile Include="GameClientState\States\OptsionState.cpp" />
     <ClCompile Include="GameClientState\StatsUI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +249,7 @@
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
     <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_UIobject.h" />
+    <ClInclude Include="GameClientState\FirstPersonWeapon.h" />
     <ClInclude Include="GameClientState\GameClientState.h" />
     <ClInclude Include="GameClientState\GameState.h" />
     <ClInclude Include="GameClientState\GameStateUI.h" />
@@ -258,6 +261,7 @@
     <ClInclude Include="GameClientState\NetLoadState.h" />
     <ClInclude Include="GameClientState\RespawnUI.h" />
     <ClInclude Include="GameClientState\SharedStateContent.h" />
+    <ClInclude Include="GameClientState\States\OptionState.h" />
     <ClInclude Include="GameClientState\StatsUI.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
     <ClInclude Include="Include\GameClient.h" />

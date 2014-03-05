@@ -36,10 +36,14 @@ GameSession::GameSession()
 	this->isCreated = false;
 	this->isRunning = false;
 	this->gameSession = this;
-	this->logicFrameTime = DELTA_TIME_60;
+	this->logicFrameTime = DELTA_TIME_120;
 	this->networkFrameTime = DELTA_TIME_60;
+	this->accumulatedLogicTime =
+	this->accumulatedNetworkTime = 0.0f;
 	this->networkTimer.reset();
 	this->logicTimer.reset();
+
+	this->gameInstance.SetFrameTimeLength(this->logicFrameTime);
 
 	// HACK to avoid mem leaks 
 	//memset(&this->description, 0, sizeof(GameDescription));
@@ -105,6 +109,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 		printf("Level not created!");
 		return false;
 	}
+	levelData->InitGameMode(desc.gameTimeMinutes * 60.0f, 300);
 
 /* Set some game instance data options */
 	this->gameInstance.SetMoveSubscription(GameSession::ObjectMove);
@@ -117,7 +122,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 	this->gameInstance.SetPickupSubscription(GameSession::PickupEvent);
 	this->gameInstance.SetCollisionSubscription(GameSession::CollisionEvent);
 	this->gameInstance.SetWeaponEnergySubscription(GameSession::EnergyUpdate);
-	this->gameInstance.SetFPS(60);
+	this->gameInstance.SetGameOverSubscription(GameSession::GameOver);
 
 	this->description.clients.Clear();
 
@@ -233,9 +238,17 @@ bool GameSession::Join(gClient gameClient)
 												Utility::String::WStringToString(this->gClients[i]->GetCharacter(), std::string()));
 				nwClient->Send(p1);
 
+				// Send player score
 				Protocol_PlayerScore oldPlayerScore(temp->GetID(), temp->GetKills(), temp->GetDeaths());
 				nwClient->Send(oldPlayerScore);
 
+				// Send players current animation ID
+				if (temp->GetState() == PLAYER_STATE_JUMPING ||	temp->GetState() == PLAYER_STATE_WALKING || temp->GetState() == PLAYER_STATE_IDLE )
+				{
+					Protocol_ObjectAction oldPlayerAction(temp->GetID(), temp->GetState());
+					nwClient->Send(oldPlayerAction);
+				}
+			
 				// new player
 				temp = playerData;
 				Protocol_ObjectCreatePlayer p2(	temp->GetPosition(), temp->GetRotation(), temp->GetScale(), 

@@ -28,6 +28,7 @@ namespace DanBias
 			::Utility::DynamicMemory::UniquePointer<MyData> privData;
 
 			void LoadGame( const ::std::string &fileName );
+			void LoadObject( GameLogic::ObjectTypeHeader* oth, int ID);
 		};
 	}
 }

@@ -16,7 +16,7 @@ cbuffer Size : register(b0)
 [numthreads(16, 16, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-	float SSAO = 0;
+	float SSAO = Ambient[DTid.xy/2].w;
 	for(int x = 0; x < 4; ++x)
 	{
 		for(int y = 0; y < 4; ++y)
