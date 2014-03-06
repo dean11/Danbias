@@ -87,7 +87,7 @@ namespace Oyster
 
 			void SetTimeStep(float timeStep);
 
-			void UpdateWorld();
+			void UpdateWorld(float deltaTime);
 
 			void ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect);
 

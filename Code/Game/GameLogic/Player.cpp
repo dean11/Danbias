@@ -9,16 +9,7 @@ using namespace Oyster::Physics;
 using namespace Oyster::Math3D;
 using namespace Utility::Value;
 
-const float MOVE_FORCE = 30.0f;
 const float KEY_TIMER = 0.03f;
-const float AFFECTED_TIMER = 1.0f;
-
-// movement properties
-const Float dampening_factor = 0.2f,
-			forward_velocity = 26.0f,
-			backward_velocity = 13.0f,
-			strafe_velocity = 18.0f,
-			jump_velocity = 30.0f;
 
 Player::Player()
 	:DynamicObject()
@@ -34,7 +25,7 @@ Player::Player()
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
-	this->weapon = new Weapon(2,this);
+	this->weapon = new Weapon(NoEdgeConstants::Values::Weapons::MaxNumberOfSockets , this);
 	Player::initPlayerData();
 	this->teamID = teamID;
 	this->playerScore.killScore = 0;
@@ -45,7 +36,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
 	:DynamicObject(rigidBody, EventOnCollision, type, objectID)
 {
-	this->weapon = new Weapon(2,this);
+	this->weapon = new Weapon(NoEdgeConstants::Values::Weapons::MaxNumberOfSockets , this);
 	Player::initPlayerData();
 	this->teamID = teamID;
 	this->playerScore.killScore = 0;
@@ -118,7 +109,7 @@ void Player::BeginFrame()
 
 			if( this->key_jump > 0.001f )
 			{ // process jumping
-				this->rigidBody->ApplyImpulse( upDir * jump_velocity * state.mass );
+				this->rigidBody->ApplyImpulse( upDir * NoEdgeConstants::Values::Player::JumpVelocity * state.mass );
 				haveMoved = true;
 				isGrounded = false;
 
@@ -395,12 +386,12 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 	{ // process forward/backward
 		if( this->key_forward > 0.001f )
 		{
-			forwardVelocity = forwardDir * forward_velocity;
+			forwardVelocity = forwardDir * NoEdgeConstants::Values::Player::ForwardVelocity;
 			isNotMovingForwardOrBackward = false;
 		}
 		if( this->key_backward > 0.001f )
 		{
-			forwardVelocity -= forwardDir * backward_velocity;
+			forwardVelocity -= forwardDir * NoEdgeConstants::Values::Player::ForwardVelocity;
 			isNotMovingForwardOrBackward = false;
 		}
 
@@ -408,7 +399,7 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 		{ // dampen forward/backward velocity if not running forward/backward
 			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir );
 			if( isGrounded )
-				forwardVelocity *= dampening_factor;
+				forwardVelocity *= NoEdgeConstants::Values::Player::DampeningFactor;
 		}
 		else
 		{
@@ -418,12 +409,12 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 	{ // process strafe right/left
 		if( this->key_strafeRight > 0.001f )
 		{
-			strafeVelocity = rightDir * strafe_velocity;
+			strafeVelocity = rightDir * NoEdgeConstants::Values::Player::StrafeVelocity;
 			isNotStrafing = false;
 		}
 		if( this->key_strafeLeft > 0.001f )
 		{
-			strafeVelocity -= rightDir * strafe_velocity;
+			strafeVelocity -= rightDir * NoEdgeConstants::Values::Player::StrafeVelocity;
 			isNotStrafing = false;
 		}
 
@@ -431,7 +422,7 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 		{ // dampen right/left strafe velocity if not strafing
 			strafeVelocity = NormalProjection( state.previousVelocity, rightDir );
 			if( isGrounded )
-				strafeVelocity *= dampening_factor;
+				strafeVelocity *= NoEdgeConstants::Values::Player::DampeningFactor;
 		}
 		else
 		{
@@ -443,8 +434,8 @@ bool Player::UpdateMovement( const Float4x4 &orientationMatrix, const ICustomBod
 	{
 		if( isGrounded )
 		{
-			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * 2.0f * dampening_factor;
-			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * 2.0f * dampening_factor;
+			forwardVelocity = NormalProjection( state.previousVelocity, forwardDir ) * 2.0f * NoEdgeConstants::Values::Player::DampeningFactor;
+			strafeVelocity = NormalProjection( state.previousVelocity, rightDir ) * 2.0f * NoEdgeConstants::Values::Player::DampeningFactor;
 		}
 		haveMoved = false;
 	}

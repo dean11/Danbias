@@ -9,6 +9,7 @@
 #define NOMINMAX
 #include <vld.h>
 
+#include "General\NoEdgeConstants.h"
 #include "GameLogicDef.h"
 #include "GameLogicStates.h"
 #include <OysterMath.h>
@@ -125,12 +126,12 @@ namespace GameLogic
 		class ILevelData :public IObjectData
 		{
 		public:
-			virtual void Update(float deltaTime)						= 0;
-			virtual int getNrOfDynamicObj()const						= 0;
-			virtual IObjectData* GetObjectAt(int ID) const				= 0;
-			virtual void AddPlayerToGame(IPlayerData *player)			= 0;
+			virtual void Update(float deltaTime)							= 0;
+			virtual int getNrOfDynamicObj()const							= 0;
+			virtual IObjectData* GetObjectAt(int ID) const					= 0;
+			virtual void AddPlayerToGame(IPlayerData *player)				= 0;
 			virtual  void RemovePlayerFromGame(IPlayerData *player)			= 0;
-			virtual void InitGameMode(float maxTimeSec, int endKillScore) = 0;
+			virtual void InitGameMode(float maxTimeSec, int endKillScore)	= 0;
 			virtual void GetAllDynamicObjects(Utility::DynamicMemory::DynamicArray<IObjectData*>& destMem) const = 0;
 		};
 
@@ -174,7 +175,7 @@ namespace GameLogic
 		/**	Runs a update of the gamelogic and physics
 		*	@return Returns true if a frame was proccessed
 		*/
-		virtual bool NewFrame( void ) = 0;
+		virtual bool NewFrame( float timeStep ) = 0;
 
 		/**	Set the frame time in fps
 		*	@param FPS The fps to set

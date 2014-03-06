@@ -20,8 +20,8 @@ AttatchmentGun::AttatchmentGun(Oyster::Math::Float* currEnergy, Oyster::Math::Fl
 AttatchmentGun::AttatchmentGun(Player &owner, Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
 {
 	this->owner = &owner;
-	this->damage = StandardDamage;
-	this->Cooldown = StandardCooldown;
+	this->damage = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryDamage;
+	this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
 	this->TimeUntilFire = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
@@ -56,16 +56,14 @@ void AttatchmentGun::Update(float dt)
 {
 	this->TimeUntilFire += dt;
 
-	if((*currentEnergy) < StandardMaxEnergy)
+	if((*currentEnergy) < NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy)
 	{
-		{
-			(*currentEnergy) += StandardrechargeRate;
-		}
+		(*currentEnergy) += NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::RechargeRate;
 	}
 
-	if((*currentEnergy) > StandardMaxEnergy) 
+	if((*currentEnergy) > NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy) 
 	{
-		(*currentEnergy) = StandardMaxEnergy;
+		(*currentEnergy) = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy;
 	}
 	else if((*currentEnergy) < 0.0f)
 	{

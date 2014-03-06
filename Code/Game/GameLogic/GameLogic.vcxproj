@@ -170,6 +170,7 @@
     <ClInclude Include="GameLogicDef.h" />
     <ClInclude Include="GameLogicStates.h" />
     <ClInclude Include="GameModeType.h" />
+    <ClInclude Include="General\NoEdgeConstants.h" />
     <ClInclude Include="IAttatchment.h" />
     <ClInclude Include="JumpPad.h" />
     <ClInclude Include="Level.h" />

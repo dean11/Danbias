@@ -93,7 +93,7 @@ namespace Oyster
 
 			virtual void SetTimeStep(float timeStep) = 0;
 
-			virtual void UpdateWorld() = 0;
+			virtual void UpdateWorld(float deltaTime) = 0;
 
 
 

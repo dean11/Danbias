@@ -13,27 +13,29 @@ AttatchmentMassDriver::AttatchmentMassDriver(Oyster::Math::Float* currEnergy, Oy
 	this->hasObject = false;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = preEnergy;
-	this->maxEnergy = StandardMaxEnergy;
 	this->previousEnergy = 0;
-	this->rechargeRate = StandardrechargeRate;
-	this->pullForce = StandarPullforce;
-	this->pushForce = StandarPushforce;
-	this->zipForce =  StandarZipforce ;
+
+	this->maxEnergy = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxEnergy;
+	this->rechargeRate = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::RechargeRate;
+	this->pullForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pullforce;
+	this->pushForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce;
+	this->zipForce =  NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Zipforce ;
 }
 
 AttatchmentMassDriver::AttatchmentMassDriver(Player &owner, Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
 {
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = preEnergy;
-	this->maxEnergy = StandardMaxEnergy;
-	this->rechargeRate = StandardrechargeRate;
-	this->pullForce = StandarPullforce;
-	this->pushForce = StandarPushforce;
-	this->zipForce =  StandarZipforce ;
-	
+	this->previousEnergy = 0;
 	this->owner = &owner;
 	this->heldObject = NULL;
 	this->hasObject = false;
+
+	this->maxEnergy = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxEnergy;
+	this->rechargeRate = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::RechargeRate;
+	this->pullForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pullforce;
+	this->pushForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce;
+	this->zipForce =  NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Zipforce ;
 }
 
 
@@ -52,9 +54,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	switch (usage)
 	{
 	case WEAPON_USE_PRIMARY_PRESS:
-		if((*currentEnergy) >= 9.0f)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost)
 		{
-			(*currentEnergy) -= 9.0f;
+			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost;
 			ForcePush(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
@@ -66,10 +68,10 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		{
 			//goto CASE_WEAPON_INTERRUPT;
 		}
-		else if( (*currentEnergy) >= 1.0f )
+		else if( (*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost )
 		{
 			
-			(*currentEnergy) -= 18.0f;
+			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost;
 		
 			ForcePull(usage,dt);
 			// add CD 
@@ -97,9 +99,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_UTILLITY_PRESS:
-		if((*currentEnergy) >= 40.0f)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost)
 		{
-			(*currentEnergy) -= 40.0f;
+			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost;
 			ForceZip(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
@@ -185,12 +187,12 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		return;
 	}
 
-	Oyster::Math::Float radius = 4;
+	Oyster::Math::Float radius = 4.0f;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 10;
+	Oyster::Math::Float lenght = 10.0f;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
-	pos += look * ((lenght*0.50));	//Move the cone to start at the player.
+	pos += look * ((lenght*0.50f));	//Move the cone to start at the player.
 
 	
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);

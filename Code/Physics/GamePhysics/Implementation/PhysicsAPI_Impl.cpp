@@ -289,7 +289,7 @@ void API_Impl::SetTimeStep(float timeStep)
 	this->timeStep = timeStep;
 }
 
-void API_Impl::UpdateWorld()
+void API_Impl::UpdateWorld(float deltaTime)
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
@@ -307,7 +307,7 @@ void API_Impl::UpdateWorld()
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
-	this->dynamicsWorld->stepSimulation(this->timeStep, 100, this->timeStep);
+	this->dynamicsWorld->stepSimulation(deltaTime, 4, this->timeStep);
 
 	ICustomBody::State state;
 
