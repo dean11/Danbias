@@ -184,6 +184,11 @@ namespace GameLogic
 			Loader loader;
 			char* buf = loader.LoadFile("../Content/Worlds/cgf/"+ fileName, fileLength);
 
+			if(buf == NULL)
+			{
+				printf("Could not find %s", fileName.c_str());
+				return;	//Could not find cgf file
+			}
 			start = 0;
 			LevelLoaderInternal::FormatVersion version;
 			memcpy(&version, &buf[0], sizeof(version));

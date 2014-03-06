@@ -61,6 +61,7 @@ namespace DanBias
 			void Shoot();
 			void Update(Oyster::Math::Matrix viewMatrix, Oyster::Math::Float3 look);
 			void Render();
+			void SetRotationSpeed(float speed);
 			
 		private:
 			Oyster::Math::Float4 initialRotation;

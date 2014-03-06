@@ -16,7 +16,7 @@ using namespace Oyster::Math;
 
 Level::Level(void)
 {
-	srand (time(NULL));
+	srand ((unsigned int)time(NULL));
 	objIDCounter = 100; 
 }
 Level::~Level(void)
@@ -31,13 +31,6 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_None: 
 		{
 			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
-
-		}
-		break;
-	case ObjectSpecialType_Sky: 
-		{
-			float skySize = ((SkyAttributes*)obj)->skySize; 
-			//gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objID); 
 		}
 		break;
 	case ObjectSpecialType_World: 
@@ -91,7 +84,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_CrystalFormation: 
 		{
 			int dmg = 30; 
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg); 
+			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter, (float)dmg); 
 		}
 		break;
 	case ObjectSpecialType_CrystalShard: 
@@ -201,7 +194,6 @@ ICustomBody* Level::InitRigidBodyMesh( const ObjectHeader* obj)
 	Oyster::Math::Float3 rigidWorldPos;
 	Oyster::Math::Float4 rigidWorldRotation;
 	float rigidBodyMass;
-	float rigidBodyRadius;
 
 	//offset the rigidPosition from modelspace to worldspace;
 	rigidWorldPos = (Oyster::Math::Float3)obj->position + (Oyster::Math::Float3)obj->boundingVolume.cgMesh.position;
@@ -389,7 +381,7 @@ void Level::RemovePlayerFromGame(Player *player)
 {
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)
 	{
-		if ((Player*)this->playerObjects[i] == player)
+		if (this->playerObjects[i] == player)
 		{
 			
 			// remove object tags 
@@ -421,7 +413,16 @@ void Level::RemovePlayerFromGame(Player *player)
 					}
 				}
 			}
-			this->playerObjects[i] =  nullptr;
+			if(this->playerObjects.Size() == 1)
+				this->playerObjects[i] =  0;
+			else
+			{
+				//Swap with last'
+				//this->playerObjects[i] = nullptr;
+				//this->playerObjects.Resize(
+				this->playerObjects.Swap(i, this->playerObjects.Size() - 1);
+			}
+			break;
 		}
 	}
 }
@@ -483,7 +484,7 @@ void Level::Update(float deltaTime)
 			}
 			else if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DIED)
 			{
-				this->playerObjects[i]->setDeathTimer(DEATH_TIMER);
+				this->playerObjects[i]->setDeathTimer((float)DEATH_TIMER);
 				Player* killer = this->playerObjects[i]->getAffectingPlayer();
 				if(!killer) //if there is no killer then you committed suicide
 				{
@@ -496,7 +497,7 @@ void Level::Update(float deltaTime)
 				this->playerObjects[i]->AddDeath();
 
 
-				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->GetDeath(), killer, killer->GetKills(), DEATH_TIMER); // add killer ID
+				((Game*)&Game::Instance())->onDeadFnc(this->playerObjects[i], this->playerObjects[i]->GetDeath(), killer, killer->GetKills(), (float)DEATH_TIMER); // add killer ID
 
 			}
 		}

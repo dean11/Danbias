@@ -104,6 +104,8 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
+	this->privData->mouseInput->SetSensitivity(1.7f);
+
 	// create UI states
 	this->gameUI = new GamingUI(&shared, &this->privData->camera);
 	this->respawnUI = new RespawnUI(this->privData->nwClient, 20);
@@ -265,7 +267,8 @@ bool GameState::Render()
 
 	Oyster::Graphics::API::NewFrame();
 	
-	
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
+	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto playerObject = this->privData->players.begin();
@@ -367,9 +370,6 @@ bool GameState::Render()
 	Oyster::Graphics::API::StartGuiRender();
 	this->UIstackRenderGUI();
 
-
-	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
-	this->privData->weapon->Render();
 
 	if(renderStats)
 	{	
@@ -1160,7 +1160,7 @@ void GameState::UIstackPush( GameStateUI *ui )
 	GameStateUI *previous = this->UIstackPeek();
 
 	++this->uiStackTop;
-	if( this->uiStackTop >= NumElementsOf(this->uiStack) )
+	if( this->uiStackTop >= (int)NumElementsOf(this->uiStack) )
 	{
 		--this->uiStackTop;
 	}

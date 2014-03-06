@@ -52,7 +52,7 @@ namespace Input
 			Enum::ButtonState buttonState;
 			Struct::SAIPointInt2D pixelPos;
 			Struct::SAIPointFloat2D normalizedPos;
-			Struct::SAIPointInt2D velocity;
+			Struct::SAIPointFloat2D velocity;
 			Mouse* sender;
 			int scrollDelta;
 			void* tag;
@@ -66,7 +66,7 @@ namespace Input
 		typedef void(*OnMouseDownCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseReleaseCallback)(Enum::SAMI btn, Mouse* sender);
 		typedef void(*OnMouseMovePixelPosCallback)(Struct::SAIPointInt2D cord, Mouse* sender);
-		typedef void(*OnMouseMoveVelocityCallback)(Struct::SAIPointInt2D cord, Mouse* sender);
+		typedef void(*OnMouseMoveVelocityCallback)(Struct::SAIPointFloat2D cord, Mouse* sender);
 		typedef void(*OnMouseScrollCallback)(int delta, Mouse* sender);
 	}
 	//-----------------------------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ namespace Input
 			virtual void OnMouseDown			( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseRelease			( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseMovePixelPos	( Struct::SAIPointInt2D coordinate, Mouse* sender )			{ }
-			virtual void OnMouseMoveVelocity	( Struct::SAIPointInt2D coordinate, Mouse* sender )			{ }
+			virtual void OnMouseMoveVelocity	( Struct::SAIPointFloat2D coordinate, Mouse* sender )			{ }
 			virtual void OnMouseScroll			( int delta, Mouse* sender )								{ }
 		};
 	
@@ -125,6 +125,7 @@ namespace Input
 
 		void SetPixelPos(int x, int y);
 		void ToggleCursor(bool toggler);
+		void SetSensitivity(float value);
 
 	public:
 		struct MouseCallbackList;
@@ -138,7 +139,7 @@ namespace Input
 		void InternalOnBtnPress(Enum::SAMI key);
 		void InternalOnBtnDown(Enum::SAMI key);
 		void InternalOnBtnRelease(Enum::SAMI key);
-		void InternalOnMove(Struct::SAIPointInt2D pixelPos, Struct::SAIPointInt2D velocity);
+		void InternalOnMove(Struct::SAIPointInt2D pixelPos, Struct::SAIPointFloat2D velocity);
 		void InternalOnScroll(int delta);
 
 	protected:
@@ -151,6 +152,7 @@ namespace Input
 		
 		bool						isCurorLocked;
 		int							wheelDelta;
+		float						sensitivity;
 	};
 }
 
