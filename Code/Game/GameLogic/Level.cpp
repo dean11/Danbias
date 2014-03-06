@@ -153,7 +153,7 @@ ICustomBody* Level::InitRigidBodyCube( const ObjectHeader* obj)
 	rigidBodySize = (Oyster::Math::Float3)obj->boundingVolume.box.size * (Oyster::Math::Float3)obj->scale;
 
 	//create the rigid body
-	rigidBody = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, obj->boundingVolume.box.restitutionCoeff , obj->boundingVolume.box.frictionCoeffStatic , obj->boundingVolume.box.frictionCoeffDynamic);
+	rigidBody = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, obj->boundingVolume.box.restitutionCoeff , 1.8f , obj->boundingVolume.box.frictionCoeffDynamic);
 	return rigidBody;
 }
 ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
