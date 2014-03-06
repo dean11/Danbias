@@ -224,20 +224,20 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	if(hasObject) return; //this test checks if the weapon has now picked up an object, if so then it shall not apply a force to suck in objects
 	
 
-	//if no object has been picked up then suck objects towards you
-	Oyster::Math::Float radius = 4;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 20;
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+	Oyster::Math::Float3 target = pos + (look * 10);
 
-	pos += look * ((lenght*0.5f) - 1.0f);	//Move the cone to start at the player.
-
-	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
 	args.pushForce = -this->pullForce;
 	args.p = this->owner;
 
-	Oyster::Physics::API::Instance().ApplyEffect(&hitCone,&args,ForcePushAction);
+	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
+	
+	if(hitObject != NULL)
+	{
+		ForcePushAction(hitObject,&args);
+	}
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
