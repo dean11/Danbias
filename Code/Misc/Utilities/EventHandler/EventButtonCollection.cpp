@@ -23,7 +23,7 @@ EventButtonCollection::~EventButtonCollection()
 		}
 	}
 
-	int size = buttons.size();
+	int size = (int)buttons.size();
 	for(int i = 0; i < size; i++)
 	{
 		delete buttons[i];
@@ -76,7 +76,7 @@ void EventButtonCollection::SetState(const EventCollectionState state)
 
 void EventButtonCollection::Clear()
 {
-	int size = buttons.size();
+	int size = (int)buttons.size();
 	for(int i = 0; i < size; i++)
 	{
 		delete buttons[i];

@@ -77,7 +77,6 @@ struct NetworkClient::PrivateData : public IThreadObject
 
 	//Used to buffer messages
 	OysterByte bufferedSend;
-	int numPackages;
 
 	//ID
 	static unsigned int currID;
@@ -90,7 +89,6 @@ struct NetworkClient::PrivateData : public IThreadObject
 		,	outputEvent(0)
 	{
 		broadcastingStarted = false;
-		numPackages = 0;
 		bufferedSend.Resize(MAX_NETWORK_MESSAGE_SIZE);
 		tempMessage.Resize(MAX_NETWORK_MESSAGE_SIZE);
 		InitWinSock();
@@ -161,7 +159,7 @@ struct NetworkClient::PrivateData : public IThreadObject
 		{
 			if(!this->connection.IsConnected())	return false;
 
-			int result = WSAWaitForMultipleEvents(3, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
+			int result = WSAWaitForMultipleEvents(2, socketEvents, FALSE, 100, FALSE) - WSA_WAIT_EVENT_0;
 			if(result == 0)
 			{
 				WSAEnumNetworkEvents(this->connection.GetSocket(), socketEvents[0], &wsaEvents);
@@ -242,9 +240,6 @@ struct NetworkClient::PrivateData : public IThreadObject
 			this->connection.Send(bufferedSend);
 			//printf("2. %d, %d\n", numPackages, bufferedSend.GetSize());
 			bufferedSend.Clear();
-
-			//Debug
-			numPackages = 0;
 		}
 	}
 
@@ -265,16 +260,10 @@ struct NetworkClient::PrivateData : public IThreadObject
 				errorCode = this->connection.Send(bufferedSend);
 				//printf("2. %d, %d\n", numPackages, bufferedSend.GetSize());
 				bufferedSend.Clear();
-
-				//Debug
-				numPackages = 0;
 			}
 
 			bufferedSend += tempMessage;
 			tempMessage.Clear();
-
-			//Debug
-			numPackages++;
 
 			if(errorCode != 0 && errorCode != WSAEWOULDBLOCK)
 			{

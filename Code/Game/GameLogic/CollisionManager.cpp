@@ -183,10 +183,17 @@ const float default_jump_pad_stun_duration = 1.0f;
 		{
 			Player *hitPlayer = (Player*)realObj;
 			hitPlayer->DamageLife(ExplosionSource->extraDamageOnCollision);
-			realObj->GetRigidBody()->ApplyImpulse(-force * 20);
+			obj->SetLinearVelocity(Oyster::Math::Float3::null);
+			obj->ApplyImpulse(force * ExplosionSource->pushForceMagnitude);
+			hitPlayer->Stun(0.2f);
 			//do shredding damage
 		}
-
+		else if(realObj->GetObjectType() != ObjectSpecialType::ObjectSpecialType_World)
+		{
+			Object *hitObject = (Object*)realObj;
+			obj->ApplyImpulse(force * ExplosionSource->pushForceMagnitude);
+			//do shredding damage
+		}
 		//send message that box has exploded?
 		ExplosionSource->RemoveAffectedBy();
 		ExplosionSource->RemoveManipulation();
