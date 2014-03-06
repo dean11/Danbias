@@ -337,6 +337,7 @@ namespace Oyster
 					Core::UsedMem += dTDesc.Height * dTDesc.Width * 4;
 					Core::device->CreateDepthStencilView(depthstencil,&dsvDesc,&Gather::NoDepthView);
 					Core::device->CreateShaderResourceView(depthstencil,&srvDesc,&Light::NoDepth);
+					depthstencil->Release();
 
 					//Reset Passes--------------------------------------------------------------------------
 
@@ -518,6 +519,7 @@ namespace Oyster
 					Core::UsedMem += dTDesc.Height * dTDesc.Width * 4;
 					Core::device->CreateDepthStencilView(depthstencil,&dsvDesc,&Gather::NoDepthView);
 					Core::device->CreateShaderResourceView(depthstencil,&srvDesc,&Light::NoDepth);
+					depthstencil->Release();
 
 					Light::Up = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
 					Light::Down = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_down.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
@@ -877,6 +879,7 @@ namespace Oyster
 					SAFE_RELEASE(Gui::Text::Pass.IAStage.Layout);
 
 					SAFE_RELEASE(Gui::depth);
+
 					SAFE_RELEASE(Gather::NoDepthView);
 					SAFE_RELEASE(Light::NoDepth);
 				}

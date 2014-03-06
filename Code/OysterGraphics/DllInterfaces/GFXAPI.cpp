@@ -287,6 +287,12 @@ namespace Oyster
 				SAFE_DELETE((*i).second);
 			}
 
+			for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
+			{
+				SAFE_DELETE((*i).second->rid);
+				SAFE_DELETE((*i).second);
+			}
+
 		}
 
 		void API::AddLight(Definitions::Pointlight* light)
