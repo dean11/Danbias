@@ -7,7 +7,6 @@
 #include "Buttons\Text_UI.h"
 #include "Buttons\Plane_UI.h"
 #include "InputManager.h"
-#include "SharedStateContent.h"
 #include "EventHandler\EventHandler.h"
 #include "Buttons\ButtonRectangle.h"
 #include "Buttons\ButtonEllipse.h"
@@ -30,21 +29,23 @@ namespace DanBias { namespace Client
 		bool Release();
 		void ChangeState( UIState next );
 	
+		void ActivateInput();
+		void DeactivateInput();
+
 	private: /* Overidden mouse methods */
-		
+		void OnMouseRelease( Input::Enum::SAMI key, Input::Mouse* sender );
+		void OnKeyRelease( Input::Enum::SAKI key, Input::Keyboard* sender );
 
 	private:
-
-		// TODO add multiple UI 
-
-		::Input::Mouse *mouseInput;
-		Oyster::Math::Float3 mousePos;
+		::Oyster::Math::Float3 mousePos;
 		Plane_UI* mouseCursor;
 		Plane_UI* background;
 		EventButtonCollection menyButtons;
+		bool render;
 
+		// HACK remove this later
+		Text_UI* debugOutput; 
 		IngameMenyUI();
-		void ReadKeyInput();
 	};
 } }
 

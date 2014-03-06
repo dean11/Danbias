@@ -31,7 +31,13 @@ void* Oyster::Graphics::Loading::LoadTexture(const wchar_t filename[])
 
 void Oyster::Graphics::Loading::UnloadTexture(void* data)
 {
+	
 	ID3D11ShaderResourceView* srv = (ID3D11ShaderResourceView*)data;
+	int CurMem = Core::UsedMem;
+	int TexMem = Core::TexSize[srv];
+	CurMem -= TexMem;
+	Core::UsedMem = CurMem;
+	
 	SAFE_RELEASE(srv);
 }
 
@@ -645,6 +651,7 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 		if ( SUCCEEDED(hr) && ( fmtSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN ) )
 		{
 			autogen = true;
+			//HACK MIPMAP
 			autogen = false;
 		}
 	}
@@ -681,6 +688,7 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 	//Error with miscFlags Generate Mips
 	hr = d3dDevice->CreateTexture2D( &desc, (autogen) ? nullptr : &initData, &tex );
 	/// Replace To get Texture Data
+	int TexSize;
 	if ( SUCCEEDED(hr) && tex != 0 )
 	{
 		if (textureView != 0)
@@ -700,9 +708,8 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 				return hr;
 			}
 			//todo check calc
-			int TexSize = twidth * theight * (int)bpp;
+			TexSize = twidth * theight * (int)bpp;
 			Oyster::Graphics::Core::UsedMem += TexSize;
-
 			if ( autogen )
 			{
 				assert( d3dContext != 0 );
@@ -721,7 +728,8 @@ static HRESULT CreateTextureFromWIC( _In_ ID3D11Device* d3dDevice,
 			tex->Release();
 		}
 	}
-
+	
+	Oyster::Graphics::Core::TexSize[*textureView] = TexSize;
 	return hr;
 }
 

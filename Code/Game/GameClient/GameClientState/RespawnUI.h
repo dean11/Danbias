@@ -10,7 +10,7 @@ namespace DanBias { namespace Client
 	class RespawnUI : public GameStateUI
 	{
 	public:
-		RespawnUI( ::Oyster::Network::NetworkClient *connection, float delay );
+		RespawnUI( SharedStateContent* shared );
 		virtual ~RespawnUI();
 		bool Init();
 
@@ -24,13 +24,15 @@ namespace DanBias { namespace Client
 		void SetCountdown( float cd );
 		void ChangeState( UIState next );
 
-	private:
-		::Oyster::Network::NetworkClient *netClient;
-		float countDown;
+		void ActivateInput();
+		void DeactivateInput();
 
-		// TODO add multiple UI elements
+	private:
+		float countDown;
 		Text_UI* text;
 		Text_UI* deathCounter;
+		bool render;
+
 		RespawnUI();
 	};
 } }

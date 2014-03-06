@@ -195,7 +195,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
 
-	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float forceThreashHold)
+	void PlayerVObject(Player &player, Object &obj, Oyster::Math::Float a)
 	{
 		//Collision between a player and a general static or dynamic object
 		//use kinetic energyloss of the collision in order too determin how much damage to take
@@ -212,7 +212,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 
 		Oyster::Math::Float damageDone = 0.0f;
-		//Oyster::Math::Float forceThreashHold = 50.0f; //FIX: balance this
+		Oyster::Math::Float forceThreashHold = 80.0f; //FIX: balance this
 
 		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
 		{

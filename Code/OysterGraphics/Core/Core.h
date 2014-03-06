@@ -44,6 +44,8 @@ namespace Oyster
 			static ID3D11RenderTargetView* rtvNULL[8];
 			static ID3D11UnorderedAccessView* uavNULL[8];
 
+			static std::map<ID3D11ShaderResourceView*,int> TexSize;
+
 			static int UsedMem;
 			static HWND window;
 			static Oyster::Math::Float2 resolution;

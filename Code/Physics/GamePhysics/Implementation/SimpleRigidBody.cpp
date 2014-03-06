@@ -385,7 +385,6 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 {
 	btTransform xform;
 	xform = this->rigidBody->getWorldTransform ();
-	//Float3 normalDown = -xform.getBasis().getColumn(1);
 	btVector3 down(-xform.getBasis().getColumn(1));
 	btVector3 forward(xform.getBasis().getColumn(2));
 	down.normalize();
@@ -393,11 +392,6 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 
 	this->raySource[0] = xform.getOrigin();
 	this->raySource[1] = xform.getOrigin();
-
-	if(this->state.mass == 40)
-	{
-		const char* breakPoint = "STOP!";
-	}
 
 	btVector3 targetPlus = down*this->state.reach.y*btScalar(1.1);
 
@@ -434,9 +428,15 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 		if (rayCallback.hasHit())
 		{
 			this->rayLambda[i] = rayCallback.m_closestHitFraction;
-			if(i == 1 && this->state.mass == 40)
+			if(i == 0 && this->state.staticFrictionCoeff == 0)
 			{
 				btVector3 hitNormal = rayCallback.m_hitNormalWorld;
+				btScalar angle = hitNormal.normalized().dot(down);
+
+				if(angle < 0)
+					this->rigidBody->setFriction(0.6f);
+				else
+					this->rigidBody->setFriction(0.0f);
 			}
 		} 
 		else 

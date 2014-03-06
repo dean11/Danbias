@@ -196,8 +196,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 
 			pointLight.Color	= desc.gtint;
 			pointLight.Pos		= desc.position;
-			pointLight.Bright	= 3.0f;
-			pointLight.Radius	= 30.0f; 
+			pointLight.Bright	= 2.0f;
+			pointLight.Radius	= 5.0f; 
 
 			C_Light *newLight = new C_Light( pointLight, ID );
 			light = ID;
@@ -235,8 +235,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 
 			pointLight.Color	= desc.gtint;
 			pointLight.Pos		= desc.position;
-			pointLight.Bright	= 5;
-			pointLight.Radius	= 5.0f; 
+			pointLight.Bright	= 3;
+			pointLight.Radius	= 2.0f; 
 
 			C_Light *newLight = new C_Light( pointLight, ID );
 

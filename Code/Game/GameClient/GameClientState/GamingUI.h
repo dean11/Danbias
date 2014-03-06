@@ -30,6 +30,10 @@ namespace DanBias { namespace Client
 		void SetKillMessage( std::wstring killerMessage );
 		void ChangeState( UIState next );
 		void StopGamingUI();
+
+		void ActivateInput();
+		void DeactivateInput();
+
 	private: /* Overidden mouse methods */
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
 		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
@@ -93,8 +97,8 @@ namespace DanBias { namespace Client
 			}
 			void Activate(GamingUI* ui)
 			{
-				ui->sharedData->weapon->SetRotationSpeed( primaryRotationSpeed );
-				ui->sharedData->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
+				ui->shared->weapon->SetRotationSpeed( primaryRotationSpeed );
+				ui->shared->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
 			}
 			void Shoot(GamingUI* ui, GameLogic::Protocol_PlayerShot::ShootValue s)
 			{
@@ -105,10 +109,10 @@ namespace DanBias { namespace Client
 						primaryShootTimer += delta;
 						if(primaryShootTimer > primaryWeaponCooldown)
 						{
-							ui->sharedData->weapon->SetRotationSpeed(primaryRotationSpeed);
+							ui->shared->weapon->SetRotationSpeed(primaryRotationSpeed);
 							this->primaryShootTimer = 0;
 							this->delta = 0;
-							ui->sharedData->weapon->Shoot();
+							ui->shared->weapon->Shoot();
 						}
 					break;
 					case GameLogic::Protocol_PlayerShot::ShootValue_SecondaryPress:
@@ -116,10 +120,10 @@ namespace DanBias { namespace Client
 						secondaryShootTimer += delta;
 						if(secondaryShootTimer > secondaryWeaponCooldown)
 						{
-							ui->sharedData->weapon->SetRotationSpeed(secondaryRotationSpeed);
+							ui->shared->weapon->SetRotationSpeed(secondaryRotationSpeed);
 							this->secondaryShootTimer = 0;
 							this->delta = 0;
-							ui->sharedData->weapon->Shoot();
+							ui->shared->weapon->Shoot();
 						}
 					break;
 					case GameLogic::Protocol_PlayerShot::ShootValue_UtilityPress:
@@ -133,12 +137,11 @@ namespace DanBias { namespace Client
 					break;
 				}	
 
-				ui->sharedData->network->Send( GameLogic::Protocol_PlayerShot(s) );
+				ui->shared->network->Send( GameLogic::Protocol_PlayerShot(s) );
 			}
 		};
 
 	private:
-		SharedStateContent *sharedData;
 		Camera_FPSV2 *camera;
 
 		// TODO add multiple UI elements

@@ -10,7 +10,7 @@ namespace DanBias { namespace Client
 	class StatsUI : public GameStateUI
 	{
 	public:
-		StatsUI();
+		StatsUI( SharedStateContent* shared );
 		virtual ~StatsUI();
 		bool Init( int maxNROfPlayers );
 
@@ -26,6 +26,9 @@ namespace DanBias { namespace Client
 		bool updateDeatchScore( int id, int deaths); 
 		void ChangeState( UIState next );
 
+		void ActivateInput();
+		void DeactivateInput();
+
 	private:
 		// TODO add multiple UI elements
 		// one for each player ingame
@@ -33,7 +36,7 @@ namespace DanBias { namespace Client
 		Text_UI* killText;
 		Text_UI* deathText;
 
-		int * id; 
+		int * playerId; 
 		Text_UI** names;
 		Text_UI** kills;
 		Text_UI** death;
@@ -48,6 +51,9 @@ namespace DanBias { namespace Client
 		float textHeightPos; 
 		float textHeight;
 		float textWidth;
+		bool render;
+
+		StatsUI();
 	};
 } }
 

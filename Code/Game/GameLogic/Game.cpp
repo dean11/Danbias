@@ -142,8 +142,18 @@ bool Game::NewFrame()
 		if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
 	}
 
-	API::Instance().UpdateWorld();
-
+	static Utility::WinTimer tim;
+	static float dt = 0.0f;
+	dt += (float)tim.getElapsedSeconds();
+	if(dt >= 1.0f/120.0f)
+	{
+		
+		//API::Instance().SetTimeStep(dt);
+		API::Instance().SetTimeStep((float)tim.getElapsedSeconds());
+		tim.reset();
+		API::Instance().UpdateWorld();
+		dt = 0;
+	}
 	for (unsigned int i = 0; i < this->players.Size(); i++)
 	{
 		if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();

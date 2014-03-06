@@ -27,14 +27,17 @@ using namespace DanBias;
 		if(this->isRunning)
 		{
 			this->accumulatedLogicTime += (float)this->logicTimer.getElapsedSeconds();
-			while( this->accumulatedLogicTime >= this->logicFrameTime )
+			//while( this->accumulatedLogicTime >= this->logicFrameTime )
+			if(this->accumulatedLogicTime >= this->logicFrameTime)
 			{
 				this->logicTimer.reset();
 
 				this->ProcessClients();
 				this->gameInstance.NewFrame();
-				this->accumulatedLogicTime -= this->logicFrameTime;
+				//this->accumulatedLogicTime -= this->logicFrameTime;
+				this->accumulatedLogicTime = 0;
 			}
+			//this->accumulatedLogicTime += (float)this->logicTimer.getElapsedSeconds();
 		}
 
 		return this->isRunning;
