@@ -21,6 +21,7 @@ namespace Oyster
 
 					
 					static std::map<Model::ModelInfo*, ModelDataWrapper*> RenderData;
+					static std::map<Model::ModelInfo*, ModelDataWrapper*> NoDepthData;
 					
 					static const int GBufferSize = 3;
 					static const int LBufferSize = 3;
@@ -59,6 +60,7 @@ namespace Oyster
 						static Core::Buffer ModelData;
 						static Core::Buffer AnimationData;
 						static Core::Buffer InstancedData;
+						static ID3D11DepthStencilView* NoDepthView;
 					};
 
 					struct Light
@@ -77,6 +79,8 @@ namespace Oyster
 						static ID3D11ShaderResourceView* Right;
 						static ID3D11ShaderResourceView* Front;
 						static ID3D11ShaderResourceView* Back;
+
+						static ID3D11ShaderResourceView* NoDepth;
 					};
 
 					struct Gui

@@ -10,8 +10,14 @@ float3 ToVpos(int2 texCoord, float2 UV)
 	// Get the depth value for this pixel
 	//texCoord = max(texCoord, uint2(0,0));
 	//texCoord = min(texCoord, DepthTexture.Length);
-
-	ViewPos.z= DepthTexture[texCoord].x;
+	if(NoDepth[texCoord].x == 1.0f)
+	{
+		ViewPos.z= DepthTexture[texCoord].x;
+	}
+	else
+	{
+		ViewPos.z = NoDepth[texCoord].x;
+	}
 	//Get X/w
 	ViewPos.x = UV.x;
 	//Get Y/w

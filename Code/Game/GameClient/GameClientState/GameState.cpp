@@ -165,8 +165,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		
 		Graphics::Definitions::Pointlight pl;
 		pl.Pos = p->getPos();
-		pl.Bright = 0.3f;
-		pl.Radius = 20;
+		pl.Bright = 0.5f;
+		pl.Radius = 10;
 		pl.Color = p->GetGlowTint();
 		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
 		p->SetLight(p->GetId());

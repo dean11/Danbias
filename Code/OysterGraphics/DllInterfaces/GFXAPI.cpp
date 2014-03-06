@@ -184,6 +184,17 @@ namespace Oyster
 				(*i).second->rid = new Definitions::RenderInstanceData[(*i).second->Models+1];
 			}
 
+			for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
+			{
+				if((*i).second->Models > maxModels)
+				{
+					maxModels = (*i).second->Models;
+				}
+				if( (*i).second->rid != nullptr)
+					delete (*i).second->rid;
+				(*i).second->rid = new Definitions::RenderInstanceData[(*i).second->Models+1];
+			}
+
 			Core::Buffer::BUFFER_INIT_DESC desc;
 			
 
@@ -204,6 +215,7 @@ namespace Oyster
 			m->Visible = true;
 			m->Animation[0].AnimationPlaying = nullptr;
 			m->Animation[1].AnimationPlaying = nullptr;
+			m->IgnoreDepth = false;
 			m->Tint = Math::Float3(1);
 			m->GlowTint = Math::Float3(1);
 			m->Instanced = true;
@@ -223,10 +235,12 @@ namespace Oyster
 				if(Core::loader.GetResourceCount(m->info) == 1)
 				{
 					Render::Resources::RenderData[m->info] = new Render::Resources::ModelDataWrapper();
+					Render::Resources::NoDepthData[m->info] = new Render::Resources::ModelDataWrapper();
 				}
 				else
 				{
 					Render::Resources::RenderData[m->info]->Models++;
+					Render::Resources::NoDepthData[m->info]->Models++;
 				}
 			}
 
@@ -273,6 +287,12 @@ namespace Oyster
 				SAFE_DELETE((*i).second);
 			}
 
+			for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
+			{
+				SAFE_DELETE((*i).second->rid);
+				SAFE_DELETE((*i).second);
+			}
+
 		}
 
 		void API::AddLight(Definitions::Pointlight* light)
@@ -306,7 +326,7 @@ namespace Oyster
 
 		void API::StartRenderWireFrame()
 		{
-			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],NULL);
+			Core::deviceContext->OMSetRenderTargets((UINT)Render::Resources::Gather::AnimatedPass.RTV.size(),&Render::Resources::Gather::AnimatedPass.RTV[0],Core::depthStencil);
 			Core::deviceContext->RSSetState(wire);
 		}
 

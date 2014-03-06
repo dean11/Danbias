@@ -49,6 +49,7 @@ namespace Oyster
 			{
 				Preparations::Basic::ClearBackBuffer(Oyster::Math::Float4(0,0,0,0));
 				Preparations::Basic::ClearDepthStencil(Resources::Gui::depth);
+				Preparations::Basic::ClearDepthStencil(Resources::Gather::NoDepthView);
 				Preparations::Basic::ClearRTV(Resources::GBufferRTV,Resources::GBufferSize,Math::Float4(0,0,0,0));
 				Lights[1];
 
@@ -59,7 +60,7 @@ namespace Oyster
 				lc.Lights = numLights;
 				lc.View = View;
 				lc.Proj = Projection;
-				lc.FoV = Core::amb;
+				lc.AmbFactor = Core::amb;
 				lc.SSAORadius = 3;
 
 				data = Resources::Light::LightConstantsData.Map();
@@ -82,6 +83,10 @@ namespace Oyster
 				{
 					(*i).second->Models=0;
 				}
+				for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
+				{
+					(*i).second->Models=0;
+				}
 
 				Core::PipelineManager::SetRenderPass(Resources::Gather::AnimatedPass);
 			}
@@ -99,15 +104,21 @@ namespace Oyster
 						Definitions::RenderInstanceData rid;
 						Math::Float3x3 normalTransform;
 						normalTransform = Math::Float3x3(models[i].WorldMatrix.v[0].xyz, models[i].WorldMatrix.v[1].xyz, models[i].WorldMatrix.v[2].xyz);
-						normalTransform.Transpose().Invert();
-						Math::Matrix m = Math::Matrix(Math::Vector4(normalTransform.v[0],0.0f), Math::Vector4(normalTransform.v[1],0.0f), Math::Vector4(normalTransform.v[2],0.0f), Math::Vector4(0.0f));
+						normalTransform.Invert().Transpose();
+						Math::Matrix m = Math::Matrix(Math::Vector4(normalTransform.v[0],0.0f), Math::Vector4(normalTransform.v[1],0.0f), Math::Vector4(normalTransform.v[2],0.0f), Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 						rid.WV = View * m;
 						rid.WVP = Projection * View * models[i].WorldMatrix;
 
 						rid.Tint = models[i].Tint;
 						rid.GTint = models[i].GlowTint;
-
-						Resources::RenderData[info]->rid[Resources::RenderData[info]->Models++] = rid;
+						if(models[i].IgnoreDepth)
+						{
+							Resources::NoDepthData[info]->rid[Resources::NoDepthData[info]->Models++] = rid;
+						}
+						else
+						{
+							Resources::RenderData[info]->rid[Resources::RenderData[info]->Models++] = rid;
+						}
 					}
 					else
 					{
@@ -246,6 +257,13 @@ namespace Oyster
 				Resources::Gather::InstancedData.Apply(1);
 
 				for(auto i = Render::Resources::RenderData.begin(); i != Render::Resources::RenderData.end(); i++ )
+				{
+					RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
+				}
+
+				Core::deviceContext->OMSetRenderTargets(2,&Resources::Gather::InstancedPass.RTV[0],Resources::Gather::NoDepthView);
+
+				for(auto i = Render::Resources::NoDepthData.begin(); i != Render::Resources::NoDepthData.end(); i++ )
 				{
 					RenderModel((*i).first,(*i).second->rid, (*i).second->Models);
 				}

@@ -22,6 +22,8 @@ bool Coil::Init()
 	if(!this->model) return false;
 
 	this->model->GlowTint = minGlow;
+	this->model->IgnoreDepth = true;
+	this->model->Tint = Float3(1.0f);
 	return true;
 }
 
@@ -132,7 +134,7 @@ bool FirstPersonWeapon::Init()
 	ModelInitData modelData;
 	modelData.modelPath = L"wpn_massdriver_high_cylinder.dan";
 	modelData.visible = true;
-	modelData.scale = Oyster::Math::Float3(1,1,0.6);
+	modelData.scale = Oyster::Math::Float3(1,1,1);
 	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0, 0, 0), 1);
 	modelData.tint = Float3(1.0f);
 	modelData.id = -1;
@@ -142,6 +144,8 @@ bool FirstPersonWeapon::Init()
 	initialRotation.xyz.Normalize();
 
 	C_Object::Init(modelData);
+	this->model->IgnoreDepth = true;
+	this->model->Tint = Float3(1.0f);
 
 	modelData.modelPath = L"wpn_massdriver_high_base.dan";
 	modelData.visible = true;
@@ -151,6 +155,7 @@ bool FirstPersonWeapon::Init()
 
 	if(((C_Object*)base)->Init(modelData))
 		base->Init();
+	
 
 	modelData.modelPath = L"wpn_massdriver_high_coil.dan";
 	modelData.visible = true;

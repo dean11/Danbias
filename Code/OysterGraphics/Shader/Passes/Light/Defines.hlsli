@@ -13,13 +13,14 @@ struct DiffSpec
 {
 	float3 Diffuse;
 	float3 Specular;
+	float3 Ambient;
 };
 
 cbuffer LightConstants					: register(b0)
 {
 	float4x4 InvProj;
 	float4x4 Proj;
-	float FoV;
+	float AmbFactor;
 	int Lights;
 	float SSAORadius;
 	float pad;
@@ -57,6 +58,8 @@ Texture2D Left							: register(t9);
 Texture2D Right							: register(t10);
 Texture2D Front							: register(t11);
 Texture2D Back							: register(t12);
+
+Texture2D NoDepth						: register(t13);
 
 // -- Output ----------------------------------------------------//
 

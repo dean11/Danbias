@@ -35,7 +35,7 @@ namespace Oyster
 			{
 				Math::Float4x4 InvProj;
 				Math::Float4x4 Proj;
-				float FoV;
+				float AmbFactor;
 				int Lights;
 				float SSAORadius;
 				float pad;

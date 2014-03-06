@@ -31,7 +31,7 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 	GroupMemoryBarrierWithGroupSync();
 
 	bool ValidPixel = true;
-	if(posN.z == 1.0f)
+	if(posN.z == 1.0f && NoDepth[DTid.xy].x == 1.0f)
 	{
 		ValidPixel = false;
 	}
@@ -43,6 +43,7 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 	DiffSpec Shaded;
 	Shaded.Diffuse = float3(0,0,0);
 	Shaded.Specular = float3(0,0,0);
+	Shaded.Ambient = float3(1,1,1);
 
 	for(int i = 0; i < numVisiblePointLights; ++i)
 	//for(int i = 0; i < Lights; ++i)
@@ -51,6 +52,7 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 		//DiffSpec light = LightCalc(Points[i], ViewPos, DTid.xy);
 		Shaded.Diffuse += light.Diffuse;
 		Shaded.Specular += light.Specular;
+		Shaded.Ambient += light.Ambient;
 	}
 
 	Diffuse[DTid.xy] = float4(Shaded.Diffuse * DiffuseGlow[DTid.xy].xyz,1);
@@ -71,12 +73,13 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 			DiffBase += DiffuseGlow[DTid.xy + uint2(0,1)];
 			DiffBase += DiffuseGlow[DTid.xy + uint2(1,1)];
 			DiffBase = DiffBase / 4;
+			DiffBase *= float4(Shaded.Ambient, 1);
 		}
 		else
 		{
 			AmbValue = 1;
 			float3 ViewVec = mul(transpose(View), float4(ViewPos,0));
-			DiffBase = float4(ReadSky(ViewVec).xyz*(1/FoV), 0);
+			DiffBase = float4(ReadSky(ViewVec).xyz*(1/AmbFactor), 0);
 		}
 
 		Ambient[DTid.xy/2] = float4(DiffBase.xyz , AmbValue);
@@ -84,7 +87,7 @@ void main( uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID,  uin
 		Ambient[DTid.xy/2 + float2(Diffuse.Length.x/2, 0)] = GUI[DTid.xy];
 		Ambient[DTid.xy/2 + float2(0, Diffuse.Length.y/2)] = float4(DiffBase.xyz * DiffBase.w ,DiffBase.w);
 		Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(numVisiblePointLights * (1.0f/Lights), 0, 0 ,1);
-		//Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(NormalSpec[DTid.xy/2].xyz ,1);
+		Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(NormalSpec[DTid.xy].xyz ,1);
 		//Ambient[DTid.xy/2 + Diffuse.Length.xy/2] = float4(Points[0].Pos ,1);
 	}
 
