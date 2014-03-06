@@ -105,6 +105,8 @@ namespace Oyster
 
 			::Oyster::Math::Float3 gravityPoint;
 			float gravity;
+
+			float deltaTime;
 		};
 
 		namespace Default
