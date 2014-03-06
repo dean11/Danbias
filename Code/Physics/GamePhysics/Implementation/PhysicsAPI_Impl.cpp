@@ -33,6 +33,8 @@ API_Impl::API_Impl()
 
 	this->gravityPoint = Float3(0.0f, 0.0f, 0.0f);
 	this->gravity = 10.0f;
+
+	this->deltaTime = 0.0f;
 }
 
 API_Impl::~API_Impl() 
@@ -102,6 +104,7 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
+	state.restitutionCoeff = restitution;
 
 	body->SetState(state);
 
@@ -144,6 +147,7 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
+	state.restitutionCoeff = restitution;
 
 	body->SetState(state);
 
@@ -186,6 +190,7 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
+	state.restitutionCoeff = restitution;
 
 	body->SetState(state);
 
@@ -230,6 +235,7 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = mass;
+	state.restitutionCoeff = restitution;
 
 	body->SetState(state);
 
@@ -261,6 +267,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 
 	// Add rigid body
 	btVector3 fallInertia(0, 0, 0);
+	//collisionShape->calcu%lateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
 	rigidBody->setFriction(staticFriction);
@@ -272,12 +279,15 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
+	//dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
+
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);
 	state.dynamicFrictionCoeff = dynamicFriction;
 	state.staticFrictionCoeff = staticFriction;
 	state.quaternion = Quaternion(Float3(rotation.xyz), rotation.w);
 	state.mass = 0;
+	state.restitutionCoeff = restitution;
 
 	body->SetState(state);
 
@@ -293,6 +303,7 @@ void API_Impl::UpdateWorld()
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
+		//this->dynamicsWorld->
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
 		if(!simpleBody->IsGravityOverrided())
 		{
@@ -307,7 +318,7 @@ void API_Impl::UpdateWorld()
 		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
 	}
 
-	this->dynamicsWorld->stepSimulation(this->timeStep, 100, this->timeStep);
+	this->dynamicsWorld->stepSimulation(btScalar(1.)/btScalar(240.), 4, btScalar(1.)/btScalar(120.));
 
 	ICustomBody::State state;
 
@@ -348,8 +359,11 @@ void API_Impl::UpdateWorld()
 				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB);
 				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA);
 			}
-		}	
+		}
+
+		
 	}
+
 }
 
 void API_Impl::Init()
