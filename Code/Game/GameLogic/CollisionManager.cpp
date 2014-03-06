@@ -97,15 +97,15 @@ const float default_jump_pad_stun_duration = 1.0f;
 	{
 		Object *realObjA = (Object*)objA->GetCustomTag();
 		Portal *portal;
-		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
+		Object *realObjB = (Object*)objB->GetCustomTag();
 
 		if(!realObjA)	
 			return;
 		if(!realObjB)		
 			return;
-		
+
 		//check who is player and who is the object
-		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Portal)
 		{
 			portal = (Portal*)realObjA;
 		}
@@ -243,6 +243,16 @@ const float default_jump_pad_stun_duration = 1.0f;
 		PlayerVObject(player, obj, kineticEnergyLoss);
 		// always take extra DMG when in contact with leathal object
 		player.DamageLife(ExtraDamage);
+
+
+		Oyster::Math::Float3 objectPos = obj.GetPosition();
+		Oyster::Math::Float3 playerPos = player.GetRigidBody()->GetState().centerPos;
+		Oyster::Math::Float3 force = (((playerPos - objectPos).GetNormalized()));
+
+		player.GetRigidBody()->SetLinearVelocity(Oyster::Math::Float3::null);
+		player.GetRigidBody()->ApplyImpulse(force * 10);
+		player.Stun(0.2f);
+
 	}
 
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
