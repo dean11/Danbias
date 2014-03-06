@@ -49,7 +49,7 @@ namespace Oyster
 					{
 						static ID3D11RasterizerState* rs;
 						static ID3D11SamplerState** ss;
-						static ID3D11DepthStencilState* dsState[2];
+						static ID3D11DepthStencilState* dsState;
 						static ID3D11BlendState* bs;
 					};
 
@@ -60,6 +60,7 @@ namespace Oyster
 						static Core::Buffer ModelData;
 						static Core::Buffer AnimationData;
 						static Core::Buffer InstancedData;
+						static ID3D11DepthStencilView* NoDepthView;
 					};
 
 					struct Light
@@ -78,6 +79,8 @@ namespace Oyster
 						static ID3D11ShaderResourceView* Right;
 						static ID3D11ShaderResourceView* Front;
 						static ID3D11ShaderResourceView* Back;
+
+						static ID3D11ShaderResourceView* NoDepth;
 					};
 
 					struct Gui

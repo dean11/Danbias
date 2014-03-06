@@ -14,6 +14,7 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 	{
 		output.Diffuse = float3(0,0,0);
 		output.Specular = float3(0,0,0);
+		output.Ambient = float3(0,0,0);
 		Ambient[texCoord.xy/2 + Diffuse.Length.xy/2] = float4(1,0,0 ,1);
 		return output;
 	}
@@ -30,7 +31,7 @@ DiffSpec LightCalc(PointLight pl, float3 pos, int2 texCoord)
 		output.Specular * 0;
 	Ambient[texCoord.xy/2 + Diffuse.Length.xy/2] = float4(0,1,0 ,1);
 	float SpecCo = normalSpec.w < 1 ? 0.0f : 1.0f;
-	
+	output.Ambient = pl.Bright * att * AmbFactor * pl.Color;
 	output.Specular = output.Specular * SpecCo;
 	return output;  
 }

@@ -22,7 +22,7 @@ bool Coil::Init()
 	if(!this->model) return false;
 
 	this->model->GlowTint = minGlow;
-	//this->model->IgnoreDepth = true;
+	this->model->IgnoreDepth = true;
 	this->model->Tint = Float3(1.0f);
 	return true;
 }
@@ -134,7 +134,7 @@ bool FirstPersonWeapon::Init()
 	ModelInitData modelData;
 	modelData.modelPath = L"wpn_massdriver_high_cylinder.dan";
 	modelData.visible = true;
-	modelData.scale = Oyster::Math::Float3(1,1,0.6);
+	modelData.scale = Oyster::Math::Float3(1,1,1);
 	modelData.rotation = Oyster::Math::Quaternion(Oyster::Math::Float3(0, 0, 0), 1);
 	modelData.tint = Float3(1.0f);
 	modelData.id = -1;
