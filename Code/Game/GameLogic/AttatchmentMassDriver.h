@@ -11,8 +11,9 @@ namespace GameLogic
 	const Oyster::Math::Float StandardMaxEnergy = 100.0f;
 	const Oyster::Math::Float StandardrechargeRate = 0.3f;
 	const Oyster::Math::Float StandarPullforce = 40.0f;
-	const Oyster::Math::Float StandarPushforce = 300.0f;
+	const Oyster::Math::Float StandarPushforce = 600.0f;
 	const Oyster::Math::Float StandarZipforce = 2000.0f;
+	const Oyster::Math::Float FireCooldown = 0.2f;
 
 	class AttatchmentMassDriver : public IAttatchment
 	{
@@ -66,6 +67,8 @@ namespace GameLogic
 
 		Oyster::Math::Float maxEnergy;
 		Oyster::Math::Float rechargeRate;
+
+		Oyster::Math::Float currentCooldown;
 
 		struct Aim
 		{

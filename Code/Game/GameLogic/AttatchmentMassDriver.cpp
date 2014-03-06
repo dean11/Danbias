@@ -19,6 +19,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(Oyster::Math::Float* currEnergy, Oy
 	this->pullForce = StandarPullforce;
 	this->pushForce = StandarPushforce;
 	this->zipForce =  StandarZipforce ;
+	this->currentCooldown = FireCooldown;
 }
 
 AttatchmentMassDriver::AttatchmentMassDriver(Player &owner, Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
@@ -30,6 +31,7 @@ AttatchmentMassDriver::AttatchmentMassDriver(Player &owner, Oyster::Math::Float*
 	this->pullForce = StandarPullforce;
 	this->pushForce = StandarPushforce;
 	this->zipForce =  StandarZipforce ;
+	this->currentCooldown = FireCooldown;
 	
 	this->owner = &owner;
 	this->heldObject = NULL;
@@ -52,10 +54,11 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	switch (usage)
 	{
 	case WEAPON_USE_PRIMARY_PRESS:
-		if((*currentEnergy) >= 9.0f)
+		if((*currentEnergy) >= 9.0f && currentCooldown >= FireCooldown)
 		{
-			(*currentEnergy) -= 9.0f;
 			ForcePush(usage,dt);
+			currentCooldown = 0.0f;
+			(*currentEnergy) = 0.0f;
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
 		}
@@ -69,7 +72,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		else if( (*currentEnergy) >= 1.0f )
 		{
 			
-			(*currentEnergy) -= 18.0f;
+			(*currentEnergy) -= 2.0f;
 		
 			ForcePull(usage,dt);
 			// add CD 
@@ -111,7 +114,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 void AttatchmentMassDriver::Update(float dt)
 {
 	
-
+	currentCooldown += dt;
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
@@ -177,7 +180,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	if(hasObject)
 	{
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (StandarPushforce * 3);
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (StandarPushforce);
+		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (StandarPushforce * 3) * (*currentEnergy / maxEnergy);
 		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
