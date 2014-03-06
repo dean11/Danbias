@@ -28,7 +28,8 @@ struct NetLoadState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
 
 	FirstPersonWeapon* weapon;
-
+	C_AudioHandler* soundManager;
+	
 	bool loading;
 };
 
@@ -66,6 +67,9 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	// signals querry to server for loading instructions
 	this->privData->nwClient->Send( Protocol_QuerryGameType() );
 
+	// SOUND
+	this->privData->soundManager = shared.soundManager;
+
 	return true;
 }
 
@@ -99,6 +103,10 @@ void NetLoadState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
+void NetLoadState::PlaySound( SoundID id )
+{
+	this->privData->soundManager->getSound(id)->Play_Sound();
+}
 
 const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientState::NetEvent &message )
 {
@@ -125,6 +133,9 @@ const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientSt
 void NetLoadState::LoadGame( const ::std::string &fileName )
 {
 	this->privData->loading = true;
+
+	// Load sounds, this should probably depend on the map later
+	LoadSound();
 
 	LevelLoader loader( "..\\Content\\Worlds\\" );
 	auto objects = loader.LoadLevel( fileName );
@@ -288,10 +299,27 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 				object->InitRB( RBData );
 			}
 			// !RB DEBUG 
-
+			if (oh->specialTypeID == ObjectSpecialType_JumpPad)
+			{
+				// sound settings first
+				this->privData->soundManager->getSound(jumppad)->setMode(Sound::Loop_normal);
+				// play sound
+				this->privData->soundManager->getSound(jumppad)->Play_Sound(true);
+				// channel settings
+				this->privData->soundManager->getSound(jumppad)->setChannel3DAttributes(object->getPos(), Float3(1,0,0));
+				this->privData->soundManager->getSound(jumppad)->setMinMaxDistance(1, 10000);
+				// unpause to play. 
+			}
 			if(oh->specialTypeID == ObjectSpecialType_PickupHealth)
 			{
 				(*this->privData->pickups)[ID] = (C_StaticObj*)object;
+				this->privData->soundManager->getSound(pickUpSound)->setMode(Sound::Loop_normal);
+				this->privData->soundManager->getSound(pickUpSound)->Play_Sound(true);
+				this->privData->soundManager->getSound(pickUpSound)->setChannel3DAttributes(object->getPos(), Float3(1,0,0));
+				this->privData->soundManager->getSound(pickUpSound)->setMinMaxDistance(1, 100000);
+				
+				this->privData->soundManager->getSound(pickUpSound)->setVolym( 0.5);
+				this->privData->soundManager->getSound(pickUpSound)->setSoundVolume();
 			}
 			else if(oth->typeID == ObjectType::ObjectType_Static)
 			{
@@ -311,4 +339,27 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			delete object;
 		}
 	}
+}
+void NetLoadState::LoadSound()
+{
+	this->privData->soundManager->getSound(backgroundSound)->SetPauseChannel(true);
+	this->privData->soundManager->getSound(backgroundSound)->setVolym(0.1f);
+
+	this->privData->soundManager->addSound(SoundDesc("jaguar.wav", effectSound));
+	this->privData->soundManager->addSound(SoundDesc("jaguar.wav", jumppad));
+	this->privData->soundManager->addSound(SoundDesc("onefootstep.wav", walk));
+	this->privData->soundManager->addSound(SoundDesc("Energy02.mp3", shoot));
+	this->privData->soundManager->addSound(SoundDesc("onefootstep.wav", walk1));
+	this->privData->soundManager->addSound(SoundDesc("Energy02.mp3", shoot1));
+	this->privData->soundManager->addSound(SoundDesc("Energy01.mp3", pull));
+	this->privData->soundManager->addSound(SoundDesc("energy_pickup.wav", collision));
+	this->privData->soundManager->addSound(SoundDesc("level_background.mp3", pickUpSound));
+	this->privData->soundManager->addSound(SoundDesc("player_near_death.wav", jump));
+	this->privData->soundManager->addSound(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient));
+	
+	this->privData->soundManager->getSound(walk)->setMode(Sound::Loop_normal);
+	this->privData->soundManager->getSound(walk)->Play_Sound(true);
+
+	this->privData->soundManager->getSound(walk1)->setMode(Sound::Loop_normal);
+	this->privData->soundManager->getSound(walk1)->Play_Sound(true);
 }

@@ -18,6 +18,7 @@
 #include "Input.h"
 #include "FirstPersonWeapon.h"
 #include "DllInterfaces\GFXAPI.h"
+#include "Sound\C_AudioHandler.h"
 
 namespace DanBias { namespace Client
 {
@@ -28,6 +29,8 @@ namespace DanBias { namespace Client
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> dynamicObjects;
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> lights;
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> pickups;
+		
+		C_AudioHandler* soundManager;
 		FirstPersonWeapon* weapon;
 
 		Oyster::Graphics::API::Texture		background;

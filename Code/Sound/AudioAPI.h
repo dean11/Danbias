@@ -3,6 +3,7 @@
 #define NOMINMAX
 #include <vld.h>
 #include <string>
+
 #ifdef SOUND_DLL_EXPORT
 #define SOUND_DLL __declspec(dllexport)
 #else
@@ -13,24 +14,40 @@ namespace Sound
 {
 	extern "C"
 	{
-		class SOUND_DLL Isound
+		enum SoundMode
+		{
+			Loop_normal,
+			Loop_off
+		};
+		enum SoundType
+		{
+			SoundType_Music,
+			SoundType_Effect
+		};
+		class SOUND_DLL ISound
 		{
 		public:
-			virtual void Play_Sound() = 0;
+			virtual void ReleaseSound() = 0;
+			virtual void Play_Sound(bool paused = false) = 0;
+			virtual void setVolym(float volym) = 0;
+			virtual void setMinMaxDistance( float min, float max) = 0; 
+			virtual void setChannel3DAttributes( float* pos, float* vel) = 0;
+			virtual void setMode(SoundMode soundMode) = 0;
+			virtual void SetPauseChannel(bool pause) = 0;
+			virtual bool GetPauseChannel()= 0;
+			virtual void toggleChannelPaused() = 0;
+			virtual SoundType getType() = 0;
+			virtual void setSoundVolume() = 0;
 		};
 
-	
 		class SOUND_DLL AudioAPI
 		{
 		public:
-
-			static void Init();
+			static bool Init();
 			static void Shutdown();
-			static Isound* Audio_CreateSound(std::string soundName, bool stream = false);
-			//static void Audio_PlaySound(Isound* sound);
-			//static void Audio_DeleteSound(Isound* sound);
-			//static void Audio_Update(float* pos, float speed);
-			static void Audio_Update();
+			static bool Audio_Update();
+			static void setListenerPos( float* pos, float* vel, float* forward, float* up ); 
+			static ISound* Audio_CreateSound(std::string soundName, bool stream = false);
 		};
 	}
 }

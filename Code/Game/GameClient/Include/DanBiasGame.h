@@ -57,6 +57,7 @@ namespace DanBias
 
 			static HRESULT	InitDirect3D();
 			static HRESULT	InitInput( HWND handle );
+			static HRESULT  InitSound();
 
 			static Result Update(float deltaTime);
 			static HRESULT Render();

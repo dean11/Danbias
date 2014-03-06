@@ -4,28 +4,23 @@
 using namespace Sound;
 
 
-void AudioAPI::Init(void)
+bool AudioAPI::Init(void)
 {
-	AudioManager::self()->intitializeSoundManager();
+	return AudioManager::self()->intitializeSoundManager();
 }
 void AudioAPI::Shutdown(void)
 {
 	AudioManager::self()->shutdownSoundManager();
 }
-Isound* AudioAPI::Audio_CreateSound(std::string soundName, bool stream)
+bool AudioAPI::Audio_Update()
 {
-	return (Isound*)AudioManager::self()->CreateSound(soundName, stream);
+	return AudioManager::self()->updateSoundManager(); 
 }
-
-//void AudioAPI::Audio_PlaySound(Isound* sound)
-//{
-//	AudioManager::self()->Play_Sound((SoundData*)sound);
-//}
-//void AudioAPI::Audio_DeleteSound(Isound* sound)
-//{
-//	AudioManager::self()->DeleteSound((SoundData*)sound);
-//}
-void AudioAPI::Audio_Update()
+void AudioAPI::setListenerPos( float* pos, float* vel, float* forward, float* up )
 {
-	AudioManager::self()->updateSoundManager(); 
+	AudioManager::self()->setListener(pos, vel, forward, up);
+}
+ISound* AudioAPI::Audio_CreateSound(std::string soundName, bool stream)
+{
+	return (ISound*)AudioManager::self()->CreateSound(soundName, stream);
 }

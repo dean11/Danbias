@@ -25,6 +25,7 @@ struct LobbyAdminState::MyData
 	::Input::Mouse *mouseInput;
 	Graphics::API::Texture background;
 	EventButtonCollection guiElements;
+	C_AudioHandler* soundManager;
 } privData;
 
 void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyAdminState*>& e );
@@ -55,6 +56,9 @@ bool LobbyAdminState::Init( SharedStateContent &shared )
 
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->privData->guiElements );
+
+	// SOUND
+	this->privData->soundManager = shared.soundManager;
 
 	return true;
 }
@@ -103,7 +107,10 @@ void LobbyAdminState::ChangeState( ClientState next )
 	else
 		this->privData->nextState = next;
 }
-
+void LobbyAdminState::PlaySound( SoundID id )
+{
+	this->privData->soundManager->getSound(id)->Play_Sound();
+}
 using namespace ::Oyster::Network;
 
 const GameClientState::NetEvent & LobbyAdminState::DataRecieved( const GameClientState::NetEvent &message )
@@ -142,8 +149,14 @@ void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyAdminState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyReady );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}

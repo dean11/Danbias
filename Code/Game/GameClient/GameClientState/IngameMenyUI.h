@@ -29,6 +29,7 @@ namespace DanBias { namespace Client
 		void RenderText();
 		bool Release();
 		void ChangeState( UIState next );
+		void PlaySound(SoundID id);
 	
 	private: /* Overidden mouse methods */
 		
@@ -39,6 +40,7 @@ namespace DanBias { namespace Client
 
 		::Input::Mouse *mouseInput;
 		Oyster::Math::Float3 mousePos;
+		C_AudioHandler* audioHandler;
 		Plane_UI* mouseCursor;
 		Plane_UI* background;
 		EventButtonCollection menyButtons;

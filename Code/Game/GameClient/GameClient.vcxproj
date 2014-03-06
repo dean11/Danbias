@@ -229,6 +229,7 @@
     <ClCompile Include="GameClientState\MainState.cpp" />
     <ClCompile Include="GameClientState\NetLoadState.cpp" />
     <ClCompile Include="GameClientState\RespawnUI.cpp" />
+    <ClCompile Include="GameClientState\Sound\C_AudioHandler.cpp" />
     <ClCompile Include="GameClientState\States\OptsionState.cpp" />
     <ClCompile Include="GameClientState\StatsUI.cpp" />
   </ItemGroup>
@@ -261,6 +262,7 @@
     <ClInclude Include="GameClientState\NetLoadState.h" />
     <ClInclude Include="GameClientState\RespawnUI.h" />
     <ClInclude Include="GameClientState\SharedStateContent.h" />
+    <ClInclude Include="GameClientState\Sound\C_AudioHandler.h" />
     <ClInclude Include="GameClientState\States\OptionState.h" />
     <ClInclude Include="GameClientState\StatsUI.h" />
     <ClInclude Include="Include\DanBiasGame.h" />
