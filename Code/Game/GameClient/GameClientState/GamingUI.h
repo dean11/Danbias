@@ -30,6 +30,10 @@ namespace DanBias { namespace Client
 		void SetKillMessage( std::wstring killerMessage );
 		void ChangeState( UIState next );
 		void StopGamingUI();
+
+		void ActivateInput();
+		void DeactivateInput();
+
 	private: /* Overidden mouse methods */
 		void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
 		void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender )							override;
@@ -50,13 +54,12 @@ namespace DanBias { namespace Client
 
 			void Activate(GamingUI* ui)
 			{
-				ui->sharedData->weapon->SetRotationSpeed( rotationSpeed );
-				ui->sharedData->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
+				ui->shared->weapon->SetRotationSpeed( rotationSpeed );
+				ui->shared->network->Send( GameLogic::Protocol_PlayerChangeWeapon( id ) );
 			}
 		};
 
 	private:
-		SharedStateContent *sharedData;
 		Camera_FPSV2 *camera;
 
 		// TODO add multiple UI elements

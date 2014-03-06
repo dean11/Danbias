@@ -34,7 +34,7 @@ namespace DanBias { namespace Client
 	private:
 		struct MyData;
 		::Utility::DynamicMemory::UniquePointer<MyData> privData;
-		GameStateUI *uiStack[4], *gameUI, *respawnUI, *statsUI, *inGameMeny;
+		GameStateUI *uiStack[4], *gameUI, *respawnUI, *statsUI, *inGameMeny, *inGameOptions;
 		int uiStackTop;
 
 		// DEGUG KEYS

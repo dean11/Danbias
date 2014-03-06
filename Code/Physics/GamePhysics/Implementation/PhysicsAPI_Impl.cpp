@@ -261,7 +261,6 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 
 	// Add rigid body
 	btVector3 fallInertia(0, 0, 0);
-	//collisionShape->calcu%lateLocalInertia(mass, fallInertia);
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(0, motionState, collisionShape, fallInertia);
     btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
 	rigidBody->setFriction(staticFriction);
@@ -272,8 +271,6 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	// Add rigid body to world
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
-
-	//dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);
@@ -296,7 +293,6 @@ void API_Impl::UpdateWorld()
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
-		//this->dynamicsWorld->
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
 		if(!simpleBody->IsGravityOverrided())
 		{
@@ -352,11 +348,8 @@ void API_Impl::UpdateWorld()
 				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB);
 				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA);
 			}
-		}
-
-		
+		}	
 	}
-
 }
 
 void API_Impl::Init()

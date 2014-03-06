@@ -8,15 +8,26 @@ using namespace ::Utility::Value;
 using namespace ::Oyster::Math;
 
 StatsUI::StatsUI() :
-	GameStateUI()
+	GameStateUI( nullptr )
 {
 	/* Should never be called! */
 	this->names = nullptr;
 	this->kills = nullptr;
 	this->death = nullptr;
+	this->render = false;
+}
+
+StatsUI::StatsUI( SharedStateContent* shared ) :
+	GameStateUI( shared )
+{
+	this->names = nullptr;
+	this->kills = nullptr;
+	this->death = nullptr;
+	this->render = false;
 }
 
 StatsUI::~StatsUI() { /* Do nothing */ }
+
 bool StatsUI::Init( int maxNrOfPlayers )
 {
 	this->textDepth = 0.2f;
@@ -52,14 +63,12 @@ GameStateUI::UIState StatsUI::Update( float deltaTime )
 
 bool StatsUI::HaveGUIRender() const
 {
-	// Set true if UIstate have any plane to render
-	return true; 
+	return this->render; 
 }
 
 bool StatsUI::HaveTextRender() const
 {
-	// Set true if UIstate have any text to render
-	return true; 
+	return this->render; 
 }
 
 void StatsUI::RenderGUI()
@@ -87,7 +96,8 @@ void StatsUI::RenderText()
 
 bool StatsUI::Release()
 {
-	// TODO: Release UI components here.
+	this->DeactivateInput();
+
 	if(this->playerId)
 		delete this->playerId;
 	if(this->nameText)
@@ -180,4 +190,18 @@ bool StatsUI::updateDeatchScore( int id, int deaths)
 void StatsUI::ChangeState( UIState next )
 {
 	this->nextState = next;
+}
+
+void StatsUI::ActivateInput()
+{
+	this->render = true;
+	this->shared->mouseDevice->AddMouseEvent( this );
+	this->shared->keyboardDevice->AddKeyboardEvent( this );
+}
+
+void StatsUI::DeactivateInput()
+{
+	this->render = false;
+	this->shared->mouseDevice->RemoveMouseEvent( this );
+	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
 }

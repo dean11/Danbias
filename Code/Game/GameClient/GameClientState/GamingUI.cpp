@@ -11,12 +11,11 @@ using namespace ::Input;
 using namespace ::Input::Enum;
 
 GamingUI::GamingUI() 
-	: GameStateUI()
+	: GameStateUI( nullptr )
 	, zip_Cooldown(0.4f)
 	, msg_Cooldown(2.0f)
 {
 	/* Should never be called! */
-	this->sharedData		= nullptr;
 	this->camera			= nullptr;
 	this->energy			= nullptr;
 	this->hp				= nullptr;
@@ -33,11 +32,10 @@ GamingUI::GamingUI()
 }
 
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) 
-	: GameStateUI()
+	: GameStateUI( shared )
 	, zip_Cooldown(0.4f)
 	, msg_Cooldown(2.0f)
 {
-	this->sharedData		= shared;
 	this->camera			= camera;
 	this->hp				= nullptr;
 	this->energy			= nullptr;
@@ -75,7 +73,7 @@ bool GamingUI::Init()
 	w1.id = 0;
 	w1.rotationSpeed = 3.5f;
 	w1.crosshair = new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
-	sharedData->weapon->SetRotationSpeed( w1.rotationSpeed );
+	this->shared->weapon->SetRotationSpeed( w1.rotationSpeed );
 	//sharedData->weapon->SetRotationSpeed(Utility::Value::Degree( w1.weaponGlobalCooldown ));
 	this->weapons.push_back(w1);
 	WeaponData w2;
@@ -85,8 +83,6 @@ bool GamingUI::Init()
 	w2.rotationSpeed = 5.6f;
 	w2.crosshair = w1.crosshair;
 	this->weapons.push_back(w2);
-
-	this->sharedData = sharedData;
 
 	return true; 
 }
@@ -128,9 +124,11 @@ void GamingUI::RenderText()
 
 bool GamingUI::Release()
 {
-	// TODO: Release UI components here.
-	if(this->hp)		delete this->hp;
-	if(this->energy)	delete this->energy;
+	this->DeactivateInput();
+
+	if( this->hp )		delete this->hp;
+	if( this->energy )	delete this->energy;
+
 	for (int i = 0; i < maxMessageCount; i++)
 	{
 		if (this->killMessages[i])
@@ -139,7 +137,6 @@ bool GamingUI::Release()
 		}
 	}
 	delete [] this->killMessages;
-	this->sharedData = 0;
 	return true;
 }
 void GamingUI::SetHPtext( std::wstring hp )
@@ -158,18 +155,18 @@ void GamingUI::SetKillMessage( std::wstring killerMessage )
 }
 void GamingUI::ReadKeyInput()
 {
-	if( this->key_forward )			this->sharedData->network->Send( Protocol_PlayerMovementForward() );
-	if( this->key_backward )		this->sharedData->network->Send( Protocol_PlayerMovementBackward() );
-	if( this->key_strafeLeft )		this->sharedData->network->Send( Protocol_PlayerMovementLeft() );
-	if( this->key_strafeRight )		this->sharedData->network->Send( Protocol_PlayerMovementRight() );
+	if( this->key_forward )			this->shared->network->Send( Protocol_PlayerMovementForward() );
+	if( this->key_backward )		this->shared->network->Send( Protocol_PlayerMovementBackward() );
+	if( this->key_strafeLeft )		this->shared->network->Send( Protocol_PlayerMovementLeft() );
+	if( this->key_strafeRight )		this->shared->network->Send( Protocol_PlayerMovementRight() );
 	if( this->mouse_firstDown && this->weapons[this->currentWeapon].shootTimer > this->weapons[this->currentWeapon].weaponGlobalCooldown )	
 	{
-		this->sharedData->weapon->Shoot();
+		this->shared->weapon->Shoot();
 		this->weapons[this->currentWeapon].shootTimer = 0;
-		this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
+		this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
 	}
-	if( this->mouse_secondDown )	this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryPress) );
-	if( this->key_zipDown )			this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityPress) );
+	if( this->mouse_secondDown )	this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryPress) );
+	if( this->key_zipDown )			this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityPress) );
 }
 
 void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )	
@@ -178,15 +175,15 @@ void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )
 	{
 		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
 			this->mouse_firstDown = true;
-			//this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
-			//this->sharedData->weapon->Shoot();
+			//this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryPress) );
+			//this->shared->weapon->Shoot();
 		break;
 		case ::Input::Enum::SAMI_MouseRightBtn:
 			this->mouse_secondDown = true;
 			//this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryPress) );
 		break;
 		case ::Input::Enum::SAMI_MouseMiddleBtn:	
-			//this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityPress) );
+			//this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityPress) );
 		break;
 	}
 }
@@ -196,26 +193,22 @@ void GamingUI::OnMouseRelease ( Input::Enum::SAMI key, Input::Mouse* sender )
 	{
 		case ::Input::Enum::SAMI_MouseLeftBtn:	// shoot
 			this->mouse_firstDown = false;
-			//this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryRelease) );
+			//this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_PrimaryRelease) );
 		break;
 		case ::Input::Enum::SAMI_MouseRightBtn:
 			this->mouse_secondDown = false;
 			//this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_SecondaryRelease) );
 		break;
 		case ::Input::Enum::SAMI_MouseMiddleBtn:	
-			//this->sharedData->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityRelease) );
+			//this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_UtilityRelease) );
 		break;
 	}
 }
 void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointFloat2D velocity, Input::Mouse* sender )
 { 
 	//send delta mouse movement 
-	this->camera->PitchDown( (-velocity.y) * this->sharedData->mouseSensitivity );
-	//this->camera->YawLeft( (-coordinate.x) * this->sharedData->mouseSensitivity );
-	//if( deltaPos.x != 0.0f ) //This made the camera reset to a specific rotation. Why?
-	{
-		this->sharedData->network->Send( Protocol_PlayerLeftTurn((velocity.x) * this->sharedData->mouseSensitivity, this->camera->GetLook()) );
-	}
+	this->camera->PitchDown( (-velocity.y) * this->shared->mouseSensitivity );
+	this->shared->network->Send( Protocol_PlayerLeftTurn((velocity.x) * this->shared->mouseSensitivity, this->camera->GetLook()) );
 }
 void GamingUI::OnMouseScroll( int delta, Input::Mouse* sender )
 {
@@ -225,16 +218,16 @@ void GamingUI::OnMouseScroll( int delta, Input::Mouse* sender )
 		
 		this->weapons[this->currentWeapon].Activate(this);
 
-		//sharedData->weapon->SetRotationSpeed( Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
-		//this->sharedData->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
+		//this->shared->weapon->SetRotationSpeed( Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
+		//this->shared->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
 	}
 	else if(delta == 1)
 	{
 		int a = this->currentWeapon - 1;
 		this->currentWeapon = max( a, 0);
 		this->weapons[this->currentWeapon].Activate(this);
-		//sharedData->weapon->SetRotationSpeed(Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
-		//this->sharedData->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
+		//this->shared->weapon->SetRotationSpeed(Utility::Value::Degree( this->weapons[this->currentWeapon].weaponGlobalCooldown ) );
+		//this->shared->network->Send( Protocol_PlayerChangeWeapon( this->weapons[this->currentWeapon].id ) );
 	}
 }
 
@@ -252,7 +245,7 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_E:		this->key_zipDown = true;
 		break;
-		case SAKI_Space:	this->sharedData->network->Send( Protocol_PlayerJump() );
+		case SAKI_Space:	this->shared->network->Send( Protocol_PlayerJump() );
 		break;
 		// swap weapon to massDriver
 		case SAKI_1:
@@ -263,13 +256,11 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 			this->currentWeapon = min( (int)this->weapons.size() , 1 );
 			this->weapons[this->currentWeapon].Activate(this);
 		break;
-		case SAKI_Escape:	this->nextState = GameStateUI::UIState_inGameMeny;
-		break;
 	}
 }
 void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 {
-	if(sender != this->sharedData->keyboardDevice) return;
+	if(sender != this->shared->keyboardDevice) return;
 	switch (key)
 	{
 		case SAKI_W:		this->key_forward = false;
@@ -282,14 +273,16 @@ void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_E:		this->key_zipDown = false;
 		break;
+		case SAKI_Escape:	this->nextState = UIState_ingame_meny;
+		break;
 	}
 
 	//DEBUG: 
 	
 	if(key == SAKI_L)
-		this->sharedData->mouseDevice->Deactivate();
+		this->shared->mouseDevice->Deactivate();
 	if(key == SAKI_M)
-		this->sharedData->mouseDevice->Activate();
+		this->shared->mouseDevice->Activate();
 }
 void GamingUI::ChangeState( UIState next )
 {
@@ -301,5 +294,19 @@ void GamingUI::StopGamingUI()
 	this->key_forward		= false;
 	this->key_strafeLeft	= false;
 	this->key_strafeRight	= false;
+	this->key_zipDown		= false;
+	this->mouse_firstDown	= false;
 	this->mouse_secondDown	= false;
+}
+
+void GamingUI::ActivateInput()
+{
+	this->shared->mouseDevice->AddMouseEvent( this );
+	this->shared->keyboardDevice->AddKeyboardEvent( this );
+}
+
+void GamingUI::DeactivateInput()
+{
+	this->shared->mouseDevice->RemoveMouseEvent( this );
+	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
 }
