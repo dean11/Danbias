@@ -273,11 +273,16 @@ namespace Oyster
 					}
 
 					SAFE_RELEASE(Gui::depth);
-					Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
+					Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
+
+					SAFE_RELEASE(Gather::NoDepthView);
+					SAFE_RELEASE(Light::NoDepth);
+					Core::UsedMem -= Core::resolution.x * Core::resolution.y * 4;
 
 					SAFE_RELEASE(Blur::BufferSRV);
 					SAFE_RELEASE(Blur::BufferUAV);
 					Core::UsedMem -= Core::resolution.x * Core::resolution.y * 16;
+
 
 					Core::resolution = size;
 
@@ -300,9 +305,9 @@ namespace Oyster
 					D3D11_TEXTURE2D_DESC dTDesc;
 					dTDesc.MipLevels=1;
 					dTDesc.ArraySize=1;
-					dTDesc.Format = DXGI_FORMAT_D32_FLOAT;
+					dTDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 					dTDesc.Usage = D3D11_USAGE_DEFAULT;
-					dTDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+					dTDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 					dTDesc.CPUAccessFlags=0;
 					dTDesc.MiscFlags=0;
 					dTDesc.Height = (UINT)Core::resolution.y;
@@ -310,11 +315,28 @@ namespace Oyster
 					dTDesc.SampleDesc.Count=1;
 					dTDesc.SampleDesc.Quality=0;
 
+					D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+					dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+					dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+					dsvDesc.Flags = 0;
+					dsvDesc.Texture2D.MipSlice = 0;
+
 					ID3D11Texture2D* depthstencil;
 					Core::device->CreateTexture2D(&dTDesc,0,&depthstencil);
 					Core::UsedMem += dTDesc.Height * dTDesc.Width * 4;
-					Core::device->CreateDepthStencilView(depthstencil,NULL,&Gui::depth);
+					Core::device->CreateDepthStencilView(depthstencil,&dsvDesc,&Gui::depth);
 					depthstencil->Release();
+
+					D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+					srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+					srvDesc.Texture2D.MipLevels = 1;
+					srvDesc.Texture2D.MostDetailedMip = 0;
+
+					Core::device->CreateTexture2D(&dTDesc,0,&depthstencil);
+					Core::UsedMem += dTDesc.Height * dTDesc.Width * 4;
+					Core::device->CreateDepthStencilView(depthstencil,&dsvDesc,&Gather::NoDepthView);
+					Core::device->CreateShaderResourceView(depthstencil,&srvDesc,&Light::NoDepth);
 
 					//Reset Passes--------------------------------------------------------------------------
 
@@ -340,6 +362,7 @@ namespace Oyster
 						Light::Pass.SRV.Compute[i] = GBufferSRV[i];
 					}
 					Light::Pass.SRV.Compute[3] = Core::depthStencilUAV;
+					Light::Pass.SRV.Compute[13] = Light::NoDepth;
 					//Post Pass
 					for(int i = 0; i<LBufferSize;++i)
 					{
@@ -854,6 +877,8 @@ namespace Oyster
 					SAFE_RELEASE(Gui::Text::Pass.IAStage.Layout);
 
 					SAFE_RELEASE(Gui::depth);
+					SAFE_RELEASE(Gather::NoDepthView);
+					SAFE_RELEASE(Light::NoDepth);
 				}
 		}
 	}
