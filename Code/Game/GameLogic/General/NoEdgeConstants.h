@@ -58,15 +58,15 @@ namespace NoEdgeConstants
 				const float MaxEnergy					= 100.0f;
 				const float RechargeRate				= 0.3f;
 
-				const float Pullforce					= 160.0f;
-				const float Pushforce					= 240.0f;
+				const float Pullforce					= 400.0f;
+				const float Pushforce					= 600.0f;
 				const float Zipforce					= 2000.0f;
 
 				const float PullCost					= 18.0f;
 				const float PushCost					= 9.0f;
 				const float ZipCost						= 40.0f;
 
-				const float PrimaryCooldown				= 0.0f;
+				const float PrimaryCooldown				= 0.2f;
 				const float SecondaryCooldown			= 0.0f;
 				const float MiddleCooldown				= 0.0f;
 			}
