@@ -54,11 +54,12 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	switch (usage)
 	{
 	case WEAPON_USE_PRIMARY_PRESS:
-		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost && currentCooldown >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PrimaryCooldown)
 		{
 			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost;
 			ForcePush(usage,dt);
-			// add CD 
+			currentCooldown = 0.0f;
+			(*currentEnergy) = 0.0f;
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
 		}
 		break;
@@ -113,7 +114,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 void AttatchmentMassDriver::Update(float dt)
 {
 	
-
+	currentCooldown += dt;
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
@@ -179,7 +180,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	if(hasObject)
 	{
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->pushForce * 20);
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce);
+		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce * 3) * (*currentEnergy / maxEnergy);
 		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
@@ -189,7 +191,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	Oyster::Math::Float radius = 4.0f;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 10.0f;
+	Oyster::Math::Float lenght = 6.0f;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
 	pos += look * ((lenght*0.50f));	//Move the cone to start at the player.
@@ -198,8 +200,9 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 
 	forcePushData args;
-	args.pushForce = this->pushForce;
-	args.p = this->owner;
+	args.pushForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce;
+	args.pushForce += NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce * 3 * (*currentEnergy / maxEnergy);
+	args.weapon = this;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
 
@@ -226,20 +229,20 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	if(hasObject) return; //this test checks if the weapon has now picked up an object, if so then it shall not apply a force to suck in objects
 	
 
-	//if no object has been picked up then suck objects towards you
-	Oyster::Math::Float radius = 4;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 20;
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+	Oyster::Math::Float3 target = pos + (look * 10);
 
-	pos += look * ((lenght*0.5f) - 1.0f);	//Move the cone to start at the player.
-
-	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
 	args.pushForce = -this->pullForce;
-	args.p = this->owner;
+	args.weapon = this;
 
-	Oyster::Physics::API::Instance().ApplyEffect(&hitCone,&args,ForcePushAction);
+	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
+	
+	if(hitObject != NULL)
+	{
+		ForcePushAction(hitObject,&args);
+	}
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)

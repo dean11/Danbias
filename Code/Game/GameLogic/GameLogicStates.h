@@ -5,7 +5,7 @@
 
 namespace GameLogic
 {
-	class Player;
+	class AttatchmentMassDriver;
 	enum PLAYER_MOVEMENT
 	{
 		PLAYER_MOVEMENT_FORWARD = 0,
@@ -45,7 +45,7 @@ namespace GameLogic
 	struct forcePushData
 	{
 		Oyster::Math::Float pushForce;
-		Player *p;
+		AttatchmentMassDriver *weapon;
 	};
 	struct firedBullet
 	{

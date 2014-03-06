@@ -97,15 +97,15 @@ const float default_jump_pad_stun_duration = 1.0f;
 	{
 		Object *realObjA = (Object*)objA->GetCustomTag();
 		Portal *portal;
-		Object *realObjB = (Object*)objB->GetCustomTag(); //needs to be changed?
+		Object *realObjB = (Object*)objB->GetCustomTag();
 
 		if(!realObjA)	
 			return;
 		if(!realObjB)		
 			return;
-		
+
 		//check who is player and who is the object
-		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player)
+		if(realObjA->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Portal)
 		{
 			portal = (Portal*)realObjA;
 		}
@@ -243,6 +243,16 @@ const float default_jump_pad_stun_duration = 1.0f;
 		PlayerVObject(player, obj, kineticEnergyLoss);
 		// always take extra DMG when in contact with leathal object
 		player.DamageLife(ExtraDamage);
+
+
+		Oyster::Math::Float3 objectPos = obj.GetPosition();
+		Oyster::Math::Float3 playerPos = player.GetRigidBody()->GetState().centerPos;
+		Oyster::Math::Float3 force = (((playerPos - objectPos).GetNormalized()));
+
+		player.GetRigidBody()->SetLinearVelocity(Oyster::Math::Float3::null);
+		player.GetRigidBody()->ApplyImpulse(force * 10);
+		player.Stun(0.2f);
+
 	}
 
 	Oyster::Physics::ICustomBody::SubscriptMessage Object::DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -339,16 +349,22 @@ const float default_jump_pad_stun_duration = 1.0f;
 		if(obj->GetState().mass == 0) return;
 
 		Object *realObj = (Object*)obj->GetCustomTag();
+		AttatchmentMassDriver *weapon = ((forcePushData*)(args))->weapon;
+		Player *player = weapon->owner;
 
 		if(realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_Player || realObj->GetObjectType() == ObjectSpecialType::ObjectSpecialType_World)
 			return;
 
-		Oyster::Math::Float3 playerPos = ((forcePushData*)(args))->p->GetPosition();
+		Oyster::Math::Float3 playerPos = player->GetPosition();
 		Oyster::Math::Float3 targetPos = realObj->GetPosition();
-		Oyster::Math::Float3 forceDir = targetPos - playerPos;
+		Oyster::Math::Float3 forceDir = (targetPos - playerPos).GetNormalized();
 		Oyster::Math::Float pushForce = ((forcePushData*)(args))->pushForce;
 
-		obj->SetLinearVelocity(((forcePushData*)(args))->p->GetRigidBody()->GetLinearVelocity());
+		if(weapon->hasObject)
+		{
+			obj->SetLinearVelocity(player->GetRigidBody()->GetLinearVelocity());
+		}
+
 		obj->ApplyImpulse(forceDir * pushForce);
 		
 
@@ -356,7 +372,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 		
 		if(dynamicObj)
 		{
-			dynamicObj->SetAffectedBy(*((forcePushData*)(args))->p);
+			dynamicObj->SetAffectedBy(*player);
 		}
 	}
 

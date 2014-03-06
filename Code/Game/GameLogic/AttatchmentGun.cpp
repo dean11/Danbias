@@ -73,7 +73,7 @@ void AttatchmentGun::Update(float dt)
 
 void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float3 target = pos + (look * 100);
 

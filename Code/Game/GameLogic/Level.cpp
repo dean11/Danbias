@@ -153,7 +153,7 @@ ICustomBody* Level::InitRigidBodyCube( const ObjectHeader* obj)
 	rigidBodySize = (Oyster::Math::Float3)obj->boundingVolume.box.size * (Oyster::Math::Float3)obj->scale;
 
 	//create the rigid body
-	rigidBody = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, obj->boundingVolume.box.restitutionCoeff , obj->boundingVolume.box.frictionCoeffStatic , obj->boundingVolume.box.frictionCoeffDynamic);
+	rigidBody = API::Instance().AddCollisionBox(rigidBodySize , rigidWorldRotation  , rigidWorldPos , rigidBodyMass, obj->boundingVolume.box.restitutionCoeff + 10.8f , 1.8f , obj->boundingVolume.box.frictionCoeffDynamic);
 	return rigidBody;
 }
 ICustomBody* Level::InitRigidBodySphere( const ObjectHeader* obj)
@@ -217,7 +217,7 @@ ICustomBody* Level::InitRigidBodyMesh( const ObjectHeader* obj)
 	//create the rigid body
 	std::wstring fname = L"..\\Content\\Worlds\\cgf\\";
 	fname.append(obj->boundingVolume.cgMesh.filename);
-	rigidBody = API::Instance().AddTriangleMesh( fname , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.cgMesh.restitutionCoeff , obj->boundingVolume.cgMesh.frictionCoeffStatic , obj->boundingVolume.cgMesh.frictionCoeffDynamic);
+	rigidBody = API::Instance().AddTriangleMesh( fname , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.cgMesh.restitutionCoeff + 10.05f , obj->boundingVolume.cgMesh.frictionCoeffStatic , obj->boundingVolume.cgMesh.frictionCoeffDynamic);
 	return rigidBody;
 }
 bool Level::InitiateLevel(std::wstring levelPath)

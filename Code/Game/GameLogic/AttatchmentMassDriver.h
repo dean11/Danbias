@@ -60,12 +60,7 @@ namespace GameLogic
 
 		Oyster::Math::Float maxEnergy;
 		Oyster::Math::Float rechargeRate;
-
-		struct Aim
-		{
-			
-		};
-
+		Oyster::Math::Float currentCooldown;
 
 	};
 }
