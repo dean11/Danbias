@@ -26,6 +26,7 @@ struct NetLoadState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> *weapons;
 
 	FirstPersonWeapon* weapon;
 
@@ -56,6 +57,7 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	this->privData->staticObjects	= &shared.staticObjects;
 	this->privData->lights			= &shared.lights;
 	this->privData->pickups			= &shared.pickups;
+	this->privData->weapons			= &shared.weapons;
 
 	shared.weapon = new FirstPersonWeapon;
 	this->privData->weapon			= shared.weapon;
@@ -163,6 +165,26 @@ void NetLoadState::LoadGame( const ::std::string &fileName )
 		default: break;
 		}
 	}
+
+	//Load ten weapons
+	ModelInitData desc;
+	desc.id			= 0;
+	StringToWstring("wpn_massdriver_low.dan", desc.modelPath );
+	desc.position	= Float3(-14, 196, 0); 
+	desc.rotation	= Quaternion(Float3(0, 0, 0), 1);
+	desc.scale		= Float3(1, 1, 1);
+	desc.visible	= false;
+	desc.tint = Float3(1.0f);
+	desc.gtint = Float3(1.0f);
+
+	for(int i = 0; i < 10; i++)
+	{
+		(*this->privData->weapons)[i] = new C_Player();
+
+		(*this->privData->weapons)[i]->Init(desc);
+		//(*this->privData->weapons)[i]->playAnimation(L"idle", true); //This animation is currently broken and will make you enter an endless loop.
+	}
+
 
 	this->privData->weapon->Init();
 

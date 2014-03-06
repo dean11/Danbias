@@ -13,6 +13,7 @@
 #include "C_Object.h"
 #include "C_obj\C_StaticObj.h"
 #include "C_obj\C_DynamicObj.h"
+#include "C_obj\C_Player.h"
 #include "C_Light.h"
 #include "NetworkClient.h"
 #include "Input.h"
@@ -28,6 +29,7 @@ namespace DanBias { namespace Client
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> dynamicObjects;
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> lights;
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> pickups;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> weapons;
 		FirstPersonWeapon* weapon;
 
 		Oyster::Graphics::API::Texture		background;

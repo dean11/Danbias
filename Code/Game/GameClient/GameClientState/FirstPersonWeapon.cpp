@@ -213,7 +213,7 @@ void FirstPersonWeapon::Update(Oyster::Math::Matrix viewMatrix, Oyster::Math::Fl
 	if(!this->model) return;
 
 	static int steps = 0;
-	if(rotate)
+	if(rotate && timer.getElapsedSeconds() > 0.2f)
 	{
 		if(currentRotation < maxRotation)
 		{

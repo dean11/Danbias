@@ -40,6 +40,7 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_DynamicObj>> *dynamicObjects;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> *weapons;
 
 	//C_Player player;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
@@ -82,6 +83,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->dynamicObjects = &shared.dynamicObjects;
 	this->privData->lights = &shared.lights;
 	this->privData->pickups = &shared.pickups;
+	this->privData->weapons = &shared.weapons;
 	this->privData->weapon = shared.weapon;
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
@@ -174,6 +176,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		(*this->privData->lights)[p->GetId()] = newLight;
 
 		(this->privData->players)[id] = p;
+		(*this->privData->weapons)[id]->SetVisible(true);
 		
 		if( isMyPlayer )
 		{
@@ -283,8 +286,9 @@ bool GameState::Render()
 	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
+	auto weaponObject = this->privData->weapons->begin();
 	auto playerObject = this->privData->players.begin();
-	for( ; playerObject != this->privData->players.end(); ++playerObject )
+	for( ; playerObject != this->privData->players.end(); ++playerObject)
 	{
 		if(playerObject->second)
 		{
@@ -293,8 +297,14 @@ bool GameState::Render()
 			#endif
 			{
 				playerObject->second->Render();
+				if(weaponObject->second)
+				{
+					weaponObject->second->Render();
+				}
 			}
 		}
+		if(weaponObject != this->privData->weapons->end())
+			++weaponObject;
 	}
 
 	auto staticObject = this->privData->staticObjects->begin();
@@ -421,6 +431,13 @@ bool GameState::Release()
 			playerObject->second = nullptr;
 		}
 
+		auto weaponObject = this->privData->weapons->begin();
+		for( ; weaponObject != this->privData->weapons->end(); ++weaponObject )
+		{
+			weaponObject->second->Release();
+			weaponObject->second = nullptr;
+		}
+
 		auto staticObject = this->privData->staticObjects->begin();
 		for( ; staticObject != this->privData->staticObjects->end(); ++staticObject )
 		{
@@ -538,7 +555,6 @@ void GameState::ReadKeyInput()
 	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
 	{
 		this->renderStats = true;
-		this->privData->weapon->Shoot();
 	} 
 	else 
 	{
@@ -701,6 +717,15 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 	{
 		// if it is not a player 
 		object = (*this->privData->dynamicObjects)[decoded.objectID];
+	}
+	else
+	{
+		if(object->GetId() != this->privData->myId)
+		{
+			(*this->privData->weapons)[decoded.objectID]->setPos(object->getPos());
+			(*this->privData->weapons)[decoded.objectID]->setRot(object->getRotation());
+			(*this->privData->weapons)[decoded.objectID]->updateWorld();
+		}
 	}
 
 	if( object )
@@ -962,13 +987,18 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			{
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
 				player->playAnimation(L"run_forwards", true);
+				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"run_forwards", true);	//This animation is currently broken and will make the weapon disappear.
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				player->playAnimation(L"movement", true);
+				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"movement", true);
+				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"run_forwards", true);	//This animation is currently broken and will make the weapon disappear.
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
+				(*this->privData->weapons)[decoded.objectID]->stopAllAnimations();
+				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"idle", true); //This animation is currently broken and will make you enter an endless loop.
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 				break;
