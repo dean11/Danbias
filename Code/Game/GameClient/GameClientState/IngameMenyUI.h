@@ -28,6 +28,7 @@ namespace DanBias { namespace Client
 		void RenderText();
 		bool Release();
 		void ChangeState( UIState next );
+		void PlaySound(SoundID id);
 	
 		void ActivateInput();
 		void DeactivateInput();
@@ -38,6 +39,7 @@ namespace DanBias { namespace Client
 
 	private:
 		::Oyster::Math::Float3 mousePos;
+		C_AudioHandler* audioHandler;
 		Plane_UI* mouseCursor;
 		Plane_UI* background;
 		EventButtonCollection menyButtons;

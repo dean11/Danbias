@@ -16,6 +16,7 @@
 #include "InGameOptionsUI.h"
 #include <ObjectDefines.h>
 #include "ColorDefines.h"
+#include "AudioAPI.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster;
@@ -41,7 +42,7 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
 
-	//C_Player player;
+	C_AudioHandler* soundManager;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
 	Camera_FPSV2 camera;
 
@@ -73,6 +74,25 @@ bool GameState::Init( SharedStateContent &shared )
 	// and there is content in shared.dynamicObjects and shared.staticObjects
 
 	this->privData = new MyData();
+
+	this->privData->soundManager = shared.soundManager;
+	//PlaySound(walk);
+	//PlaySound(pickUpSound);
+	//PlaySound(jumppad);
+	//PlaySound(ambient);
+	
+	//this->privData->soundManager->getSound(ambient)->Play_Sound(true);
+	//this->privData->soundManager->getSound(ambient)->setChannel3DAttributes(Float3(0,150,0), Float3(1,0,0));
+	//this->privData->soundManager->getSound(ambient)->setMinMaxDistance(1, 10000);
+	//this->privData->soundManager->getSound(ambient)->setMode(Sound::Loop_normal);
+	//this->privData->soundManager->getSound(ambient)->setSoundVolume();
+	//this->privData->soundManager->getSound(ambient)->setVolym( 0.4);
+	//this->privData->soundManager->getSound(ambient)->SetPauseChannel(false);
+	//this->privData->soundManager->getSound(pickUpSound)->setSoundVolume();
+
+	this->privData->soundManager->getSound(jumppad)->SetPauseChannel(false);
+	this->privData->soundManager->getSound(pickUpSound)->SetPauseChannel(false);
+	
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
@@ -449,6 +469,7 @@ bool GameState::Release()
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
+
 		this->privData->pickups->clear();
 
 		if(this->privData->weapon)
@@ -456,6 +477,7 @@ bool GameState::Release()
 			delete this->privData->weapon;
 			this->privData->weapon = nullptr;
 		}
+
 
 		privData = NULL;
 	}
@@ -500,6 +522,11 @@ bool GameState::Release()
 void GameState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
+}
+
+void GameState::PlaySound( SoundID id )
+{
+	this->privData->soundManager->getSound(id)->Play_Sound();
 }
 
 void GameState::ReadKeyInput()
@@ -585,6 +612,7 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 		}
 	}
 	decoded.pickup_ID;
+	
 }
 
 void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
@@ -606,6 +634,9 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 			((GamingUI*)this->gameUI)->SetHPtext( ::std::to_wstring((int)decoded.healthLost) );
 		}
 	}
+	this->privData->soundManager->getSound(effectSound)->setChannel3DAttributes(object->getPos(), Float3(0,0,0));
+	PlaySound(effectSound);
+	
 }
 
 void GameState::Gameplay_ObjectHealthStatus( CustomNetProtocol data )
@@ -710,6 +741,8 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 		{
 			this->privData->camera.SetPosition( position );
 			this->privData->camera.SetRotation( rotation );
+			Float3 vel(1, 0, 0);
+			Sound::AudioAPI::setListenerPos(position, vel, this->privData->camera.GetForward(), this->privData->camera.GetUp());
 		}
 		object->setPos( position );
 		object->setRot( rotation );
@@ -963,15 +996,20 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			{
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
 				player->playAnimation(L"run_forwards", true);
+				this->privData->soundManager->getSound(walk1)->setChannel3DAttributes(player->getPos(), Float3(1,0,0));
+				this->privData->soundManager->getSound(walk1)->SetPauseChannel(false);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				player->playAnimation(L"movement", true);
+				this->privData->soundManager->getSound(walk1)->SetPauseChannel(true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
+				this->privData->soundManager->getSound(walk1)->SetPauseChannel(true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
+				this->privData->soundManager->getSound(shoot1)->setChannel3DAttributes(player->getPos(), Float3(1,0,0));
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
 				break;
@@ -988,17 +1026,23 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			{
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
 				player->playAnimation(L"run_forwards", true);
+				this->privData->soundManager->getSound(walk)->SetPauseChannel(false);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				player->playAnimation(L"movement", true);
+				this->privData->soundManager->getSound(walk)->SetPauseChannel(true);
+				PlaySound(jump);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
+				this->privData->soundManager->getSound(walk)->SetPauseChannel(true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
+				PlaySound(shoot);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+				PlaySound(pull);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_Reload:
 				break;
@@ -1023,6 +1067,7 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 		switch (decoded.collisionID)
 		{
 		case GameLogic::CollisionEvent::CollisionEvent_BasicCollision:
+			//PlaySound(collision);
 			break;
 		default:
 			break;

@@ -1,6 +1,7 @@
 #include "GamingUI.h"
 #include <Protocols.h>
 #include "Utilities.h"
+#include "NoEdgeConstants.h"
 
 using namespace ::DanBias::Client;
 using namespace ::Oyster::Network;
@@ -67,11 +68,15 @@ bool GamingUI::Init()
 	this->killMessages[1] = new Text_UI(L"", Float3(0.02f,0.1f,0.1f), Float2(0.8f,0.1f), 0.035f, Float4(1,0.5,0,1));
 	this->killMessages[2] = new Text_UI(L"", Float3(0.02f,0.15f,0.1f), Float2(0.8f,0.1f), 0.035f, Float4(1,0.5,0,1));
 
-	WeaponData w1 ( 0, 0.2f, 3.5f );
+	WeaponData w1 (	NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::SlotId
+				  , NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PrimaryCooldown
+				  , 3.5f );
 	w1.crosshair = new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
 	this->weapons.push_back(w1);
 	
-	WeaponData w2 ( 1, 0.2f, 5.6f );
+	WeaponData w2 (	NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::SlotId
+				  , NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown
+				  , 5.6f );
 	w2.crosshair				= w1.crosshair;
 	this->weapons.push_back(w2);
 

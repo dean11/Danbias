@@ -157,13 +157,23 @@ void LanMenuState::ChangeState( ClientState next )
 
 	this->privData->nextState = next;
 }
+void LanMenuState::PlaySound( SoundID id )
+{
+	this->privData->sharedData->soundManager->getSound(id)->Play_Sound();
+}
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_NetLoad );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}
@@ -173,8 +183,14 @@ void OnButtonInteract_Exit( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Main );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}

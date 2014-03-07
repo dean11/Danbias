@@ -28,6 +28,7 @@ namespace DanBias { namespace Client
 		bool Render()override;
 		bool Release()override;
 		void ChangeState( ClientState next );
+		void PlaySound( SoundID id );
 
 		const NetEvent & DataRecieved( const NetEvent &message );
 

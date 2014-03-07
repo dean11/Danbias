@@ -27,6 +27,7 @@ struct MainState::MyData
 
 	Float3 mousePos;
 	EventButtonCollection guiElements;
+	C_AudioHandler* soundManager;
 };
 
 void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e );
@@ -72,6 +73,15 @@ bool MainState::Init( SharedStateContent &shared )
 
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->privData->guiElements );
+
+	// SOUND
+	this->privData->soundManager = this->privData->sharedData->soundManager;
+	// SOUND
+	this->privData->soundManager->addSound(SoundDesc("Button01.mp3", mouse_hoover));
+	this->privData->soundManager->addSound(SoundDesc("button_click.wav", mouse_click));
+	this->privData->soundManager->addSound(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
+	this->privData->soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
+	this->privData->soundManager->getSound(backgroundSound)->Play_Sound();
 
 	return true;
 }
@@ -124,6 +134,7 @@ bool MainState::Release()
 		this->privData = NULL;
 		// button collection will be autoreleased from EventHandler
 	}
+	
 	return true;
 }
 
@@ -131,13 +142,22 @@ void MainState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
-
+void MainState::PlaySound( SoundID id )
+{
+	this->privData->soundManager->getSound(id)->Play_Sound();
+}
 void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}
@@ -147,8 +167,14 @@ void OnButtonInteract_Settings( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Options );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}
@@ -158,8 +184,14 @@ void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Lan );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}
@@ -169,8 +201,14 @@ void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<MainState*>& e )
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Quit );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}

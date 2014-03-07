@@ -20,6 +20,7 @@ namespace DanBias
 			bool Render();
 			bool Release();
 			void ChangeState( ClientState next );
+			void PlaySound( SoundID id );
 
 			const NetEvent & DataRecieved( const NetEvent &message );
 		
@@ -29,6 +30,7 @@ namespace DanBias
 
 			void LoadGame( const ::std::string &fileName );
 			void LoadObject( GameLogic::ObjectTypeHeader* oth, int ID);
+			void LoadSound( );
 		};
 	}
 }

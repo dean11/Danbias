@@ -14,6 +14,7 @@
 #include <Protocols.h>
 #include "NetworkClient.h"
 //#include <GameServerAPI.h>
+#include "AudioAPI.h"
 
 #include "../WindowManager/WindowShell.h"
 #include "WinTimer.h"
@@ -92,6 +93,9 @@ namespace DanBias
 		if( FAILED( InitDirect3D() ) )
 			return DanBiasClientReturn_Error;
 
+		if( FAILED( InitSound() ) )
+			return DanBiasClientReturn_Error;
+
 		data.serverOwner = false;
 
 		data.networkClient.SetMessagePump( ClientEventFunction );
@@ -144,6 +148,7 @@ namespace DanBias
 
 			if( data.capFrame_gfx >= gfx_frame_periodicy )
 			{
+				Sound::AudioAPI::Audio_Update();
 				Graphics::API::Update( gfx_frame_periodicy );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
@@ -203,6 +208,14 @@ namespace DanBias
 		return S_OK;
 	}
 	
+	HRESULT DanBiasGame::InitSound( )
+	{
+		if(!Sound::AudioAPI::Init())
+			return S_FALSE;
+		data.sharedStateContent.soundManager = new C_AudioHandler();
+
+		return S_OK;
+	}
 	DanBiasGame::Result DanBiasGame::Update(float deltaTime)
 	{
 		/*if( data.serverOwner )
@@ -288,7 +301,10 @@ namespace DanBias
 		Input::InputManager::DestroyInputManager();
 		EventHandler::Instance().Clean();
 		Graphics::API::Clean();
-
+		// SOUND
+		data.sharedStateContent.soundManager->Release();
+		delete data.sharedStateContent.soundManager;
+		Sound::AudioAPI::Shutdown();
 		//GameServerAPI::ServerStop();
 
 		return S_OK;

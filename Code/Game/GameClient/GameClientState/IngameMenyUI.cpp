@@ -17,6 +17,7 @@ IngameMenyUI::IngameMenyUI() :
 {
 	/* Should never be called! */
 	this->mousePos			= Float3( 0.0f );
+	this->audioHandler		= nullptr;
 	this->background		= nullptr;
 	this->mouseCursor		= nullptr;
 	this->nextState 		= GameStateUI::UIState_same;
@@ -27,6 +28,7 @@ IngameMenyUI::IngameMenyUI( SharedStateContent* shared ) :
 	GameStateUI( shared )
 {
 	this->mousePos = Float3( 0.0f );
+	this->audioHandler = shared->soundManager;
 	this->background		= nullptr;
 	this->mouseCursor		= nullptr;
 	this->nextState			= GameStateUI::UIState_same;
@@ -179,8 +181,14 @@ void OnButtonInteract_InGame_Exit( Oyster::Event::ButtonEvent<IngameMenyUI*>& e 
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameStateUI::UIState_main_menu );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}
@@ -201,9 +209,20 @@ void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& 
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(mouse_hoover);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameStateUI::UIState_resume_game );
+		// SOUND
+		e.owner->PlaySound(mouse_click);
 		break;
 	default: break;
 	}
+
+}
+void IngameMenyUI::PlaySound( SoundID id )
+{
+	this->audioHandler->getSound(id)->Play_Sound();
 }
