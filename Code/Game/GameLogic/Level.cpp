@@ -95,7 +95,10 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	case ObjectSpecialType_JumpPad: 
 		{
 			float power = ((JumpPadAttributes*)obj)->power; 
-			Oyster::Math::Float3 dir = ((JumpPadAttributes*)obj)->direction; 
+			Oyster::Math::Float3 pos = rigidBody->GetState().centerPos;
+
+			Oyster::Math::Float3 dir = pos.GetNormalized();
+
 			Oyster::Math::Float3 pushForce = dir * power; 
 			gameObj = new JumpPad(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter , pushForce);
 		}
