@@ -21,6 +21,7 @@ namespace DanBias
 			bool Release();
 			void ChangeState( ClientState next );
 			void PlaySound( SoundID id );
+			void PlaySound( SoundID id, ChannelID channel );
 		private:
 			struct MyData;
 			::Utility::DynamicMemory::UniquePointer<MyData> privData;

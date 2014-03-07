@@ -179,7 +179,8 @@ void OptionState::ChangeState( ClientState next )
 }
 void OptionState::PlaySound( SoundID id )
 {
-	this->sharedData->soundManager->getSound(id)->Play_Sound();
+	//this->sharedData->soundManager->getSound(id)->Play_Sound();
+	Sound::AudioAPI::Audio_PlaySound(this->sharedData->soundManager->getSound(id), this->sharedData->soundManager->getChannel(id));
 }
 const DanBias::Client::GameClientState::NetEvent & OptionState::DataRecieved( const NetEvent &message )
 {

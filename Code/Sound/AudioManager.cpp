@@ -1,93 +1,35 @@
 #include "AudioManager.h"
 
 using namespace Sound;
-const int   INTERFACE_UPDATETIME = 50;      // 50ms update for interface
-const float DISTANCEFACTOR = 1.0f;          // Units per meter.  I.e feet would = 3.28.  centimeters would = 100.
+using namespace FmodUtil;
+//const int   INTERFACE_UPDATETIME = 50;      // 50ms update for interface
+//const float DISTANCEFACTOR = 1.0f;          // Units per meter.  I.e feet would = 3.28.  centimeters would = 100.
 bool AudioManager::instanceFlag = false;
 AudioManager* AudioManager::single = NULL;
 
-SoundData::SoundData()
+void FmodUtil::floatArrToFmodVECTOR(FMOD_VECTOR& F_Vec, float* floatArr)
 {
-	sound = nullptr;
-	channel = nullptr;
+	F_Vec.x = floatArr[0];
+	F_Vec.y = floatArr[1];
+	F_Vec.z = floatArr[2];
 }
-SoundData::~SoundData()
+FMOD_VECTOR FmodUtil::floatArrToFmodVECTOR( float* floatArr)
 {
-	if(sound) 
+	FMOD_VECTOR F_Vec;
+	F_Vec.x = floatArr[0];
+	F_Vec.y = floatArr[1];
+	F_Vec.z = floatArr[2];
+	return F_Vec;
+}
+bool FmodUtil::FmodErrorCheck(FMOD_RESULT result)	// Error handling function for FMOD errors
+{		
+	if (result != FMOD_OK)
 	{
-		delete sound;
-		sound = nullptr;
+		// output error message
+		printf( "FMOD error! ( %i ) %s", result, FMOD_ErrorString(result));
+		return false;
 	}
-	if (channel)
-	{
-		delete channel;
-		channel = nullptr;
-	}	
-}
- void SoundData::ReleaseSound()
- {
-	 if(sound) 
-	 {
-		 sound->release();
-	 }
-	 if (channel)
-	 {
-		 channel->stop();
-	 }
- }
-
-void SoundData::Play_Sound( bool paused )
-{
-	AudioManager::self()->Play_Sound(this, paused);
-}
-void SoundData::setVolym(float volym)
-{
-	channel->setVolume(volym);
-}
-void SoundData::setMinMaxDistance( float min, float max)
-{
-	channel->set3DMinMaxDistance(min, max);
-}
-void SoundData::setChannel3DAttributes( float* pos, float* vel)
-{
-	//FMOD_VECTOR posF = { 1.0f, 2.0f, 3.0f };
-	//FMOD_VECTOR velF = { 1.0f, 0.0f, 0.0f };
-	//channel->set3DAttributes( &posF, &velF);
-	channel->set3DAttributes( &floatArrToFmodVECTOR(pos), &floatArrToFmodVECTOR(vel));
-}
-void SoundData::setMode(SoundMode soundMode)
-{
-	if(soundMode == Loop_normal)
-		sound->setMode(FMOD_LOOP_NORMAL);
-	else if(soundMode == Loop_off)
-		sound->setMode(FMOD_LOOP_OFF);
-}
-void SoundData::SetPauseChannel(bool pause)
-{
-	channel->setPaused(pause);
-}
-bool SoundData::GetPauseChannel()
-{
-	bool pause;
-	channel->getPaused(&pause);
-	return pause;
-}
-void SoundData::toggleChannelPaused()
-{
-	bool paused;
-	channel->getPaused(&paused);
-	channel->setPaused(!paused);
-}
-SoundType SoundData::getType()
-{
-	return this->soundType;
-}
-void SoundData::setSoundVolume()
-{
-	FMOD_VECTOR direction = { 0.0f, 1.0f, 0.0f };
-	channel->set3DConeOrientation(&direction);
-	// 360 grader, 360 grader, 0- 1 volym
-	channel->set3DConeSettings(30.0f, 360.0f, 0.2f);
+	return true;
 }
 
 AudioManager* AudioManager::self()
@@ -105,8 +47,6 @@ AudioManager* AudioManager::self()
 }
 AudioManager::AudioManager(void)
 {
-	this->music_volume = STANDARD_MUSIC_VOLYM;
-	this->effects_volume = STANDARD_EFFECTS_VOLYM;
 	this->basePath = "..\\Content\\Sound\\";
 
 	FMOD_VECTOR pos = { 2, 3, 4};
@@ -216,7 +156,7 @@ void AudioManager::shutdownSoundManager()
 	fmodSystem->release();
 	delete single;
 }
-bool AudioManager::updateSoundManager()
+bool AudioManager::updateSoundManager(float deltaTime)
 {
 	result = fmodSystem->update();
 	if(!FmodErrorCheck(result))
@@ -224,13 +164,17 @@ bool AudioManager::updateSoundManager()
 	return true;
 }
 
-
-SoundData* AudioManager::CreateSound(std::string soundName, bool stream)
+ChannelData* AudioManager::CreateChannel()
+{
+	ChannelData* channel = new ChannelData();
+	return channel;
+}
+SoundData* AudioManager::CreateSound(std::string soundName, SoundType soundType)
 {
 	SoundData* sound = new SoundData();
 	std::string  soundPath = basePath + soundName;
 	
-	if(stream)
+	if(soundType == SoundType_Music )
 	{
 		if ( !FmodErrorCheck( this->fmodSystem->createStream(soundPath.c_str(), FMOD_DEFAULT, NULL, &sound->sound) ) )
 		{
@@ -239,7 +183,16 @@ SoundData* AudioManager::CreateSound(std::string soundName, bool stream)
 			return nullptr;
 		}	
 	}
-	else
+	else if(soundType == SoundType_Effect)
+	{
+		if ( !FmodErrorCheck( this->fmodSystem->createSound(soundPath.c_str(), FMOD_DEFAULT, NULL, &sound->sound) ) )
+		{
+			// error
+			delete sound;
+			return nullptr;
+		}	
+	}
+	else if(soundType == SoundType_Effect3D)
 	{
 		if ( !FmodErrorCheck( this->fmodSystem->createSound(soundPath.c_str(), FMOD_3D, NULL, &sound->sound) ) )
 		{
@@ -248,38 +201,24 @@ SoundData* AudioManager::CreateSound(std::string soundName, bool stream)
 			return nullptr;
 		}	
 	}
-
-	return sound;
-}
-
-
-void AudioManager::Play_Sound(SoundData* sound, bool paused)
-{	
-	bool playing; 
-
-	// don't start sound if it is already playing
-	sound->channel->isPlaying(&playing);
-	if(!playing)
-	{
-		result = this->fmodSystem->playSound(FMOD_CHANNEL_FREE, sound->sound, paused,&sound->channel);
-	}
-}
-void AudioManager::DeleteSound(SoundData* sound)
-{
-	if(sound)
+	else
 	{
 		delete sound;
-		sound = nullptr;
+		return nullptr;
 	}
+	return sound;
 }
-
-void AudioManager::setListener( float* pos, float* vel, float* forward, float* up )
+void AudioManager::Play_Sound(SoundData* soundData, ChannelData* channelData, bool paused)
+{	
+	result = this->fmodSystem->playSound(FMOD_CHANNEL_FREE, soundData->sound, paused, &channelData->channel);
+}
+void AudioManager::setListenerPos( float* pos, float* vel, float* forward, float* up )
 {
 	
-	Sound::floatArrToFmodVECTOR( listenerData.pos, pos);
-	Sound::floatArrToFmodVECTOR( listenerData.vel, vel);
-	Sound::floatArrToFmodVECTOR( listenerData.forward, forward);
-	Sound::floatArrToFmodVECTOR( listenerData.up, up);
+	floatArrToFmodVECTOR( listenerData.pos, pos);
+	floatArrToFmodVECTOR( listenerData.vel, vel);
+	floatArrToFmodVECTOR( listenerData.forward, forward);
+	floatArrToFmodVECTOR( listenerData.up, up);
 
 	result = fmodSystem->set3DListenerAttributes(0, &listenerData.pos, &listenerData.vel, &listenerData.forward, &listenerData.up );
 	if(!FmodErrorCheck(result))
@@ -288,42 +227,7 @@ void AudioManager::setListener( float* pos, float* vel, float* forward, float* u
 	}
 		//return false;
 }
-void Sound::floatArrToFmodVECTOR(FMOD_VECTOR& F_Vec, float* floatArr)
-{
-	F_Vec.x = floatArr[0];
-	F_Vec.y = floatArr[1];
-	F_Vec.z = floatArr[2];
-}
-FMOD_VECTOR Sound::floatArrToFmodVECTOR( float* floatArr)
-{
-	FMOD_VECTOR F_Vec;
-	F_Vec.x = floatArr[0];
-	F_Vec.y = floatArr[1];
-	F_Vec.z = floatArr[2];
-	return F_Vec;
-}
-
 void AudioManager::setBasePath(std::string basePath)
 {
 	this->basePath = basePath;
-}
-bool AudioManager::FmodErrorCheck(FMOD_RESULT result)	// Error handling function for FMOD errors
-{		
-	if (result != FMOD_OK)
-	{
-		// output error message
-		printf( "FMOD error! ( %i ) %s", result, FMOD_ErrorString(result));
-		return false;
-	}
-	return true;
-}
-
-
-void AudioManager::setMusicVolym(float volym)
-{
-	this->music_volume = volym;
-}
-void AudioManager::setEffectsVolym(float volym)
-{
-	this->effects_volume = volym;
 }

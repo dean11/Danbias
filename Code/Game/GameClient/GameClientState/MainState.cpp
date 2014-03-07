@@ -77,12 +77,18 @@ bool MainState::Init( SharedStateContent &shared )
 	// SOUND
 	this->privData->soundManager = this->privData->sharedData->soundManager;
 	// SOUND
-	this->privData->soundManager->addSound(SoundDesc("Button01.mp3", mouse_hoover));
-	this->privData->soundManager->addSound(SoundDesc("button_click.wav", mouse_click));
-	this->privData->soundManager->addSound(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
+	//this->privData->soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
+	this->privData->soundManager->addSFX(SoundDesc("jaguar.wav", mouse_hoover));
+	this->privData->soundManager->addSFX(SoundDesc("button_click.wav", mouse_click));
+	this->privData->soundManager->addChannel(ChannelID_mouse_hoover_button1);
+	this->privData->soundManager->addChannel(ChannelID_mouse_hoover_button2);
+	this->privData->soundManager->addChannel(ChannelID_mouse_hoover_button3);
+	this->privData->soundManager->addChannel(ChannelID_mouse_click_button1);
+	this->privData->soundManager->addChannel(ChannelID_mouse_click_button2);
+	this->privData->soundManager->addChannel(ChannelID_mouse_click_button3);
+	this->privData->soundManager->addMusic(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
 	this->privData->soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
-	this->privData->soundManager->getSound(backgroundSound)->Play_Sound();
-
+	//Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(backgroundSound), this->privData->soundManager->getChannel(backgroundSound));
 	return true;
 }
 
@@ -144,7 +150,19 @@ void MainState::ChangeState( ClientState next )
 }
 void MainState::PlaySound( SoundID id )
 {
-	this->privData->soundManager->getSound(id)->Play_Sound();
+	//this->privData->soundManager->getSound(id)->Play_Sound();
+	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(id), this->privData->soundManager->getChannel(id));
+}
+void MainState::PlaySound( SoundID sound, ChannelID channel )
+{
+	//this->privData->soundManager->getSound(id)->Play_Sound();
+	if(this->privData->soundManager->getChannel(channel)->getChannelPlaying())
+	{
+		this->privData->soundManager->getChannel(channel)->stop();
+	}
+	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(sound), this->privData->soundManager->getChannel(channel));
+	
+	
 }
 void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 {
@@ -152,12 +170,12 @@ void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(mouse_hoover, ChannelID_mouse_hoover_button1);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(mouse_click, ChannelID_mouse_click_button1);
 		break;
 	default: break;
 	}
@@ -169,12 +187,12 @@ void OnButtonInteract_Settings( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(mouse_hoover, ChannelID_mouse_hoover_button2);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Options );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(mouse_click, ChannelID_mouse_click_button2);
 		break;
 	default: break;
 	}
@@ -186,12 +204,12 @@ void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(mouse_hoover, ChannelID_mouse_hoover_button3);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Lan );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(mouse_click, ChannelID_mouse_click_button3);
 		break;
 	default: break;
 	}

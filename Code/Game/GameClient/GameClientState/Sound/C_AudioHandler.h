@@ -8,6 +8,8 @@ namespace DanBias
 {
 	namespace Client
 	{
+		const float STANDARD_MUSIC_VOLYM = 0.5f;
+		const float STANDARD_EFFECTS_VOLYM = 0.5f;
 		enum SoundID
 		{
 			backgroundSound,
@@ -25,6 +27,46 @@ namespace DanBias
 			mouse_hoover,
 			mouse_click,
 
+
+		};
+		enum ChannelID
+		{
+			ChannelID_backgroundSound,
+			ChannelID_effectSound, 
+			ChannelID_pickUpSound,
+			ChannelID_jumppad,
+			ChannelID_walk,
+			ChannelID_walk1,
+			ChannelID_jump,
+			ChannelID_shoot,
+			ChannelID_shoot1,
+			ChannelID_pull, 
+			ChannelID_collision,
+			ChannelID_ambient,
+			ChannelID_mouse_hoover_button1,
+			ChannelID_mouse_click_button1,
+			ChannelID_mouse_hoover_button2,
+			ChannelID_mouse_click_button2,
+			ChannelID_mouse_hoover_button3,
+			ChannelID_mouse_click_button3,
+		};
+		enum PlayerSoundID
+		{
+			PlayerSoundID_Jump,
+			PlayerSoundID_walk,
+			PlayerSoundID_shoot,
+			PlayerSoundID_pull,
+			playerSoundID_dmgRecieved,
+			PlayerSoundID_Count,
+		};
+		struct PlayerSounds
+		{
+			Sound::IChannel** channels;
+
+			PlayerSounds()
+			{
+				channels = new Sound::IChannel*[PlayerSoundID_Count];
+			}
 		};
 		struct SoundDesc
 		{
@@ -40,12 +82,33 @@ namespace DanBias
 		private:
 			::std::map<int, Sound::ISound*> songs;
 			::std::map<int, Sound::ISound*> effects;
+			::std::map<int, Sound::IChannel*> channels;
+
+			::std::map<int, PlayerSounds*> playerChannels;
+
+			Sound::IChannel** collisionChannels;
+			int maxCollisionSounds;
+			int currCollisionSound;
+			float music_volume;
+			float effects_volume;
+
 		public:
 			C_AudioHandler();
 			~C_AudioHandler();
 			bool Init();
-			void addSound(SoundDesc soundDesc);
+			void addSFX(SoundDesc soundDesc);
+			void addMusic(SoundDesc soundDesc);
+			void addSFX_3D(SoundDesc soundDesc);
+			void addPlayerSound( int playerId);
+			void setPlayerChannelPos( int playerId, float* pos, float* vel);
+			void addChannel( SoundID id );
+			void addChannel( ChannelID id );
+			void playCollisionSound();
 			Sound::ISound* getSound( SoundID id );
+			Sound::ISound* getSFX( SoundID id );
+			Sound::IChannel* getChannel( SoundID id );
+			Sound::IChannel* getChannel( ChannelID id );
+			Sound::IChannel* getPlayerChannel( int  id, PlayerSoundID soundId );
 			void SetSoundVolume(float volume);
 			void SetEffectVolume(float volume);
 			void Release();

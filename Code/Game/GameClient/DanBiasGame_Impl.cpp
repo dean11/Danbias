@@ -148,7 +148,7 @@ namespace DanBias
 
 			if( data.capFrame_gfx >= gfx_frame_periodicy )
 			{
-				Sound::AudioAPI::Audio_Update();
+				Sound::AudioAPI::Audio_Update(gfx_frame_periodicy);
 				Graphics::API::Update( gfx_frame_periodicy );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
@@ -210,7 +210,7 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::InitSound( )
 	{
-		if(!Sound::AudioAPI::Init())
+		if(!Sound::AudioAPI::Audio_Init())
 			return S_FALSE;
 		data.sharedStateContent.soundManager = new C_AudioHandler();
 
@@ -304,7 +304,7 @@ namespace DanBias
 		// SOUND
 		data.sharedStateContent.soundManager->Release();
 		delete data.sharedStateContent.soundManager;
-		Sound::AudioAPI::Shutdown();
+		Sound::AudioAPI::Audio_Shutdown();
 		//GameServerAPI::ServerStop();
 
 		return S_OK;
