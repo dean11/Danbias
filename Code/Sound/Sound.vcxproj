@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="AudioAPI.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Channel.cpp" />
     <ClCompile Include="Sound.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ AttatchmentGun::AttatchmentGun(Player &owner, Oyster::Math::Float* currEnergy, O
 	this->owner = &owner;
 	this->damage = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryDamage;
 	this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
+	this->energyCost = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost;
 	this->TimeUntilFire = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
@@ -42,10 +43,11 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		if(TimeUntilFire > this->Cooldown)
+		if(TimeUntilFire > this->Cooldown && *currentEnergy >= energyCost)
 		{
 			ShootBullet(usage,dt);
 			TimeUntilFire = 0.0f;
+			(*currentEnergy) -= energyCost; 
 		}
 	break;
 	}

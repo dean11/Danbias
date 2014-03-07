@@ -33,6 +33,7 @@ namespace NoEdgeConstants
 		namespace Limits
 		{
 			const float FallDamageThreshold				= 80.0f;
+			const float forceThreashHold                = 40.0f;
 		}
 
 		namespace Player
@@ -46,6 +47,7 @@ namespace NoEdgeConstants
 			const float RestitutionCoeff				= 0.0f;
 			const float FrictionStatic					= 0.0f;
 			const float FrictionDynamic					= 0.0f;
+
 		}
 
 		namespace Weapons
@@ -58,8 +60,8 @@ namespace NoEdgeConstants
 				const float MaxEnergy					= 100.0f;
 				const float RechargeRate				= 0.3f;
 
-				const float Pullforce					= 400.0f;
-				const float Pushforce					= 600.0f;
+				const float Pullforce					= 1000.0f;
+				const float Pushforce					= 3000.0f;
 				const float Zipforce					= 2000.0f;
 
 				const float PullCost					= 18.0f;
@@ -69,6 +71,8 @@ namespace NoEdgeConstants
 				const float PrimaryCooldown				= 0.2f;
 				const float SecondaryCooldown			= 0.0f;
 				const float MiddleCooldown				= 0.0f;
+
+				const float MaxDistanceFromPlayer		= 5.0f;
 			}
 
 			namespace MassDriveProjectileAttachment
@@ -76,9 +80,10 @@ namespace NoEdgeConstants
 				const int SlotId						= 1;
 				const float MaxEnergy					= 100.0f;
 				const float RechargeRate				= 0.3f;
-				const float PrimaryDamage				= 2.0f;
+				const float PrimaryDamage				= 5.0f;
+				const float PrimaryCost                 = 30;
 
-				const float PrimaryCooldown				= 0.2f;
+				const float PrimaryCooldown				= 0.1f;
 				const float SecondaryCooldown			= 0.0f;
 				const float MiddleCooldown				= 0.0f;
 			}

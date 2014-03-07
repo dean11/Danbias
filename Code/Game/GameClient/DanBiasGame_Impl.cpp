@@ -110,6 +110,19 @@ namespace DanBias
 		if( ( data.sharedStateContent.mouseCursor = Graphics::API::CreateTexture( L"cursor.png" ) ) == 0)
 			printf("Failed to load the mouse cursor [cursor.png]\n");
 
+		
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", mouse_click));
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button3);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button3);
+		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
+		data.sharedStateContent.soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
+		Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(backgroundSound), data.sharedStateContent.soundManager->getChannel(backgroundSound), true);
+
 		// Start in main menu state
 		data.state = new Client::MainState();
 
@@ -149,7 +162,7 @@ namespace DanBias
 
 			if( data.capFrame_gfx >= gfx_frame_periodicy )
 			{
-				Sound::AudioAPI::Audio_Update();
+				Sound::AudioAPI::Audio_Update(gfx_frame_periodicy);
 				Graphics::API::Update( gfx_frame_periodicy );
 				if(Render() != S_OK)
 					return DanBiasClientReturn_Error;
@@ -211,7 +224,7 @@ namespace DanBias
 	
 	HRESULT DanBiasGame::InitSound( )
 	{
-		if(!Sound::AudioAPI::Init())
+		if(!Sound::AudioAPI::Audio_Init())
 			return S_FALSE;
 		data.sharedStateContent.soundManager = new C_AudioHandler();
 
@@ -305,7 +318,7 @@ namespace DanBias
 		// SOUND
 		data.sharedStateContent.soundManager->Release();
 		delete data.sharedStateContent.soundManager;
-		Sound::AudioAPI::Shutdown();
+		Sound::AudioAPI::Audio_Shutdown();
 		//GameServerAPI::ServerStop();
 
 		return S_OK;
@@ -326,15 +339,31 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 		
 		break;
 
-		case WM_NCACTIVATE:
+		case WM_LBUTTONUP:
+		{
+			DanBias::data.sharedStateContent.mouseDevice->Activate();
+		}
+		break;
+
 		case WM_ACTIVATEAPP:
+		case WM_NCACTIVATE:
 		case WM_ACTIVATE:
 		{
-			
 			bool act = (LOWORD(wParam) != WA_INACTIVE) && (HIWORD(wParam) == 0);
 			Graphics::API::Option op = Graphics::API::GetOption();
+
 			if(act)
 			{
+				//Not working as wanted... (maby due to where the window actualy is (borders etc...)
+				//if(LOWORD(wParam) == WA_CLICKACTIVE)
+				//{
+				//	
+				//}
+				//else
+				//{
+				//	DanBias::data.sharedStateContent.mouseDevice->Activate();
+				//}
+
 				ShowWindow(WindowShell::GetHWND(), SW_RESTORE);
 				//ShowWindow(WindowShell::GetHWND(), SW_MAXIMIZE);
 
@@ -343,10 +372,15 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 			}
 			else
 			{
-				ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
+				DanBias::data.sharedStateContent.mouseDevice->Deactivate();
 				prevFull = op.fullscreen;
-				op.fullscreen = false;
-				Graphics::API::SetOptions(op);
+				if(op.fullscreen)
+				{
+					op.fullscreen = false;
+					Graphics::API::SetOptions(op);
+					ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
+				}
+				
 			}
 		}
 		break;
