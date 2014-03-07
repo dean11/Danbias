@@ -218,6 +218,10 @@ void OptionState::ChangeState( ClientState next )
 {
 
 }
+void OptionState::PlaySound( SoundID id )
+{
+	this->sharedData->soundManager->getSound(id)->Play_Sound();
+}
 const DanBias::Client::GameClientState::NetEvent & OptionState::DataRecieved( const NetEvent &message )
 {
 	/* Todo update when in game options */
@@ -329,7 +333,12 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 			}
 		break;
 		case DanBias::Client::OptionState::ButtonType_Apply:
-			if(e.state == ButtonState_Released)
+			if(e.state == ButtonState_Hover)
+			{
+				// SOUND
+				e.owner->PlaySound(mouse_hoover);
+			}
+			else if(e.state == ButtonState_Released)
 			{
 				//e.owner->sharedData->mouseDevice->InversY(e.owner->options.invertMouse);
 				//e.owner->sharedData->sound->Toggle(e.owner->options.toggleSound);
@@ -339,12 +348,21 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 
 
 				Graphics::API::SetOptions(op);
+				// SOUND
+				e.owner->PlaySound(mouse_click);
 			}
 		break;
 		case DanBias::Client::OptionState::ButtonType_Back:
-			if(e.state == ButtonState_Released)
+			if(e.state == ButtonState_Hover)
+			{
+				// SOUND
+				e.owner->PlaySound(mouse_hoover);
+			}
+			else if(e.state == ButtonState_Released)
 			{
 				e.owner->nextState = GameClientState::ClientState_Main;
+				// SOUND
+				e.owner->PlaySound(mouse_click);
 			}
 		break;
 	}
