@@ -27,7 +27,7 @@ namespace NoEdgeConstants
 			const float LogicFrameTime					= 1.0f / 120.f;
 			const float PhysicsFrameTime				= 1.0f / 120.f;
 			const float NetworkFrameTime				= 1.0f / 70.f;
-			const float Gravity							= 10.0f;
+			const float Gravity							= 5.0f;
 		}
 
 		namespace Limits
@@ -38,10 +38,10 @@ namespace NoEdgeConstants
 
 		namespace Player
 		{
-			const float ForwardVelocity					= 19.0f;
-			const float BackwardVelocity				= 13.0f;
-			const float StrafeVelocity					= 18.0f;
-			const float JumpVelocity					= 23.0f;
+			const float ForwardVelocity					= 10.0f;
+			const float BackwardVelocity				= 7.0f;
+			const float StrafeVelocity					= 9.0f;
+			const float JumpVelocity					= 16.0f;
 			const float Mass							= 23.0f;
 			const float DampeningFactor					= 0.2f;
 			const float RestitutionCoeff				= 0.0f;
@@ -58,13 +58,13 @@ namespace NoEdgeConstants
 			{
 				const int SlotId						= 0;
 				const float MaxEnergy					= 100.0f;
-				const float RechargeRate				= 0.3f;
+				const float RechargeRate				= 0.5f;
 
-				const float Pullforce					= 1000.0f;
-				const float Pushforce					= 3000.0f;
-				const float Zipforce					= 2000.0f;
+				const float Pullforce					= 350.0f;
+				const float Pushforce					= 1500.0f;
+				const float Zipforce					= 10000.0f;
 
-				const float PullCost					= 18.0f;
+				const float PullCost					= 5.0f;
 				const float PushCost					= 9.0f;
 				const float ZipCost						= 40.0f;
 
@@ -79,14 +79,19 @@ namespace NoEdgeConstants
 			{
 				const int SlotId						= 1;
 				const float MaxEnergy					= 100.0f;
-				const float RechargeRate				= 0.3f;
-				const float PrimaryDamage				= 5.0f;
+				const float RechargeRate				= 0.5f;
+				const float PrimaryDamage				= 20.0f;
 				const float PrimaryCost                 = 30;
 
 				const float PrimaryCooldown				= 0.1f;
 				const float SecondaryCooldown			= 0.0f;
 				const float MiddleCooldown				= 0.0f;
 			}
+		}
+
+		namespace Enviroment
+		{
+			const int CrystalDamage						= 10;
 		}
 	}
 }
