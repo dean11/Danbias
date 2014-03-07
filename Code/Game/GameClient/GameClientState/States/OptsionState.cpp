@@ -116,7 +116,7 @@ bool OptionState::Init( SharedStateContent &shared )
 	
 	CreateMouseSlider();
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.006f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((int)ButtonType_FullScreen);
 
