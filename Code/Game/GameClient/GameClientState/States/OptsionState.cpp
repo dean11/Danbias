@@ -343,11 +343,19 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 				//e.owner->sharedData->mouseDevice->InversY(e.owner->options.invertMouse);
 				//e.owner->sharedData->sound->Toggle(e.owner->options.toggleSound);
 				Graphics::API::Option op = Graphics::API::GetOption();
-				op.fullscreen = e.owner->options.toogleFullScreen;
+				
+				//There seems to be a bugg when changing resolution in fullscreen..
+				if(op.fullscreen)
+				{
+					Graphics::API::Option optemp = Graphics::API::GetOption();
+					optemp.fullscreen = false;
+					Graphics::API::SetOptions(optemp);
+				}
+				
 				op.resolution = e.owner->options.resolution;
-
-
+				op.fullscreen = e.owner->options.toogleFullScreen;
 				Graphics::API::SetOptions(op);
+
 				// SOUND
 				e.owner->PlaySound(mouse_click);
 			}
