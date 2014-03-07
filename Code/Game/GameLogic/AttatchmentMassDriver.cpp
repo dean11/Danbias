@@ -229,10 +229,11 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 {
 	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->zipForce);
+	Oyster::Math::Float3 pos = owner->GetPosition();
 
 	this->owner->GetRigidBody()->ApplyImpulse(force);
 
-	this->owner->Stun(0.1f);
+	this->owner->Stun(0.5f);
 }
 
 

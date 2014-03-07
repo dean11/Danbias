@@ -62,7 +62,7 @@ namespace NoEdgeConstants
 
 				const float Pullforce					= 350.0f;
 				const float Pushforce					= 1500.0f;
-				const float Zipforce					= 2000.0f;
+				const float Zipforce					= 4500.0f;
 
 				const float PullCost					= 5.0f;
 				const float PushCost					= 9.0f;
