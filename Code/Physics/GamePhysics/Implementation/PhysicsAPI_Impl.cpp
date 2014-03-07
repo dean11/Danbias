@@ -242,7 +242,7 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	return body;
 }
 
-ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, float mass, float restitution, float staticFriction, float dynamicFriction)
+ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Math::Float4 rotation, ::Oyster::Math::Float3 position, ::Oyster::Math::Float3 scale, float mass, float restitution, float staticFriction, float dynamicFriction)
 {
 	SimpleRigidBody* body = new SimpleRigidBody;
 	SimpleRigidBody::State state;
@@ -257,6 +257,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	// Add collision shape
 	bulletFile.loadFile(bulletPath.c_str());
 	btCollisionShape* collisionShape = bulletFile.getCollisionShapeByIndex(0);
+	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 	body->SetCollisionShape(collisionShape);
 
 	// Add motion state
@@ -279,7 +280,7 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	//dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setMargin(0.3);
+	
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);

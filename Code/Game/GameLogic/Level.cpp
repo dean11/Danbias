@@ -220,7 +220,7 @@ ICustomBody* Level::InitRigidBodyMesh( const ObjectHeader* obj)
 	//create the rigid body
 	std::wstring fname = L"..\\Content\\Worlds\\cgf\\";
 	fname.append(obj->boundingVolume.cgMesh.filename);
-	rigidBody = API::Instance().AddTriangleMesh( fname , rigidWorldRotation , rigidWorldPos , rigidBodyMass, obj->boundingVolume.cgMesh.restitutionCoeff , obj->boundingVolume.cgMesh.frictionCoeffStatic , obj->boundingVolume.cgMesh.frictionCoeffDynamic);
+	rigidBody = API::Instance().AddTriangleMesh( fname , rigidWorldRotation , rigidWorldPos, obj->scale, rigidBodyMass, obj->boundingVolume.cgMesh.restitutionCoeff , obj->boundingVolume.cgMesh.frictionCoeffStatic , obj->boundingVolume.cgMesh.frictionCoeffDynamic);
 	return rigidBody;
 }
 bool Level::InitiateLevel(std::wstring levelPath)
