@@ -133,17 +133,25 @@ void AttatchmentMassDriver::Update(float dt)
 		crossTemp.Normalize();
 
 		Oyster::Math::Float3 backToMeVelocity = 0.0f;
-
+	
 		if(objDir.GetMagnitude() > 3.1f)
 		{
-			backToMeVelocity = -objDir.GetNormalized()*deltaPos.GetMagnitude();
+			backToMeVelocity = -objDir.GetNormalized()*deltaPos.GetMagnitude()*10.0f;
 		}
 		else if(objDir.GetMagnitude() < 2.9f)
 		{
-			backToMeVelocity = objDir.GetNormalized()*deltaPos.GetMagnitude();
+			backToMeVelocity = objDir.GetNormalized()*deltaPos.GetMagnitude()*10.0f;
 		}
 
 		heldObject->SetLinearVelocity(crossTemp*10.0f*deltaPos.GetMagnitude() + backToMeVelocity + this->owner->GetRigidBody()->GetLinearVelocity());
+
+		if(objDir.GetMagnitude() > NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxDistanceFromPlayer)
+		{
+			heldObject->SetLinearVelocity(Oyster::Math::Float3(0.0f));
+			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+			this->hasObject = false;
+			this->heldObject = NULL;	
+		}
 
 		if((*currentEnergy) < maxEnergy)
 		{
@@ -181,7 +189,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 	if(hasObject)
 	{
 		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce);
-		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce * 3) * (*currentEnergy / maxEnergy);
+		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce) * (*currentEnergy / maxEnergy);
 		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
@@ -222,6 +230,7 @@ void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 {
+
 	if(hasObject) return; //this test checks if the weapon already has something picked up, if so then it cant use this function
 
 	PickUpObject(usage,dt);	//first test if there is a nearby object to pickup
@@ -233,8 +242,10 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float3 target = pos + (look * 10);
 
+
+
 	forcePushData args;
-	args.pushForce = -this->pullForce;
+	args.pushForce = -NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pullforce;
 	args.weapon = this;
 
 	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
