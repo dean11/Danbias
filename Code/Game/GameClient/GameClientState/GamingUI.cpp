@@ -27,6 +27,7 @@ GamingUI::GamingUI()
 	this->mouse_secondDown	= false;
 	this->mouse_firstDown	= false;
 	this->key_zipDown		= false;
+	this->key_Drop			= false;
 	this->currentWeapon		= 0;
 	this->zip_Timer			= 0;
 	this->nextState 		= GameStateUI::UIState_same;
@@ -47,6 +48,7 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera )
 	this->mouse_secondDown	= false;
 	this->mouse_firstDown	= false;
 	this->key_zipDown		= false;
+	this->key_Drop			= false;
 	this->currentWeapon		= 0;
 	this->zip_Timer			= 0.0f;
 	this->msg_Timer			= 0.0f;
@@ -158,6 +160,7 @@ void GamingUI::ReadKeyInput(float deltaTime)
 	if( this->key_backward )		this->shared->network->Send( Protocol_PlayerMovementBackward() );
 	if( this->key_strafeLeft )		this->shared->network->Send( Protocol_PlayerMovementLeft() );
 	if( this->key_strafeRight )		this->shared->network->Send( Protocol_PlayerMovementRight() );
+	if( this->key_Drop )			this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_DropItem) );
 
 	int energy = 0;
 	energy = _wtoi(this->energy->getText().c_str());
@@ -261,6 +264,8 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_E:		this->key_zipDown = true;
 		break;
+		case SAKI_F:		this->key_Drop = true;
+		break;
 		case SAKI_Space:	this->shared->network->Send( Protocol_PlayerJump() );
 		break;
 		// swap weapon to massDriver
@@ -290,6 +295,8 @@ void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
 		break;
 		case SAKI_E:		this->key_zipDown = false;
 		break;
+		case SAKI_F:		this->key_Drop = false;
+		break;
 		case SAKI_Escape:	this->nextState = UIState_ingame_meny;
 		break;
 	}
@@ -312,6 +319,7 @@ void GamingUI::StopGamingUI()
 	this->key_strafeLeft	= false;
 	this->key_strafeRight	= false;
 	this->key_zipDown		= false;
+	this->key_Drop			= false;
 	this->mouse_firstDown	= false;
 	this->mouse_secondDown	= false;
 }

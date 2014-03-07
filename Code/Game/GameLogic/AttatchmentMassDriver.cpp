@@ -70,8 +70,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		{
 			if(this->hasObject)
 			{
-				currentCooldown = 0.0f;
-				goto CASE_WEAPON_INTERRUPT;
+				break;
 			}
 			else if( (*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost )
 			{
