@@ -190,7 +190,6 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			offset.z = p->getScale().z * -5.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
-			this->privData->camera.UpdateOrientation();
 		#endif
 			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0); 
 		}
@@ -712,45 +711,41 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 	Protocol_ObjectPositionRotation decoded(data);
 	Float3 position = decoded.position;
 	Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
-	C_Object *object; 
-	object = (this->privData->players)[decoded.objectID];
-	if( !object)
-	{
-		// if it is not a player 
-		object = (*this->privData->dynamicObjects)[decoded.objectID];
-	}
-	else
-	{
-		if(object->GetId() != this->privData->myId)
-		{
-			(*this->privData->weapons)[decoded.objectID]->setPos(object->getPos());
-			(*this->privData->weapons)[decoded.objectID]->setRot(object->getRotation());
-			(*this->privData->weapons)[decoded.objectID]->updateWorld();
-		}
-	}
 
-	if( object )
+	C_Object *player = (this->privData->players)[decoded.objectID];
+
+	if( player )
 	{
+		C_Object *weapon = (*this->privData->weapons)[decoded.objectID];
+
 		if( this->privData->myId == decoded.objectID )
 		{
 			this->privData->camera.SetPosition( position );
 			this->privData->camera.SetRotation( rotation );
 		}
-		object->setPos( position );
-		object->setRot( rotation );
-		object->updateWorld();
-		if(object->GetLight()!=-1)
+
+		player->setPos( position );
+		player->setRot( rotation );
+		player->updateWorld();
+
+		weapon->setPos( position );
+		weapon->setRot( rotation );
+		weapon->updateWorld();
+
+		if( player->GetLight() != -1 )
 		{
-			std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>::iterator light = privData->lights->find(object->GetLight());
-			if(light != privData->lights->end())
+			//std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>>::iterator light = privData->lights->find( player->GetLight() );
+			auto light = privData->lights->find( player->GetLight() );
+			if( light != privData->lights->end() )
 			{
-				light->second->setPos(object->getPos());
+				light->second->setPos( player->getPos() );
 			}
 		}
+
 		// RB DEBUG 
-		object->setRBPos ( position );  
-		object->setRBRot ( rotation );  
-		object->updateRBWorld();
+		player->setRBPos ( position );  
+		player->setRBRot ( rotation );  
+		player->updateRBWorld();
 		// !RB DEBUG 
 	}
 }
@@ -976,8 +971,9 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 {
 	Protocol_ObjectAction decoded(data);
 
-	C_Player *player; 
-	player = (this->privData->players)[decoded.objectID];
+	C_Player *player = (this->privData->players)[decoded.objectID];
+	C_Player *weapon = (*this->privData->weapons)[decoded.objectID];
+
 
 	if( player )
 	{
@@ -986,20 +982,19 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			// my player animation
 			switch (decoded.animationID)
 			{
-			case  GameLogic::PlayerAction::PlayerAction_Walk:
+			case GameLogic::PlayerAction::PlayerAction_Walk:
+				player->stopAllAnimations();
 				player->playAnimation(L"run_forwards", true);
-				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"run_forwards", true);	//This animation is currently broken and will make the weapon disappear.
+				//weapon->stopAllAnimations();
+				//weapon->playAnimation(L"run_forwards", true);	//This animation is currently broken and will make the weapon disappear.
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
-				player->playAnimation(L"movement", true);
-				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"movement", true);
-				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"run_forwards", true);	//This animation is currently broken and will make the weapon disappear.
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
-				(*this->privData->weapons)[decoded.objectID]->stopAllAnimations();
-				//(*this->privData->weapons)[decoded.objectID]->playAnimation(L"idle", true); //This animation is currently broken and will make you enter an endless loop.
+				//weapon->stopAllAnimations();
+				//weapon->playAnimation(L"idle", true); //This animation is currently broken and will make you enter an endless loop.
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 				break;
