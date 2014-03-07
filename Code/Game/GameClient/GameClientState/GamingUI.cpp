@@ -290,12 +290,14 @@ void GamingUI::StopGamingUI()
 
 void GamingUI::ActivateInput()
 {
+	this->ActivateGUIRender();
 	this->shared->mouseDevice->AddMouseEvent( this );
 	this->shared->keyboardDevice->AddKeyboardEvent( this );
 }
 
 void GamingUI::DeactivateInput()
 {
+	this->DeactivateGUIRender();
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
 }

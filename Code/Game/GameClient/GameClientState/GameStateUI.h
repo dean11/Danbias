@@ -37,6 +37,10 @@ namespace DanBias { namespace Client
 		virtual bool Release() = 0;
 		virtual void ChangeState( UIState next ) = 0;
 
+		virtual void ActivateGUIRender() { this->active = true; };
+		virtual void DeactivateGUIRender() { this->active = false; };
+		virtual bool IsActive () { return this->active; }
+
 		virtual void ActivateInput() = 0;
 		virtual void DeactivateInput() = 0;
 
@@ -49,6 +53,7 @@ namespace DanBias { namespace Client
 	protected:
 		SharedStateContent* shared;
 		UIState nextState;
+		bool active;
 	};
 } }
 

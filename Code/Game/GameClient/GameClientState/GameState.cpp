@@ -1350,7 +1350,8 @@ void GameState::UIstackRenderGUI()
 	for( int i = 0; i <= this->uiStackTop; ++i )
 	{
 		if( uiStack[i]->HaveGUIRender() )
-			uiStack[i]->RenderGUI();
+			if( uiStack[i]->IsActive() )
+				uiStack[i]->RenderGUI();
 	}
 }
 
