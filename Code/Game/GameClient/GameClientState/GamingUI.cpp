@@ -14,7 +14,7 @@ using namespace ::Input::Enum;
 GamingUI::GamingUI() 
 	: GameStateUI( nullptr )
 	, zip_Cooldown(0.4f)
-	, msg_Cooldown(4.0f)
+	, msg_Cooldown(6.0f)
 {
 	/* Should never be called! */
 	this->camera			= nullptr;
@@ -36,7 +36,7 @@ GamingUI::GamingUI()
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) 
 	: GameStateUI( shared )
 	, zip_Cooldown(0.4f)
-	, msg_Cooldown(4.0f)
+	, msg_Cooldown(6.0f)
 {
 	this->camera			= camera;
 	this->hp				= nullptr;
