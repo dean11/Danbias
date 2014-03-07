@@ -155,9 +155,36 @@ void GamingUI::ReadKeyInput(float deltaTime)
 	if( this->key_backward )		this->shared->network->Send( Protocol_PlayerMovementBackward() );
 	if( this->key_strafeLeft )		this->shared->network->Send( Protocol_PlayerMovementLeft() );
 	if( this->key_strafeRight )		this->shared->network->Send( Protocol_PlayerMovementRight() );
-	if( this->mouse_firstDown )		this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
-	if( this->mouse_secondDown )	this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_SecondaryPress);
-	if( this->key_zipDown )			this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_UtilityPress);
+
+	int energy = 0;
+	energy = _wtoi(this->energy->getText().c_str());
+	printf("%d", energy);
+
+	if( this->mouse_firstDown )		
+	{
+		if(this->currentWeapon == 0)
+		{
+			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost)
+				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
+		}
+		else
+		{
+			if(energy >= 30)
+				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
+		}
+	}
+	if( this->mouse_secondDown )
+	{
+		if(this->currentWeapon == 0)
+		{
+			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost)
+				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_SecondaryPress);
+		}
+	}
+	if( this->key_zipDown )
+	{
+		this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_UtilityPress);
+	}
 }
 
 void GamingUI::OnMousePress	( Input::Enum::SAMI key, Input::Mouse* sender )	
