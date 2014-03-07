@@ -31,6 +31,7 @@ namespace DanBias { namespace Client
 		enum ButtonType
 		{
 			ButtonType_FullScreen,
+			ButtonType_MouseSensitivity,
 			ButtonType_FlipResLeft,
 			ButtonType_FlipResRight,
 			ButtonType_Apply,
@@ -55,6 +56,19 @@ namespace DanBias { namespace Client
 			}
 		} options;
 
+		struct MouseSensitivitySlider
+			{
+				ButtonRectangle<InGameOptionsUI*> *button;
+				Oyster::Graphics::API::Texture mouseSlider;
+				bool isHeld;
+				Oyster::Math::Float3 pos;
+				MouseSensitivitySlider()
+				{
+					button = 0;
+					isHeld = false;
+				}
+			} mouseSensitivity;
+
 		::Oyster::Event::EventButtonCollection guiElements;
 		::Oyster::Math::Float3 mousePos;
 
@@ -67,9 +81,12 @@ namespace DanBias { namespace Client
 
 		InGameOptionsUI();
 
+		void CreateMouseSlider();
+
 		 /* Overidden input methods */
 		void OnMouseRelease( Input::Enum::SAMI key, Input::Mouse* sender );
 		void OnKeyRelease( Input::Enum::SAKI key, Input::Keyboard* sender );
+		void OnMouseMoveVelocity( Input::Struct::SAIPointFloat2D coordinate, Input::Mouse* sender );
 	};
 } }
 

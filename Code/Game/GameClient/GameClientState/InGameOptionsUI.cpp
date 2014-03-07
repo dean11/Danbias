@@ -79,8 +79,33 @@ InGameOptionsUI::InGameOptionsUI( SharedStateContent* shared ) :
 
 InGameOptionsUI::~InGameOptionsUI() {}
 
+void InGameOptionsUI::CreateMouseSlider()
+{
+	Float4 TextCol = Float4(0.1f,0.1f,0.1f,1.0f);
+	Float4 BackCol = Float4(1.0f);
+	Float4 HoverCol = Float4(1.2f);
+	Float4 PressCol = Float4(1.5f);
+
+	this->mouseSensitivity.pos = Float3(0.5f, 0.354f, 0.6f);
+	this->mouseSensitivity.button =  new ButtonRectangle<InGameOptionsUI*>( L"noedge-slider-btn.png", L"", TextCol, BackCol, 
+																		HoverCol, PressCol, OnButtonInteract, this, 
+																		Float3(this->mouseSensitivity.pos.xy.x, this->mouseSensitivity.pos.xy.y, 0.4f), 
+																		Float2(0.016f, 0.029f));
+	this->guiElements.AddButton( mouseSensitivity.button );
+
+	mouseSensitivity.button->SetUserData((void*)(int)ButtonType_MouseSensitivity);
+
+	this->mouseSensitivity.mouseSlider = Oyster::Graphics::API::CreateTexture(L"noedge-slider-vertical.png");
+	if(!mouseSensitivity.mouseSlider)
+	{
+		printf("Failed to load texture noedge-slider-vertical.png");
+	}
+
+}
+
 bool InGameOptionsUI::Init()
 {
+	CreateMouseSlider();
 	this->mousePos = Float3( 0.5f );
 
 	// create buttons
@@ -108,13 +133,13 @@ bool InGameOptionsUI::Init()
 		fScreenBtnToggle = button;
 	}
 
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.3f, 0.4f, 0.5f), Float2(0.035f, 0.035f) );
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.3f, 0.51f, 0.5f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
-	button->SetUserData( (void*)(int)ButtonType_FlipResLeft );
+	button->SetUserData((void*)(int)ButtonType_FlipResLeft);
 
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.7f, 0.4f, 0.5f), Float2(0.035f, 0.035f) );
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.7f, 0.51f, 0.5f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
-	button->SetUserData( (void*)(int)ButtonType_FlipResRight );
+	button->SetUserData((void*)(int)ButtonType_FlipResRight);
 
 	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-apply.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.5f, 0.65f, 0.5f), Float2(0.5f, 0.12f) );
 	this->guiElements.AddButton( button );
@@ -158,6 +183,9 @@ bool InGameOptionsUI::HaveTextRender() const
 
 void InGameOptionsUI::RenderGUI() 
 {
+	//Render mouse Slider
+	Graphics::API::RenderGuiElement( this->mouseSensitivity.mouseSlider, this->mouseSensitivity.pos, Float2(0.35f, 0.003f), Float4(1.0f) );
+
 	if( this->shared->mouseDevice->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn) )
 		Graphics::API::RenderGuiElement( this->shared->mouseCursor, this->mousePos, Float2(0.15f), Float4(1.0f) );
 	else
@@ -169,8 +197,18 @@ void InGameOptionsUI::RenderGUI()
 
 void InGameOptionsUI::RenderText() 
 {
+	Float3 sp = this->mouseSensitivity.pos;
+	sp.x -= 0.2; sp.y += 0.0011f; sp.z = 0.4f;
+	Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.2f), 0.030f);
+	
+	wchar_t val[25];
+	swprintf_s(val, L"%f", this->shared->mouseDevice->GetSensitivity());
+	val[3] = L'\0';
+	Float3 t = this->mouseSensitivity.button->GetPosition(); t.y = 0.29f; t.x -= 0.04f;
+	Graphics::API::RenderText( val, t, Float2(0.13f, 0.13f), 0.028f);
+
 	Graphics::API::RenderText( L"Full Screen", Float3(0.33f, 0.14f, 0.1f), Float2(0.5f, 0.24f), 0.034f );
-	Graphics::API::RenderText( resolution[this->options.currentRes], Float3(0.36f, 0.36f, 0.1f), Float2(0.3f, 0.18f), 0.034f );
+	Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.36f, 0.40f, 0.1f), Float2(0.32f, 0.4f), 0.050f);
 	this->guiElements.RenderText();
 }
 
@@ -204,16 +242,9 @@ void InGameOptionsUI::DeactivateInput()
 
 void InGameOptionsUI::OnMouseRelease( SAMI key, Mouse* sender )
 {
-	if( sender == this->shared->mouseDevice && key == SAMI_MouseLeftBtn )
+	if(this->mouseSensitivity.isHeld)
 	{
-		MouseInput mouseState;
-		{
-			mouseState.x = this->mousePos.x;
-			mouseState.y = this->mousePos.y;
-			mouseState.mouseButtonPressed = true;
-		}
-
-		EventHandler::Instance().Update( mouseState );
+		this->mouseSensitivity.isHeld = false;
 	}
 }
 
@@ -224,12 +255,59 @@ void InGameOptionsUI::OnKeyRelease( SAKI key, Keyboard* sender )
 		this->ChangeState( UIState_previous );
 	}
 }
+void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coordinate, Input::Mouse* sender )
+{
+
+	if( sender == shared->mouseDevice )
+	{
+		MouseInput mouseState;
+		{
+			Input::Struct::SAIPointFloat2D p = this->shared->mouseDevice->GetNormalizedPosition();
+			mouseState.x = p.x;
+			mouseState.y = p.y;
+			mouseState.mouseButtonPressed = this->shared->mouseDevice->IsBtnDown(SAMI_MouseLeftBtn);
+		}
+
+		EventHandler::Instance().Update( mouseState );
+	}
+
+	if(this->mouseSensitivity.isHeld)
+	{
+		Float3 temp = this->mouseSensitivity.button->GetPosition();
+		temp.x = (sender->GetNormalizedPosition().x);
+		
+		temp.x = Max((0.5f - (0.35f/2.0f)), temp.x);
+		temp.x = Min((0.5f + (0.35f/2.0f)), temp.x);
+		this->mouseSensitivity.button->SetPosition(temp ); 
+
+		float vel = this->shared->mouseDevice->GetSensitivity();
+
+		const float minThreshold = 0.1f;
+		const float maxVal = 10.5f;
+		float x = temp.x;
+		float width = 0.35f;
+		float halfWidth = 0.35f / 2.0f;
+		float left = 0.5f - halfWidth;
+		float localX = (temp.x - left);
+		float value = localX * maxVal / width;
+		
+		this->shared->mouseDevice->SetSensitivity( Max(value, minThreshold) );
+	}
+}
 
 void InGameOptionsUI::OnButtonInteract( ButtonEvent<InGameOptionsUI*>& msg )
 {
 	ButtonType op = (ButtonType)(int)msg.userData;
 	switch( op )
 	{
+		case DanBias::Client::InGameOptionsUI::ButtonType_MouseSensitivity:
+		{
+			if(msg.state == ButtonState_Pressed)
+			{
+				msg.owner->mouseSensitivity.isHeld = true;
+			}
+		}
+		break;
 		case InGameOptionsUI::ButtonType_FullScreen:
 			if( msg.state == ButtonState_Released )
 			{
