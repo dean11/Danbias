@@ -368,8 +368,10 @@ void NetLoadState::LoadSound()
 {
 	this->privData->soundManager->getChannel(backgroundSound)->SetPauseChannel(true);
 
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav", effectSound));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav", jumppad));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav", playerDmgRecieveSound));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", crystalCollisionEventSound));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", jumppadEventSound));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", explosionEventSound));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Running01.mp3", walk));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", shoot));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3", pull));

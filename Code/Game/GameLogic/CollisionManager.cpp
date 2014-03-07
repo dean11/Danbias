@@ -86,6 +86,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 				Player *player = (Player*)realObj;
 				player->Stun( default_jump_pad_stun_duration );
 				SendObjectFlying(*obj, jumpPad->pushForce);
+				((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_JumpPad);
 			}
 			break;
 		}
