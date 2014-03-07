@@ -330,7 +330,6 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 		case WM_ACTIVATEAPP:
 		case WM_ACTIVATE:
 		{
-			
 			bool act = (LOWORD(wParam) != WA_INACTIVE) && (HIWORD(wParam) == 0);
 			Graphics::API::Option op = Graphics::API::GetOption();
 			if(act)
@@ -343,10 +342,13 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 			}
 			else
 			{
-				ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
 				prevFull = op.fullscreen;
-				op.fullscreen = false;
-				Graphics::API::SetOptions(op);
+				if(op.fullscreen)
+				{
+					op.fullscreen = false;
+					Graphics::API::SetOptions(op);
+				}
+				ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
 			}
 		}
 		break;

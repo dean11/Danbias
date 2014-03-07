@@ -60,6 +60,7 @@ namespace DanBias { namespace Client
 			float middleRotationSpeed;
 			float middleWeaponCooldown;
 			float middleShootTimer;
+			Oyster::Math::Float4 tint;
 
 			Utility::DynamicMemory::SmartPointer<Plane_UI> crosshair;
 		
