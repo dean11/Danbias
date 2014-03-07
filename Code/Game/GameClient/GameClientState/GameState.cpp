@@ -1093,7 +1093,19 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 	{
 		switch (decoded.collisionID)
 		{
-		case GameLogic::CollisionEvent::CollisionEvent_BasicCollision:
+		case GameLogic::CollisionEvent::CollisionEvent_BoxVsBox:
+			//PlaySound(collision);
+			break;
+		case GameLogic::CollisionEvent::CollisionEvent_BoxVsPlayer:
+			//PlaySound(collision);
+			break;
+		case GameLogic::CollisionEvent::CollisionEvent_CrystalVsPlayer:
+			//PlaySound(collision);
+			break;
+		case GameLogic::CollisionEvent::CollisionEvent_JumpPad:
+			//PlaySound(collision);
+			break;
+		case GameLogic::CollisionEvent::CollisionEvent_Explosion:
 			//PlaySound(collision);
 			break;
 		default:

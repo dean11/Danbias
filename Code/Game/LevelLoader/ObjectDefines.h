@@ -115,7 +115,12 @@ namespace GameLogic
 	// TODO: add more collision Events
 	enum CollisionEvent
 	{
-		CollisionEvent_BasicCollision,
+		CollisionEvent_BoxVsBox,
+		CollisionEvent_BoxVsPlayer,
+		CollisionEvent_CrystalVsPlayer,
+		CollisionEvent_JumpPad,
+		CollisionEvent_Explosion,
+		
 	};
 	enum PickupType
 	{

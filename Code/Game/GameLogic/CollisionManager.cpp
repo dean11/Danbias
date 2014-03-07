@@ -52,6 +52,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_StandardBox:
 			PlayerVObject(*player,*realObjB, 50.0f);
+			((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_BoxVsPlayer);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
 			break;
@@ -60,10 +61,11 @@ const float default_jump_pad_stun_duration = 1.0f;
 			break;
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
 			PlayerVLethalObject(*player,*realObjB, kineticEnergyLoss,realObjB->GetExtraDamageOnCollision());
+			((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_CrystalVsPlayer);
 			break;
 		}
 		// send collision event message
-		((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_BasicCollision);
+		
 	}
 
 	void JumpPad::JumpPadActivated(Oyster::Physics::ICustomBody *rigidBodyJumpPad, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss)
@@ -165,6 +167,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 			Oyster::Physics::API::Instance().ApplyEffect(hitSphere,crate,Explode);
 			crate->hasExploaded = true;
 			delete hitSphere;
+			((Game*)&Game::Instance())->onCollisionEventFnc(crate, CollisionEvent::CollisionEvent_Explosion);
 			break;
 		}
 	}
