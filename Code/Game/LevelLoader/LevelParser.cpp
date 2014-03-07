@@ -93,6 +93,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 					switch(specialType)
 					{
 						//there is no difference when parsing these specialTypes.
+						case ObjectSpecialType_None:
 						case ObjectSpecialType_PickupEnergy:
 						case ObjectSpecialType_Generic:
 						case ObjectSpecialType_PickupHealth:
