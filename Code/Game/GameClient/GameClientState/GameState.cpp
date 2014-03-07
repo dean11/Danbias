@@ -739,10 +739,12 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 	Float3 position = decoded.position;
 	Quaternion rotation = Quaternion( Float3(decoded.rotationQ), decoded.rotationQ[3] );
 
-	C_Object *player = (this->privData->players)[decoded.objectID];
-
-	if( player )
+	if( decoded.objectID < 100 )
 	{
+		C_Object *player = (this->privData->players)[decoded.objectID];
+		if( !player )
+			return; // haven't got CreatePlayer yet
+
 		C_Object *weapon = (*this->privData->weapons)[decoded.objectID];
 
 		if( this->privData->myId == decoded.objectID )
@@ -777,6 +779,16 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 		player->setRBRot ( rotation );  
 		player->updateRBWorld();
 		// !RB DEBUG 
+	}
+	else
+	{
+		C_Object *object = (*this->privData->dynamicObjects)[decoded.objectID];
+		if( !object )
+			return; // haven't got CreateObject yet
+
+		object->setPos( position );
+		object->setRot( rotation );
+		object->updateWorld();
 	}
 }
 void GameState::Gameplay_ObjectEnabled( CustomNetProtocol data )
