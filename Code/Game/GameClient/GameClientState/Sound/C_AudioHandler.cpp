@@ -52,7 +52,8 @@ void C_AudioHandler::addPlayerSound(int playerId)
 		{
 			playerChannels[playerId]->channels[i] = AudioAPI::Audio_CreateChannel();
 		}
-		//AudioAPI::Audio_PlaySound(getSound(walk), getPlayerChannel(playerId, PlayerSoundID_walk), true);
+		AudioAPI::Audio_PlaySound(getSound(walk), getPlayerChannel(playerId, PlayerSoundID_walk), true);
+		getPlayerChannel(playerId, PlayerSoundID_walk)->setVolym(0.2);
 	}
 }
 void C_AudioHandler::setPlayerChannelPos( int playerId, float* pos, float* vel)
