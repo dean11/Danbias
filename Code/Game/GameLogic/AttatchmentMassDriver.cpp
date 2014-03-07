@@ -105,7 +105,7 @@ CASE_WEAPON_INTERRUPT:
 		break;
 
 	case WEAPON_USE_UTILLITY_PRESS:
-		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost && currentCooldown >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PrimaryCooldown)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost && currentCooldown >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::UtilityCooldown)
 		{
 			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost;
 			currentCooldown = 0.0f;
