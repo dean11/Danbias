@@ -372,7 +372,8 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 			}
 			else
 			{
-				DanBias::data.sharedStateContent.mouseDevice->Deactivate();
+				if(DanBias::data.sharedStateContent.mouseDevice)
+					DanBias::data.sharedStateContent.mouseDevice->Deactivate();
 				prevFull = op.fullscreen;
 				if(op.fullscreen)
 				{

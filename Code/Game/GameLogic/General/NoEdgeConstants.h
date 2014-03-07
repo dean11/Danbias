@@ -32,7 +32,7 @@ namespace NoEdgeConstants
 
 		namespace Limits
 		{
-			const float FallDamageThreshold				= 80.0f;
+			const float FallDamageThreshold				= 100.0f;
 			const float forceThreashHold                = 40.0f;
 		}
 

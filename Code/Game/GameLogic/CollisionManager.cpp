@@ -55,9 +55,10 @@ const float default_jump_pad_stun_duration = 1.0f;
 			((Game*)&Game::Instance())->onCollisionEventFnc(player, CollisionEvent::CollisionEvent_BoxVsPlayer);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_Player:
+			PlayerVObject(*player,*realObjB, 150.0f);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_World:
-			PlayerVObject(*player,*realObjB, 100.0f);
+			PlayerVObject(*player,*realObjB, NoEdgeConstants::Values::Limits::FallDamageThreshold);
 			break;
 		case ObjectSpecialType::ObjectSpecialType_CrystalFormation:
 			PlayerVLethalObject(*player,*realObjB, kineticEnergyLoss,realObjB->GetExtraDamageOnCollision());
@@ -224,7 +225,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 		Oyster::Math::Float damageDone = 0.0f;
 
-		if(impactPower > NoEdgeConstants::Values::Limits::forceThreashHold) //should only take damage if the force is high enough
+		if(impactPower > a) //should only take damage if the force is high enough
 		{
 			if(obj.GetRigidBody()->GetState().mass == 0)
 			{

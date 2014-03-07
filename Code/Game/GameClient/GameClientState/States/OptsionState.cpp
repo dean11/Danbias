@@ -301,11 +301,12 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 	{
 		case DanBias::Client::OptionState::ButtonType_MouseSensitivity:
 		{
-			if(e.state == ButtonState_Down)
+			if(e.state == ButtonState_Pressed)
 			{
 				e.owner->mouseSensitivity.isHeld = true;
 			}
 		}
+		break; //Good thing to break..
 		case DanBias::Client::OptionState::ButtonType_FullScreen:
 			if(e.state == ButtonState_Released)
 			{
