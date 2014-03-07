@@ -159,7 +159,7 @@ void LanMenuState::ChangeState( ClientState next )
 }
 void LanMenuState::PlaySound( SoundID id )
 {
-	this->privData->sharedData->soundManager->getSound(id)->Play_Sound();
+	Sound::AudioAPI::Audio_PlaySound(this->privData->sharedData->soundManager->getSound(id), this->privData->sharedData->soundManager->getChannel(id));
 }
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )

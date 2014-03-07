@@ -112,7 +112,7 @@ void LobbyState::ChangeState( ClientState next )
 }
 void LobbyState::PlaySound( SoundID id )
 {
-	this->privData->soundManager->getSound(id)->Play_Sound();
+	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(id), this->privData->soundManager->getChannel(id));
 }
 using namespace ::Oyster::Network;
 
