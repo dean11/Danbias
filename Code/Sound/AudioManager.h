@@ -7,46 +7,61 @@
 #include "OysterMath.h"
 #include <map>
 
-const float STANDARD_MUSIC_VOLYM = 0.5f;
-const float STANDARD_EFFECTS_VOLYM = 0.5f;
+
 const int maxNrOfChannels = 100;
 namespace Sound
 {
 
-
+	struct ChannelGroupData : IChannelGroup
+	{
+		FMOD::ChannelGroup* channel;
+	public:
+		ChannelGroupData();
+		~ChannelGroupData();
+		void setVolym(float volym) override;
+		void stop()override;
+	};
+	struct ChannelData : IChannel
+	{
+		FMOD_RESULT result;
+		FMOD::Channel* channel;
+	public:
+		ChannelData();
+		~ChannelData();
+		void setVolym(float volym) override;
+		void setMinMaxDistance( float min, float max) override;
+		void setChannel3DAttributes( float* pos, float* vel) override;
+		void SetPauseChannel(bool pause) override;
+		bool GetPauseChannel()override;
+		void toggleChannelPaused() override;
+		void setSoundVolume()override;
+		bool getChannelPlaying()override;
+		void stop()override;
+		void restartChannel()override;
+	};
 	struct SoundData : ISound
 	{
 		FMOD::Sound* sound;
-		FMOD::Channel* channel;
 		SoundType soundType;
 
 	public:
 		SoundData();
 		~SoundData();
 		void ReleaseSound() override;
-		void Play_Sound(bool paused) override;
-		void setVolym(float volym) override;
-		void setMinMaxDistance( float min, float max) override;
-		void setChannel3DAttributes( float* pos, float* vel) override;
 		void setMode(SoundMode soundMode) override;
-		void SetPauseChannel(bool pause) override;
-		bool GetPauseChannel()override;
-		void toggleChannelPaused() override;
-		void setSoundVolume()override;
 		SoundType getType() override;
 	};
-	void floatArrToFmodVECTOR(FMOD_VECTOR& F_Vec, float* floatArr);
-	FMOD_VECTOR floatArrToFmodVECTOR( float* floatArr);
+	namespace FmodUtil
+	{
+		void floatArrToFmodVECTOR(FMOD_VECTOR& F_Vec, float* floatArr);
+		FMOD_VECTOR floatArrToFmodVECTOR( float* floatArr);
+		bool FmodErrorCheck(FMOD_RESULT result);
+	}
+
 
 	class AudioManager
 	{
 	public:
-		struct	playerSoundData
-		{
-			Oyster::Math::Float3 pos;
-			float vel; 
-		};
-
 		struct ListenerData
 		{
 			FMOD_VECTOR pos;
@@ -61,14 +76,10 @@ namespace Sound
 		FMOD::System * fmodSystem;
 		FMOD_RESULT result;
 
-		float music_volume;
-		float effects_volume;
-		
 		AudioManager(void);
-
 		ListenerData listenerData;
 		void unLoadSounds();
-		bool FmodErrorCheck(FMOD_RESULT result);
+		
 		std::string basePath;
 		
 	public:
@@ -79,19 +90,17 @@ namespace Sound
 
 		bool intitializeSoundManager();
 		void shutdownSoundManager();
-		bool updateSoundManager();
+		bool updateSoundManager(float deltaTime);
+		ChannelData* CreateChannel();
 		// set stream to true if it is a big sound file
-		SoundData* CreateSound(std::string soundName, bool stream = false);
-		void Play_Sound(SoundData* sound, bool paused);
-		void DeleteSound(SoundData* sound);
+		SoundData* CreateSound(std::string soundName, SoundType soundType);
+		void Play_Sound(SoundData* sound, ChannelData* channel, bool paused);
 
-		void setListener( float* pos, float* vel, float* forward, float* up );
+		void setListenerPos( float* pos, float* vel, float* forward, float* up );
 
 		void setLoop(SoundData* sound, bool loop);
 		// setVolym( SoundData* );
 
-		void setMusicVolym(float volym);
-		void setEffectsVolym(float volym);
 		void setBasePath(std::string basePath);
 
 	};

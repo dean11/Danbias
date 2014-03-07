@@ -222,9 +222,8 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 
 		Oyster::Math::Float damageDone = 0.0f;
-		Oyster::Math::Float forceThreashHold = 80.0f; //FIX: balance this
 
-		if(impactPower > forceThreashHold) //should only take damage if the force is high enough
+		if(impactPower > NoEdgeConstants::Values::Limits::forceThreashHold) //should only take damage if the force is high enough
 		{
 			if(obj.GetRigidBody()->GetState().mass == 0)
 			{

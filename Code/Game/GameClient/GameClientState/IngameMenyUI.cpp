@@ -224,5 +224,6 @@ void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& 
 }
 void IngameMenyUI::PlaySound( SoundID id )
 {
-	this->audioHandler->getSound(id)->Play_Sound();
+	//this->audioHandler->getSound(id)->Play_Sound();
+	Sound::AudioAPI::Audio_PlaySound(this->audioHandler->getSound(id), this->audioHandler->getChannel(id), true);
 }

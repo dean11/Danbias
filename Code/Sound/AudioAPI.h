@@ -22,32 +22,49 @@ namespace Sound
 		enum SoundType
 		{
 			SoundType_Music,
-			SoundType_Effect
+			SoundType_Effect,
+			SoundType_Effect3D
 		};
+		class SOUND_DLL IChannelGroup
+		{
+		public:
+			virtual void setVolym(float volym) = 0;
+			virtual void stop() = 0;
+		};
+
+		class SOUND_DLL IChannel
+		{
+		public:
+			virtual void setVolym(float volym) = 0;
+			virtual void setMinMaxDistance( float min, float max) = 0; 
+			virtual void setChannel3DAttributes( float* pos, float* vel) = 0;
+			virtual void SetPauseChannel(bool pause) = 0;
+			virtual bool GetPauseChannel()= 0;
+			virtual void toggleChannelPaused() = 0;
+			virtual void setSoundVolume() = 0;
+			virtual bool getChannelPlaying() = 0;
+			virtual void stop() = 0;
+			virtual void restartChannel() = 0;
+		};
+
 		class SOUND_DLL ISound
 		{
 		public:
 			virtual void ReleaseSound() = 0;
-			virtual void Play_Sound(bool paused = false) = 0;
-			virtual void setVolym(float volym) = 0;
-			virtual void setMinMaxDistance( float min, float max) = 0; 
-			virtual void setChannel3DAttributes( float* pos, float* vel) = 0;
 			virtual void setMode(SoundMode soundMode) = 0;
-			virtual void SetPauseChannel(bool pause) = 0;
-			virtual bool GetPauseChannel()= 0;
-			virtual void toggleChannelPaused() = 0;
 			virtual SoundType getType() = 0;
-			virtual void setSoundVolume() = 0;
 		};
 
 		class SOUND_DLL AudioAPI
 		{
 		public:
-			static bool Init();
-			static void Shutdown();
-			static bool Audio_Update();
-			static void setListenerPos( float* pos, float* vel, float* forward, float* up ); 
-			static ISound* Audio_CreateSound(std::string soundName, bool stream = false);
+			static bool			Audio_Init();
+			static void			Audio_Shutdown();
+			static bool			Audio_Update( float deltaTime);
+			static IChannel*	Audio_CreateChannel();
+			static ISound*		Audio_CreateSound(std::string soundName, SoundType soundType);
+			static void			Audio_PlaySound( ISound* sound, IChannel* channel, bool paused = false);
+			static void			Audio_SetListenerPos( float* pos, float* vel, float* forward, float* up ); 
 		};
 	}
 }
