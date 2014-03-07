@@ -163,6 +163,7 @@ namespace DanBias { namespace Client
 		bool key_strafeRight;
 		bool key_strafeLeft;
 		bool key_zipDown;
+		bool key_Drop;
 		bool mouse_firstDown;
 		bool mouse_secondDown;
 

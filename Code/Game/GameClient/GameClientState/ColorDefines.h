@@ -44,7 +44,7 @@ namespace DanBias
 			glowTintColor[8] = Oyster::Math::Float3( 1.0f, 1.0f, 1.0f ); // white
 			glowTintColor[9] = Oyster::Math::Float3( 0.5f, 1.0f, 0.0f ); // lime
 
-			colorNames[0] = L"Mr. Purple";
+			colorNames[0] = L"Mr.Purple";
 			colorNames[1] = L"Mr.Green";
 			colorNames[2] = L"Mr.Blue";
 			colorNames[3] = L"Mr.Pink";

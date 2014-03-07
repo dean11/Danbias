@@ -1053,8 +1053,8 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			switch (decoded.animationID)
 			{
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
+				player->stopAllAnimations();
 				player->playAnimation(L"run_forwards", true);
-				//this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(false);
 				PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk), true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:

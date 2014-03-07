@@ -250,11 +250,11 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 
 		Oyster::Math::Float3 objectPos = obj.GetPosition();
-		Oyster::Math::Float3 playerPos = player.GetRigidBody()->GetState().centerPos;
+		Oyster::Math::Float3 playerPos = player.GetRigidBody()->GetState().centerPos - player.GetRigidBody()->GetOrientation()[1];
 		Oyster::Math::Float3 force = (((playerPos - objectPos).GetNormalized()));
 
 		player.GetRigidBody()->SetLinearVelocity(Oyster::Math::Float3::null);
-		player.GetRigidBody()->ApplyImpulse(force * 10);
+		player.GetRigidBody()->ApplyImpulse(force * 3000);
 		player.Stun(0.2f);
 
 	}

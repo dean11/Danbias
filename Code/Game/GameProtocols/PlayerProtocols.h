@@ -176,6 +176,7 @@ namespace GameLogic
 			ShootValue_SecondaryRelease,
 			ShootValue_UtilityPress,
 			ShootValue_UtilityRelease,
+			ShootValue_DropItem,
 		} value;
 		//bool primaryPressed; 
 		//bool secondaryPressed;

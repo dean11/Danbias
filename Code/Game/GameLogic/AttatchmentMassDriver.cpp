@@ -65,28 +65,33 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_SECONDARY_PRESS:
-		if(this->hasObject)
-		{
-			//goto CASE_WEAPON_INTERRUPT;
-		}
-		else if( (*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost )
-		{
-			
-			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost;
 		
-			ForcePull(usage,dt);
-			// add CD 
-			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
 		
-		}
+	if(this->hasObject)
+	{
 		break;
+	}
+	else if( (*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost )
+	{
+			
+		(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost;
+		
+		ForcePull(usage,dt);
+		// add CD 
+		((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_SecondaryShoot);
+		
+	}
+	break;
 
 	case WEAPON_INTERRUPT:
-	//CASE_WEAPON_INTERRUPT:
-		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
-		this->hasObject = false;
-		this->heldObject = NULL;
-		break;
+CASE_WEAPON_INTERRUPT:
+		if(heldObject)
+		{
+			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
+			this->hasObject = false;
+			this->heldObject = NULL;
+			break;
+		}
 
 	case WEAPON_USE_SECONDARY_RELEASE:
 		{
@@ -100,9 +105,10 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_UTILLITY_PRESS:
-		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost && currentCooldown >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::UtilityCooldown)
 		{
 			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost;
+			currentCooldown = 0.0f;
 			ForceZip(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
@@ -225,6 +231,8 @@ void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->zipForce);
 
 	this->owner->GetRigidBody()->ApplyImpulse(force);
+
+	this->owner->Stun(0.1f);
 }
 
 
@@ -264,6 +272,6 @@ void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 
 	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos , 0.5);
 	Oyster::Physics::API::Instance().ApplyEffect(&hitSphere,this,AttemptPickUp);
-
+	currentCooldown = 0.0f;
 	return;
 }

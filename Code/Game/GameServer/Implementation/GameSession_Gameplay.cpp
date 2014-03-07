@@ -308,6 +308,8 @@ using namespace DanBias;
 			break;
 			case Protocol_PlayerShot::ShootValue_UtilityRelease:		c->GetPlayer()->UseWeapon(GameLogic::WEAPON_USE_UTILLITY_RELEASE);
 			break;
+			case Protocol_PlayerShot::ShootValue_DropItem:				c->GetPlayer()->UseWeapon(GameLogic::WEAPON_INTERRUPT);
+			break;
 		}
 	}
 	void GameSession::Gameplay_ObjectPickup				( Protocol_ObjectPickup& p, DanBias::GameClient* c )
