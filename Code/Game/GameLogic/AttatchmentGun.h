@@ -24,6 +24,8 @@ namespace GameLogic
 		Oyster::Math::Float damage;
 		Oyster::Math::Float Cooldown;
 		Oyster::Math::Float TimeUntilFire;
+		Oyster::Math::Float energyCost;
+	
 
 	private:
 		void ShootBullet(const WEAPON_FIRE &usage, float dt);
