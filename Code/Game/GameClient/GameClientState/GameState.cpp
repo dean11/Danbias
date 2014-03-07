@@ -91,7 +91,7 @@ bool GameState::Init( SharedStateContent &shared )
 
 	this->privData->soundManager->getChannel(jumppad)->SetPauseChannel(false);
 	this->privData->soundManager->getChannel(pickUpSound)->SetPauseChannel(false);
-	this->privData->soundManager->playCollisionSound();
+	//this->privData->soundManager->playCollisionSound();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;

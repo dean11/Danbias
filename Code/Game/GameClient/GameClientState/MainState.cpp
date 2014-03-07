@@ -77,9 +77,8 @@ bool MainState::Init( SharedStateContent &shared )
 	// SOUND
 	this->privData->soundManager = this->privData->sharedData->soundManager;
 	// SOUND
-	//this->privData->soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
-	this->privData->soundManager->addSFX(SoundDesc("jaguar.wav", mouse_hoover));
-	this->privData->soundManager->addSFX(SoundDesc("button_click.wav", mouse_click));
+	this->privData->soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
+	this->privData->soundManager->addSFX(SoundDesc("Button02.mp3", mouse_click));
 	this->privData->soundManager->addChannel(ChannelID_mouse_hoover_button1);
 	this->privData->soundManager->addChannel(ChannelID_mouse_hoover_button2);
 	this->privData->soundManager->addChannel(ChannelID_mouse_hoover_button3);
@@ -88,7 +87,7 @@ bool MainState::Init( SharedStateContent &shared )
 	this->privData->soundManager->addChannel(ChannelID_mouse_click_button3);
 	this->privData->soundManager->addMusic(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
 	this->privData->soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
-	//Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(backgroundSound), this->privData->soundManager->getChannel(backgroundSound));
+	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(backgroundSound), this->privData->soundManager->getChannel(backgroundSound));
 	return true;
 }
 
