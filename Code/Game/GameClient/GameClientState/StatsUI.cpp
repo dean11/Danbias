@@ -63,12 +63,12 @@ GameStateUI::UIState StatsUI::Update( float deltaTime )
 
 bool StatsUI::HaveGUIRender() const
 {
-	return this->render; 
+	return true; 
 }
 
 bool StatsUI::HaveTextRender() const
 {
-	return this->render; 
+	return true; 
 }
 
 void StatsUI::RenderGUI()
