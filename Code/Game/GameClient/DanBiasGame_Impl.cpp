@@ -326,14 +326,31 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 		
 		break;
 
-		case WM_NCACTIVATE:
+		case WM_LBUTTONUP:
+		{
+			DanBias::data.sharedStateContent.mouseDevice->Activate();
+		}
+		break;
+
 		case WM_ACTIVATEAPP:
+		case WM_NCACTIVATE:
 		case WM_ACTIVATE:
 		{
 			bool act = (LOWORD(wParam) != WA_INACTIVE) && (HIWORD(wParam) == 0);
 			Graphics::API::Option op = Graphics::API::GetOption();
+
 			if(act)
 			{
+				//Not working as wanted... (maby due to where the window actualy is (borders etc...)
+				//if(LOWORD(wParam) == WA_CLICKACTIVE)
+				//{
+				//	
+				//}
+				//else
+				//{
+				//	DanBias::data.sharedStateContent.mouseDevice->Activate();
+				//}
+
 				ShowWindow(WindowShell::GetHWND(), SW_RESTORE);
 				//ShowWindow(WindowShell::GetHWND(), SW_MAXIMIZE);
 
@@ -342,13 +359,15 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 			}
 			else
 			{
+				DanBias::data.sharedStateContent.mouseDevice->Deactivate();
 				prevFull = op.fullscreen;
 				if(op.fullscreen)
 				{
 					op.fullscreen = false;
 					Graphics::API::SetOptions(op);
+					ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
 				}
-				ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
+				
 			}
 		}
 		break;
