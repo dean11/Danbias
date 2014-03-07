@@ -33,6 +33,7 @@ using namespace ::Utility::DynamicMemory;
 
 LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam );
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
+static bool prevFull = false;
 
 #pragma region Game Data
 namespace DanBias
@@ -177,7 +178,7 @@ namespace DanBias
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
 		gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
 		gfxOp.ambientValue = 0.3f;
-		gfxOp.fullscreen = false;
+		gfxOp.fullscreen = prevFull;
 		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
 		gfxOp.globalTint = Math::Float3(1.0f, 1.0f, 1.0f);
 
@@ -321,6 +322,33 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 		break;
 		case WM_INPUT:
 			message = 0;
+		break;
+		
+		break;
+
+		case WM_NCACTIVATE:
+		case WM_ACTIVATEAPP:
+		case WM_ACTIVATE:
+		{
+			
+			bool act = (LOWORD(wParam) != WA_INACTIVE) && (HIWORD(wParam) == 0);
+			Graphics::API::Option op = Graphics::API::GetOption();
+			if(act)
+			{
+				ShowWindow(WindowShell::GetHWND(), SW_RESTORE);
+				//ShowWindow(WindowShell::GetHWND(), SW_MAXIMIZE);
+
+				op.fullscreen = prevFull;
+				Graphics::API::SetOptions(op);
+			}
+			else
+			{
+				ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
+				prevFull = op.fullscreen;
+				op.fullscreen = false;
+				Graphics::API::SetOptions(op);
+			}
+		}
 		break;
 		default: break;
 	}
