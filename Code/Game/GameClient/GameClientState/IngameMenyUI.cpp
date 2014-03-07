@@ -54,13 +54,13 @@ bool IngameMenyUI::Init()
 	Float4 HoverCol = Float4(0.8f, 0.8f, 0.8f, 1.0f);
 	Float4 PressCol = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.3f, 0.2f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
 
 	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Options, this, Float3(0.5f, 0.45f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
 
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.3f, 0.2f), Float2(0.5f, 0.18f));
 	menyButtons.AddButton( button );
 
 	// HACK remove this later
