@@ -70,7 +70,7 @@ namespace NoEdgeConstants
 
 				const float PrimaryCooldown				= 0.2f;
 				const float SecondaryCooldown			= 0.0f;
-				const float MiddleCooldown				= 0.0f;
+				const float UtilityCooldown				= 0.1f;
 
 				const float MaxDistanceFromPlayer		= 5.0f;
 			}
