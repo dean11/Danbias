@@ -44,6 +44,7 @@ namespace Sound
 			virtual void setSoundVolume() = 0;
 			virtual bool getChannelPlaying() = 0;
 			virtual void stop() = 0;
+			virtual void restartChannel() = 0;
 		};
 
 		class SOUND_DLL ISound

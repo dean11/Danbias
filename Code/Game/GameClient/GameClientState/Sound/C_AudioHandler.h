@@ -17,17 +17,13 @@ namespace DanBias
 			pickUpSound,
 			jumppad,
 			walk,
-			walk1,
 			jump,
 			shoot,
-			shoot1,
 			pull, 
 			collision,
 			ambient,
 			mouse_hoover,
 			mouse_click,
-
-
 		};
 		enum ChannelID
 		{
@@ -36,10 +32,8 @@ namespace DanBias
 			ChannelID_pickUpSound,
 			ChannelID_jumppad,
 			ChannelID_walk,
-			ChannelID_walk1,
 			ChannelID_jump,
 			ChannelID_shoot,
-			ChannelID_shoot1,
 			ChannelID_pull, 
 			ChannelID_collision,
 			ChannelID_ambient,
@@ -86,7 +80,7 @@ namespace DanBias
 
 			::std::map<int, PlayerSounds*> playerChannels;
 
-			Sound::IChannel** collisionChannels;
+			//Sound::IChannel** collisionChannels;
 			int maxCollisionSounds;
 			int currCollisionSound;
 			float music_volume;

@@ -23,6 +23,7 @@ namespace Sound
 	};
 	struct ChannelData : IChannel
 	{
+		FMOD_RESULT result;
 		FMOD::Channel* channel;
 	public:
 		ChannelData();
@@ -36,6 +37,7 @@ namespace Sound
 		void setSoundVolume()override;
 		bool getChannelPlaying()override;
 		void stop()override;
+		void restartChannel()override;
 	};
 	struct SoundData : ISound
 	{

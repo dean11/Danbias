@@ -29,7 +29,7 @@ namespace DanBias { namespace Client
 		bool Release()override;
 		void ChangeState( ClientState next );
 		void PlaySound( SoundID id );
-		void PlaySound( Sound::ISound* id, Sound::IChannel* channel );
+		void PlaySound( Sound::ISound* id, Sound::IChannel* channel, bool restart = false );
 
 		const NetEvent & DataRecieved( const NetEvent &message );
 

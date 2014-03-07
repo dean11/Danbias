@@ -2,8 +2,6 @@
 
 using namespace Sound;
 using namespace FmodUtil;
-//const int   INTERFACE_UPDATETIME = 50;      // 50ms update for interface
-//const float DISTANCEFACTOR = 1.0f;          // Units per meter.  I.e feet would = 3.28.  centimeters would = 100.
 bool AudioManager::instanceFlag = false;
 AudioManager* AudioManager::single = NULL;
 
@@ -152,8 +150,10 @@ bool AudioManager::intitializeSoundManager()
 }
 void AudioManager::shutdownSoundManager()
 {
-	fmodSystem->close(); 
-	fmodSystem->release();
+	result = fmodSystem->close(); 
+	FmodErrorCheck(result);
+	result = fmodSystem->release();
+	FmodErrorCheck(result);
 	delete single;
 }
 bool AudioManager::updateSoundManager(float deltaTime)
@@ -211,6 +211,7 @@ SoundData* AudioManager::CreateSound(std::string soundName, SoundType soundType)
 void AudioManager::Play_Sound(SoundData* soundData, ChannelData* channelData, bool paused)
 {	
 	result = this->fmodSystem->playSound(FMOD_CHANNEL_FREE, soundData->sound, paused, &channelData->channel);
+	//FmodErrorCheck(result);
 }
 void AudioManager::setListenerPos( float* pos, float* vel, float* forward, float* up )
 {
@@ -221,11 +222,7 @@ void AudioManager::setListenerPos( float* pos, float* vel, float* forward, float
 	floatArrToFmodVECTOR( listenerData.up, up);
 
 	result = fmodSystem->set3DListenerAttributes(0, &listenerData.pos, &listenerData.vel, &listenerData.forward, &listenerData.up );
-	if(!FmodErrorCheck(result))
-	{
-		int i = 0;
-	}
-		//return false;
+	//FmodErrorCheck(result);
 }
 void AudioManager::setBasePath(std::string basePath)
 {

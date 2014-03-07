@@ -499,18 +499,20 @@ void GameState::ChangeState( ClientState next )
 
 void GameState::PlaySound( SoundID id )
 {
-	//this->privData->soundManager->getSound(id)->Play_Sound();
 	if(!this->privData->soundManager->getChannel(id)->getChannelPlaying())
 		Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSFX(id), this->privData->soundManager->getChannel(id));
 }
-void GameState::PlaySound( Sound::ISound* sound, Sound::IChannel* channel )
+void GameState::PlaySound( Sound::ISound* sound, Sound::IChannel* channel, bool restart )
 {
+	if(restart)
+	{
+		if(channel->getChannelPlaying())
+		{
+			channel->restartChannel();
+		}
+	}
 	if(!channel->getChannelPlaying())
 		Sound::AudioAPI::Audio_PlaySound(sound, channel);
-	else
-	{
-		int i = 0;
-	}
 }
 void GameState::ReadKeyInput()
 {
@@ -565,7 +567,6 @@ void GameState::ReadKeyInput()
 		this->renderStats = true;
 	}
 }
-
 void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 {
 	Protocol_ObjectPickup decoded(data);
@@ -597,7 +598,6 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 	decoded.pickup_ID;
 	
 }
-
 void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 {
 	Protocol_ObjectDamage decoded(data);
@@ -620,12 +620,10 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 		object = (*this->privData->dynamicObjects)[decoded.objectID];
 	}
 }
-
 void GameState::Gameplay_ObjectHealthStatus( CustomNetProtocol data )
 {
 
 }
-
 void GameState::Gameplay_ObjectPosition( CustomNetProtocol data )
 {
 	Protocol_ObjectPosition decoded(data);
@@ -978,18 +976,20 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
 				player->playAnimation(L"run_forwards", true);
 				//this->privData->soundManager->getChannel(walk1)->setChannel3DAttributes(player->getPos(), Float3(1,0,0));
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(false);
+				//this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(false);
+				PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk), true);
+
 				//PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk));
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				player->playAnimation(L"movement", true);
 				PlaySound(this->privData->soundManager->getSound(jump), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Jump));
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->stop();
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->stop();
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
@@ -1009,17 +1009,19 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			{
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
 				player->playAnimation(L"run_forwards", true);
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(false);
+				//this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(false);
+				PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk), true);
+
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				player->playAnimation(L"movement", true);
 				PlaySound(this->privData->soundManager->getSound(jump), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Jump));
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->stop();
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->stop();
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
 				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));

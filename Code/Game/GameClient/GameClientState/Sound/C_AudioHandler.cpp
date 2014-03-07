@@ -4,9 +4,9 @@ using namespace Sound;
 
 C_AudioHandler::C_AudioHandler()
 {
-	maxCollisionSounds = 25;
+	maxCollisionSounds = 50;
 	currCollisionSound = 0; 
-	collisionChannels = new Sound::IChannel*[maxCollisionSounds];
+	//collisionChannels = new Sound::IChannel*[maxCollisionSounds];
 }
 
 C_AudioHandler::~C_AudioHandler()
@@ -48,7 +48,7 @@ void C_AudioHandler::addPlayerSound(int playerId)
 		{
 			playerChannels[playerId]->channels[i] = AudioAPI::Audio_CreateChannel();
 		}
-		AudioAPI::Audio_PlaySound(getSound(walk), getPlayerChannel(playerId, PlayerSoundID_walk), true);
+		//AudioAPI::Audio_PlaySound(getSound(walk), getPlayerChannel(playerId, PlayerSoundID_walk), true);
 	}
 }
 void C_AudioHandler::setPlayerChannelPos( int playerId, float* pos, float* vel)
@@ -63,12 +63,12 @@ void C_AudioHandler::setPlayerChannelPos( int playerId, float* pos, float* vel)
 }
 void C_AudioHandler::playCollisionSound()
 {
-	getSound(mouse_click)->setMode(Loop_normal);
-	for (int i = 0; i < maxCollisionSounds; i ++)
-	{
-		collisionChannels[i] = AudioAPI::Audio_CreateChannel();	
-		AudioAPI::Audio_PlaySound(getSound(mouse_click), collisionChannels[i]);
-	}
+	//getSound(mouse_click)->setMode(Loop_normal);
+	//for (int i = 0; i < maxCollisionSounds; i ++)
+	//{
+	//	collisionChannels[i] = AudioAPI::Audio_CreateChannel();	
+	//	AudioAPI::Audio_PlaySound(getSound(mouse_click), collisionChannels[i]);
+	//}
 }
 void C_AudioHandler::addChannel(SoundID id )
 {
@@ -128,11 +128,11 @@ void C_AudioHandler::SetEffectVolume(float volume)
 }
 void C_AudioHandler::Release()
 {
-	for (int i = 0; i < maxCollisionSounds; i ++)
+	/*for (int i = 0; i < maxCollisionSounds; i ++)
 	{
-		delete collisionChannels[i];
-	}
-	delete [] collisionChannels;
+	delete collisionChannels[i];
+	}*/
+	//delete [] collisionChannels;
 
 	auto effect = this->effects.begin();
 	for( ; effect != this->effects.end(); ++effect )

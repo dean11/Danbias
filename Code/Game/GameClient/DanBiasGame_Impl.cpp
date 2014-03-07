@@ -109,6 +109,19 @@ namespace DanBias
 		if( ( data.sharedStateContent.mouseCursor = Graphics::API::CreateTexture( L"cursor.png" ) ) == 0)
 			printf("Failed to load the mouse cursor [cursor.png]\n");
 
+		
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", mouse_click));
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button3);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button3);
+		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
+		data.sharedStateContent.soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
+		Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(backgroundSound), data.sharedStateContent.soundManager->getChannel(backgroundSound), true);
+
 		// Start in main menu state
 		data.state = new Client::MainState();
 

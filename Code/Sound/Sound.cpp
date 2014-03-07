@@ -23,10 +23,17 @@ void SoundData::ReleaseSound()
 }
 void SoundData::setMode(SoundMode soundMode)
 {
+	FMOD_RESULT result;
 	if(soundMode == Loop_normal)
-		sound->setMode(FMOD_LOOP_NORMAL);
+	{
+		result = sound->setMode(FMOD_LOOP_NORMAL);
+		FmodErrorCheck(result);
+	}
 	else if(soundMode == Loop_off)
-		sound->setMode(FMOD_LOOP_OFF);
+	{
+		result = sound->setMode(FMOD_LOOP_OFF);
+		FmodErrorCheck(result);
+	}
 }
 SoundType SoundData::getType()
 {

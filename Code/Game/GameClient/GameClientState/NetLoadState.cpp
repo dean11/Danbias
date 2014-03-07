@@ -344,14 +344,11 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 void NetLoadState::LoadSound()
 {
 	this->privData->soundManager->getChannel(backgroundSound)->SetPauseChannel(true);
-	this->privData->soundManager->getChannel(backgroundSound)->setVolym(0.1f);
 
 	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav", effectSound));
 	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav", jumppad));
-	this->privData->soundManager->addSFX_3D(SoundDesc("onefootstep.wav", walk));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Running01.mp3", walk));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", shoot));
-	this->privData->soundManager->addSFX_3D(SoundDesc("onefootstep.wav", walk1));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", shoot1));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3", pull));
 	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav", collision));
 	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", pickUpSound));
