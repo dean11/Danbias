@@ -14,7 +14,7 @@ using namespace ::Input::Enum;
 GamingUI::GamingUI() 
 	: GameStateUI( nullptr )
 	, zip_Cooldown(0.4f)
-	, msg_Cooldown(2.0f)
+	, msg_Cooldown(4.0f)
 {
 	/* Should never be called! */
 	this->camera			= nullptr;
@@ -35,7 +35,7 @@ GamingUI::GamingUI()
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) 
 	: GameStateUI( shared )
 	, zip_Cooldown(0.4f)
-	, msg_Cooldown(2.0f)
+	, msg_Cooldown(4.0f)
 {
 	this->camera			= camera;
 	this->hp				= nullptr;
@@ -111,7 +111,7 @@ void GamingUI::RenderText()
 {
 	this->hp->RenderText();
 	this->energy->RenderText();
-	if(this->msg_Timer > this->msg_Cooldown)
+	if(this->msg_Timer < this->msg_Cooldown)
 	{
 		for (int i = 0; i < maxMessageCount; i++)
 		{
@@ -150,6 +150,7 @@ void GamingUI::SetKillMessage( std::wstring killerMessage )
 	this->killMessages[2]->setText( this->killMessages[1]->getText());
 	this->killMessages[1]->setText( this->killMessages[0]->getText());
 	this->killMessages[0]->setText( killerMessage);
+	this->msg_Timer = 0;
 }
 void GamingUI::ReadKeyInput(float deltaTime)
 {
