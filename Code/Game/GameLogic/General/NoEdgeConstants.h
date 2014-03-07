@@ -33,6 +33,7 @@ namespace NoEdgeConstants
 		namespace Limits
 		{
 			const float FallDamageThreshold				= 80.0f;
+			const float forceThreashHold                = 40.0f;
 		}
 
 		namespace Player
@@ -46,6 +47,7 @@ namespace NoEdgeConstants
 			const float RestitutionCoeff				= 0.0f;
 			const float FrictionStatic					= 0.0f;
 			const float FrictionDynamic					= 0.0f;
+
 		}
 
 		namespace Weapons
