@@ -354,6 +354,10 @@ void Mouse::SetSensitivity(float value)
 {
 	this->sensitivity = value;
 }
+float Mouse::GetSensitivity() const
+{
+	return this->sensitivity;
+}
 
 
 

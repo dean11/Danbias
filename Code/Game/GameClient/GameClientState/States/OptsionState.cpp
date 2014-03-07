@@ -2,6 +2,7 @@
 #include "EventHandler\EventHandler.h"
 #include "..\Buttons\ButtonRectangle.h"
 #include "..\Buttons\ButtonEllipse.h"
+#include "..\C_obj\C_UIobject.h"
 
 using namespace DanBias; 
 using namespace Client;
@@ -14,7 +15,6 @@ using namespace Oyster::Event;
 using namespace Utility;
 using namespace Utility::DynamicMemory;
 using namespace Utility::StaticArray;
-
 
 static wchar_t* resolution[] = 
 {
@@ -74,6 +74,30 @@ OptionState::~OptionState()
 	this->sharedData = 0;
 }
 
+void OptionState::CreateMouseSlider()
+{
+	Float4 TextCol = Float4(0.1f,0.1f,0.1f,1.0f);
+	Float4 BackCol = Float4(1.0f);
+	Float4 HoverCol = Float4(1.2f);
+	Float4 PressCol = Float4(1.5f);
+
+	this->mouseSensitivity.pos = Float3(0.5f, 0.354f, 0.6f);
+	this->mouseSensitivity.button =  new ButtonRectangle<OptionState*>( L"noedge-slider-btn.png", L"", TextCol, BackCol, 
+																		HoverCol, PressCol, OnButtonInteract, this, 
+																		Float3(this->mouseSensitivity.pos.xy.x, this->mouseSensitivity.pos.xy.y, 0.4f), 
+																		Float2(0.016f, 0.029f));
+	this->guiElements.AddButton( mouseSensitivity.button );
+
+	mouseSensitivity.button->SetUserData((void*)(int)ButtonType_MouseSensitivity);
+
+	this->mouseSensitivity.mouseSlider = Oyster::Graphics::API::CreateTexture(L"noedge-slider-vertical.png");
+	if(!mouseSensitivity.mouseSlider)
+	{
+		printf("Failed to load texture noedge-slider-vertical.png");
+	}
+
+}
+
 bool OptionState::Init( SharedStateContent &shared )
 {
 	this->sharedData = &shared;
@@ -81,6 +105,7 @@ bool OptionState::Init( SharedStateContent &shared )
 	this->musOrientation = Float3( 0.0f );
 
 	this->sharedData->keyboardDevice->AddKeyboardEvent(this);
+	this->sharedData->mouseDevice->AddMouseEvent(this);
 
 	// create buttons
 	ButtonRectangle<OptionState*> *button;
@@ -89,7 +114,9 @@ bool OptionState::Init( SharedStateContent &shared )
 	Float4 HoverCol = Float4(1.2f);
 	Float4 PressCol = Float4(1.5f);
 	
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
+	CreateMouseSlider();
+
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.006f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((int)ButtonType_FullScreen);
 
@@ -107,11 +134,11 @@ bool OptionState::Init( SharedStateContent &shared )
 		fScreenBtnToggle = button;
 	}
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.3f, 0.4f, 0.5f), Float2(0.035f, 0.035f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.3f, 0.51f, 0.5f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_FlipResLeft);
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.7f, 0.4f, 0.5f), Float2(0.035f, 0.035f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.7f, 0.51f, 0.5f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_FlipResRight);
 
@@ -148,6 +175,8 @@ bool OptionState::Render()
 	Graphics::API::NewFrame();
 	Graphics::API::StartGuiRender();
 	
+	//Render mouse Slider
+	Graphics::API::RenderGuiElement( this->mouseSensitivity.mouseSlider, this->mouseSensitivity.pos, Float2(0.35f, 0.003f), Float4(1.0f) );
 	
 	if(this->sharedData->mouseDevice->IsBtnDown(Input::Enum::SAMI_MouseLeftBtn))
 		Graphics::API::RenderGuiElement( this->sharedData->mouseCursor, this->musOrientation, Float2(0.15f), Float4(1.0f) );
@@ -159,7 +188,18 @@ bool OptionState::Render()
 
 	Graphics::API::StartTextRender();
 		Graphics::API::RenderText(L"Full Screen" , Float3(0.33f, 0.14f, 0.1f), Float2(0.5f, 0.24f), 0.034f);
-		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.36f, 0.36f, 0.1f), Float2(0.3f, 0.18f), 0.034f);
+
+		Float3 sp = this->mouseSensitivity.pos;
+		sp.x -= 0.2; sp.y += 0.0011f; sp.z = 0.4f;
+		Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.2f), 0.030f);
+		
+		wchar_t val[25];
+		swprintf_s(val, L"%f", this->sharedData->mouseDevice->GetSensitivity());
+		val[3] = L'\0';
+		Float3 t = this->mouseSensitivity.button->GetPosition(); t.y = 0.29f; t.x -= 0.04f;
+		Graphics::API::RenderText( val, t, Float2(0.13f, 0.13f), 0.028f);
+
+		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.36f, 0.40f, 0.1f), Float2(0.32f, 0.4f), 0.050f);
 		this->guiElements.RenderText();
 
 	Graphics::API::EndFrame();
@@ -170,6 +210,7 @@ bool OptionState::Release()
 {
 	EventHandler::Instance().ReleaseCollection( &this->guiElements );
 	this->sharedData->keyboardDevice->RemoveKeyboardEvent(this);
+	this->sharedData->mouseDevice->RemoveMouseEvent(this);
 
 	return true;
 }
@@ -195,12 +236,38 @@ void OptionState::OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender )
 }
 void OptionState::OnMouseRelease		( Input::Enum::SAMI key, Input::Mouse* sender )
 {
+	if(this->mouseSensitivity.isHeld)
+	{
+		this->mouseSensitivity.isHeld = false;
+	}
 }
 void OptionState::OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )
 {
 }
-void OptionState::OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender )
+void OptionState::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coordinate, Input::Mouse* sender )
 {
+	if(this->mouseSensitivity.isHeld)
+	{
+		Float3 temp = this->mouseSensitivity.button->GetPosition();
+		temp.x = (sender->GetNormalizedPosition().x);
+
+		temp.x = std::max((0.5f - (0.35f/2.0f)), temp.x);
+		temp.x = std::min((0.5f + (0.35f/2.0f)), temp.x);
+		this->mouseSensitivity.button->SetPosition(temp ); 
+
+		float vel = this->sharedData->mouseDevice->GetSensitivity();
+
+		const float minThreshold = 0.1f;
+		const float maxVal = 10.5f;
+		float x = temp.x;
+		float width = 0.35f;
+		float halfWidth = 0.35f / 2.0f;
+		float left = 0.5f - halfWidth;
+		float localX = (temp.x - left);
+		float value = localX * maxVal / width;
+		
+		this->sharedData->mouseDevice->SetSensitivity( std::max(value, minThreshold) );
+	}
 }
 void OptionState::OnMouseScroll			( int delta, Input::Mouse* sender )
 {
@@ -227,6 +294,13 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 	ButtonType op = (ButtonType)(int)e.userData;
 	switch (op)
 	{
+		case DanBias::Client::OptionState::ButtonType_MouseSensitivity:
+		{
+			if(e.state == ButtonState_Down)
+			{
+				e.owner->mouseSensitivity.isHeld = true;
+			}
+		}
 		case DanBias::Client::OptionState::ButtonType_FullScreen:
 			if(e.state == ButtonState_Released)
 			{

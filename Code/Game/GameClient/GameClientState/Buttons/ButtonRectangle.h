@@ -65,6 +65,11 @@ namespace DanBias
 				return false;
 			}
 
+			inline void SetPosition(const Oyster::Math::Float3& pos)
+			{ this->pos = pos; }
+			inline Oyster::Math::Float3 GetPosition(Oyster::Math::Float3& pos = Oyster::Math::Float3()) const
+			{ return this->pos; }
+
 		protected:
 
 		};

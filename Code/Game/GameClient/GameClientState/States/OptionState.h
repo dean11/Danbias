@@ -26,27 +26,30 @@ namespace DanBias
 			const DanBias::Client::GameClientState::NetEvent & DataRecieved( const NetEvent &message )	override;
 
 		private: /* Derived mouse events */
-			void OnMouse				( const Input::Struct::MouseEventData& eventData );
-			void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender );
-			void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender );
-			void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender );
-			void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender );
-			void OnMouseMoveVelocity	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender );
-			void OnMouseScroll			( int delta, Input::Mouse* sender );
+			void OnMouse				( const Input::Struct::MouseEventData& eventData ) override;
+			void OnMousePress			( Input::Enum::SAMI key, Input::Mouse* sender ) override;
+			void OnMouseDown			( Input::Enum::SAMI key, Input::Mouse* sender ) override;
+			void OnMouseRelease			( Input::Enum::SAMI key, Input::Mouse* sender ) override;
+			void OnMouseMovePixelPos	( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;
+			void OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coordinate, Input::Mouse* sender ) override;
+			void OnMouseScroll			( int delta, Input::Mouse* sender ) override;
 		
 		private: /* Derived keyboard events */
-			void OnKeyEvent		(const Input::Struct::KeyboardEventData& eventData);
-			void OnKeyPress		(Input::Enum::SAKI key, Input::Keyboard* sender);
-			void OnKeyDown		(Input::Enum::SAKI key, Input::Keyboard* sender);
-			void OnKeyRelease	(Input::Enum::SAKI key, Input::Keyboard* sender);
+			void OnKeyEvent		(const Input::Struct::KeyboardEventData& eventData) override;
+			void OnKeyPress		(Input::Enum::SAKI key, Input::Keyboard* sender) override;
+			void OnKeyDown		(Input::Enum::SAKI key, Input::Keyboard* sender) override;
+			void OnKeyRelease	(Input::Enum::SAKI key, Input::Keyboard* sender) override;
 
 		private: /* Button events */
 			static void OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e);
 
 		private:
+			void CreateMouseSlider();
+
+		private:
 			GameClientState::ClientState nextState;
 			SharedStateContent* sharedData;
-			
+
 			Oyster::Event::EventButtonCollection guiElements;
 			Oyster::Math::Float3 musOrientation;
 			
@@ -54,6 +57,7 @@ namespace DanBias
 			enum ButtonType
 			{
 				ButtonType_FullScreen,
+				ButtonType_MouseSensitivity,
 				ButtonType_FlipResLeft,
 				ButtonType_FlipResRight,
 				ButtonType_Apply,
@@ -66,6 +70,8 @@ namespace DanBias
 				Oyster::Math::Float2 resolution;
 				bool toggleSound;
 				bool invertMouse;
+				float mouseSensitivity;
+				bool mute;
 				OptionsData()
 				{
 					Oyster::Graphics::API::Option op = Oyster::Graphics::API::GetOption();
@@ -76,9 +82,20 @@ namespace DanBias
 					currentRes = 5; //720p
 				}
 			} options;
+			struct MouseSensitivitySlider
+			{
+				ButtonRectangle<OptionState*> *button;
+				Oyster::Graphics::API::Texture mouseSlider;
+				bool isHeld;
+				Oyster::Math::Float3 pos;
+				MouseSensitivitySlider()
+				{
+					button = 0;
+					isHeld = false;
+				}
+			} mouseSensitivity;
 
 			ButtonRectangle<OptionState*> *fScreenBtnToggle;
-			
 		};
 	}
 }

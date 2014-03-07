@@ -12,8 +12,8 @@ void MapButton(RAWMOUSE& rawMouse, bool &isUp, Enum::SAMI& btn, int& delta, Stru
 {
 	if(rawMouse.lLastX != 0 || rawMouse.lLastY != 0)
 	{
-		vel.x = rawMouse.lLastX;
-		vel.y = rawMouse.lLastY;
+		vel.x = (float)rawMouse.lLastX;
+		vel.y = (float)rawMouse.lLastY;
 	}
 	if( rawMouse.usButtonFlags > 0 )
 	{
@@ -62,12 +62,12 @@ void MapButton(RAWMOUSE& rawMouse, bool &isUp, Enum::SAMI& btn, int& delta, Stru
 	}
 }
 
-void ContainPoint(Struct::SAIPointInt2D& pixelPos, Struct::SAIPointInt2D& windowSize)
+void ContainPoint(Struct::SAIPointFloat2D& pixelPos, Struct::SAIPointInt2D& windowSize)
 {
-		 if(pixelPos.x < 0)				{ pixelPos.x = 0;				}
-	else if(pixelPos.x > windowSize.x)	{ pixelPos.x = windowSize.x;	}
-		 if(pixelPos.y < 0)				{ pixelPos.y = 0;				}
-	else if(pixelPos.y > windowSize.y)	{ pixelPos.y = windowSize.y;	}
+		 if(pixelPos.x < 0.0f)			{ pixelPos.x = 0.0f;				}
+	else if(pixelPos.x > windowSize.x)	{ pixelPos.x = (float)windowSize.x;	}
+		 if(pixelPos.y < 0.0f)			{ pixelPos.y = 0.0f;				}
+	else if(pixelPos.y > windowSize.y)	{ pixelPos.y = (float)windowSize.y;	}
 }
 
 Win32Mouse::Win32Mouse(HWND target)
@@ -170,13 +170,14 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 
 		this->pixelPos.x += velocity.x;
 		this->pixelPos.y += velocity.y;
+		SAIPointInt2D p(pixelPos.x, pixelPos.y);
 
 		ContainPoint(this->pixelPos, this->windowSize);
-
-		InternalOnMove(this->pixelPos, velocity);
+		
+		InternalOnMove(p, velocity);
 
 		GetNormalizedPosition( mouseEventData.normalizedPos );
-		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.pixelPos			= p;
 		mouseEventData.velocity			= velocity;
 		mouseEventData.buttonState		= Enum::ButtonState_Unknown;
 		mouseEventData.scrollDelta		= 0;
@@ -189,9 +190,9 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 	if(delta != 0)
 	{
 		InternalOnScroll(delta);
-
+		
 		GetNormalizedPosition( mouseEventData.normalizedPos );
-		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.pixelPos			= SAIPointInt2D(pixelPos.x, pixelPos.y);
 		mouseEventData.buttonState		= Enum::ButtonState_Unknown;
 		mouseEventData.scrollDelta		= delta;
 		mouseEventData.sender			= this;
@@ -212,7 +213,7 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 		InternalOnBtnRelease(btn);
 
 		GetNormalizedPosition( mouseEventData.normalizedPos );
-		mouseEventData.pixelPos			= this->pixelPos;
+		mouseEventData.pixelPos			= SAIPointInt2D(pixelPos.x, pixelPos.y);
 		mouseEventData.buttonState		= Enum::ButtonState_Release;
 		mouseEventData.type				= btn;
 		mouseEventData.sender			= this;
@@ -229,7 +230,7 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 			InternalOnBtnDown(btn);
 
 			GetNormalizedPosition( mouseEventData.normalizedPos );
-			mouseEventData.pixelPos			= this->pixelPos;
+			mouseEventData.pixelPos			= SAIPointInt2D(pixelPos.x, pixelPos.y);
 			mouseEventData.buttonState		= Enum::ButtonState_Down;
 			mouseEventData.type				= btn;
 			mouseEventData.sender			= this;
@@ -242,7 +243,7 @@ void Win32Mouse::ProccessMouseData (RAWMOUSE mouse)
 			InternalOnBtnPress(btn);
 
 			GetNormalizedPosition( mouseEventData.normalizedPos );
-			mouseEventData.pixelPos			= this->pixelPos;
+			mouseEventData.pixelPos			= SAIPointInt2D(pixelPos.x, pixelPos.y);
 			mouseEventData.buttonState		= Enum::ButtonState_Press;
 			mouseEventData.type				= btn;
 			mouseEventData.sender			= this;

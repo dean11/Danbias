@@ -83,7 +83,7 @@ namespace Input
 			virtual void OnMouseDown			( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseRelease			( Enum::SAMI key, Mouse* sender )							{ }
 			virtual void OnMouseMovePixelPos	( Struct::SAIPointInt2D coordinate, Mouse* sender )			{ }
-			virtual void OnMouseMoveVelocity	( Struct::SAIPointFloat2D coordinate, Mouse* sender )			{ }
+			virtual void OnMouseMoveVelocity	( Struct::SAIPointFloat2D coordinate, Mouse* sender )		{ }
 			virtual void OnMouseScroll			( int delta, Mouse* sender )								{ }
 		};
 	
@@ -126,6 +126,7 @@ namespace Input
 		void SetPixelPos(int x, int y);
 		void ToggleCursor(bool toggler);
 		void SetSensitivity(float value);
+		float GetSensitivity() const;
 
 	public:
 		struct MouseCallbackList;
@@ -145,8 +146,8 @@ namespace Input
 	protected:
 		std::vector<MouseEvent*>	mouseSubscribers;
 		MouseCallbackList*			callbackList;
-		Struct::SAIPointInt2D		pixelPos;
-		Struct::SAIPointInt2D		velocity;
+		Struct::SAIPointFloat2D		pixelPos;
+		Struct::SAIPointFloat2D		velocity;
 		Struct::SAIPointFloat2D		normalPos;
 		Struct::SAIPointFloat2D		deltaPos;
 		

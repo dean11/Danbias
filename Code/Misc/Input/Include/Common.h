@@ -37,21 +37,28 @@ namespace Input
 	/*********************************************************************/
 	namespace Struct
 	{
+		struct SAIPointFloat2D;
+
 		struct SAIPointInt2D
 		{
 			int x;
 			int y;
 			SAIPointInt2D() :x(0), y(0) { }
 			SAIPointInt2D(int _x, int _y) :x(_x), y(_y) { }
+			SAIPointInt2D(int v[2]) :x(v[0]), y(v[1]) { }
+			SAIPointInt2D(float _x, float _y) :x((int)_x), y((int)_y) { }
+			SAIPointInt2D(float v[2]) :x((int)v[0]), y((int)v[1]) { }
 			int Length() { return (abs(x) + abs(y)); }
 		};
 
 		struct SAIPointFloat2D
 		{
-			float x;
-			float y;
+			float x, y;
+			
 			SAIPointFloat2D() :x(0.0f), y(0.0f) { }
 			SAIPointFloat2D(float _x, float _y) :x(_x), y(_y) { }
+			SAIPointFloat2D(const SAIPointInt2D& p) :x((float)p.x), y((float)p.y) { }
+			operator float*() { return &x; } 
 			float Length() { return (fabs(x) + fabs(y)); }
 		};
 
