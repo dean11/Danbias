@@ -233,7 +233,9 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 		{
 			this->privData->nextState = ClientState_Main;
 
-			// disconnect 
+			// stop lvl sounds
+			this->privData->soundManager->pauseAllSounds();
+
 
 			// inactivate MenyInput
 			this->privData->mouseInput->RemoveMouseEvent( (Input::Mouse::MouseEvent*)this->UIstackPeek() );
@@ -618,7 +620,7 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 
 		if (decoded.pickup_ID == GameLogic::PickupType::PickupType_Health)
 		{
-			// object->PickupHealth();
+			PlaySound(this->privData->soundManager->getSound(pickUpHealth), this->privData->soundManager->getCollisionChannel());
 		}
 		else if (decoded.pickup_ID == GameLogic::PickupType::PickupType_SpeedBoost)
 		{
