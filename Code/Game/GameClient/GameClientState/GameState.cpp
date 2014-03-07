@@ -77,23 +77,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData = new MyData();
 
 	this->privData->soundManager = shared.soundManager;
-	//PlaySound(walk);
-	//PlaySound(pickUpSound);
-	//PlaySound(jumppad);
-	//PlaySound(ambient);
-	
-	//this->privData->soundManager->getSound(ambient)->Play_Sound(true);
-	//this->privData->soundManager->getSound(ambient)->setChannel3DAttributes(Float3(0,150,0), Float3(1,0,0));
-	//this->privData->soundManager->getSound(ambient)->setMinMaxDistance(1, 10000);
-	//this->privData->soundManager->getSound(ambient)->setMode(Sound::Loop_normal);
-	//this->privData->soundManager->getSound(ambient)->setSoundVolume();
-	//this->privData->soundManager->getSound(ambient)->setVolym( 0.4);
-	//this->privData->soundManager->getSound(ambient)->SetPauseChannel(false);
-	//this->privData->soundManager->getSound(pickUpSound)->setSoundVolume();
-
-	this->privData->soundManager->getChannel(jumppad)->SetPauseChannel(false);
 	this->privData->soundManager->getChannel(pickUpSound)->SetPauseChannel(false);
-	//this->privData->soundManager->playCollisionSound();
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
@@ -657,7 +641,7 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 			((GamingUI*)this->gameUI)->SetHPtext( ::std::to_wstring((int)decoded.healthLost) );
 		}
 
-		PlaySound(this->privData->soundManager->getSound(effectSound), this->privData->soundManager->getPlayerChannel(decoded.objectID, playerSoundID_dmgRecieved));
+		PlaySound(this->privData->soundManager->getSound(playerDmgRecieveSound), this->privData->soundManager->getPlayerChannel(decoded.objectID, playerSoundID_dmgRecieved));
 	}
 	if( !object)
 	{
@@ -1111,16 +1095,16 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 		case GameLogic::CollisionEvent::CollisionEvent_BoxVsBox:
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_BoxVsPlayer:
-			//PlaySound(collision);
+			//PlaySound(this->privData->soundManager->getSound(pull), this->privData->soundManager->getCollisionChannel());
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_CrystalVsPlayer:
-			//PlaySound(collision);
+			PlaySound(this->privData->soundManager->getSound(crystalCollisionEventSound), this->privData->soundManager->getCollisionChannel());
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_JumpPad:
-			PlaySound(this->privData->soundManager->getSound(pull), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_pull));
+			PlaySound(this->privData->soundManager->getSound(jumppadEventSound), this->privData->soundManager->getCollisionChannel());
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_Explosion:
-			//PlaySound(collision);
+			PlaySound(this->privData->soundManager->getSound(explosionEventSound), this->privData->soundManager->getCollisionChannel() );
 			break;
 		default:
 			break;

@@ -13,9 +13,8 @@ namespace DanBias
 		enum SoundID
 		{
 			backgroundSound,
-			effectSound, 
+			playerDmgRecieveSound, 
 			pickUpSound,
-			jumppad,
 			walk,
 			jump,
 			shoot,
@@ -24,6 +23,10 @@ namespace DanBias
 			ambient,
 			mouse_hoover,
 			mouse_click,
+			jumppadEventSound,
+			explosionEventSound,
+			crystalCollisionEventSound,
+
 		};
 		enum ChannelID
 		{
@@ -80,9 +83,10 @@ namespace DanBias
 
 			::std::map<int, PlayerSounds*> playerChannels;
 
-			//Sound::IChannel** collisionChannels;
+			Sound::IChannel** collisionChannels;
 			int maxCollisionSounds;
 			int currCollisionSound;
+
 			float music_volume;
 			float effects_volume;
 
@@ -103,6 +107,7 @@ namespace DanBias
 			Sound::IChannel* getChannel( SoundID id );
 			Sound::IChannel* getChannel( ChannelID id );
 			Sound::IChannel* getPlayerChannel( int  id, PlayerSoundID soundId );
+			Sound::IChannel* getCollisionChannel();
 			void SetSoundVolume(float volume);
 			void SetEffectVolume(float volume);
 			void Release();

@@ -6,7 +6,11 @@ C_AudioHandler::C_AudioHandler()
 {
 	maxCollisionSounds = 50;
 	currCollisionSound = 0; 
-	//collisionChannels = new Sound::IChannel*[maxCollisionSounds];
+	collisionChannels = new Sound::IChannel*[maxCollisionSounds];
+	for (int i = 0; i < maxCollisionSounds; i ++)
+	{
+		collisionChannels[i] = AudioAPI::Audio_CreateChannel();	
+	}
 }
 
 C_AudioHandler::~C_AudioHandler()
@@ -108,6 +112,14 @@ Sound::IChannel* C_AudioHandler::getPlayerChannel( int  id, PlayerSoundID soundI
 {
 	return playerChannels[id]->channels[soundId];
 }
+Sound::IChannel* C_AudioHandler::getCollisionChannel( )
+{
+	if (currCollisionSound >= maxCollisionSounds)
+	{
+		currCollisionSound = 0;
+	}
+	return collisionChannels[currCollisionSound++];
+}
 void C_AudioHandler::SetSoundVolume(float volume)
 {
 	auto effect = this->channels.begin();
@@ -128,11 +140,11 @@ void C_AudioHandler::SetEffectVolume(float volume)
 }
 void C_AudioHandler::Release()
 {
-	/*for (int i = 0; i < maxCollisionSounds; i ++)
+	for (int i = 0; i < maxCollisionSounds; i ++)
 	{
 	delete collisionChannels[i];
-	}*/
-	//delete [] collisionChannels;
+	}
+	delete [] collisionChannels;
 
 	auto effect = this->effects.begin();
 	for( ; effect != this->effects.end(); ++effect )
