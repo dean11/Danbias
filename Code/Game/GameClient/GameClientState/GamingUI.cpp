@@ -160,7 +160,6 @@ void GamingUI::ReadKeyInput(float deltaTime)
 
 	int energy = 0;
 	energy = _wtoi(this->energy->getText().c_str());
-	printf("%d", energy);
 
 	if( this->mouse_firstDown )		
 	{
