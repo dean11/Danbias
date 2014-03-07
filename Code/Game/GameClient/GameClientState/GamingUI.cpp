@@ -171,7 +171,7 @@ void GamingUI::ReadKeyInput(float deltaTime)
 		}
 		else
 		{
-			if(energy >= 30)
+			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost)
 				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
 		}
 	}
