@@ -213,7 +213,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		{
 			desc.tint = Float3(1.0f);
 			desc.gtint = Float3(1.0f, 0.0f, 0.0f);
-
+			
+			desc.gtint *= 2;
 			Graphics::Definitions::Pointlight pointLight; 
 
 			pointLight.Color	= desc.gtint;
@@ -252,7 +253,7 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 					).Normalize();
 			}
 			light = ID;
-
+			desc.gtint *= 2;
 			Graphics::Definitions::Pointlight pointLight; 
 
 			pointLight.Color	= desc.gtint;

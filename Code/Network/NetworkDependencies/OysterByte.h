@@ -5,6 +5,10 @@
 // Created by Pontus Fransson 2013 //
 /////////////////////////////////////
 
+#define TRUE 1
+#define FALSE 0
+#define test (FALSE)
+
 #include <string.h>
 
 namespace Oyster
@@ -51,7 +55,11 @@ namespace Oyster
 
 
 		private:
+#if (test == TRUE)
 			unsigned char* byteArray;
+#else
+			unsigned char byteArray[1400];
+#endif
 			unsigned int size;
 			unsigned int capacity;
 

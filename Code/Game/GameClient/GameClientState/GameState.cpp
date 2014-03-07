@@ -167,8 +167,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		
 		Graphics::Definitions::Pointlight pl;
 		pl.Pos = p->getPos();
-		pl.Bright = 0.3f;
-		pl.Radius = 20;
+		pl.Bright = 0.5f;
+		pl.Radius = 10;
 		pl.Color = p->GetGlowTint();
 		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
 		p->SetLight(p->GetId());
@@ -281,9 +281,6 @@ bool GameState::Render()
 	Oyster::Graphics::API::SetView( this->privData->camera.GetViewMatrix() );
 
 	Oyster::Graphics::API::NewFrame();
-	
-	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
-	this->privData->weapon->Render();
 
 	// for debugging to be replaced with render weapon
 	auto weaponObject = this->privData->weapons->begin();
@@ -335,6 +332,9 @@ bool GameState::Render()
 
 		}
 	}
+
+	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
+	this->privData->weapon->Render();
 
 #ifdef _DEBUG //RB DEBUG render wire frame 
 		if(this->renderWhireframe)
@@ -414,6 +414,7 @@ bool GameState::Render()
 		Oyster::Graphics::API::RenderText( L"GAME OVER", Float3(0.2f,0.1f,0.1f), Float2(0.6f,0.1f), 0.1f);
 		Oyster::Graphics::API::RenderText( L"press 'ESC' to continue", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
 	}
+
 	Oyster::Graphics::API::EndFrame();
 	return true;
 }

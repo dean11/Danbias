@@ -6,18 +6,13 @@
 #include "IAttatchment.h"
 
 
-
 namespace GameLogic
 {
-	const Oyster::Math::Float StandardMaxEnergy = 100.0f;
-	const Oyster::Math::Float StandardrechargeRate = 0.5f;
-	const Oyster::Math::Float Standardforce = 2000.0f;
-
 	class AttatchmentMassDriver : public IAttatchment
 	{
 	public:
-		AttatchmentMassDriver(void);
-		AttatchmentMassDriver(Player &owner);
+		AttatchmentMassDriver(Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy);
+		AttatchmentMassDriver(Player &owner, Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy);
 		~AttatchmentMassDriver(void);
 
 
@@ -59,18 +54,13 @@ namespace GameLogic
 		Oyster::Physics::ICustomBody *heldObject;
 		bool hasObject;
 
-		Oyster::Math::Float force;
+		Oyster::Math::Float pushForce;
+		Oyster::Math::Float pullForce;
+		Oyster::Math::Float zipForce;
 
 		Oyster::Math::Float maxEnergy;
-		Oyster::Math::Float currentEnergy;
-		Oyster::Math::Float oldEnergy; // variable used to limit energy update messages
 		Oyster::Math::Float rechargeRate;
-
-		struct Aim
-		{
-			
-		};
-
+		Oyster::Math::Float currentCooldown;
 
 	};
 }

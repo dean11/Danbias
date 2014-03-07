@@ -2,6 +2,7 @@
 #include "AttatchmentGun.h"
 #include "AttatchmentMassDriver.h"
 #include "Player.h"
+#include "Game.h"
 
 
 using namespace GameLogic;
@@ -31,14 +32,14 @@ Weapon::Weapon(int MaxNrOfSockets,Player *owner)
 	selectedAttatchment = 0;
 
 	//give the weapon a massdriver on socket 0
-	IAttatchment *mD = new AttatchmentMassDriver(*owner);
+	IAttatchment *mD = new AttatchmentMassDriver(*owner, &this->currentEnergy, &this->previousEnergy);
 	attatchmentSockets[0]->SetAttatchment(mD);
 	this->currentNrOfAttatchments = 1;
 	SelectAttatchment(0);
 	//give the weapon a massdriver on socket 0
 
 	//give the weapon a normal gun on socket 1
-	IAttatchment *gun = new AttatchmentGun(*owner);
+	IAttatchment *gun = new AttatchmentGun(*owner, &this->currentEnergy, &this->previousEnergy);
 	attatchmentSockets[1]->SetAttatchment(gun);
 	this->currentNrOfAttatchments = 2;
 	//SelectAttatchment(1);
@@ -152,4 +153,10 @@ void Weapon::Update(float dt)
 	if(!selectedAttatchment) return;
 
 	selectedAttatchment->Update(dt);
+
+	if(this->selectedAttatchment->IsModified())
+	{
+		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->selectedAttatchment->GetOwner(), this->currentEnergy);
+		this->previousEnergy = this->currentEnergy;
+	}
 }

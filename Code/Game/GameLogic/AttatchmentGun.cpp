@@ -3,23 +3,28 @@
 #include "GameLogicStates.h"
 #include "Player.h"
 #include "Game.h"
+#include "AttatchmentMassDriver.h"
 using namespace GameLogic;
 
 
 
-AttatchmentGun::AttatchmentGun(void)
+AttatchmentGun::AttatchmentGun(Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
 {
 	this->owner = 0;
 	this->damage = 0.0f;
 	this->Cooldown = 0.0f;
+	this->currentEnergy = currEnergy;
+	this->previousEnergy = previousEnergy;
 }
 
-AttatchmentGun::AttatchmentGun(Player &owner)
+AttatchmentGun::AttatchmentGun(Player &owner, Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
 {
 	this->owner = &owner;
-	this->damage = standardDamage;
-	this->Cooldown = standardCooldown;
+	this->damage = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryDamage;
+	this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
 	this->TimeUntilFire = 0.0f;
+	this->currentEnergy = currEnergy;
+	this->previousEnergy = previousEnergy;
 }
 
 
@@ -37,34 +42,38 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-
-		if(TimeUntilFire == 0.0f)
+		if(TimeUntilFire > this->Cooldown)
 		{
 			ShootBullet(usage,dt);
-			TimeUntilFire = this->Cooldown;
+			TimeUntilFire = 0.0f;
 		}
-
 	break;
 	}
-		
+
 }
 
 void AttatchmentGun::Update(float dt)
 {
-	if(TimeUntilFire > 0.0f)
+	this->TimeUntilFire += dt;
+
+	if((*currentEnergy) < NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy)
 	{
-		TimeUntilFire-= dt;
-	}
-	else
-	{
-		TimeUntilFire = 0.0f;
+		(*currentEnergy) += NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::RechargeRate;
 	}
 
+	if((*currentEnergy) > NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy) 
+	{
+		(*currentEnergy) = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy;
+	}
+	else if((*currentEnergy) < 0.0f)
+	{
+		(*currentEnergy) = 0.0f;
+	}
 }
 
 void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float3 target = pos + (look * 100);
 

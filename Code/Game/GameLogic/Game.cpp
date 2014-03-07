@@ -132,21 +132,25 @@ void Game::CreateTeam()
 	
 }
 
-bool Game::NewFrame()
+bool Game::NewFrame(float deltaTime)
 {
-	// HACK need dynamic delta time
-	this->level->Update(this->frameTime);
-
-	for (unsigned int i = 0; i < this->players.Size(); i++)
+	this->timer += deltaTime;
+	if(this->timer >= this->frameTime)
 	{
-		if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
-	}
+		this->level->Update(this->frameTime);
 
-	API::Instance().UpdateWorld();
+		for (unsigned int i = 0; i < this->players.Size(); i++)
+		{
+			if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
+		}
 
-	for (unsigned int i = 0; i < this->players.Size(); i++)
-	{
-		if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();
+		API::Instance().UpdateWorld(this->timer);
+	
+		for (unsigned int i = 0; i < this->players.Size(); i++)
+		{
+			if(this->players[i] && this->players[i]->player)	this->players[i]->player->EndFrame();
+		}
+		this->timer = 0;
 	}
 	return true;
 }

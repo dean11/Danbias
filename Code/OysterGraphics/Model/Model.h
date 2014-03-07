@@ -28,6 +28,7 @@ namespace Oyster
 				Oyster::Math::Float3 GlowTint;
 				bool Visible;
 				bool Instanced;
+				bool IgnoreDepth;
 				AnimationData Animation[4];
 				int numOccupiedAnimationSlots;
 

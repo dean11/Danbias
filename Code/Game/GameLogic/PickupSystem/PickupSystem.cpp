@@ -15,7 +15,7 @@ void PickupSystem::CreatePickup(Pickup* pickup)
 
 void PickupSystem::Update()
 {
-	for(int i = 0; i < pickups.size(); i++)
+	for(int i = 0; i < (int)pickups.size(); i++)
 	{
 		pickups.at(i)->Update();
 	}

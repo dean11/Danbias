@@ -14,6 +14,7 @@
 #include <Windows.h>
 
 
+
 using namespace Utility::DynamicMemory;
 using namespace Oyster;
 using namespace Oyster::Network;
@@ -26,15 +27,18 @@ using namespace DanBias;
 	{
 		if(this->isRunning)
 		{
-			this->accumulatedLogicTime += (float)this->logicTimer.getElapsedSeconds();
-			while( this->accumulatedLogicTime >= this->logicFrameTime )
-			{
-				this->logicTimer.reset();
+			// GameLogic takes care of propper step time
+			this->gameInstance.NewFrame((float)this->logicTimer.getElapsedSeconds());
+			this->logicTimer.reset();
 
+			// Need to accumulate nnetwork time
+			this->accumulatedNetworkTime += (float)this->networkTimer.getElapsedSeconds();
+			while (this->accumulatedNetworkTime >= this->networkFrameTime)
+			{
 				this->ProcessClients();
-				this->gameInstance.NewFrame();
-				this->accumulatedLogicTime -= this->logicFrameTime;
+				this->accumulatedNetworkTime -= this->networkFrameTime;
 			}
+			this->networkTimer.reset();
 		}
 
 		return this->isRunning;

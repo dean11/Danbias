@@ -6,35 +6,43 @@ using namespace GameLogic;
 
 
 
-AttatchmentMassDriver::AttatchmentMassDriver(void)
+AttatchmentMassDriver::AttatchmentMassDriver(Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
 {
 	this->owner = 0;
 	this->heldObject = NULL;
 	this->hasObject = false;
-	this->currentEnergy = StandardMaxEnergy;
-	this->maxEnergy = StandardMaxEnergy;
-	this->oldEnergy = 0;
-	this->rechargeRate = StandardrechargeRate;
-	this->force = Standardforce;
+	this->currentEnergy = currEnergy;
+	this->previousEnergy = preEnergy;
+	this->previousEnergy = 0;
+
+	this->maxEnergy = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxEnergy;
+	this->rechargeRate = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::RechargeRate;
+	this->pullForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pullforce;
+	this->pushForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce;
+	this->zipForce =  NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Zipforce ;
 }
 
-AttatchmentMassDriver::AttatchmentMassDriver(Player &owner)
+AttatchmentMassDriver::AttatchmentMassDriver(Player &owner, Oyster::Math::Float* currEnergy, Oyster::Math::Float* preEnergy)
 {
-	this->currentEnergy = StandardMaxEnergy;
-	this->maxEnergy = StandardMaxEnergy;
-	this->rechargeRate = StandardrechargeRate;
-	this->oldEnergy = 0;
-	this->force = Standardforce;
-	
+	this->currentEnergy = currEnergy;
+	this->previousEnergy = preEnergy;
+	this->previousEnergy = 0;
 	this->owner = &owner;
 	this->heldObject = NULL;
 	this->hasObject = false;
+
+	this->maxEnergy = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxEnergy;
+	this->rechargeRate = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::RechargeRate;
+	this->pullForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pullforce;
+	this->pushForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce;
+	this->zipForce =  NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Zipforce ;
 }
 
 
 AttatchmentMassDriver::~AttatchmentMassDriver(void)
 {
-
+	this->previousEnergy = 0;
+	this->currentEnergy = 0;
 }
 
 /********************************************************
@@ -46,11 +54,12 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	switch (usage)
 	{
 	case WEAPON_USE_PRIMARY_PRESS:
-		if(currentEnergy >= 9.0f)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost && currentCooldown >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PrimaryCooldown)
 		{
-			currentEnergy -= 9.0f;
+			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost;
 			ForcePush(usage,dt);
-			// add CD 
+			currentCooldown = 0.0f;
+			(*currentEnergy) = 0.0f;
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_PrimaryShoot);
 		}
 		break;
@@ -60,10 +69,10 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		{
 			//goto CASE_WEAPON_INTERRUPT;
 		}
-		else if( currentEnergy >= 1.0f )
+		else if( (*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost )
 		{
 			
-			currentEnergy -= 1.0f;
+			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost;
 		
 			ForcePull(usage,dt);
 			// add CD 
@@ -73,7 +82,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_INTERRUPT:
-	CASE_WEAPON_INTERRUPT:
+	//CASE_WEAPON_INTERRUPT:
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
 		this->heldObject = NULL;
@@ -91,9 +100,9 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_UTILLITY_PRESS:
-		if(currentEnergy >= 4.0f)
+		if((*currentEnergy) >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost)
 		{
-			currentEnergy -= 4.0f;
+			(*currentEnergy) -= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::ZipCost;
 			ForceZip(usage,dt);
 			// add CD 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_UtilityActivate);
@@ -105,7 +114,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 void AttatchmentMassDriver::Update(float dt)
 {
 	
-
+	currentCooldown += dt;
 	//update position of heldObject if there is an object being held
 	if(hasObject)
 	{
@@ -136,33 +145,27 @@ void AttatchmentMassDriver::Update(float dt)
 
 		heldObject->SetLinearVelocity(crossTemp*10.0f*deltaPos.GetMagnitude() + backToMeVelocity + this->owner->GetRigidBody()->GetLinearVelocity());
 
-		if(currentEnergy < maxEnergy)
+		if((*currentEnergy) < maxEnergy)
 		{
-			currentEnergy += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
+			(*currentEnergy) += rechargeRate * 0.5f; //rechargeRate is halfed if you are holding an object	
 		}
 		
 	}
 	else
 	{
-		if(currentEnergy < maxEnergy)
+		if((*currentEnergy) < maxEnergy)
 		{
-			currentEnergy += rechargeRate;
+			(*currentEnergy) += rechargeRate;
 		}
 	}
 
-	if(currentEnergy > maxEnergy) 
+	if((*currentEnergy) > maxEnergy) 
 	{
-		currentEnergy = maxEnergy;
+		(*currentEnergy) = maxEnergy;
 	}
-	else if(currentEnergy < 0.0f)
+	else if((*currentEnergy) < 0.0f)
 	{
-		currentEnergy = 0.0f;
-	}
-	
-	if(oldEnergy != currentEnergy)
-	{
-		((Game*)&Game::Instance())->onEnergyUpdateFnc( this->owner, currentEnergy);
-		oldEnergy = currentEnergy;
+		(*currentEnergy) = 0.0f;
 	}
 }
 
@@ -177,7 +180,8 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 
 	if(hasObject)
 	{
-		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force);
+		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce);
+		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce * 3) * (*currentEnergy / maxEnergy);
 		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
@@ -185,19 +189,20 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		return;
 	}
 
-	Oyster::Math::Float radius = 4;
+	Oyster::Math::Float radius = 4.0f;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 10;
+	Oyster::Math::Float lenght = 6.0f;
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
 
-	pos += look * ((lenght*0.50));	//Move the cone to start at the player.
+	pos += look * ((lenght*0.50f));	//Move the cone to start at the player.
 
 	
 	Oyster::Collision3D::Cone *hitCone = new Oyster::Collision3D::Cone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 
 	forcePushData args;
-	args.pushForce = this->force;
-	args.p = this->owner;
+	args.pushForce = NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce;
+	args.pushForce += NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce * 3 * (*currentEnergy / maxEnergy);
+	args.weapon = this;
 
 	Oyster::Physics::API::Instance().ApplyEffect(hitCone,&args,ForcePushAction);
 
@@ -209,7 +214,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 ********************************************************/
 void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->force);
+	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->zipForce);
 
 	this->owner->GetRigidBody()->ApplyImpulse(force);
 }
@@ -224,20 +229,20 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	if(hasObject) return; //this test checks if the weapon has now picked up an object, if so then it shall not apply a force to suck in objects
 	
 
-	//if no object has been picked up then suck objects towards you
-	Oyster::Math::Float radius = 4;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float lenght = 20;
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos;
+	Oyster::Math::Float3 target = pos + (look * 10);
 
-	pos += look * ((lenght*0.5) - 1);	//Move the cone to start at the player.
-
-	Oyster::Collision3D::Cone hitCone(lenght,pos,(Oyster::Math::Float4)owner->GetRigidBody()->GetState().quaternion,radius);
 	forcePushData args;
-	args.pushForce = -this->force;
-	args.p = this->owner;
+	args.pushForce = -this->pullForce;
+	args.weapon = this;
 
-	Oyster::Physics::API::Instance().ApplyEffect(&hitCone,&args,ForcePushAction);
+	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
+	
+	if(hitObject != NULL)
+	{
+		ForcePushAction(hitObject,&args);
+	}
 }
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)

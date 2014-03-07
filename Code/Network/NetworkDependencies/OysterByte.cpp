@@ -2,24 +2,31 @@
 
 using namespace Oyster::Network;
 
+
+
 OysterByte::OysterByte()
 {
 	size = 0;
 	capacity = 1400;
+#if test == TRUE
 	byteArray = new unsigned char[capacity];
+#endif
 }
 
 OysterByte::OysterByte(int cap)
 {
 	size = 0;
 	capacity = cap;
+#if test == TRUE
 	byteArray = new unsigned char[capacity];
+#endif
 }
 
 OysterByte::OysterByte(const OysterByte& obj)
 {
+#if test == TRUE
 	this->byteArray = new unsigned char[obj.capacity];
-
+#endif
 	for(int i = 0; i < (int)obj.size; i++)
 	{
 		this->byteArray[i] = obj.byteArray[i];
@@ -30,7 +37,9 @@ OysterByte::OysterByte(const OysterByte& obj)
 
 OysterByte::~OysterByte()
 {
+#if test == TRUE
 	delete[] byteArray;
+#endif
 }
 
 void OysterByte::Clear()
@@ -42,8 +51,10 @@ void OysterByte::Resize(unsigned int cap)
 {
 	if(capacity < cap)
 	{
+#if test == TRUE
 		delete[] byteArray;
 		byteArray = new unsigned char[cap];
+#endif
 		capacity = cap;
 	}
 }
@@ -72,8 +83,10 @@ void OysterByte::AddSize(unsigned int size)
 
 void OysterByte::SetBytes(unsigned char* bytes)
 {
+#if test == TRUE
 	delete[] byteArray;
 	byteArray = bytes;
+#endif
 }
 
 void OysterByte::SetSize(unsigned int size)
@@ -109,8 +122,10 @@ void OysterByte::AppendPartOfArray(OysterByte& source, unsigned int startIndex, 
 
 OysterByte& OysterByte::operator =(const OysterByte& obj)
 {
+#if test == TRUE
 	delete[] this->byteArray;
 	this->byteArray = new unsigned char[obj.capacity];
+#endif
 
 	for(int i = 0; i < (int)obj.size; i++)
 	{
@@ -163,13 +178,15 @@ OysterByte& OysterByte::operator +=(const OysterByte& obj)
 void OysterByte::IncreaseCapacity(unsigned int newCapacity)
 {
 	capacity = newCapacity * 2;
+#if test == TRUE
 	unsigned char* temp = new unsigned char[capacity];
 	
 	for(int i = 0; i < (int)this->size; i++)
 	{
 		temp[i] = byteArray[i];
 	}
-
+	
 	delete[] byteArray;
 	byteArray = temp;
+#endif
 }

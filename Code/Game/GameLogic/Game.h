@@ -82,7 +82,7 @@ namespace GameLogic
 		void RemovePlayer( IPlayerData* )																				override;
 		LevelData* CreateLevel(const wchar_t mapName[255] )																override;
 		void CreateTeam()																								override;
-		bool NewFrame()																									override;
+		bool NewFrame(float delta )																						override;
 		void SetFPS( int FPS )																							override;
 		void SetFrameTimeLength( float seconds )																		override;
 		void SetMoveSubscription(GameEvent::ObjectMovedFunction functionPointer) 										override;
@@ -107,6 +107,7 @@ namespace GameLogic
 		Utility::DynamicMemory::DynamicArray<PlayerData*> players;
 		LevelData* level;
 		float frameTime;
+		float timer;
 		bool initiated;
 
 		GameEvent::ObjectMovedFunction		onMoveFnc;
