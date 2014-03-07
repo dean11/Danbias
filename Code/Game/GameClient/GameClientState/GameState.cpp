@@ -1355,7 +1355,7 @@ void GameState::UIstackRenderGUI()
 	for( int i = 0; i <= this->uiStackTop; ++i )
 	{
 		if( uiStack[i]->HaveGUIRender() )
-			if( uiStack[i]->IsActive() )
+			if( uiStack[i]->IsActive() ) // WTF!? Why this redundancy? / Dan
 				uiStack[i]->RenderGUI();
 	}
 }

@@ -39,7 +39,7 @@ namespace DanBias { namespace Client
 
 		virtual void ActivateGUIRender() { this->active = true; };
 		virtual void DeactivateGUIRender() { this->active = false; };
-		virtual bool IsActive () { return this->active; }
+		virtual bool IsActive () { return this->active; } // WTF!? Why this redundancy? / Dan
 
 		virtual void ActivateInput() = 0;
 		virtual void DeactivateInput() = 0;
