@@ -71,13 +71,13 @@ bool GamingUI::Init()
 	WeaponData w1 (	NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::SlotId
 				  , NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PrimaryCooldown
 				  , 3.5f );
-	w1.crosshair = new Plane_UI(L"croshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.0061f , 0.0061f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.74f));
+	w1.crosshair = new Plane_UI(L"crosshair_low.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.1f , 0.1f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 1.0f));
 	this->weapons.push_back(w1);
 	
 	WeaponData w2 (	NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::SlotId
 				  , NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown
 				  , 5.6f );
-	w2.crosshair				= w1.crosshair;
+	w2.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.011f , 0.011f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.80f));;
 	this->weapons.push_back(w2);
 
 	return true; 
