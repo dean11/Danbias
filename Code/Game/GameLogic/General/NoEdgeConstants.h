@@ -77,6 +77,7 @@ namespace NoEdgeConstants
 				const float MaxEnergy					= 100.0f;
 				const float RechargeRate				= 0.3f;
 				const float PrimaryDamage				= 2.0f;
+				const float PrimaryCost                 = 30;
 
 				const float PrimaryCooldown				= 0.2f;
 				const float SecondaryCooldown			= 0.0f;
