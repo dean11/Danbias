@@ -15,6 +15,7 @@ namespace DanBias
 			backgroundSound,
 			playerDmgRecieveSound, 
 			pickUpSound,
+			pickUpHealth,
 			walk,
 			jump,
 			shoot,
@@ -108,6 +109,7 @@ namespace DanBias
 			Sound::IChannel* getChannel( ChannelID id );
 			Sound::IChannel* getPlayerChannel( int  id, PlayerSoundID soundId );
 			Sound::IChannel* getCollisionChannel();
+			void pauseAllSounds();
 			void SetSoundVolume(float volume);
 			void SetEffectVolume(float volume);
 			void Release();

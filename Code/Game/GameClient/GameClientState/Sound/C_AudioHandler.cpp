@@ -121,6 +121,30 @@ Sound::IChannel* C_AudioHandler::getCollisionChannel( )
 	}
 	return collisionChannels[currCollisionSound++];
 }
+void C_AudioHandler::pauseAllSounds()
+{
+	for (int i = 0; i < maxCollisionSounds; i ++)
+	{
+		collisionChannels[i]->SetPauseChannel(true);
+	}
+	auto channel = this->channels.begin();
+	for( ; channel != this->channels.end(); ++channel )
+	{
+		channel->second->SetPauseChannel(true);
+	}
+	auto playerChannel = this->playerChannels.begin();
+	for( ; playerChannel != this->playerChannels.end(); ++playerChannel )
+	{
+
+		for (int i = 0; i < PlayerSoundID_Count; i ++)
+		{
+			if(playerChannel->second)
+			{
+				playerChannel->second->channels[i]->SetPauseChannel(true);
+			}
+		}
+	}
+}
 void C_AudioHandler::SetSoundVolume(float volume)
 {
 	auto effect = this->channels.begin();
@@ -143,7 +167,7 @@ void C_AudioHandler::Release()
 {
 	for (int i = 0; i < maxCollisionSounds; i ++)
 	{
-	delete collisionChannels[i];
+		delete collisionChannels[i];
 	}
 	delete [] collisionChannels;
 

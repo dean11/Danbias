@@ -376,6 +376,7 @@ void NetLoadState::LoadSound()
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", shoot));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3", pull));
 	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav", collision));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3", pickUpHealth));
 	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", pickUpSound));
 	this->privData->soundManager->addSFX_3D(SoundDesc("player_near_death.wav", jump));
 	this->privData->soundManager->addSFX_3D(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient));
