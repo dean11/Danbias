@@ -78,8 +78,8 @@ bool GamingUI::Init()
 	WeaponData w2 (	NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::SlotId
 				  , NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown
 				  , 5.6f );
-	w2.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.011f , 0.011f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 0.80f));;
-	w2.tint = Float4(0.5f, 1.0f, 0.5f, 0.80f);
+	w2.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.018f , 0.018f * (size.x / size.y)), Float4(2.0f, 2.0f, 2.0f, 0.9f));;
+	w2.tint = Float4(8.0f, 8.0f, 8.0f, 0.9f);
 	this->weapons.push_back(w2);
 
 	return true; 
@@ -227,8 +227,8 @@ void GamingUI::OnMouseRelease ( Input::Enum::SAMI key, Input::Mouse* sender )
 void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointFloat2D velocity, Input::Mouse* sender )
 { 
 	//send delta mouse movement 
-	this->camera->PitchDown( (-velocity.y) * this->shared->mouseSensitivity );
-	this->shared->network->Send( Protocol_PlayerLeftTurn((velocity.x) * this->shared->mouseSensitivity, this->camera->GetLook()) );
+	this->camera->PitchDown( -Utility::Value::Radian(velocity.y) );
+	this->shared->network->Send( Protocol_PlayerLeftTurn(Utility::Value::Radian(velocity.x), this->camera->GetLook()) );
 }
 void GamingUI::OnMouseScroll( int delta, Input::Mouse* sender )
 {
@@ -306,6 +306,7 @@ void GamingUI::ChangeState( UIState next )
 }
 void GamingUI::StopGamingUI()
 {
+	this->shared->mouseDevice->SetSensitivity(this->shared->mouseSensitivity);
 	this->key_backward		= false;
 	this->key_forward		= false;
 	this->key_strafeLeft	= false;
@@ -317,6 +318,7 @@ void GamingUI::StopGamingUI()
 
 void GamingUI::ActivateInput()
 {
+	this->shared->mouseDevice->SetSensitivity(this->shared->mouseSensitivity);
 	this->ActivateGUIRender();
 	this->shared->mouseDevice->AddMouseEvent( this );
 	this->shared->keyboardDevice->AddKeyboardEvent( this );
@@ -324,6 +326,8 @@ void GamingUI::ActivateInput()
 
 void GamingUI::DeactivateInput()
 {
+	this->shared->mouseSensitivity = this->shared->mouseDevice->GetSensitivity();
+	this->shared->mouseDevice->SetSensitivity(1.0f);
 	this->DeactivateGUIRender();
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );

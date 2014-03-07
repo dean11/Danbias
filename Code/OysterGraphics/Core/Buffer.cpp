@@ -24,7 +24,7 @@ HRESULT Core::Buffer::Apply(UINT32 misc) const
 			UINT32 vertexSize = mElementSize;
 			UINT32 offset = 0;
 			Core::deviceContext->IASetVertexBuffers(misc, 1, &mBuffer, &vertexSize, &offset );
-		}
+		} 
 		break;
 	case INDEX_BUFFER:
 		{

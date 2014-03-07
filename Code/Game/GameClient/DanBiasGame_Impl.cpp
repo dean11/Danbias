@@ -103,6 +103,8 @@ namespace DanBias
 
 		data.sharedStateContent.network = &data.networkClient;
 
+		data.sharedStateContent.mouseSensitivity = 1.0f;
+
 		if( (data.sharedStateContent.background = Graphics::API::CreateTexture( L"color_white.png" ) ) == 0)
 			printf("Failed to load the default background [color_white.png]\n");
 

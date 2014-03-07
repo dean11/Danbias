@@ -273,6 +273,9 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 
 	if(this->mouseSensitivity.isHeld)
 	{
+		const float minThreshold = 0.1f;
+		const float maxVal = 2.0f;
+
 		Float3 temp = this->mouseSensitivity.button->GetPosition();
 		temp.x = (sender->GetNormalizedPosition().x);
 		
@@ -282,8 +285,6 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 
 		float vel = this->shared->mouseDevice->GetSensitivity();
 
-		const float minThreshold = 0.1f;
-		const float maxVal = 10.5f;
 		float x = temp.x;
 		float width = 0.35f;
 		float halfWidth = 0.35f / 2.0f;
