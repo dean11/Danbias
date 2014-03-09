@@ -157,7 +157,6 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 	C_Player *p = new C_Player();
 	if( p->Init(modelData) )
 	{
-		
 		// RB DEBUG
 		p->InitRB( RBData );
 		// !RB DEBUG 
@@ -192,8 +191,8 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			Float3 offset = Float3( 0.0f );
 			// DEBUG position of camera so we can see the player model
 		#ifdef _CAMERA_DEBUG
-			offset.y = p->getScale().y * 5.0f;
-			offset.z = p->getScale().z * -5.0f;
+			offset.y = p->getScale().y * 2.0f;
+			offset.z = p->getScale().z * -2.0f;
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 		#endif
@@ -1026,10 +1025,10 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			{
 			case GameLogic::PlayerAction::PlayerAction_Walk:
 				player->stopAllAnimations();
-				player->playAnimation(L"run_forwards", true);
+				player->playAnimation( L"run_forwards", true );
 				PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk), true);
-				//weapon->stopAllAnimations();
-				//weapon->playAnimation(L"run_forwards", true);	//This animation is currently broken and will make the weapon disappear.
+				weapon->stopAllAnimations();
+				//weapon->playAnimation( L"run_forwards", true );
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				PlaySound(this->privData->soundManager->getSound(jump), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Jump));
@@ -1037,7 +1036,9 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
-				player->playAnimation(L"idle", true);
+				player->playAnimation( L"idle", true );
+				weapon->stopAllAnimations();
+				//weapon->playAnimation( L"idle", true );
 				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
