@@ -107,7 +107,7 @@ namespace GameLogic
 		WeaponAction_PrimaryShoot		= 3,
 		WeaponAction_SecondaryShoot		= 4,
 		WeaponAction_UtilityActivate	= 5,
-		WeaponAction_Reload				= 6, 
+		WeaponAction_GunShoot			= 6, 
 		WeaponAction_EnergyDepleted		= 7,
 
 	};

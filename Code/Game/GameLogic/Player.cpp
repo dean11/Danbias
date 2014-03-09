@@ -101,9 +101,9 @@ void Player::BeginFrame()
 		Float3 &rightDir = rotation.v[0].xyz;
 
 		bool haveMoved = false,
-			 isGrounded = true;
+			 isGrounded = this->IsWalking();
 
-		if( this->IsWalking() )
+		if( isGrounded )
 		{
 			haveMoved = this->UpdateMovement( rotation, state, true );
 
@@ -125,10 +125,9 @@ void Player::BeginFrame()
 				this->playerState = PLAYER_STATE::PLAYER_STATE_WALKING;
 			}
 		}
-		else if( this->IsJumping() )
+		else
 		{
 			haveMoved = this->UpdateMovement( rotation, state, false );
-			isGrounded = false;
 		}
 		
 		if( !haveMoved && isGrounded && this->playerState != PLAYER_STATE_IDLE )

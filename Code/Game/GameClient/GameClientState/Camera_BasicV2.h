@@ -35,7 +35,7 @@ public:
 
 	private:
 			::Oyster::Math::Float3 translation;
-	mutable ::Oyster::Math::Quaternion rotation;
+			::Oyster::Math::Quaternion rotation;
 			::Oyster::Math::Float4x4 projection;
 };
 
