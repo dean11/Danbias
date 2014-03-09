@@ -162,29 +162,13 @@ void GamingUI::ReadKeyInput(float deltaTime)
 	if( this->key_strafeRight )		this->shared->network->Send( Protocol_PlayerMovementRight() );
 	if( this->key_Drop )			this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_DropItem) );
 
-	int energy = 0;
-	energy = _wtoi(this->energy->getText().c_str());
-
 	if( this->mouse_firstDown )		
 	{
-		if(this->currentWeapon == 0)
-		{
-			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost)
-				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
-		}
-		else
-		{
-			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost)
-				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
-		}
+		this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
 	}
 	if( this->mouse_secondDown )
 	{
-		if(this->currentWeapon == 0)
-		{
-			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost)
-				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_SecondaryPress);
-		}
+		this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_SecondaryPress);
 	}
 	if( this->key_zipDown )
 	{
