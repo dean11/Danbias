@@ -27,7 +27,7 @@ namespace NoEdgeConstants
 			const float LogicFrameTime					= 1.0f / 120.f;
 			const float PhysicsFrameTime				= 1.0f / 120.f;
 			const float NetworkFrameTime				= 1.0f / 70.f;
-			const float Gravity							= 150.0f;
+			const float Gravity							= 127.0f;
 		}
 
 		namespace Limits
