@@ -14,7 +14,7 @@ namespace Sound
 
 	struct ChannelGroupData : IChannelGroup
 	{
-		FMOD::ChannelGroup* channel;
+		FMOD::ChannelGroup* channelgroup;
 	public:
 		ChannelGroupData();
 		~ChannelGroupData();
@@ -38,6 +38,7 @@ namespace Sound
 		bool getChannelPlaying()override;
 		void stop()override;
 		void restartChannel()override;
+		void addChannelToGroup(IChannelGroup* channelGroup)override;
 	};
 	struct SoundData : ISound
 	{
@@ -91,6 +92,7 @@ namespace Sound
 		bool intitializeSoundManager();
 		void shutdownSoundManager();
 		bool updateSoundManager(float deltaTime);
+		ChannelGroupData* CreateChannelGroup(const char* groupName);
 		ChannelData* CreateChannel();
 		// set stream to true if it is a big sound file
 		SoundData* CreateSound(std::string soundName, SoundType soundType);

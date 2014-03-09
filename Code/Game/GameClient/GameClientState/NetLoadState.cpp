@@ -335,14 +335,14 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			if(oh->specialTypeID == ObjectSpecialType_PickupHealth || oh->specialTypeID == ObjectSpecialType_PickupEnergy)
 			{
 				(*this->privData->pickups)[ID] = (C_StaticObj*)object;
-				this->privData->soundManager->getSound(pickUpSound)->setMode(Sound::Loop_normal);
-				//this->privData->soundManager->getSound(pickUpSound)->Play_Sound(true);
-				Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(pickUpSound), this->privData->soundManager->getChannel(pickUpSound), true);
-				this->privData->soundManager->getChannel(pickUpSound)->setChannel3DAttributes(object->getPos(), Float3(1,0,0));
-				this->privData->soundManager->getChannel(pickUpSound)->setMinMaxDistance(1, 100000);
-				
-				this->privData->soundManager->getChannel(pickUpSound)->setVolym( 0.5);
-				this->privData->soundManager->getChannel(pickUpSound)->setSoundVolume();
+				this->privData->soundManager->getSound(SoundID_Pickup_Music)->setMode(Sound::Loop_normal);
+				Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(SoundID_Pickup_Music), this->privData->soundManager->getChannel(ChannelID_pickUpSound), true);
+				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setChannel3DAttributes(object->getPos(), Float3(1,0,0));
+				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setMinMaxDistance(1, 100000);
+				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->addChannelToGroup(this->privData->soundManager->getChannelGroup(ChannelGroup_GameMusic));
+				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setVolym( 0.5);
+				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setSoundVolume();
+				this->privData->soundManager->getChannelGroup(ChannelGroup_GameMusic)->setVolym(0.9);
 			}
 			else if(oth->typeID == ObjectType::ObjectType_Static)
 			{
@@ -365,21 +365,32 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 }
 void NetLoadState::LoadSound()
 {
-	this->privData->soundManager->getChannel(backgroundSound)->SetPauseChannel(true);
+	this->privData->soundManager->getChannel(ChannelID_Menu_Soundtrack)->SetPauseChannel(true);
 
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav", playerDmgRecieveSound));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", crystalCollisionEventSound));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", jumppadEventSound));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", explosionEventSound));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Running01.mp3", walk));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3", shoot));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3", pull));
-	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav", collision));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3", pickUpHealth));
-	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", pickUpSound));
-	this->privData->soundManager->addSFX_3D(SoundDesc("player_near_death.wav", jump));
-	this->privData->soundManager->addSFX_3D(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient));
+
+
+	// event sounds, using collision channels
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",		SoundID_PickUpHealth));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_Jumppad));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_CrystalCollision));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_CrateExplosion));
+	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsBoxCollision));
+	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsPlayerCollision));
+
+	// player sounds, using player channels
+	this->privData->soundManager->addSFX_3D(SoundDesc("Running01.mp3",			SoundID_Player_Walk));
+	this->privData->soundManager->addSFX_3D(SoundDesc("player_near_death.wav",	SoundID_Player_Jump));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPull));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPush));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",			SoundID_Player_WeaponShoot));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_DMGtaken));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Heal));
+
+	// ambient sounds
+	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", SoundID_Pickup_Music, ChannelID_pickUpSound ));
+	this->privData->soundManager->addSFX_3D(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient, ChannelID_ambient));
 	
-	this->privData->soundManager->getSound(walk)->setMode(Sound::Loop_normal);
+	this->privData->soundManager->getSound(SoundID_Player_Walk)->setMode(Sound::Loop_normal);
+	
 }
 

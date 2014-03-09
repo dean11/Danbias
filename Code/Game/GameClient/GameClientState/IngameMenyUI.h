@@ -28,7 +28,7 @@ namespace DanBias { namespace Client
 		void RenderText();
 		bool Release();
 		void ChangeState( UIState next );
-		void PlaySound(SoundID id);
+		void PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode );
 	
 		void ActivateInput();
 		void DeactivateInput();

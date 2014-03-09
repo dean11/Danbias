@@ -33,7 +33,8 @@ namespace DanBias { namespace Client
 		virtual bool Render() = 0;
 		virtual bool Release() = 0;
 		virtual void ChangeState( ClientState next ) = 0;
-		virtual void PlaySound(SoundID id) = 0;
+		//virtual void PlaySound( Sound::ISound* sound, Sound::IChannel* channel, PlayMode playMode ) = 0;
+		//virtual void PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode ) = 0;
 
 		/******************************************************************
 		 * @param message of the event
