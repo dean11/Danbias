@@ -1044,8 +1044,10 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
 				break;
-			case GameLogic::WeaponAction::WeaponAction_Reload:
+			case GameLogic::WeaponAction::WeaponAction_GunShoot:
+				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
 				break;
 			default:
 				break;
@@ -1077,7 +1079,8 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
 				PlaySound(this->privData->soundManager->getSound(pull), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_pull));
 				break;
-			case GameLogic::WeaponAction::WeaponAction_Reload:
+			case GameLogic::WeaponAction::WeaponAction_GunShoot:
+				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
 				break;
 			default:
 				break;
