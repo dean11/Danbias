@@ -60,7 +60,8 @@ namespace GameLogic
 	struct Protocol_ObjectDamage :public Oyster::Network::CustomProtocolObject
 	{
 		int objectID;
-		float healthLost; //Precentage%
+		float health; 
+		int eventID;
 
 		Protocol_ObjectDamage()
 		{
@@ -69,30 +70,36 @@ namespace GameLogic
 									
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
 			
-			objectID = -1;
-			healthLost = 0.0f;
+			this->objectID = -1;
+			this->health = 0.0f;
+			this->eventID = -1;
 		}
 		Protocol_ObjectDamage(Oyster::Network::CustomNetProtocol& p)
 		{
 			this->objectID = p[1].value.netInt; 
-			this->healthLost = p[2].value.netFloat; 
+			this->health = p[2].value.netFloat; 
+			this->eventID = p[3].value.netInt;
 		}
-		Protocol_ObjectDamage(int id, float hp)
+		Protocol_ObjectDamage(int id, float hp, int eventID)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectDamage;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 					
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
-			
-			objectID = id;
-			healthLost = hp;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
+
+			this->objectID = id;
+			this->health = hp;
+			this->eventID = eventID;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = objectID;
-			this->protocol[2].value = healthLost;
+			this->protocol[2].value = health;
+			this->protocol[3].value = eventID;
 			return protocol;		 
 		}	
 

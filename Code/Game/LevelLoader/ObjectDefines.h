@@ -127,6 +127,13 @@ namespace GameLogic
 		PickupType_Health,
 		PickupType_SpeedBoost
 	};
+	enum PlayerHealthEvent
+	{
+		PlayerHealthEvent_Damage, 
+		PlayerHealthEvent_Heal,
+		PlayerHealthEvent_Respawn,
+		PlayerHealthEvent_Join,
+	};
 
 	/************************************
 				Structs

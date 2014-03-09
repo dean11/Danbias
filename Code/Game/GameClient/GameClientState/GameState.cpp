@@ -534,11 +534,12 @@ void GameState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMo
 
 	this->privData->soundManager->PlaySoundOnChannel( sound, channel, playMode);
 }
-void GameState::PlaySoundCollisionSound( SoundID soundID, PlayMode playMode )
+void GameState::PlaySoundCollisionSound( SoundID soundID, PlayMode playMode, float* pos )
 {
 	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
 	Sound::IChannel* channel = this->privData->soundManager->getCollisionChannel();
-
+	Float3 vel(0, 0, 0);
+	channel->setChannel3DAttributes( pos, vel);
 	this->privData->soundManager->PlaySoundOnChannel( sound, channel, playMode);
 }
 void GameState::PlayPlayerSound( SoundID soundID, int playerId, PlayerSoundID playerSoundID, PlayMode playMode )
@@ -621,7 +622,7 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 
 		if (decoded.pickup_ID == GameLogic::PickupType::PickupType_Health)
 		{
-			PlaySoundCollisionSound(SoundID_PickUpHealth, PlayMode_AlwaysStart);
+			PlaySoundCollisionSound(SoundID_PickUpHealth, PlayMode_AlwaysStart, object->getPos());
 		}
 		else if (decoded.pickup_ID == GameLogic::PickupType::PickupType_SpeedBoost)
 		{
@@ -642,14 +643,25 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			// set given players HP 
-			((GamingUI*)this->gameUI)->SetHPtext( ::std::to_wstring((int)decoded.healthLost) );
+			((GamingUI*)this->gameUI)->SetHPtext( ::std::to_wstring((int)decoded.health) );
 		}
-		// play dmg sound
-		PlayPlayerSound(SoundID_Player_DMGtaken, decoded.objectID, PlayerSoundID_DMGtaken, PlayMode_FinnishSound);
 
-		// play heal sound 
-		PlayPlayerSound(SoundID_Player_Heal, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
-
+		switch (decoded.eventID)
+		{
+		case PlayerHealthEvent_Damage:
+			PlayPlayerSound(SoundID_Player_DMGtaken, decoded.objectID, PlayerSoundID_DMGtaken, PlayMode_FinnishSound);
+			break;
+		case PlayerHealthEvent_Heal:
+			// Play pickup sound
+			//PlayPlayerSound(SoundID_Player_Heal, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
+			break;
+		case PlayerHealthEvent_Respawn:
+			PlayPlayerSound(SoundID_Player_Respawn, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
+			break;
+		case PlayerSoundID_Join:
+			//PlayPlayerSound(SoundID_Player_Join, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
+			break;
+		}
 	}
 	if( !object)
 	{
@@ -753,15 +765,19 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 
 		C_Object *weapon = (*this->privData->weapons)[decoded.objectID];
 
+		Float3 vel(0, 0, 0);
+		// Update player sound position
+		this->privData->soundManager->setPlayerChannelPos(decoded.objectID, position, vel);
+
 		if( this->privData->myId == decoded.objectID )
 		{
 			this->privData->camera.SetPosition( position );
 			this->privData->camera.SetRotation( rotation );
-			Float3 vel(0, 0, 0);
+	
 			// Set audio listener pos
 			Sound::AudioAPI::Audio_SetListenerPos(position, vel, this->privData->camera.GetForward(), this->privData->camera.GetUp());
 		}
-
+		
 		player->setPos( position );
 		player->setRot( rotation );
 		player->updateWorld();
@@ -985,6 +1001,9 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	}
 
 	((GamingUI*)this->gameUI)->SetKillMessage(message);
+
+	//SOUND
+	PlayPlayerSound(SoundID_Player_Die, decoded.victimID, PlayerSoundID_Die, PlayMode_AlwaysStart);
 }
 void GameState::Gameplay_PlayerScore( CustomNetProtocol data )
 {
@@ -1117,13 +1136,13 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 			//PlaySoundCollisionSound(SoundID_BoxVsPlayerCollision, PlayMode_AlwaysStart);
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_CrystalVsPlayer:
-			PlaySoundCollisionSound(SoundID_CrystalCollision, PlayMode_AlwaysStart);
+			PlaySoundCollisionSound(SoundID_CrystalCollision, PlayMode_AlwaysStart, object->getPos());
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_JumpPad:
-			PlaySoundCollisionSound(SoundID_Jumppad, PlayMode_AlwaysStart );
+			PlaySoundCollisionSound(SoundID_Jumppad, PlayMode_AlwaysStart, object->getPos() );
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_Explosion:
-			PlaySoundCollisionSound(SoundID_CrateExplosion, PlayMode_AlwaysStart );
+			PlaySoundCollisionSound(SoundID_CrateExplosion, PlayMode_AlwaysStart, object->getPos() );
 			break;
 		default:
 			break;
@@ -1138,6 +1157,8 @@ void GameState::General_GameOver( CustomNetProtocol data )
 	// turn off gameInput
 	this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
 	this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+	this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack)->SetPauseChannel(true);
+	PlaySound(SoundID_Game_GameOver, ChannelID_Game_GameOver, PlayMode_Restart);
 	gameOver = true;
 }
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )

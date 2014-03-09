@@ -198,6 +198,12 @@ void C_AudioHandler::Release()
 	}
 	delete [] collisionChannels;
 
+	for (int i = 0; i < ChannelGroup_Count; i ++)
+	{
+		delete channelGroups[i];	
+	}
+	delete [] channelGroups;
+
 	auto effect = this->effects.begin();
 	for( ; effect != this->effects.end(); ++effect )
 	{

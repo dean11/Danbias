@@ -26,6 +26,7 @@ namespace DanBias
 			// soundtracks
 			SoundID_Menu_SoundTrack,
 			SoundID_Game_SoundTrack,
+			SoundID_Game_GameOver,
 
 			// event sounds
 			SoundID_PickUpHealth,
@@ -43,6 +44,9 @@ namespace DanBias
 			SoundID_Player_WeaponShoot,
 			SoundID_Player_DMGtaken, 
 			SoundID_Player_Heal, 
+			SoundID_Player_Respawn, 
+			SoundID_Player_Die, 
+			SoundID_Player_Join, 
 
 			ambient,
 			SoundID_Pickup_Music,
@@ -61,6 +65,7 @@ namespace DanBias
 
 			ChannelID_Menu_Soundtrack, 
 			ChannelID_Game_Soundtrack, 
+			ChannelID_Game_GameOver,
 			
 			ChannelID_effectSound, 
 			ChannelID_pickUpSound,
@@ -79,6 +84,9 @@ namespace DanBias
 			PlayerSoundID_Shoot,
 			PlayerSoundID_DMGtaken,
 			PlayerSoundID_Heal,
+			PlayerSoundID_Respawn, 
+			PlayerSoundID_Join, 
+			PlayerSoundID_Die,
 			PlayerSoundID_Count,
 		};
 		enum ChannelGroups

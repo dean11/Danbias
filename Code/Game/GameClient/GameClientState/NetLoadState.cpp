@@ -372,7 +372,7 @@ void NetLoadState::LoadSound()
 	// event sounds, using collision channels
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",		SoundID_PickUpHealth));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_Jumppad));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_CrystalCollision));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Collision02.mp3",	SoundID_CrystalCollision));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_CrateExplosion));
 	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsBoxCollision));
 	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsPlayerCollision));
@@ -383,8 +383,11 @@ void NetLoadState::LoadSound()
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPull));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPush));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",			SoundID_Player_WeaponShoot));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_DMGtaken));
+	this->privData->soundManager->addSFX_3D(SoundDesc("Skada1.wav",				SoundID_Player_DMGtaken));
 	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Heal));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Respawn));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Die));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Join));
 
 	// ambient sounds
 	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", SoundID_Pickup_Music, ChannelID_pickUpSound ));
