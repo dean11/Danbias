@@ -788,6 +788,14 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 		object->setPos( position );
 		object->setRot( rotation );
 		object->updateWorld();
+		if(object->GetLight() != -1)
+		{
+			auto light = privData->lights->find( object->GetLight() );
+			if( light != privData->lights->end() )
+			{
+				light->second->setPos( object->getPos() );
+			}
+		}
 	}
 }
 void GameState::Gameplay_ObjectEnabled( CustomNetProtocol data )
