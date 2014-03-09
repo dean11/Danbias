@@ -27,7 +27,7 @@ namespace NoEdgeConstants
 			const float LogicFrameTime					= 1.0f / 120.f;
 			const float PhysicsFrameTime				= 1.0f / 120.f;
 			const float NetworkFrameTime				= 1.0f / 70.f;
-			const float Gravity							= 5.0f;
+			const float Gravity							= 150.0f;
 		}
 
 		namespace Limits
@@ -38,10 +38,10 @@ namespace NoEdgeConstants
 
 		namespace Player
 		{
-			const float ForwardVelocity					= 10.0f;
-			const float BackwardVelocity				= 7.0f;
-			const float StrafeVelocity					= 9.0f;
-			const float JumpVelocity					= 16.0f;
+			const float ForwardVelocity					= 12.0f;
+			const float BackwardVelocity				= 9.0f;
+			const float StrafeVelocity					= 11.0f;
+			const float JumpVelocity					= 25.0f;
 			const float Mass							= 23.0f;
 			const float DampeningFactor					= 0.2f;
 			const float RestitutionCoeff				= 0.0f;
