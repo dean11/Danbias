@@ -186,7 +186,7 @@ namespace GameLogic
 
 			if(buf == NULL)
 			{
-				printf("Could not find %s", fileName.c_str());
+				printf("Could not find %s\n", fileName.c_str());
 				return;	//Could not find cgf file
 			}
 			start = 0;

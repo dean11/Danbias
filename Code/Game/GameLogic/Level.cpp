@@ -30,7 +30,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	{
 	case ObjectSpecialType_None: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
+			//gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
 	case ObjectSpecialType_World: 
@@ -263,25 +263,28 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 				ICustomBody* rigidBody_Static = NULL;	
 
-				// collision shape
-				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+				if(staticObjData->specialTypeID != ObjectSpecialType_None)
 				{
-					rigidBody_Static = InitRigidBodySphere(staticObjData);
-				}
+					// collision shape
+					if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+					{
+						rigidBody_Static = InitRigidBodySphere(staticObjData);
+					}
 
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
-				{	
-					rigidBody_Static = InitRigidBodyCube(staticObjData);
-				}
+					else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
+					{
+						rigidBody_Static = InitRigidBodyCube(staticObjData);
+					}
 
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
-				{
-					//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
-				}
+					else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
+					{
+						//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
+					}
 
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_CG_MESH)
-				{
-					rigidBody_Static = InitRigidBodyMesh(staticObjData);
+					else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_CG_MESH)
+					{
+						rigidBody_Static = InitRigidBodyMesh(staticObjData);
+					}
 				}
 
 				if(rigidBody_Static != NULL)
