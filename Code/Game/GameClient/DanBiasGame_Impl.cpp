@@ -39,7 +39,7 @@ static bool prevFull = false;
 static float width = 0.0f;
 static float height = 0.0f;
 static float mouseSens = 0.0f;
-static bool sound = true;
+static bool mute = false;
 
 #pragma region Game Data
 namespace DanBias
@@ -459,8 +459,8 @@ void LoadInitSettings()
 				if(chars == "false")
 				{
 
-					sound = false; //default is true
-					printf("Sound hio");
+					mute = false; //default is true
+		
 				}
 
 			}
