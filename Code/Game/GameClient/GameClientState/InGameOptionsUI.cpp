@@ -152,6 +152,8 @@ bool InGameOptionsUI::Init()
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->guiElements );
 
+	printf("INITI\n");
+
 	return true;
 }
 
