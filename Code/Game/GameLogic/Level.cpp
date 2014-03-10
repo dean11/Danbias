@@ -67,10 +67,6 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg, force, radie);
 		}
 		break;
-	//case ObjectSpecialType_BlueExplosiveBox: 
-	//	int dmg = 70; 
-	//	gameObj = new ExplosiveBox(rigidBody, ObjectSpecialType_BlueExplosiveBox);
-	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
 			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
@@ -124,6 +120,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		}
 		break;
 	}
+	gameObj->SetInitialPos(rigidBody->GetState().centerPos);
 	return gameObj;
 }
 
@@ -520,6 +517,7 @@ void Level::Update(float deltaTime)
 				dynamicObjects[i]->RemoveAffectedBy();
 			}
 		}
+		dynamicObjects[i]->AttemptResetToInitalPos(); //FIX: will also need to update a counter on how long it as been stationary
 	}
 
 	for(int i = 0; i < (int)playerObjects.Size(); i++)

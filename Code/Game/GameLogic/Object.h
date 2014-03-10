@@ -33,6 +33,8 @@ namespace GameLogic
 		inline Oyster::Math::Float4x4			GetOrientation()		override;
 		inline Oyster::Physics::ICustomBody*	GetRigidBody()						{ return this->rigidBody; }
 		inline Oyster::Math::Float				GetExtraDamageOnCollision()			{ return this->extraDamageOnCollision; }
+		inline Oyster::Math::Float3				GetInitialPos()						{return this->initialPos;}
+		inline void								SetInitialPos(Oyster::Math::Float3 initialPos)	{this->initialPos = initialPos;}
 
 		virtual void BeginFrame()	{ };
 		virtual void EndFrame()		{ };
@@ -52,6 +54,9 @@ namespace GameLogic
 		int objectID;
 
 		Oyster::Math::Float extraDamageOnCollision;
+
+		Oyster::Math::Float3 initialPos;
+
 	};
 
 }
