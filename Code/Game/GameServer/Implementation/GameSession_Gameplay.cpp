@@ -28,10 +28,11 @@ using namespace DanBias;
 		if(this->isRunning)
 		{
 			// GameLogic takes care of propper step time
-			this->gameInstance.NewFrame((float)this->logicTimer.getElapsedSeconds());
+			float ldt = (float)this->logicTimer.getElapsedSeconds();
 			this->logicTimer.reset();
-
-			// Need to accumulate nnetwork time
+			this->gameInstance.NewFrame(ldt);
+			
+			// Need to accumulate network time
 			this->accumulatedNetworkTime += (float)this->networkTimer.getElapsedSeconds();
 			while (this->accumulatedNetworkTime >= this->networkFrameTime)
 			{

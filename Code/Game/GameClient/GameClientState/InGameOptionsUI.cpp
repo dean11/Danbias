@@ -152,7 +152,7 @@ bool InGameOptionsUI::Init()
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->guiElements );
 
-	printf("INITI\n");
+	printf("Init\n");
 
 	return true;
 }
@@ -185,6 +185,8 @@ bool InGameOptionsUI::HaveTextRender() const
 
 void InGameOptionsUI::RenderGUI() 
 {
+	printf("RenderGUI\n");
+
 	//Render mouse Slider
 	Graphics::API::RenderGuiElement( this->mouseSensitivity.mouseSlider, this->mouseSensitivity.pos, Float2(0.35f, 0.003f), Float4(1.0f) );
 
@@ -230,6 +232,7 @@ void InGameOptionsUI::ChangeState( UIState next )
 
 void InGameOptionsUI::ActivateInput()
 {
+	this->active = true;
 	this->render = true;
 	this->shared->mouseDevice->AddMouseEvent( this );
 	this->shared->keyboardDevice->AddKeyboardEvent( this );
@@ -237,6 +240,7 @@ void InGameOptionsUI::ActivateInput()
 
 void InGameOptionsUI::DeactivateInput()
 {
+	this->active = false;
 	this->render = false;
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );

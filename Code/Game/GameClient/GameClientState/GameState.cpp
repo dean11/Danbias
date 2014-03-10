@@ -75,6 +75,7 @@ bool GameState::Init( SharedStateContent &shared )
 	// and there is content in shared.dynamicObjects and shared.staticObjects
 
 	this->privData = new MyData();
+	this->renderStats = false;
 
 	this->privData->soundManager = shared.soundManager;
 	//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->SetPauseChannel(false);
