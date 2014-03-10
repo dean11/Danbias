@@ -60,7 +60,8 @@ namespace GameLogic
 	struct Protocol_ObjectDamage :public Oyster::Network::CustomProtocolObject
 	{
 		int objectID;
-		float healthLost; //Precentage%
+		float health; 
+		int eventID;
 
 		Protocol_ObjectDamage()
 		{
@@ -69,30 +70,36 @@ namespace GameLogic
 									
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
 			
-			objectID = -1;
-			healthLost = 0.0f;
+			this->objectID = -1;
+			this->health = 0.0f;
+			this->eventID = -1;
 		}
 		Protocol_ObjectDamage(Oyster::Network::CustomNetProtocol& p)
 		{
 			this->objectID = p[1].value.netInt; 
-			this->healthLost = p[2].value.netFloat; 
+			this->health = p[2].value.netFloat; 
+			this->eventID = p[3].value.netInt;
 		}
-		Protocol_ObjectDamage(int id, float hp)
+		Protocol_ObjectDamage(int id, float hp, int eventID)
 		{
 			this->protocol[0].value = protocol_Gameplay_ObjectDamage;
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 					
 			this->protocol[1].type = Oyster::Network::NetAttributeType_Int;
 			this->protocol[2].type = Oyster::Network::NetAttributeType_Float;
-			
-			objectID = id;
-			healthLost = hp;
+			this->protocol[3].type = Oyster::Network::NetAttributeType_Int;
+
+			this->objectID = id;
+			this->health = hp;
+			this->eventID = eventID;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
 			this->protocol[1].value = objectID;
-			this->protocol[2].value = healthLost;
+			this->protocol[2].value = health;
+			this->protocol[3].value = eventID;
 			return protocol;		 
 		}	
 
@@ -991,7 +998,7 @@ namespace GameLogic
 	private:
 		Oyster::Network::CustomNetProtocol protocol;
 	};
-}
+
 	//#define protocol_Gameplay_ObjectAction				369
 	struct Protocol_ObjectAction :public Oyster::Network::CustomProtocolObject
 	{
@@ -1075,4 +1082,91 @@ namespace GameLogic
 	private:
 		Oyster::Network::CustomNetProtocol protocol;
 	};
+
+	//#define protocol_Gameplay_EffectBeam				371
+	struct Protocol_EffectBeam : public Oyster::Network::CustomProtocolObject
+	{
+		short ownerID;
+		float startPoint[3], endPoint[3],
+			  beamRadius, lifeTime;
+
+		Protocol_EffectBeam()
+		{
+			this->protocol[0].value = protocol_Gameplay_EffectBeam;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].value = -1;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+
+			for( int i = 2; i < 10; ++i )
+			{ // seeding startPoint, endPoint, beamRadius & lifeTime value_types
+				this->protocol[i].type = Oyster::Network::NetAttributeType_Float;
+			}
+
+			this->ownerID		= -1;
+			for( int i = 0; i < 3 ; ++i )
+			{
+				this->startPoint[i]	=
+				this->endPoint[i] = 0.0f;
+			}
+			this->beamRadius	= 0.0f;
+			this->lifeTime		= 0.0f;
+		}
+		Protocol_EffectBeam( Oyster::Network::CustomNetProtocol& p )
+		{
+			this->ownerID		= p[1].value.netShort;
+			for( int i = 0; i < 3 ; ++i )
+			{
+				this->startPoint[i]	= p[2+i].value.netFloat;
+				this->endPoint[i] = p[5+i].value.netFloat;
+			}
+			this->beamRadius	= p[8].value.netFloat;
+			this->lifeTime		= p[9].value.netFloat;
+		}
+		Protocol_EffectBeam( int creatorID, const float start[3], const float end[3], float radius, float lifeTime )
+		{
+			this->protocol[0].value = protocol_Gameplay_EffectBeam;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].value = -1;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
+
+			for( int i = 2; i < 10; ++i )
+			{ // seeding startPoint, endPoint, beamRadius & lifeTime value_types
+				this->protocol[i].type = Oyster::Network::NetAttributeType_Float;
+			}
+
+			this->ownerID		= creatorID;
+			for( int i = 0; i < 3 ; ++i )
+			{
+				this->startPoint[i]	= start[i];
+				this->endPoint[i] = end[i];
+			}
+			this->beamRadius	= radius;
+			this->lifeTime		= lifeTime;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = ownerID;
+
+			for( int i = 0; i < 3 ; ++i )
+			{
+				// startPoint
+				this->protocol[2+i].value	= this->startPoint[i];
+
+				// endPoint
+				this->protocol[5+i].value	= this->endPoint[i];
+			}
+
+			// beamRadius
+			this->protocol[8].value = this->beamRadius;
+
+			// lifeTime
+			this->protocol[9].value = this->lifeTime;
+
+			return protocol;		 
+		}	
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+}
 #endif // !GAMELOGIC_PLAYER_PROTOCOLS_H

@@ -24,7 +24,7 @@ bool FmodUtil::FmodErrorCheck(FMOD_RESULT result)	// Error handling function for
 	if (result != FMOD_OK)
 	{
 		// output error message
-		printf( "FMOD error! ( %i ) %s", result, FMOD_ErrorString(result));
+		//printf( "FMOD error! ( %i ) %s", result, FMOD_ErrorString(result));
 		return false;
 	}
 	return true;
@@ -164,6 +164,12 @@ bool AudioManager::updateSoundManager(float deltaTime)
 	return true;
 }
 
+ChannelGroupData* AudioManager::CreateChannelGroup(const char* groupName)
+{
+	ChannelGroupData* channelGroup = new ChannelGroupData();
+	result = this->fmodSystem->createChannelGroup( groupName, &channelGroup->channelgroup);
+	return channelGroup;
+}
 ChannelData* AudioManager::CreateChannel()
 {
 	ChannelData* channel = new ChannelData();
@@ -211,7 +217,10 @@ SoundData* AudioManager::CreateSound(std::string soundName, SoundType soundType)
 void AudioManager::Play_Sound(SoundData* soundData, ChannelData* channelData, bool paused)
 {	
 	result = this->fmodSystem->playSound(FMOD_CHANNEL_FREE, soundData->sound, paused, &channelData->channel);
-	//FmodErrorCheck(result);
+	if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+	{
+		FmodErrorCheck(result);
+	}
 }
 void AudioManager::setListenerPos( float* pos, float* vel, float* forward, float* up )
 {
@@ -222,7 +231,7 @@ void AudioManager::setListenerPos( float* pos, float* vel, float* forward, float
 	floatArrToFmodVECTOR( listenerData.up, up);
 
 	result = fmodSystem->set3DListenerAttributes(0, &listenerData.pos, &listenerData.vel, &listenerData.forward, &listenerData.up );
-	//FmodErrorCheck(result);
+	FmodErrorCheck(result);
 }
 void AudioManager::setBasePath(std::string basePath)
 {

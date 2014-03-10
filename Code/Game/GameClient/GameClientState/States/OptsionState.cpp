@@ -218,10 +218,12 @@ void OptionState::ChangeState( ClientState next )
 {
 
 }
-void OptionState::PlaySound( SoundID id )
+void OptionState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode )
 {
-	//this->sharedData->soundManager->getSound(id)->Play_Sound();
-	Sound::AudioAPI::Audio_PlaySound(this->sharedData->soundManager->getSound(id), this->sharedData->soundManager->getChannel(id));
+	Sound::ISound* sound = this->sharedData->soundManager->getSound(soundID);
+	Sound::IChannel* channel = this->sharedData->soundManager->getChannel(channelID);
+	
+	this->sharedData->soundManager->PlaySoundOnChannel(sound, channel, playMode);
 }
 const DanBias::Client::GameClientState::NetEvent & OptionState::DataRecieved( const NetEvent &message )
 {
@@ -338,7 +340,7 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 			if(e.state == ButtonState_Hover)
 			{
 				// SOUND
-				e.owner->PlaySound(mouse_hoover);
+				e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button1, PlayMode::PlayMode_Restart);
 			}
 			else if(e.state == ButtonState_Released)
 			{
@@ -359,20 +361,20 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 				Graphics::API::SetOptions(op);
 
 				// SOUND
-				e.owner->PlaySound(mouse_click);
+				e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button1, PlayMode::PlayMode_Restart);
 			}
 		break;
 		case DanBias::Client::OptionState::ButtonType_Back:
 			if(e.state == ButtonState_Hover)
 			{
 				// SOUND
-				e.owner->PlaySound(mouse_hoover);
+				e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button2, PlayMode::PlayMode_Restart);
 			}
 			else if(e.state == ButtonState_Released)
 			{
 				e.owner->nextState = GameClientState::ClientState_Main;
 				// SOUND
-				e.owner->PlaySound(mouse_click);
+				e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button2, PlayMode::PlayMode_Restart);
 			}
 		break;
 	}

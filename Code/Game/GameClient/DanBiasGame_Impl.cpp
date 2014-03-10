@@ -23,6 +23,7 @@
 
 #include "GameClientState/SharedStateContent.h"
 #include "Utilities.h"
+#include "fstream"
 
 using namespace ::Oyster;
 using namespace ::Oyster::Event;
@@ -33,7 +34,12 @@ using namespace ::Utility::DynamicMemory;
 
 LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam );
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
+void LoadInitSettings();
 static bool prevFull = false;
+static float width = 0.0f;
+static float height = 0.0f;
+static float mouseSens = 0.0f;
+static bool mute = false;
 
 #pragma region Game Data
 namespace DanBias
@@ -79,10 +85,11 @@ namespace DanBias
 	{
 		WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
+		LoadInitSettings();
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x		= 1200;
-		winDesc.windowSize.y		= 600;
+		winDesc.windowSize.x		= (int)width;
+		winDesc.windowSize.y		= (int)height;
 		winDesc.windowProcCallback	= WindowCallBack;
 
 		if(! data.window->CreateWin(winDesc) )
@@ -103,6 +110,8 @@ namespace DanBias
 
 		data.sharedStateContent.network = &data.networkClient;
 
+		data.sharedStateContent.mouseSensitivity = 1.0f;
+
 		if( (data.sharedStateContent.background = Graphics::API::CreateTexture( L"color_white.png" ) ) == 0)
 			printf("Failed to load the default background [color_white.png]\n");
 
@@ -110,19 +119,21 @@ namespace DanBias
 		if( ( data.sharedStateContent.mouseCursor = Graphics::API::CreateTexture( L"cursor.png" ) ) == 0)
 			printf("Failed to load the mouse cursor [cursor.png]\n");
 
+		data.sharedStateContent.soundManager->MuteSound(mute);
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", SoundID_Mouse_Hover));
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", SoundID_Mouse_Click));
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button3);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button4);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button3);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button4);
+		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.wav", SoundID_Menu_SoundTrack, ChannelID_Menu_Soundtrack));
+		data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack)->setMode(Sound::Loop_normal);
+		data.sharedStateContent.soundManager->PlaySoundOnChannel(data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack), data.sharedStateContent.soundManager->getChannel(ChannelID_Menu_Soundtrack), PlayMode_FinnishSound);
 		
-		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
-		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", mouse_click));
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button1);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button2);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button3);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button1);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button2);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button3);
-		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
-		data.sharedStateContent.soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
-		Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(backgroundSound), data.sharedStateContent.soundManager->getChannel(backgroundSound), true);
-
 		// Start in main menu state
 		data.state = new Client::MainState();
 
@@ -189,7 +200,7 @@ namespace DanBias
 		Oyster::Graphics::API::Option gfxOp;
 		gfxOp.modelPath = L"..\\Content\\Models\\";
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
-		gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
+		gfxOp.resolution = Oyster::Math::Float2( width, height );
 		gfxOp.ambientValue = 0.3f;
 		gfxOp.fullscreen = prevFull;
 		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
@@ -211,6 +222,8 @@ namespace DanBias
 			MessageBox( 0, L"Could not initialize the mouseDevice.", L"Error", MB_OK );
 			return E_FAIL;
 		}
+		data.sharedStateContent.mouseDevice->SetSensitivity(mouseSens);
+		data.sharedStateContent.mouseSensitivity = mouseSens;
 		
 		data.sharedStateContent.keyboardDevice= dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
 		if( !data.sharedStateContent.keyboardDevice )
@@ -395,4 +408,86 @@ void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArg
 {
 	if( DanBias::data.state )
 		DanBias::data.state->DataRecieved( e );
+}
+
+void LoadInitSettings()
+{
+	std::fstream inStream;
+	std::string chars = "";
+	inStream.open("settings.txt", std::fstream::in);
+
+	if(inStream.is_open())
+	{
+		while(!inStream.eof())
+		{
+			inStream >> chars;
+
+			if(chars == "fullscreen")
+			{
+
+				inStream >> chars;
+				if(chars == "true")
+				{
+
+					prevFull = true; //default is false
+
+				}
+
+			}
+			else if(chars == "resolutionW")
+			{
+
+				inStream >> chars;
+				width = atof(chars.c_str());
+
+			}
+			else if(chars == "resolutionH")
+			{
+
+				inStream >> chars;
+				height = atof(chars.c_str());
+
+			}
+			else if(chars == "mouseSens")
+			{
+
+				inStream >> chars;
+				mouseSens = atof(chars.c_str());
+
+			}
+			else if(chars == "sound")
+			{
+
+				inStream >> chars;
+				if(chars == "false")
+				{
+
+					mute = false; //default is true
+		
+				}
+
+			}
+		}
+		inStream.close();
+	}
+	else
+	{
+		std::wofstream ostream(L"..\\Settings\\settings.txt");
+
+	
+		prevFull = false; //default is false
+		width = 1280.0f;
+		height = 720.0f;
+		mouseSens = 0.5f;
+		mute = false;
+		
+
+		ostream << L"fullscreen false\n";
+		ostream << L"resolutionW 1280\n";
+		ostream << L"resolutionH 720\n";
+		ostream << L"mouseSens 1.2\n";
+		ostream << L"sound true\n";
+		ostream.close();
+	}
+
 }

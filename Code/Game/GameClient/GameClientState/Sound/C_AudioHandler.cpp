@@ -6,10 +6,16 @@ C_AudioHandler::C_AudioHandler()
 {
 	maxCollisionSounds = 50;
 	currCollisionSound = 0; 
+	mute = false;
 	collisionChannels = new Sound::IChannel*[maxCollisionSounds];
 	for (int i = 0; i < maxCollisionSounds; i ++)
 	{
 		collisionChannels[i] = AudioAPI::Audio_CreateChannel();	
+	}
+	channelGroups = new Sound::IChannelGroup*[ChannelGroup_Count];
+	for (int i = 0; i < ChannelGroup_Count; i ++)
+	{
+		channelGroups[i] = AudioAPI::Audio_CreateChannelGroup("name");	
 	}
 }
 
@@ -21,26 +27,56 @@ bool C_AudioHandler::Init(){return true;}
 
 void C_AudioHandler::addSFX(SoundDesc soundDesc)
 {
-	if(!effects[soundDesc.ID])
+	if(!effects[soundDesc.soundID])
 	{
-		effects[soundDesc.ID] = AudioAPI::Audio_CreateSound( soundDesc.name, SoundType_Effect );
-		addChannel(soundDesc.ID);
+		effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( soundDesc.soundName, SoundType_Effect );
+		
+		// default sound -- sound is missing
+		if (!effects[soundDesc.soundID])
+		{
+			effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( "jaguar.wav", SoundType_Music );
+		}
+		
+		if (soundDesc.channelID != ChannelID_none)
+		{
+			addChannel(soundDesc.channelID);
+		}
 	}
 }
 void C_AudioHandler::addMusic(SoundDesc soundDesc)
 {
-	if(!songs[soundDesc.ID])
+	if(!songs[soundDesc.soundID])
 	{
-		songs[soundDesc.ID] = AudioAPI::Audio_CreateSound( soundDesc.name, SoundType_Music );
-		addChannel(soundDesc.ID);
+		songs[soundDesc.soundID] = AudioAPI::Audio_CreateSound( soundDesc.soundName, SoundType_Music );
+		
+		// default sound -- sound is missing
+		if (!songs[soundDesc.soundID])
+		{
+			songs[soundDesc.soundID] = AudioAPI::Audio_CreateSound( "jaguar.wav", SoundType_Music );
+		}
+		
+		if (soundDesc.channelID != ChannelID_none)
+		{
+			addChannel(soundDesc.channelID);
+		}
 	}
 }
 void C_AudioHandler::addSFX_3D(SoundDesc soundDesc)
 {
-	if(!effects[soundDesc.ID])
+	if(!effects[soundDesc.soundID])
 	{
-		effects[soundDesc.ID] = AudioAPI::Audio_CreateSound( soundDesc.name, SoundType_Effect3D );
-		addChannel(soundDesc.ID);
+		effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( soundDesc.soundName, SoundType_Effect3D );
+		
+		// default sound -- sound is missing
+		if (!effects[soundDesc.soundID])
+		{
+			effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( "jaguar.wav", SoundType_Music );
+		}
+
+		if (soundDesc.channelID != ChannelID_none)
+		{
+			addChannel(soundDesc.channelID);
+		}
 	}
 }
 void C_AudioHandler::addPlayerSound(int playerId)
@@ -51,9 +87,11 @@ void C_AudioHandler::addPlayerSound(int playerId)
 		for (int i = 0; i < PlayerSoundID_Count; i ++)
 		{
 			playerChannels[playerId]->channels[i] = AudioAPI::Audio_CreateChannel();
+			playerChannels[playerId]->channels[i]->addChannelToGroup( getChannelGroup(ChannelGroup_GameSFX));
 		}
-		AudioAPI::Audio_PlaySound(getSound(walk), getPlayerChannel(playerId, PlayerSoundID_walk), true);
-		getPlayerChannel(playerId, PlayerSoundID_walk)->setVolym(0.2);
+		AudioAPI::Audio_PlaySound(getSound(SoundID_Player_Walk), getPlayerChannel(playerId, PlayerSoundID_Walk), true);
+		getPlayerChannel(playerId, PlayerSoundID_Walk)->setVolym(0.2f);
+
 	}
 }
 void C_AudioHandler::setPlayerChannelPos( int playerId, float* pos, float* vel)
@@ -66,27 +104,45 @@ void C_AudioHandler::setPlayerChannelPos( int playerId, float* pos, float* vel)
 		}
 	}
 }
-void C_AudioHandler::playCollisionSound()
-{
-	//getSound(mouse_click)->setMode(Loop_normal);
-	//for (int i = 0; i < maxCollisionSounds; i ++)
-	//{
-	//	collisionChannels[i] = AudioAPI::Audio_CreateChannel();	
-	//	AudioAPI::Audio_PlaySound(getSound(mouse_click), collisionChannels[i]);
-	//}
-}
-void C_AudioHandler::addChannel(SoundID id )
+
+void C_AudioHandler::addChannel(ChannelID id )
 {
 	if (!channels[id])
 	{
 		channels[id] = AudioAPI::Audio_CreateChannel();
 	}
 }
-void C_AudioHandler::addChannel(ChannelID id )
+void C_AudioHandler::PlaySoundOnChannel( ISound* sound, IChannel* channel, PlayMode playMode )
 {
-	if (!channels[id])
+	if (mute)
 	{
-		channels[id] = AudioAPI::Audio_CreateChannel();
+		// don't play sounds while muted
+		return;
+	}
+	if( playMode == PlayMode_Restart)
+	{
+		if(channel->getChannelPlaying())
+		{
+			// play from the beginning of the sound on the channel
+			channel->restartChannel();
+			channel->SetPauseChannel(false);
+		}
+		else
+		{
+			// start new sound if nothing was playing
+			Sound::AudioAPI::Audio_PlaySound(sound, channel);
+		}
+	}
+	else if( playMode == PlayMode_FinnishSound )
+	{
+		// start sound only when it is not already playing
+		if(!channel->getChannelPlaying())
+			Sound::AudioAPI::Audio_PlaySound(sound, channel);
+	}
+	else if( playMode == PlayMode_AlwaysStart )
+	{
+		// multiple sounds can play at once on the channel
+		Sound::AudioAPI::Audio_PlaySound(sound, channel);
 	}
 }
 Sound::ISound* C_AudioHandler::getSound( SoundID id )
@@ -101,9 +157,9 @@ Sound::ISound* C_AudioHandler::getSFX( SoundID id )
 {
 	return effects[id];
 }
-Sound::IChannel* C_AudioHandler::getChannel( SoundID id )
+Sound::IChannelGroup* C_AudioHandler::getChannelGroup( ChannelGroups id )
 {
-	return channels[id];
+	return channelGroups[id];
 }
 Sound::IChannel* C_AudioHandler::getChannel( ChannelID id )
 {
@@ -163,6 +219,31 @@ void C_AudioHandler::SetEffectVolume(float volume)
 	//		effect->second->setVolym(volume);
 	//}
 }
+void C_AudioHandler::MuteSound(bool mute)
+{
+	this->mute = mute;
+	/*for (int i = 0; i < maxCollisionSounds; i ++)
+	{
+	collisionChannels[i]->SetMuteChannel(true);
+	}
+	auto channel = this->channels.begin();
+	for( ; channel != this->channels.end(); ++channel )
+	{
+	channel->second->SetMuteChannel(true);
+	}
+	auto playerChannel = this->playerChannels.begin();
+	for( ; playerChannel != this->playerChannels.end(); ++playerChannel )
+	{
+
+	for (int i = 0; i < PlayerSoundID_Count; i ++)
+	{
+	if(playerChannel->second)
+	{
+	playerChannel->second->channels[i]->SetMuteChannel(true);
+	}
+	}
+	}*/
+}
 void C_AudioHandler::Release()
 {
 	for (int i = 0; i < maxCollisionSounds; i ++)
@@ -170,6 +251,12 @@ void C_AudioHandler::Release()
 		delete collisionChannels[i];
 	}
 	delete [] collisionChannels;
+
+	for (int i = 0; i < ChannelGroup_Count; i ++)
+	{
+		delete channelGroups[i];	
+	}
+	delete [] channelGroups;
 
 	auto effect = this->effects.begin();
 	for( ; effect != this->effects.end(); ++effect )

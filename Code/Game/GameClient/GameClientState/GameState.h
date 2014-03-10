@@ -28,8 +28,9 @@ namespace DanBias { namespace Client
 		bool Render()override;
 		bool Release()override;
 		void ChangeState( ClientState next );
-		void PlaySound( SoundID id );
-		void PlaySound( Sound::ISound* id, Sound::IChannel* channel, bool restart = false );
+		void PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode );
+		void PlaySoundCollisionSound( SoundID soundID, PlayMode playMode, float* pos );
+		void PlayPlayerSound( SoundID soundID, int playerId, PlayerSoundID playerSoundID, PlayMode playMode );
 
 		const NetEvent & DataRecieved( const NetEvent &message );
 
@@ -69,6 +70,7 @@ namespace DanBias { namespace Client
 		void Gameplay_ObjectDisconnectPlayer( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectAction( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectCollision( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol data );
 		void General_GameOver( Oyster::Network::CustomNetProtocol data );
 		//:HACK!
 		//void OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;

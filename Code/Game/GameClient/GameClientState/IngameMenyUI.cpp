@@ -139,6 +139,14 @@ void IngameMenyUI::ChangeState( UIState next )
 {
 	this->nextState = next;
 }
+void IngameMenyUI::PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode )
+{
+	Sound::ISound* sound = this->audioHandler->getSound(soundID);
+	Sound::IChannel* channel = this->audioHandler->getChannel(channelID);
+
+	this->audioHandler->PlaySoundOnChannel(sound, channel, playMode);
+}
+
 
 void IngameMenyUI::ActivateInput()
 {
@@ -183,12 +191,12 @@ void OnButtonInteract_InGame_Exit( Oyster::Event::ButtonEvent<IngameMenyUI*>& e 
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button1, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameStateUI::UIState_main_menu );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button1, PlayMode_Restart);
 		break;
 	default: break;
 	}
@@ -198,8 +206,14 @@ void OnButtonInteract_InGame_Options( Oyster::Event::ButtonEvent<IngameMenyUI*>&
 {
 	switch( e.state )
 	{
+	case ButtonState_Hover:
+		// SOUND
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button2, PlayMode_Restart);
+		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameStateUI::UIState_ingame_options );
+		// SOUND
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button2, PlayMode_Restart);
 		break;
 	default: break;
 	}
@@ -211,19 +225,14 @@ void OnButtonInteract_InGame_Resume( Oyster::Event::ButtonEvent<IngameMenyUI*>& 
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button3, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameStateUI::UIState_resume_game );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button3, PlayMode_Restart);
 		break;
 	default: break;
 	}
 
-}
-void IngameMenyUI::PlaySound( SoundID id )
-{
-	//this->audioHandler->getSound(id)->Play_Sound();
-	Sound::AudioAPI::Audio_PlaySound(this->audioHandler->getSound(id), this->audioHandler->getChannel(id), true);
 }

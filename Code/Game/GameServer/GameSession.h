@@ -100,7 +100,7 @@ namespace DanBias
 		static void ObjectMove				( GameLogic::IObjectData* movedObject );
 		static void ObjectDisabled			( GameLogic::IObjectData* movedObject );
 		static void ObjectEnabled			( GameLogic::IObjectData* movedObject );
-		static void ObjectDamaged			( GameLogic::IObjectData* movedObject, float hp );
+		static void ObjectDamaged			( GameLogic::IObjectData* movedObject, float hp, int eventId );
 		static void ObjectRespawned			( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos );
 		static void ObjectDead				( GameLogic::IObjectData* victim, int deatchCount, GameLogic::IObjectData* killer, int killCount, float seconds );
 		static void PickupEvent				( GameLogic::IObjectData* movedObject, int pickupEffectID );
@@ -108,6 +108,7 @@ namespace DanBias
 		static void CollisionEvent			( GameLogic::IObjectData* Object , int collisionID );
 		static void EnergyUpdate			( GameLogic::IObjectData* movedObject , float energy );
 		static void GameOver				(  );
+		static void BeamEffect				( GameLogic::IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime );
 
 	private:	//Private member variables
 		Utility::DynamicMemory::DynamicArray<gClient> gClients;

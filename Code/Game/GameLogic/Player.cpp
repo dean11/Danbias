@@ -10,6 +10,7 @@ using namespace Oyster::Math3D;
 using namespace Utility::Value;
 
 const float KEY_TIMER = 0.03f;
+const Float3 normalized_weapon_muzzle_offset = Float3( 0.5f, 0.0f, 3.0f ); // on rightside of hip, slightly forward
 
 Player::Player()
 	:DynamicObject()
@@ -20,6 +21,8 @@ Player::Player()
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
+	this->deathTimer = 0.0f;
+
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -31,6 +34,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
+	this->deathTimer = 0.0f;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -42,6 +46,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
+	this->deathTimer = 0.0f;
 }
 
 Player::~Player(void)
@@ -80,11 +85,26 @@ void Player::initPlayerData()
 	this->rigidBody->SetState( state );
 }
 
-void Player::BeginFrame()
+Float3 & Player::GetWeaponMuzzlePosition( Float3 &targetMem )
+{
+	return this->GetWeaponMuzzlePosition( targetMem, this->GetRigidBody()->GetState() );
+}
+
+Float3 & Player::GetWeaponMuzzlePosition( Float3 &targetMem, const ICustomBody::State &state )
+{
+	targetMem = normalized_weapon_muzzle_offset * this->GetScale(); // TODO: would prefer if state had the scale data
+
+	Float4x4 rotM = OrientationMatrix_LookAtDirection(-this->lookDir, WorldAxisOf(state.quaternion, Float3::standard_unit_y), state.centerPos);
+
+	targetMem = rotM * Float4(targetMem, 1.0f);
+	return targetMem;
+}
+
+void Player::BeginFrame(float dt)
 {
 	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		this->weapon->Update( 0.002f );
+		this->weapon->Update( dt );
 
 		// Rotate player accordingly
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
@@ -216,7 +236,8 @@ void Player::Respawn( Float3 spawnPoint )
 		Player::initPlayerData();
 		this->rigidBody->SetPosition(spawnPoint);
 		this->gameInstance->onRespawnFnc( this, spawnPoint);
-		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Respawn);
+		Oyster::Physics::API::Instance().ReleaseFromLimbo(this->rigidBody);
 	}
 }
 
@@ -239,18 +260,18 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return ( this->rigidBody->GetLambdaUp() < 0.7f );
+	return ( this->rigidBody->GetLambdaUp() < 0.8f );
 }
 
 bool Player::IsJumping()
 {
-	return ( this->rigidBody->GetLambdaUp() >= 0.7f );
+	return ( this->rigidBody->GetLambdaUp() >= 0.8f );
 }
 
 bool Player::IsIdle()
 {
 	Float3 v = this->rigidBody->GetLinearVelocity();
-	return ( this->rigidBody->GetLambdaUp() < 0.7f && v.Dot( v ) < 0.0001f );
+	return ( this->rigidBody->GetLambdaUp() < 0.8f && v.Dot( v ) < 0.0001f );
 }
 
 bool Player::IsStunned( bool struggled )
@@ -338,15 +359,23 @@ void Player::DamageLife( float damage )
 			if( this->playerStats.hp > 100.0f )
 				this->playerStats.hp = 100.0f;
 
-			// send hp to client
-			this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
-
-			if( this->playerStats.hp <= 0.0f )
+			
+			else if( this->playerStats.hp <= 0.0f )
 			{
 				this->playerStats.hp = 0.0f;
 				this->playerState = PLAYER_STATE_DIED;
 				this->rigidBody->SetLinearVelocity( 0.0f );
+				Oyster::Physics::API::Instance().MoveToLimbo(this->rigidBody);
 			}
+
+
+			// heal 
+			if(damage < 0 )
+				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Heal);
+
+			// dmg taken
+			else
+				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Damage);
 		}
 	}
 }

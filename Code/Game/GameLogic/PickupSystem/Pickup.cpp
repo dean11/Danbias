@@ -9,7 +9,7 @@ Pickup::Pickup(Oyster::Physics::ICustomBody *rigidBody, EventOnCollision collisi
 	this->active = true;
 	this->spawnTime = spawnTime;
 	timer.reset();
-	this->GetRigidBody()->MoveToLimbo();
+	this->GetRigidBody()->DisableCollisionResponse();
 }
 
 Pickup::~Pickup()

@@ -27,21 +27,23 @@ namespace NoEdgeConstants
 			const float LogicFrameTime					= 1.0f / 120.f;
 			const float PhysicsFrameTime				= 1.0f / 120.f;
 			const float NetworkFrameTime				= 1.0f / 70.f;
-			const float Gravity							= 5.0f;
+			const float Gravity							= 127.0f;
 		}
 
 		namespace Limits
 		{
 			const float FallDamageThreshold				= 100.0f;
 			const float forceThreashHold                = 40.0f;
+			const float	ObjectDistanceBeforeRespawn		= 80.0f;
+			const float	ObjectTimeStillBeforeRespawn	= 10.0f;
 		}
 
 		namespace Player
 		{
-			const float ForwardVelocity					= 10.0f;
-			const float BackwardVelocity				= 7.0f;
-			const float StrafeVelocity					= 9.0f;
-			const float JumpVelocity					= 16.0f;
+			const float ForwardVelocity					= 12.0f;
+			const float BackwardVelocity				= 9.0f;
+			const float StrafeVelocity					= 11.0f;
+			const float JumpVelocity					= 25.0f;
 			const float Mass							= 23.0f;
 			const float DampeningFactor					= 0.2f;
 			const float RestitutionCoeff				= 0.0f;
@@ -68,11 +70,12 @@ namespace NoEdgeConstants
 				const float PushCost					= 9.0f;
 				const float ZipCost						= 40.0f;
 
-				const float PrimaryCooldown				= 0.2f;
+				const float PrimaryCooldown				= 0.0f;
 				const float SecondaryCooldown			= 0.0f;
 				const float UtilityCooldown				= 0.1f;
 
 				const float MaxDistanceFromPlayer		= 5.0f;
+				const float MaxPullDistance				= 20.0f;
 			}
 
 			namespace MassDriveProjectileAttachment
@@ -80,8 +83,8 @@ namespace NoEdgeConstants
 				const int SlotId						= 1;
 				const float MaxEnergy					= 100.0f;
 				const float RechargeRate				= 0.5f;
-				const float PrimaryDamage				= 20.0f;
-				const float PrimaryCost                 = 30;
+				const float PrimaryDamage				= 30.0f; //= 20.0f;
+				const float PrimaryCost                 = 55.0f; //= 30;
 
 				const float PrimaryCooldown				= 0.1f;
 				const float SecondaryCooldown			= 0.0f;

@@ -10,52 +10,95 @@ namespace DanBias
 	{
 		const float STANDARD_MUSIC_VOLYM = 0.5f;
 		const float STANDARD_EFFECTS_VOLYM = 0.5f;
+
+		enum PlayMode
+		{
+			PlayMode_Restart,
+			PlayMode_FinnishSound,
+			PlayMode_AlwaysStart,
+		};
 		enum SoundID
 		{
-			backgroundSound,
-			playerDmgRecieveSound, 
-			pickUpSound,
-			pickUpHealth,
-			walk,
-			jump,
-			shoot,
-			pull, 
-			collision,
-			ambient,
-			mouse_hoover,
-			mouse_click,
-			jumppadEventSound,
-			explosionEventSound,
-			crystalCollisionEventSound,
+			// menu sounds 
+			SoundID_Mouse_Click,
+			SoundID_Mouse_Hover,
+			
+			// soundtracks
+			SoundID_Menu_SoundTrack,
+			SoundID_Game_SoundTrack,
+			SoundID_Game_GameOver,
+
+			// event sounds
+			SoundID_PickUpHealth,
+			SoundID_Jumppad,
+			SoundID_CrystalCollision,
+			SoundID_CrateExplosion,
+			SoundID_BoxVsBoxCollision, 
+			SoundID_BoxVsPlayerCollision,
+			SoundID_Portal,
+
+			// player sounds
+			SoundID_Player_Walk,
+			SoundID_Player_Jump,
+			SoundID_Player_WeaponPull,
+			SoundID_Player_WeaponPush, 
+			SoundID_Player_WeaponShoot,
+			SoundID_Player_DMGtaken, 
+			SoundID_Player_Heal, 
+			SoundID_Player_Respawn, 
+			SoundID_Player_Die, 
+			SoundID_Player_Join, 
+
+			//ambient,
+			SoundID_Pickup_Music,
 
 		};
 		enum ChannelID
 		{
-			ChannelID_backgroundSound,
+			ChannelID_Mouse_Hover_Button1,
+			ChannelID_Mouse_Click_Button1,
+			ChannelID_Mouse_Hover_Button2,
+			ChannelID_Mouse_Click_Button2,
+			ChannelID_Mouse_Hover_Button3,
+			ChannelID_Mouse_Click_Button3,
+			ChannelID_Mouse_Hover_Button4,
+			ChannelID_Mouse_Click_Button4,
+
+			ChannelID_Menu_Soundtrack, 
+			ChannelID_Game_Soundtrack, 
+			ChannelID_Game_GameOver,
+			
 			ChannelID_effectSound, 
-			ChannelID_pickUpSound,
+			//ChannelID_pickUpSound,
 			ChannelID_jumppad,
-			ChannelID_walk,
-			ChannelID_jump,
-			ChannelID_shoot,
-			ChannelID_pull, 
 			ChannelID_collision,
+			ChannelID_portal,
 			ChannelID_ambient,
-			ChannelID_mouse_hoover_button1,
-			ChannelID_mouse_click_button1,
-			ChannelID_mouse_hoover_button2,
-			ChannelID_mouse_click_button2,
-			ChannelID_mouse_hoover_button3,
-			ChannelID_mouse_click_button3,
+
+			ChannelID_none,
 		};
 		enum PlayerSoundID
 		{
+			PlayerSoundID_Walk,
 			PlayerSoundID_Jump,
-			PlayerSoundID_walk,
-			PlayerSoundID_shoot,
-			PlayerSoundID_pull,
-			playerSoundID_dmgRecieved,
+			PlayerSoundID_Pull,
+			PlayerSoundID_Push,
+			PlayerSoundID_Shoot,
+			PlayerSoundID_DMGtaken,
+			PlayerSoundID_Heal,
+			PlayerSoundID_Respawn, 
+			PlayerSoundID_Join, 
+			PlayerSoundID_Die,
 			PlayerSoundID_Count,
+		};
+		enum ChannelGroups
+		{
+			ChannelGroup_Master,
+			ChannelGroup_MenuMusic,
+			ChannelGroup_MenuSFX,
+			ChannelGroup_GameMusic,
+			ChannelGroup_GameSFX,
+			ChannelGroup_Count,
 		};
 		struct PlayerSounds
 		{
@@ -68,12 +111,12 @@ namespace DanBias
 		};
 		struct SoundDesc
 		{
-			std::string name;
-			SoundID ID;
-
+			std::string soundName;
+			SoundID soundID;
+			ChannelID channelID;
 			SoundDesc(){}
-			SoundDesc( std::string name, SoundID id)
-				:name(name), ID(id){}
+			SoundDesc( std::string soundName, SoundID soundID, ChannelID channelID = ChannelID_none)
+				:soundName(soundName), soundID(soundID), channelID(channelID){}
 		};
 		class C_AudioHandler
 		{
@@ -84,12 +127,14 @@ namespace DanBias
 
 			::std::map<int, PlayerSounds*> playerChannels;
 
+			Sound::IChannelGroup** channelGroups;
 			Sound::IChannel** collisionChannels;
 			int maxCollisionSounds;
 			int currCollisionSound;
 
 			float music_volume;
 			float effects_volume;
+			bool mute;
 
 		public:
 			C_AudioHandler();
@@ -100,18 +145,18 @@ namespace DanBias
 			void addSFX_3D(SoundDesc soundDesc);
 			void addPlayerSound( int playerId);
 			void setPlayerChannelPos( int playerId, float* pos, float* vel);
-			void addChannel( SoundID id );
 			void addChannel( ChannelID id );
-			void playCollisionSound();
+			void PlaySoundOnChannel( Sound::ISound* sound, Sound::IChannel* channel, PlayMode playMode );
 			Sound::ISound* getSound( SoundID id );
 			Sound::ISound* getSFX( SoundID id );
-			Sound::IChannel* getChannel( SoundID id );
+			Sound::IChannelGroup* getChannelGroup( ChannelGroups id );
 			Sound::IChannel* getChannel( ChannelID id );
 			Sound::IChannel* getPlayerChannel( int  id, PlayerSoundID soundId );
 			Sound::IChannel* getCollisionChannel();
 			void pauseAllSounds();
 			void SetSoundVolume(float volume);
 			void SetEffectVolume(float volume);
+			void MuteSound(bool mute);
 			void Release();
 		};
 	}

@@ -16,7 +16,7 @@ IDXGISwapChain* Core::swapChain = NULL;
 std::stringstream Core::log;
 
 Oyster::Resource::ResourceManager Core::loader;
-
+ 
 
 ID3D11RenderTargetView* Core::backBufferRTV = NULL;
 

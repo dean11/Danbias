@@ -29,7 +29,7 @@ namespace GameLogic
 		typedef void(*ObjectMovedFunction)(IObjectData* object);	// Callback method that recieves and object
 		typedef void(*ObjectDisabledFunction)(IObjectData* object);	// Callback method that recieves and object
 		typedef void(*ObjectEnabledFunction)(IObjectData* object);	// Callback method that recieves and object
-		typedef void(*ObjectHpFunction)(IObjectData* object, float hp);	// Callback method that sends obj HP
+		typedef void(*ObjectHpFunction)(IObjectData* object, float hp, int eventID);	// Callback method that sends obj HP
 		typedef void(*ObjectRespawnedFunction)(IObjectData* object, Oyster::Math::Float3 spawnPos );	// Callback method that sends spawnPos
 		typedef void(*ObjectDeadFunction)(IObjectData* victim, int deatchCount, IObjectData* killer, int killCount, float seconds);	// Callback method that sends killer and death timer
 		typedef void(*PickupEventFunction)(IObjectData* player, int pickupEffectID );	// Callback method that sends killer and death timer
@@ -37,6 +37,7 @@ namespace GameLogic
 		typedef void(*CollisionEventFunction)(IObjectData*object, int collisionID); 
 		typedef void(*WeaponEnergyFunction)(IObjectData*object, float energy); 
 		typedef void(*EndGameFunction)(); 
+		typedef void(*BeamEffectFunction)( IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime );
 		//etc...
 	};
 
@@ -201,6 +202,7 @@ namespace GameLogic
 		virtual void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) = 0;
 		virtual void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer) = 0;
 		virtual void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer) = 0;
+		virtual void SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer) = 0;
 	};	
 }
 

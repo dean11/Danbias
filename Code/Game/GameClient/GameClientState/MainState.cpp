@@ -76,7 +76,7 @@ bool MainState::Init( SharedStateContent &shared )
 	
 	// SOUND
 	this->privData->soundManager = this->privData->sharedData->soundManager;
-	this->privData->soundManager->getChannel(backgroundSound)->SetPauseChannel(false);
+	this->privData->soundManager->getChannel(ChannelID_Menu_Soundtrack)->SetPauseChannel(false);
 	return true;
 }
 
@@ -136,19 +136,12 @@ void MainState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
-void MainState::PlaySound( SoundID id )
+void MainState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode )
 {
-	//this->privData->soundManager->getSound(id)->Play_Sound();
-	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(id), this->privData->soundManager->getChannel(id));
-}
-void MainState::PlaySound( SoundID sound, ChannelID channel )
-{
-	//this->privData->soundManager->getSound(id)->Play_Sound();
-	if(this->privData->soundManager->getChannel(channel)->getChannelPlaying())
-	{
-		this->privData->soundManager->getChannel(channel)->restartChannel();
-	}
-	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(sound), this->privData->soundManager->getChannel(channel));
+	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
+	Sound::IChannel* channel = this->privData->soundManager->getChannel(channelID);
+
+	this->privData->soundManager->PlaySoundOnChannel(sound, channel, playMode);
 }
 void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 {
@@ -156,12 +149,12 @@ void OnButtonInteract_Create( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover, ChannelID_mouse_hoover_button1);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button1, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyCreate );
 		// SOUND
-		e.owner->PlaySound(mouse_click, ChannelID_mouse_click_button1);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button1, PlayMode_Restart);
 		break;
 	default: break;
 	}
@@ -173,12 +166,12 @@ void OnButtonInteract_Settings( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover, ChannelID_mouse_hoover_button2);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button2, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Options );
 		// SOUND
-		e.owner->PlaySound(mouse_click, ChannelID_mouse_click_button2);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button2, PlayMode_Restart);
 		break;
 	default: break;
 	}
@@ -190,12 +183,12 @@ void OnButtonInteract_Join( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover, ChannelID_mouse_hoover_button3);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button3, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Lan );
 		// SOUND
-		e.owner->PlaySound(mouse_click, ChannelID_mouse_click_button3);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button3, PlayMode_Restart);
 		break;
 	default: break;
 	}
@@ -207,12 +200,12 @@ void OnButtonInteract_Quit( Oyster::Event::ButtonEvent<MainState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button4, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_Quit );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button4, PlayMode_Restart);
 		break;
 	default: break;
 	}

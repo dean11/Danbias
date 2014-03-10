@@ -30,13 +30,13 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 	{
 	case ObjectSpecialType_None: 
 		{
-			gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
+			//gameObj = new StaticObject(rigidBody, Object::DefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter); 
 		}
 		break;
 	case ObjectSpecialType_World: 
 		{
 			API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
-			API::Instance().SetGravity(200); // could balance gravitation with the world size
+			//API::Instance().SetGravity(200); // could balance gravitation with the world size
 
 			float worldSize = ((WorldAttributes*)obj)->worldSize; 
 			float atmosphereSize = ((WorldAttributes*)obj)->atmoSphereSize; 
@@ -67,10 +67,6 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 			gameObj = new ExplosiveCrate(rigidBody, (ObjectSpecialType)obj->specialTypeID, objIDCounter, dmg, force, radie);
 		}
 		break;
-	//case ObjectSpecialType_BlueExplosiveBox: 
-	//	int dmg = 70; 
-	//	gameObj = new ExplosiveBox(rigidBody, ObjectSpecialType_BlueExplosiveBox);
-	//	break;
 	case ObjectSpecialType_SpikeBox: 
 		{
 			gameObj = new DynamicObject(rigidBody, DynamicObject::DynamicDefaultOnCollision, (ObjectSpecialType)obj->specialTypeID, objIDCounter);
@@ -124,6 +120,7 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		}
 		break;
 	}
+	gameObj->SetInitialPos(rigidBody->GetState().centerPos);
 	return gameObj;
 }
 
@@ -239,7 +236,7 @@ bool Level::InitiateLevel(std::wstring levelPath)
 		return false;
 
 	API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
-	API::Instance().SetGravity(200);
+	API::Instance().SetGravity(NoEdgeConstants::Values::Globals::Gravity);
 	int objCount = (int)objects.size();
 
 	for (int i = 0; i < objCount; i++)
@@ -263,25 +260,28 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 				ICustomBody* rigidBody_Static = NULL;	
 
-				// collision shape
-				if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+				if(staticObjData->specialTypeID != ObjectSpecialType_None)
 				{
-					rigidBody_Static = InitRigidBodySphere(staticObjData);
-				}
+					// collision shape
+					if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Sphere)
+					{
+						rigidBody_Static = InitRigidBodySphere(staticObjData);
+					}
 
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
-				{	
-					rigidBody_Static = InitRigidBodyCube(staticObjData);
-				}
+					else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Box)
+					{
+						rigidBody_Static = InitRigidBodyCube(staticObjData);
+					}
 
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
-				{
-					//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
-				}
+					else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_Cylinder)
+					{
+						//rigidBody_Static = InitRigidBodyCylinder(staticObjData);
+					}
 
-				else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_CG_MESH)
-				{
-					rigidBody_Static = InitRigidBodyMesh(staticObjData);
+					else if(staticObjData->boundingVolume.geoType == CollisionGeometryType_CG_MESH)
+					{
+						rigidBody_Static = InitRigidBodyMesh(staticObjData);
+					}
 				}
 
 				if(rigidBody_Static != NULL)
@@ -458,8 +458,6 @@ void Level::Update(float deltaTime)
 	int winnerID =  gameMode.EndConditionMet(this->playerObjects);
 	if (winnerID != -1 )
 	{
-		this->playerObjects[winnerID];
-		
 		// game ends because of timer
 		if (gameMode.TimeExit())
 		{
@@ -517,6 +515,7 @@ void Level::Update(float deltaTime)
 				dynamicObjects[i]->RemoveAffectedBy();
 			}
 		}
+		dynamicObjects[i]->AttemptResetToInitalPos(deltaTime);
 	}
 
 	for(int i = 0; i < (int)playerObjects.Size(); i++)

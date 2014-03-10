@@ -107,7 +107,7 @@ namespace GameLogic
 		WeaponAction_PrimaryShoot		= 3,
 		WeaponAction_SecondaryShoot		= 4,
 		WeaponAction_UtilityActivate	= 5,
-		WeaponAction_Reload				= 6, 
+		WeaponAction_GunShoot			= 6, 
 		WeaponAction_EnergyDepleted		= 7,
 
 	};
@@ -120,12 +120,19 @@ namespace GameLogic
 		CollisionEvent_CrystalVsPlayer,
 		CollisionEvent_JumpPad,
 		CollisionEvent_Explosion,
-		
+		CollisionEvent_Portal,
 	};
 	enum PickupType
 	{
 		PickupType_Health,
 		PickupType_SpeedBoost
+	};
+	enum PlayerHealthEvent
+	{
+		PlayerHealthEvent_Damage, 
+		PlayerHealthEvent_Heal,
+		PlayerHealthEvent_Respawn,
+		PlayerHealthEvent_Join,
 	};
 
 	/************************************

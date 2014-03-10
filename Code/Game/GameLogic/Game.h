@@ -96,6 +96,7 @@ namespace GameLogic
 		void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) 								override;
 		void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer)								override;
 		void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer)										override;
+		void SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer)									override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -121,6 +122,7 @@ namespace GameLogic
 		GameEvent::CollisionEventFunction	onCollisionEventFnc;
 		GameEvent::WeaponEnergyFunction		onEnergyUpdateFnc;
 		GameEvent::EndGameFunction			onEndGameFnc;
+		GameEvent::BeamEffectFunction		onBeamEffectFnc;
 	};	
 }
 

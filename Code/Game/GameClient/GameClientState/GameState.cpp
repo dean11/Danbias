@@ -1,4 +1,5 @@
 ﻿#include "GameState.h"
+#include <vector>
 #include "DllInterfaces/GFXAPI.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
@@ -6,6 +7,7 @@
 //#include <GameServerAPI.h>
 #include "C_Light.h"
 #include "C_obj/C_Player.h"
+#include "C_obj/C_Beam.h"
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
 #include "Utilities.h"
@@ -31,7 +33,15 @@ using namespace ::Utility::StaticArray;
 //#define _CAMERA_DEBUG
 struct  GameState::MyData
 {
-	MyData(){}
+	MyData()
+	{
+		myId = -1;
+		weapon = 0;
+		soundManager = 0;
+		keyboardInput = 0;
+		mouseInput = 0;
+		nwClient = 0;
+	}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
@@ -45,6 +55,7 @@ struct  GameState::MyData
 
 	C_AudioHandler* soundManager;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
+	::std::vector<::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Beam>> beams;
 	Camera_FPSV2 camera;
 
 	FirstPersonWeapon* weapon;
@@ -61,6 +72,12 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 GameState::GameState()
 {
 	this->privData = nullptr;
+	this->gameUI = 0;
+	this->respawnUI = 0;
+	this->statsUI = 0;
+	this->inGameMeny = 0;
+	this->inGameOptions = 0;
+	int uiStackTop = 0;
 }
 
 GameState::~GameState()
@@ -75,9 +92,10 @@ bool GameState::Init( SharedStateContent &shared )
 	// and there is content in shared.dynamicObjects and shared.staticObjects
 
 	this->privData = new MyData();
+	this->renderStats = false;
 
 	this->privData->soundManager = shared.soundManager;
-	this->privData->soundManager->getChannel(pickUpSound)->SetPauseChannel(false);
+	//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->SetPauseChannel(false);
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;
@@ -89,6 +107,8 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->pickups = &shared.pickups;
 	this->privData->weapons = &shared.weapons;
 	this->privData->weapon = shared.weapon;
+
+	this->privData->beams.reserve( 10 );
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
@@ -111,7 +131,7 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
-	this->privData->mouseInput->SetSensitivity(1.7f);
+	this->privData->mouseInput->SetSensitivity(1.0f);
 
 	// create UI states
 	this->gameUI = new GamingUI( &shared, &this->privData->camera );
@@ -279,6 +299,20 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	}
 	//!Rotate pickups
 
+	{ // update beams
+		int numBeams = (int)this->privData->beams.size();
+		for( int i = 0; i < numBeams; ++i )
+		{
+			if( this->privData->beams[i]->Update(deltaTime) )
+			{ // returns true if beam is expired
+				--numBeams;
+				this->privData->beams[i] = this->privData->beams[numBeams];
+				this->privData->beams.pop_back();
+				--i;
+			}
+		}
+	} // end update beams
+
 	return this->privData->nextState;
 }
 
@@ -338,6 +372,14 @@ bool GameState::Render()
 
 		}
 	}
+
+	{ // render beams
+		auto beam = this->privData->beams.begin();
+		for( ; beam != this->privData->beams.end(); ++beam )
+		{
+			(*beam)->Render();
+		}
+	} // end render beams
 
 	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
 	this->privData->weapon->Render();
@@ -527,23 +569,27 @@ void GameState::ChangeState( ClientState next )
 	this->privData->nextState = next;
 }
 
-void GameState::PlaySound( SoundID id )
+void GameState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode )
 {
-	if(!this->privData->soundManager->getChannel(id)->getChannelPlaying())
-		Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSFX(id), this->privData->soundManager->getChannel(id));
+	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
+	Sound::IChannel* channel = this->privData->soundManager->getChannel(channelID);
+
+	this->privData->soundManager->PlaySoundOnChannel( sound, channel, playMode);
 }
-void GameState::PlaySound( Sound::ISound* sound, Sound::IChannel* channel, bool restart )
+void GameState::PlaySoundCollisionSound( SoundID soundID, PlayMode playMode, float* pos )
 {
-	if(restart)
-	{
-		if(channel->getChannelPlaying())
-		{
-			channel->restartChannel();
-			channel->SetPauseChannel(false);
-		}
-	}
-	if(!channel->getChannelPlaying())
-		Sound::AudioAPI::Audio_PlaySound(sound, channel);
+	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
+	Sound::IChannel* channel = this->privData->soundManager->getCollisionChannel();
+	Float3 vel(0, 0, 0);
+	this->privData->soundManager->PlaySoundOnChannel( sound, channel, playMode);
+	channel->setChannel3DAttributes( pos, vel);
+}
+void GameState::PlayPlayerSound( SoundID soundID, int playerId, PlayerSoundID playerSoundID, PlayMode playMode )
+{
+	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
+	Sound::IChannel* channel = this->privData->soundManager->getPlayerChannel( playerId, playerSoundID);
+
+	this->privData->soundManager->PlaySoundOnChannel( sound, channel, playMode);
 }
 void GameState::ReadKeyInput()
 {
@@ -618,11 +664,11 @@ void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 
 		if (decoded.pickup_ID == GameLogic::PickupType::PickupType_Health)
 		{
-			PlaySound(this->privData->soundManager->getSound(pickUpHealth), this->privData->soundManager->getCollisionChannel());
+			PlaySoundCollisionSound(SoundID_PickUpHealth, PlayMode_AlwaysStart, object->getPos());
 		}
 		else if (decoded.pickup_ID == GameLogic::PickupType::PickupType_SpeedBoost)
 		{
-			// object->PickupSpeed();
+			// PlaySoundCollisionSound(SoundID_PickUpSpeed, PlayMode_AlwaysStart);
 		}
 	}
 	decoded.pickup_ID;
@@ -639,10 +685,25 @@ void GameState::Gameplay_ObjectDamage( CustomNetProtocol data )
 		if( this->privData->myId == decoded.objectID )
 		{
 			// set given players HP 
-			((GamingUI*)this->gameUI)->SetHPtext( ::std::to_wstring((int)decoded.healthLost) );
+			((GamingUI*)this->gameUI)->SetHPtext( ::std::to_wstring((int)decoded.health) );
 		}
 
-		PlaySound(this->privData->soundManager->getSound(playerDmgRecieveSound), this->privData->soundManager->getPlayerChannel(decoded.objectID, playerSoundID_dmgRecieved));
+		switch (decoded.eventID)
+		{
+		case PlayerHealthEvent_Damage:
+			PlayPlayerSound(SoundID_Player_DMGtaken, decoded.objectID, PlayerSoundID_DMGtaken, PlayMode_FinnishSound);
+			break;
+		case PlayerHealthEvent_Heal:
+			// Play pickup sound
+			//PlayPlayerSound(SoundID_Player_Heal, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
+			break;
+		case PlayerHealthEvent_Respawn:
+			PlayPlayerSound(SoundID_Player_Respawn, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
+			break;
+		case PlayerSoundID_Join:
+			//PlayPlayerSound(SoundID_Player_Join, decoded.objectID, PlayerSoundID_Heal, PlayMode_FinnishSound);
+			break;
+		}
 	}
 	if( !object)
 	{
@@ -746,15 +807,19 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 
 		C_Object *weapon = (*this->privData->weapons)[decoded.objectID];
 
+		Float3 vel(0, 0, 0);
+		// Update player sound position
+		this->privData->soundManager->setPlayerChannelPos(decoded.objectID, position, vel);
+
 		if( this->privData->myId == decoded.objectID )
 		{
 			this->privData->camera.SetPosition( position );
 			this->privData->camera.SetRotation( rotation );
-			Float3 vel(0, 0, 0);
+	
 			// Set audio listener pos
 			Sound::AudioAPI::Audio_SetListenerPos(position, vel, this->privData->camera.GetForward(), this->privData->camera.GetUp());
 		}
-
+		
 		player->setPos( position );
 		player->setRot( rotation );
 		player->updateWorld();
@@ -788,6 +853,14 @@ void GameState::Gameplay_ObjectPositionRotation( CustomNetProtocol data )
 		object->setPos( position );
 		object->setRot( rotation );
 		object->updateWorld();
+		if(object->GetLight() != -1)
+		{
+			auto light = privData->lights->find( object->GetLight() );
+			if( light != privData->lights->end() )
+			{
+				light->second->setPos( object->getPos() );
+			}
+		}
 	}
 }
 void GameState::Gameplay_ObjectEnabled( CustomNetProtocol data )
@@ -978,6 +1051,9 @@ void GameState::Gameplay_ObjectDie( CustomNetProtocol data )
 	}
 
 	((GamingUI*)this->gameUI)->SetKillMessage(message);
+
+	//SOUND
+	PlayPlayerSound(SoundID_Player_Die, decoded.victimID, PlayerSoundID_Die, PlayMode_AlwaysStart);
 }
 void GameState::Gameplay_PlayerScore( CustomNetProtocol data )
 {
@@ -1026,27 +1102,27 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			case GameLogic::PlayerAction::PlayerAction_Walk:
 				player->stopAllAnimations();
 				player->playAnimation( L"run_forwards", true );
-				PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk), true);
+				PlayPlayerSound(SoundID_Player_Walk, decoded.objectID, PlayerSoundID_Walk, PlayMode_Restart);
 				weapon->stopAllAnimations();
-				//weapon->playAnimation( L"run_forwards", true );
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
-				PlaySound(this->privData->soundManager->getSound(jump), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Jump));
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				PlayPlayerSound(SoundID_Player_Jump, decoded.objectID, PlayerSoundID_Jump, PlayMode_FinnishSound);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Jump)->SetPauseChannel(true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation( L"idle", true );
 				weapon->stopAllAnimations();
-				//weapon->playAnimation( L"idle", true );
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Walk)->SetPauseChannel(true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
-				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
+				PlayPlayerSound(SoundID_Player_WeaponPull, decoded.objectID, PlayerSoundID_Push, PlayMode_FinnishSound);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
+				PlayPlayerSound(SoundID_Player_WeaponPush, decoded.objectID, PlayerSoundID_Pull, PlayMode_FinnishSound);
 				break;
-			case GameLogic::WeaponAction::WeaponAction_Reload:
+			case GameLogic::WeaponAction::WeaponAction_GunShoot:
+				PlayPlayerSound(SoundID_Player_WeaponShoot, decoded.objectID, PlayerSoundID_Shoot, PlayMode_FinnishSound);
 				break;
 			default:
 				break;
@@ -1060,25 +1136,29 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 			case  GameLogic::PlayerAction::PlayerAction_Walk:
 				player->stopAllAnimations();
 				player->playAnimation(L"run_forwards", true);
-				PlaySound(this->privData->soundManager->getSound(walk), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk), true);
+				PlayPlayerSound(SoundID_Player_Walk, decoded.objectID, PlayerSoundID_Walk, PlayMode_Restart);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Jump:
 				player->playAnimation(L"movement", true);
-				PlaySound(this->privData->soundManager->getSound(jump), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Jump));
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				PlayPlayerSound(SoundID_Player_Jump, decoded.objectID, PlayerSoundID_Jump, PlayMode_FinnishSound);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Walk)->SetPauseChannel(true);
 				break;
 			case GameLogic::PlayerAction::PlayerAction_Idle:
 				player->stopAllAnimations();
 				player->playAnimation(L"idle", true);
-				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_walk)->SetPauseChannel(true);
+				this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_Walk)->SetPauseChannel(true);
 				break;
 			case GameLogic::WeaponAction::WeaponAction_PrimaryShoot:
-				PlaySound(this->privData->soundManager->getSound(shoot), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_shoot));
+				PlayPlayerSound(SoundID_Player_WeaponPush, decoded.objectID, PlayerSoundID_Push, PlayMode_FinnishSound);
+				this->privData->weapon->Shoot();
 				break;
 			case GameLogic::WeaponAction::WeaponAction_SecondaryShoot:
-				PlaySound(this->privData->soundManager->getSound(pull), this->privData->soundManager->getPlayerChannel(decoded.objectID, PlayerSoundID_pull));
+				PlayPlayerSound(SoundID_Player_WeaponPull, decoded.objectID, PlayerSoundID_Pull, PlayMode_FinnishSound);
+				this->privData->weapon->Shoot();
 				break;
-			case GameLogic::WeaponAction::WeaponAction_Reload:
+			case GameLogic::WeaponAction::WeaponAction_GunShoot:
+				PlayPlayerSound(SoundID_Player_WeaponShoot, decoded.objectID, PlayerSoundID_Shoot, PlayMode_FinnishSound);
+				this->privData->weapon->Shoot();
 				break;
 			default:
 				break;
@@ -1101,25 +1181,64 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 		switch (decoded.collisionID)
 		{
 		case GameLogic::CollisionEvent::CollisionEvent_BoxVsBox:
+			//PlaySoundCollisionSound(SoundID_BoxVsBoxCollision, PlayMode_AlwaysStart);
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_BoxVsPlayer:
-			//PlaySound(this->privData->soundManager->getSound(pull), this->privData->soundManager->getCollisionChannel());
+			//PlaySoundCollisionSound(SoundID_BoxVsPlayerCollision, PlayMode_AlwaysStart);
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_CrystalVsPlayer:
-			PlaySound(this->privData->soundManager->getSound(crystalCollisionEventSound), this->privData->soundManager->getCollisionChannel());
+			PlaySoundCollisionSound(SoundID_CrystalCollision, PlayMode_AlwaysStart, object->getPos());
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_JumpPad:
-			PlaySound(this->privData->soundManager->getSound(jumppadEventSound), this->privData->soundManager->getCollisionChannel());
+			PlaySoundCollisionSound(SoundID_Jumppad, PlayMode_AlwaysStart, object->getPos() );
 			break;
 		case GameLogic::CollisionEvent::CollisionEvent_Explosion:
-			PlaySound(this->privData->soundManager->getSound(explosionEventSound), this->privData->soundManager->getCollisionChannel() );
+			PlaySoundCollisionSound(SoundID_CrateExplosion, PlayMode_AlwaysStart, object->getPos() );
 			break;
+		case GameLogic::CollisionEvent::CollisionEvent_Portal:
+			PlaySoundCollisionSound(SoundID_Portal, PlayMode_AlwaysStart, object->getPos() );
 		default:
 			break;
 		}
 	}
 }
+void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol data )
+{
+	Protocol_EffectBeam decoded( data );
 
+	C_DynamicObj *owner = this->privData->players[decoded.ownerID];
+	Quaternion ownerRotation = owner->getRotation();
+	Float3 upNormal = WorldAxisOf( ownerRotation, Float3::standard_unit_y );
+
+	Float3 debugRight = this->privData->camera.GetRight();
+	Quaternion debugRotQ = this->privData->camera.GetHeadRotation();
+	Float3 debugAngularNormal = AngularAxis( debugRotQ );
+	Float debugRadian = debugAngularNormal.GetMagnitude();
+	debugAngularNormal /= debugRadian;
+
+	C_Beam *beam = new C_Beam
+	(
+		decoded.ownerID,
+		upNormal,
+		decoded.startPoint,
+		decoded.endPoint,
+		decoded.beamRadius,
+		decoded.lifeTime
+	);
+
+	if( beam->LoadModel(L"beam.dan") )
+	{
+		beam->SetTint( Float3::standard_unit_x );
+		beam->SetGlowTint( owner->GetGlowTint() );
+		beam->updateWorld();
+	}
+	else
+	{
+		const char *breakpoint = "Debug trap: Missing file!";
+	}
+
+	this->privData->beams.push_back( beam );
+}
 void GameState::General_GameOver( CustomNetProtocol data )
 {
 	Protocol_General_GameOver decoded(data);
@@ -1127,6 +1246,8 @@ void GameState::General_GameOver( CustomNetProtocol data )
 	// turn off gameInput
 	this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
 	this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
+	this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack)->SetPauseChannel(true);
+	PlaySound(SoundID_Game_GameOver, ChannelID_Game_GameOver, PlayMode_Restart);
 	gameOver = true;
 }
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
@@ -1198,6 +1319,11 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Gameplay_ObjectCreate( data );
 			}		
 			return GameClientState::event_processed;
+		case protocol_Gameplay_EffectBeam:
+			{
+				Gameplay_EffectCreateBeam( data );
+			}
+			break;
 		case protocol_Gameplay_ObjectCreatePlayer:
 			{
 				Gameplay_ObjectCreatePlayer( data );

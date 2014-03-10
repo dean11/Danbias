@@ -12,7 +12,7 @@ AttatchmentGun::AttatchmentGun(Oyster::Math::Float* currEnergy, Oyster::Math::Fl
 {
 	this->owner = 0;
 	this->damage = 0.0f;
-	this->Cooldown = 0.0f;
+	//this->Cooldown = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
 }
@@ -21,9 +21,9 @@ AttatchmentGun::AttatchmentGun(Player &owner, Oyster::Math::Float* currEnergy, O
 {
 	this->owner = &owner;
 	this->damage = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryDamage;
-	this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
+	//this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
 	this->energyCost = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost;
-	this->TimeUntilFire = 0.0f;
+	//this->TimeUntilFire = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
 }
@@ -43,11 +43,13 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		if(TimeUntilFire > this->Cooldown && *currentEnergy >= energyCost)
+		//if(TimeUntilFire > this->Cooldown && *currentEnergy >= energyCost)
+		if( *currentEnergy >= energyCost )
 		{
 			ShootBullet(usage,dt);
-			TimeUntilFire = 0.0f;
+			//TimeUntilFire = 0.0f;
 			(*currentEnergy) -= energyCost; 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_GunShoot);
 		}
 	break;
 	}
@@ -56,7 +58,7 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 
 void AttatchmentGun::Update(float dt)
 {
-	this->TimeUntilFire += dt;
+	//this->TimeUntilFire += dt;
 
 	if((*currentEnergy) < NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy)
 	{
@@ -75,16 +77,18 @@ void AttatchmentGun::Update(float dt)
 
 void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
-	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float3 target = pos + (look * 100);
+	::Oyster::Physics::ICustomBody::State ownerState; owner->GetRigidBody()->GetState( ownerState );
+	::Oyster::Math::Float3 pos; this->owner->GetWeaponMuzzlePosition( pos, ownerState );
+	::Oyster::Math::Float3 target = pos + ( this->owner->GetLookDir() * 100.0f );
 
-	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
+	::Oyster::Physics::ICustomBody *hitObject = ::Oyster::Physics::API::Instance().RayClosestObjectNotMe( this->owner->GetRigidBody(), pos, target );
 	
 	if(hitObject != NULL)
 	{
 		BulletCollision(hitObject);
 	}
+
+	((Game*)&Game::Instance())->onBeamEffectFnc( this->owner, pos, target, 0.1f, 0.1f );
 }
 
 
