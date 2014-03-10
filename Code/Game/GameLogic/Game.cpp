@@ -137,7 +137,7 @@ bool Game::NewFrame(float deltaTime)
 	this->timer += deltaTime;
 	if(this->timer >= this->frameTime)
 	{
-		this->level->Update(this->frameTime);
+		this->level->Update(deltaTime);
 
 		for (unsigned int i = 0; i < this->players.Size(); i++)
 		{

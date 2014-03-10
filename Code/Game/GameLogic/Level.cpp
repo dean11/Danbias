@@ -458,8 +458,6 @@ void Level::Update(float deltaTime)
 	int winnerID =  gameMode.EndConditionMet(this->playerObjects);
 	if (winnerID != -1 )
 	{
-		this->playerObjects[winnerID];
-		
 		// game ends because of timer
 		if (gameMode.TimeExit())
 		{

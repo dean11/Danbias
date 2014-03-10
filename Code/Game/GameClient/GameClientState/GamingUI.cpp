@@ -318,7 +318,6 @@ void GamingUI::ActivateInput()
 
 void GamingUI::DeactivateInput()
 {
-	this->shared->mouseSensitivity = this->shared->mouseDevice->GetSensitivity();
 	this->shared->mouseDevice->SetSensitivity(1.0f);
 	this->DeactivateGUIRender();
 	this->shared->mouseDevice->RemoveMouseEvent( this );

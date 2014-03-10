@@ -291,8 +291,10 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 		float left = 0.5f - halfWidth;
 		float localX = (temp.x - left);
 		float value = localX * maxVal / width;
+		float real = Max(value, minThreshold);
 		
-		this->shared->mouseDevice->SetSensitivity( Max(value, minThreshold) );
+		this->shared->mouseDevice->SetSensitivity( real );
+		this->shared->mouseSensitivity = real;
 	}
 }
 

@@ -69,7 +69,7 @@ namespace NoEdgeConstants
 				const float PushCost					= 9.0f;
 				const float ZipCost						= 40.0f;
 
-				const float PrimaryCooldown				= 0.2f;
+				const float PrimaryCooldown				= 0.0f;
 				const float SecondaryCooldown			= 0.0f;
 				const float UtilityCooldown				= 0.1f;
 
