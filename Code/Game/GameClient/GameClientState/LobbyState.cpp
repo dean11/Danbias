@@ -110,9 +110,35 @@ void LobbyState::ChangeState( ClientState next )
 	else
 		this->privData->nextState = next;
 }
-void LobbyState::PlaySound( SoundID id )
+void LobbyState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode )
 {
-	Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(id), this->privData->soundManager->getChannel(id));
+	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
+	Sound::IChannel* channel = this->privData->soundManager->getChannel(channelID);
+	if( playMode == PlayMode_Restart)
+	{
+		if(channel->getChannelPlaying())
+		{
+			// play from the beginning of the sound on the channel
+			channel->restartChannel();
+			channel->SetPauseChannel(false);
+		}
+		else
+		{
+			// start new sound if nothing was playing
+			Sound::AudioAPI::Audio_PlaySound(sound, channel);
+		}
+	}
+	else if( playMode == PlayMode_FinnishSound )
+	{
+		// start sound only when it is not already playing
+		if(!channel->getChannelPlaying())
+			Sound::AudioAPI::Audio_PlaySound(sound, channel);
+	}
+	else if( playMode == PlayMode_AlwaysStart )
+	{
+		// multiple sounds can play at once on the channel
+		Sound::AudioAPI::Audio_PlaySound(sound, channel);
+	}
 }
 using namespace ::Oyster::Network;
 
@@ -155,12 +181,12 @@ void OnButtonInteract_Ready( Oyster::Event::ButtonEvent<LobbyState*>& e )
 	{
 	case ButtonState_Hover:
 		// SOUND
-		e.owner->PlaySound(mouse_hoover);
+		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button1, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
 		e.owner->ChangeState( GameClientState::ClientState_LobbyReady );
 		// SOUND
-		e.owner->PlaySound(mouse_click);
+		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button1, PlayMode_Restart);
 		break;
 	default: break;
 	}

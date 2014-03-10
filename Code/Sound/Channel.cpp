@@ -2,6 +2,10 @@
 using namespace Sound;
 using namespace FmodUtil;
 
+//if (result == FMOD_ERR_CHANNEL_STOLEN)
+//{
+//	int i = 0; 
+//}
 ChannelData::ChannelData()
 {
 	channel = nullptr;
@@ -16,64 +20,136 @@ ChannelData::~ChannelData()
 }
 void ChannelData::setVolym(float volym)
 {
-	result = channel->setVolume(volym);
-	FmodErrorCheck(result);
+	if(channel)
+	{
+		result = channel->setVolume(volym);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 void ChannelData::setMinMaxDistance( float min, float max)
 {
-	result = channel->set3DMinMaxDistance(min, max);
-	FmodErrorCheck(result);
+	if(channel)
+	{
+		result = channel->set3DMinMaxDistance(min, max);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 void ChannelData::setChannel3DAttributes( float* pos, float* vel)
 {
-	//FMOD_VECTOR posF = { 1.0f, 2.0f, 3.0f };
-	//FMOD_VECTOR velF = { 1.0f, 0.0f, 0.0f };
-	//channel->set3DAttributes( &posF, &velF);
-	result = channel->set3DAttributes( &floatArrToFmodVECTOR(pos), &floatArrToFmodVECTOR(vel));
-	//FmodErrorCheck(result);
+	if(channel)
+	{
+		result = channel->set3DAttributes( &floatArrToFmodVECTOR(pos), &floatArrToFmodVECTOR(vel));
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 void ChannelData::SetPauseChannel(bool pause)
 {
-	result = channel->setPaused(pause);
-	FmodErrorCheck(result);
+	if(channel)
+	{
+		result = channel->setPaused(pause);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 bool ChannelData::GetPauseChannel()
 {
-	bool pause;
-	result = channel->getPaused(&pause);
-	FmodErrorCheck(result);
+	bool pause = false;
+	if(channel)
+	{
+		result = channel->getPaused(&pause);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 	return pause;
 }
 void ChannelData::toggleChannelPaused()
 {
-	bool paused;
-	result = channel->getPaused(&paused);
-	FmodErrorCheck(result);
-	result = channel->setPaused(!paused);
-	FmodErrorCheck(result);
+	if(channel)
+	{
+		bool paused;
+		result = channel->getPaused(&paused);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+		result = channel->setPaused(!paused);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 void ChannelData::setSoundVolume()
 {
-	FMOD_VECTOR direction = { 0.0f, 1.0f, 0.0f };
-	result = channel->set3DConeOrientation(&direction);
-	FmodErrorCheck(result);
-	// 360 grader, 360 grader, 0- 1 volym
-	result = channel->set3DConeSettings(30.0f, 360.0f, 0.2f);
-	FmodErrorCheck(result);
+	if(channel)
+	{
+		FMOD_VECTOR direction = { 0.0f, 1.0f, 0.0f };
+		result = channel->set3DConeOrientation(&direction);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+		// 360 grader, 360 grader, 0- 1 volym
+		result = channel->set3DConeSettings(30.0f, 360.0f, 0.2f);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 bool ChannelData::getChannelPlaying()
 {
-	bool playing;
-	result = channel->isPlaying(&playing);
-	//FmodErrorCheck(result);
+	bool playing = false;
+	if(channel)
+	{
+		result = channel->isPlaying(&playing);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 	return playing; 
 }
 void ChannelData::stop()
 {
-	result = channel->stop();
-	FmodErrorCheck(result);
+	if(channel)
+	{
+		result = channel->stop();
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
 }
 void ChannelData::restartChannel()
 {
-	result = channel->setPosition(0, FMOD_TIMEUNIT_MS);
+	if(channel)
+	{
+		result = channel->setPosition(0, FMOD_TIMEUNIT_MS);
+		if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+		{
+			FmodErrorCheck(result);
+		}
+	}
+}
+void ChannelData::addChannelToGroup(IChannelGroup* channelGroup)
+{
+	channel->setChannelGroup(((ChannelGroupData*)channelGroup)->channelgroup);
+	if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE )
+	{
+		FmodErrorCheck(result);
+	}
 }

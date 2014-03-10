@@ -15,6 +15,10 @@ bool AudioAPI::Audio_Update(float deltaTime)
 {
 	return AudioManager::self()->updateSoundManager(deltaTime); 
 }
+IChannelGroup* AudioAPI::Audio_CreateChannelGroup(const char* groupName)
+{
+	return (IChannelGroup*)AudioManager::self()->CreateChannelGroup(groupName);
+}
 IChannel* AudioAPI::Audio_CreateChannel()
 {
 	return (IChannel*)AudioManager::self()->CreateChannel();

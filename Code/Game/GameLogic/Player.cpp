@@ -216,7 +216,7 @@ void Player::Respawn( Float3 spawnPoint )
 		Player::initPlayerData();
 		this->rigidBody->SetPosition(spawnPoint);
 		this->gameInstance->onRespawnFnc( this, spawnPoint);
-		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Respawn);
 	}
 }
 

@@ -20,7 +20,7 @@ namespace DanBias
 			virtual bool Render();
 			virtual bool Release();
 			void ChangeState( ClientState next );
-			void PlaySound( SoundID id );
+			void PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode );
 
 			virtual const NetEvent & DataRecieved( const NetEvent &message );
 
