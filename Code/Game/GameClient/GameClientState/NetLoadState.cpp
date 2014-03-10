@@ -367,31 +367,39 @@ void NetLoadState::LoadSound()
 {
 	this->privData->soundManager->getChannel(ChannelID_Menu_Soundtrack)->SetPauseChannel(true);
 
-
+	// Game music
+	this->privData->soundManager->addMusic(SoundDesc("Energy01.mp3",		SoundID_Game_SoundTrack)); // !
+	this->privData->soundManager->addMusic(SoundDesc("industrial.mp3",		SoundID_Game_GameOver)); 
 
 	// event sounds, using collision channels
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",		SoundID_PickUpHealth));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_Jumppad));
+	this->privData->soundManager->addSFX_3D(SoundDesc("scifi2.mp3",		SoundID_PickUpHealth));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jumppad2.mp3",		SoundID_Jumppad));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Collision02.mp3",	SoundID_CrystalCollision));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",		SoundID_CrateExplosion));
-	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsBoxCollision));
-	this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsPlayerCollision));
+	this->privData->soundManager->addSFX_3D(SoundDesc("explosion3.mp3",		SoundID_CrateExplosion));
+
+	//this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsBoxCollision));
+	//this->privData->soundManager->addSFX_3D(SoundDesc("energy_pickup.wav",	SoundID_BoxVsPlayerCollision));
+	this->privData->soundManager->addSFX_3D(SoundDesc("teleport.mp3",		SoundID_Portal));
 
 	// player sounds, using player channels
 	this->privData->soundManager->addSFX_3D(SoundDesc("Running01.mp3",			SoundID_Player_Walk));
-	this->privData->soundManager->addSFX_3D(SoundDesc("player_near_death.wav",	SoundID_Player_Jump));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPull));
+	this->privData->soundManager->addSFX_3D(SoundDesc("player_near_death.wav",	SoundID_Player_Jump)); // !
+	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",			SoundID_Player_WeaponPull));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPush));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",			SoundID_Player_WeaponShoot));
+	this->privData->soundManager->addSFX_3D(SoundDesc("weaponShot.mp3",			SoundID_Player_WeaponShoot));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Skada1.wav",				SoundID_Player_DMGtaken));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Heal));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Respawn));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Die));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Join));
+	//this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Heal));
+	this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Respawn)); // !
+	this->privData->soundManager->addSFX_3D(SoundDesc("gameOver.mp3",			SoundID_Player_Die));
+	//this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Join));
 
 	// ambient sounds
 	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", SoundID_Pickup_Music, ChannelID_pickUpSound ));
 	this->privData->soundManager->addSFX_3D(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient, ChannelID_ambient));
+	
+	// Background music 
+	//this->privData->soundManager->getSound(SoundID_Game_SoundTrack)->setMode(Sound::Loop_normal);
+	//Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(SoundID_Game_SoundTrack), this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack), true);
 	
 	this->privData->soundManager->getSound(SoundID_Player_Walk)->setMode(Sound::Loop_normal);
 	

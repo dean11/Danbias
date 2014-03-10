@@ -35,6 +35,7 @@ namespace DanBias
 			SoundID_CrateExplosion,
 			SoundID_BoxVsBoxCollision, 
 			SoundID_BoxVsPlayerCollision,
+			SoundID_Portal,
 
 			// player sounds
 			SoundID_Player_Walk,
@@ -71,6 +72,7 @@ namespace DanBias
 			ChannelID_pickUpSound,
 			ChannelID_jumppad,
 			ChannelID_collision,
+			ChannelID_portal,
 			ChannelID_ambient,
 
 			ChannelID_none,

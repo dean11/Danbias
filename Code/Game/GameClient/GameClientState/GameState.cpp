@@ -539,8 +539,8 @@ void GameState::PlaySoundCollisionSound( SoundID soundID, PlayMode playMode, flo
 	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
 	Sound::IChannel* channel = this->privData->soundManager->getCollisionChannel();
 	Float3 vel(0, 0, 0);
-	channel->setChannel3DAttributes( pos, vel);
 	this->privData->soundManager->PlaySoundOnChannel( sound, channel, playMode);
+	channel->setChannel3DAttributes( pos, vel);
 }
 void GameState::PlayPlayerSound( SoundID soundID, int playerId, PlayerSoundID playerSoundID, PlayMode playMode )
 {
@@ -1144,6 +1144,8 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 		case GameLogic::CollisionEvent::CollisionEvent_Explosion:
 			PlaySoundCollisionSound(SoundID_CrateExplosion, PlayMode_AlwaysStart, object->getPos() );
 			break;
+		case GameLogic::CollisionEvent::CollisionEvent_Portal:
+			PlaySoundCollisionSound(SoundID_Portal, PlayMode_AlwaysStart, object->getPos() );
 		default:
 			break;
 		}

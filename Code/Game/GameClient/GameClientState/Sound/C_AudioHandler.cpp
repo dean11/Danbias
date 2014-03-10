@@ -65,9 +65,11 @@ void C_AudioHandler::addPlayerSound(int playerId)
 		for (int i = 0; i < PlayerSoundID_Count; i ++)
 		{
 			playerChannels[playerId]->channels[i] = AudioAPI::Audio_CreateChannel();
+			playerChannels[playerId]->channels[i]->addChannelToGroup( getChannelGroup(ChannelGroup_GameSFX));
 		}
 		AudioAPI::Audio_PlaySound(getSound(SoundID_Player_Walk), getPlayerChannel(playerId, PlayerSoundID_Walk), true);
 		getPlayerChannel(playerId, PlayerSoundID_Walk)->setVolym(0.2f);
+
 	}
 }
 void C_AudioHandler::setPlayerChannelPos( int playerId, float* pos, float* vel)

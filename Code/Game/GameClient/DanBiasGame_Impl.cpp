@@ -112,7 +112,7 @@ namespace DanBias
 
 		
 		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", SoundID_Mouse_Hover));
-		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", SoundID_Mouse_Click));
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("button_click.wav", SoundID_Mouse_Click));
 		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button1);
 		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button2);
 		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button3);

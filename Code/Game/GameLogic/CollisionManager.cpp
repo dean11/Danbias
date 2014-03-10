@@ -123,7 +123,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 
 
 		Teleport(*realObjB->GetRigidBody(),portal->portalExit);
-
+		((Game*)&Game::Instance())->onCollisionEventFnc(realObjB, CollisionEvent::CollisionEvent_Portal);
 	}
 
 	void Teleport(Oyster::Physics::ICustomBody &obj, Oyster::Math::Float3 target)

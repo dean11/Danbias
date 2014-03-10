@@ -120,7 +120,7 @@ namespace GameLogic
 		CollisionEvent_CrystalVsPlayer,
 		CollisionEvent_JumpPad,
 		CollisionEvent_Explosion,
-		
+		CollisionEvent_Portal,
 	};
 	enum PickupType
 	{
