@@ -111,31 +111,8 @@ void LobbyAdminState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode 
 {
 	Sound::ISound* sound = this->privData->soundManager->getSound(soundID);
 	Sound::IChannel* channel = this->privData->soundManager->getChannel(channelID);
-	if( playMode == PlayMode_Restart)
-	{
-		if(channel->getChannelPlaying())
-		{
-			// play from the beginning of the sound on the channel
-			channel->restartChannel();
-			channel->SetPauseChannel(false);
-		}
-		else
-		{
-			// start new sound if nothing was playing
-			Sound::AudioAPI::Audio_PlaySound(sound, channel);
-		}
-	}
-	else if( playMode == PlayMode_FinnishSound )
-	{
-		// start sound only when it is not already playing
-		if(!channel->getChannelPlaying())
-			Sound::AudioAPI::Audio_PlaySound(sound, channel);
-	}
-	else if( playMode == PlayMode_AlwaysStart )
-	{
-		// multiple sounds can play at once on the channel
-		Sound::AudioAPI::Audio_PlaySound(sound, channel);
-	}
+
+	this->privData->soundManager->PlaySoundOnChannel(sound, channel, playMode);
 }
 using namespace ::Oyster::Network;
 

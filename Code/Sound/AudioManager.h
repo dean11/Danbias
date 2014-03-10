@@ -39,6 +39,7 @@ namespace Sound
 		void stop()override;
 		void restartChannel()override;
 		void addChannelToGroup(IChannelGroup* channelGroup)override;
+		void SetMuteChannel(bool mute)override;
 	};
 	struct SoundData : ISound
 	{

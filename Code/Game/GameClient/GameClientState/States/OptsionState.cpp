@@ -222,31 +222,8 @@ void OptionState::PlaySound( SoundID soundID, ChannelID channelID, PlayMode play
 {
 	Sound::ISound* sound = this->sharedData->soundManager->getSound(soundID);
 	Sound::IChannel* channel = this->sharedData->soundManager->getChannel(channelID);
-	if( playMode == PlayMode_Restart)
-	{
-		if(channel->getChannelPlaying())
-		{
-			// play from the beginning of the sound on the channel
-			channel->restartChannel();
-			channel->SetPauseChannel(false);
-		}
-		else
-		{
-			// start new sound if nothing was playing
-			Sound::AudioAPI::Audio_PlaySound(sound, channel);
-		}
-	}
-	else if( playMode == PlayMode_FinnishSound )
-	{
-		// start sound only when it is not already playing
-		if(!channel->getChannelPlaying())
-			Sound::AudioAPI::Audio_PlaySound(sound, channel);
-	}
-	else if( playMode == PlayMode_AlwaysStart )
-	{
-		// multiple sounds can play at once on the channel
-		Sound::AudioAPI::Audio_PlaySound(sound, channel);
-	}
+	
+	this->sharedData->soundManager->PlaySoundOnChannel(sound, channel, playMode);
 }
 const DanBias::Client::GameClientState::NetEvent & OptionState::DataRecieved( const NetEvent &message )
 {

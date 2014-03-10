@@ -105,10 +105,6 @@ void NetLoadState::ChangeState( ClientState next )
 {
 	this->privData->nextState = next;
 }
-void NetLoadState::PlaySound( SoundID id )
-{
-	//this->privData->soundManager->getSound(id)->Play_Sound();
-}
 
 const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientState::NetEvent &message )
 {
@@ -403,6 +399,5 @@ void NetLoadState::LoadSound()
 	//Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(SoundID_Game_SoundTrack), this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack), true);
 	
 	this->privData->soundManager->getSound(SoundID_Player_Walk)->setMode(Sound::Loop_normal);
-	
 }
 

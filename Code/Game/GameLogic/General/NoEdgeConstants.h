@@ -35,6 +35,7 @@ namespace NoEdgeConstants
 			const float FallDamageThreshold				= 100.0f;
 			const float forceThreashHold                = 40.0f;
 			const float	ObjectDistanceBeforeRespawn		= 80.0f;
+			const float	ObjectTimeStillBeforeRespawn	= 10.0f;
 		}
 
 		namespace Player

@@ -22,6 +22,7 @@ DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , void (*Ev
 	this->isActive = true;
 	this->affectedBy = NULL;
 	this->manipulatedBy = NULL;
+	this->resetCounter = 0;
 }
 DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID)
 	:Object(rigidBody, EventOnCollision, type, objectID)
@@ -30,6 +31,7 @@ DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::P
 	this->isActive = true;
 	this->affectedBy = NULL;
 	this->manipulatedBy = NULL;
+	this->resetCounter = 0;
 }
 
 DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, Oyster::Math::Float extraDamageOnCollision)
@@ -40,6 +42,7 @@ DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , void (*Ev
 	this->isActive = true;
 	this->affectedBy = NULL;
 	this->manipulatedBy = NULL;
+	this->resetCounter = 0;
 }
 
 DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Oyster::Math::Float kineticEnergyLoss), ObjectSpecialType type, int objectID, Oyster::Math::Float extraDamageOnCollision)
@@ -50,6 +53,7 @@ DynamicObject::DynamicObject(Oyster::Physics::ICustomBody *rigidBody , Oyster::P
 	this->isActive = true;
 	this->affectedBy = NULL;
 	this->manipulatedBy = NULL;
+	this->resetCounter = 0;
 }
 DynamicObject::~DynamicObject(void)
 {
@@ -112,7 +116,7 @@ void DynamicObject::RemoveManipulation()
 	this->manipulatedBy = NULL;
 }
 
-void DynamicObject::AttemptResetToInitalPos()
+void DynamicObject::AttemptResetToInitalPos(Oyster::Math::Float dt)
 {
 	if (!this->affectedBy && !this->manipulatedBy)
 	{
@@ -123,8 +127,19 @@ void DynamicObject::AttemptResetToInitalPos()
 
 			if (this->rigidBody->GetLinearVelocity().GetMagnitude() <= 0.1f)
 			{
-				//if the distance between the initialPosition of the object and the currentPosition is greater than the limit and the object is at rest, then teleport it back to its initial position
-				this->rigidBody->SetPosition(initialPos);
+
+				if (this->resetCounter >= NoEdgeConstants::Values::Limits::ObjectTimeStillBeforeRespawn)
+				{
+					//if the distance between the initialPosition of the object and the currentPosition is greater than the limit and the object is at rest, then teleport it back to its initial position
+					this->rigidBody->SetPosition(initialPos);
+					resetCounter = 0;
+				}
+				else
+				{
+					resetCounter += dt;
+				}
+				
+				
 			}
 		}
 	}

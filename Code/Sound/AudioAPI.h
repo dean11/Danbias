@@ -46,6 +46,7 @@ namespace Sound
 			virtual void stop() = 0;
 			virtual void restartChannel() = 0;
 			virtual void addChannelToGroup(IChannelGroup* channelGroup) = 0;
+			virtual void SetMuteChannel(bool mute) = 0;
 		};
 
 		class SOUND_DLL ISound

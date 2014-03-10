@@ -38,7 +38,7 @@ namespace GameLogic
 
 		static void DynamicObject::DynamicDefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 
-		void AttemptResetToInitalPos();
+		void AttemptResetToInitalPos(Oyster::Math::Float dt);
 
 	private:
 		bool isActive;
