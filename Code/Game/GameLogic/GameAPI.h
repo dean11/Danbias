@@ -37,6 +37,7 @@ namespace GameLogic
 		typedef void(*CollisionEventFunction)(IObjectData*object, int collisionID); 
 		typedef void(*WeaponEnergyFunction)(IObjectData*object, float energy); 
 		typedef void(*EndGameFunction)(); 
+		typedef void(*BeamEffectFunction)( IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime );
 		//etc...
 	};
 
@@ -201,6 +202,7 @@ namespace GameLogic
 		virtual void SetCollisionSubscription(GameEvent::CollisionEventFunction functionPointer) = 0;
 		virtual void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer) = 0;
 		virtual void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer) = 0;
+		virtual void SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer) = 0;
 	};	
 }
 
