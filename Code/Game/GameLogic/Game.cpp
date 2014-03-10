@@ -47,6 +47,8 @@ Game::Game(void)
 	,   onRespawnFnc(0)
 	,	onDeadFnc(0)
 	,	frameTime(1.0f/120.0f)
+	,	timer(0.0f)
+	,	level(0)
 {}
 
 Game::~Game(void)
@@ -137,7 +139,7 @@ bool Game::NewFrame(float deltaTime)
 	this->timer += deltaTime;
 	if(this->timer >= this->frameTime)
 	{
-		this->level->Update(deltaTime);
+		this->level->Update(this->timer);
 
 		for (unsigned int i = 0; i < this->players.Size(); i++)
 		{

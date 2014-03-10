@@ -33,7 +33,15 @@ using namespace ::Utility::StaticArray;
 //#define _CAMERA_DEBUG
 struct  GameState::MyData
 {
-	MyData(){}
+	MyData()
+	{
+		myId = -1;
+		weapon = 0;
+		soundManager = 0;
+		keyboardInput = 0;
+		mouseInput = 0;
+		nwClient = 0;
+	}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
@@ -64,6 +72,12 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 GameState::GameState()
 {
 	this->privData = nullptr;
+	this->gameUI = 0;
+	this->respawnUI = 0;
+	this->statsUI = 0;
+	this->inGameMeny = 0;
+	this->inGameOptions = 0;
+	int uiStackTop = 0;
 }
 
 GameState::~GameState()
