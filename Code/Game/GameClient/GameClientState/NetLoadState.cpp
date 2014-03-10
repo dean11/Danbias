@@ -374,7 +374,7 @@ void NetLoadState::LoadSound()
 
 	// event sounds, using collision channels
 	this->privData->soundManager->addSFX_3D(SoundDesc("scifi2.mp3",		SoundID_PickUpHealth));
-	this->privData->soundManager->addSFX_3D(SoundDesc("jumppad2.mp3",		SoundID_Jumppad));
+	this->privData->soundManager->addSFX_3D(SoundDesc("JumpPad01.mp3",		SoundID_Jumppad));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Collision02.mp3",	SoundID_CrystalCollision));
 	this->privData->soundManager->addSFX_3D(SoundDesc("explosion3.mp3",		SoundID_CrateExplosion));
 

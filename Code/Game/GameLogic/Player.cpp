@@ -338,6 +338,15 @@ void Player::DamageLife( float damage )
 			if( this->playerStats.hp > 100.0f )
 				this->playerStats.hp = 100.0f;
 
+			
+			else if( this->playerStats.hp <= 0.0f )
+			{
+				this->playerStats.hp = 0.0f;
+				this->playerState = PLAYER_STATE_DIED;
+				this->rigidBody->SetLinearVelocity( 0.0f );
+			}
+
+
 			// heal 
 			if(damage < 0 )
 				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Heal);
@@ -345,13 +354,6 @@ void Player::DamageLife( float damage )
 			// dmg taken
 			else
 				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Damage);
-
-			if( this->playerStats.hp <= 0.0f )
-			{
-				this->playerStats.hp = 0.0f;
-				this->playerState = PLAYER_STATE_DIED;
-				this->rigidBody->SetLinearVelocity( 0.0f );
-			}
 		}
 	}
 }
