@@ -77,7 +77,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData = new MyData();
 
 	this->privData->soundManager = shared.soundManager;
-	this->privData->soundManager->getChannel(ChannelID_pickUpSound)->SetPauseChannel(false);
+	//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->SetPauseChannel(false);
 
 	this->privData->nextState = GameClientState::ClientState_Same;
 	this->privData->nwClient = shared.network;

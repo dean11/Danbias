@@ -335,14 +335,15 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			if(oh->specialTypeID == ObjectSpecialType_PickupHealth || oh->specialTypeID == ObjectSpecialType_PickupEnergy)
 			{
 				(*this->privData->pickups)[ID] = (C_StaticObj*)object;
-				this->privData->soundManager->getSound(SoundID_Pickup_Music)->setMode(Sound::Loop_normal);
-				Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(SoundID_Pickup_Music), this->privData->soundManager->getChannel(ChannelID_pickUpSound), true);
-				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setChannel3DAttributes(object->getPos(), Float3(1,0,0));
-				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setMinMaxDistance(1, 100000);
-				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->addChannelToGroup(this->privData->soundManager->getChannelGroup(ChannelGroup_GameMusic));
-				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setVolym( 0.5);
-				this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setSoundVolume();
-				this->privData->soundManager->getChannelGroup(ChannelGroup_GameMusic)->setVolym(0.9);
+				// ambient sound
+				//this->privData->soundManager->getSound(SoundID_Pickup_Music)->setMode(Sound::Loop_normal);
+				//Sound::AudioAPI::Audio_PlaySound(this->privData->soundManager->getSound(SoundID_Pickup_Music), this->privData->soundManager->getChannel(ChannelID_pickUpSound), true);
+				//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setChannel3DAttributes(object->getPos(), Float3(1,0,0));
+				//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setMinMaxDistance(1, 100000);
+				//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->addChannelToGroup(this->privData->soundManager->getChannelGroup(ChannelGroup_GameMusic));
+				//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setVolym( 0.5);
+				//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->setSoundVolume();
+				//this->privData->soundManager->getChannelGroup(ChannelGroup_GameMusic)->setVolym(0.9);
 			}
 			else if(oth->typeID == ObjectType::ObjectType_Static)
 			{
@@ -394,8 +395,8 @@ void NetLoadState::LoadSound()
 	//this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",				SoundID_Player_Join));
 
 	// ambient sounds
-	this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", SoundID_Pickup_Music, ChannelID_pickUpSound ));
-	this->privData->soundManager->addSFX_3D(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient, ChannelID_ambient));
+	//this->privData->soundManager->addSFX_3D(SoundDesc("level_background.mp3", SoundID_Pickup_Music, ChannelID_pickUpSound ));
+	//this->privData->soundManager->addSFX_3D(SoundDesc("1978-039 Kansas - Dust In The Wind.mp3", ambient, ChannelID_ambient));
 	
 	// Background music 
 	//this->privData->soundManager->getSound(SoundID_Game_SoundTrack)->setMode(Sound::Loop_normal);

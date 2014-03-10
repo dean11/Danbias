@@ -338,8 +338,13 @@ void Player::DamageLife( float damage )
 			if( this->playerStats.hp > 100.0f )
 				this->playerStats.hp = 100.0f;
 
-			// send hp to client
-			this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Damage);
+			// heal 
+			if(damage < 0 )
+				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Heal);
+
+			// dmg taken
+			else
+				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Damage);
 
 			if( this->playerStats.hp <= 0.0f )
 			{

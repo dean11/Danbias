@@ -49,7 +49,7 @@ namespace DanBias
 			SoundID_Player_Die, 
 			SoundID_Player_Join, 
 
-			ambient,
+			//ambient,
 			SoundID_Pickup_Music,
 
 		};
@@ -69,7 +69,7 @@ namespace DanBias
 			ChannelID_Game_GameOver,
 			
 			ChannelID_effectSound, 
-			ChannelID_pickUpSound,
+			//ChannelID_pickUpSound,
 			ChannelID_jumppad,
 			ChannelID_collision,
 			ChannelID_portal,
