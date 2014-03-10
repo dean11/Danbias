@@ -23,6 +23,7 @@
 
 #include "GameClientState/SharedStateContent.h"
 #include "Utilities.h"
+#include "fstream"
 
 using namespace ::Oyster;
 using namespace ::Oyster::Event;
@@ -33,7 +34,12 @@ using namespace ::Utility::DynamicMemory;
 
 LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM lParam );
 void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e );
+void LoadInitSettings();
 static bool prevFull = false;
+static float width = 0.0f;
+static float height = 0.0f;
+static float mouseSens = 0.0f;
+static bool mute = false;
 
 #pragma region Game Data
 namespace DanBias
@@ -79,10 +85,11 @@ namespace DanBias
 	{
 		WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
+		LoadInitSettings();
 
 		WindowShell::WINDOW_INIT_DESC winDesc;
-		winDesc.windowSize.x		= 1200;
-		winDesc.windowSize.y		= 600;
+		winDesc.windowSize.x		= (int)width;
+		winDesc.windowSize.y		= (int)height;
 		winDesc.windowProcCallback	= WindowCallBack;
 
 		if(! data.window->CreateWin(winDesc) )
@@ -192,7 +199,7 @@ namespace DanBias
 		Oyster::Graphics::API::Option gfxOp;
 		gfxOp.modelPath = L"..\\Content\\Models\\";
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
-		gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
+		gfxOp.resolution = Oyster::Math::Float2( width, height );
 		gfxOp.ambientValue = 0.3f;
 		gfxOp.fullscreen = prevFull;
 		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
@@ -214,6 +221,7 @@ namespace DanBias
 			MessageBox( 0, L"Could not initialize the mouseDevice.", L"Error", MB_OK );
 			return E_FAIL;
 		}
+		data.sharedStateContent.mouseDevice->SetSensitivity(mouseSens);
 		
 		data.sharedStateContent.keyboardDevice= dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
 		if( !data.sharedStateContent.keyboardDevice )
@@ -398,4 +406,66 @@ void ClientEventFunction( NetEvent<NetworkClient*, NetworkClient::ClientEventArg
 {
 	if( DanBias::data.state )
 		DanBias::data.state->DataRecieved( e );
+}
+
+void LoadInitSettings()
+{
+	std::fstream inStream;
+	std::string chars = "";
+	inStream.open("settings.txt", std::fstream::in);
+
+	if(inStream.is_open())
+	{
+		while(!inStream.eof())
+		{
+			inStream >> chars;
+
+			if(chars == "fullscreen")
+			{
+
+				inStream >> chars;
+				if(chars == "true")
+				{
+
+					prevFull = true; //default is false
+
+				}
+
+			}
+			else if(chars == "resolutionW")
+			{
+
+				inStream >> chars;
+				width = atof(chars.c_str());
+
+			}
+			else if(chars == "resolutionH")
+			{
+
+				inStream >> chars;
+				height = atof(chars.c_str());
+
+			}
+			else if(chars == "mouseSens")
+			{
+
+				inStream >> chars;
+				mouseSens = atof(chars.c_str());
+
+			}
+			else if(chars == "sound")
+			{
+
+				inStream >> chars;
+				if(chars == "false")
+				{
+
+					mute = false; //default is true
+		
+				}
+
+			}
+		}
+	}
+
 }
