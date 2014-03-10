@@ -384,7 +384,7 @@ void NetLoadState::LoadSound()
 
 	// player sounds, using player channels
 	this->privData->soundManager->addSFX_3D(SoundDesc("Running01.mp3",			SoundID_Player_Walk));
-	this->privData->soundManager->addSFX_3D(SoundDesc("Jump01.mp3",	SoundID_Player_Jump)); // !
+	this->privData->soundManager->addSFX_3D(SoundDesc("Jump01.mp3",				SoundID_Player_Jump)); // !
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy01.mp3",			SoundID_Player_WeaponPull));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Energy02.mp3",			SoundID_Player_WeaponPush));
 	this->privData->soundManager->addSFX_3D(SoundDesc("weaponShot.mp3",			SoundID_Player_WeaponShoot));
