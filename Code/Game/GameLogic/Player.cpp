@@ -90,9 +90,9 @@ Float3 & Player::GetWeaponMuzzlePosition( Float3 &targetMem, const ICustomBody::
 {
 	targetMem = normalized_weapon_muzzle_offset * this->GetScale(); // TODO: would prefer if state had the scale data
 
-	Float4x4 rotm = OrientationMatrix_LookAtDirection(this->lookDir, WorldAxisOf( state.quaternion, Float3::standard_unit_y ), state.centerPos);
+	Float4x4 rotM = OrientationMatrix_LookAtDirection(-this->lookDir, WorldAxisOf(state.quaternion, Float3::standard_unit_y), state.centerPos);
 
-	targetMem = rotm * Float4(targetMem, 1.0f);
+	targetMem = rotM * Float4(targetMem, 1.0f);
 	return targetMem;
 }
 
