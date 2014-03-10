@@ -48,6 +48,7 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 			ShootBullet(usage,dt);
 			TimeUntilFire = 0.0f;
 			(*currentEnergy) -= energyCost; 
+			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_GunShoot);
 		}
 	break;
 	}

@@ -6,8 +6,17 @@ using namespace ::Utility::Value;
 
 inline Quaternion Transform( const Quaternion &transformer, const Quaternion &transformee )
 {
-//	return transformer * transformee;
-	return transformee * transformer;
+	return transformer * transformee ;
+}
+
+inline Float3 Transform( const Quaternion &transformer, const Float3 &transformee, const Quaternion &transformerConjugate )
+{
+	return (transformer * transformee * transformerConjugate).imaginary;
+}
+
+inline Float3 Transform( const Quaternion &transformer, const Float3 &transformee )
+{
+	return Transform( transformer, transformee, transformer.GetConjugate() );
 }
 
 Camera_FPSV2::Camera_FPSV2()
@@ -16,7 +25,7 @@ Camera_FPSV2::Camera_FPSV2()
 	this->headOffset =
 	this->body.translation = Float3::null;
 	this->body.rotation = Quaternion::identity;
-	this->pitchHaveChanged = false;
+	this->isNotUpdated = false;
 }
 
 Camera_FPSV2::~Camera_FPSV2() {}
@@ -28,19 +37,19 @@ Camera_FPSV2 & Camera_FPSV2::operator = ( const Camera_FPSV2 &camera )
 	this->headOffset = camera.headOffset;
 	this->body.translation = camera.body.translation;
 	this->body.rotation = camera.body.rotation;
-	this->pitchHaveChanged = camera.pitchHaveChanged;
+	this->isNotUpdated = camera.isNotUpdated;
 	return *this;
 }
 
 void Camera_FPSV2::SetHeadOffset( const Float3 &translation )
 {
-	this->head.Move( translation - this->headOffset );
 	this->headOffset = translation;
+	this->isNotUpdated = true;
 }
 
 void Camera_FPSV2::SetPosition( const Float3 &translation )
 {
-	this->head.Move( translation - this->body.translation );
+	this->isNotUpdated = true;
 	this->body.translation = translation;
 }
 
@@ -52,8 +61,7 @@ void Camera_FPSV2::SetRotation( const Quaternion &rotation )
 	}
 
 	this->body.rotation = rotation;
-	this->head.SetRotation( Transform(rotation, Rotation(this->pitchUp, WorldAxisOf(rotation, Float3::standard_unit_x))) );
-	this->pitchHaveChanged = false;
+	this->isNotUpdated = true;
 }
 
 void Camera_FPSV2::SetAngular( const Float3 &axis )
@@ -76,25 +84,11 @@ void Camera_FPSV2::SetPerspectiveProjection( Float verticalFoV, Float aspectRati
 	this->head.SetPerspectiveProjection( verticalFoV, aspectRatio, nearClip, farClip );
 }
 
-void Camera_FPSV2::UpdateOrientation()
-{
-	if( this->pitchHaveChanged )
-	{
-		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
-		this->pitchHaveChanged = false;
-	}
-
-	Float4x4 orientation;
-	OrientationMatrix( this->body.rotation, this->body.translation, orientation );
-
-	this->head.SetPosition( (orientation * Float4(this->headOffset, 1.0f)).xyz );
-}
-
 void Camera_FPSV2::SnapUpToNormal( const Float3 &normal )
 {
 	this->body.rotation = Rotation( SnapAngularAxis(AngularAxis(this->body.rotation), WorldAxisOf(this->body.rotation, Float3::standard_unit_y), normal) );
 	this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
-	this->pitchHaveChanged = false;
+	this->isNotUpdated = false;
 }
 
 void Camera_FPSV2::Move( const Float3 &deltaPosition )
@@ -105,8 +99,8 @@ void Camera_FPSV2::Move( const Float3 &deltaPosition )
 
 void Camera_FPSV2::Rotate( const Quaternion &deltaRotation )
 {
-	this->body.rotation *= deltaRotation;
-	this->pitchHaveChanged = true;
+	(this->body.rotation *= deltaRotation).Normalize();
+	this->isNotUpdated = true;
 }
 
 void Camera_FPSV2::Rotate( const Float3 &deltaAngularAxis )
@@ -122,11 +116,13 @@ void Camera_FPSV2::MoveForward( Float distance )
 void Camera_FPSV2::MoveBackward( Float distance )
 {
 	this->Move( distance * WorldAxisOf(this->body.rotation, Float3::standard_unit_z) );
+	this->isNotUpdated = true;
 }
 
 void Camera_FPSV2::StrafeRight( Float distance )
 {
 	this->Move( distance * WorldAxisOf(this->body.rotation, Float3::standard_unit_x) );
+	this->isNotUpdated = true;
 }
 
 void Camera_FPSV2::StrafeLeft( Float distance )
@@ -137,7 +133,7 @@ void Camera_FPSV2::StrafeLeft( Float distance )
 void Camera_FPSV2::PitchUp( Float radian )
 {
 	this->pitchUp = Clamp( this->pitchUp + radian, -0.48f * pi, 0.48f * pi );
-	this->pitchHaveChanged = true;
+	this->isNotUpdated = true;
 }
 
 void Camera_FPSV2::PitchDown( Float radian )
@@ -166,12 +162,21 @@ const Float3 & Camera_FPSV2::GetPosition() const
 	return this->body.translation;
 }
 
+const Quaternion & Camera_FPSV2::GetHeadRotation() const
+{
+	if( this->isNotUpdated )
+	{
+		this->UpdateOrientation();
+	}
+
+	return this->head.GetRotation();
+}
+
 Float4x4 & Camera_FPSV2::GetViewMatrix( Float4x4 &targetMem ) const
 {
-	if( this->pitchHaveChanged )
+	if( this->isNotUpdated )
 	{
-		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
-		this->pitchHaveChanged = false;
+		this->UpdateOrientation();
 	}
 
 	return this->head.GetViewMatrix( targetMem );
@@ -184,10 +189,9 @@ const Float4x4 & Camera_FPSV2::GetProjectionMatrix() const
 
 Float4x4 & Camera_FPSV2::GetViewsProjMatrix( Float4x4 &targetMem ) const
 {
-	if( this->pitchHaveChanged )
+	if( this->isNotUpdated )
 	{
-		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
-		this->pitchHaveChanged = false;
+		this->UpdateOrientation();
 	}
 
 	return this->head.GetViewsProjMatrix( targetMem );
@@ -195,10 +199,9 @@ Float4x4 & Camera_FPSV2::GetViewsProjMatrix( Float4x4 &targetMem ) const
 
 Float3 Camera_FPSV2::GetNormalOf( const Float3 &axis ) const
 {
-	if( this->pitchHaveChanged )
+	if( this->isNotUpdated )
 	{
-		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
-		this->pitchHaveChanged = false;
+		this->UpdateOrientation();
 	}
 
 	return this->head.GetNormalOf( axis );
@@ -216,10 +219,9 @@ Float3 Camera_FPSV2::GetUp() const
 
 Float3 Camera_FPSV2::GetLook() const
 {
-	if( this->pitchHaveChanged )
+	if( this->isNotUpdated )
 	{
-		this->head.SetRotation( Transform(this->body.rotation, Rotation(this->pitchUp, WorldAxisOf(this->body.rotation, Float3::standard_unit_x))) );
-		this->pitchHaveChanged = false;
+		this->UpdateOrientation();
 	}
 
 	return this->head.GetNormalOf( -Float3::standard_unit_z );
@@ -228,4 +230,12 @@ Float3 Camera_FPSV2::GetLook() const
 Float3 Camera_FPSV2::GetForward() const
 {
 	return WorldAxisOf( this->body.rotation, -Float3::standard_unit_z );
+}
+
+void Camera_FPSV2::UpdateOrientation() const
+{
+	Quaternion rotConjugate = this->body.rotation.GetConjugate();
+	this->head.SetRotation( Transform(Rotation(this->pitchUp, Transform(this->body.rotation, Float3::standard_unit_x, rotConjugate)), this->body.rotation) );
+	this->head.SetPosition( Transform( this->body.rotation, this->headOffset, rotConjugate ) + this->body.translation );
+	this->isNotUpdated = false;
 }

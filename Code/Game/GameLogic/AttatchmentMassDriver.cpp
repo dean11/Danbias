@@ -65,8 +65,7 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 		break;
 
 	case WEAPON_USE_SECONDARY_PRESS:
-		
-		
+
 	if(this->hasObject)
 	{
 		break;
@@ -197,6 +196,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce);
 		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce) * (*currentEnergy / maxEnergy);
 		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
+		((DynamicObject*)this->heldObject->GetCustomTag())->SetAffectedBy(*this->owner);
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
 		this->heldObject = NULL;
@@ -229,10 +229,11 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 void AttatchmentMassDriver::ForceZip(const WEAPON_FIRE &usage, float dt)
 {
 	Oyster::Math::Float3 force = Oyster::Math::Float4(this->owner->GetLookDir()) * (this->zipForce);
+	Oyster::Math::Float3 pos = owner->GetPosition();
 
 	this->owner->GetRigidBody()->ApplyImpulse(force);
 
-	this->owner->Stun(0.1f);
+	this->owner->Stun(0.5f);
 }
 
 
@@ -248,7 +249,7 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float3 target = pos + (look * 10);
+	Oyster::Math::Float3 target = pos + (look * NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxPullDistance);
 
 
 
@@ -266,12 +267,19 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetPosition() + owner->GetLookDir().GetNormalized() * 1.5f;
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
+	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
+	Oyster::Math::Float3 target = pos + (look * 2.5f);
 
 	if(this->hasObject) return;
 
-	Oyster::Collision3D::Sphere hitSphere = Oyster::Collision3D::Sphere(pos , 0.5);
-	Oyster::Physics::API::Instance().ApplyEffect(&hitSphere,this,AttemptPickUp);
+	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
+
+	if (hitObject != NULL)
+	{
+		this->AttemptPickUp(hitObject,this);
+	}
+	
 	currentCooldown = 0.0f;
 	return;
 }

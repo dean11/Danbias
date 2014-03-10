@@ -113,7 +113,6 @@ namespace DanBias { namespace Client
 							ui->shared->weapon->SetRotationSpeed(primaryRotationSpeed);
 							this->primaryShootTimer = 0;
 							this->delta = 0;
-							ui->shared->weapon->Shoot();
 						}
 					break;
 					case GameLogic::Protocol_PlayerShot::ShootValue_SecondaryPress:
@@ -124,7 +123,6 @@ namespace DanBias { namespace Client
 							ui->shared->weapon->SetRotationSpeed(secondaryRotationSpeed);
 							this->secondaryShootTimer = 0;
 							this->delta = 0;
-							ui->shared->weapon->Shoot();
 						}
 					break;
 					case GameLogic::Protocol_PlayerShot::ShootValue_UtilityPress:

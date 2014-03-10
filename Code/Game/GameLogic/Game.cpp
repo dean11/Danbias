@@ -157,12 +157,13 @@ bool Game::NewFrame(float deltaTime)
 
 void Game::SetFPS(int FPS)
 {
-	this->frameTime = 1.0f / FPS;
+	this->SetFrameTimeLength( 1.0f /(float) FPS );
 }
 
 void Game::SetFrameTimeLength( float seconds )
 {
 	this->frameTime = seconds;
+	::Oyster::Physics::API::Instance().SetTimeStep( seconds );
 }
 
 void Game::SetMoveSubscription(GameEvent::ObjectMovedFunction functionPointer)

@@ -20,8 +20,6 @@ public:
 	void SetOrthographicProjection( ::Oyster::Math::Float width, ::Oyster::Math::Float height, ::Oyster::Math::Float nearClip, ::Oyster::Math::Float farClip );
 	void SetPerspectiveProjection( ::Oyster::Math::Float verticalFoV, ::Oyster::Math::Float aspectRatio, ::Oyster::Math::Float nearClip, ::Oyster::Math::Float farClip );
 
-	void UpdateOrientation();
-
 	void SnapUpToNormal( const ::Oyster::Math::Float3 &normal );
 
 	void Move( const ::Oyster::Math::Float3 &deltaPosition );
@@ -40,6 +38,7 @@ public:
 
 	const ::Oyster::Math::Float3	 & GetHeadOffset() const;
 	const ::Oyster::Math::Float3	 & GetPosition() const;
+	const ::Oyster::Math::Quaternion & GetHeadRotation() const;
 		  ::Oyster::Math::Float4x4   & GetViewMatrix( Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
 	const ::Oyster::Math::Float4x4   & GetProjectionMatrix() const;
 		  ::Oyster::Math::Float4x4   & GetViewsProjMatrix( Oyster::Math::Float4x4 &targetMem = ::Oyster::Math::Float4x4() ) const;
@@ -58,7 +57,9 @@ private:
 		::Oyster::Math::Float3 translation;
 		::Oyster::Math::Quaternion rotation;
 	} body;
-	mutable bool pitchHaveChanged;
+	mutable bool isNotUpdated;
+
+	void UpdateOrientation() const;
 };
 
 #endif

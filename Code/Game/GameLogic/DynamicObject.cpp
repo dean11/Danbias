@@ -111,3 +111,21 @@ void DynamicObject::RemoveManipulation()
 {
 	this->manipulatedBy = NULL;
 }
+
+void DynamicObject::AttemptResetToInitalPos()
+{
+	if (!this->affectedBy && !this->manipulatedBy)
+	{
+		Oyster::Math::Float3 currPos = this->GetPosition();
+		Oyster::Math::Float deltaMagnitude = (currPos - this->initialPos).GetMagnitude();
+		if (deltaMagnitude > NoEdgeConstants::Values::Limits::ObjectDistanceBeforeRespawn)
+		{
+
+			if (this->rigidBody->GetLinearVelocity().GetMagnitude() <= 0.1f)
+			{
+				//if the distance between the initialPosition of the object and the currentPosition is greater than the limit and the object is at rest, then teleport it back to its initial position
+				this->rigidBody->SetPosition(initialPos);
+			}
+		}
+	}
+}

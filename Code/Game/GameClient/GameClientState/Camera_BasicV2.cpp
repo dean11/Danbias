@@ -2,6 +2,21 @@
 
 using namespace ::Oyster::Math3D;
 
+inline Quaternion Transform( const Quaternion &transformer, const Quaternion &transformee )
+{
+	return transformer * transformee ;
+}
+
+inline Float3 Transform( const Quaternion &transformer, const Float3 &transformee, const Quaternion &transformerConjugate )
+{
+	return (transformer * transformee * transformerConjugate).imaginary;
+}
+
+inline Float3 Transform( const Quaternion &transformer, const Float3 &transformee )
+{
+	return Transform( transformer, transformee, transformer.GetConjugate() );
+}
+
 Camera_BasicV2::Camera_BasicV2()
 {
 	this->translation = Float3::null;
@@ -83,7 +98,7 @@ Float3 & Camera_BasicV2::GetAngularAxis( Float3 &targetMem ) const
 
 Float3 Camera_BasicV2::GetNormalOf( const Float3 &axis ) const
 {
-	return WorldAxisOf( this->rotation, axis );
+	return Transform( this->rotation, axis );
 }
 
 const Quaternion & Camera_BasicV2::GetRotation() const
