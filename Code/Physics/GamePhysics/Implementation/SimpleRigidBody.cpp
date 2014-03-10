@@ -28,6 +28,7 @@ SimpleRigidBody::SimpleRigidBody()
 	this->onMovement = NULL;
 
 	this->overrideGravity = false;
+	this->inLimbo = false;
 
 	this->customTag = nullptr;
 }
@@ -255,7 +256,7 @@ void SimpleRigidBody::SetUp(::Oyster::Math::Float3 up)
 		if(xCrossPre.length() < 0.000001)
 			xCrossPre = btVector3(0, 1 ,0).cross(v1);
 		xCrossPre.normalize();
-		q.setRotation(xCrossPre, 3.1415);
+		q.setRotation(xCrossPre, 3.1415f);
 	}
 	else if (v1.dot(v2) > 0.999999)
 	{
@@ -328,8 +329,6 @@ void SimpleRigidBody::OverrideGravity(const ::Oyster::Math::Float3& point, const
 	this->overrideGravity = true;
 	if(this->state.centerPos - point != Float3::null)
 		this->SetGravity(-(this->state.centerPos - point).GetNormalized()*gravityForce);
-	//this->rigidBody->setDamping(1 - (this->state.centerPos - point).GetMagnitude(), 0);
-	//this->rigidBody->
 }
 
 void SimpleRigidBody::SetOverrideGravity(bool overrideGravity)
@@ -458,15 +457,30 @@ float SimpleRigidBody::GetLambdaForward() const
 
 void SimpleRigidBody::MoveToLimbo()
 {
-	this->rigidBody->setCollisionFlags(this->rigidBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	this->inLimbo = true;
 }
 
 void SimpleRigidBody::ReleaseFromLimbo()
 {
-	this->rigidBody->setCollisionFlags(this->collisionFlags);
+	this->inLimbo = false;
+}
+
+bool SimpleRigidBody::IsInLimbo()
+{
+	return this->inLimbo;
 }
 
 void SimpleRigidBody::SetPreviousVelocity(::Oyster::Math::Float3 velocity)
 {
 	this->state.previousVelocity = velocity;
+}
+
+void SimpleRigidBody::DisableCollisionResponse()
+{
+	this->rigidBody->setCollisionFlags(this->rigidBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+}
+
+void SimpleRigidBody::TurnOnCollisionResponse()
+{
+	this->rigidBody->setCollisionFlags(this->collisionFlags);
 }

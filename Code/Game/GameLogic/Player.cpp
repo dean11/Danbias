@@ -237,6 +237,7 @@ void Player::Respawn( Float3 spawnPoint )
 		this->rigidBody->SetPosition(spawnPoint);
 		this->gameInstance->onRespawnFnc( this, spawnPoint);
 		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Respawn);
+		Oyster::Physics::API::Instance().ReleaseFromLimbo(this->rigidBody);
 	}
 }
 
@@ -364,6 +365,7 @@ void Player::DamageLife( float damage )
 				this->playerStats.hp = 0.0f;
 				this->playerState = PLAYER_STATE_DIED;
 				this->rigidBody->SetLinearVelocity( 0.0f );
+				Oyster::Physics::API::Instance().MoveToLimbo(this->rigidBody);
 			}
 
 
