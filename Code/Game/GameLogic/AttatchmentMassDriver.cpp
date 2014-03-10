@@ -247,10 +247,9 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 	if(hasObject) return; //this test checks if the weapon has now picked up an object, if so then it shall not apply a force to suck in objects
 	
 
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + (owner->GetRigidBody()->GetState().GetOrientation()[1] * 2.0f);
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float3 target = pos + (look * NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::MaxPullDistance);
-
 
 
 	forcePushData args;
@@ -267,7 +266,7 @@ void AttatchmentMassDriver::ForcePull(const WEAPON_FIRE &usage, float dt)
 
 void AttatchmentMassDriver::PickUpObject(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
+	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1] * 2.0f;
 	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
 	Oyster::Math::Float3 target = pos + (look * 2.5f);
 

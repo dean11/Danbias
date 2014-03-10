@@ -29,6 +29,13 @@ void C_AudioHandler::addSFX(SoundDesc soundDesc)
 	if(!effects[soundDesc.soundID])
 	{
 		effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( soundDesc.soundName, SoundType_Effect );
+		
+		// default sound -- sound is missing
+		if (!effects[soundDesc.soundID])
+		{
+			effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( "jaguar.wav", SoundType_Music );
+		}
+		
 		if (soundDesc.channelID != ChannelID_none)
 		{
 			addChannel(soundDesc.channelID);
@@ -40,6 +47,13 @@ void C_AudioHandler::addMusic(SoundDesc soundDesc)
 	if(!songs[soundDesc.soundID])
 	{
 		songs[soundDesc.soundID] = AudioAPI::Audio_CreateSound( soundDesc.soundName, SoundType_Music );
+		
+		// default sound -- sound is missing
+		if (!songs[soundDesc.soundID])
+		{
+			songs[soundDesc.soundID] = AudioAPI::Audio_CreateSound( "jaguar.wav", SoundType_Music );
+		}
+		
 		if (soundDesc.channelID != ChannelID_none)
 		{
 			addChannel(soundDesc.channelID);
@@ -51,6 +65,13 @@ void C_AudioHandler::addSFX_3D(SoundDesc soundDesc)
 	if(!effects[soundDesc.soundID])
 	{
 		effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( soundDesc.soundName, SoundType_Effect3D );
+		
+		// default sound -- sound is missing
+		if (!effects[soundDesc.soundID])
+		{
+			effects[soundDesc.soundID] = AudioAPI::Audio_CreateSound( "jaguar.wav", SoundType_Music );
+		}
+
 		if (soundDesc.channelID != ChannelID_none)
 		{
 			addChannel(soundDesc.channelID);

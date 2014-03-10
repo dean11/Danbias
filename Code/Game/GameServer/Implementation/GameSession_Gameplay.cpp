@@ -29,6 +29,7 @@ using namespace DanBias;
 		{
 			// GameLogic takes care of propper step time
 			float ldt = (float)this->logicTimer.getElapsedSeconds();
+			//ldt = Utility::Value::Max(ldt, 0.000f);
 			this->logicTimer.reset();
 			this->gameInstance.NewFrame(ldt);
 			
