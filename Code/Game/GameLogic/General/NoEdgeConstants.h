@@ -74,6 +74,7 @@ namespace NoEdgeConstants
 				const float UtilityCooldown				= 0.1f;
 
 				const float MaxDistanceFromPlayer		= 5.0f;
+				const float MaxPullDistance				= 20.0f;
 			}
 
 			namespace MassDriveProjectileAttachment
