@@ -56,6 +56,7 @@ namespace GameLogic
 		Oyster::Math::Float extraDamageOnCollision;
 
 		Oyster::Math::Float3 initialPos;
+		Oyster::Math::Float resetCounter;
 
 	};
 
