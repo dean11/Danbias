@@ -108,6 +108,7 @@ namespace DanBias
 		static void CollisionEvent			( GameLogic::IObjectData* Object , int collisionID );
 		static void EnergyUpdate			( GameLogic::IObjectData* movedObject , float energy );
 		static void GameOver				(  );
+		static void BeamEffect				( GameLogic::IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime );
 
 	private:	//Private member variables
 		Utility::DynamicMemory::DynamicArray<gClient> gClients;

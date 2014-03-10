@@ -76,16 +76,18 @@ void AttatchmentGun::Update(float dt)
 
 void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 {
-	Oyster::Math::Float3 pos = owner->GetRigidBody()->GetState().centerPos + owner->GetRigidBody()->GetState().GetOrientation()[1];
-	Oyster::Math::Float3 look = owner->GetLookDir().GetNormalized();
-	Oyster::Math::Float3 target = pos + (look * 100);
+	::Oyster::Physics::ICustomBody::State ownerState; owner->GetRigidBody()->GetState( ownerState );
+	::Oyster::Math::Float3 pos; this->owner->GetWeaponMuzzlePosition( pos, ownerState );
+	::Oyster::Math::Float3 target = pos + ( this->owner->GetLookDir() * 100.0f );
 
-	Oyster::Physics::ICustomBody *hitObject = Oyster::Physics::API::Instance().RayClosestObjectNotMe(this->owner->GetRigidBody(),pos,target);
+	::Oyster::Physics::ICustomBody *hitObject = ::Oyster::Physics::API::Instance().RayClosestObjectNotMe( this->owner->GetRigidBody(), pos, target );
 	
 	if(hitObject != NULL)
 	{
 		BulletCollision(hitObject);
 	}
+
+	((Game*)&Game::Instance())->onBeamEffectFnc( this->owner, pos, target, 0.1f, 1.5f );
 }
 
 

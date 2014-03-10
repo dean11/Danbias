@@ -215,6 +215,19 @@ using namespace DanBias;
 		GameSession::gameSession->Send( Protocol_General_GameOver().GetProtocol() );
 		GameSession::gameSession->isRunning = false;
 	}
+	void GameSession::BeamEffect( GameLogic::IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime )
+	{
+		GameSession::gameSession->Send
+		( Protocol_EffectBeam
+			(
+				creator != nullptr ? creator->GetID() : -1,
+				start,
+				end,
+				radius,
+				lifeTime
+			).GetProtocol()
+		);
+	}
 
 
 
