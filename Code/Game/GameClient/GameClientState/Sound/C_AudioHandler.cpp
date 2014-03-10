@@ -6,6 +6,7 @@ C_AudioHandler::C_AudioHandler()
 {
 	maxCollisionSounds = 50;
 	currCollisionSound = 0; 
+	mute = false;
 	collisionChannels = new Sound::IChannel*[maxCollisionSounds];
 	for (int i = 0; i < maxCollisionSounds; i ++)
 	{
@@ -113,6 +114,11 @@ void C_AudioHandler::addChannel(ChannelID id )
 }
 void C_AudioHandler::PlaySoundOnChannel( ISound* sound, IChannel* channel, PlayMode playMode )
 {
+	if (mute)
+	{
+		// don't play sounds while muted
+		return;
+	}
 	if( playMode == PlayMode_Restart)
 	{
 		if(channel->getChannelPlaying())
@@ -212,6 +218,31 @@ void C_AudioHandler::SetEffectVolume(float volume)
 	//	if(effect->second->getType() == Sound::SoundType_Effect)
 	//		effect->second->setVolym(volume);
 	//}
+}
+void C_AudioHandler::MuteSound(bool mute)
+{
+	this->mute = mute;
+	/*for (int i = 0; i < maxCollisionSounds; i ++)
+	{
+	collisionChannels[i]->SetMuteChannel(true);
+	}
+	auto channel = this->channels.begin();
+	for( ; channel != this->channels.end(); ++channel )
+	{
+	channel->second->SetMuteChannel(true);
+	}
+	auto playerChannel = this->playerChannels.begin();
+	for( ; playerChannel != this->playerChannels.end(); ++playerChannel )
+	{
+
+	for (int i = 0; i < PlayerSoundID_Count; i ++)
+	{
+	if(playerChannel->second)
+	{
+	playerChannel->second->channels[i]->SetMuteChannel(true);
+	}
+	}
+	}*/
 }
 void C_AudioHandler::Release()
 {

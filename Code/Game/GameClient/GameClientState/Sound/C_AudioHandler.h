@@ -134,6 +134,7 @@ namespace DanBias
 
 			float music_volume;
 			float effects_volume;
+			bool mute;
 
 		public:
 			C_AudioHandler();
@@ -155,6 +156,7 @@ namespace DanBias
 			void pauseAllSounds();
 			void SetSoundVolume(float volume);
 			void SetEffectVolume(float volume);
+			void MuteSound(bool mute);
 			void Release();
 		};
 	}

@@ -110,7 +110,7 @@ namespace DanBias
 		if( ( data.sharedStateContent.mouseCursor = Graphics::API::CreateTexture( L"cursor.png" ) ) == 0)
 			printf("Failed to load the mouse cursor [cursor.png]\n");
 
-		
+		data.sharedStateContent.soundManager->MuteSound(true);
 		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", SoundID_Mouse_Hover));
 		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", SoundID_Mouse_Click));
 		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button1);
@@ -123,8 +123,9 @@ namespace DanBias
 		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button4);
 		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.wav", SoundID_Menu_SoundTrack, ChannelID_Menu_Soundtrack));
 		data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack)->setMode(Sound::Loop_normal);
-		Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack), data.sharedStateContent.soundManager->getChannel(ChannelID_Menu_Soundtrack), true);
-
+		//Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack), data.sharedStateContent.soundManager->getChannel(ChannelID_Menu_Soundtrack), true);
+		data.sharedStateContent.soundManager->PlaySoundOnChannel(data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack), data.sharedStateContent.soundManager->getChannel(ChannelID_Menu_Soundtrack), PlayMode_FinnishSound);
+		
 		// Start in main menu state
 		data.state = new Client::MainState();
 

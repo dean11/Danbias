@@ -153,3 +153,11 @@ void ChannelData::addChannelToGroup(IChannelGroup* channelGroup)
 		FmodErrorCheck(result);
 	}
 }
+void ChannelData::SetMuteChannel(bool mute)
+{
+	if (channel)
+	{
+		result = channel->setMute(mute);
+		FmodErrorCheck(result);
+	}
+}
