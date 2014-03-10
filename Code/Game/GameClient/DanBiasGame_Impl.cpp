@@ -113,17 +113,19 @@ namespace DanBias
 			printf("Failed to load the mouse cursor [cursor.png]\n");
 
 		
-		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", mouse_hoover));
-		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", mouse_click));
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button1);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button2);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_hoover_button3);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button1);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button2);
-		data.sharedStateContent.soundManager->addChannel(ChannelID_mouse_click_button3);
-		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.mp3", backgroundSound));
-		data.sharedStateContent.soundManager->getSound(backgroundSound)->setMode(Sound::Loop_normal);
-		Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(backgroundSound), data.sharedStateContent.soundManager->getChannel(backgroundSound), true);
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button01.mp3", SoundID_Mouse_Hover));
+		data.sharedStateContent.soundManager->addSFX(SoundDesc("Button03.mp3", SoundID_Mouse_Click));
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button3);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Hover_Button4);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button1);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button2);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button3);
+		data.sharedStateContent.soundManager->addChannel(ChannelID_Mouse_Click_Button4);
+		data.sharedStateContent.soundManager->addMusic(SoundDesc("No Edge - Main Theme.wav", SoundID_Menu_SoundTrack, ChannelID_Menu_Soundtrack));
+		data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack)->setMode(Sound::Loop_normal);
+		Sound::AudioAPI::Audio_PlaySound(data.sharedStateContent.soundManager->getSound(SoundID_Menu_SoundTrack), data.sharedStateContent.soundManager->getChannel(ChannelID_Menu_Soundtrack), true);
 
 		// Start in main menu state
 		data.state = new Client::MainState();

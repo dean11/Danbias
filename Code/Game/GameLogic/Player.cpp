@@ -216,7 +216,7 @@ void Player::Respawn( Float3 spawnPoint )
 		Player::initPlayerData();
 		this->rigidBody->SetPosition(spawnPoint);
 		this->gameInstance->onRespawnFnc( this, spawnPoint);
-		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+		this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Respawn);
 	}
 }
 
@@ -338,15 +338,22 @@ void Player::DamageLife( float damage )
 			if( this->playerStats.hp > 100.0f )
 				this->playerStats.hp = 100.0f;
 
-			// send hp to client
-			this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
-
-			if( this->playerStats.hp <= 0.0f )
+			
+			else if( this->playerStats.hp <= 0.0f )
 			{
 				this->playerStats.hp = 0.0f;
 				this->playerState = PLAYER_STATE_DIED;
 				this->rigidBody->SetLinearVelocity( 0.0f );
 			}
+
+
+			// heal 
+			if(damage < 0 )
+				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Heal);
+
+			// dmg taken
+			else
+				this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent::PlayerHealthEvent_Damage);
 		}
 	}
 }
