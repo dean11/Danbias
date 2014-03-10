@@ -346,7 +346,7 @@ void Player::DamageLife( float damage )
 			}
 
 			// send hp to client
-			this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp);
+			this->gameInstance->onDamageTakenFnc( this, this->playerStats.hp, PlayerHealthEvent_Damage);
 		}
 	}
 }
