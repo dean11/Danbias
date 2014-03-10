@@ -95,7 +95,7 @@ ICustomBody* API_Impl::AddCollisionSphere(float radius, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdMotionThreshold(0.01f);
 	rigidBody->setCcdSweptSphereRadius(radius);
 
 	state.centerPos = position;
@@ -138,7 +138,7 @@ ICustomBody* API_Impl::AddCollisionBox(Float3 halfSize, ::Oyster::Math::Float4 r
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdMotionThreshold(0.01f);
 	rigidBody->setCcdSweptSphereRadius(Min(halfSize.x, Min(halfSize.y, halfSize.z)));
 
 	state.centerPos = position;
@@ -181,7 +181,7 @@ ICustomBody* API_Impl::AddCollisionCylinder(::Oyster::Math::Float3 halfSize, ::O
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdMotionThreshold(0.01f);
 	rigidBody->setCcdSweptSphereRadius(Min(halfSize.x, Min(halfSize.y, halfSize.z)));
 
 	state.centerPos = position;
@@ -226,7 +226,7 @@ ICustomBody* API_Impl::AddCharacter(::Oyster::Math::Float height, ::Oyster::Math
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
 
-	rigidBody->setCcdMotionThreshold(0.1f);
+	rigidBody->setCcdMotionThreshold(0.01f);
 	rigidBody->setCcdSweptSphereRadius(Min(height, radius));
 
 	state.centerPos = position;
