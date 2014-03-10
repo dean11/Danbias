@@ -517,7 +517,7 @@ void Level::Update(float deltaTime)
 				dynamicObjects[i]->RemoveAffectedBy();
 			}
 		}
-		dynamicObjects[i]->AttemptResetToInitalPos(); //FIX: will also need to update a counter on how long it as been stationary
+		dynamicObjects[i]->AttemptResetToInitalPos(deltaTime);
 	}
 
 	for(int i = 0; i < (int)playerObjects.Size(); i++)
