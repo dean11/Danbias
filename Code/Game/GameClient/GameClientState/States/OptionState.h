@@ -23,7 +23,8 @@ namespace DanBias
 			bool Render()												override;
 			bool Release()												override;
 			void ChangeState( ClientState next )						override;
-			void PlaySound( SoundID id )								override;
+			//void PlaySound( Sound::ISound* sound, Sound::IChannel* channel, PlayMode playMode ) override;
+			void PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode );
 			const DanBias::Client::GameClientState::NetEvent & DataRecieved( const NetEvent &message )	override;
 
 		private: /* Derived mouse events */

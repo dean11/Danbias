@@ -178,9 +178,9 @@ using namespace DanBias;
 	{
 		GameSession::gameSession->Send(Protocol_ObjectEnable(movedObject->GetID()).GetProtocol());
 	}
-	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp )
+	void GameSession::ObjectDamaged( GameLogic::IObjectData* movedObject, float hp, int eventID )
 	{
-		GameSession::gameSession->Send(Protocol_ObjectDamage(movedObject->GetID(), hp).GetProtocol());
+		GameSession::gameSession->Send(Protocol_ObjectDamage(movedObject->GetID(), hp, eventID).GetProtocol());
 	}
 	void GameSession::ObjectRespawned( GameLogic::IObjectData* movedObject, Oyster::Math::Float3 spawnPos )
 	{

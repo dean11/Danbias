@@ -45,6 +45,7 @@ namespace Sound
 			virtual bool getChannelPlaying() = 0;
 			virtual void stop() = 0;
 			virtual void restartChannel() = 0;
+			virtual void addChannelToGroup(IChannelGroup* channelGroup) = 0;
 		};
 
 		class SOUND_DLL ISound
@@ -61,6 +62,7 @@ namespace Sound
 			static bool			Audio_Init();
 			static void			Audio_Shutdown();
 			static bool			Audio_Update( float deltaTime);
+			static IChannelGroup*	Audio_CreateChannelGroup(const char* groupName);
 			static IChannel*	Audio_CreateChannel();
 			static ISound*		Audio_CreateSound(std::string soundName, SoundType soundType);
 			static void			Audio_PlaySound( ISound* sound, IChannel* channel, bool paused = false);
