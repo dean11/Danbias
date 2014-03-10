@@ -210,6 +210,10 @@ void Game::SetGameOverSubscription(GameEvent::EndGameFunction functionPointer)
 {
 	this->onEndGameFnc = functionPointer;
 }
+void Game::SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer)
+{
+	this->onBeamEffectFnc = functionPointer;
+}
 bool Game::Initiate()
 {
 	API::Instance().Init();

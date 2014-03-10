@@ -70,6 +70,7 @@ namespace DanBias { namespace Client
 		void Gameplay_ObjectDisconnectPlayer( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectAction( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectCollision( Oyster::Network::CustomNetProtocol data );
+		void Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol data );
 		void General_GameOver( Oyster::Network::CustomNetProtocol data );
 		//:HACK!
 		//void OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;
