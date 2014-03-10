@@ -433,8 +433,8 @@ void SimpleRigidBody::PreStep (const btCollisionWorld* collisionWorld)
 				btVector3 hitNormal = rayCallback.m_hitNormalWorld;
 				btScalar angle = hitNormal.normalized().dot(down);
 
-				if(angle < 0)
-					this->rigidBody->setFriction(0.6f);
+				if(angle < 0.0f)
+					this->rigidBody->setFriction(1.6f*fabs(angle));
 				else
 					this->rigidBody->setFriction(0.0f);
 			}

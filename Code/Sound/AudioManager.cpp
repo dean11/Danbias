@@ -24,7 +24,7 @@ bool FmodUtil::FmodErrorCheck(FMOD_RESULT result)	// Error handling function for
 	if (result != FMOD_OK)
 	{
 		// output error message
-		printf( "FMOD error! ( %i ) %s", result, FMOD_ErrorString(result));
+		//printf( "FMOD error! ( %i ) %s", result, FMOD_ErrorString(result));
 		return false;
 	}
 	return true;

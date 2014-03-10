@@ -239,18 +239,18 @@ void Player::Jump()
 
 bool Player::IsWalking()
 {
-	return ( this->rigidBody->GetLambdaUp() < 0.7f );
+	return ( this->rigidBody->GetLambdaUp() < 0.8f );
 }
 
 bool Player::IsJumping()
 {
-	return ( this->rigidBody->GetLambdaUp() >= 0.7f );
+	return ( this->rigidBody->GetLambdaUp() >= 0.8f );
 }
 
 bool Player::IsIdle()
 {
 	Float3 v = this->rigidBody->GetLinearVelocity();
-	return ( this->rigidBody->GetLambdaUp() < 0.7f && v.Dot( v ) < 0.0001f );
+	return ( this->rigidBody->GetLambdaUp() < 0.8f && v.Dot( v ) < 0.0001f );
 }
 
 bool Player::IsStunned( bool struggled )
