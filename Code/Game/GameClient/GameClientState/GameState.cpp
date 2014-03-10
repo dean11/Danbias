@@ -1210,8 +1210,7 @@ void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol da
 		decoded.lifeTime
 	);
 
-	// TODO: @todo exchange for another dan file
-	if( beam->LoadModel(L"crate_colonists.dan" ) )
+	if( beam->LoadModel(L"beam.dan") )
 	{
 		beam->SetTint( Float3::standard_unit_x );
 		beam->SetGlowTint( Float3::standard_unit_y );

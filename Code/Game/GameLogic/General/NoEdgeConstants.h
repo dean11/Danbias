@@ -82,8 +82,8 @@ namespace NoEdgeConstants
 				const int SlotId						= 1;
 				const float MaxEnergy					= 100.0f;
 				const float RechargeRate				= 0.5f;
-				const float PrimaryDamage				= 20.0f;
-				const float PrimaryCost                 = 30;
+				const float PrimaryDamage				= 30.0f; //= 20.0f;
+				const float PrimaryCost                 = 55.0f; //= 30;
 
 				const float PrimaryCooldown				= 0.1f;
 				const float SecondaryCooldown			= 0.0f;

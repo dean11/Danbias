@@ -12,7 +12,7 @@ AttatchmentGun::AttatchmentGun(Oyster::Math::Float* currEnergy, Oyster::Math::Fl
 {
 	this->owner = 0;
 	this->damage = 0.0f;
-	this->Cooldown = 0.0f;
+	//this->Cooldown = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
 }
@@ -21,9 +21,9 @@ AttatchmentGun::AttatchmentGun(Player &owner, Oyster::Math::Float* currEnergy, O
 {
 	this->owner = &owner;
 	this->damage = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryDamage;
-	this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
+	//this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
 	this->energyCost = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost;
-	this->TimeUntilFire = 0.0f;
+	//this->TimeUntilFire = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
 }
@@ -43,10 +43,11 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		if(TimeUntilFire > this->Cooldown && *currentEnergy >= energyCost)
+		//if(TimeUntilFire > this->Cooldown && *currentEnergy >= energyCost)
+		if( *currentEnergy >= energyCost )
 		{
 			ShootBullet(usage,dt);
-			TimeUntilFire = 0.0f;
+			//TimeUntilFire = 0.0f;
 			(*currentEnergy) -= energyCost; 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_GunShoot);
 		}
@@ -57,7 +58,7 @@ void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float d
 
 void AttatchmentGun::Update(float dt)
 {
-	this->TimeUntilFire += dt;
+	//this->TimeUntilFire += dt;
 
 	if((*currentEnergy) < NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::MaxEnergy)
 	{
@@ -87,7 +88,7 @@ void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 		BulletCollision(hitObject);
 	}
 
-	((Game*)&Game::Instance())->onBeamEffectFnc( this->owner, pos, target, 0.1f, 1.5f );
+	((Game*)&Game::Instance())->onBeamEffectFnc( this->owner, pos, target, 0.1f, 0.1f );
 }
 
 

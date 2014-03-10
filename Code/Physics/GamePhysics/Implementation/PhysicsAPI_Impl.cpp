@@ -469,7 +469,12 @@ ICustomBody* API_Impl::RayClosestObjectNotMe(ICustomBody* self, Float3 origin, F
 		return nullptr;
 
 	if(rayCallback.hasHit())
+	{
+		//target.x = rayCallback.m_rayToWorld.x();
+		//target.y = rayCallback.m_rayToWorld.y();
+		//target.z = rayCallback.m_rayToWorld.z();
 		return (ICustomBody*)rayCallback.m_collisionObject->getUserPointer();
+	}
 	else
 		return nullptr;
 }
