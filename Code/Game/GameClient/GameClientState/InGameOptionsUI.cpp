@@ -152,6 +152,8 @@ bool InGameOptionsUI::Init()
 	// bind button collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->guiElements );
 
+	printf("Init\n");
+
 	return true;
 }
 
@@ -183,6 +185,8 @@ bool InGameOptionsUI::HaveTextRender() const
 
 void InGameOptionsUI::RenderGUI() 
 {
+	printf("RenderGUI\n");
+
 	//Render mouse Slider
 	Graphics::API::RenderGuiElement( this->mouseSensitivity.mouseSlider, this->mouseSensitivity.pos, Float2(0.35f, 0.003f), Float4(1.0f) );
 
@@ -228,6 +232,7 @@ void InGameOptionsUI::ChangeState( UIState next )
 
 void InGameOptionsUI::ActivateInput()
 {
+	this->active = true;
 	this->render = true;
 	this->shared->mouseDevice->AddMouseEvent( this );
 	this->shared->keyboardDevice->AddKeyboardEvent( this );
@@ -235,6 +240,7 @@ void InGameOptionsUI::ActivateInput()
 
 void InGameOptionsUI::DeactivateInput()
 {
+	this->active = false;
 	this->render = false;
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
@@ -273,6 +279,9 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 
 	if(this->mouseSensitivity.isHeld)
 	{
+		const float minThreshold = 0.1f;
+		const float maxVal = 2.0f;
+
 		Float3 temp = this->mouseSensitivity.button->GetPosition();
 		temp.x = (sender->GetNormalizedPosition().x);
 		
@@ -282,16 +291,16 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 
 		float vel = this->shared->mouseDevice->GetSensitivity();
 
-		const float minThreshold = 0.1f;
-		const float maxVal = 10.5f;
 		float x = temp.x;
 		float width = 0.35f;
 		float halfWidth = 0.35f / 2.0f;
 		float left = 0.5f - halfWidth;
 		float localX = (temp.x - left);
 		float value = localX * maxVal / width;
+		float real = Max(value, minThreshold);
 		
-		this->shared->mouseDevice->SetSensitivity( Max(value, minThreshold) );
+		this->shared->mouseDevice->SetSensitivity( real );
+		this->shared->mouseSensitivity = real;
 	}
 }
 

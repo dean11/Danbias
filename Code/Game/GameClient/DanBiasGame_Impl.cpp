@@ -110,6 +110,8 @@ namespace DanBias
 
 		data.sharedStateContent.network = &data.networkClient;
 
+		data.sharedStateContent.mouseSensitivity = 1.0f;
+
 		if( (data.sharedStateContent.background = Graphics::API::CreateTexture( L"color_white.png" ) ) == 0)
 			printf("Failed to load the default background [color_white.png]\n");
 
@@ -221,6 +223,7 @@ namespace DanBias
 			return E_FAIL;
 		}
 		data.sharedStateContent.mouseDevice->SetSensitivity(mouseSens);
+		data.sharedStateContent.mouseSensitivity = mouseSens;
 		
 		data.sharedStateContent.keyboardDevice= dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
 		if( !data.sharedStateContent.keyboardDevice )
@@ -465,6 +468,26 @@ void LoadInitSettings()
 
 			}
 		}
+		inStream.close();
+	}
+	else
+	{
+		std::wofstream ostream(L"..\\Settings\\settings.txt");
+
+	
+		prevFull = false; //default is false
+		width = 1280.0f;
+		height = 720.0f;
+		mouseSens = 0.5f;
+		mute = false;
+		
+
+		ostream << L"fullscreen false\n";
+		ostream << L"resolutionW 1280\n";
+		ostream << L"resolutionH 720\n";
+		ostream << L"mouseSens 1.2\n";
+		ostream << L"sound true\n";
+		ostream.close();
 	}
 
 }

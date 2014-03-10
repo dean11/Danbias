@@ -10,6 +10,7 @@ using namespace Oyster::Math3D;
 using namespace Utility::Value;
 
 const float KEY_TIMER = 0.03f;
+const Float3 normalized_weapon_muzzle_offset = Float3( 0.5f, 0.0f, 3.0f ); // on rightside of hip, slightly forward
 
 Player::Player()
 	:DynamicObject()
@@ -20,6 +21,8 @@ Player::Player()
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
+	this->deathTimer = 0.0f;
+
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -31,6 +34,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, void (*EventOnCollision)
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
+	this->deathTimer = 0.0f;
 }
 
 Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustomBody::SubscriptMessage (*EventOnCollision)(Oyster::Physics::ICustomBody *proto,Oyster::Physics::ICustomBody *deuter,Float kineticEnergyLoss), ObjectSpecialType type, int objectID, int teamID)
@@ -42,6 +46,7 @@ Player::Player(Oyster::Physics::ICustomBody *rigidBody, Oyster::Physics::ICustom
 	this->playerScore.killScore = 0;
 	this->playerScore.deathScore = 0;
 	this->lookDir = Float3( 0.0f, 0.0f, -1.0f );
+	this->deathTimer = 0.0f;
 }
 
 Player::~Player(void)
@@ -78,6 +83,21 @@ void Player::initPlayerData()
 	state.dynamicFrictionCoeff = 0.0f;
 	state.restitutionCoeff = 0.0f;
 	this->rigidBody->SetState( state );
+}
+
+Float3 & Player::GetWeaponMuzzlePosition( Float3 &targetMem )
+{
+	return this->GetWeaponMuzzlePosition( targetMem, this->GetRigidBody()->GetState() );
+}
+
+Float3 & Player::GetWeaponMuzzlePosition( Float3 &targetMem, const ICustomBody::State &state )
+{
+	targetMem = normalized_weapon_muzzle_offset * this->GetScale(); // TODO: would prefer if state had the scale data
+
+	Float4x4 rotM = OrientationMatrix_LookAtDirection(-this->lookDir, WorldAxisOf(state.quaternion, Float3::standard_unit_y), state.centerPos);
+
+	targetMem = rotM * Float4(targetMem, 1.0f);
+	return targetMem;
 }
 
 void Player::BeginFrame(float dt)

@@ -28,10 +28,12 @@ using namespace DanBias;
 		if(this->isRunning)
 		{
 			// GameLogic takes care of propper step time
-			this->gameInstance.NewFrame((float)this->logicTimer.getElapsedSeconds());
+			float ldt = (float)this->logicTimer.getElapsedSeconds();
+			//ldt = Utility::Value::Max(ldt, 0.000f);
 			this->logicTimer.reset();
-
-			// Need to accumulate nnetwork time
+			this->gameInstance.NewFrame(ldt);
+			
+			// Need to accumulate network time
 			this->accumulatedNetworkTime += (float)this->networkTimer.getElapsedSeconds();
 			while (this->accumulatedNetworkTime >= this->networkFrameTime)
 			{
@@ -214,6 +216,19 @@ using namespace DanBias;
 	{
 		GameSession::gameSession->Send( Protocol_General_GameOver().GetProtocol() );
 		GameSession::gameSession->isRunning = false;
+	}
+	void GameSession::BeamEffect( GameLogic::IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime )
+	{
+		GameSession::gameSession->Send
+		( Protocol_EffectBeam
+			(
+				creator != nullptr ? creator->GetID() : -1,
+				start,
+				end,
+				radius,
+				lifeTime
+			).GetProtocol()
+		);
 	}
 
 

@@ -122,6 +122,7 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 	this->gameInstance.SetCollisionSubscription(GameSession::CollisionEvent);
 	this->gameInstance.SetWeaponEnergySubscription(GameSession::EnergyUpdate);
 	this->gameInstance.SetGameOverSubscription(GameSession::GameOver);
+	this->gameInstance.SetBeamEffectSubscription(GameSession::BeamEffect);
 
 	this->description.clients.Clear();
 

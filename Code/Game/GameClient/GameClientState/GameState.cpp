@@ -1,4 +1,5 @@
 ﻿#include "GameState.h"
+#include <vector>
 #include "DllInterfaces/GFXAPI.h"
 #include <Protocols.h>
 #include "NetworkClient.h"
@@ -6,6 +7,7 @@
 //#include <GameServerAPI.h>
 #include "C_Light.h"
 #include "C_obj/C_Player.h"
+#include "C_obj/C_Beam.h"
 #include "C_obj/C_DynamicObj.h"
 #include "C_obj/C_StaticObj.h"
 #include "Utilities.h"
@@ -31,7 +33,15 @@ using namespace ::Utility::StaticArray;
 //#define _CAMERA_DEBUG
 struct  GameState::MyData
 {
-	MyData(){}
+	MyData()
+	{
+		myId = -1;
+		weapon = 0;
+		soundManager = 0;
+		keyboardInput = 0;
+		mouseInput = 0;
+		nwClient = 0;
+	}
 	GameClientState::ClientState nextState;
 	NetworkClient *nwClient;
 	::Input::Mouse *mouseInput;
@@ -45,6 +55,7 @@ struct  GameState::MyData
 
 	C_AudioHandler* soundManager;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
+	::std::vector<::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Beam>> beams;
 	Camera_FPSV2 camera;
 
 	FirstPersonWeapon* weapon;
@@ -61,6 +72,12 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 GameState::GameState()
 {
 	this->privData = nullptr;
+	this->gameUI = 0;
+	this->respawnUI = 0;
+	this->statsUI = 0;
+	this->inGameMeny = 0;
+	this->inGameOptions = 0;
+	int uiStackTop = 0;
 }
 
 GameState::~GameState()
@@ -75,6 +92,7 @@ bool GameState::Init( SharedStateContent &shared )
 	// and there is content in shared.dynamicObjects and shared.staticObjects
 
 	this->privData = new MyData();
+	this->renderStats = false;
 
 	this->privData->soundManager = shared.soundManager;
 	//this->privData->soundManager->getChannel(ChannelID_pickUpSound)->SetPauseChannel(false);
@@ -89,6 +107,8 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->pickups = &shared.pickups;
 	this->privData->weapons = &shared.weapons;
 	this->privData->weapon = shared.weapon;
+
+	this->privData->beams.reserve( 10 );
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
@@ -111,7 +131,7 @@ bool GameState::Init( SharedStateContent &shared )
 		light->second->Render();
 	}
 
-	this->privData->mouseInput->SetSensitivity(1.7f);
+	this->privData->mouseInput->SetSensitivity(1.0f);
 
 	// create UI states
 	this->gameUI = new GamingUI( &shared, &this->privData->camera );
@@ -279,6 +299,20 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 	}
 	//!Rotate pickups
 
+	{ // update beams
+		int numBeams = (int)this->privData->beams.size();
+		for( int i = 0; i < numBeams; ++i )
+		{
+			if( this->privData->beams[i]->Update(deltaTime) )
+			{ // returns true if beam is expired
+				--numBeams;
+				this->privData->beams[i] = this->privData->beams[numBeams];
+				this->privData->beams.pop_back();
+				--i;
+			}
+		}
+	} // end update beams
+
 	return this->privData->nextState;
 }
 
@@ -338,6 +372,14 @@ bool GameState::Render()
 
 		}
 	}
+
+	{ // render beams
+		auto beam = this->privData->beams.begin();
+		for( ; beam != this->privData->beams.end(); ++beam )
+		{
+			(*beam)->Render();
+		}
+	} // end render beams
 
 	this->privData->weapon->Update( this->privData->camera.GetViewMatrix(), this->privData->camera.GetLook() );
 	this->privData->weapon->Render();
@@ -1160,7 +1202,43 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 		}
 	}
 }
+void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol data )
+{
+	Protocol_EffectBeam decoded( data );
 
+	C_DynamicObj *owner = this->privData->players[decoded.ownerID];
+	Quaternion ownerRotation = owner->getRotation();
+	Float3 upNormal = WorldAxisOf( ownerRotation, Float3::standard_unit_y );
+
+	Float3 debugRight = this->privData->camera.GetRight();
+	Quaternion debugRotQ = this->privData->camera.GetHeadRotation();
+	Float3 debugAngularNormal = AngularAxis( debugRotQ );
+	Float debugRadian = debugAngularNormal.GetMagnitude();
+	debugAngularNormal /= debugRadian;
+
+	C_Beam *beam = new C_Beam
+	(
+		decoded.ownerID,
+		upNormal,
+		decoded.startPoint,
+		decoded.endPoint,
+		decoded.beamRadius,
+		decoded.lifeTime
+	);
+
+	if( beam->LoadModel(L"beam.dan") )
+	{
+		beam->SetTint( Float3::standard_unit_x );
+		beam->SetGlowTint( owner->GetGlowTint() );
+		beam->updateWorld();
+	}
+	else
+	{
+		const char *breakpoint = "Debug trap: Missing file!";
+	}
+
+	this->privData->beams.push_back( beam );
+}
 void GameState::General_GameOver( CustomNetProtocol data )
 {
 	Protocol_General_GameOver decoded(data);
@@ -1241,6 +1319,11 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 				Gameplay_ObjectCreate( data );
 			}		
 			return GameClientState::event_processed;
+		case protocol_Gameplay_EffectBeam:
+			{
+				Gameplay_EffectCreateBeam( data );
+			}
+			break;
 		case protocol_Gameplay_ObjectCreatePlayer:
 			{
 				Gameplay_ObjectCreatePlayer( data );
