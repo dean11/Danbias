@@ -196,6 +196,7 @@ void AttatchmentMassDriver::ForcePush(const GameLogic::WEAPON_FIRE &usage, float
 		pushForce = Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce);
 		pushForce += Oyster::Math::Float4(this->owner->GetLookDir()) * (NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::Pushforce) * (*currentEnergy / maxEnergy);
 		this->heldObject->ApplyImpulse((Oyster::Math::Float3)pushForce);
+		((DynamicObject*)this->heldObject->GetCustomTag())->SetAffectedBy(*this->owner);
 		((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();
 		this->hasObject = false;
 		this->heldObject = NULL;
