@@ -1191,7 +1191,8 @@ void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol da
 {
 	Protocol_EffectBeam decoded( data );
 
-	Quaternion ownerRotation = this->privData->players[decoded.ownerID]->getRotation();
+	C_DynamicObj *owner = this->privData->players[decoded.ownerID];
+	Quaternion ownerRotation = owner->getRotation();
 	Float3 upNormal = WorldAxisOf( ownerRotation, Float3::standard_unit_y );
 
 	Float3 debugRight = this->privData->camera.GetRight();
@@ -1213,7 +1214,7 @@ void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol da
 	if( beam->LoadModel(L"beam.dan") )
 	{
 		beam->SetTint( Float3::standard_unit_x );
-		beam->SetGlowTint( Float3::standard_unit_y );
+		beam->SetGlowTint( owner->GetGlowTint() );
 		beam->updateWorld();
 	}
 	else
