@@ -101,7 +101,7 @@ namespace GameLogic
 		void setDeathTimer(float deathTimer);
 		bool deathTimerTick(float dt);
 
-		void BeginFrame();
+		void BeginFrame(float dt);
 		void EndFrame();
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 

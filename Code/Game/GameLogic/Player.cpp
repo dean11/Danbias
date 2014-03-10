@@ -80,11 +80,11 @@ void Player::initPlayerData()
 	this->rigidBody->SetState( state );
 }
 
-void Player::BeginFrame()
+void Player::BeginFrame(float dt)
 {
 	if( this->playerState != PLAYER_STATE_DEAD && this->playerState != PLAYER_STATE_DIED) 
 	{
-		this->weapon->Update( 0.002f );
+		this->weapon->Update( dt );
 
 		// Rotate player accordingly
 		this->rigidBody->AddRotationAroundY(this->rotationUp);
