@@ -1,5 +1,5 @@
 fullscreen false
 resolutionW 1280
 resolutionH 720
-mouseSens 1.2
+mouseSens 0.5
 sound true

@@ -206,7 +206,7 @@ void InGameOptionsUI::RenderText()
 	Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.2f), 0.030f);
 	
 	wchar_t val[25];
-	swprintf_s(val, L"%f", this->shared->mouseDevice->GetSensitivity());
+	swprintf_s(val, L"%f", this->shared->mouseDevice->GetSensitivity() * 10.0f);
 	val[3] = L'\0';
 	Float3 t = this->mouseSensitivity.button->GetPosition(); t.y = 0.29f; t.x -= 0.04f;
 	Graphics::API::RenderText( val, t, Float2(0.13f, 0.13f), 0.028f);
@@ -279,7 +279,7 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 
 	if(this->mouseSensitivity.isHeld)
 	{
-		const float minThreshold = 0.1f;
+		const float minThreshold = 0.000000001f;
 		const float maxVal = 2.0f;
 
 		Float3 temp = this->mouseSensitivity.button->GetPosition();
