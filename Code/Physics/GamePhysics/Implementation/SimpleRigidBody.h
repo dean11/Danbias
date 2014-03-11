@@ -60,6 +60,9 @@ namespace Oyster
 
 			void OverrideGravity(const ::Oyster::Math::Float3& point, const ::Oyster::Math::Float gravityForce);
 
+			void DisableCollisionResponse();
+			void TurnOnCollisionResponse();
+
 			// Class specific
 			void SetCollisionShape(btCollisionShape* shape);
 			void SetMotionState(btDefaultMotionState* motionState);
@@ -73,6 +76,7 @@ namespace Oyster
 
 			void MoveToLimbo();
 			void ReleaseFromLimbo();
+			bool IsInLimbo();
 
 			bool IsGravityOverrided();
 			void SetOverrideGravity(bool overrideGravity);
@@ -99,6 +103,7 @@ namespace Oyster
 			int collisionFlags;
 
 			bool overrideGravity;
+			bool inLimbo;
 		};
 	} 
 }

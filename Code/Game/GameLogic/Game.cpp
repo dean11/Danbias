@@ -143,7 +143,7 @@ bool Game::NewFrame(float deltaTime)
 
 		for (unsigned int i = 0; i < this->players.Size(); i++)
 		{
-			if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame();
+			if(this->players[i] && this->players[i]->player)	this->players[i]->player->BeginFrame(this->timer);
 		}
 
 		API::Instance().UpdateWorld(this->timer);

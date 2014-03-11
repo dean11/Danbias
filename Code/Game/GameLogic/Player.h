@@ -103,8 +103,8 @@ namespace GameLogic
 
 		::Oyster::Math::Float3 & GetWeaponMuzzlePosition( ::Oyster::Math::Float3 &targetMem = ::Oyster::Math::Float3() );
 		::Oyster::Math::Float3 & GetWeaponMuzzlePosition( ::Oyster::Math::Float3 &targetMem, const ::Oyster::Physics::ICustomBody::State &state );
-
-		void BeginFrame();
+		
+		void BeginFrame(float dt);
 		void EndFrame();
 		static Oyster::Physics::ICustomBody::SubscriptMessage PlayerCollisionAfter(Oyster::Physics::ICustomBody *rigidBodyLevel, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);
 

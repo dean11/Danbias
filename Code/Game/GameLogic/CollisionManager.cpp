@@ -203,7 +203,7 @@ const float default_jump_pad_stun_duration = 1.0f;
 		ExplosionSource->RemoveAffectedBy();
 		ExplosionSource->RemoveManipulation();
 
-		ExplosionSource->GetRigidBody()->MoveToLimbo();
+		Oyster::Physics::API::Instance().MoveToLimbo(ExplosionSource->GetRigidBody());
 		((Game*)&Game::Instance())->onDisableFnc(ExplosionSource);
 	}
 

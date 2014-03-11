@@ -304,38 +304,25 @@ void API_Impl::UpdateWorld(float deltaTime)
 {
 	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
 	{
-		//this->dynamicsWorld->
 		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
-		if(!simpleBody->IsGravityOverrided())
-		{
-			this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
-		}
-		else
-		{
-			simpleBody->SetOverrideGravity(false);
-		}
 
-		simpleBody->PreStep(this->dynamicsWorld);
-		simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
+		if(!simpleBody->IsInLimbo())
+		{		
+			if(!simpleBody->IsGravityOverrided())
+			{
+				this->customBodies[i]->SetGravity(-(this->customBodies[i]->GetState().centerPos - this->gravityPoint).GetNormalized()*this->gravity);
+			}
+			else
+			{
+				simpleBody->SetOverrideGravity(false);
+			}
+	
+			simpleBody->PreStep(this->dynamicsWorld);
+			simpleBody->SetPreviousVelocity(simpleBody->GetLinearVelocity());
+		}
 	}
 
 	this->dynamicsWorld->stepSimulation(deltaTime, 4, this->timeStep);
-
-	ICustomBody::State state;
-
-	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
-	{
-		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
-		btTransform trans;
-		trans = simpleBody->GetRigidBody()->getWorldTransform();
-		this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
-		this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
-
-		if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
-		{
-			this->customBodies[i]->CallSubscription_Move();
-		}
-	}
 
 	int numManifolds = this->dynamicsWorld->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
@@ -360,11 +347,32 @@ void API_Impl::UpdateWorld(float deltaTime)
 				bodyA->CallSubscription_AfterCollisionResponse(bodyA, bodyB);
 				bodyB->CallSubscription_AfterCollisionResponse(bodyB, bodyA);
 			}
-		}
-
-		
+		}	
 	}
 
+	ICustomBody::State state;
+
+	for(unsigned int i = 0; i < this->customBodies.size(); i++ )
+	{
+		SimpleRigidBody* simpleBody = dynamic_cast<SimpleRigidBody*>(this->customBodies[i]);
+
+		if(!simpleBody->IsInLimbo())
+		{
+			btTransform trans;
+			trans = simpleBody->GetRigidBody()->getWorldTransform();
+			this->customBodies[i]->SetPosition(Float3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z()));
+			this->customBodies[i]->SetRotation(Quaternion(Float3(trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z()), trans.getRotation().w()));
+			
+			if(simpleBody->GetRigidBody()->getActivationState() == ACTIVE_TAG)
+			{
+				this->customBodies[i]->CallSubscription_Move();
+			}
+		}
+		else if(simpleBody->IsInLimbo())
+		{
+			this->dynamicsWorld->removeRigidBody(simpleBody->GetRigidBody());
+		}
+	}
 }
 
 void API_Impl::Init()
@@ -385,12 +393,13 @@ bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 
 void API_Impl::MoveToLimbo( const ICustomBody* objRef )
 {
-	
+	dynamic_cast<SimpleRigidBody*>((ICustomBody*)objRef)->MoveToLimbo();
 }
 
 void API_Impl::ReleaseFromLimbo( const ICustomBody* objRef )
 {
-	
+	this->dynamicsWorld->addRigidBody(dynamic_cast<SimpleRigidBody*>((ICustomBody*)objRef)->GetRigidBody());
+	dynamic_cast<SimpleRigidBody*>((ICustomBody*)objRef)->ReleaseFromLimbo();
 }
 
 void API_Impl::ApplyEffect(Oyster::Collision3D::ICollideable* collideable, void* args, EventAction_ApplyEffect effect)
