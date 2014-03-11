@@ -194,7 +194,7 @@ bool OptionState::Render()
 		Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.2f), 0.030f);
 		
 		wchar_t val[25];
-		swprintf_s(val, L"%f", this->sharedData->mouseDevice->GetSensitivity());
+		swprintf_s(val, L"%f", this->sharedData->mouseDevice->GetSensitivity() * 10.0f);
 		val[3] = L'\0';
 		Float3 t = this->mouseSensitivity.button->GetPosition(); t.y = 0.29f; t.x -= 0.04f;
 		Graphics::API::RenderText( val, t, Float2(0.13f, 0.13f), 0.028f);
@@ -264,8 +264,8 @@ void OptionState::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coordinat
 
 		float vel = this->sharedData->mouseDevice->GetSensitivity();
 
-		const float minThreshold = 0.1f;
-		const float maxVal = 10.5f;
+		const float minThreshold = 0.00000001f;
+		const float maxVal = 2.0f;
 		float x = temp.x;
 		float width = 0.35f;
 		float halfWidth = 0.35f / 2.0f;
