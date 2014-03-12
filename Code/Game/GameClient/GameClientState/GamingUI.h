@@ -9,6 +9,7 @@
 #include "InputManager.h"
 #include "SharedStateContent.h"
 #include <Protocols.h>
+#include <list>
 
 namespace DanBias { namespace Client
 {

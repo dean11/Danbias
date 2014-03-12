@@ -124,22 +124,22 @@ void DynamicObject::AttemptResetToInitalPos(Oyster::Math::Float dt)
 		Oyster::Math::Float deltaMagnitude = (currPos - this->initialPos).GetMagnitude();
 		if (deltaMagnitude > NoEdgeConstants::Values::Limits::ObjectDistanceBeforeRespawn)
 		{
-
 			if (this->rigidBody->GetLinearVelocity().GetMagnitude() <= 0.1f)
 			{
-
 				if (this->resetCounter >= NoEdgeConstants::Values::Limits::ObjectTimeStillBeforeRespawn)
 				{
 					//if the distance between the initialPosition of the object and the currentPosition is greater than the limit and the object is at rest, then teleport it back to its initial position
 					this->rigidBody->SetPosition(initialPos);
-					resetCounter = 0;
+
+					//This is a HACK to get the boxes to start moving again after we set the position.
+					this->rigidBody->ApplyImpulse(Float3(0, 0, 0.001f));
+
+					this->resetCounter = 0;
 				}
 				else
 				{
-					resetCounter += dt;
+					this->resetCounter += dt;
 				}
-				
-				
 			}
 		}
 	}

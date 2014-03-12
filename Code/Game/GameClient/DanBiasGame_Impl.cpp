@@ -495,7 +495,7 @@ void LoadInitSettings()
 		ostream << L"fullscreen false\n";
 		ostream << L"resolutionW 1280\n";
 		ostream << L"resolutionH 720\n";
-		ostream << L"mouseSens 1.2\n";
+		ostream << L"mouseSens 0.5\n";
 		ostream << L"sound true\n";
 		ostream.close();
 	}

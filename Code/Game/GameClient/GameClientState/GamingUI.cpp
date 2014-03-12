@@ -274,9 +274,14 @@ void GamingUI::OnMouseRelease ( Input::Enum::SAMI key, Input::Mouse* sender )
 }
 void GamingUI::OnMouseMoveVelocity ( Input::Struct::SAIPointFloat2D velocity, Input::Mouse* sender )
 { 
-	//send delta mouse movement 
-	this->camera->PitchDown( -Utility::Value::Radian(velocity.y) );
-	this->shared->network->Send( Protocol_PlayerLeftTurn(Utility::Value::Radian(velocity.x), this->camera->GetLook()) );
+	if(velocity.x != 0.0f)
+	{
+		this->shared->network->Send( Protocol_PlayerLeftTurn(Utility::Value::Radian(velocity.x), this->camera->GetLook()) );
+	}
+	if(velocity.y != 0.0f)
+	{
+		this->camera->PitchDown( -Utility::Value::Radian(velocity.y) );
+	}
 }
 void GamingUI::OnMouseScroll( int delta, Input::Mouse* sender )
 {
