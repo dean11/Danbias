@@ -49,6 +49,8 @@ Game::Game(void)
 	,	frameTime(1.0f/120.0f)
 	,	timer(0.0f)
 	,	level(0)
+	,	tickPeriod(1.0f)
+	,	tickTimer(0.0f)
 {}
 
 Game::~Game(void)
@@ -127,6 +129,21 @@ Game::LevelData* Game::CreateLevel(const wchar_t mapName[255])
 	this->level->level->InitiateLevel(mapName);
 
 	return this->level;
+}
+void Game::Release()
+{
+	for (unsigned int i = 0; i < this->players.Size(); i++)
+	{
+		delete this->players[i];
+	}
+	this->players.Clear();
+
+	delete this->level;
+	this->level = 0;
+
+	initiated = false;
+
+	API::Instance().Release();
 }
 
 void Game::CreateTeam()
@@ -215,6 +232,11 @@ void Game::SetGameOverSubscription(GameEvent::EndGameFunction functionPointer)
 void Game::SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer)
 {
 	this->onBeamEffectFnc = functionPointer;
+}
+void Game::SetOnGameTimeTick(GameEvent::OnGameTimeTickFunction functionPointer, float period)
+{
+	this->tickPeriod = period;
+	this->onGameTimeTickFnc = functionPointer;
 }
 bool Game::Initiate()
 {

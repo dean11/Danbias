@@ -34,6 +34,12 @@ namespace DanBias
 			{
 				this->fontSize = fontSize;
 			}
+			void SetPos(Oyster::Math::Float3 pos) { this->pos = pos; }
+			Oyster::Math::Float3& GetPos() { return this->pos; }
+			void SetSize(Oyster::Math::Float2 size) { this->size = size; }
+			Oyster::Math::Float2& GetSize() { return this->size; }
+			void SetCol(Oyster::Math::Float4 textColor) { this->textColor = textColor; }
+			Oyster::Math::Float4& GetCol() { return this->textColor; }
 			void RenderText() const
 			{
 				if(text.size() > 0)

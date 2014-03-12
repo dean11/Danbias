@@ -144,6 +144,7 @@ void Listener::ThreadEntry()
 {
 }
 
-void Listener::ThreadExit()
+Oyster::Thread::IThreadObject::ThreadCode Listener::ThreadExit()
 {
+	return Thread::IThreadObject::ThreadCode_Exit;
 }

@@ -283,11 +283,6 @@ bool Player::IsStunned( bool struggled )
 	return !this->haveRecoveredFromStun;
 }
 
-void Player::Inactivate()
-{
-	//this->
-}
-
 void Player::ResetPlayer( Float3 spawnPos )
 {
 	Player::initPlayerData();

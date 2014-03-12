@@ -59,6 +59,11 @@ namespace Oyster
 			virtual void Init() = 0;
 
 			/********************************************************
+			 * Resets stuff //Last week fixing. //Dennis
+			 ********************************************************/
+			virtual void Release() = 0;
+
+			/********************************************************
 			 * An object in limbo state will be ignored during the physics frame Update.
 			 * @param objRef: A pointer to the ICustomBody representing a physical object.
 			 * @return true if object is in limbo state.

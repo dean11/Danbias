@@ -45,6 +45,8 @@ namespace DanBias
 
 		int GetGameSessionClientCount();
 
+		bool Attach(Utility::DynamicMemory::SmartPointer<GameClient> gClient);
+
 	private:
 		void ParseProtocol(Oyster::Network::CustomNetProtocol& p, Oyster::Network::NetworkClient* c);
 

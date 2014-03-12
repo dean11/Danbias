@@ -201,8 +201,8 @@ using namespace Utility::DynamicMemory;
 		}
 		static void ThreadingFunction(ThreadData* w)
 		{
+START:
 			CheckStatus(w);
-
 			if(w->ownerObj.value.obj)	w->ownerObj.value.obj->ThreadEntry();
 
 			while (w->state == OYSTER_THREAD_STATE_NORMAL)		
@@ -216,7 +216,22 @@ using namespace Utility::DynamicMemory;
 				//w->threadDataAcces.unlock();
 			}
 
-			if(w->ownerObj.value.obj)	w->ownerObj.value.obj->ThreadExit();
+			IThreadObject::ThreadCode code = IThreadObject::ThreadCode_Exit;
+			if(w->ownerObj.value.obj)	code = w->ownerObj.value.obj->ThreadExit();
+
+			switch (code)
+			{
+				case Oyster::Thread::IThreadObject::ThreadCode_ResetNormal:
+					w->msec = 0.0f;
+					goto START;
+				break;
+				case Oyster::Thread::IThreadObject::ThreadCode_ResetIdle:
+					w->state = OYSTER_THREAD_STATE_IDLE;
+					w->msec = 0.0f;
+					goto START;
+				break;
+			}
+
 
 			w->state = OYSTER_THREAD_STATE_DEAD;
 		}

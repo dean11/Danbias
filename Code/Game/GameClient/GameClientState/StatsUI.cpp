@@ -1,6 +1,7 @@
 #include "StatsUI.h"
 #include <Protocols.h>
 #include "Utilities.h"
+#include <fstream>
 
 using namespace ::DanBias::Client;
 using namespace ::GameLogic;
@@ -37,7 +38,7 @@ bool StatsUI::Init( int maxNrOfPlayers )
 	this->lineSpacing = 0.05f;
 	this->textHeightPos = 0.3;
 	this->textHeight = 0.1f;
-	this->textWidth = 0.4f;
+	this->textWidth = 0.08f;
 	// z value should be between 0.1 - 0.5 so that it will be in front of other states
 	// add textures and text for player stats
 
@@ -54,6 +55,10 @@ bool StatsUI::Init( int maxNrOfPlayers )
 	this->death	=  new Text_UI*[maxNrOfPlayers];
 	this->nrOfPlayers = 0;
 	this->maxNrOfPlayers = maxNrOfPlayers;
+
+	//Parse layout variables
+	ParseLayout();
+
 	return true; 
 }
 GameStateUI::UIState StatsUI::Update( float deltaTime )
@@ -204,4 +209,76 @@ void StatsUI::DeactivateInput()
 	this->render = false;
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
+}
+
+void StatsUI::ParseLayout()
+{
+	
+	std::ifstream in("..\\Settings\\statsLayout.settings");
+	if(in.is_open())
+	{
+		while (!in.eof())
+		{
+			std::string buff;
+			in >> buff;
+
+			if(buff == "header")
+			{
+				float fsize, yPos, xname, xkill, xdeath, zval;
+				Float3 nsize, kdsize;
+				in >> fsize;
+				in >> yPos;
+				in >> zval;
+				in >> xname;
+				in >> xkill;
+				in >> xdeath;
+				in >> nsize.x; in >> nsize.y; in >> nsize.z;
+				in >> kdsize.x; in >> kdsize.y; in >> kdsize.z;
+				this->textHeightPos = yPos;
+
+				this->nameText->setFontSize(fsize);
+				this->nameText->GetPos().z = zval;
+				this->nameText->GetPos().y = yPos;
+				this->nameText->GetPos().x = xname;
+
+				this->killText->setFontSize(fsize);
+				this->killText->GetPos().z = zval;
+				this->killText->GetPos().y = yPos;
+				this->killText->GetPos().x = xkill;
+
+				this->deathText->setFontSize(fsize);
+				this->deathText->GetPos().z = zval;
+				this->deathText->GetPos().y = yPos;
+				this->deathText->GetPos().x = xdeath;
+
+				this->nameMargin = xname;
+				this->killsMargin = xkill+0.004;
+				this->deathMargin = xdeath;
+				this->nameText->GetSize() = nsize;
+				this->killText->GetSize() = kdsize;
+				this->deathText->GetSize() = kdsize;
+
+				for (int i = 0; i < this->nrOfPlayers; i++)
+				{
+					this->names[i]->setFontSize(fsize);
+					this->kills[i]->setFontSize(fsize);
+					this->death[i]->setFontSize(fsize);
+
+					this->names[i]->GetSize() = nsize;
+					this->kills[i]->GetSize() = kdsize;
+					this->death[i]->GetSize() = kdsize;
+				}
+			}
+		}
+		in.close();
+	}
+}
+
+void StatsUI::OnKeyPress (Input::Enum::SAKI key, Input::Keyboard* sender)
+{
+#if defined(DEBUG) || defined(_DEBUG)
+	{
+		if(key == Input::Enum::SAKI_P)	ParseLayout();
+	}
+#endif
 }

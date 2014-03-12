@@ -385,6 +385,26 @@ void API_Impl::Init()
 	this->dynamicsWorld->setGravity(btVector3(0,-10,0));
 }
 
+void API_Impl::Release()
+{
+	delete this->dynamicsWorld;
+	this->dynamicsWorld = NULL;
+    delete this->solver;
+	this->solver = NULL;
+    delete this->dispatcher;
+	this->dispatcher = NULL;
+    delete this->collisionConfiguration;
+	this->collisionConfiguration = NULL;
+    delete this->broadphase;
+	this->broadphase = NULL;
+
+	for(unsigned int i = 0; i < this->customBodies.size(); i++)
+	{
+		delete this->customBodies[i];
+		this->customBodies[i] = NULL;
+	}
+	this->customBodies.clear();
+}
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {

@@ -7,6 +7,7 @@ GameStateUI::GameStateUI( SharedStateContent* shared )
 	: Input::Mouse::MouseEvent(),
 	  Input::Keyboard::KeyboardEvent()
 {
+	this->active = true;
 	this->shared = shared;
 	this->nextState = GameStateUI::UIState_same;
 }

@@ -28,6 +28,8 @@ namespace DanBias { namespace Client
 
 		void ActivateInput();
 		void DeactivateInput();
+		void ParseLayout();
+		void OnKeyPress (Input::Enum::SAKI key, Input::Keyboard* sender);
 
 	private:
 		// TODO add multiple UI elements

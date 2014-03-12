@@ -37,12 +37,7 @@ namespace DanBias { namespace Client
 		virtual bool Release() = 0;
 		virtual void ChangeState( UIState next ) = 0;
 
-		virtual void ActivateGUIRender() { this->active = true; };
-		virtual void DeactivateGUIRender() { this->active = false; };
-		virtual bool IsActive () { return this->active; } // WTF!? Why this redundancy? / Dan | Yout should have looked at the commit history and
-																							//  asked the person who did it instead of writing 
-																							//  snide comments in code!
-																							//  /Dennis
+		virtual void GUIRenderToggle(bool toggle) { toggle; };
 
 		virtual void ActivateInput() = 0;	
 		virtual void DeactivateInput() = 0;

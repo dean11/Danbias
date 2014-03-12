@@ -13,7 +13,8 @@ namespace GameLogic
 			States_ready,
 			States_idle,
 			States_disconected,
-			States_leave
+			States_leave,
+			State_serverShutdown,
 		};
 		States status;
 	
@@ -35,7 +36,7 @@ namespace GameLogic
 	
 		Protocol_General_Status(Oyster::Network::CustomNetProtocol& p)
 		{
-			status = (States)this->protocol[1].value.netShort;
+			status = (States)p[1].value.netShort;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
@@ -75,21 +76,29 @@ namespace GameLogic
 	//#define protocol_General_GameOver							10
 	struct Protocol_General_GameOver :public Oyster::Network::CustomProtocolObject
 	{
+		float resetTime;
+
 		Protocol_General_GameOver()
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_General_GameOver;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
 		}
-		Protocol_General_GameOver(unsigned short port, std::string ip, std::string name)
+		Protocol_General_GameOver(float resetTime)
 		{ 
 			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
 			this->protocol[0].value.netShort = protocol_General_GameOver;
+
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->resetTime = resetTime;
 		}
 		Protocol_General_GameOver(Oyster::Network::CustomNetProtocol& p)
 		{
+			this->resetTime = p[1].value.netFloat;
 		}
 		Oyster::Network::CustomNetProtocol GetProtocol() override
 		{
+			this->protocol[1].value = this->resetTime;
 			return protocol;		 
 		}							 
 
@@ -136,6 +145,39 @@ namespace GameLogic
 			this->protocol.Set(2, ip);
 			this->protocol.Set(3, name);
 			
+			return protocol;		 
+		}							 
+
+	private:
+		Oyster::Network::CustomNetProtocol protocol;
+	};
+
+	struct Protocol_General_Timer :public Oyster::Network::CustomProtocolObject
+	{
+		float timeLeft;
+	
+		Protocol_General_Timer()
+		{
+			this->protocol[0].value = protocol_General_Timer;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+		}
+		Protocol_General_Timer(float time)
+		{
+			this->protocol[0].value = protocol_General_Timer;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_Float;
+			this->timeLeft = time;
+		}
+	
+		Protocol_General_Timer(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->timeLeft = p[1].value.netFloat;
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			this->protocol[1].value = this->timeLeft;
+
 			return protocol;		 
 		}							 
 
