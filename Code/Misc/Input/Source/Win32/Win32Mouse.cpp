@@ -289,8 +289,8 @@ void Win32Mouse::ToggleDefault( bool toggler )
 {
 	if( toggler )
 	{
-		SetCursorPos(this->winCursPos.x, this->winCursPos.y);
-		ShowCursor(TRUE);
+		//SetCursorPos(this->winCursPos.x, this->winCursPos.y);
+		//ShowCursor(TRUE);
 	}
 	else
 	{
@@ -298,7 +298,7 @@ void Win32Mouse::ToggleDefault( bool toggler )
 		GetCursorPos(&p);
 		this->winCursPos.x = p.x;
 		this->winCursPos.y = p.y;
-		ShowCursor(FALSE);
+		//ShowCursor(FALSE);
 	}
 }
 

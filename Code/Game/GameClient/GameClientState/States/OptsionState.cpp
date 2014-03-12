@@ -295,7 +295,16 @@ void OptionState::OnKeyRelease			( Input::Enum::SAKI key, Input::Keyboard* sende
 }
 
 
-
+void ClientResize(HWND hWnd, int nWidth, int nHeight)
+{
+	RECT rcClient, rcWind;
+	POINT ptDiff;
+	GetClientRect(hWnd, &rcClient);
+	GetWindowRect(hWnd, &rcWind);
+	ptDiff.x = (rcWind.right - rcWind.left) - rcClient.right;
+	ptDiff.y = (rcWind.bottom - rcWind.top) - rcClient.bottom;
+	MoveWindow(hWnd,rcWind.left, rcWind.top, nWidth + ptDiff.x, nHeight + ptDiff.y, TRUE);
+}
 void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 {
 	ButtonType op = (ButtonType)(int)e.userData;
@@ -348,7 +357,9 @@ void OptionState::OnButtonInteract(Oyster::Event::ButtonEvent<OptionState*>& e)
 				//e.owner->sharedData->sound->Toggle(e.owner->options.toggleSound);
 				Graphics::API::Option op = Graphics::API::GetOption();
 				
-				//There seems to be a bugg when changing resolution in fullscreen..
+				if(!op.fullscreen)
+					ClientResize(WindowShell::GetHWND(), (int)e.owner->options.resolution.x, (int)e.owner->options.resolution.y);
+				
 				if(op.fullscreen)
 				{
 					Graphics::API::Option optemp = Graphics::API::GetOption();
