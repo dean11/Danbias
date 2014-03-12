@@ -26,6 +26,10 @@ void GameLobby::Release()
 }
 void GameLobby::Update()
 {
+	//if(this->gameSession.IsTerminated())
+	//{
+	//	
+	//}
 	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
 		if(this->gClients[i])
