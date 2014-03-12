@@ -40,7 +40,7 @@ bool StatsUI::Init( int maxNrOfPlayers )
 	Settings::StatsUISettings::ParseStatsSettings(this->settings);
 
 	// black background
-	this->backGround = new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0,0,0,0.5));
+	this->backGround = new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0.6,0.6,0.6,0.5));
 	this->nameText = new Text_UI(L"Name", Float3(this->settings.nameMarigin, this->settings.textOffsetY - this->settings.lineSpacing, this->settings.globalZ), Float2(this->settings.nameTextSize));
 	this->killText = new Text_UI(L"Kills", Float3(this->settings.killsMargin, this->settings.textOffsetY - this->settings.lineSpacing, this->settings.globalZ), Float2(this->settings.killTextSize));
 	this->deathText = new Text_UI(L"Deaths", Float3(this->settings.deathMargin, this->settings.textOffsetY - this->settings.lineSpacing, this->settings.globalZ), Float2(this->settings.deathTextSize));
@@ -130,6 +130,8 @@ void StatsUI::addPLayer( int id, std::wstring name, int kills, int deaths, Oyste
 	{
 		if(this->playerId[i] == id)
 		{
+			updateDeatchScore(id, deaths);
+			updateKillScore(id, kills);
 			// player already exist
 			return;
 		}

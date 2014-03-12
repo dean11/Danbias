@@ -3,12 +3,13 @@
 
 #include "GameClientState.h"
 #include "OysterMath.h"
+#include "Keyboard.h"
 
 namespace DanBias
 {
 	namespace Client
 	{
-		class LanMenuState : public GameClientState
+		class LanMenuState : public GameClientState, Input::Keyboard::KeyboardEvent
 		{
 		public:
 			LanMenuState();
@@ -23,6 +24,8 @@ namespace DanBias
 			void PlaySound( SoundID soundID, ChannelID channelID, PlayMode playMode );
 
 			virtual const NetEvent & DataRecieved( const NetEvent &message );
+
+			void OnKeyPress	(Input::Enum::SAKI key, Input::Keyboard* sender) override;
 
 		private:
 			struct MyData;

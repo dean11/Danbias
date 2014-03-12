@@ -159,7 +159,7 @@ bool GameState::Init( SharedStateContent &shared )
 	return true;
 }
 
-void GameState::InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer)
+void GameState::InitiatePlayer( int id, const std::string &alias, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer)
 {
 	ModelInitData modelData;
 	modelData.visible	= true;
@@ -189,6 +189,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 		ColorDefines colors;
 		p->SetTint(colors.getTintColor(id));
 		p->SetGlowTint(colors.getGlowColor(id));
+
 		
 		Graphics::Definitions::Pointlight pl;
 		pl.Pos = p->getPos();
@@ -218,7 +219,11 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 		#endif
-			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0, colors.getGlowColor(id)); 
+			((StatsUI*)this->statsUI)->addPLayer( id, Utility::String::StringToWstring(alias, std::wstring()), 0, 0, colors.getGlowColor(id)); 
+		}
+		else
+		{
+			((StatsUI*)this->statsUI)->addPLayer( id, Utility::String::StringToWstring(alias, std::wstring()), 0, 0, colors.getGlowColor(id)); 
 		}
 	}
 	else
@@ -973,7 +978,7 @@ void GameState::Gameplay_ObjectCreate( CustomNetProtocol data )
 void GameState::Gameplay_ObjectCreatePlayer( CustomNetProtocol data )
 {
 	Protocol_ObjectCreatePlayer decoded(data);
-	this->InitiatePlayer( decoded.objectID, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
+	this->InitiatePlayer( decoded.objectID, decoded.name, decoded.meshName, decoded.position, decoded.rotationQ, decoded.scale, decoded.owner );				
 }
 void GameState::Gameplay_ObjectJoinTeam( CustomNetProtocol data )
 {

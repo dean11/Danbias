@@ -59,6 +59,7 @@ namespace DanBias
 		void LobbyMainData(GameLogic::Protocol_LobbyClientData& p, Oyster::Network::NetworkClient* c);			//id = protocol_Lobby_MainData:
 		void LobbyReady(GameLogic::Protocol_LobbyClientReadyState& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_ClientReadyState:
 		void LobbyQuerryGameData(GameLogic::Protocol_QuerryGameType& p, Oyster::Network::NetworkClient* c);		//id = protocol_Lobby_QuerryGameType:
+		void LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c);					//id = protocol_Lobby_Join:
 
 	private:
 		int FindClient(Oyster::Network::NetworkClient* c);

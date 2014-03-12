@@ -39,6 +39,7 @@
 #define protocol_Lobby_GameData						206
 #define protocol_Lobby_QuerryGameType				207
 #define protocol_Lobby_ClientReadyState				208
+#define protocol_Lobby_Join							209
 #define protocol_LobbyMAX								299
 
 

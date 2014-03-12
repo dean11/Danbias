@@ -108,7 +108,6 @@ bool GameSession::Create(GameDescription& desc, bool forceStart)
 		return false;
 	}
 	levelData->InitGameMode(desc.gameTimeMinutes * 60.0f, 300);
-	levelData->InitGameMode(25, 300);
 
 /* Set some game instance data options */
 	this->gameInstance.SetMoveSubscription(GameSession::ObjectMove);

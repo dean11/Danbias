@@ -75,6 +75,7 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 	bool isUp = (( keyboard.Flags & RI_KEY_BREAK) != 0);
 	SAKI key = SAKI_Unknown;
 	bool isE0;
+	bool once = false;
 	
 	MapKey(keyboard, key, isE0);
 
@@ -107,6 +108,7 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 			}
 			else
 			{
+				once = true;
 				this->InternalOnKeyPress(key);
 				this->keys[key].isDown = true;
 				this->keys[key].isE0 = isE0;
@@ -153,7 +155,7 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 		}
 		else if ( this->keys[SAKI_Tab].isDown )
 		{
-			this->textTarget->insert( this->writePos, 1, '\t');
+			//this->textTarget->insert( this->writePos, 1, '\t');
 		}
 		else if (virtualKey && !isUp)
 		{
@@ -186,8 +188,69 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				else if(key == SAKI_Add)	test = L'\\';
 			}
 
-			this->textTarget->insert( this->writePos, 1, test);
-			++this->writePos;
+			//Filter junk keys...
+			switch (key)
+			{
+			case Input::Enum::SAKI_0:
+			case Input::Enum::SAKI_1:
+			case Input::Enum::SAKI_2:
+			case Input::Enum::SAKI_3:
+			case Input::Enum::SAKI_4:
+			case Input::Enum::SAKI_5:
+			case Input::Enum::SAKI_6:
+			case Input::Enum::SAKI_7:
+			case Input::Enum::SAKI_8:
+			case Input::Enum::SAKI_9:
+			case Input::Enum::SAKI_Add:
+			case Input::Enum::SAKI_Comma:
+			case Input::Enum::SAKI_Minus:
+			case Input::Enum::SAKI_Period:
+			case Input::Enum::SAKI_A:
+			case Input::Enum::SAKI_B:
+			case Input::Enum::SAKI_C:
+			case Input::Enum::SAKI_D:
+			case Input::Enum::SAKI_E:
+			case Input::Enum::SAKI_F:
+			case Input::Enum::SAKI_G:
+			case Input::Enum::SAKI_H:
+			case Input::Enum::SAKI_I:
+			case Input::Enum::SAKI_J:
+			case Input::Enum::SAKI_K:
+			case Input::Enum::SAKI_L:
+			case Input::Enum::SAKI_M:
+			case Input::Enum::SAKI_N:
+			case Input::Enum::SAKI_O:
+			case Input::Enum::SAKI_P:
+			case Input::Enum::SAKI_Q:
+			case Input::Enum::SAKI_R:
+			case Input::Enum::SAKI_S:
+			case Input::Enum::SAKI_T:
+			case Input::Enum::SAKI_U:
+			case Input::Enum::SAKI_V:
+			case Input::Enum::SAKI_W:
+			case Input::Enum::SAKI_X:
+			case Input::Enum::SAKI_Y:
+			case Input::Enum::SAKI_Z:
+			case Input::Enum::SAKI_Numpad0:
+			case Input::Enum::SAKI_Numpad1:
+			case Input::Enum::SAKI_Numpad2:
+			case Input::Enum::SAKI_Numpad3:
+			case Input::Enum::SAKI_Numpad4:
+			case Input::Enum::SAKI_Numpad5:
+			case Input::Enum::SAKI_Numpad6:
+			case Input::Enum::SAKI_Numpad7:
+			case Input::Enum::SAKI_Numpad8:
+			case Input::Enum::SAKI_Numpad9:
+			case Input::Enum::SAKI_NumpadEnter:
+			case Input::Enum::SAKI_NumpadMultiply:
+			case Input::Enum::SAKI_NumpadPlus:
+			case Input::Enum::SAKI_NumpadSubtract:
+			case Input::Enum::SAKI_NumpadDecimal:
+			case Input::Enum::SAKI_NumpadDivide:
+				this->textTarget->insert( this->writePos, 1, test);
+				++this->writePos;
+			}
+			
 		}
 		
 	}
@@ -251,6 +314,7 @@ void Win32Keyboard::MapKey(RAWKEYBOARD& rawKB, SAKI& out_key, bool& isE0)
 		// NUMPAD ENTER has its e0 bit set
 		case VK_RETURN:
 			if (isE0)	out_key = SAKI_NumpadEnter;
+			else		out_key = SAKI_Enter;
 		break;
  
 		// the standard INSERT, DELETE, HOME, END, PRIOR and NEXT keys will always have their e0 bit set, but the
