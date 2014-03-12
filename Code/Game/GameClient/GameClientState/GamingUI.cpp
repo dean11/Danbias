@@ -28,9 +28,13 @@ GamingUI::GamingUI()
 	this->mouse_firstDown	= false;
 	this->key_zipDown		= false;
 	this->key_Drop			= false;
-	this->currentWeapon		= 0;
-	this->zip_Timer			= 0;
+	this->currentWeapon		= 0.0f;
+	this->zip_Timer			= 0.0f;
+	this->gameTime			= 0.0f;
 	this->nextState 		= GameStateUI::UIState_same;
+
+	this->renderGuiFunc		= &GamingUI::InternalRenderGUI;
+	this->renderTextFunc	= &GamingUI::InternalRenderText;
 }
 
 GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera ) 
@@ -52,17 +56,26 @@ GamingUI::GamingUI( SharedStateContent* shared, Camera_FPSV2 *camera )
 	this->currentWeapon		= 0;
 	this->zip_Timer			= 0.0f;
 	this->msg_Timer			= 0.0f;
+	this->gameTime			= 0.0f;
 	this->nextState			= GameStateUI::UIState_same;
+	this->renderGuiFunc		= &GamingUI::InternalRenderGUI;
+	this->renderTextFunc	= &GamingUI::InternalRenderText;
 }
 
 GamingUI::~GamingUI() { }
 bool GamingUI::Init()
 {
+	this->renderGuiFunc		= &GamingUI::InternalRenderGUI;
+	this->renderTextFunc	= &GamingUI::InternalRenderText;
+
 	Float2 size = Oyster::Graphics::API::GetOption().resolution;
+
+	Settings::GameUISettings::ParseSettings(this->settings);
+
 	// z value should be between 0.5 - 0.9 so that it will be behind other states
 	// add textures and text
-	this->hp 		= new Text_UI(L"100", Float3(0.04f,0.91f,0.1f), Float2(0.3f,0.1f), 0.05f, Float4(1,0,0,1));
-	this->energy 	= new Text_UI(L"100", Float3(0.8f,0.91f,0.1f), Float2(0.3f,0.1f), 0.05f, Float4(1,1,0,1));
+	this->hp 		= new Text_UI(L"100", this->settings.healthpos, this->settings.healthboxsize, this->settings.healthsize, this->settings.healthcolor);
+	this->energy 	= new Text_UI(L"100", this->settings.energypos, this->settings.energyboxsize, this->settings.energysize, this->settings.energycolor);
 	this->maxMessageCount = 3;
 	
 	this->killMessages = new Text_UI*[maxMessageCount];
@@ -73,7 +86,7 @@ bool GamingUI::Init()
 	WeaponData w1 (	NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::SlotId
 				  , NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PrimaryCooldown
 				  , 3.5f );
-	w1.crosshair = new Plane_UI(L"crosshair_low.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.1f , 0.1f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 1.0f));
+	w1.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.1f , 0.1f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 1.0f));
 	w1.tint = Float4(1.5f, 2.8f, 1.5f, 1.0f);
 	this->weapons.push_back(w1);
 	
@@ -104,15 +117,36 @@ bool GamingUI::HaveTextRender() const
 	return true; 
 }
 
-void GamingUI::RenderGUI() 
+void GamingUI::GUIRenderToggle(bool toggle)
+{ 
+	this->renderGuiFunc = toggle ? &GamingUI::InternalRenderGUI : &GamingUI::DummyRender;
+}
+void GamingUI::DummyRender()
+{
+
+}
+void GamingUI::InternalRenderGUI()
 {
 	this->weapons[this->currentWeapon].crosshair->RenderTexture(this->weapons[this->currentWeapon].tint);
 }
-
-void GamingUI::RenderText() 
+void GamingUI::InternalRenderText()
 {
-	this->hp->RenderText();
-	this->energy->RenderText();
+	int gt = (int)this->gameTime;
+	int sec = gt % 60;
+	int min = gt / 60 % 60;
+
+	std::wstring str;
+	wchar_t buff[10];
+	_itow_s(min, buff, 10); 
+	str.append(buff);
+	str.append(L".");
+	_itow_s(sec, buff, 10); 
+	str.append(buff);
+
+	Oyster::Graphics::API::RenderText(str, this->settings.timerpos, this->settings.timerboxsize, this->settings.timersize, this->settings.timercolor);
+
+	this->hp->RenderText(this->settings.healthpos, this->settings.healthboxsize, this->settings.healthsize, this->settings.healthcolor);
+	this->energy->RenderText(this->settings.energypos, this->settings.energyboxsize, this->settings.energysize, this->settings.energycolor);
 	if(this->msg_Timer < this->msg_Cooldown)
 	{
 		for (int i = 0; i < maxMessageCount; i++)
@@ -120,6 +154,16 @@ void GamingUI::RenderText()
 			this->killMessages[i]->RenderText();
 		}
 	}
+}
+
+void GamingUI::RenderGUI() 
+{
+	(this->*renderGuiFunc)();
+}
+
+void GamingUI::RenderText() 
+{
+	(this->*renderTextFunc)();
 }
 
 bool GamingUI::Release()
@@ -143,6 +187,10 @@ void GamingUI::SetHPtext( std::wstring hp )
 {
 	this->hp->setText(hp);
 }
+void GamingUI::SetGameTime( float time )
+{
+	this->gameTime = time;
+}
 void GamingUI::SetEnergyText( std::wstring energy )
 {
 	this->energy->setText(energy);
@@ -162,13 +210,29 @@ void GamingUI::ReadKeyInput(float deltaTime)
 	if( this->key_strafeRight )		this->shared->network->Send( Protocol_PlayerMovementRight() );
 	if( this->key_Drop )			this->shared->network->Send( Protocol_PlayerShot(Protocol_PlayerShot::ShootValue_DropItem) );
 
+	int energy = 0;
+	energy = _wtoi(this->energy->getText().c_str());
+
 	if( this->mouse_firstDown )		
 	{
-		this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
+		if(this->currentWeapon == 0)
+		{
+			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PushCost)
+				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
+		}
+		else
+		{
+			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost)
+				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_PrimaryPress);
+		}
 	}
 	if( this->mouse_secondDown )
 	{
-		this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_SecondaryPress);
+		if(this->currentWeapon == 0)
+		{
+			if(energy >= NoEdgeConstants::Values::Weapons::MassDriveForceAttachment::PullCost)
+				this->weapons[this->currentWeapon].Shoot(this, Protocol_PlayerShot::ShootValue_SecondaryPress);
+		}
 	}
 	if( this->key_zipDown )
 	{
@@ -266,6 +330,11 @@ void GamingUI::OnKeyPress(Enum::SAKI key, Keyboard* sender)
 			this->currentWeapon = min( (int)this->weapons.size() , 1 );
 			this->weapons[this->currentWeapon].Activate(this);
 		break;
+#if defined (DEBUG) || defined (_DEBUG)
+		case SAKI_P:
+			Settings::GameUISettings::ParseSettings(this->settings);
+		break;
+#endif
 	}
 }
 void GamingUI::OnKeyRelease(Enum::SAKI key, Keyboard* sender)
@@ -315,16 +384,15 @@ void GamingUI::StopGamingUI()
 
 void GamingUI::ActivateInput()
 {
+	this->renderGuiFunc = &GamingUI::InternalRenderGUI;
 	this->shared->mouseDevice->SetSensitivity(this->shared->mouseSensitivity);
-	this->ActivateGUIRender();
 	this->shared->mouseDevice->AddMouseEvent( this );
 	this->shared->keyboardDevice->AddKeyboardEvent( this );
 }
 
 void GamingUI::DeactivateInput()
 {
-	this->shared->mouseDevice->SetSensitivity(1.0f);
-	this->DeactivateGUIRender();
+	this->renderGuiFunc = &GamingUI::DummyRender;
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
 }

@@ -1,0 +1,14 @@
+timersize 0.03
+timerpos 0.45 0.01 0.4
+timercolor 0.2 0.6 0.2 1.0
+timerboxsize 0.1 0.15
+
+healthsize 0.04
+healthpos 0.001 0.94 0.1f
+healthcolor 1 0 0 1
+healthboxsize 0.12 0.1
+
+energysize 0.04
+energypos 0.9 0.94 0.1
+energycolor 0.1 0.4 0.9 1
+energyboxsize 0.1 0.1

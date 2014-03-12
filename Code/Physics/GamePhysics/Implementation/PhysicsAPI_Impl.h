@@ -67,6 +67,8 @@ namespace Oyster
 			API_Impl();
 			virtual ~API_Impl();
 
+			void Release();
+
 			void Init();
 
 			bool IsInLimbo( const ICustomBody* objRef );

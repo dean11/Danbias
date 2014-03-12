@@ -124,11 +124,12 @@ struct NetworkClient::PrivateData : public IThreadObject
 		}
 	}
 
-	void ThreadExit()
+	Thread::IThreadObject::ThreadCode ThreadExit()
 	{
 		WSACloseEvent(socketEvents[0]);
 		WSACloseEvent(socketEvents[1]);
 		CloseHandle(shutdownEvent);
+		return Thread::IThreadObject::ThreadCode_Exit;
 	}
 
 	//Thread for receiving broadcast messages
@@ -463,6 +464,8 @@ struct NetworkClient::PrivateData : public IThreadObject
 			e.args.type = parg.type;
 			
 			this->recieveQueue.Push(e);
+			if(this->recieveQueue.Size() > 500) //TODO: NO CONSTANT
+				this->recieveQueue.Pop();
 
 			if(this->outputEvent)
 			{

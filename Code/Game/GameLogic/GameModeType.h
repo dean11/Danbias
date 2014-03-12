@@ -38,6 +38,7 @@ namespace GameLogic
 			void Update( float deltaTime);
 			bool TimeExit();
 			int EndConditionMet( Utility::DynamicMemory::DynamicArray<Player*>& players );
+			float GetGameTime() const;
 
 		private:
 			EndConditions endConditions;

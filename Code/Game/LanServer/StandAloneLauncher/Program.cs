@@ -19,7 +19,7 @@ namespace StandAloneLauncher
             //Application.Run(new Form1());
 
 
-            Form1 myf = new Form1();
+            NoEdgeWindow myf = new NoEdgeWindow();
             myf.Show();
             myf.Initiate();
             myf.Run();

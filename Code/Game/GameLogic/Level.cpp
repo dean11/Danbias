@@ -423,6 +423,7 @@ void Level::RemovePlayerFromGame(Player *player)
 				//this->playerObjects[i] = nullptr;
 				//this->playerObjects.Resize(
 				this->playerObjects.Swap(i, this->playerObjects.Size() - 1);
+				this->playerObjects[i, this->playerObjects.Size() - 1] = 0;
 			}
 			break;
 		}
@@ -456,6 +457,7 @@ void Level::Update(float deltaTime)
 	gameMode.Update(deltaTime);
 
 	int winnerID =  gameMode.EndConditionMet(this->playerObjects);
+
 	if (winnerID != -1 )
 	{
 		// game ends because of timer
@@ -465,6 +467,15 @@ void Level::Update(float deltaTime)
 
 		//send message
 		((Game*)&Game::Instance())->onEndGameFnc();
+	}
+	else
+	{
+		((Game*)&Game::Instance())->tickTimer += deltaTime;
+		if(((Game*)&Game::Instance())->tickTimer >= ((Game*)&Game::Instance())->tickPeriod)
+		{
+			((Game*)&Game::Instance())->onGameTimeTickFnc(this->gameMode.GetGameTime());
+			((Game*)&Game::Instance())->tickTimer = 0.0f;
+		}
 	}
 
 	for(int i = 0; i < (int)this->playerObjects.Size(); i++)

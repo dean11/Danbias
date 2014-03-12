@@ -259,7 +259,7 @@ namespace Utility
 
 				int newSize = this->size + elements;
 
-				if(newSize >= this->capacity)
+				if(newSize > this->capacity)
 				{
 					T* temp = new T[newSize];
 
@@ -269,8 +269,12 @@ namespace Utility
 					}
 					this->capacity = newSize;
 
-					delete [] this->data;
+					// By temporary storing data pointer in a destroyer, the memory data points ad will 
+					// never be invalid when other threads try to access. (Still not as safe as mutex or atomic)
+					T* destroyer = this->data;
 					this->data = temp;
+
+					delete [] destroyer;
 				}
 			}
 

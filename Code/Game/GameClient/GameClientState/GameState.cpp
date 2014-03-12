@@ -72,6 +72,7 @@ inline Quaternion ArrayToQuaternion( const float source[4] )
 GameState::GameState()
 {
 	this->privData = nullptr;
+	this->renderStats = false;
 	this->gameUI = 0;
 	this->respawnUI = 0;
 	this->statsUI = 0;
@@ -123,6 +124,7 @@ bool GameState::Init( SharedStateContent &shared )
 	this->gameOver = false;
 
 	shared.keyboardDevice->ReleaseTextTarget();
+	shared.keyboardDevice->AddKeyboardEvent(this);
 	//shared.mouseDevice->AddMouseEvent(this);
 
 	auto light = this->privData->lights->begin();
@@ -216,7 +218,7 @@ void GameState::InitiatePlayer( int id, const std::string &modelName, const floa
 			// !DEBUG
 			this->privData->camera.SetHeadOffset( offset );
 		#endif
-			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0); 
+			((StatsUI*)this->statsUI)->addPLayer( id, colors.getColorName(id), 0, 0, colors.getGlowColor(id)); 
 		}
 	}
 	else
@@ -236,6 +238,7 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 		{
 			this->privData->nextState = ClientState_Quit;
 			// disconnect 
+			privData->nwClient->Disconnect();
 		}
 	
 		break;
@@ -460,7 +463,8 @@ bool GameState::Render()
 	if( this->gameOver )
 	{
 		Oyster::Graphics::API::RenderText( L"GAME OVER", Float3(0.2f,0.1f,0.1f), Float2(0.6f,0.1f), 0.1f);
-		Oyster::Graphics::API::RenderText( L"press 'ESC' to continue", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
+		Oyster::Graphics::API::RenderText( L"press 'ESC' to return to main menu", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
+		Oyster::Graphics::API::RenderText( L"press 'SPACE' to continue", Float3(0.2f,0.85f,0.1f), Float2(0.8f,0.1f), 0.04f);
 	}
 
 	Oyster::Graphics::API::EndFrame();
@@ -472,6 +476,7 @@ bool GameState::Release()
 	Graphics::API::Option o = Graphics::API::GetOption();
 	if( privData )
 	{
+		this->privData->keyboardInput->RemoveKeyboardEvent(this);
 		this->UIstackPeek()->DeactivateInput();
 
 		auto playerObject = this->privData->players.begin();
@@ -511,6 +516,7 @@ bool GameState::Release()
 			pickup->second = nullptr;
 		}
 
+		this->privData->players.clear();
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
@@ -561,7 +567,45 @@ bool GameState::Release()
 	
 	Graphics::API::SetView(Math::Float4x4::identity);
 	Graphics::API::SetProjection(Math::Float4x4::null);
+
 	return true;
+}
+
+void GameState::OnKeyPress		(Input::Enum::SAKI key, Input::Keyboard* sender)
+{
+	switch (key)
+	{
+		case Input::Enum::SAKI_Tab:
+			this->gameUI->GUIRenderToggle(false); //Toggle crosshair rendering
+			this->renderStats = true;
+			this->statsUI->ActivateInput();
+		break;
+	}
+}
+void GameState::OnKeyRelease	(Input::Enum::SAKI key, Input::Keyboard* sender)
+{
+	switch (key)
+	{
+		case Input::Enum::SAKI_Tab:
+			this->gameUI->GUIRenderToggle(true); //Toggle crosshair rendering
+			this->renderStats = false;
+			this->statsUI->DeactivateInput();
+		break;
+
+		case Input::Enum::SAKI_Escape:
+		if( this->gameOver )
+		{
+			this->privData->nextState = ClientState_Main; 
+		}
+		break;
+
+		case Input::Enum::SAKI_Space:
+		if( this->gameOver )
+		{
+			this->privData->nextState = ClientState_ResetGame; 
+		}
+		break;
+	}
 }
 
 void GameState::ChangeState( ClientState next )
@@ -623,25 +667,6 @@ void GameState::ReadKeyInput()
 		this->key_Wireframe_Toggle = false;
 	}
 #endif // !DEGUG KEYS
-
-	// show Stats
-	if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Tab) )
-	{
-		this->renderStats = true;
-	} 
-	else 
-	{
-		this->renderStats = false;
-	}
-
-	if( this->gameOver )
-	{
-		if( this->privData->keyboardInput->IsKeyDown(::Input::Enum::SAKI_Escape) )
-		{
-			this->privData->nextState = ClientState_Main; 
-		}
-		this->renderStats = true;
-	}
 }
 void GameState::Gameplay_ObjectPickup( CustomNetProtocol data )
 {
@@ -1060,7 +1085,7 @@ void GameState::Gameplay_PlayerScore( CustomNetProtocol data )
 	Protocol_PlayerScore decoded(data);
 	// update scoreboard 
 	ColorDefines colors;
-	((StatsUI*)this->statsUI)->addPLayer( decoded.playerID, colors.getColorName(decoded.playerID), decoded.killCount, decoded.deathCount );	
+	((StatsUI*)this->statsUI)->addPLayer( decoded.playerID, colors.getColorName(decoded.playerID), decoded.killCount, decoded.deathCount, colors.getGlowColor(decoded.playerID) );	
 }
 void GameState::Gameplay_ObjectDisconnectPlayer( CustomNetProtocol data )
 {
@@ -1246,17 +1271,24 @@ void GameState::General_GameOver( CustomNetProtocol data )
 	// turn off gameInput
 	this->privData->mouseInput->RemoveMouseEvent((Input::Mouse::MouseEvent*)(GamingUI*)this->gameUI);
 	this->privData->keyboardInput->RemoveKeyboardEvent((Input::Keyboard::KeyboardEvent*)(GamingUI*)this->gameUI);
-	this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack)->SetPauseChannel(true);
+	//this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack)->SetPauseChannel(true);
 	PlaySound(SoundID_Game_GameOver, ChannelID_Game_GameOver, PlayMode_Restart);
 	gameOver = true;
+	this->renderStats = true;
+}
+void GameState::General_Timer( Oyster::Network::CustomNetProtocol data )
+{
+	((GamingUI*)this->gameUI)->SetGameTime(GameLogic::Protocol_General_Timer( data ).timeLeft);
 }
 const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState::NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
 	{ // TODO: Reconnect
-		const char *breakpoint = "temp trap";
-		this->privData->nwClient->Disconnect();
-		this->ChangeState( GameClientState::ClientState_Main );
+		//const char *breakpoint = "temp trap";
+		if(!this->privData->nwClient->Reconnect())
+			this->ChangeState( GameClientState::ClientState_Main );
+		//this->privData->nwClient->Disconnect();
+		//this->ChangeState( GameClientState::ClientState_Main );
 	}
 
 	// fetching the id data.
@@ -1375,6 +1407,7 @@ const GameClientState::NetEvent & GameState::DataRecieved( const GameClientState
 		CustomNetProtocol data = message.args.data.protocol;
 		switch( ID )
 		{
+			case protocol_General_Timer:	General_Timer( data );
 			case protocol_General_Status:				break; /** @todo TODO: implement */
 			case protocol_General_Text:					break; /** @todo TODO: implement */
 			case protocol_General_GameOver: General_GameOver( data );
@@ -1494,8 +1527,7 @@ void GameState::UIstackRenderGUI()
 	for( int i = 0; i <= this->uiStackTop; ++i )
 	{
 		if( uiStack[i]->HaveGUIRender() )
-			if( uiStack[i]->IsActive() ) // WTF!? Why this redundancy? / Dan
-				uiStack[i]->RenderGUI();
+			uiStack[i]->RenderGUI();
 	}
 }
 

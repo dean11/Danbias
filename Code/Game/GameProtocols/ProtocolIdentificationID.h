@@ -22,6 +22,7 @@
 #define protocol_General_Text						101
 #define protocol_General_GameOver					102
 #define protocol_Broadcast_Test						103
+#define protocol_General_Timer						104
 #define protocol_GeneralMAX								199
 
 

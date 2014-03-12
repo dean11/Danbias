@@ -82,7 +82,6 @@ namespace GameLogic
 		bool IsIdle();
 		bool IsStunned( bool struggled = false );
 
-		void Inactivate();
 		void ResetPlayer( Oyster::Math::Float3 spawnPos);
 
 		Oyster::Math::Float3 GetPosition() const;

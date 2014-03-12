@@ -167,7 +167,7 @@ int GameLobby::FindClient(Oyster::Network::NetworkClient* c)
 	//find client in waiting list
 	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(this->gClients[i]->GetClient()->GetID() == c->GetID())
+		if(this->gClients[i] && this->gClients[i]->GetClient()->GetID() == c->GetID())
 		{
 			temp = i;
 			break;

@@ -52,7 +52,7 @@ namespace DanBias
 		void SetSinceLastResponse(float seconds);
 		void SetState(ClientState state);
 
-		GameLogic::IPlayerData* ReleasePlayer();
+		void ReleasePlayer();
 		Oyster::Network::NetClient ReleaseClient();
 
 		bool IsInvalid();

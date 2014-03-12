@@ -257,6 +257,7 @@
     <ClInclude Include="GameClientState\GameClientState.h" />
     <ClInclude Include="GameClientState\GameState.h" />
     <ClInclude Include="GameClientState\GameStateUI.h" />
+    <ClInclude Include="GameClientState\GameUISettings.h" />
     <ClInclude Include="GameClientState\GamingUI.h" />
     <ClInclude Include="GameClientState\IngameMenyUI.h" />
     <ClInclude Include="GameClientState\InGameOptionsUI.h" />

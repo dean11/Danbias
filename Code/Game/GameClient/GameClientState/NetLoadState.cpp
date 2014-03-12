@@ -124,8 +124,8 @@ const GameClientState::NetEvent & NetLoadState::DataRecieved( const GameClientSt
 	else
 	{ // HACK: Debug trap
 		const char *breakPoint = "Being greedy.";
-		return message;
 	}
+	return message;
 }
 
 void NetLoadState::LoadGame( const ::std::string &fileName )

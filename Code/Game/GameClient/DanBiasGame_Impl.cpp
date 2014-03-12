@@ -83,7 +83,7 @@ namespace DanBias
 	//--------------------------------------------------------------------------------------
 	DanBiasClientReturn DanBiasGame::Initiate( DanBiasGameDesc& desc )
 	{
-		WindowShell::CreateConsoleWindow();
+		//WindowShell::CreateConsoleWindow();
 		//if(! data.window->CreateWin(WindowShell::WINDOW_INIT_DESC(L"Window", cPOINT(1600, 900), cPOINT())))
 		LoadInitSettings();
 
@@ -201,6 +201,7 @@ namespace DanBias
 		gfxOp.modelPath = L"..\\Content\\Models\\";
 		gfxOp.texturePath = L"..\\Content\\Textures\\";
 		gfxOp.resolution = Oyster::Math::Float2( width, height );
+		//gfxOp.resolution = Oyster::Math::Float2( 1280.0f, 720.0f );
 		gfxOp.ambientValue = 0.3f;
 		gfxOp.fullscreen = prevFull;
 		gfxOp.globalGlowTint = Math::Float3(1.0f, 1.0f, 1.0f);
@@ -285,6 +286,11 @@ namespace DanBias
 				data.state = new Client::GameState();
 				stateChanged = true;
 				break;
+			case Client::GameClientState::ClientState_ResetGame:
+				data.state->Release();
+				data.state = new Client::NetLoadState();
+				stateChanged = true;
+				break;
 			case Client::GameClientState::ClientState_NetLoad:
 				data.state->Release();
 				data.state = new Client::NetLoadState();
@@ -365,17 +371,21 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 			bool act = (LOWORD(wParam) != WA_INACTIVE) && (HIWORD(wParam) == 0);
 			Graphics::API::Option op = Graphics::API::GetOption();
 
+			//Not working as wanted... (maby due to where the window actualy is (borders etc...)
+			if(LOWORD(wParam) == WA_CLICKACTIVE)
+			{
+				
+			}
+			else
+			{
+				//if(DanBias::data.sharedStateContent.mouseDevice)
+				//	DanBias::data.sharedStateContent.mouseDevice->Activate();
+				//return FALSE;
+			}
+
 			if(act)
 			{
-				//Not working as wanted... (maby due to where the window actualy is (borders etc...)
-				//if(LOWORD(wParam) == WA_CLICKACTIVE)
-				//{
-				//	
-				//}
-				//else
-				//{
-				//	DanBias::data.sharedStateContent.mouseDevice->Activate();
-				//}
+				
 
 				ShowWindow(WindowShell::GetHWND(), SW_RESTORE);
 				//ShowWindow(WindowShell::GetHWND(), SW_MAXIMIZE);
@@ -394,7 +404,7 @@ LRESULT CALLBACK WindowCallBack(HWND handle, UINT message, WPARAM wParam, LPARAM
 					Graphics::API::SetOptions(op);
 					ShowWindow(WindowShell::GetHWND(), SW_MINIMIZE);
 				}
-				
+
 			}
 		}
 		break;

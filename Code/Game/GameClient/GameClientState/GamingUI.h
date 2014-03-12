@@ -8,6 +8,7 @@
 #include "Buttons\Plane_UI.h"
 #include "InputManager.h"
 #include "SharedStateContent.h"
+#include "GameUISettings.h"
 #include <Protocols.h>
 #include <list>
 
@@ -27,6 +28,7 @@ namespace DanBias { namespace Client
 		void RenderText();
 		bool Release();
 		void SetHPtext( std::wstring hp );
+		void SetGameTime( float time );
 		void SetEnergyText( std::wstring energy );
 		void SetKillMessage( std::wstring killerMessage );
 		void ChangeState( UIState next );
@@ -153,10 +155,11 @@ namespace DanBias { namespace Client
 		float msg_Timer;
 		const float zip_Cooldown;
 		float zip_Timer;
+		float gameTime;
 		
 		std::vector<WeaponData> weapons;
 		int currentWeapon;
-
+		Settings::GameUISettings::Settings settings;
 		bool key_forward;
 		bool key_backward;
 		bool key_strafeRight;
@@ -168,6 +171,16 @@ namespace DanBias { namespace Client
 
 		GamingUI();
 		void ReadKeyInput(float deltaTime);
+		void GUIRenderToggle(bool toggle) override;
+
+	private:
+		typedef void(GamingUI::*RenderFunc)();
+		GamingUI::RenderFunc renderGuiFunc;
+		GamingUI::RenderFunc renderTextFunc;
+
+		void DummyRender();
+		void InternalRenderGUI();
+		void InternalRenderText();
 	};
 } }
 
