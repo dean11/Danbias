@@ -44,6 +44,7 @@ namespace DanBias
 		bool StartGameSession( bool forceStart );
 
 		int GetGameSessionClientCount();
+		float GetGameTimeLeft() const;
 
 		bool Attach(Utility::DynamicMemory::SmartPointer<GameClient> gClient);
 

@@ -88,21 +88,21 @@ bool GamingUI::Init()
 				  , 3.5f );
 	w1.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.1f , 0.1f * (size.x / size.y)), Float4(1.0f, 1.0f, 1.0f, 1.0f));
 	w1.tint = Float4(1.5f, 2.8f, 1.5f, 1.0f);
-	w1.beam = new C_Beam
-	(
-		-1,
-		this->shared->weapon->getWorld().v[2].xyz,
-		this->shared->weapon->getPos(),
-		this->shared->weapon->getPos() + (this->camera->GetForward() * 100),
-		0.1f,
-		66.0f
-	);
-	if( w1.beam->LoadModel(L"beam.dan") )
-	{
-		w1.beam->SetTint( Float3::standard_unit_x );
-		w1.beam->SetGlowTint( Float3(0.6f, 0.0f, 0.0f) );
-		w1.beam->updateWorld();
-	}
+	//w1.beam = new C_Beam
+	//(
+	//	-1,
+	//	this->shared->weapon->getWorld().v[2].xyz,
+	//	this->shared->weapon->getPos(),
+	//	this->shared->weapon->getPos() + (this->camera->GetForward() * 100),
+	//	0.1f,
+	//	66.0f
+	//);
+	//if( w1.beam->LoadModel(L"beam.dan") )
+	//{
+	//	w1.beam->SetTint( Float3::standard_unit_x );
+	//	w1.beam->SetGlowTint( Float3(0.6f, 0.0f, 0.0f) );
+	//	w1.beam->updateWorld();
+	//}
 	this->weapons.push_back(w1);
 	
 	WeaponData w2 (	NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::SlotId

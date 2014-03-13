@@ -60,6 +60,8 @@ namespace DanBias
 		inline bool IsRunning() const	{ return this->isRunning; }
 		operator bool()					{ return (this->isCreated && this->isRunning); }
 
+		float GetElapsedSeconds() const;
+
 		//Private member functions
 	private:
 		// Client event callback function
@@ -137,6 +139,7 @@ namespace DanBias
 		Utility::WinTimer logicTimer;
 		Utility::WinTimer networkTimer;
 		GameDescription description;
+		float timeLeft;
 
 		//TODO: Remove this uggly thing
 		static GameSession* gameSession;

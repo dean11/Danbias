@@ -20,12 +20,13 @@ namespace StandAloneLauncher
         System.Windows.Interop.StandaloneGameServerCLI gameServer;
         bool serverIsRunning = false;
         bool gameIsStarted = false;
-        bool draging = false;
+        int totalTime = 0;
 
         public NoEdgeWindow()
         {
             InitializeComponent();
 
+            this.panel_serverOptions.MouseDown += NoEdgeWindow_MouseDown;
             //this.Size = this.panel_serverOptions.Size;
             this.panel_clientArea.Visible = false;
             this.Width = this.panel_serverOptions.Width;
@@ -61,7 +62,11 @@ namespace StandAloneLauncher
             if (this.serverIsRunning)
             {
                 this.gameServer.ServerUpdate();
-                this.textBox_clients.Text = this.gameServer.GetClientsConnectedCount().ToString() + "/" + ((int)this.nrOfClients.Value).ToString();
+                this.textBox_clients.Text = this.gameServer.GetClientsConnectedCount().ToString() + "/" + this.textBox_clientLimit.Text;
+                int tot = this.gameServer.GameGetGameTime();
+                int sec = tot % 60;
+                int min = tot / 60 % 60;
+                this.textBox_timeLeft.Text = min.ToString() + "." + sec.ToString();
             }
         }
      
@@ -79,7 +84,7 @@ namespace StandAloneLauncher
         {
             ServerInitDesc desc = new ServerInitDesc();
             //desc.mainOptions.broadcast = this.lanBroadcast.Checked;
-            desc.mainOptions.listenPort = (int)this.listenPort.Value;
+            desc.mainOptions.listenPort = Convert.ToInt32(this.textBox_TCPport.Text);
             desc.mainOptions.serverName = this.serverName.Text;
 
             if (this.gameServer.ServerInitiate(desc) == DanBiasServerReturn.DanBiasServerReturn_Sucess)
@@ -88,13 +93,10 @@ namespace StandAloneLauncher
 
                 GameServerInfo info = this.gameServer.ServerGetInfo();
                 this.textBox_name.Text = this.serverName.Text;
-                this.textBox_ip.Text = info.serverIp + ": " + this.listenPort.Value.ToString();
+                this.textBox_ip.Text = info.serverIp + ": " + this.textBox_TCPport.Text;
 
-                this.listenPort.Enabled = false;
-                this.serverName.Enabled = false;
                 this.gameServer.ServerStart();
-                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server initiated!\n\tListening on port " + this.listenPort.Value.ToString() + "\n\tLocal IP: " + info.serverIp + "\n");
-                //this.panelServerCommands.Visible = true;
+                this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "\n\t" + "Server initiated!\n\tListening on port " + this.textBox_TCPport.Text + "\n\tLocal IP: " + info.serverIp + "\n");
             }
             else
             {
@@ -109,9 +111,9 @@ namespace StandAloneLauncher
             if (InitServer())
             {
                 //this.gameServer.GameSetGameMode(this.gameModes.SelectedText);
-                this.gameServer.GameSetGameTime((int)this.timeLimit.Value);
+                this.gameServer.GameSetGameTime(Convert.ToInt32(this.textBox_timelimit.Text));
                 this.gameServer.GameSetMapName(this.mapName.Text);
-                this.gameServer.GameSetMaxClients((int)this.nrOfClients.Value);
+                this.gameServer.GameSetMaxClients(Convert.ToInt32(this.textBox_clientLimit.Text));
 
                 if (!(gameIsStarted = this.gameServer.GameStart(this.forceStart.Checked)))
                 {
@@ -119,11 +121,13 @@ namespace StandAloneLauncher
                 }
                 else
                 {
+                    this.timerTotal.Start();
                     this.panel_serverOptions.Visible = false;
                     this.panel_clientArea.Visible = true;
                     this.Size = this.panel_clientArea.Size;
                 }
-                this.Width = this.panel_serverOptions.Width;
+                this.Width = this.panel_right.Width;
+                this.Height = this.panel_right.Height;
             }
         }
 
@@ -167,6 +171,16 @@ namespace StandAloneLauncher
             {
                 if (this.textBox_consonl_textfield.Text.Length > 0)
                 {
+                    switch (this.textBox_consonl_textfield.Text)
+                    {
+                        case "exit":
+                            this.Close();
+                        return;
+
+                        case "status":
+
+                        break;
+                    }
                     this.ServerInfoTextArea.AppendText(DateTime.Now.ToUniversalTime() + "-\t" + this.textBox_consonl_textfield.Text + "\n");
                     this.textBox_consonl_textfield.Text = "";
                 }
@@ -179,22 +193,54 @@ namespace StandAloneLauncher
             textBox_consonl_textfield_KeyPress( null,  be);
         }
 
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HTCAPTION = 0x2;
+        [DllImport("User32.dll")]
+        public static extern bool ReleaseCapture();
+        [DllImport("User32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         private void NoEdgeWindow_MouseDown(object sender, MouseEventArgs e)
         {
-            this.draging = true;
-        }
-
-        private void NoEdgeWindow_MouseUp(object sender, MouseEventArgs e)
-        {
-            this.draging = false;
-        }
-
-        private void NoEdgeWindow_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (this.draging)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
             }
         }
+
+        private void buttonClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void textboxKeyDownEvent(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Back) return;
+            int t;
+            string c = ((char)e.KeyValue).ToString();
+            if (!int.TryParse(c, out t))
+            {
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void button_rightMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void button_serverOnclose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void timerTotal_Tick(object sender, EventArgs e)
+        {
+            totalTime += 1;
+            int sec = totalTime % 60;
+            int min = totalTime / 60 % 60;
+            this.textBox_timeTotal.Text = min.ToString() + "." + sec.ToString();
+        }
+        
     }
 }

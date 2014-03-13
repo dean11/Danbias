@@ -43,6 +43,7 @@ GameSession::GameSession()
 	this->networkTimer.reset();
 	this->logicTimer.reset();
 	this->timerSendClock = 0.0f;
+	this->timeLeft = 0.0f;
 
 	this->gameInstance.SetFrameTimeLength(this->logicFrameTime);
 
@@ -315,6 +316,11 @@ bool GameSession::Join(gClient gameClient)
 	this->clientCount++;
 
 	return true;
+}
+
+float GameSession::GetElapsedSeconds() const
+{
+	return this->timeLeft;
 }
 
 // Use lambda method to get callback (if you want)

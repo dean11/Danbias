@@ -106,7 +106,7 @@ void InGameOptionsUI::CreateMouseSlider()
 bool InGameOptionsUI::Init()
 {
 	CreateMouseSlider();
-	this->mousePos = Float3( 0.4f );
+	this->mousePos = Float3( 0.01f );
 
 	// create buttons
 	ButtonRectangle<InGameOptionsUI*> *button;
@@ -286,6 +286,8 @@ void InGameOptionsUI::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coord
 	}
 }
 
+void ClientResize(HWND hWnd, int nWidth, int nHeight); //Defined in OpstionsState.cpp
+
 void InGameOptionsUI::OnButtonInteract( ButtonEvent<InGameOptionsUI*>& msg )
 {
 	ButtonType op = (ButtonType)(int)msg.userData;
@@ -333,6 +335,10 @@ void InGameOptionsUI::OnButtonInteract( ButtonEvent<InGameOptionsUI*>& msg )
 			if( msg.state == ButtonState_Released )
 			{
 				Graphics::API::Option op = Graphics::API::GetOption();
+
+				if(!op.fullscreen)
+					ClientResize(WindowShell::GetHWND(), (int)msg.owner->options.resolution.x, (int)msg.owner->options.resolution.y);
+
 				op.fullscreen = msg.owner->options.toogleFullScreen;
 				op.resolution = msg.owner->options.resolution;
 

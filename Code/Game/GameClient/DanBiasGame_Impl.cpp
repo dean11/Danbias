@@ -424,7 +424,7 @@ void LoadInitSettings()
 {
 	std::fstream inStream;
 	std::string chars = "";
-	inStream.open("settings.txt", std::fstream::in);
+	inStream.open("..\\Settings\\settings.txt", std::fstream::in);
 
 	if(inStream.is_open())
 	{
@@ -495,7 +495,7 @@ void LoadInitSettings()
 		ostream << L"fullscreen false\n";
 		ostream << L"resolutionW 1280\n";
 		ostream << L"resolutionH 720\n";
-		ostream << L"mouseSens 0.5\n";
+		ostream << L"mouseSens 10\n";
 		ostream << L"sound true\n";
 		ostream.close();
 	}
