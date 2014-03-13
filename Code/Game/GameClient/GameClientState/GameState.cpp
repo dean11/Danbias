@@ -949,6 +949,14 @@ void GameState::Gameplay_ObjectDisabled( CustomNetProtocol data )
 	if( object )
 	{
 		object->SetVisible(false);
+		if(object->GetLight() != -1)
+		{
+			auto light = privData->lights->find( object->GetLight() );
+			if( light != privData->lights->end() )
+			{
+				light->second->Release();
+			}
+		}
 	}
 }
 void GameState::Gameplay_ObjectCreate( CustomNetProtocol data )
