@@ -55,7 +55,13 @@ PixelOut main(VertexOut input)
 	float3 normal = normalize(mul(CoTangentFrame, map));
 	//normal = perturb_normal( normal, normalize(-input.ViewPos), input.UV );
 
-	output.NormalSpec = float4(normal, Normal.Sample(S1, input.UV).w*255);
+	float Val = Normal.Sample(S1, input.UV).w*255;
+	float mul = 0.5 + 0.5 * Val;
+	//todo plot 1-45 in groups
+	mul = Val > 7 ? 1.0/3 : mul;
+	mul = Val > 20 ? 1.0/6 : mul;
+	mul = Val > 45 ? (0.000000005417 * pow(Val,4)) - (0.000002849 * pow(Val,3)) + (0.00055562 * pow(Val,2)) - 0.0441362 * Val + 1.34392578: mul;
+	output.NormalSpec = float4(normal, mul*Val);
 
 	//output.NormalSpec = float4(input.normal, Normal.Sample(S1, input.UV).w * 0);
 	//output.NormalSpec = float4(map,0);

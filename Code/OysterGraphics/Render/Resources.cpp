@@ -522,11 +522,11 @@ namespace Oyster
 					depthstencil->Release();
 
 					Light::Up = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Down = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_down.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Left = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_left.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Right = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_right.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Front = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_front.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
-					Light::Back = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_back.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Down = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Left = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Right = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Front = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
+					Light::Back = (ID3D11ShaderResourceView*)Core::loader.LoadResource((Core::texturePath + L"stars_up.png").c_str(),Oyster::Graphics::Loading::LoadTexture, Oyster::Graphics::Loading::UnloadTexture);
 
 					return Core::Init::Success;
 				}
