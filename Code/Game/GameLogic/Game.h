@@ -81,6 +81,7 @@ namespace GameLogic
 		PlayerData* CreatePlayer()																						override;
 		void RemovePlayer( IPlayerData* )																				override;
 		LevelData* CreateLevel(const wchar_t mapName[255] )																override;
+		void Release()																									override;
 		void CreateTeam()																								override;
 		bool NewFrame(float delta )																						override;
 		void SetFPS( int FPS )																							override;
@@ -97,6 +98,7 @@ namespace GameLogic
 		void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer)								override;
 		void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer)										override;
 		void SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer)									override;
+		void SetOnGameTimeTick(GameEvent::OnGameTimeTickFunction functionPointer, float perdiod)						override;
 		bool Initiate()																									override;
 
 		float GetFrameTime() const;
@@ -110,6 +112,8 @@ namespace GameLogic
 		float frameTime;
 		float timer;
 		bool initiated;
+		float tickPeriod;
+		float tickTimer;
 
 		GameEvent::ObjectMovedFunction		onMoveFnc;
 		GameEvent::ObjectDisabledFunction	onDisableFnc;
@@ -123,6 +127,7 @@ namespace GameLogic
 		GameEvent::WeaponEnergyFunction		onEnergyUpdateFnc;
 		GameEvent::EndGameFunction			onEndGameFnc;
 		GameEvent::BeamEffectFunction		onBeamEffectFnc;
+		GameEvent::OnGameTimeTickFunction	onGameTimeTickFnc;
 	};	
 }
 

@@ -35,7 +35,7 @@ namespace Oyster
 			//Thread functions
 			bool DoWork();
 			void ThreadEntry();
-			void ThreadExit();
+			Thread::IThreadObject::ThreadCode ThreadExit();
 
 			//Function that runs in the thread.
 			int Accept();

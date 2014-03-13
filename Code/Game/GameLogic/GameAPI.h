@@ -38,6 +38,7 @@ namespace GameLogic
 		typedef void(*WeaponEnergyFunction)(IObjectData*object, float energy); 
 		typedef void(*EndGameFunction)(); 
 		typedef void(*BeamEffectFunction)( IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime );
+		typedef void(*OnGameTimeTickFunction)( float time );
 		//etc...
 	};
 
@@ -168,6 +169,8 @@ namespace GameLogic
 		*/
 		virtual ILevelData* CreateLevel( const wchar_t mapName[255] ) = 0;
 
+		virtual void Release() = 0;
+
 		/** Creates a team
 		*	@return ?
 		*/
@@ -203,6 +206,7 @@ namespace GameLogic
 		virtual void SetWeaponEnergySubscription(GameEvent::WeaponEnergyFunction functionPointer) = 0;
 		virtual void SetGameOverSubscription(GameEvent::EndGameFunction functionPointer) = 0;
 		virtual void SetBeamEffectSubscription(GameEvent::BeamEffectFunction functionPointer) = 0;
+		virtual void SetOnGameTimeTick(GameEvent::OnGameTimeTickFunction functionPointer, float perdiod) = 0;
 	};	
 }
 

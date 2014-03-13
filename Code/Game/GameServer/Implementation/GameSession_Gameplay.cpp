@@ -1,5 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // Created by [Dennis Andersen] [2013]
+// Edited by Linda Andersson
 /////////////////////////////////////////////////////////////////////
 #include "..\GameSession.h"
 #include "..\GameClient.h"
@@ -22,7 +23,7 @@ using namespace Oyster::Thread;
 using namespace GameLogic;
 using namespace DanBias;
 
-
+	
 	bool GameSession::DoWork(  )
 	{
 		if(this->isRunning)
@@ -35,12 +36,14 @@ using namespace DanBias;
 			
 			// Need to accumulate network time
 			this->accumulatedNetworkTime += (float)this->networkTimer.getElapsedSeconds();
-			while (this->accumulatedNetworkTime >= this->networkFrameTime)
+			//while (this->accumulatedNetworkTime >= this->networkFrameTime)
+			if (this->networkTimer.getElapsedSeconds() >= this->networkFrameTime)
 			{
 				this->ProcessClients();
 				this->accumulatedNetworkTime -= this->networkFrameTime;
+				this->networkTimer.reset();
 			}
-			this->networkTimer.reset();
+			//this->networkTimer.reset();
 		}
 
 		return this->isRunning;
@@ -79,8 +82,9 @@ using namespace DanBias;
 						}
 					}
 					printf("\t(%i : %s) - EventType_Disconnect\n", cl->GetClient()->GetID(), e.sender->GetIpAddress().c_str());	
-					this->gameInstance.RemovePlayer(this->gClients[temp]->GetPlayer());
-					this->gClients[temp]->Invalidate();
+					this->gameInstance.RemovePlayer(cl->GetPlayer());
+					cl->Invalidate();
+					
 					clientCount--;
 				}
 				break;
@@ -149,8 +153,6 @@ using namespace DanBias;
 		return false;
 	}
 
-
-
 	void GameSession::ObjectMove(GameLogic::IObjectData* movedObject)
 	{
 		//float dt = (float)GameSession::gameSession->networkTimer.getElapsedSeconds();
@@ -214,7 +216,8 @@ using namespace DanBias;
 	}
 	void GameSession::GameOver(  )
 	{
-		GameSession::gameSession->Send( Protocol_General_GameOver().GetProtocol() );
+		GameSession::gameSession->reset = true; //Reset due to normal game conditions 
+		GameSession::gameSession->Send( Protocol_General_GameOver(8.0f).GetProtocol() );
 		GameSession::gameSession->isRunning = false;
 	}
 	void GameSession::BeamEffect( GameLogic::IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime )
@@ -230,7 +233,11 @@ using namespace DanBias;
 			).GetProtocol()
 		);
 	}
-
+	void GameSession::OnGameTimeTick(float gameTime)
+	{
+		GameSession::gameSession->timeLeft = gameTime;
+		GameSession::gameSession->Send( Protocol_General_Timer(gameTime).GetProtocol() );
+	}
 
 
 
@@ -275,6 +282,8 @@ using namespace DanBias;
 			break;
 			case protocol_General_Text:							this->General_Text						( Protocol_General_Text			(p), c );
 			break;
+			case protocol_Lobby_QuerryGameType:					this->General_QuerryGameData				( c );
+				break;
 		}
 	}
 
@@ -378,6 +387,13 @@ using namespace DanBias;
 	void GameSession::General_Text						( Protocol_General_Text& p, DanBias::GameClient* c )
 	{
 		printf("Message recieved from (%i):\t %s\n", c->GetClient()->GetID(), p.text.c_str());
+	}
+	void GameSession::General_QuerryGameData			( DanBias::GameClient* c )
+	{
+		if(this->reset && !c->IsReady())
+		{
+			c->SetReadyState(true);
+		}
 	}
 
 

@@ -55,3 +55,7 @@ int GameModeType::EndConditionMet( Utility::DynamicMemory::DynamicArray<Player*>
 	}
 	return winnerID;
 }
+float GameModeType::GetGameTime() const
+{
+	return this->endConditions.endTimeSec - this->endConditions.timer;
+}

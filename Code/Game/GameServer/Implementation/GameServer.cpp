@@ -102,12 +102,6 @@ void GameServerAPI::ServerStop()
 	sec = time; 
 
 	printf( "Server has been running for: %i:%i:%i - [hh:mm:ss] \n\n", hour, min, sec );
-	//printf( "Terminating in : ");
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	printf( "%i ", 3-i );
-	//	Sleep(1000);
-	//}
 	printf( "\nServer terminated!" );
 }
 void GameServerAPI::ServerUpdate()
@@ -196,9 +190,7 @@ const wchar_t*	GameServerAPI::GameGetGameMode()
 }
 int				GameServerAPI::GameGetGameTime()
 {
-	LobbyLevelData d;
-	lobby.GetGameDesc(d);
-	return d.gameTimeInMinutes;
+	return (int)lobby.GetGameTimeLeft();
 }
 const wchar_t*	GameServerAPI::GameGetGameName()
 {

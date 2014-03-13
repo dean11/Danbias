@@ -17,6 +17,14 @@ namespace Oyster
 		class IThreadObject
 		{
 		public:
+			enum ThreadCode
+			{
+				ThreadCode_Exit,
+				ThreadCode_ResetNormal,
+				ThreadCode_ResetIdle,
+			};
+
+		public:
 			/**
 			*	Override this to get notified when the thread is started.
 			*/
@@ -24,7 +32,7 @@ namespace Oyster
 			/**
 			*	Override this to get notified when the thread is about to exit.
 			*/
-			virtual void ThreadExit()	{ }
+			virtual ThreadCode ThreadExit()	{ return ThreadCode_Exit; }
 			/**
 			*	This function is required to get threading working. 
 			*	Note that this function is NOT thread safe.
@@ -49,6 +57,7 @@ namespace Oyster
 		};
 		enum OYSTER_THREAD_PRIORITY
 		{
+			OYSTER_THREAD_PRIORITY_0,	//!< Realtime
 			OYSTER_THREAD_PRIORITY_1,	//!< High
 			OYSTER_THREAD_PRIORITY_2,	//!< Medium
 			OYSTER_THREAD_PRIORITY_3,	//!< Low

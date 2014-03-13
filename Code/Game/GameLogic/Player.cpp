@@ -94,7 +94,7 @@ Float3 & Player::GetWeaponMuzzlePosition( Float3 &targetMem, const ICustomBody::
 {
 	targetMem = normalized_weapon_muzzle_offset * this->GetScale(); // TODO: would prefer if state had the scale data
 
-	Float4x4 rotM = OrientationMatrix_LookAtDirection(-this->lookDir, WorldAxisOf(state.quaternion, Float3::standard_unit_y), state.centerPos);
+	Float4x4 rotM = OrientationMatrix_LookAtDirection(-this->lookDir * 0.05f, WorldAxisOf(state.quaternion, Float3::standard_unit_y), state.centerPos);
 
 	targetMem = rotM * Float4(targetMem, 1.0f);
 	return targetMem;
@@ -281,11 +281,6 @@ bool Player::IsStunned( bool struggled )
 		this->haveRecoveredFromStun = true;
 	}
 	return !this->haveRecoveredFromStun;
-}
-
-void Player::Inactivate()
-{
-	//this->
 }
 
 void Player::ResetPlayer( Float3 spawnPos )

@@ -69,6 +69,7 @@ namespace DanBias
 			{ this->pos = pos; }
 			inline Oyster::Math::Float3 GetPosition(Oyster::Math::Float3& pos = Oyster::Math::Float3()) const
 			{ return this->pos; }
+			void SetBackColor( Oyster::Math::Float4 c ) { this->backColor = c; };
 
 		protected:
 

@@ -117,6 +117,8 @@ namespace DanBias
 				}
 			}
 
+			virtual void SetBackColor( Oyster::Math::Float4 c ) { this->backColor = c; };
+
 		private:
 			void ResizeWithAspectRatio(ResizeAspectRatio resize)
 			{

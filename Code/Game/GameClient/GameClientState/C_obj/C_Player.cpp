@@ -32,6 +32,5 @@ void C_Player::stopAnimation(std::wstring animation)
 
 void C_Player::stopAllAnimations()
 {
-	if(model)
-		Oyster::Graphics::API::StopAllAnimations(model);
+	Oyster::Graphics::API::StopAllAnimations(model);
 }

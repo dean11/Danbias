@@ -43,7 +43,7 @@ namespace Oyster
 
 			//These functions should not be called by any other than the thread.
 			virtual void ThreadEntry();
-			virtual void ThreadExit();
+			virtual Thread::IThreadObject::ThreadCode ThreadExit();
 			virtual bool DoWork();
 
 		protected:

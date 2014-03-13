@@ -9,7 +9,7 @@
 
 namespace DanBias { namespace Client
 {
-	class GameState : public GameClientState//, Input::Mouse::MouseEvent
+	class GameState : public GameClientState, Input::Keyboard::KeyboardEvent
 	{
 	public:
 		enum gameStateState
@@ -23,7 +23,7 @@ namespace DanBias { namespace Client
 		~GameState(void);
 		bool Init( SharedStateContent &shared );
 		GameClientState::ClientState Update( float deltaTime ) override;
-		void InitiatePlayer( int id, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer );
+		void InitiatePlayer( int id, const std::string &alias, const std::string &modelName, const float position[3], const float rotation[4], const float scale[3], bool isMyPlayer );
 		void ReadKeyInput();
 		bool Render()override;
 		bool Release()override;
@@ -49,6 +49,9 @@ namespace DanBias { namespace Client
 		bool gameOver; 
 		// !DEGUG KEYS
 
+		void OnKeyPress		(Input::Enum::SAKI key, Input::Keyboard* sender) override;
+		void OnKeyRelease	(Input::Enum::SAKI key, Input::Keyboard* sender) override;
+
 		void Gameplay_ObjectPickup( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectDamage( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_ObjectHealthStatus( Oyster::Network::CustomNetProtocol data );
@@ -72,6 +75,7 @@ namespace DanBias { namespace Client
 		void Gameplay_ObjectCollision( Oyster::Network::CustomNetProtocol data );
 		void Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol data );
 		void General_GameOver( Oyster::Network::CustomNetProtocol data );
+		void General_Timer( Oyster::Network::CustomNetProtocol data );
 		//:HACK!
 		//void OnMouseMoveVelocity ( Input::Struct::SAIPointInt2D coordinate, Input::Mouse* sender ) override;
 		//void SetUp( DanBias::Client::C_Player* p);

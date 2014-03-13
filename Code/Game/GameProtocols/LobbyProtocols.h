@@ -140,32 +140,36 @@ namespace GameLogic
 			Oyster::Network::CustomNetProtocol protocol;
 	};
 
-	//struct Protocol_LobbyJoin :public Oyster::Network::CustomProtocolObject
-	//{
-	//	short value;
-	//
-	//	Protocol_LobbyJoin()
-	//	{
-	//		this->protocol[0].value = protocol_Lobby_Join;
-	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
-	//	}
-	//	Protocol_LobbyJoin(Oyster::Network::CustomNetProtocol& p)
-	//	{
-	//		this->protocol[0].value = protocol_Lobby_Join;
-	//		this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
-	//		this->protocol[1].type = Oyster::Network::NetAttributeType_Short;
-	//		value = p[1].value.netShort;
-	//	}
-	//	Oyster::Network::CustomNetProtocol GetProtocol() override
-	//	{
-	//		protocol[1].value = value;
-	//		return &protocol;
-	//	}
-	//	
-	//	private:
-	//		Oyster::Network::CustomNetProtocol protocol;
-	//};
+	struct Protocol_LobbyJoin :public Oyster::Network::CustomProtocolObject
+	{
+		std::string alias;
+	
+		Protocol_LobbyJoin()
+		{
+			this->protocol[0].value = protocol_Lobby_Join;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_CharArray;
+		}
+		Protocol_LobbyJoin(std::string alias)
+		{
+			this->protocol[0].value = protocol_Lobby_Join;
+			this->protocol[0].type = Oyster::Network::NetAttributeType_Short;
+			this->protocol[1].type = Oyster::Network::NetAttributeType_CharArray;
+			this->alias = alias;
+		}
+		Protocol_LobbyJoin(Oyster::Network::CustomNetProtocol& p)
+		{
+			this->alias.append(p[1].value.netCharPtr);
+		}
+		Oyster::Network::CustomNetProtocol GetProtocol() override
+		{
+			protocol.Set(1, this->alias);
+			return protocol;
+		}
+		
+		private:
+			Oyster::Network::CustomNetProtocol protocol;
+	};
 
 	struct Protocol_LobbyRefresh :public Oyster::Network::CustomProtocolObject
 	{

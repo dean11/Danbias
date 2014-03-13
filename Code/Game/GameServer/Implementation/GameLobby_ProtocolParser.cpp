@@ -30,6 +30,8 @@ void GameLobby::ParseProtocol(Oyster::Network::CustomNetProtocol& p, NetworkClie
 		break;
 		case protocol_Lobby_QuerryGameType:		this->LobbyQuerryGameData	(Protocol_QuerryGameType			(), c);
 		break;
+		case protocol_Lobby_Join:				this->LobbyJoin				(Protocol_LobbyJoin					(p), c);
+		break;
 	}
 }
 
@@ -158,7 +160,18 @@ void GameLobby::LobbyQuerryGameData(GameLogic::Protocol_QuerryGameType& p, Oyste
 		// Nothing.-
 	}
 }
-
+void GameLobby::LobbyJoin(GameLogic::Protocol_LobbyJoin& p, Oyster::Network::NetworkClient* c)
+{
+	int i = this->FindClient(c);
+	if(i != -1)
+	{
+		this->gClients[i]->SetAlias(Utility::String::StringToWstring(p.alias, std::wstring()));
+	}
+	else
+	{
+		// Nothing._.
+	}
+}
 
 int GameLobby::FindClient(Oyster::Network::NetworkClient* c)
 {
@@ -167,7 +180,7 @@ int GameLobby::FindClient(Oyster::Network::NetworkClient* c)
 	//find client in waiting list
 	for (unsigned int i = 0; i < this->gClients.Size(); i++)
 	{
-		if(this->gClients[i]->GetClient()->GetID() == c->GetID())
+		if(this->gClients[i] && this->gClients[i]->GetClient()->GetID() == c->GetID())
 		{
 			temp = i;
 			break;

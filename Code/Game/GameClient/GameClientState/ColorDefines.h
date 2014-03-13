@@ -12,11 +12,13 @@ namespace DanBias
 			Oyster::Math::Float3 getGlowColor(int index);
 			Oyster::Math::Float3 getTintColor(int index);
 			std::wstring getColorName(int index);
+			std::wstring getPlayerName(int index);
 
 		private:
 			Oyster::Math::Float3	tintColor[10];
 			Oyster::Math::Float3	glowTintColor[10];
 			std::wstring			colorNames[10];
+			std::wstring			playerNames[10];
 		};
 
 		ColorDefines::ColorDefines()
@@ -68,6 +70,10 @@ namespace DanBias
 			return tintColor[index];
 		}
 		std::wstring ColorDefines::getColorName(int index)
+		{
+			return colorNames[index];
+		}
+		std::wstring ColorDefines::getPlayerName(int index)
 		{
 			return colorNames[index];
 		}

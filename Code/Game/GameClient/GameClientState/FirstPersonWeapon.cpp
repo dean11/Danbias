@@ -102,6 +102,14 @@ void Coil::SetWorld(Matrix world)
 FirstPersonWeapon::FirstPersonWeapon()
 {
 	coilID = 0;
+	rotate = false;
+	elapsed = 0.0f;
+	maxRotation = 0.0f;
+	maxRot = 0.0f;
+	currentRotation = 0.0f;
+	smallStepRotation = 0.0f;
+
+	coilID = 0;
 	base = new Coil;
 	for(int i = 0; i < 6; i++)
 	{

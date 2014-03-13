@@ -26,13 +26,7 @@ void GameLobby::Release()
 }
 void GameLobby::Update()
 {
-	for (unsigned int i = 0; i < this->gClients.Size(); i++)
-	{
-		if(this->gClients[i])
-		{
-			this->gClients[i]->GetClient()->Update();
-		}
-	}
+	this->ProcessClients();
 }
 void GameLobby::SetGameDesc(const LobbyLevelData& desc)
 {
@@ -105,6 +99,10 @@ bool GameLobby::StartGameSession( bool forceStart )
 int GameLobby::GetGameSessionClientCount()
 {
 	return this->gameSession.GetClientCount();
+}
+float GameLobby::GetGameTimeLeft() const
+{
+	return this->gameSession.GetElapsedSeconds();
 }
 
 void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
@@ -204,7 +202,28 @@ bool GameLobby::Attach(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 	}
 	return true;
 }
+bool GameLobby::Attach(Utility::DynamicMemory::SmartPointer<GameClient> gClient)
+{
+	if(this->clientCount == this->description.maxClients) return false;
 
+	gClient->SetOwner(this);
+
+	bool added = false;
+	for (unsigned int i = 0; i < this->gClients.Size(); i++)
+	{
+		if(!this->gClients[i])
+		{
+			added = true;
+			this->gClients[i] = gClient;
+		}
+	}
+
+	if(!added)
+	{
+		this->gClients.Push(gClient);
+	}
+	return true;
+}
 
 
 

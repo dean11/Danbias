@@ -60,6 +60,8 @@ namespace DanBias
 		inline bool IsRunning() const	{ return this->isRunning; }
 		operator bool()					{ return (this->isCreated && this->isRunning); }
 
+		float GetElapsedSeconds() const;
+
 		//Private member functions
 	private:
 		// Client event callback function
@@ -73,8 +75,8 @@ namespace DanBias
 		
 		//Derived from IThreadObject
 		void ThreadEntry( ) override;
+		Oyster::Thread::IThreadObject::ThreadCode ThreadExit( ) override;
 		bool DoWork	( ) override;
-
 
 	private:
 		void ParseProtocol					( Oyster::Network::CustomNetProtocol& p, DanBias::GameClient* c );
@@ -95,6 +97,7 @@ namespace DanBias
 		void Gameplay_ObjectCreate			( GameLogic::Protocol_ObjectCreate& p, DanBias::GameClient* c );
 		void General_Status					( GameLogic::Protocol_General_Status& p, DanBias::GameClient* c );
 		void General_Text					( GameLogic::Protocol_General_Text& p, DanBias::GameClient* c );
+		void General_QuerryGameData			( DanBias::GameClient* c );
 
 	private:	//Callback method receiving from game logic
 		static void ObjectMove				( GameLogic::IObjectData* movedObject );
@@ -109,6 +112,15 @@ namespace DanBias
 		static void EnergyUpdate			( GameLogic::IObjectData* movedObject , float energy );
 		static void GameOver				(  );
 		static void BeamEffect				( GameLogic::IObjectData* creator, const ::Oyster::Math::Float3 &start, const ::Oyster::Math::Float3 &end, ::Oyster::Math::Float radius, ::Oyster::Math::Float lifeTime );
+		static void OnGameTimeTick			(float gameTime);
+
+	private:
+		void DisposeClient(gClient cl);
+		/* Syncs clients with max time and returns true if synced within time limit */
+		bool SyncClients(float maxSec, void(*fnc)(gClient client) = 0);
+		/* Resets game data and starts game again with synced clients */
+		bool ResetAndWait(); 
+		bool ResetAndContinue(); 
 
 	private:	//Private member variables
 		Utility::DynamicMemory::DynamicArray<gClient> gClients;
@@ -119,12 +131,15 @@ namespace DanBias
 		NetworkSession* owner;
 		bool isCreated;
 		bool isRunning;
+		bool reset;
 		float logicFrameTime;
 		float networkFrameTime;
 		float accumulatedNetworkTime;
+		float timerSendClock;
 		Utility::WinTimer logicTimer;
 		Utility::WinTimer networkTimer;
 		GameDescription description;
+		float timeLeft;
 
 		//TODO: Remove this uggly thing
 		static GameSession* gameSession;

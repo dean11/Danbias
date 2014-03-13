@@ -1,7 +1,6 @@
 #include "PhysicsAPI_Impl.h"
 #include "OysterPhysics3D.h"
 #include "SimpleRigidBody.h"
-#include <BulletWorldImporter\btBulletWorldImporter.h>
 
 #include <codecvt>
 
@@ -55,6 +54,8 @@ API_Impl::~API_Impl()
 		delete this->customBodies[i];
 		this->customBodies[i] = NULL;
 	}
+
+	this->importer.deleteAllData();
 }
 
 void API_Impl::SetGravityPoint(::Oyster::Math::Float3 gravityPoint)
@@ -255,16 +256,14 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	std::string bulletPath = converterX.to_bytes(fileName);
 
 	// Add collision shape
-	bulletFile.loadFile(bulletPath.c_str());
-	btCollisionShape* collisionShape = bulletFile.getCollisionShapeByIndex(0);
-	dynamic_cast<btBvhTriangleMeshShape*>(collisionShape)->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-	body->SetCollisionShape(collisionShape);
+	this->importer.loadFile(bulletPath.c_str());
+	btBvhTriangleMeshShape* collisionShape = (btBvhTriangleMeshShape*)this->importer.getCollisionShapeByIndex(this->nrOfShapes);
+	collisionShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+	this->nrOfShapes++;
 
 	// Add motion state
 	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w),btVector3(position.x, position.y, position.z)));
 	body->SetMotionState(motionState);
-
-	
 
 	// Add rigid body
 	btVector3 fallInertia(0, 0, 0);
@@ -279,8 +278,6 @@ ICustomBody* API_Impl::AddTriangleMesh(const std::wstring fileName, ::Oyster::Ma
 	// Add rigid body to world
 	this->dynamicsWorld->addRigidBody(rigidBody);
 	this->customBodies.push_back(body);
-
-	
 
 	state.centerPos = position;
 	state.reach = Float3(0, 0, 0);
@@ -383,8 +380,29 @@ void API_Impl::Init()
 	this->solver = new btSequentialImpulseConstraintSolver;
 	this->dynamicsWorld = new btDiscreteDynamicsWorld(this->dispatcher,this->broadphase,this->solver,this->collisionConfiguration);
 	this->dynamicsWorld->setGravity(btVector3(0,-10,0));
+	this->nrOfShapes = 0;
 }
 
+void API_Impl::Release()
+{
+	delete this->dynamicsWorld;
+	this->dynamicsWorld = NULL;
+    delete this->solver;
+	this->solver = NULL;
+    delete this->dispatcher;
+	this->dispatcher = NULL;
+    delete this->collisionConfiguration;
+	this->collisionConfiguration = NULL;
+    delete this->broadphase;
+	this->broadphase = NULL;
+
+	for(unsigned int i = 0; i < this->customBodies.size(); i++)
+	{
+		delete this->customBodies[i];
+		this->customBodies[i] = NULL;
+	}
+	this->customBodies.clear();
+}
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {

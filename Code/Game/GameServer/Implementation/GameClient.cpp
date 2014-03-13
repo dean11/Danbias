@@ -22,6 +22,7 @@ GameClient::GameClient(Utility::DynamicMemory::SmartPointer<Oyster::Network::Net
 	this->character = L"char_orca.dan";
 	this->alias = L"Unknown";
 	this->secondsSinceLastResponse = 0.0f;
+	this->state = ClientState_Ready;
 }
 GameClient::~GameClient()
 {
@@ -41,6 +42,8 @@ GameClient::~GameClient()
 
 void GameClient::SetPlayer(GameLogic::IPlayerData* player)
 {
+	if(this->player)
+		this->player->Inactivate();
 	this->player = player;
 }
 void GameClient::SetReadyState(bool r)
@@ -72,7 +75,7 @@ void GameClient::Invalidate()
 {
 	this->client->Disconnect();
 	this->isReady = false;
-	this->isInvalid = true;	//TODO: Fix this, should be true
+	this->isInvalid = true;
 	this->secondsSinceLastResponse = 0.0f;
 	this->failedPackagesCount = 0;
 	this->character = L"char_orca.dan";
@@ -100,6 +103,7 @@ void GameClient::UpdateClient()
 {
 	switch (this->state)
 	{
+		case ClientState_CreatingGame:
 		case ClientState_Ready:
 			this->client->Update();
 		break;
@@ -107,11 +111,10 @@ void GameClient::UpdateClient()
 }
 
 
-IPlayerData* GameClient::ReleasePlayer()
+void GameClient::ReleasePlayer()
 {
-	IPlayerData* temp = this->player;
-	this->player = 0;
-	return temp;
+	this->player->Inactivate();
+	this->player = nullptr;
 }
 NetClient GameClient::ReleaseClient()
 {

@@ -18,6 +18,7 @@ namespace DanBias { namespace Client
 			ClientState_LobbyReady,
 			ClientState_NetLoad,
 			ClientState_Game,
+			ClientState_ResetGame,
 			ClientState_Options,
 			ClientState_Same,
 			ClientState_Quit

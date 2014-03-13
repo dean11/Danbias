@@ -22,6 +22,7 @@
 #define protocol_General_Text						101
 #define protocol_General_GameOver					102
 #define protocol_Broadcast_Test						103
+#define protocol_General_Timer						104
 #define protocol_GeneralMAX								199
 
 
@@ -38,6 +39,7 @@
 #define protocol_Lobby_GameData						206
 #define protocol_Lobby_QuerryGameType				207
 #define protocol_Lobby_ClientReadyState				208
+#define protocol_Lobby_Join							209
 #define protocol_LobbyMAX								299
 
 

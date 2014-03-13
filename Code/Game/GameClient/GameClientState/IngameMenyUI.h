@@ -34,6 +34,7 @@ namespace DanBias { namespace Client
 		void DeactivateInput();
 
 	private: /* Overidden mouse methods */
+		void OnMouseMoveVelocity( Input::Struct::SAIPointFloat2D key, Input::Mouse* sender ) override;
 		void OnMouseRelease( Input::Enum::SAMI key, Input::Mouse* sender );
 		void OnKeyRelease( Input::Enum::SAKI key, Input::Keyboard* sender );
 

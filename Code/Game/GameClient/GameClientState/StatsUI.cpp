@@ -1,6 +1,7 @@
 #include "StatsUI.h"
 #include <Protocols.h>
 #include "Utilities.h"
+#include <fstream>
 
 using namespace ::DanBias::Client;
 using namespace ::GameLogic;
@@ -11,6 +12,7 @@ StatsUI::StatsUI() :
 	GameStateUI( nullptr )
 {
 	/* Should never be called! */
+	this->colors = 0;
 	this->names = nullptr;
 	this->kills = nullptr;
 	this->death = nullptr;
@@ -20,6 +22,7 @@ StatsUI::StatsUI() :
 StatsUI::StatsUI( SharedStateContent* shared ) :
 	GameStateUI( shared )
 {
+	this->colors = 0;
 	this->names = nullptr;
 	this->kills = nullptr;
 	this->death = nullptr;
@@ -30,30 +33,31 @@ StatsUI::~StatsUI() { /* Do nothing */ }
 
 bool StatsUI::Init( int maxNrOfPlayers )
 {
-	this->textDepth = 0.2f;
-	this->nameMargin = 0.15f;
-	this->killsMargin = 0.3f;
-	this->deathMargin = 0.5f; 
-	this->lineSpacing = 0.05f;
-	this->textHeightPos = 0.3;
-	this->textHeight = 0.1f;
-	this->textWidth = 0.4f;
 	// z value should be between 0.1 - 0.5 so that it will be in front of other states
 	// add textures and text for player stats
 
+	//Parse layout variables
+	Settings::StatsUISettings::ParseStatsSettings(this->settings);
 
 	// black background
-	this->backGround = new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0,0,0,0.5));
-	this->nameText = new Text_UI(L"Name", Float3(0.15f, textHeightPos - lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->killText = new Text_UI(L"Kills", Float3(0.4f, textHeightPos - lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->deathText = new Text_UI(L"Deaths", Float3(0.6f, textHeightPos - lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->backGround = new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0.6,0.6,0.6,0.5));
+	this->nameText = new Text_UI(L"Name", Float3(this->settings.nameMarigin, this->settings.textOffsetY - this->settings.lineSpacing, this->settings.globalZ), Float2(this->settings.nameTextSize));
+	this->killText = new Text_UI(L"Kills", Float3(this->settings.killsMargin, this->settings.textOffsetY - this->settings.lineSpacing, this->settings.globalZ), Float2(this->settings.killTextSize));
+	this->deathText = new Text_UI(L"Deaths", Float3(this->settings.deathMargin, this->settings.textOffsetY - this->settings.lineSpacing, this->settings.globalZ), Float2(this->settings.deathTextSize));
 
+	this->nameText->setFontSize(this->settings.fontSize);
+	this->killText->setFontSize(this->settings.fontSize);
+	this->deathText->setFontSize(this->settings.fontSize);
+
+	this->colors = new Oyster::Math::Float4[maxNrOfPlayers];
+	memset(&this->colors[0], 1, sizeof(Oyster::Math::Float4) * maxNrOfPlayers);
 	this->playerId = new int[maxNrOfPlayers];
 	this->names	=  new Text_UI*[maxNrOfPlayers];
 	this->kills	=  new Text_UI*[maxNrOfPlayers];
 	this->death	=  new Text_UI*[maxNrOfPlayers];
 	this->nrOfPlayers = 0;
 	this->maxNrOfPlayers = maxNrOfPlayers;
+
 	return true; 
 }
 GameStateUI::UIState StatsUI::Update( float deltaTime )
@@ -80,17 +84,17 @@ void StatsUI::RenderGUI()
 void StatsUI::RenderText()
 {
 	// render all the text
-	this->nameText->RenderText(); 
-	this->killText->RenderText();
-	this->deathText->RenderText();
+	this->nameText->RenderText(Float3(this->settings.nameMarigin, this->settings.textOffsetY, this->settings.globalZ), this->settings.nameTextSize, this->settings.fontSize); 
+	this->killText->RenderText(Float3(this->settings.killsMargin, this->settings.textOffsetY, this->settings.globalZ), this->settings.killTextSize, this->settings.fontSize); 
+	this->deathText->RenderText(Float3(this->settings.deathMargin, this->settings.textOffsetY, this->settings.globalZ), this->settings.deathTextSize, this->settings.fontSize); 
 
-	float offset = textHeightPos;
+	float offset = this->settings.textOffsetY;
 	for( int i = 0; i< nrOfPlayers; i++)
 	{
-		offset += 0.05;
-		this->names[i]->RenderText(Float3(nameMargin, offset, textDepth)); 
-		this->kills[i]->RenderText(Float3(killsMargin, offset, textDepth));
-		this->death[i]->RenderText(Float3(deathMargin, offset, textDepth));
+		offset += this->settings.lineSpacing;
+		this->names[i]->RenderText(Float3(this->settings.nameMarigin, offset, this->settings.globalZ), this->settings.nameMarginTextSize, this->settings.fontSize, this->colors[i]); 
+		this->kills[i]->RenderText(Float3(this->settings.killsMargin, offset, this->settings.globalZ), this->settings.killMarginTextSize, this->settings.fontSize, this->settings.killMarginColor);
+		this->death[i]->RenderText(Float3(this->settings.deathMargin, offset, this->settings.globalZ), this->settings.deathMarginTextSize, this->settings.fontSize, this->settings.deathMarginColor);
 	}
 }
 
@@ -120,22 +124,27 @@ bool StatsUI::Release()
 	return true;
 }
 
-void StatsUI::addPLayer( int id, std::wstring name, int kills, int deaths )
+void StatsUI::addPLayer( int id, std::wstring name, int kills, int deaths, Oyster::Math::Float3 col )
 {
 	for( int i = 0; i< nrOfPlayers; i++)
 	{
 		if(this->playerId[i] == id)
 		{
+			updateDeatchScore(id, deaths);
+			updateKillScore(id, kills);
 			// player already exist
 			return;
 		}
 	}
 
 	// new player
+	this->colors[this->nrOfPlayers] = col;
+	this->colors[this->nrOfPlayers].w = 1.0f;
 	this->playerId[nrOfPlayers] = id;
-	this->names[nrOfPlayers] = new Text_UI(name, Float3(nameMargin, textHeightPos + nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->kills[nrOfPlayers] = new Text_UI(std::to_wstring(kills), Float3(killsMargin, textHeightPos + nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
-	this->death[nrOfPlayers] = new Text_UI(std::to_wstring(deaths), Float3(deathMargin,  textHeightPos+ nrOfPlayers+lineSpacing, textDepth), Float2(textWidth, textHeight));
+	this->names[nrOfPlayers] = new Text_UI(name);
+	this->kills[nrOfPlayers] = new Text_UI(std::to_wstring(kills));
+	this->death[nrOfPlayers] = new Text_UI(std::to_wstring(deaths));
+
 	nrOfPlayers ++; 
 }
 bool StatsUI::removePlayer( int id )
@@ -204,4 +213,13 @@ void StatsUI::DeactivateInput()
 	this->render = false;
 	this->shared->mouseDevice->RemoveMouseEvent( this );
 	this->shared->keyboardDevice->RemoveKeyboardEvent( this );
+}
+
+void StatsUI::OnKeyPress (Input::Enum::SAKI key, Input::Keyboard* sender)
+{
+#if defined(DEBUG) || defined(_DEBUG)
+	{
+		if(key == Input::Enum::SAKI_P)	Settings::StatsUISettings::ParseStatsSettings(this->settings);
+	}
+#endif
 }

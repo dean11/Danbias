@@ -3,6 +3,8 @@
 
 #include "../PhysicsAPI.h"
 #include <btBulletDynamicsCommon.h>
+#include <vld.h>
+#include <BulletWorldImporter\btBulletWorldImporter.h>
 
 namespace Oyster
 {
@@ -67,6 +69,8 @@ namespace Oyster
 			API_Impl();
 			virtual ~API_Impl();
 
+			void Release();
+
 			void Init();
 
 			bool IsInLimbo( const ICustomBody* objRef );
@@ -100,6 +104,8 @@ namespace Oyster
 			btSequentialImpulseConstraintSolver* solver;
 			btDiscreteDynamicsWorld* dynamicsWorld;
 			std::vector<ICustomBody*> customBodies;
+			btBulletWorldImporter importer;
+			unsigned int nrOfShapes;
 
 			float timeStep;
 

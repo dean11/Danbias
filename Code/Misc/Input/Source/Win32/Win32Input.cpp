@@ -111,7 +111,7 @@ void Win32Input::WindowActivate(bool activate)
 {
 	if(activate)
 	{
-		SetCursor(0);
+		//SetCursor(0);
 		for (unsigned int i = 0; i < Win32Input::instance->mouse.size(); i++)
 		{
 			Win32Input::instance->mouse[i]->ToggleDefault(false);

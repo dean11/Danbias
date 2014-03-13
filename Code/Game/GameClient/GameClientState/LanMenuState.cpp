@@ -27,7 +27,10 @@ using namespace ::GameLogic;
 
 struct  LanMenuState::MyData
 {
-	MyData(){}
+	MyData()
+	{
+		this->currentText = 0;
+	}
 
 	SharedStateContent *sharedData;
 
@@ -36,6 +39,10 @@ struct  LanMenuState::MyData
 	EventButtonCollection guiElements;
 
 	TextField<LanMenuState*> *connectIP;
+	TextField<LanMenuState*> *alias;
+	Utility::DynamicMemory::DynamicArray<TextField<LanMenuState*>*> textsRefs;
+	int currentText;
+
 	unsigned short connectPort;
 
 	std::string ip;
@@ -63,17 +70,30 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	// create guiElements
 	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
 	this->privData->connectIP->ReserveLines( 1 );
-	this->privData->connectIP->AppendText( L"127.0.0.1" );
-	//this->privData->connectIP->AppendText( L"194.47.150.206" ); // HACK: connecting to Dennis's server
-	//this->privData->connectIP->AppendText( L"194.47.150.189" ); // HACK: connecting to Robins server
+	this->privData->connectIP->AppendText( L"127.0.0.1:15151" );
 	this->privData->connectIP->SetFontHeight( 0.035f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
 	this->privData->connectIP->SetBottomAligned();
-	
+
+	this->privData->alias = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.35f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+	this->privData->alias->ReserveLines( 1 );
+	this->privData->alias->AppendText( L"Player" );
+	this->privData->alias->SetFontHeight( 0.035f );
+	this->privData->alias->SetLineSpacing( 0.005f );
+	this->privData->alias->SetBottomAligned();
+
+	this->privData->textsRefs.Push(this->privData->alias);
+	this->privData->guiElements.AddButton( this->privData->alias );
+
+	this->privData->textsRefs.Push(this->privData->connectIP);
 	this->privData->guiElements.AddButton( this->privData->connectIP );
+	this->privData->sharedData->keyboardDevice->BindTextTarget( &(*this->privData->connectIP)[0] );
+
+	Float4 bg = this->privData->connectIP->GetBackColor(); bg.w = 1.6f;
+	this->privData->connectIP->SetBackColor(bg);
 
 	ButtonRectangle<LanMenuState*> *guiElements;
-	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-join.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Connect, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-join.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Connect, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
 	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-back.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Exit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
@@ -84,8 +104,8 @@ bool LanMenuState::Init( SharedStateContent &shared )
 
 	this->privData->connectPort = 15151;
 
-	this->privData->sharedData->keyboardDevice->BindTextTarget( &(*this->privData->connectIP)[0] );
 	this->privData->sharedData->keyboardDevice->Activate();
+	this->privData->sharedData->keyboardDevice->AddKeyboardEvent(this);
 
 	if(!this->privData->sharedData->network->StartListeningForBroadcasting(this->privData->connectPort))
 	{
@@ -146,13 +166,32 @@ void LanMenuState::ChangeState( ClientState next )
 	switch( next )
 	{
 	case GameClientState::ClientState_NetLoad:
-		// attempt to connect to lobby
-		if( !this->privData->sharedData->network->Connect(this->privData->connectPort, (*this->privData->connectIP)[0]) )
+	{
+		std::wstring spl;
+		std::vector<std::wstring> s;
+		Utility::String::Split(s, (*this->privData->connectIP)[0], L":");
+
+		if(s.size() != 2)
 			return;
-		break;
+
+		this->privData->connectPort = _wtoi(s[1].c_str());
+
+		// attempt to connect to lobby
+		if( !this->privData->sharedData->network->Connect(this->privData->connectPort, s[0] ) )
+			return;
+
+		std::string al;
+		Utility::String::WStringToString((*this->privData->alias)[0], al);
+
+		if(al.size() == 0 ) al = "Player";
+
+		this->privData->sharedData->network->Send(GameLogic::Protocol_LobbyJoin(al));
+	} break;
+
 	default: break;
 	}
 
+	this->privData->sharedData->keyboardDevice->RemoveKeyboardEvent(this);
 	this->privData->sharedData->keyboardDevice->ReleaseTextTarget();
 
 	this->privData->nextState = next;
@@ -174,9 +213,8 @@ void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 		e.owner->PlaySound(SoundID_Mouse_Hover, ChannelID_Mouse_Hover_Button1, PlayMode_Restart);
 		break;
 	case ButtonState_Released:
-		e.owner->ChangeState( GameClientState::ClientState_NetLoad );
-		// SOUND
 		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button1, PlayMode_Restart);
+		e.owner->ChangeState( GameClientState::ClientState_NetLoad );
 		break;
 	default: break;
 	}
@@ -236,3 +274,30 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 
 	return message;
 }
+
+void LanMenuState::OnKeyPress(Input::Enum::SAKI key, Input::Keyboard* sender) 
+{
+	if(key == Input::Enum::SAKI_Tab)
+	{
+		
+		Float4 bg = this->privData->textsRefs[this->privData->currentText]->GetBackColor();
+		bg.w = 1.0f;
+		this->privData->textsRefs[this->privData->currentText]->SetBackColor(bg);
+
+
+		this->privData->currentText = (this->privData->currentText + 1) % this->privData->textsRefs.Size();
+		this->privData->sharedData->keyboardDevice->BindTextTarget(	&(*this->privData->textsRefs[this->privData->currentText])[0] );
+
+
+		bg = this->privData->textsRefs[this->privData->currentText]->GetBackColor();
+		bg.w = 1.6f;
+		this->privData->textsRefs[this->privData->currentText]->SetBackColor(bg);
+	}
+	else if (key == Input::Enum::SAKI_Enter || key == Input::Enum::SAKI_NumpadEnter)
+	{
+		this->ChangeState( GameClientState::ClientState_NetLoad );
+	}
+}
+
+
+

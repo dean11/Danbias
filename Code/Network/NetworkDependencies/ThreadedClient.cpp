@@ -103,9 +103,10 @@ void ThreadedClient::ThreadEntry()
 	std::cout<< "Client Thread started" << std::endl;
 }
 
-void ThreadedClient::ThreadExit()
+Oyster::Thread::IThreadObject::ThreadCode ThreadedClient::ThreadExit()
 {
 	std::cout << "Client Thread exit" << std::endl;
+	return Oyster::Thread::IThreadObject::ThreadCode_Exit;
 }
 
 #include <Windows.h>

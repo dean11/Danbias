@@ -114,6 +114,8 @@ void C_AudioHandler::addChannel(ChannelID id )
 }
 void C_AudioHandler::PlaySoundOnChannel( ISound* sound, IChannel* channel, PlayMode playMode )
 {
+	if(!sound || ! channel) return;
+
 	if (mute)
 	{
 		// don't play sounds while muted
@@ -186,7 +188,8 @@ void C_AudioHandler::pauseAllSounds()
 	auto channel = this->channels.begin();
 	for( ; channel != this->channels.end(); ++channel )
 	{
-		channel->second->SetPauseChannel(true);
+		if(channel->second)
+			channel->second->SetPauseChannel(true);
 	}
 	auto playerChannel = this->playerChannels.begin();
 	for( ; playerChannel != this->playerChannels.end(); ++playerChannel )
