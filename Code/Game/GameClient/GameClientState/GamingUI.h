@@ -11,6 +11,7 @@
 #include "GameUISettings.h"
 #include <Protocols.h>
 #include <list>
+#include "C_obj\C_Beam.h"
 
 namespace DanBias { namespace Client
 {
@@ -24,6 +25,7 @@ namespace DanBias { namespace Client
 		UIState Update( float deltaTime );
 		bool HaveGUIRender() const;
 		bool HaveTextRender() const;
+		void Render();
 		void RenderGUI();
 		void RenderText();
 		bool Release();
@@ -66,6 +68,7 @@ namespace DanBias { namespace Client
 			Oyster::Math::Float4 tint;
 
 			Utility::DynamicMemory::SmartPointer<Plane_UI> crosshair;
+			C_Beam *beam;
 		
 			WeaponData() 
 			{ 
@@ -80,6 +83,7 @@ namespace DanBias { namespace Client
 				middleRotationSpeed			= 0.0f;
 				middleWeaponCooldown		= 0.0f;
 				middleShootTimer			= 0.0f;
+				beam = 0;
 			}
 			WeaponData(int _id, float gc, float rs) 
 			{ 
@@ -94,10 +98,15 @@ namespace DanBias { namespace Client
 				middleRotationSpeed			= rs;
 				middleWeaponCooldown		= gc;
 				middleShootTimer			= 0.0f;
+				beam = 0;
 			}
 			void Frame(float dt)
 			{
 				delta += dt;
+				if(beam)
+				{
+					this->beam->Update(dt);
+				}
 			}
 			void Activate(GamingUI* ui)
 			{

@@ -159,6 +159,8 @@ void IngameMenyUI::PlaySound( SoundID soundID, ChannelID channelID, PlayMode pla
 
 void IngameMenyUI::ActivateInput()
 {
+	this->shared->mouseSensitivity = this->shared->mouseDevice->GetSensitivity();
+	this->shared->mouseDevice->SetSensitivity(1.0f);
 	this->active = true;
 	this->menyButtons.SetState(Oyster::Event::EventCollectionState_Enabled);
 
@@ -168,6 +170,7 @@ void IngameMenyUI::ActivateInput()
 
 void IngameMenyUI::DeactivateInput()
 {
+	this->shared->mouseDevice->SetSensitivity(this->shared->mouseSensitivity);
 	this->active = false;
 	this->menyButtons.SetState(Oyster::Event::EventCollectionState_Disabled);
 

@@ -381,6 +381,7 @@ bool GameState::Render()
 		}
 	}
 
+	((GamingUI*) this->gameUI)->Render();
 	{ // render beams
 		auto beam = this->privData->beams.begin();
 		for( ; beam != this->privData->beams.end(); ++beam )
@@ -581,6 +582,8 @@ void GameState::OnKeyPress		(Input::Enum::SAKI key, Input::Keyboard* sender)
 	switch (key)
 	{
 		case Input::Enum::SAKI_Tab:
+			if(this->gameOver) return;
+
 			this->gameUI->GUIRenderToggle(false); //Toggle crosshair rendering
 			this->renderStats = true;
 			this->statsUI->ActivateInput();
@@ -592,6 +595,7 @@ void GameState::OnKeyRelease	(Input::Enum::SAKI key, Input::Keyboard* sender)
 	switch (key)
 	{
 		case Input::Enum::SAKI_Tab:
+			if(this->gameOver) return;
 			this->gameUI->GUIRenderToggle(true); //Toggle crosshair rendering
 			this->renderStats = false;
 			this->statsUI->DeactivateInput();
@@ -1279,6 +1283,7 @@ void GameState::General_GameOver( CustomNetProtocol data )
 	//this->privData->soundManager->getChannel(ChannelID_Game_Soundtrack)->SetPauseChannel(true);
 	PlaySound(SoundID_Game_GameOver, ChannelID_Game_GameOver, PlayMode_Restart);
 	gameOver = true;
+	this->gameUI->GUIRenderToggle(false);
 	this->renderStats = true;
 }
 void GameState::General_Timer( Oyster::Network::CustomNetProtocol data )
