@@ -100,6 +100,10 @@ int GameLobby::GetGameSessionClientCount()
 {
 	return this->gameSession.GetClientCount();
 }
+float GameLobby::GetGameTimeLeft() const
+{
+	return this->gameSession.GetElapsedSeconds();
+}
 
 void GameLobby::ClientEventCallback(NetEvent<NetworkClient*, NetworkClient::ClientEventArgs> e)
 {

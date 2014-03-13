@@ -235,6 +235,7 @@ using namespace DanBias;
 	}
 	void GameSession::OnGameTimeTick(float gameTime)
 	{
+		GameSession::gameSession->timeLeft = gameTime;
 		GameSession::gameSession->Send( Protocol_General_Timer(gameTime).GetProtocol() );
 	}
 

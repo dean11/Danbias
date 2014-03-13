@@ -190,9 +190,7 @@ const wchar_t*	GameServerAPI::GameGetGameMode()
 }
 int				GameServerAPI::GameGetGameTime()
 {
-	LobbyLevelData d;
-	lobby.GetGameDesc(d);
-	return d.gameTimeInMinutes;
+	return (int)lobby.GetGameTimeLeft();
 }
 const wchar_t*	GameServerAPI::GameGetGameName()
 {
