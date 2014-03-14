@@ -482,10 +482,10 @@ void Level::Update(float deltaTime)
 	{
 		if(this->playerObjects[i])
 		{
-			if(this->playerObjects[i]->getAffectingPlayer() != NULL)
-			{
-			
-			}
+			//if(this->playerObjects[i]->getAffectingPlayer() != NULL)
+			//{
+			//
+			//}
 
 			if (this->playerObjects[i]->GetState() == PLAYER_STATE::PLAYER_STATE_DEAD)
 			{
