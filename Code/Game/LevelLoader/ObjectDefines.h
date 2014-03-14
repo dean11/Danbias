@@ -41,6 +41,10 @@ namespace GameLogic
 		ObjectSpecialType_Portal,
 		ObjectSpecialType_PickupHealth,
 		ObjectSpecialType_PickupEnergy,
+		ObjectSpecialType_LightSource,
+		ObjectSpecialType_NonSolidRotationSlow,
+		ObjectSpecialType_NonSolidRotationQuick,
+
 		
 
 		
