@@ -272,7 +272,12 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			(*this->privData->lights)[ID] = newLight;
 			break;
 		}
-
+	case ObjectSpecialType::ObjectSpecialType_LightSource:
+		break;
+	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationQuick:
+		break;
+	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationSlow:
+		break;
 	default:
 		desc.tint = Float3(1.0f);
 		desc.gtint = Float3(1.0f);
