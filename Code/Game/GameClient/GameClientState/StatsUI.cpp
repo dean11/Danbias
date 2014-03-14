@@ -112,6 +112,8 @@ bool StatsUI::Release()
 		delete this->deathText;
 	if(this->backGround)
 		delete this->backGround;
+	if(this->colors)
+		delete this->colors;
 	for( int i = 0; i< nrOfPlayers; i++)
 	{
 		delete this->names[i]; 
