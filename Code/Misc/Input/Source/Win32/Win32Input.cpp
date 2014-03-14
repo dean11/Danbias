@@ -116,6 +116,11 @@ void Win32Input::WindowActivate(bool activate)
 		{
 			Win32Input::instance->mouse[i]->ToggleDefault(false);
 		}
+		for (unsigned int i = 0; i < Win32Input::instance->keyboard.size(); i++)
+		{
+			Win32Input::instance->keyboard[i]->ResetKeys();
+		}
+		
 	}
 	else
 	{

@@ -25,6 +25,24 @@ using namespace ::Oyster::Event;
 using namespace ::Oyster::Math3D;
 using namespace ::GameLogic;
 
+struct BroadcastData
+{
+	std::wstring name;
+	std::string ip;
+	int port;
+	TextField<LanMenuState*> *btn;
+
+	BroadcastData()
+	{
+		port = 0;
+		btn = 0;
+	}
+	bool operator==(const BroadcastData& d)
+	{
+		return ( ip == d.ip && port == d.port );
+	}
+};
+
 struct  LanMenuState::MyData
 {
 	MyData()
@@ -38,8 +56,13 @@ struct  LanMenuState::MyData
 	Float3 mousePos;
 	EventButtonCollection guiElements;
 
+	EventButtonCollection broadcastGuiElements;
+
+	Utility::DynamicMemory::DynamicArray<BroadcastData*> bData;
+
 	TextField<LanMenuState*> *connectIP;
 	TextField<LanMenuState*> *alias;
+
 	Utility::DynamicMemory::DynamicArray<TextField<LanMenuState*>*> textsRefs;
 	int currentText;
 
@@ -49,6 +72,7 @@ struct  LanMenuState::MyData
 
 	static void OnButtonInteractIPField( Oyster::Event::ButtonEvent<LanMenuState*>& e );
 	static void OnButtonInteractNameField( Oyster::Event::ButtonEvent<LanMenuState*>& e );
+	static void OnServerInteractField(Oyster::Event::ButtonEvent<LanMenuState*>& e);
 } privData;
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
@@ -76,13 +100,13 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->connectIP->AppendText( L"127.0.0.1:15151" );
 	this->privData->connectIP->SetFontHeight( 0.035f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
-	this->privData->connectIP->SetBottomAligned();
+	this->privData->connectIP->SetTopAligned();
 
 	this->privData->alias = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.35f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
 	this->privData->alias->SetEventFunc(this->privData->OnButtonInteractNameField);
 	this->privData->alias->ReserveLines( 1 );
 	this->privData->alias->AppendText( L"Player" );
-	this->privData->alias->SetFontHeight( 0.035f );
+	this->privData->alias->SetFontHeight( 0.030f );
 	this->privData->alias->SetLineSpacing( 0.005f );
 	this->privData->alias->SetBottomAligned();
 
@@ -108,6 +132,7 @@ bool LanMenuState::Init( SharedStateContent &shared )
 
 	// bind guiElements collection to the singleton eventhandler
 	EventHandler::Instance().AddCollection( &this->privData->guiElements );
+	EventHandler::Instance().AddCollection( &this->privData->broadcastGuiElements );
 
 	this->privData->connectPort = 15151;
 
@@ -149,9 +174,11 @@ bool LanMenuState::Render( )
 	Graphics::API::RenderGuiElement( this->privData->sharedData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
 	Graphics::API::RenderGuiElement( this->privData->sharedData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
 	this->privData->guiElements.RenderTexture();
+	this->privData->broadcastGuiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
 	this->privData->guiElements.RenderText();
+	this->privData->broadcastGuiElements.RenderText();
 
 	Graphics::API::EndFrame();
 	return true;
@@ -162,8 +189,14 @@ bool LanMenuState::Release()
 	if(privData)
 	{
 		this->privData->sharedData->network->StopListeningForBroadcasting();
+		Event::EventHandler::Instance().ReleaseCollection( &this->privData->broadcastGuiElements );
+		for (int i = 0; i < this->privData->bData.Size(); i++)
+		{
+			delete this->privData->bData[i];
+			this->privData->bData[i] = 0;
+		}
 	}
-
+	
 	privData = NULL;
 	return true;
 }
@@ -295,6 +328,21 @@ void LanMenuState::MyData::OnButtonInteractNameField( Oyster::Event::ButtonEvent
 	}
 }
 
+void LanMenuState::MyData::OnServerInteractField(Oyster::Event::ButtonEvent<LanMenuState*>& e)
+{
+	if(e.state == ButtonState_Released)
+	{
+		e.owner->privData->connectIP->ClearText();
+		std::wstring text;
+		text.append(Utility::String::StringToWstring(((BroadcastData*)e.userData)->ip, std::wstring()));
+		text.append(L":");
+		wchar_t buff[55] = {0};
+		_itow_s(((BroadcastData*)e.userData)->port, buff, 10);
+		text.append(buff);
+		e.owner->privData->connectIP->AppendText(text);
+	}
+}
+
 const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &message )
 {
 	if( message.args.type == NetworkClient::ClientEventArgs::EventType_ProtocolFailedToSend )
@@ -315,10 +363,34 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 		{
 			Protocol_Broadcast_Test decoded(data);
 
-			unsigned short port = decoded.port;
-			std::string ip = decoded.ip;
-			std::string name = decoded.name;
-			printf("Broadcast message: %d: %s: %s\n", port, ip.c_str(), name.c_str());
+			
+			BroadcastData nb;
+			nb.port = decoded.port;
+			nb.ip = decoded.ip;
+			nb.name = Utility::String::StringToWstring(decoded.name, std::wstring());
+			//printf("Broadcast message: %d: %s: %s\n", port, ip.c_str(), name.c_str());
+			bool found = false;
+			for (int i = 0; i < this->privData->bData.Size(); i++)
+			{
+				if((*this->privData->bData[i]) == nb)
+					found = true;
+			}
+			if(!found)
+			{
+				BroadcastData *b = new BroadcastData();
+				b->ip = nb.ip;
+				b->name = nb.name;
+				b->port = nb.port;
+
+				b->btn = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.88f, 0.2f + (this->privData->bData.Size() * 0.06f), 0.9f), Float2(0.24f, 0.05f), ResizeAspectRatio_Height );
+				b->btn->AppendText(b->name);
+				b->btn->SetHoverColor(Float4(1.0f, 1.5f, 1.0f, 1.0f));
+				b->btn->SetUserData(b);
+				b->btn->SetTopAligned();
+				b->btn->SetEventFunc(this->privData->OnServerInteractField);
+				this->privData->broadcastGuiElements.AddButton(b->btn);
+				this->privData->bData.Push(b);
+			}
 
 			//this->privData->connectPort = port;
 			//this->privData->ip = ip;

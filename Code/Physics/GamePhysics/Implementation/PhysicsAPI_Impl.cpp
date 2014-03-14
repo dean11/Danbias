@@ -402,6 +402,7 @@ void API_Impl::Release()
 		this->customBodies[i] = NULL;
 	}
 	this->customBodies.clear();
+	this->importer.deleteAllData();
 }
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )

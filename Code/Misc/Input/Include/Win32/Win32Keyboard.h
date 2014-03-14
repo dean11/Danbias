@@ -28,6 +28,8 @@ namespace Input
 		void ProccessKeyboardData (RAWKEYBOARD keyboard);
 		bool Create( );
 
+		void ResetKeys();
+
 	private:
 		void MapKey(RAWKEYBOARD& rawKB, Enum::SAKI& out_key, bool& isE0);
 		

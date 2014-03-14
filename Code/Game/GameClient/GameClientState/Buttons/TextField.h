@@ -92,7 +92,7 @@ namespace DanBias { namespace Client
 	{
 		::Oyster::Math::Float lineStep = this->fontHeight + this->lineSpacing;
 		::Oyster::Math::Float2 rowSize = ::Oyster::Math::Float2( this->size.x, this->fontHeight );
-		::Oyster::Math::Float3 fieldTopLeft = this->pos - Float3( this->size * 0.25f, 0.001f );
+		::Oyster::Math::Float3 fieldTopLeft = this->pos - Float3( this->size.x * 0.5f, this->size.y * 0.25f, 0.0001f );
 		::Oyster::Math::Float3 topLeft = fieldTopLeft;
 
 		if( this->isBottomAligned )
