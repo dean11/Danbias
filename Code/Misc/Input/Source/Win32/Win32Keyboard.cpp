@@ -173,6 +173,7 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				else if(key == SAKI_8)		test = L'(';
 				else if(key == SAKI_9)		test = L')';
 				else if(key == SAKI_Add)	test = L'?';
+				else if(key == SAKI_Period) test = L':';
 				test = towupper(test);
 			}
 			else if( this->keys[SAKI_LeftAlt].isDown || this->keys[SAKI_RightAlt].isDown )

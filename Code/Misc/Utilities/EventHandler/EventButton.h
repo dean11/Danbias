@@ -241,7 +241,7 @@ namespace Oyster
 		template <typename Owner>
 		void EventButton<Owner>::SetEventFunc(EventFunc func)
 		{
-			this->privData.EventFunc = EventFunc;
+			this->privData.eventCallback = func;
 		}
 
 		template <typename Owner>

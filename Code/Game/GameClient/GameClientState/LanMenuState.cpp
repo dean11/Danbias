@@ -47,6 +47,8 @@ struct  LanMenuState::MyData
 
 	std::string ip;
 
+	static void OnButtonInteractIPField( Oyster::Event::ButtonEvent<LanMenuState*>& e );
+	static void OnButtonInteractNameField( Oyster::Event::ButtonEvent<LanMenuState*>& e );
 } privData;
 
 void OnButtonInteract_Connect( Oyster::Event::ButtonEvent<LanMenuState*>& e );
@@ -68,14 +70,16 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->nextState = GameClientState::ClientState_Same;
 
 	// create guiElements
-	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+	this->privData->connectIP->SetEventFunc(this->privData->OnButtonInteractIPField);
 	this->privData->connectIP->ReserveLines( 1 );
 	this->privData->connectIP->AppendText( L"127.0.0.1:15151" );
 	this->privData->connectIP->SetFontHeight( 0.035f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
 	this->privData->connectIP->SetBottomAligned();
 
-	this->privData->alias = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), this, Float3(0.5f, 0.35f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+	this->privData->alias = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.35f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+	this->privData->alias->SetEventFunc(this->privData->OnButtonInteractNameField);
 	this->privData->alias->ReserveLines( 1 );
 	this->privData->alias->AppendText( L"Player" );
 	this->privData->alias->SetFontHeight( 0.035f );
@@ -89,8 +93,11 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->guiElements.AddButton( this->privData->connectIP );
 	this->privData->sharedData->keyboardDevice->BindTextTarget( &(*this->privData->connectIP)[0] );
 
-	Float4 bg = this->privData->connectIP->GetBackColor(); bg.w = 1.6f;
-	this->privData->connectIP->SetBackColor(bg);
+	this->privData->currentText = (this->privData->currentText + 1) % this->privData->textsRefs.Size();
+	this->privData->sharedData->keyboardDevice->BindTextTarget(	&(*this->privData->textsRefs[this->privData->currentText])[0] );
+	
+	Float4 bg = this->privData->textsRefs[this->privData->currentText]->GetBackColor(); bg.w = 1.6f;
+	this->privData->textsRefs[this->privData->currentText]->SetBackColor(bg);
 
 	ButtonRectangle<LanMenuState*> *guiElements;
 	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-join.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Connect, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
@@ -234,6 +241,57 @@ void OnButtonInteract_Exit( Oyster::Event::ButtonEvent<LanMenuState*>& e )
 		e.owner->PlaySound(SoundID_Mouse_Click, ChannelID_Mouse_Click_Button2, PlayMode_Restart);
 		break;
 	default: break;
+	}
+}
+
+void LanMenuState::MyData::OnButtonInteractIPField( Oyster::Event::ButtonEvent<LanMenuState*>& e )
+{
+	if(e.state == ButtonState_Pressed)
+	{
+		for (int i = 0; i < e.owner->privData->textsRefs.Size(); i++)
+		{
+			if(e.owner->privData->textsRefs[i] == e.owner->privData->connectIP)
+			{
+				Float4 bg = e.owner->privData->textsRefs[e.owner->privData->currentText]->GetBackColor();
+				bg.w = 1.0f;
+				e.owner->privData->textsRefs[e.owner->privData->currentText]->SetBackColor(bg);
+
+				e.owner->privData->currentText = i;
+
+				e.owner->privData->sharedData->keyboardDevice->BindTextTarget(	&(*e.owner->privData->textsRefs[e.owner->privData->currentText])[0] );
+
+				bg = e.owner->privData->textsRefs[e.owner->privData->currentText]->GetBackColor();
+				bg.w = 1.6f;
+				e.owner->privData->textsRefs[e.owner->privData->currentText]->SetBackColor(bg);
+
+				break;
+			}
+		}
+	}
+}
+void LanMenuState::MyData::OnButtonInteractNameField( Oyster::Event::ButtonEvent<LanMenuState*>& e )
+{
+	if(e.state == ButtonState_Pressed)
+	{
+		for (int i = 0; i < e.owner->privData->textsRefs.Size(); i++)
+		{
+			if(e.owner->privData->textsRefs[i] == e.owner->privData->alias)
+			{
+				Float4 bg = e.owner->privData->textsRefs[e.owner->privData->currentText]->GetBackColor();
+				bg.w = 1.0f;
+				e.owner->privData->textsRefs[e.owner->privData->currentText]->SetBackColor(bg);
+
+				e.owner->privData->currentText = i;
+
+				e.owner->privData->sharedData->keyboardDevice->BindTextTarget(	&(*e.owner->privData->textsRefs[e.owner->privData->currentText])[0] );
+
+				bg = e.owner->privData->textsRefs[e.owner->privData->currentText]->GetBackColor();
+				bg.w = 1.6f;
+				e.owner->privData->textsRefs[e.owner->privData->currentText]->SetBackColor(bg);
+
+				break;
+			}
+		}
 	}
 }
 
