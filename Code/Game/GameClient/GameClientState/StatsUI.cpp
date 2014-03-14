@@ -112,6 +112,8 @@ bool StatsUI::Release()
 		delete this->deathText;
 	if(this->backGround)
 		delete this->backGround;
+	if(this->colors)
+		delete this->colors;
 	for( int i = 0; i< nrOfPlayers; i++)
 	{
 		delete this->names[i]; 
@@ -195,6 +197,17 @@ bool StatsUI::updateDeatchScore( int id, int deaths)
 		}
 	}
 	return false;
+}
+std::wstring StatsUI::getPlaterName( int id)
+{
+	for( int i = 0; i< nrOfPlayers; i++)
+	{
+		if(this->playerId[i] == id)
+		{
+			return this->names[i]->getText();
+		}
+	}
+	return L""; 
 }
 void StatsUI::ChangeState( UIState next )
 {

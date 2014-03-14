@@ -21,6 +21,7 @@ namespace DanBias { namespace Client
 	public:
 		TextField();
 		TextField( ::std::wstring backgroundTexture, ::Oyster::Math::Float4 textColor, ::Oyster::Math::Float4 backColor, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height );
+		TextField( ::std::wstring backgroundTexture, ::Oyster::Math::Float4 textColor, ::Oyster::Math::Float4 backColor, ::Oyster::Math::Float4 hovCol, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height );
 		virtual ~TextField();
 
 		virtual void RenderText();
@@ -68,6 +69,15 @@ namespace DanBias { namespace Client
 	template<typename Owner>
 	TextField<Owner>::TextField( ::std::wstring backgroundTexture, ::Oyster::Math::Float4 textColor, ::Oyster::Math::Float4 backColor, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize )
 		: ButtonRectangle( backgroundTexture, L"", textColor, backColor, backColor, backColor, owner, pos, size, resize )
+	{
+		this->fontHeight = 0.025f;
+		this->lineSpacing = 0.001f;
+		this->isBottomAligned = true;
+	}
+
+	template<typename Owner>
+	TextField<Owner>::TextField( ::std::wstring backgroundTexture, ::Oyster::Math::Float4 textColor, ::Oyster::Math::Float4 backColor, ::Oyster::Math::Float4 hovCol, Owner owner, Oyster::Math::Float3 pos, Oyster::Math::Float2 size, ResizeAspectRatio resize = ResizeAspectRatio_Height )
+		: ButtonRectangle( backgroundTexture, L"", textColor, backColor, hovCol, backColor, owner, pos, size, resize )
 	{
 		this->fontHeight = 0.025f;
 		this->lineSpacing = 0.001f;
