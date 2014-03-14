@@ -27,6 +27,7 @@ struct NetLoadState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> *weapons;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_ClientLogic>> *clientObjects;
 
 	FirstPersonWeapon* weapon;
 	C_AudioHandler* soundManager;
@@ -59,6 +60,8 @@ bool NetLoadState::Init( SharedStateContent &shared )
 	this->privData->lights			= &shared.lights;
 	this->privData->pickups			= &shared.pickups;
 	this->privData->weapons			= &shared.weapons;
+	this->privData->clientObjects = &shared.clientObjects;
+	
 
 	shared.weapon = new FirstPersonWeapon;
 	this->privData->weapon			= shared.weapon;
@@ -273,11 +276,24 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 			break;
 		}
 	case ObjectSpecialType::ObjectSpecialType_LightSource:
-		break;
+		{
+			C_ClientLogic *logic = new C_ClientLogic();
+			return;
+		}
 	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationQuick:
-		break;
+		{
+			C_ClientLogic *logic = new C_ClientLogic();
+			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/16, Math::Vector3(0.0f,0.0f,1.0f));
+			(*this->privData->clientObjects)[ID] = logic;
+			return;
+		}
 	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationSlow:
-		break;
+		{
+			C_ClientLogic *logic = new C_ClientLogic();
+			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/64, Math::Vector3(0.0f,0.0f,1.0f));
+			(*this->privData->clientObjects)[ID] = logic;
+			return;
+		}
 	default:
 		desc.tint = Float3(1.0f);
 		desc.gtint = Float3(1.0f);

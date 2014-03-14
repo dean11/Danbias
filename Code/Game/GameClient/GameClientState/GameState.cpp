@@ -52,6 +52,7 @@ struct  GameState::MyData
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> *lights;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> *pickups;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> *weapons;
+	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_ClientLogic>> *clientObjects;
 
 	C_AudioHandler* soundManager;
 	::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> players;
@@ -108,12 +109,13 @@ bool GameState::Init( SharedStateContent &shared )
 	this->privData->pickups = &shared.pickups;
 	this->privData->weapons = &shared.weapons;
 	this->privData->weapon = shared.weapon;
+	this->privData->clientObjects = &shared.clientObjects;
 
 	this->privData->beams.reserve( 10 );
 
 	Graphics::API::Option gfxOp = Graphics::API::GetOption();
 	Float aspectRatio = gfxOp.resolution.x / gfxOp.resolution.y;
-	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 200.0f );
+	this->privData->camera.SetPerspectiveProjection( Utility::Value::Radian(90.0f), aspectRatio, 0.1f, 2000000.0f );
 	Graphics::API::SetProjection( this->privData->camera.GetProjectionMatrix() );
 
 	// DEGUG KEYS
@@ -191,15 +193,7 @@ void GameState::InitiatePlayer( int id, const std::string &alias, const std::str
 		p->SetGlowTint(colors.getGlowColor(id));
 
 		
-		Graphics::Definitions::Pointlight pl;
-		pl.Pos = p->getPos();
-		pl.Bright = 0.5f;
-		pl.Radius = 10;
-		pl.Color = p->GetGlowTint();
-		UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
-		p->SetLight(p->GetId());
-		(newLight)->Render();
-		(*this->privData->lights)[p->GetId()] = newLight;
+		
 
 		(this->privData->players)[id] = p;
 		(*this->privData->weapons)[id]->SetVisible(true);
@@ -212,6 +206,7 @@ void GameState::InitiatePlayer( int id, const std::string &alias, const std::str
 			this->privData->camera.SetPosition( p->getPos() );
 			this->privData->camera.SetHeadOffset( Float3(0.0f, 0.45f * p->getScale().y, 0.0f) );
 			Float3 offset = Float3( 0.0f );
+
 			// DEBUG position of camera so we can see the player model
 		#ifdef _CAMERA_DEBUG
 			offset.y = p->getScale().y * 2.0f;
@@ -223,6 +218,15 @@ void GameState::InitiatePlayer( int id, const std::string &alias, const std::str
 		}
 		else
 		{
+			Graphics::Definitions::Pointlight pl;
+			pl.Pos = p->getPos();
+			pl.Bright = 0.5f;
+			pl.Radius = 10;
+			pl.Color = p->GetGlowTint();
+			UniquePointer<C_Light> newLight(new C_Light(pl, p->GetId()));
+			p->SetLight(p->GetId());
+			(newLight)->Render();
+			(*this->privData->lights)[p->GetId()] = newLight;
 			((StatsUI*)this->statsUI)->addPLayer( id, Utility::String::StringToWstring(alias, std::wstring()), 0, 0, colors.getGlowColor(id)); 
 		}
 	}
@@ -321,6 +325,11 @@ GameClientState::ClientState GameState::Update( float deltaTime )
 		}
 	} // end update beams
 
+	for (auto object = privData->clientObjects->begin();object != privData->clientObjects->end();++object)
+	{
+		object->second->Update(deltaTime);
+	}
+
 	return this->privData->nextState;
 }
 
@@ -378,6 +387,15 @@ bool GameState::Render()
 		{
 			pickup->second->Render();
 
+		}
+	}
+
+	auto object = privData->clientObjects->begin();
+	for (;object!=privData->clientObjects->end();++object)
+	{
+		if(object->second)
+		{
+			object->second->Render();
 		}
 	}
 

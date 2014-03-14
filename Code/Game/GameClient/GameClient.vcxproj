@@ -212,6 +212,7 @@
     <ClCompile Include="GameClientState\Camera_FPSV2.cpp" />
     <ClCompile Include="GameClientState\C_Light.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_Beam.cpp" />
+    <ClCompile Include="GameClientState\C_obj\C_ClientLogic.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_DynamicObj.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_Player.cpp" />
     <ClCompile Include="GameClientState\C_obj\C_StaticObj.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="GameClientState\ColorDefines.h" />
     <ClInclude Include="GameClientState\C_Light.h" />
     <ClInclude Include="GameClientState\C_obj\C_Beam.h" />
+    <ClInclude Include="GameClientState\C_obj\C_ClientLogic.h" />
     <ClInclude Include="GameClientState\C_obj\C_DynamicObj.h" />
     <ClInclude Include="GameClientState\C_obj\C_Player.h" />
     <ClInclude Include="GameClientState\C_obj\C_StaticObj.h" />

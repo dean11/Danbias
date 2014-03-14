@@ -15,6 +15,7 @@
 #include "C_obj\C_DynamicObj.h"
 #include "C_obj\C_Player.h"
 #include "C_Light.h"
+#include "C_obj/C_ClientLogic.h"
 #include "NetworkClient.h"
 #include "Input.h"
 #include "FirstPersonWeapon.h"
@@ -31,6 +32,7 @@ namespace DanBias { namespace Client
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Light>> lights;
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_StaticObj>> pickups;
 		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_Player>> weapons;
+		::std::map<int, ::Utility::DynamicMemory::UniquePointer<::DanBias::Client::C_ClientLogic>> clientObjects;
 		C_AudioHandler* soundManager;
 		FirstPersonWeapon* weapon;
 
