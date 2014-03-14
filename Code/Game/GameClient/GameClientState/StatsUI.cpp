@@ -198,6 +198,17 @@ bool StatsUI::updateDeatchScore( int id, int deaths)
 	}
 	return false;
 }
+std::wstring StatsUI::getPlaterName( int id)
+{
+	for( int i = 0; i< nrOfPlayers; i++)
+	{
+		if(this->playerId[i] == id)
+		{
+			return this->names[i]->getText();
+		}
+	}
+	return L""; 
+}
 void StatsUI::ChangeState( UIState next )
 {
 	this->nextState = next;

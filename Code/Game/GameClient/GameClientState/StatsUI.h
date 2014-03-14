@@ -25,6 +25,7 @@ namespace DanBias { namespace Client
 		bool removePlayer( int id );
 		bool updateKillScore( int id, int kills);
 		bool updateDeatchScore( int id, int deaths); 
+		std::wstring getPlaterName( int id); 
 		void ChangeState( UIState next );
 
 		void ActivateInput();
