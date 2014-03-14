@@ -796,7 +796,13 @@ bool Win32Keyboard::Create()
 	return false;
 }
 
-
+void Win32Keyboard::ResetKeys()
+{
+	for (int i = 0; i < MAXKEYS; i++)
+	{
+		this->keys[i].isDown = false;
+	}
+}
 
 
 

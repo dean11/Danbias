@@ -4,6 +4,8 @@
 #include "GameClientState.h"
 #include "OysterMath.h"
 #include "Keyboard.h"
+#include <string>
+#include <DynamicArray.h>
 
 namespace DanBias
 {
@@ -30,7 +32,7 @@ namespace DanBias
 		private:
 			struct MyData;
 			::Utility::DynamicMemory::UniquePointer<MyData> privData;
-
+		
 		};
 	}
 }
