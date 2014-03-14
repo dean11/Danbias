@@ -156,7 +156,7 @@ void Player::BeginFrame(float dt)
 			this->playerState = PLAYER_STATE::PLAYER_STATE_IDLE;
 		}
 
-		Float frameTime = gameInstance->GetFrameTime();
+		Float frameTime = dt;
 		this->key_forward = Max( this->key_forward - frameTime, 0.0f );
 		this->key_backward = Max( this->key_backward - frameTime, 0.0f );
 		this->key_strafeRight = Max( this->key_strafeRight - frameTime, 0.0f );
