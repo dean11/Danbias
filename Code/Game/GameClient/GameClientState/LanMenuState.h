@@ -30,6 +30,7 @@ namespace DanBias
 		private:
 			struct MyData;
 			::Utility::DynamicMemory::UniquePointer<MyData> privData;
+
 		};
 	}
 }
