@@ -64,7 +64,7 @@ namespace NoEdgeConstants
 
 				const float Pullforce					= 300.0f;
 				const float Pushforce					= 1500.0f;
-				const float Zipforce					= 4500.0f;
+				const float Zipforce					= 2500.0f;
 
 				const float PullCost					= 5.0f;
 				const float PushCost					= 9.0f;
@@ -72,7 +72,7 @@ namespace NoEdgeConstants
 
 				const float PrimaryCooldown				= 0.0f;
 				const float SecondaryCooldown			= 0.0f;
-				const float UtilityCooldown				= 1.5f;
+				const float UtilityCooldown				= 0.1f;
 
 				const float MaxDistanceFromPlayer		= 18.0f;
 				const float MaxPullDistance				= 39.0f;
