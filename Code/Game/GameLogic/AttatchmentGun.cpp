@@ -12,7 +12,7 @@ AttatchmentGun::AttatchmentGun(Oyster::Math::Float* currEnergy, Oyster::Math::Fl
 {
 	this->owner = 0;
 	this->damage = 0.0f;
-	//this->Cooldown = 0.0f;
+	this->timeUntilFire = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
 }
@@ -23,7 +23,7 @@ AttatchmentGun::AttatchmentGun(Player &owner, Oyster::Math::Float* currEnergy, O
 	this->damage = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryDamage;
 	//this->Cooldown = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
 	this->energyCost = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCost;
-	//this->TimeUntilFire = 0.0f;
+	this->timeUntilFire = 0.0f;
 	this->currentEnergy = currEnergy;
 	this->previousEnergy = previousEnergy;
 }
@@ -39,15 +39,15 @@ AttatchmentGun::~AttatchmentGun(void)
 ********************************************************/
 void AttatchmentGun::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, float dt)
 {
+	this->timeUntilFire  -= dt;
 	//switch case to determin what functionallity to use in the attatchment
 	switch (usage)
 	{
 	case WEAPON_FIRE::WEAPON_USE_PRIMARY_PRESS:
-		//if(TimeUntilFire > this->Cooldown && *currentEnergy >= energyCost)
-		if( *currentEnergy >= energyCost )
+		if( *currentEnergy >= energyCost &&  this->timeUntilFire <= 0.0f)
 		{
 			ShootBullet(usage,dt);
-			//TimeUntilFire = 0.0f;
+			this->timeUntilFire = NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown;
 			(*currentEnergy) -= energyCost; 
 			((Game*)&Game::Instance())->onActionEventFnc(this->owner, WeaponAction::WeaponAction_GunShoot);
 		}
@@ -88,7 +88,7 @@ void AttatchmentGun::ShootBullet(const WEAPON_FIRE &usage, float dt)
 		BulletCollision(hitObject);
 	}
 
-	((Game*)&Game::Instance())->onBeamEffectFnc( this->owner, pos, target, 0.1f, 0.1f );
+	((Game*)&Game::Instance())->onBeamEffectFnc( this->owner, pos, target, 0.1f, NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown * 0.5 );
 }
 
 

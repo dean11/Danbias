@@ -22,8 +22,7 @@ namespace GameLogic
 
 	private:
 		Oyster::Math::Float damage;
-		//Oyster::Math::Float Cooldown;
-		//Oyster::Math::Float TimeUntilFire;
+		Oyster::Math::Float timeUntilFire;
 		Oyster::Math::Float energyCost;
 	
 

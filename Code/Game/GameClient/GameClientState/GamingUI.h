@@ -122,7 +122,7 @@ namespace DanBias { namespace Client
 						primaryShootTimer += delta;
 						if(primaryShootTimer > primaryWeaponCooldown)
 						{
-							ui->shared->weapon->SetRotationSpeed(primaryRotationSpeed);
+							ui->shared->weapon->SetRotationSpeed(primaryRotationSpeed * 1.08);
 							this->primaryShootTimer = 0;
 							this->delta = 0;
 						}

@@ -81,14 +81,14 @@ void OptionState::CreateMouseSlider()
 	Float4 HoverCol = Float4(1.2f);
 	Float4 PressCol = Float4(1.5f);
 
-	this->mouseSensitivity.pos = Float3(0.5f, 0.354f, 0.6f);
+	this->mouseSensitivity.pos = Float3(0.62f, 0.354f, 0.6f);
 	this->mouseSensitivity.button =  new ButtonRectangle<OptionState*>( L"noedge-slider-btn.png", L"", TextCol, BackCol, 
 																		HoverCol, PressCol, OnButtonInteract, this, 
 																		Float3(this->mouseSensitivity.pos.xy.x, this->mouseSensitivity.pos.xy.y, 0.4f), 
 																		Float2(0.016f, 0.029f));
 	this->guiElements.AddButton( mouseSensitivity.button );
 
-	mouseSensitivity.button->SetUserData((void*)(int)ButtonType_MouseSensitivity);
+	mouseSensitivity.button->SetUserData((void*)(int)ButtonType_MouseSensitivity); 
 
 	this->mouseSensitivity.mouseSlider = Oyster::Graphics::API::CreateTexture(L"noedge-slider-vertical.png");
 	if(!mouseSensitivity.mouseSlider)
@@ -116,11 +116,11 @@ bool OptionState::Init( SharedStateContent &shared )
 	
 	CreateMouseSlider();
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.47f, 0.26f, 0.1f), Float2(0.045f, 0.045f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((int)ButtonType_FullScreen);
 
-	fScreenBtnToggle = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOff.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.64f, 0.2f, 0.5f), Float2(0.045f, 0.045f));
+	fScreenBtnToggle = new ButtonRectangle<OptionState*>( L"noedge-btn-fScreenOff.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.47f, 0.26f, 0.1f), Float2(0.045f, 0.045f));
 	this->guiElements.AddButton( fScreenBtnToggle );
 	fScreenBtnToggle->SetUserData((int)ButtonType_FullScreen);
 
@@ -134,19 +134,19 @@ bool OptionState::Init( SharedStateContent &shared )
 		fScreenBtnToggle = button;
 	}
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.3f, 0.51f, 0.5f), Float2(0.035f, 0.035f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.459f, 0.42f, 0.2f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_FlipResLeft);
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.7f, 0.51f, 0.5f), Float2(0.035f, 0.035f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.7f, 0.42f, 0.2f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_FlipResRight);
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-apply.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.5f, 0.65f, 0.5f), Float2(0.3f, 0.1f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-apply.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.37f, 0.8f, 0.5f), Float2(0.24f, 0.094f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_Apply);
 
-	button = new ButtonRectangle<OptionState*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.3f, 0.18f));
+	button = new ButtonRectangle<OptionState*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.63f, 0.8f, 0.5f), Float2(0.24f, 0.094f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_Back);
 
@@ -187,11 +187,11 @@ bool OptionState::Render()
 		this->guiElements.RenderTexture();
 
 	Graphics::API::StartTextRender();
-		Graphics::API::RenderText(L"Full Screen" , Float3(0.33f, 0.14f, 0.1f), Float2(0.5f, 0.24f), 0.034f);
+		Graphics::API::RenderText(L"Full Screen" , Float3(0.05f, 0.24f, 0.1f), Float2(0.4f, 0.1f), 0.028f);
 
 		Float3 sp = this->mouseSensitivity.pos;
-		sp.x -= 0.2; sp.y += 0.0011f; sp.z = 0.4f;
-		Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.2f), 0.030f);
+		sp.x = 0.05f; sp.y -= 0.028f;
+		Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.1f), 0.028f);
 		
 		wchar_t val[25];
 		swprintf_s(val, L"%f", this->sharedData->mouseDevice->GetSensitivity() * 10.0f);
@@ -199,7 +199,8 @@ bool OptionState::Render()
 		Float3 t = this->mouseSensitivity.button->GetPosition(); t.y = 0.29f; t.x -= 0.04f;
 		Graphics::API::RenderText( val, t, Float2(0.13f, 0.13f), 0.028f);
 
-		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.36f, 0.40f, 0.1f), Float2(0.32f, 0.4f), 0.050f);
+		Graphics::API::RenderText(L"Resolution" , Float3(0.05f, 0.398f, 0.1f), Float2(0.4f, 0.1f), 0.028f);
+		Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.5f, 0.41f, 0.1f), Float2(0.2f, 0.05f), 0.028f);
 		this->guiElements.RenderText();
 
 	Graphics::API::EndFrame();
@@ -258,18 +259,18 @@ void OptionState::OnMouseMoveVelocity	( Input::Struct::SAIPointFloat2D coordinat
 		Float3 temp = this->mouseSensitivity.button->GetPosition();
 		temp.x = (sender->GetNormalizedPosition().x);
 
-		temp.x = std::max((0.5f - (0.35f/2.0f)), temp.x);
-		temp.x = std::min((0.5f + (0.35f/2.0f)), temp.x);
+		temp.x = std::max((this->mouseSensitivity.pos.x - (0.35f/2.0f)), temp.x);
+		temp.x = std::min((this->mouseSensitivity.pos.x + (0.35f/2.0f)), temp.x);
 		this->mouseSensitivity.button->SetPosition(temp ); 
 
 		float vel = this->sharedData->mouseDevice->GetSensitivity();
 
-		const float minThreshold = 0.00000001f;
+		const float minThreshold = 0.1f;
 		const float maxVal = 2.0f;
 		float x = temp.x;
 		float width = 0.35f;
 		float halfWidth = 0.35f / 2.0f;
-		float left = 0.5f - halfWidth;
+		float left = this->mouseSensitivity.pos.x - halfWidth;
 		float localX = (temp.x - left);
 		float value = localX * maxVal / width;
 		

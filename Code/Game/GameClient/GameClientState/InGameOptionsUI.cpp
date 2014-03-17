@@ -114,12 +114,14 @@ bool InGameOptionsUI::Init()
 	Float4 BackCol	= Float4( 1.0f );
 	Float4 HoverCol	= Float4( 1.2f );
 	Float4 PressCol	= Float4( 1.5f );
+
+	HoverCol.w = PressCol.w = 1.0f;
 	
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.64f, 0.2f, 0.49f), Float2(0.045f, 0.045f) );
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-fScreenOn.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.58f, 0.25f, 0.49f), Float2(0.045f, 0.045f) );
 	this->guiElements.AddButton( button );
 	button->SetUserData( (int)ButtonType_FullScreen );
 
-	fScreenBtnToggle = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-fScreenOff.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.64f, 0.2f, 0.49f), Float2(0.045f, 0.045f) );
+	fScreenBtnToggle = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-fScreenOff.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.58f, 0.25f, 0.49f), Float2(0.045f, 0.045f) );
 	this->guiElements.AddButton( fScreenBtnToggle );
 	fScreenBtnToggle->SetUserData( (int)ButtonType_FullScreen );
 
@@ -133,19 +135,19 @@ bool InGameOptionsUI::Init()
 		fScreenBtnToggle = button;
 	}
 
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.3f, 0.51f, 0.49f), Float2(0.035f, 0.035f));
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresLeft.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.38f, 0.48f, 0.49f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_FlipResLeft);
 
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.7f, 0.51f, 0.49f), Float2(0.035f, 0.035f));
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-flipresright.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract, this, Float3(0.62f, 0.48f, 0.49f), Float2(0.035f, 0.035f));
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_FlipResRight);
 
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-apply.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.5f, 0.65f, 0.49f), Float2(0.5f, 0.12f) );
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-apply.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.5f, 0.6f, 0.49f), Float2(0.24f, 0.094f) );
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_Apply);
 
-	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.5f, 0.8f, 0.49f), Float2(0.5f, 0.18f) );
+	button = new ButtonRectangle<InGameOptionsUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, InGameOptionsUI::OnButtonInteract, this, Float3(0.5f, 0.7f, 0.49f), Float2(0.24f, 0.094f) );
 	this->guiElements.AddButton( button );
 	button->SetUserData((void*)(int)ButtonType_Back);
 
@@ -191,15 +193,15 @@ void InGameOptionsUI::RenderGUI()
 	else
 		Graphics::API::RenderGuiElement( this->shared->mouseCursor, this->mousePos, Float2(0.15f, 0.24f), Float4(1.0f) );
 	
-	Graphics::API::RenderGuiElement( this->shared->background, Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0,0,0,0.5) );
+	Graphics::API::RenderGuiElement( this->shared->background, Float3(0.5f, 0.5f, 0.5f), Float2(0.38f, 0.67f), Float4(1,1,1,0.5) );
 	this->guiElements.RenderTexture();
 }
 
 void InGameOptionsUI::RenderText() 
 {
 	Float3 sp = this->mouseSensitivity.pos;
-	sp.x -= 0.2f; sp.y += 0.0011f; sp.z = 0.4f;
-	Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.2f), 0.030f);
+	sp.x -= 0.18f; sp.y += 0.0011f; sp.z = 0.4f;
+	Graphics::API::RenderText(L"Mouse sensitivity" , sp, Float2(0.4f, 0.1f), 0.028f);
 	
 	wchar_t val[25];
 	swprintf_s(val, L"%f", this->shared->mouseDevice->GetSensitivity() * 10.0f);
@@ -207,8 +209,8 @@ void InGameOptionsUI::RenderText()
 	Float3 t = this->mouseSensitivity.button->GetPosition(); t.y = 0.29f; t.x -= 0.04f;
 	Graphics::API::RenderText( val, t, Float2(0.13f, 0.13f), 0.028f);
 
-	Graphics::API::RenderText( L"Full Screen", Float3(0.33f, 0.14f, 0.1f), Float2(0.5f, 0.24f), 0.034f );
-	Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.36f, 0.40f, 0.1f), Float2(0.32f, 0.4f), 0.050f);
+	Graphics::API::RenderText( L"Full Screen", Float3(0.33f, 0.22f, 0.1f), Float2(0.2f, 0.1f), 0.028f );
+	Graphics::API::RenderText(resolution[this->options.currentRes], Float3(0.41f, 0.45f, 0.1f), Float2(0.2f, 0.1f), 0.028f);
 	this->guiElements.RenderText();
 }
 
@@ -228,6 +230,7 @@ void InGameOptionsUI::ChangeState( UIState next )
 
 void InGameOptionsUI::ActivateInput()
 {
+	this->guiElements.SetState(Oyster::Event::EventCollectionState_Enabled);
 	this->active = true;
 	this->render = true;
 	this->shared->mouseDevice->AddMouseEvent( this );
@@ -236,6 +239,7 @@ void InGameOptionsUI::ActivateInput()
 
 void InGameOptionsUI::DeactivateInput()
 {
+	this->guiElements.SetState(Oyster::Event::EventCollectionState_Disabled);
 	this->active = false;
 	this->render = false;
 	this->shared->mouseDevice->RemoveMouseEvent( this );

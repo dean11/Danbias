@@ -35,7 +35,8 @@ Object* Level::CreateGameObj(ObjectHeader* obj, ICustomBody* rigidBody)
 		break;
 	case ObjectSpecialType_World: 
 		{
-			API::Instance().SetGravityPoint(Oyster::Math3D::Float3(0,0,0));
+			
+			API::Instance().SetGravityPoint(Oyster::Math3D::Float3(((WorldAttributes*)obj)->position));
 			//API::Instance().SetGravity(200); // could balance gravitation with the world size
 
 			float worldSize = ((WorldAttributes*)obj)->worldSize; 
