@@ -9,7 +9,7 @@ using namespace Oyster::Physics;
 using namespace Oyster::Math3D;
 using namespace Utility::Value;
 
-const float KEY_TIMER = 0.03f;
+const float KEY_TIMER = 0.08f;
 const Float3 normalized_weapon_muzzle_offset = Float3( 0.5f, 0.0f, 3.0f ); // on rightside of hip, slightly forward
 
 Player::Player()
