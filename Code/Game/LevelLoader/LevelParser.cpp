@@ -104,7 +104,6 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 						//These does not have any cgf file.
 						case ObjectSpecialType_NonSolidRotationQuick:
 						case ObjectSpecialType_NonSolidRotationSlow:
-						case ObjectSpecialType_LightSource:
 						{
 							ObjectHeader* header = new ObjectHeader;
 							ParseObject(&buffer[counter], *header, counter, false);
@@ -114,6 +113,7 @@ std::vector<SmartPointer<ObjectTypeHeader>> LevelParser::Parse(std::string filen
 						}
 
 						//there is no difference when parsing these specialTypes.
+						case ObjectSpecialType_LightSource:
 						case ObjectSpecialType_PickupEnergy:
 						case ObjectSpecialType_Generic:
 						case ObjectSpecialType_PickupHealth:

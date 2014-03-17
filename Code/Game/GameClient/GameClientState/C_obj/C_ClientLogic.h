@@ -32,10 +32,21 @@ namespace DanBias { namespace Client
 			~UpdateRotation();
 			void Update( ::Oyster::Math::Float deltaTime );
 		};
+		class UpdateLight: public UpdateMethod
+		{
+		public:
+			UpdateLight(C_ClientLogic* clientLogic);
+			~UpdateLight();
+			void Update( ::Oyster::Math::Float deltaTime );
+		};
 
 	private:
 		Oyster::Graphics::Definitions::Pointlight currentLight;
 		Oyster::Graphics::Definitions::Pointlight origLight;
+
+		bool LightState;
+		float interpolationSpeed;
+		float interpolated;
 
 		float rotationSpeed;
 		Oyster::Math::Float3 roataionVector;

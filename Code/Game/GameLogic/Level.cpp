@@ -261,9 +261,8 @@ bool Level::InitiateLevel(std::wstring levelPath)
 
 				ICustomBody* rigidBody_Static = NULL;	
 
-				if(	staticObjData->specialTypeID != ObjectSpecialType_None ||
-					staticObjData->specialTypeID != ObjectSpecialType_LightSource ||
-					staticObjData->specialTypeID != ObjectSpecialType_NonSolidRotationSlow || 
+				if(	staticObjData->specialTypeID != ObjectSpecialType_None &&
+					staticObjData->specialTypeID != ObjectSpecialType_NonSolidRotationSlow && 
 					staticObjData->specialTypeID != ObjectSpecialType_NonSolidRotationQuick)
 				{
 					// collision shape

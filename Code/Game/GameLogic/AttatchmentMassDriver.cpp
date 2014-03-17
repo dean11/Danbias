@@ -83,7 +83,6 @@ void AttatchmentMassDriver::UseAttatchment(const GameLogic::WEAPON_FIRE &usage, 
 	break;
 
 	case WEAPON_INTERRUPT:
-CASE_WEAPON_INTERRUPT:
 		if(heldObject)
 		{
 			((DynamicObject*)(this->heldObject->GetCustomTag()))->RemoveManipulation();

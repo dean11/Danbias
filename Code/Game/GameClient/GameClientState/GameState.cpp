@@ -540,6 +540,12 @@ bool GameState::Release()
 			pickup->second = nullptr;
 		}
 
+		auto clientObjects = this->privData->clientObjects->begin();
+		for( ; clientObjects != this->privData->clientObjects->end(); ++clientObjects )
+		{
+			delete clientObjects->second;
+		}
+
 		this->privData->players.clear();
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();

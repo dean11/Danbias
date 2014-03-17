@@ -221,12 +221,9 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 	case ObjectSpecialType::ObjectSpecialType_RedExplosiveBox:
 		{
 			desc.tint = Float3(1.0f);
-			desc.gtint = Float3(1.0f, 0.0f, 0.0f);
-			
-			desc.gtint *= 2;
 			Graphics::Definitions::Pointlight pointLight; 
 
-			pointLight.Color	= desc.gtint;
+			pointLight.Color	= Float3(1.0f, 0.3f, 0.0f);
 			pointLight.Pos		= desc.position;
 			pointLight.Bright	= 2.0f;
 			pointLight.Radius	= 5.0f; 
@@ -238,9 +235,10 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		}
 	case ObjectSpecialType::ObjectSpecialType_Portal:
 		{
-			desc.tint = Float3(0.0f, 0.0f, 1.0f);
-			desc.gtint = Float3(1.0f, 1.0f, 1.0f);
-			break;
+			C_ClientLogic *logic = new C_ClientLogic();
+			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), -Math::pi, Math::Vector3(0.0f,1.0f,0.0f));
+			(*this->privData->clientObjects)[ID] = logic;
+			return;
 		}
 	case ObjectSpecialType::ObjectSpecialType_StandardBox:
 		{
@@ -278,19 +276,27 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 	case ObjectSpecialType::ObjectSpecialType_LightSource:
 		{
 			C_ClientLogic *logic = new C_ClientLogic();
+			Graphics::Definitions::Pointlight pointLight; 
+
+			pointLight.Color	= Float3(0.0f, 1.0f, 1.0f);
+			pointLight.Pos		= desc.position + desc.position.GetNormalized()*5;
+			pointLight.Bright	= ((float)rand() / (RAND_MAX + 1) * (2 - 0) + 0.5f);
+			pointLight.Radius	= ((float)rand() / (RAND_MAX + 1) * (30 - 8) + 5);
+			logic->Init(desc, new C_ClientLogic::UpdateLight(logic), pointLight);
+			(*this->privData->clientObjects)[ID] = logic;
 			return;
 		}
 	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationQuick:
 		{
 			C_ClientLogic *logic = new C_ClientLogic();
-			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/16, Math::Vector3(0.0f,0.0f,1.0f));
+			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/2, Math::Vector3(1.0f,0.0f,0.0f));
 			(*this->privData->clientObjects)[ID] = logic;
 			return;
 		}
 	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationSlow:
 		{
 			C_ClientLogic *logic = new C_ClientLogic();
-			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/64, Math::Vector3(0.0f,0.0f,1.0f));
+			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/64, Math::Vector3(1.0f,0.0f,0.0f));
 			(*this->privData->clientObjects)[ID] = logic;
 			return;
 		}
