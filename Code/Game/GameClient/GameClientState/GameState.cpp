@@ -543,14 +543,15 @@ bool GameState::Release()
 		auto clientObjects = this->privData->clientObjects->begin();
 		for( ; clientObjects != this->privData->clientObjects->end(); ++clientObjects )
 		{
-			delete clientObjects->second;
+			clientObjects->second->Release();
+			clientObjects->second = nullptr;
 		}
 
 		this->privData->players.clear();
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
-
+		this->privData->clientObjects->clear();
 		this->privData->pickups->clear();
 
 		if(this->privData->weapon)
