@@ -221,6 +221,7 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 	case ObjectSpecialType::ObjectSpecialType_RedExplosiveBox:
 		{
 			desc.tint = Float3(1.0f);
+			desc.gtint = Float3(1.0f);
 			Graphics::Definitions::Pointlight pointLight; 
 
 			pointLight.Color	= Float3(1.0f, 0.3f, 0.0f);
@@ -235,6 +236,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		}
 	case ObjectSpecialType::ObjectSpecialType_Portal:
 		{
+			desc.gtint = Float3(1.0f);
+			desc.tint = Float3(1.0f);
 			C_ClientLogic *logic = new C_ClientLogic();
 			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), -Math::pi, Math::Vector3(0.0f,1.0f,0.0f));
 			(*this->privData->clientObjects)[ID] = logic;
@@ -243,6 +246,7 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 	case ObjectSpecialType::ObjectSpecialType_StandardBox:
 		{
 			desc.tint = Float3(1.0f);
+			desc.gtint = Float3(1.0f);
 			if(desc.modelPath == L"crate_colonists.dan")
 			{
 				desc.gtint = Float3(
@@ -277,7 +281,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		{
 			C_ClientLogic *logic = new C_ClientLogic();
 			Graphics::Definitions::Pointlight pointLight; 
-
+			desc.tint = Float3(1.0f);
+			desc.gtint = Float3(1.0f);
 			pointLight.Color	= Float3(0.0f, 1.0f, 1.0f);
 			pointLight.Pos		= desc.position + desc.position.GetNormalized()*5;
 			pointLight.Bright	= ((float)rand() / (RAND_MAX + 1) * (2 - 0) + 0.5f);
@@ -288,6 +293,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		}
 	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationQuick:
 		{
+			desc.tint = Float3(1.0f);
+			desc.gtint = Float3(1.0f);
 			C_ClientLogic *logic = new C_ClientLogic();
 			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/2, Math::Vector3(1.0f,0.0f,0.0f));
 			(*this->privData->clientObjects)[ID] = logic;
@@ -295,6 +302,8 @@ void NetLoadState::LoadObject( ObjectTypeHeader* oth, int ID)
 		}
 	case ObjectSpecialType::ObjectSpecialType_NonSolidRotationSlow:
 		{
+			desc.tint = Float3(1.0f);
+			desc.gtint = Float3(1.0f);
 			C_ClientLogic *logic = new C_ClientLogic();
 			logic->Init(desc, new C_ClientLogic::UpdateRotation(logic), Math::pi/64, Math::Vector3(1.0f,0.0f,0.0f));
 			(*this->privData->clientObjects)[ID] = logic;

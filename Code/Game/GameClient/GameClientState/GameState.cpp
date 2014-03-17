@@ -543,7 +543,7 @@ bool GameState::Release()
 		auto clientObjects = this->privData->clientObjects->begin();
 		for( ; clientObjects != this->privData->clientObjects->end(); ++clientObjects )
 		{
-			delete clientObjects->second;
+			clientObjects->second = nullptr;
 		}
 
 		this->privData->players.clear();
