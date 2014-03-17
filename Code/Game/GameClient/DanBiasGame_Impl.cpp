@@ -38,7 +38,6 @@ void LoadInitSettings();
 static bool prevFull = false;
 static float width = 0.0f;
 static float height = 0.0f;
-static float mouseSens = 0.0f;
 static bool mute = false;
 
 #pragma region Game Data
@@ -91,6 +90,11 @@ namespace DanBias
 		winDesc.windowSize.x		= (int)width;
 		winDesc.windowSize.y		= (int)height;
 		winDesc.windowProcCallback	= WindowCallBack;
+		winDesc.windowName			= L"Release mode";
+
+#if defined(DEBUG) || defined(_DEBUG)
+		winDesc.windowName = L"Debug mode";
+#endif
 
 		if(! data.window->CreateWin(winDesc) )
 			return DanBiasClientReturn_Error;
@@ -223,8 +227,7 @@ namespace DanBias
 			MessageBox( 0, L"Could not initialize the mouseDevice.", L"Error", MB_OK );
 			return E_FAIL;
 		}
-		data.sharedStateContent.mouseDevice->SetSensitivity(mouseSens);
-		data.sharedStateContent.mouseSensitivity = mouseSens;
+		data.sharedStateContent.mouseDevice->SetSensitivity(data.sharedStateContent.mouseSensitivity);
 		
 		data.sharedStateContent.keyboardDevice= dynamic_cast<Input::Keyboard*>( ::Input::InputManager::Instance()->CreateDevice(Input::Enum::SAIType_Keyboard, handle) );
 		if( !data.sharedStateContent.keyboardDevice )
@@ -462,7 +465,7 @@ void LoadInitSettings()
 			{
 
 				inStream >> chars;
-				mouseSens = atof(chars.c_str());
+				DanBias::data.sharedStateContent.mouseSensitivity = atof(chars.c_str());
 
 			}
 			else if(chars == "sound")
@@ -475,7 +478,11 @@ void LoadInitSettings()
 					mute = false; //default is true
 		
 				}
-
+			}
+			else if (chars == "dafaultIp")
+			{
+				inStream >> chars;
+				DanBias::data.sharedStateContent.defaultIP = chars;
 			}
 		}
 		inStream.close();
@@ -488,7 +495,8 @@ void LoadInitSettings()
 		prevFull = false; //default is false
 		width = 1280.0f;
 		height = 720.0f;
-		mouseSens = 0.5f;
+		DanBias::data.sharedStateContent.mouseSensitivity = 0.5f;
+		DanBias::data.sharedStateContent.defaultIP = "127.0.0.1:15151";
 		mute = false;
 		
 
@@ -497,6 +505,7 @@ void LoadInitSettings()
 		ostream << L"resolutionH 720\n";
 		ostream << L"mouseSens 10\n";
 		ostream << L"sound true\n";
+		ostream << L"dafaultIp 127.0.0.1:15151\n";
 		ostream.close();
 	}
 

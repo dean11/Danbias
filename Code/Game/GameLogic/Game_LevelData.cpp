@@ -43,6 +43,10 @@ ObjectSpecialType Game::LevelData::GetObjectType() const
 	return ((IObjectData*)this->level)->GetObjectType();
 	//return OBJECT_TYPE_UNKNOWN;
 }
+bool Game::LevelData::IsDisabled() const
+{
+	return ((IObjectData*)this->level)->IsDisabled();
+}
 int Game::LevelData::getNrOfDynamicObj()const
 {
 	return this->level->getNrOfDynamicObj();

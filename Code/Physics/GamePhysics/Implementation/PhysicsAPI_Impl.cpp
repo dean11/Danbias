@@ -407,7 +407,7 @@ void API_Impl::Release()
 
 bool API_Impl::IsInLimbo( const ICustomBody* objRef )
 {
-	return true;
+	return dynamic_cast<SimpleRigidBody*>((ICustomBody*)objRef)->IsInLimbo();
 }
 
 void API_Impl::MoveToLimbo( const ICustomBody* objRef )

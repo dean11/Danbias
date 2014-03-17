@@ -1216,7 +1216,7 @@ void GameState::Gameplay_ObjectAction( CustomNetProtocol data )
 				this->privData->weapon->Shoot();
 				break;
 			case GameLogic::WeaponAction::WeaponAction_GunShoot:
-				PlayPlayerSound(SoundID_Player_WeaponShoot, decoded.objectID, PlayerSoundID_Shoot, PlayMode_FinnishSound);
+				//PlayPlayerSound(SoundID_Player_WeaponShoot, decoded.objectID, PlayerSoundID_Shoot, PlayMode_FinnishSound);
 				this->privData->weapon->Shoot();
 				break;
 			default:
@@ -1264,7 +1264,7 @@ void GameState::Gameplay_ObjectCollision( CustomNetProtocol data )
 void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol data )
 {
 	Protocol_EffectBeam decoded( data );
-
+	
 	C_DynamicObj *owner = this->privData->players[decoded.ownerID];
 	Quaternion ownerRotation = owner->getRotation();
 	Float3 upNormal = WorldAxisOf( ownerRotation, Float3::standard_unit_y );
@@ -1297,6 +1297,8 @@ void GameState::Gameplay_EffectCreateBeam( Oyster::Network::CustomNetProtocol da
 	}
 
 	this->privData->beams.push_back( beam );
+
+	PlayPlayerSound(SoundID_Player_WeaponShoot, decoded.ownerID, PlayerSoundID_Shoot, PlayMode_FinnishSound);
 }
 void GameState::General_GameOver( CustomNetProtocol data )
 {

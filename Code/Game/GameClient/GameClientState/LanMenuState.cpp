@@ -48,6 +48,7 @@ struct  LanMenuState::MyData
 	MyData()
 	{
 		this->currentText = 0;
+		this->previousBData = 0;
 	}
 
 	SharedStateContent *sharedData;
@@ -59,6 +60,7 @@ struct  LanMenuState::MyData
 	EventButtonCollection broadcastGuiElements;
 
 	Utility::DynamicMemory::DynamicArray<BroadcastData*> bData;
+	BroadcastData* previousBData;
 
 	TextField<LanMenuState*> *connectIP;
 	TextField<LanMenuState*> *alias;
@@ -94,19 +96,20 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->nextState = GameClientState::ClientState_Same;
 
 	// create guiElements
-	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.2f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+
+	this->privData->connectIP = new TextField<LanMenuState*>( L"noedge-btn-txtfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.76f, 0.9f), Float2(0.488f, 0.05f), ResizeAspectRatio_Height );
 	this->privData->connectIP->SetEventFunc(this->privData->OnButtonInteractIPField);
 	this->privData->connectIP->ReserveLines( 1 );
-	this->privData->connectIP->AppendText( L"127.0.0.1:15151" );
-	this->privData->connectIP->SetFontHeight( 0.035f );
+	this->privData->connectIP->AppendText( Utility::String::StringToWstring(shared.defaultIP , std::wstring()));
+	this->privData->connectIP->SetFontHeight( 0.028f );
 	this->privData->connectIP->SetLineSpacing( 0.005f );
 	this->privData->connectIP->SetTopAligned();
 
-	this->privData->alias = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.35f, 0.9f), Float2(0.5f, 0.05f), ResizeAspectRatio_Height );
+	this->privData->alias = new TextField<LanMenuState*>( L"noedge-btn-txtfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.5f, 0.68f, 0.9f), Float2(0.488f, 0.05f), ResizeAspectRatio_Height );
 	this->privData->alias->SetEventFunc(this->privData->OnButtonInteractNameField);
 	this->privData->alias->ReserveLines( 1 );
 	this->privData->alias->AppendText( L"Player" );
-	this->privData->alias->SetFontHeight( 0.030f );
+	this->privData->alias->SetFontHeight( 0.028f );
 	this->privData->alias->SetLineSpacing( 0.005f );
 	this->privData->alias->SetBottomAligned();
 
@@ -124,10 +127,10 @@ bool LanMenuState::Init( SharedStateContent &shared )
 	this->privData->textsRefs[this->privData->currentText]->SetBackColor(bg);
 
 	ButtonRectangle<LanMenuState*> *guiElements;
-	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-join.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Connect, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-join.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Connect, this, Float3(0.625f, 0.85f, 0.5f), Float2(0.24f, 0.094f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
-	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-back.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Exit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.5f, 0.18f), ResizeAspectRatio_None );
+	guiElements = new ButtonRectangle<LanMenuState*>( L"noedge-btn-back.png", L"", Float4(1.0f),Float4(1.0f),Float4(1.2f),Float4(1.5f), OnButtonInteract_Exit, this, Float3(0.375f, 0.85f, 0.5f), Float2(0.24f, 0.094f), ResizeAspectRatio_None );
 	this->privData->guiElements.AddButton( guiElements );
 
 	// bind guiElements collection to the singleton eventhandler
@@ -169,16 +172,19 @@ bool LanMenuState::Render( )
 {
 	Graphics::API::NewFrame();
 
-	Graphics::API::StartGuiRender();
+		Graphics::API::StartGuiRender();
+			
+			Graphics::API::RenderGuiElement( this->privData->sharedData->background, Float3(0.5f, 0.45f, 0.92f), Float2(0.52, 0.3f), Float4(1.0f, 1.0f, 1.0f, 0.5f) );
+			
+			Graphics::API::RenderGuiElement( this->privData->sharedData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
+			Graphics::API::RenderGuiElement( this->privData->sharedData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
+			
+			this->privData->guiElements.RenderTexture();
+			this->privData->broadcastGuiElements.RenderTexture();
 
-	Graphics::API::RenderGuiElement( this->privData->sharedData->mouseCursor, this->privData->mousePos, Float2(0.15f, 0.24), Float4(1.0f) );
-	Graphics::API::RenderGuiElement( this->privData->sharedData->background, Float3(0.5f, 0.5f, 1.0f), Float2(1.0f) );
-	this->privData->guiElements.RenderTexture();
-	this->privData->broadcastGuiElements.RenderTexture();
-
-	Graphics::API::StartTextRender();
-	this->privData->guiElements.RenderText();
-	this->privData->broadcastGuiElements.RenderText();
+		Graphics::API::StartTextRender();
+			this->privData->guiElements.RenderText();
+			this->privData->broadcastGuiElements.RenderText();
 
 	Graphics::API::EndFrame();
 	return true;
@@ -327,11 +333,16 @@ void LanMenuState::MyData::OnButtonInteractNameField( Oyster::Event::ButtonEvent
 		}
 	}
 }
-
 void LanMenuState::MyData::OnServerInteractField(Oyster::Event::ButtonEvent<LanMenuState*>& e)
 {
 	if(e.state == ButtonState_Released)
 	{
+		if(e.owner->privData->previousBData) 
+			e.owner->privData->previousBData->btn->SetFontColor(Float4(1.0f));
+
+		e.owner->privData->previousBData = ((BroadcastData*)e.userData);
+
+		((BroadcastData*)e.userData)->btn->SetFontColor(Float4(0.2f, 1.0f, 0.2f, 1.0f));
 		e.owner->privData->connectIP->ClearText();
 		std::wstring text;
 		text.append(Utility::String::StringToWstring(((BroadcastData*)e.userData)->ip, std::wstring()));
@@ -381,9 +392,19 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 				b->ip = nb.ip;
 				b->name = nb.name;
 				b->port = nb.port;
+				Float3 pos(0.5f, 0.55f - (this->privData->bData.Size() * 0.06f), 0.9f);
+				b->btn = new TextField<LanMenuState*>( L"", Float4(1.0f), Float4(0.2f, 1.0f, 0.8f, 1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, pos, Float2(0.488f, 0.05f), ResizeAspectRatio_Height );
+				std::wstring temp = b->name;
 
-				b->btn = new TextField<LanMenuState*>( L"noedge-btn-ipfield.png", Float4(1.0f), Float4(1.0f), Float4(1.0f, 1.0f, 1.0f, 1.6f), this, Float3(0.88f, 0.2f + (this->privData->bData.Size() * 0.06f), 0.9f), Float2(0.24f, 0.05f), ResizeAspectRatio_Height );
-				b->btn->AppendText(b->name);
+				temp.append(L" ");
+				temp.append(Utility::String::StringToWstring(b->ip, std::wstring()));
+				temp.append(L":");
+				wchar_t buff[55] = {0};
+				_itow_s(b->port, buff, 10);
+				temp.append(buff);
+
+				b->btn->AppendText(temp);
+				
 				b->btn->SetHoverColor(Float4(1.0f, 1.5f, 1.0f, 1.0f));
 				b->btn->SetUserData(b);
 				b->btn->SetTopAligned();
@@ -391,9 +412,6 @@ const GameClientState::NetEvent& LanMenuState::DataRecieved( const NetEvent &mes
 				this->privData->broadcastGuiElements.AddButton(b->btn);
 				this->privData->bData.Push(b);
 			}
-
-			//this->privData->connectPort = port;
-			//this->privData->ip = ip;
 		}
 		break;
 

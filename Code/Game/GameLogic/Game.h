@@ -39,7 +39,8 @@ namespace GameLogic
 			Oyster::Math::Float3 GetPosition()															override;
 			Oyster::Math::Quaternion GetRotation()														override;
 			Oyster::Math::Float3 GetScale()																override;
-			Oyster::Math::Float4x4 GetOrientation()														override; 
+			Oyster::Math::Float4x4 GetOrientation()														override;
+			bool IsDisabled() const																		override;
 			int GetID() const																			override;
 			int GetKills() const override;
 			int GetDeaths() const override;
@@ -61,6 +62,7 @@ namespace GameLogic
 			Oyster::Math::Quaternion GetRotation()					override;
 			Oyster::Math::Float3 GetScale()							override;
 			Oyster::Math::Float4x4 GetOrientation()					override; 
+			bool IsDisabled() const									override;
 			int GetID() const										override;
 			ObjectSpecialType GetObjectType()	const				override;
 			int getNrOfDynamicObj()const							override;

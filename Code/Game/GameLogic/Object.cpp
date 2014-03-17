@@ -50,7 +50,10 @@ void Object::SetOnCollision(OnCollisionCallback func)
 {
 	this->rigidBody->SetSubscription((Oyster::Physics::ICustomBody::EventAction_AfterCollisionResponse)(func));
 }
-
+bool Object::IsDisabled() const
+{
+	return Oyster::Physics::API::Instance().IsInLimbo(this->rigidBody);
+}
 Oyster::Math::Float3 Object::GetScale() 
 {
 	Oyster::Physics::ICustomBody::State state; 
