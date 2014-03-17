@@ -487,7 +487,7 @@ bool GameState::Render()
 	if( this->gameOver )
 	{
 		Oyster::Graphics::API::RenderText( L"GAME OVER", Float3(0.2f,0.1f,0.1f), Float2(0.6f,0.1f), 0.1f);
-		Oyster::Graphics::API::RenderText( L"press 'ESC' to return to main menu", Float3(0.2f,0.8f,0.1f), Float2(0.8f,0.1f), 0.04f);
+		Oyster::Graphics::API::RenderText( L"press 'ESC' to return to main menu", Float3(0.02f,0.8f,0.1f), Float2(1.0f,0.1f), 0.04f);
 		Oyster::Graphics::API::RenderText( L"press 'SPACE' to continue", Float3(0.2f,0.85f,0.1f), Float2(0.8f,0.1f), 0.04f);
 	}
 
