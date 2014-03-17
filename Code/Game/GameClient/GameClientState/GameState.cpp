@@ -550,7 +550,7 @@ bool GameState::Release()
 		this->privData->staticObjects->clear();
 		this->privData->dynamicObjects->clear();
 		this->privData->lights->clear();
-
+		this->privData->clientObjects->clear();
 		this->privData->pickups->clear();
 
 		if(this->privData->weapon)
