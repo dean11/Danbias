@@ -174,6 +174,8 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				else if(key == SAKI_9)		test = L')';
 				else if(key == SAKI_Add)	test = L'?';
 				else if(key == SAKI_Period) test = L':';
+				else if(key == SAKI_Comma)	test = L';';
+				else if(key == SAKI_Minus)	test = L'_';
 				test = towupper(test);
 			}
 			else if( this->keys[SAKI_LeftAlt].isDown || this->keys[SAKI_RightAlt].isDown )
@@ -189,7 +191,7 @@ void Win32Keyboard::ProccessKeyboardData (RAWKEYBOARD keyboard)
 				else if(key == SAKI_Add)	test = L'\\';
 			}
 
-			//Filter junk keys...
+			//Filter keys...
 			switch (key)
 			{
 			case Input::Enum::SAKI_0:

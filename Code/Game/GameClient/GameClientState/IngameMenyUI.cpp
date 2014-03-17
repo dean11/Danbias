@@ -45,7 +45,7 @@ bool IngameMenyUI::Init()
 	
 	// z value should be between 0.1 - 0.5 so that it will be above other states
 	// add textures and text
-	this->background	= new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f), Float4(0,0,0,0.5));
+	this->background	= new Plane_UI(L"color_white.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.28f, 0.4f), Float4(1,1,1,0.5));
 	this->mouseCursor	= new Plane_UI(L"cursor.png", Float3(0.5f, 0.5f, 0.5f), Float2(0.7f, 0.7f));
 	
 	ButtonRectangle<IngameMenyUI*> *button;
@@ -54,13 +54,14 @@ bool IngameMenyUI::Init()
 	Float4 HoverCol = Float4(0.8f, 0.8f, 0.8f, 1.0f);
 	Float4 PressCol = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Exit, this, Float3(0.5f, 0.6f, 0.2f), Float2(0.24f, 0.094f));
+	menyButtons.AddButton( button );
+	button->SetUserData(0);
+
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Options, this, Float3(0.5f, 0.5f, 0.2f), Float2(0.24f, 0.094f));
 	menyButtons.AddButton( button );
 
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Options, this, Float3(0.5f, 0.45f, 0.2f), Float2(0.5f, 0.18f));
-	menyButtons.AddButton( button );
-
-	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.3f, 0.2f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<IngameMenyUI*>( L"noedge-btn-back.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_InGame_Resume, this, Float3(0.5f, 0.4f, 0.2f), Float2(0.24f, 0.094f));
 	menyButtons.AddButton( button );
 
 	// HACK remove this later

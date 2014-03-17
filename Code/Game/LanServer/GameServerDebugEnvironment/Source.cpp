@@ -4,6 +4,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <vld.h>
+#include <iostream>
 
 #include <GameServerAPI.h>
 #include <WindowShell.h>
@@ -30,17 +31,21 @@ int WINAPI WinMain( HINSTANCE hinst, HINSTANCE prevInst, PSTR cmdLine, int cmdSh
 		GameServerAPI::ServerStart();
 
 		GameServerAPI::GameSetGameMode(L"free-for-all");
+
 		GameServerAPI::GameSetGameName(L"DebugServer");
 		GameServerAPI::GameSetGameTime(15);
 		//GameServerAPI::GameSetMapName(L"sculpted_normal.bias");
 		//GameServerAPI::GameSetMapName(L"booger.bias");
 		GameServerAPI::GameSetMapName(L"OfficialWorld_v3.bias");
+		//GameServerAPI::GameSetMapName(L"demo_7.bias");
 		GameServerAPI::GameSetMaxClients(10);
 		
 		if(GameServerAPI::GameStart(true))
 		{
 			int Q = 0x51;
-			while ( GetAsyncKeyState(Q) == 0) 
+			int O = 0x4F;
+			printf("Press \"o\" to quit!\n"); 
+			while ( GetAsyncKeyState(O) == 0) 
 			{
 				GameServerAPI::ServerUpdate();
 			}

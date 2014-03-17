@@ -41,7 +41,8 @@ namespace DanBias { namespace Client
 		::Input::Keyboard					*keyboardDevice;
 		::Input::Mouse						*mouseDevice;
 		::Oyster::Graphics::API::Texture	mouseCursor;
-		float mouseSensitivity;
+		float								mouseSensitivity;
+		std::string							defaultIP;
 	};
 } }
 

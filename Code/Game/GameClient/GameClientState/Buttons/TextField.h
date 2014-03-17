@@ -32,7 +32,7 @@ namespace DanBias { namespace Client
 		void SetFontHeight( ::Oyster::Math::Float h );
 		void SetLineSpacing( ::Oyster::Math::Float ls );
 
-		void SetFontColor(::Oyster::Math::Float4 col) {  } ;
+		void SetFontColor(::Oyster::Math::Float4 col) { this->textColor = col; } ;
 		void SetBackColor( Oyster::Math::Float4 c ) { this->backColor = c; };
 		Oyster::Math::Float4 GetBackColor( ) { return this->backColor; };
 

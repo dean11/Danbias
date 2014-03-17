@@ -95,12 +95,12 @@ bool GamingUI::Init()
 	//	this->shared->weapon->getPos(),
 	//	this->shared->weapon->getPos() + (this->camera->GetForward() * 100),
 	//	0.1f,
-	//	66.0f
+	//	6.0f
 	//);
 	//if( w1.beam->LoadModel(L"beam.dan") )
 	//{
 	//	w1.beam->SetTint( Float3::standard_unit_x );
-	//	w1.beam->SetGlowTint( Float3(0.6f, 0.0f, 0.0f) );
+	//	w1.beam->SetGlowTint( Float3(0.6f, 1.0f, 1.0f) );
 	//	w1.beam->updateWorld();
 	//}
 	this->weapons.push_back(w1);
@@ -108,9 +108,11 @@ bool GamingUI::Init()
 	WeaponData w2 (	NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::SlotId
 				  , NoEdgeConstants::Values::Weapons::MassDriveProjectileAttachment::PrimaryCooldown
 				  , 5.6f );
-	w2.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.018f , 0.018f * (size.x / size.y)), Float4(2.0f, 2.0f, 2.0f, 0.9f));;
+	w2.crosshair = new Plane_UI(L"crosshair.png", Float3(0.5f, 0.5f, 0.1f), Float2(0.03f , 0.03f * (size.x / size.y)), Float4(2.0f, 2.0f, 2.0f, 0.9f));;
 	w2.tint = Float4(8.0f, 8.0f, 8.0f, 0.9f);
 	this->weapons.push_back(w2);
+
+	this->shared->mouseDevice->SetSensitivity(this->shared->mouseSensitivity);
 
 	return true; 
 }

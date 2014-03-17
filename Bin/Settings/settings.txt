@@ -3,3 +3,4 @@ resolutionW 1024
 resolutionH 768
 mouseSens 0.5
 sound true
+dafaultIp 127.0.0.1:15151

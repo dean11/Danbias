@@ -62,13 +62,13 @@ bool MainState::Init( SharedStateContent &shared )
 	//button = new ButtonRectangle<MainState*>( L"color_white.png", L"Create",TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Create, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.3f, 0.1f));
 	//this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"noedge-btn-lan.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Join, this, Float3(0.5f, 0.2f, 0.5f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<MainState*>( L"noedge-btn-lan.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Join, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.24f, 0.094f));
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Settings, this, Float3(0.5f, 0.4f, 0.5f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<MainState*>( L"noedge-btn-settings.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Settings, this, Float3(0.5f, 0.5f, 0.5f), Float2(0.24f, 0.094f));
 	this->privData->guiElements.AddButton( button );
 
-	button = new ButtonRectangle<MainState*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Quit, this, Float3(0.5f, 0.8f, 0.5f), Float2(0.5f, 0.18f));
+	button = new ButtonRectangle<MainState*>( L"noedge-btn-quit.png", L"", TextCol, BackCol, HoverCol, PressCol, OnButtonInteract_Quit, this, Float3(0.5f, 0.6f, 0.5f), Float2(0.24f, 0.094f));
 	this->privData->guiElements.AddButton( button );
 
 	// bind button collection to the singleton eventhandler
