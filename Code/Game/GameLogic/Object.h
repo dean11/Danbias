@@ -38,7 +38,7 @@ namespace GameLogic
 
 		virtual void BeginFrame()	{ };
 		virtual void EndFrame()		{ };
-
+		bool IsDisabled() const;
 		void SetOnCollision(OnCollisionCallback func);
 
 		static Oyster::Physics::ICustomBody::SubscriptMessage DefaultOnCollision(Oyster::Physics::ICustomBody *rigidBodyObject, Oyster::Physics::ICustomBody *obj, Oyster::Math::Float kineticEnergyLoss);

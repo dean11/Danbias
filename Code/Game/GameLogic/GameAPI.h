@@ -81,6 +81,11 @@ namespace GameLogic
 			*	@return The OBJECT_TYPE of the object is returned
 			*/
 			virtual ObjectSpecialType GetObjectType() const = 0;
+
+			/** Get if object is disabled
+			*	@return true if it is disabled
+			*/
+			virtual bool IsDisabled() const = 0;
 		};
 
 		class IPlayerData :public IObjectData

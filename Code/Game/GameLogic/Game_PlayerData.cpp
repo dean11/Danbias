@@ -98,6 +98,10 @@ ObjectSpecialType Game::PlayerData::GetObjectType()	const
 {
 	return this->player->GetObjectType();
 }
+bool Game::PlayerData::IsDisabled() const
+{
+	return this->player->IsDisabled();
+}
 void Game::PlayerData::SetLookDir(const Oyster::Math3D::Float3& lookDir)
 {
 	this->player->SetLookDir(lookDir);
