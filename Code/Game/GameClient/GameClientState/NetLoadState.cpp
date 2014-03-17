@@ -407,7 +407,7 @@ void NetLoadState::LoadSound()
 	this->privData->soundManager->addSFX_3D(SoundDesc("weaponShot.mp3",			SoundID_Player_WeaponShoot));
 	this->privData->soundManager->addSFX_3D(SoundDesc("Skada1.wav",				SoundID_Player_DMGtaken));
 	//this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",			SoundID_Player_Heal));
-	this->privData->soundManager->addSFX_3D(SoundDesc("teleport2.mp3",			SoundID_Player_Respawn)); 
+	this->privData->soundManager->addSFX_3D(SoundDesc("spawn.wav",				SoundID_Player_Respawn)); 
 	this->privData->soundManager->addSFX_3D(SoundDesc("gameOver.mp3",			SoundID_Player_Die));
 	//this->privData->soundManager->addSFX_3D(SoundDesc("jaguar.wav",			SoundID_Player_Join));
 
