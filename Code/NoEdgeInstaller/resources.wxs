@@ -1,0 +1,761 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="TARGETDIR">
+            <Directory Id="dir460B6E225AA06B12F954CB7AF060AF3B" Name="No Edge 1.3">
+                <Component Id="cmp61E7CF99413E0B0EB399B56FD0ED8F1B" Guid="{799E91FC-6F93-46FC-B3F5-D743044BD1A2}">
+                    <File Id="fil972CA32490D94757AF2E146332D169CA" KeyPath="yes" Source="SourceDir\NoEdge.exe" />
+                </Component>
+                <Component Id="cmpAF6AC664C281E827A81793B6CCFA0891" Guid="{33D6E5EA-7EE7-4A7D-9DA3-84D12D9BB574}">
+                    <File Id="fil43863DC1EC443B9088C0792201E0219B" KeyPath="yes" Source="SourceDir\NoEdgeServer.exe" />
+                </Component>
+                <Directory Id="dir2D75C34F04664D78B3D020D96EAD47A6" Name="Content">
+                    <Directory Id="dirA9CAB83137AA54FDDF2BFFF1BF2B458F" Name="Models">
+                        <Component Id="cmp9A59A9E84E13639A6573F0F7E8CE6F8D" Guid="{12A0D258-AF65-4034-9F89-D872AF289AB6}">
+                            <File Id="filC342E4A557EF22D3EDCABD060B3E252C" KeyPath="yes" Source="SourceDir\Content\Models\beam.dan" />
+                        </Component>
+                        <Component Id="cmp404B5B612A89F7427F813B901CD7486F" Guid="{2AB83BB5-90DE-47F9-894C-68EBD16A42DB}">
+                            <File Id="filCDF7C2E310E2B67154038FB1F465FCF3" KeyPath="yes" Source="SourceDir\Content\Models\char_orca.dan" />
+                        </Component>
+                        <Component Id="cmp2743E0DD11B11B13416D77490FF2D329" Guid="{4CC28BBB-1E03-4230-AC7A-8A5F497D4323}">
+                            <File Id="filBB019B204B49203F80E89E4650D8B837" KeyPath="yes" Source="SourceDir\Content\Models\crate_colonists.dan" />
+                        </Component>
+                        <Component Id="cmpDCBC339A2890C786A95490A87D01C9F0" Guid="{C5FBE041-4977-4940-AD31-D205747F9C39}">
+                            <File Id="fil7598C42A944093731D0F1CF8A7D046BA" KeyPath="yes" Source="SourceDir\Content\Models\crate_generic.dan" />
+                        </Component>
+                        <Component Id="cmp565D41553871D489930AA8154A44095B" Guid="{20492F8E-F45F-4DCE-8A15-A1D066996799}">
+                            <File Id="fil5429F380C766CB16D303E41310C46D03" KeyPath="yes" Source="SourceDir\Content\Models\entity_blueCrystal.dan" />
+                        </Component>
+                        <Component Id="cmpE2779697D967B14A2FBCB3457A6D14B9" Guid="{104D3282-6926-4CB3-894E-B5DBF5E8AE05}">
+                            <File Id="fil701FA202CF0FEB6639EAD968836BEFDC" KeyPath="yes" Source="SourceDir\Content\Models\entity_blueCrystal_mid.dan" />
+                        </Component>
+                        <Component Id="cmp583DD28447E7A912C1D6414E32781708" Guid="{C6E8FD6D-1E6A-4D6C-93F3-D0C17A3FE1F8}">
+                            <File Id="filC44B20A7F0D06B59C1CD5963465B2C5E" KeyPath="yes" Source="SourceDir\Content\Models\entity_blueCrystal_tall.dan" />
+                        </Component>
+                        <Component Id="cmp29C39ABEB403D731165A31F71549EABD" Guid="{5B38FF5D-EAAE-4F64-8095-8AE0636F3306}">
+                            <File Id="fil467EE884476BEB28F755B370F04B5E08" KeyPath="yes" Source="SourceDir\Content\Models\entity_lightPillar.dan" />
+                        </Component>
+                        <Component Id="cmp7C5F76B296BE70D2747A339E61FF5514" Guid="{115A5F6A-DC31-4871-91BC-6F01808C18B1}">
+                            <File Id="fil5A0A93C692963E4018C3535AD1CA8D6E" KeyPath="yes" Source="SourceDir\Content\Models\entity_platform.dan" />
+                        </Component>
+                        <Component Id="cmp75028DE14957CB32461703CBE0082204" Guid="{E6BAF485-3E23-4789-8A3B-24273904EB4E}">
+                            <File Id="fil077CFEAE23874661CDE3CDF94E0E3589" KeyPath="yes" Source="SourceDir\Content\Models\generic_cube.dan" />
+                        </Component>
+                        <Component Id="cmp0E42B1A5232E8C11B24FCA7C9A6A1EE6" Guid="{A0F28A4C-553E-4C83-9496-ACDD025FD95E}">
+                            <File Id="fil2F88569A7D06E28273A353874416E150" KeyPath="yes" Source="SourceDir\Content\Models\generic_sphere.dan" />
+                        </Component>
+                        <Component Id="cmp57C8B37C5FA3DA7200720C5AC57DEA40" Guid="{217783A7-02ED-4678-8010-9A6E7F222E93}">
+                            <File Id="fil4C791154D018FCDB938935EAE88C8080" KeyPath="yes" Source="SourceDir\Content\Models\jumppad.dan" />
+                        </Component>
+                        <Component Id="cmp82BA29F397E6322ECF435DCC1D58EC11" Guid="{41442930-465A-4841-854C-5A2F391A4DE7}">
+                            <File Id="fil092076D2B865C300A6D50AB7AF4F8806" KeyPath="yes" Source="SourceDir\Content\Models\nature_crystalFormation.dan" />
+                        </Component>
+                        <Component Id="cmp93FA3DEC52B189CA8132E4AEFF7CB158" Guid="{32E928DE-93AE-433E-9344-D991161057F6}">
+                            <File Id="fil26C9949EC73D503B72523E07FE8A9737" KeyPath="yes" Source="SourceDir\Content\Models\nature_grass.dan" />
+                        </Component>
+                        <Component Id="cmpB3B4D738417A9378E642FC53FD2AC82D" Guid="{4020BD0F-6210-4F77-9F40-B6F9AC815360}">
+                            <File Id="filC37ED45F3592B42269503F02D7FDA4D3" KeyPath="yes" Source="SourceDir\Content\Models\nature_stone.dan" />
+                        </Component>
+                        <Component Id="cmp15C9AB0E276316A7040629B7D1190185" Guid="{48D9BE5E-68D0-4D3E-A718-EFA59CEBE3CB}">
+                            <File Id="fil1F42780E6F09E58D783E32F5E91541E2" KeyPath="yes" Source="SourceDir\Content\Models\pickup_health.dan" />
+                        </Component>
+                        <Component Id="cmp9C0326A0737699A662D56A9570F35E17" Guid="{9E425877-A28A-42FC-A491-9A03A5987C38}">
+                            <File Id="fil3A7DCA9B0DC36EF2014F6D5EE049F8A0" KeyPath="yes" Source="SourceDir\Content\Models\sky_night.dan" />
+                        </Component>
+                        <Component Id="cmp0CA893B58ACBDEF06AA3E8534FA3ACE8" Guid="{F5F9C875-283A-4715-A2CB-3B17CF3459FC}">
+                            <File Id="fil34DE417236A309D89D3E9383E6D940A7" KeyPath="yes" Source="SourceDir\Content\Models\sky_sunshine.dan" />
+                        </Component>
+                        <Component Id="cmp8A20A282F64979928FCE8B385934DB31" Guid="{0912CEA7-5392-4038-9B8C-B17BB0C025FE}">
+                            <File Id="fil156441533D1A7B2903767D714FA39E84" KeyPath="yes" Source="SourceDir\Content\Models\structure_corporation.dan" />
+                        </Component>
+                        <Component Id="cmp6532C378852714F7B02B92D722AC15F0" Guid="{E1170DFC-E8F7-4057-8F5D-B2003268E3F2}">
+                            <File Id="filA125A493F67DCA371C2D4375D2C86F62" KeyPath="yes" Source="SourceDir\Content\Models\structure_empire_monument.dan" />
+                        </Component>
+                        <Component Id="cmp7990CB8E20781BC15E9FE85E5CC320EB" Guid="{CBF93E9D-1A9B-4283-85FB-E94EB76D736B}">
+                            <File Id="fil5743014A392177A7DC11921D97D490AC" KeyPath="yes" Source="SourceDir\Content\Models\structure_flying_platform.dan" />
+                        </Component>
+                        <Component Id="cmpA9F6EC1DC5DA1755440EDC5B46ACA0D5" Guid="{EC5D6974-1E8B-4BDC-8A5E-D85C834F8009}">
+                            <File Id="filE2B98C6975DEDBAAD896B49B23E6BDC6" KeyPath="yes" Source="SourceDir\Content\Models\structure_hut.dan" />
+                        </Component>
+                        <Component Id="cmp88B5001277E404ADACC11E3A12830B07" Guid="{0E43A4B0-906B-4E0B-BB0E-63CD6004C27E}">
+                            <File Id="fil5AD6D1BBCB843EB80A4689D5B7AAB419" KeyPath="yes" Source="SourceDir\Content\Models\structure_market.dan" />
+                        </Component>
+                        <Component Id="cmpC12C4747BEA8E63D6BA38DA39BD526E4" Guid="{6E2893FD-6B1A-43C3-900B-79D3968DEA95}">
+                            <File Id="fil8C9AB6EFF118AD3992F1BC304F77B84B" KeyPath="yes" Source="SourceDir\Content\Models\structure_metal_rib.dan" />
+                        </Component>
+                        <Component Id="cmpA3DE3E1C9E4F14E6BD80E95B4BC780C5" Guid="{1D60BCCC-0B8A-4424-93BD-5BBA64E64DEB}">
+                            <File Id="fil5C655868531FF3B1E5C5C9851115E198" KeyPath="yes" Source="SourceDir\Content\Models\structure_platform.dan" />
+                        </Component>
+                        <Component Id="cmpEDFFE105E7C37E40D9016A3DA94B894E" Guid="{37DD3BD8-6DF5-4ADA-A732-7B8724818479}">
+                            <File Id="fil52C8B31788DDBB06578182719B2456BE" KeyPath="yes" Source="SourceDir\Content\Models\world_300_repeatxy.dan" />
+                        </Component>
+                        <Component Id="cmp1883A6B934324BBBD45BE260DA05B53A" Guid="{0B2CADD0-1B36-4C0B-A2DF-A1D0C9CE87EF}">
+                            <File Id="fil6880AB525D93F6F43F53625D8EC6F37F" KeyPath="yes" Source="SourceDir\Content\Models\world_booger.dan" />
+                        </Component>
+                        <Component Id="cmpB0BB324A1E3832ED1B8DC971D43BE926" Guid="{0C4BBF2B-D952-4854-9639-40DF7AD50F8A}">
+                            <File Id="fil4B3B1A07BAA489D82652ABC8C58B608D" KeyPath="yes" Source="SourceDir\Content\Models\world_demo.dan" />
+                        </Component>
+                        <Component Id="cmp835F6A057C70E705E198307229620B23" Guid="{21DFF920-1812-40B0-B9EE-4A6373C9DEF2}">
+                            <File Id="fil22B352FF3C750E21B9AF8EF63735D919" KeyPath="yes" Source="SourceDir\Content\Models\world_demosphere.dan" />
+                        </Component>
+                        <Component Id="cmpD7925CFA698C6B40D86140CC30C1ADCA" Guid="{B2D296DC-0F36-4714-8670-17A58719C625}">
+                            <File Id="filB20192E6F87A7E48DD3FF51A1BE5A3A0" KeyPath="yes" Source="SourceDir\Content\Models\world_dirt_sculpted-ellipse.dan" />
+                        </Component>
+                        <Component Id="cmpDB3FABB77EC3370ED2D7B15CACBDE2DD" Guid="{79E1D094-0205-4E77-81F3-B07AA9675F38}">
+                            <File Id="fil3C8A470EA59125AD7704A3852E510940" KeyPath="yes" Source="SourceDir\Content\Models\world_dirt_sculpted.dan" />
+                        </Component>
+                        <Component Id="cmp8B08624157AF62A73761D7E5CB39D102" Guid="{A4618C19-7EEE-46D7-86CA-DF654191D63C}">
+                            <File Id="fil13080CC1C74BFFF52F5D58A2BEF904D8" KeyPath="yes" Source="SourceDir\Content\Models\world_grass.dan" />
+                        </Component>
+                        <Component Id="cmp260A2E689ED52592C110BFF7AF04E152" Guid="{2248DEEA-09A9-47DB-9620-C54F49760558}">
+                            <File Id="fil1058C861BBDDEE96F80B232BD2983400" KeyPath="yes" Source="SourceDir\Content\Models\world_spacedonut_200.dan" />
+                        </Component>
+                        <Component Id="cmpA01D432FD08856CF4893F99E958A1F2C" Guid="{A68147BF-D80C-494E-B0E8-BA75E5A14B64}">
+                            <File Id="filA47D47D7058C4767BAFB3BA4177B56F3" KeyPath="yes" Source="SourceDir\Content\Models\wpn_massdriver_high_base.dan" />
+                        </Component>
+                        <Component Id="cmp53730D9DF640D77BFA154BF0466108A6" Guid="{818FBF5D-0875-4941-ACD9-4F5812D8C8E4}">
+                            <File Id="filF163BDE3AE28B3014233E87E539F3D5F" KeyPath="yes" Source="SourceDir\Content\Models\wpn_massdriver_high_coil.dan" />
+                        </Component>
+                        <Component Id="cmp6B703973CE75087CDA49587C81AA1F2B" Guid="{5A8C3FFE-AD21-4850-AAF6-DF64204DB27A}">
+                            <File Id="filEFD898DFC7CA4DA516C6C805667E778D" KeyPath="yes" Source="SourceDir\Content\Models\wpn_massdriver_high_cylinder.dan" />
+                        </Component>
+                        <Component Id="cmpE37379D382879AE66326BE8CC535E5F7" Guid="{D1E8C3F1-9142-431E-9F3E-06C9B000FB52}">
+                            <File Id="fil1C0101FD2AE7A7F7A96A6A280569A786" KeyPath="yes" Source="SourceDir\Content\Models\wpn_massdriver_low.dan" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dir6810150784F4D6511085AF96842C32EF" Name="Shaders">
+                        <Component Id="cmp3779505BEB6EA37FD817A7FA09979D55" Guid="{B736AC25-8E3E-4A3F-A3B1-ADC611E6E77A}">
+                            <File Id="fil4A87EBAC44CAB5AC9091AFFBE863E434" KeyPath="yes" Source="SourceDir\Content\Shaders\2DGeometry.cso" />
+                        </Component>
+                        <Component Id="cmpEB29FEE22DAD533E39C9E26D85AEEB0E" Guid="{6FE63BC9-BE03-4D41-AA1B-A219A4E09552}">
+                            <File Id="fil7B8481A823AF2D05257B75B3676C2618" KeyPath="yes" Source="SourceDir\Content\Shaders\2DPixel.cso" />
+                        </Component>
+                        <Component Id="cmpDDE415CF238D10DED55A851C199EC5AF" Guid="{87D09C69-29DA-4579-8B85-312F32B409FE}">
+                            <File Id="fil03980674245C79AA211A48D3A5088C67" KeyPath="yes" Source="SourceDir\Content\Shaders\2DTextGeometry.cso" />
+                        </Component>
+                        <Component Id="cmpA9B436069888FF4870E546B4FBAF3673" Guid="{78B667A4-ED17-4ED1-A5E7-72E6BF0AA7FC}">
+                            <File Id="filB8FB8123711BC699AA80104AC27FFB59" KeyPath="yes" Source="SourceDir\Content\Shaders\2DTextVertex.cso" />
+                        </Component>
+                        <Component Id="cmpF478389DE507A7C7511642A729656A4B" Guid="{4C67092E-6F42-457A-8A73-FEB7903C9D95}">
+                            <File Id="filC8AC525DBA2A2F5FEFE43B7C80C97E24" KeyPath="yes" Source="SourceDir\Content\Shaders\2DVertex.cso" />
+                        </Component>
+                        <Component Id="cmp708849E3BB8591DF97F3BCD36B08DFC3" Guid="{F9E993A0-7EE2-408D-8B13-1818D4CC9CC7}">
+                            <File Id="filFCB192EA4A4931E1886EC31FC821BD1D" KeyPath="yes" Source="SourceDir\Content\Shaders\BlurHor.cso" />
+                        </Component>
+                        <Component Id="cmpAD1FFFFC8328BA44A5891C5A81DB93B5" Guid="{51A21D09-0312-4B8F-B160-CAAB2F592127}">
+                            <File Id="filC8FD4AE1C1F6C311B7453C9A94E9EDD2" KeyPath="yes" Source="SourceDir\Content\Shaders\BlurVert.cso" />
+                        </Component>
+                        <Component Id="cmpB8A7354FE5425F2AB5114525206130D5" Guid="{8D77C2C7-B0E8-4EFB-A223-F523B74AA3CA}">
+                            <File Id="filC269773F2421ED4E1D3F1A5F39EF49CC" KeyPath="yes" Source="SourceDir\Content\Shaders\GatherAnimPixel.cso" />
+                        </Component>
+                        <Component Id="cmp9796C0A7EE37062FFDCD7909AE2C4A86" Guid="{2AA97861-DF56-4C81-8A34-D85B6AF6995A}">
+                            <File Id="filAE65A5119C37BE1F67FE39E5F0B24758" KeyPath="yes" Source="SourceDir\Content\Shaders\GatherAnimVertex.cso" />
+                        </Component>
+                        <Component Id="cmpFD2355E297D2B6E55E0C2FEA3E070035" Guid="{23120D29-7E97-449E-B621-0ACA24B39C08}">
+                            <File Id="fil38C537E35C2EE00DD34688441FFC7414" KeyPath="yes" Source="SourceDir\Content\Shaders\GatherInstPixel.cso" />
+                        </Component>
+                        <Component Id="cmpB0DB54A22784CB94C66C89868F473F1A" Guid="{9FFACB71-B7CF-4AA9-9FB7-CC777D6ED8BB}">
+                            <File Id="fil0C7CF46B88F83CCFEDE768F553FC6A67" KeyPath="yes" Source="SourceDir\Content\Shaders\GatherInstVertex.cso" />
+                        </Component>
+                        <Component Id="cmpA1A3115666B5193D0263F3628A7F7A9D" Guid="{AFAC3382-0BE2-41B7-A166-4AB3638FD663}">
+                            <File Id="filBC621716108FE2272A074A0153D94130" KeyPath="yes" Source="SourceDir\Content\Shaders\GatherPixel.cso" />
+                        </Component>
+                        <Component Id="cmpD5EB220918C2517AE3E18FA2F7D72404" Guid="{EAF3D2EB-2F7A-4514-8C17-77C2F9766463}">
+                            <File Id="filC03B43EB43ED59290861820BC57B7BAF" KeyPath="yes" Source="SourceDir\Content\Shaders\GatherVertex.cso" />
+                        </Component>
+                        <Component Id="cmp0BA1B9E17F51FD4404E39E5CCC80C231" Guid="{19987319-541D-42DC-B66B-8F645D4F7AD4}">
+                            <File Id="filA7322D5EA1D52E932B2B16E327E2FA74" KeyPath="yes" Source="SourceDir\Content\Shaders\LightPass.cso" />
+                        </Component>
+                        <Component Id="cmp17DD2206AD06E27D7C61EDA6936FECCC" Guid="{66A50418-3861-4019-AD8F-8312B2ED20BE}">
+                            <File Id="filF0EE4FFE6150B0F49B9DCCBB47E19E24" KeyPath="yes" Source="SourceDir\Content\Shaders\PixelGatherData.cso" />
+                        </Component>
+                        <Component Id="cmp6A01DC646E72D735F3D031E0CECB69B6" Guid="{D167FF61-A3B7-4164-B42C-E3614B03CBC4}">
+                            <File Id="fil7DFBD4E5A5F3B899413FC83AF75F1AC8" KeyPath="yes" Source="SourceDir\Content\Shaders\PostPass.cso" />
+                        </Component>
+                        <Component Id="cmpFF639BEB33F129D664797A3AFCA72EF9" Guid="{0C69C76A-DACD-412E-959D-6CA332E6C13E}">
+                            <File Id="filFD85A75C0B708F5551259DA0B1EB8520" KeyPath="yes" Source="SourceDir\Content\Shaders\TextureDebug.cso" />
+                        </Component>
+                        <Component Id="cmp69914B8394D47698F2EE19AC53F7D4DE" Guid="{04ED671A-CCC7-4277-A557-F2BEBDB82754}">
+                            <File Id="fil3047C2C0B96717B25542EEC3A1A48398" KeyPath="yes" Source="SourceDir\Content\Shaders\VertexGatherData.cso" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dir8376699A936110F35965E01A080E57C2" Name="Sound">
+                        <Component Id="cmp0502A65DFDCAF4993B353F8C06DA1359" Guid="{47E421F4-F5FF-438B-AD72-2AED5314FB77}">
+                            <File Id="fil874716B2FC143C9C962DE9D6A8294098" KeyPath="yes" Source="SourceDir\Content\Sound\1978-039 Kansas - Dust In The Wind.mp3" />
+                        </Component>
+                        <Component Id="cmp674780583AEEE27E1EFAED22D53AA9C0" Guid="{AA437668-6E9B-4FDC-BE12-7BFF1F5260BA}">
+                            <File Id="filF37D7EDA27618DCD548C5A7E24A2EC4A" KeyPath="yes" Source="SourceDir\Content\Sound\Button01.mp3" />
+                        </Component>
+                        <Component Id="cmp7A21036220F551A0EFBB8122C1CE4D01" Guid="{61D12FDA-6C42-44A0-9D6D-CA3DE8FB4586}">
+                            <File Id="filA9DEDE1BC9DCE1914BA21674D96EDF97" KeyPath="yes" Source="SourceDir\Content\Sound\Button02.mp3" />
+                        </Component>
+                        <Component Id="cmp9569E22A1727EEC8359C5222116DB737" Guid="{D7AC7685-835E-43C0-B528-3853B0C08E4B}">
+                            <File Id="fil2741BDD6EFD17A63CF67AEFBF00D8D67" KeyPath="yes" Source="SourceDir\Content\Sound\Button03.mp3" />
+                        </Component>
+                        <Component Id="cmp71ECEE824C9BFE400AB4678479838FE3" Guid="{EC20A094-4FB7-452B-8C35-37C20F6D532D}">
+                            <File Id="filA08CF4C32AC245FF9611AA39DF7ED848" KeyPath="yes" Source="SourceDir\Content\Sound\button_click.wav" />
+                        </Component>
+                        <Component Id="cmpBFF527D27F6B9F46CFCC2CC15C144BD0" Guid="{ED1C16C9-C14F-4C73-9CC0-95AEC280E3A7}">
+                            <File Id="fil2796456E4C825E8510C80C2856AFBB7A" KeyPath="yes" Source="SourceDir\Content\Sound\button_hover.wav" />
+                        </Component>
+                        <Component Id="cmpDC89F01D58E5C5CEF1D6B3430707163F" Guid="{1E59F8E1-113E-492F-9EE5-ACEAC919C21E}">
+                            <File Id="fil518545760D4514D90C2F8A399785F72C" KeyPath="yes" Source="SourceDir\Content\Sound\cargo_pickup.wav" />
+                        </Component>
+                        <Component Id="cmp92D8EC8254E50A85ED69F5A58D7244E0" Guid="{F9EA11C0-8252-43B3-8F0C-B03A2DF5B113}">
+                            <File Id="fil340D531EC70225CE9A5B33BF343B8E7B" KeyPath="yes" Source="SourceDir\Content\Sound\Collision02.mp3" />
+                        </Component>
+                        <Component Id="cmp69BDFC23A70A9AED6BCCB3A3A0307CF7" Guid="{B7C84193-FCEC-4200-AEDB-3C429A4A207C}">
+                            <File Id="filBB1D78763C4C2C8D210D0B5555DA7030" KeyPath="yes" Source="SourceDir\Content\Sound\collision_grinding.wav" />
+                        </Component>
+                        <Component Id="cmp280A3908BB9CE70EF990F9C6B50A91A3" Guid="{746FF44D-5709-4E7B-9CE7-D8B5595DE491}">
+                            <File Id="filD87CA0C4730851FEFFB6C52DC2C394ED" KeyPath="yes" Source="SourceDir\Content\Sound\Energy01.mp3" />
+                        </Component>
+                        <Component Id="cmpE9D31D273E1D8D0A9AA1AC75852379BF" Guid="{CDAD4876-1983-48D4-8DF1-DDB252B1F9E1}">
+                            <File Id="fil961B34B31311CE5BE081CC877B2ECF42" KeyPath="yes" Source="SourceDir\Content\Sound\Energy02.mp3" />
+                        </Component>
+                        <Component Id="cmp76FA5F7B53F32690E33008B382F52C30" Guid="{96C81546-4824-4CED-A535-3F7A900686AC}">
+                            <File Id="fil08A8A4DD7592C1441E0ED85BF4391746" KeyPath="yes" Source="SourceDir\Content\Sound\EnergyField01.mp3" />
+                        </Component>
+                        <Component Id="cmp84C41C827EF50EB5016ADF4D2AEEE427" Guid="{456D2695-4381-4EA6-A549-9048777CD6FF}">
+                            <File Id="fil62E14235C2A78CBF27CBE647DAFE7DC7" KeyPath="yes" Source="SourceDir\Content\Sound\EnergyPulsating01.mp3" />
+                        </Component>
+                        <Component Id="cmp70D2D5C87232558336CC7F017527601D" Guid="{BB96CE76-C273-4247-BEDF-890C4E919E5A}">
+                            <File Id="fil3EFB7609DA81EE42254323E824320365" KeyPath="yes" Source="SourceDir\Content\Sound\energy_pickup.wav" />
+                        </Component>
+                        <Component Id="cmp57EB4FA323C685932D9FC3575B52FA26" Guid="{39DB3EFF-6F1C-49E8-89C8-1BC9140445C5}">
+                            <File Id="fil746158543BD89ED819417270DFD92852" KeyPath="yes" Source="SourceDir\Content\Sound\explosion3.mp3" />
+                        </Component>
+                        <Component Id="cmpDE0FC61C2B5F4A54CF2D59619C7BF4FC" Guid="{60C8FA42-0605-43FC-A94D-760EDBAD4598}">
+                            <File Id="filA4C63C8BE2B817BE5B93989397748935" KeyPath="yes" Source="SourceDir\Content\Sound\gameOver.mp3" />
+                        </Component>
+                        <Component Id="cmpF81E83F7E34E563EA5072F6A290DBAAE" Guid="{791C04B8-A4E2-434B-85E2-1866F1D839C6}">
+                            <File Id="filB83B97861425AA355D0AD87454D5ACBB" KeyPath="yes" Source="SourceDir\Content\Sound\industrial.mp3" />
+                        </Component>
+                        <Component Id="cmp789B72AEF76D496C7C88224CDBE0DA7F" Guid="{F1C32FB1-0EF8-4F46-A796-5393AA0F5BF1}">
+                            <File Id="fil57130B5968B6D422AC0A2244FC5FC0B3" KeyPath="yes" Source="SourceDir\Content\Sound\jaguar.wav" />
+                        </Component>
+                        <Component Id="cmp8D3FF467A74BE9A547823F7C76F1C120" Guid="{51F4057D-C9B3-424B-87B2-5FCEA84FBDB6}">
+                            <File Id="fil95390B58913EC3627607106EECEDBB4D" KeyPath="yes" Source="SourceDir\Content\Sound\Jump01.mp3" />
+                        </Component>
+                        <Component Id="cmp9EFB97F7AF590E05A8324F5623B70B19" Guid="{90936ED2-37A1-4C84-8E93-8D7B370D2074}">
+                            <File Id="fil0CD403887AE7C92ACB30A9A5E8F07044" KeyPath="yes" Source="SourceDir\Content\Sound\JumpPad01.mp3" />
+                        </Component>
+                        <Component Id="cmpE41858B4668269A2B42E95CDDD710559" Guid="{C6BD1DE5-D262-44B2-88E0-21709C4B1AB6}">
+                            <File Id="fil1C63EEB51DC4C88AF3B53FA5FFDF4A0C" KeyPath="yes" Source="SourceDir\Content\Sound\level_background.mp3" />
+                        </Component>
+                        <Component Id="cmpD8B0DA5F72FA139C8A3336663CE8F118" Guid="{2D49CEEC-D197-4C4B-A60C-CC96EB893455}">
+                            <File Id="filB733F114D6F764B927842A4B9D652FEC" KeyPath="yes" Source="SourceDir\Content\Sound\No Edge - Main Theme.mp3" />
+                        </Component>
+                        <Component Id="cmp7B894EBAE0F67CCB2EBB1968A0226924" Guid="{4A2206BA-A058-4D85-AC0E-05CF52BB24A9}">
+                            <File Id="fil20CEC850CA6BDC25B90C6B00B48E4667" KeyPath="yes" Source="SourceDir\Content\Sound\No Edge - Main Theme.wav" />
+                        </Component>
+                        <Component Id="cmp03F6D4BCD3B49C00B864F550CAD2CA19" Guid="{BEFC654A-81BC-4E36-ABA5-B9C3507B3025}">
+                            <File Id="fil3112DC2281A1502E03A2FF028190B084" KeyPath="yes" Source="SourceDir\Content\Sound\onefootstep.wav" />
+                        </Component>
+                        <Component Id="cmp37AC874D6E1FD91C54B71278261A16DE" Guid="{474ADAD3-A3FC-4425-B141-00A86C959A3B}">
+                            <File Id="fil27DE39066D6D526439FE5DA8868CEA95" KeyPath="yes" Source="SourceDir\Content\Sound\player_death.WAV" />
+                        </Component>
+                        <Component Id="cmp15E463AF8E567AF7C67B2002AABEA53A" Guid="{DCF95CD0-E39C-45FC-8D28-8A423D67ED34}">
+                            <File Id="filE87CAC201186BFE96C26DAF5DB6A1957" KeyPath="yes" Source="SourceDir\Content\Sound\player_near_death.wav" />
+                        </Component>
+                        <Component Id="cmp7437B8FE8F042E9BBE9DDA1C3C735A82" Guid="{87C88659-D6FA-45CE-A0B9-7CAE2FC02847}">
+                            <File Id="filB4D6585016F09EC8B1CCDCDE196E3A22" KeyPath="yes" Source="SourceDir\Content\Sound\Running01.mp3" />
+                        </Component>
+                        <Component Id="cmp32F81DE8015EDA0F30FCE9841F8545D2" Guid="{63A8BACF-D7BB-4CBD-ACB8-D987FA8FF5A1}">
+                            <File Id="fil0578D1B2F0815853E0B27B6C2A31E6ED" KeyPath="yes" Source="SourceDir\Content\Sound\Running02.mp3" />
+                        </Component>
+                        <Component Id="cmpE7C5F60D7249D3A5B71A633F8A73B619" Guid="{4E9817D9-F029-401B-A13E-EF155B166240}">
+                            <File Id="fil963366623E911856D3625FC583BD0183" KeyPath="yes" Source="SourceDir\Content\Sound\scifi2.mp3" />
+                        </Component>
+                        <Component Id="cmp98E33874F51604B567CE0BED5BE7EDD1" Guid="{46A52CE2-689F-4222-B17C-56A275D1DCD2}">
+                            <File Id="fil656B7A549D52676B03C22C70725417F6" KeyPath="yes" Source="SourceDir\Content\Sound\Skada1.wav" />
+                        </Component>
+                        <Component Id="cmp1FCEB6AECF6DB04A1D268CE9318D12FC" Guid="{19346AE4-8E19-4A85-9226-011A9A9CFDC9}">
+                            <File Id="fil0C4B1AC526408B27CAF051F9C07C307D" KeyPath="yes" Source="SourceDir\Content\Sound\teleport.mp3" />
+                        </Component>
+                        <Component Id="cmp882F3E842E2C446D3CBCF1F3C2459A11" Guid="{A49595D4-4762-4BF6-8310-02E55D339089}">
+                            <File Id="filB7C895B50B89094E8340FD22ABBCD101" KeyPath="yes" Source="SourceDir\Content\Sound\thrusters.wav" />
+                        </Component>
+                        <Component Id="cmpF3A2DE4BF39F5215EDC08B39C3BBC5C1" Guid="{EE3FBD57-9149-4C3D-B5C0-843B3546CFD2}">
+                            <File Id="filC3F433E4FB8FBF5C4E5D25CE75D6798C" KeyPath="yes" Source="SourceDir\Content\Sound\Walking01.mp3" />
+                        </Component>
+                        <Component Id="cmp05A591A5F63C608F78A258AEF169FEFE" Guid="{3DCCFC7B-D388-44D7-82A5-2679617B1751}">
+                            <File Id="filA80DA19F18EDE270A6C365CF681F9708" KeyPath="yes" Source="SourceDir\Content\Sound\Walking02.mp3" />
+                        </Component>
+                        <Component Id="cmp83FBC8BC376F19B29AD27E8E0463436E" Guid="{1778CD13-BC2B-428D-BA51-609C73912D1D}">
+                            <File Id="fil658E20BEF79653B01AFE320F4A105EE2" KeyPath="yes" Source="SourceDir\Content\Sound\weaponShot.mp3" />
+                        </Component>
+                        <Component Id="cmp363F8D386E47182350C0D84F7B284CB4" Guid="{DCB2E6B9-D667-40C9-BF0D-8C330607268B}">
+                            <File Id="fil87FDF5A7323F75AD926D00F8E9469F0D" KeyPath="yes" Source="SourceDir\Content\Sound\wind.wav" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dirF21ED8CC658500C8C39BA9AC2B18BED7" Name="Textures">
+                        <Component Id="cmp8E9B6E8B2B148E17F3899B477ABACF5A" Guid="{C3226186-0C8B-4B20-A1FA-D09406D506CA}">
+                            <File Id="filF47E97B3ED5EBEA60052BCE5700935E4" KeyPath="yes" Source="SourceDir\Content\Textures\char_white_mdg.png" />
+                        </Component>
+                        <Component Id="cmp010383A51090E66210A8AFE717337E7F" Guid="{91978806-FADC-46A2-B62B-A00C346AB26C}">
+                            <File Id="fil0B05D0DDF75B926231FFB97697BF705D" KeyPath="yes" Source="SourceDir\Content\Textures\color_white.png" />
+                        </Component>
+                        <Component Id="cmp562EC7A981702F43632CF5CF7954CB77" Guid="{5D77D8C3-CD04-4087-AC65-0046DDC4D5B8}">
+                            <File Id="fil8A89127A30500FD2D8C4847BACE7FFF9" KeyPath="yes" Source="SourceDir\Content\Textures\crate_colonists_mdg.png" />
+                        </Component>
+                        <Component Id="cmp8C8355BCF46F4C19EDEC68EA51318E84" Guid="{7B07985E-1331-4F71-9299-BC3897727A81}">
+                            <File Id="filC808381A9EE6798550CFF85406DA04AF" KeyPath="yes" Source="SourceDir\Content\Textures\crate_diffuseglow.png" />
+                        </Component>
+                        <Component Id="cmp759B3A7D4329AD2503006BBBAAD7A277" Guid="{74E61D99-2EF0-4AF1-A0E5-C9A32341C2DE}">
+                            <File Id="filA6512A76F21166AA99992ED6934D0188" KeyPath="yes" Source="SourceDir\Content\Textures\crate_generic_mdg.png" />
+                        </Component>
+                        <Component Id="cmpD866FD978C92770092C39EF66472F04F" Guid="{76EA62DF-D975-41E9-A803-F50EB5708055}">
+                            <File Id="filEC310312A912A059F33DC1528DF62E97" KeyPath="yes" Source="SourceDir\Content\Textures\croshair.png" />
+                        </Component>
+                        <Component Id="cmp200890E77D5AD62E2D2DCDAF7FB14929" Guid="{97AB8DAE-3521-4CFE-ABC3-C3F8B59BECF3}">
+                            <File Id="fil3D0132BAB9D1ED4388DA14E17E07697A" KeyPath="yes" Source="SourceDir\Content\Textures\crosshair.png" />
+                        </Component>
+                        <Component Id="cmp5196DAFD07F89B1D45A99A0BAE4BEA02" Guid="{C0E71867-C74E-4D26-B080-9BF7E07FA927}">
+                            <File Id="fil48D348E25E928F167141D0E45B28A485" KeyPath="yes" Source="SourceDir\Content\Textures\Crosshair_low.png" />
+                        </Component>
+                        <Component Id="cmpD4FFB7C02B94E90BCDF773730D59516C" Guid="{52B97E06-F40B-4582-8A37-1EE1A5C6F3FD}">
+                            <File Id="fil29E49E25465D23C99684475E2F90102E" KeyPath="yes" Source="SourceDir\Content\Textures\crystal_b_mdg.png" />
+                        </Component>
+                        <Component Id="cmp326C639DD9C7BF5794A532765CFF4E45" Guid="{F818543C-B927-48F1-9DC3-A02084CF3948}">
+                            <File Id="fil8F69AD0CB4DE5E46B83C1E527ADEA498" KeyPath="yes" Source="SourceDir\Content\Textures\cursor.png" />
+                        </Component>
+                        <Component Id="cmp806F121A43259428E79ECC304D28032F" Guid="{DEC52F6D-5F80-4C71-A1C0-B8B666C6837B}">
+                            <File Id="filCA528BAC1FD76421B065F85EAF51D554" KeyPath="yes" Source="SourceDir\Content\Textures\default_mdg.png" />
+                        </Component>
+                        <Component Id="cmp3363B4D7BD968F3B257EF11495EEDCE5" Guid="{BDD90485-C42F-43B4-BD5E-5062E8F0611C}">
+                            <File Id="filA8384B8C3D39ECC3C189603CBBB65003" KeyPath="yes" Source="SourceDir\Content\Textures\default_mns.png" />
+                        </Component>
+                        <Component Id="cmpE2F28111981B61009E208C0FA5C2162F" Guid="{EB8C8DDD-5BC0-4699-A12E-BDD4350F5A0B}">
+                            <File Id="fil9E2E2567840AA0769DF44B9D1ED2C9B4" KeyPath="yes" Source="SourceDir\Content\Textures\entity_blueCrystal_mdg.png" />
+                        </Component>
+                        <Component Id="cmpA4010E4121F4755434127BC4EFAFE494" Guid="{FBC016BE-FEF9-4C09-AE34-CB9D4208C213}">
+                            <File Id="filD4E93EFC5CD9063683395F33669861D4" KeyPath="yes" Source="SourceDir\Content\Textures\entity_platform_mdg.png" />
+                        </Component>
+                        <Component Id="cmp6D45F0C50CDA65402849240A83D66672" Guid="{217C8C27-86D4-44CC-BE47-F5ADDB1A8346}">
+                            <File Id="fil7C228E1565E81B11A3511EBE0D859673" KeyPath="yes" Source="SourceDir\Content\Textures\font_generic.png" />
+                        </Component>
+                        <Component Id="cmpC98CD5A990DFB766011A08D1DCD21DDD" Guid="{724FC0D8-7D21-476F-BBB1-31470B239CE2}">
+                            <File Id="fil5F6D8C81ECF0C03F0CA6C1280F74C0FB" KeyPath="yes" Source="SourceDir\Content\Textures\jumppad_mdg.png" />
+                        </Component>
+                        <Component Id="cmpC5D8349CC0565177001DF55D7B6EA8AB" Guid="{56FA75CE-0611-48B3-94F2-2C1C8C953D87}">
+                            <File Id="fil7B70F0536B8E6F49FB3C3C31D165F2DA" KeyPath="yes" Source="SourceDir\Content\Textures\jumppad_round_mdg.png" />
+                        </Component>
+                        <Component Id="cmp6EDCCAD69EFF2AD61184CE66F60E2E57" Guid="{6EF532A3-BF37-4163-BD4A-8F269C3AD343}">
+                            <File Id="filD1EF00E95E5742331862418F52408279" KeyPath="yes" Source="SourceDir\Content\Textures\massdriver_high_mdg.png" />
+                        </Component>
+                        <Component Id="cmpEC1F168FA3930094AA619FF970F622B4" Guid="{E0A29954-7C66-4CE0-A9FD-AA0F68B2C213}">
+                            <File Id="fil31A054F823B34C9243EC60D5630397F0" KeyPath="yes" Source="SourceDir\Content\Textures\massdriver_high_mns.png" />
+                        </Component>
+                        <Component Id="cmpEF7E55A30D06A1989908A8F644F826C0" Guid="{BCDF88F3-3D5D-4C0E-843E-7BD8DDC5C3CE}">
+                            <File Id="fil314A7CEBB04C07F5432AFCD3D6DAE7B3" KeyPath="yes" Source="SourceDir\Content\Textures\massdriver_low_mdg.png" />
+                        </Component>
+                        <Component Id="cmpF02ADE8697A9097E2395BAE4050E7A20" Guid="{69C5947B-F61E-4992-B23B-DFE42E53E881}">
+                            <File Id="filB4F024CFAB04FC4C3454AD54DFD86BDA" KeyPath="yes" Source="SourceDir\Content\Textures\mdg.png" />
+                        </Component>
+                        <Component Id="cmp4410FB582DBD5DA68516D863EE9C5A1D" Guid="{D919906E-9DBA-4995-A085-1E2F0F793598}">
+                            <File Id="fil593CCE9B3635B9E4AEBEDA383043A40F" KeyPath="yes" Source="SourceDir\Content\Textures\nature_crystalFormation_mdg.png" />
+                        </Component>
+                        <Component Id="cmp77E575470E7D6FB49F564B07DCD0D6DE" Guid="{E19C2EFD-38B2-4252-9D01-E2082BD1D62F}">
+                            <File Id="fil129E004549921A5C05FAA4FEB1FF6008" KeyPath="yes" Source="SourceDir\Content\Textures\nature_grass_mdg.png" />
+                        </Component>
+                        <Component Id="cmp23FA0A3CB9027BCC1717C570669FC17F" Guid="{C924AB14-EB07-418A-9F51-B9CF84EAC6C9}">
+                            <File Id="fil7A5D1817FC176E9701A6B282C95C0FC7" KeyPath="yes" Source="SourceDir\Content\Textures\nature_stone_md.jpg" />
+                        </Component>
+                        <Component Id="cmpFF23DE54225D9CD709FA1B5E83B695CA" Guid="{84592DD8-BAE9-457A-8B9C-97068505C248}">
+                            <File Id="fil80CF69D390084DB3BA416DF08A17C23C" KeyPath="yes" Source="SourceDir\Content\Textures\nature_stone_mdg.png" />
+                        </Component>
+                        <Component Id="cmp82EE0829A40A1CDED2DECC16E9437B67" Guid="{18962C9D-A01B-4ECF-B089-9AC59C620A18}">
+                            <File Id="filAF2CB9DF708D7888BAA8FE80D69C748B" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-apply.png" />
+                        </Component>
+                        <Component Id="cmp8C9AFB108713EBBC02901DB59C1213C3" Guid="{6F0E35C2-84CD-4623-AECD-5DCE2CCD4C79}">
+                            <File Id="filEC295DC792FA7085E34F6901B3880FB3" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-apply1.png" />
+                        </Component>
+                        <Component Id="cmpA2B798C00C3974D4C46ADF4DA06DD17A" Guid="{D9D06B61-1D69-4D8D-81EC-E5060F23C201}">
+                            <File Id="fil0F4ADB160419C8E0707C12C879685D25" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-back.png" />
+                        </Component>
+                        <Component Id="cmp2E1968C2FB44246D961FE502DE088131" Guid="{87DA3FFD-B482-4597-8FF6-9F243C9DEC5E}">
+                            <File Id="fil343A842050084A97C5095C984B944F1A" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-flipresleft.png" />
+                        </Component>
+                        <Component Id="cmpD5292F14BBB858B355DE1BDE50ADEFCC" Guid="{1B3EBAFE-92F5-456A-A7A3-150586186B82}">
+                            <File Id="fil1A3F87DA167124A6DE15747122401363" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-flipresright.png" />
+                        </Component>
+                        <Component Id="cmpAB7E1B94A02764B9704DFB0E47A98BF5" Guid="{BC73F826-91C9-4F52-B4EB-66FEF2CBCA6C}">
+                            <File Id="fil6A30D4FCF1A5AFCDA8F7B339E476C475" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-fScreenOff.png" />
+                        </Component>
+                        <Component Id="cmp3B60B769D8ED6B434DAF2982350157BB" Guid="{C1B0CE32-D6F0-4938-B406-393BF25A7043}">
+                            <File Id="fil972F093B071C3151126034EC0A1BA981" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-fScreenOn.png" />
+                        </Component>
+                        <Component Id="cmp7D4C44A153C3EADBDEB0207A3F595240" Guid="{A209E213-57A9-4696-9AF6-F97A375D2C2D}">
+                            <File Id="fil2DC33158A7307C730654B83BDFD9DF26" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-ipfield.png" />
+                        </Component>
+                        <Component Id="cmp1EDB96B976FC4D70A4E973C69F8CB440" Guid="{A108737B-3A36-4428-A66F-4DB39F655852}">
+                            <File Id="fil8F90B91E0712423790A746F2404E4067" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-join.png" />
+                        </Component>
+                        <Component Id="cmpC99BD105E56511D8FEAFEE82BAFAD5C2" Guid="{FB6A8F0E-8007-468D-8D99-C966FB430C36}">
+                            <File Id="fil65ED81BD8C0D58A0BE3581BE596E56EC" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-Lan.png" />
+                        </Component>
+                        <Component Id="cmp297164DE9203CD7F9EA805E4B8C4D1A1" Guid="{B816B92E-AD11-42EA-A165-7D2AA587546E}">
+                            <File Id="fil9A15F9C773E3D64EACD2E481F48DE263" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-quit.png" />
+                        </Component>
+                        <Component Id="cmpE97C6BF985990CE19A17378FA1F51837" Guid="{2CA677D8-50C9-40AB-A1ED-4597BC5CF82C}">
+                            <File Id="fil923CC9FE7A726C222B685E323EDE598E" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-btn-settings.png" />
+                        </Component>
+                        <Component Id="cmp1872528522F79193A0A5D1317D2B541C" Guid="{13AC8506-EF7E-429B-8511-4F0B35312D63}">
+                            <File Id="fil17098E69D4278E6DF092DD5573B88E65" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-slider-btn.png" />
+                        </Component>
+                        <Component Id="cmp86B61466A07A59F3CAE90E7720A97746" Guid="{24001C99-C529-4016-91FF-556D74D86FDF}">
+                            <File Id="fil395E0AB14707011ABF977DCE708FE426" KeyPath="yes" Source="SourceDir\Content\Textures\noedge-slider-vertical.png" />
+                        </Component>
+                        <Component Id="cmpEAC57730C109DCE09902D9F23C382FA8" Guid="{F3971051-A46C-4F9D-A645-E35A1A92DD13}">
+                            <File Id="fil0173D77568DF4DF688D5A905E0D18B05" KeyPath="yes" Source="SourceDir\Content\Textures\orca_dummy.png" />
+                        </Component>
+                        <Component Id="cmp51A5B59F6613FF150350F79309E33AC9" Guid="{3BA96A90-C06A-4C8C-8D11-2D57C10AC1F5}">
+                            <File Id="filC09498F4C5AF5C692C0FD1FADBA76395" KeyPath="yes" Source="SourceDir\Content\Textures\orca_dummy_normal.png" />
+                        </Component>
+                        <Component Id="cmp82C191F2796D46A48E7F1E76ADF7AB58" Guid="{8AADCFA7-E3C6-4DCC-96F9-6E9FB0A420C3}">
+                            <File Id="fil3FFCA27009F09A1DA1E2005B4ECC0268" KeyPath="yes" Source="SourceDir\Content\Textures\orca_mdg.png" />
+                        </Component>
+                        <Component Id="cmp1449048FCC3989FDA12A41BFCCC6070C" Guid="{86F73470-DFC3-40B8-89C3-60385DC13B14}">
+                            <File Id="filCB64B26170FFF94FF552E3E54407289E" KeyPath="yes" Source="SourceDir\Content\Textures\orca_mn.png" />
+                        </Component>
+                        <Component Id="cmpA4553264ADB34537B4515CCA3B5ADA73" Guid="{54681D59-EB29-4AD6-B9A3-BDEC8A7ECBCD}">
+                            <File Id="filFBA292604E49846A6DDAAB9B71A3E1DB" KeyPath="yes" Source="SourceDir\Content\Textures\orca_mns.png" />
+                        </Component>
+                        <Component Id="cmp66BBA3C2FBF61EE19F07601DCC3AED1F" Guid="{B6F86861-4A78-414F-83D8-A159BF5DE888}">
+                            <File Id="fil9E9B1A3B1565007CBBD255B2A875B3C3" KeyPath="yes" Source="SourceDir\Content\Textures\orca_white_mdg.png" />
+                        </Component>
+                        <Component Id="cmpACB171BB9B5E6E94680AB1240E7C5C8C" Guid="{DEBDBAE9-50A9-42D8-A535-9438038D4A84}">
+                            <File Id="filAB4D4129D1DFFD16F63C9E8040A8BC12" KeyPath="yes" Source="SourceDir\Content\Textures\pickup_health_mdg.png" />
+                        </Component>
+                        <Component Id="cmp13FC9F27BACFF21ACA4F531A0DE474AC" Guid="{26B5D856-79D5-4806-8855-053E98295C36}">
+                            <File Id="filFC59AA14AF46395437AF626570FCAE17" KeyPath="yes" Source="SourceDir\Content\Textures\plane_texture_md.png" />
+                        </Component>
+                        <Component Id="cmp101F0149535ACCF0A81A41578147F326" Guid="{A9047306-BE0B-4071-8594-96ACD7EFAD67}">
+                            <File Id="filD99C9E76A9BAA184E5D0BDB89A3B32CD" KeyPath="yes" Source="SourceDir\Content\Textures\skysphere_sunshine_mdg.png" />
+                        </Component>
+                        <Component Id="cmp7A03C732BB1201C6BB2BAC35C39797CC" Guid="{BE869846-E8C8-469B-A7D2-EAA4AABA3EA6}">
+                            <File Id="fil82C5A3295E9147A63BC2F63E2B521332" KeyPath="yes" Source="SourceDir\Content\Textures\sky_back.png" />
+                        </Component>
+                        <Component Id="cmpA7F5B8EF0F5CB5677A35A3C8B2229649" Guid="{775E9634-2049-4A51-82C1-339C8C5C6408}">
+                            <File Id="filBBFCDEAFAE811DD20E8A1111BCB95246" KeyPath="yes" Source="SourceDir\Content\Textures\sky_down.png" />
+                        </Component>
+                        <Component Id="cmp1BC59DD8FBBFDB208FBA9B8511F545F1" Guid="{A5524E3D-D4F5-43B8-B697-6C7DA9A8A7A5}">
+                            <File Id="filBEC280FE88AAAAA64B7E06F72993E656" KeyPath="yes" Source="SourceDir\Content\Textures\sky_front.png" />
+                        </Component>
+                        <Component Id="cmp08D55B0E3EDA5F18EE60E7D6C26272AC" Guid="{01A9DF38-9E07-410F-9ABB-CDA246FC879F}">
+                            <File Id="fil474E567B5EDF75356FFC5EBE30ECF9BF" KeyPath="yes" Source="SourceDir\Content\Textures\sky_left.png" />
+                        </Component>
+                        <Component Id="cmp8BCF5E8E1AAB6168E76D449D4E31464D" Guid="{9FA99623-3DBA-4D72-8F8A-366694E5853B}">
+                            <File Id="fil664C2B52C2F697FC133BDFCCD61CEC83" KeyPath="yes" Source="SourceDir\Content\Textures\sky_night_mdg.png" />
+                        </Component>
+                        <Component Id="cmp8FA018FFEB38DDD2F303EA42A4212572" Guid="{3BFD3CFA-2CB4-47AF-B319-2AF4A3D4490A}">
+                            <File Id="fil42A310D1D95AE0DAB4EDE635E32CED3C" KeyPath="yes" Source="SourceDir\Content\Textures\sky_right.png" />
+                        </Component>
+                        <Component Id="cmp28106B1E68B0F1FE23EFA3B111D480C1" Guid="{13D584EF-3B76-4D99-A737-AD1446830470}">
+                            <File Id="filD000892047BACF744C36E73BC3C59750" KeyPath="yes" Source="SourceDir\Content\Textures\sky_up.png" />
+                        </Component>
+                        <Component Id="cmp395BBE1BD1BCC674126DA0A20EC5A69C" Guid="{1EA7BE92-D68A-412A-9814-5636C017201B}">
+                            <File Id="fil0F44CD76334F918B94A8B2B6ADBEF301" KeyPath="yes" Source="SourceDir\Content\Textures\stars_back.png" />
+                        </Component>
+                        <Component Id="cmp476C37F835B4AB0CAA158BB1B2331E62" Guid="{E4EF64F3-09A0-40FE-858B-867C02AECDE1}">
+                            <File Id="filCA910401D52FCFA63A9FF6058AA9FD3E" KeyPath="yes" Source="SourceDir\Content\Textures\stars_down.png" />
+                        </Component>
+                        <Component Id="cmpDCD74F7A4D4E64C61578F9217C25B3E3" Guid="{8E82CC49-1247-421C-95AE-25C186BDBCBB}">
+                            <File Id="filE7BB3B01EBBF32315EA3AA76BE096996" KeyPath="yes" Source="SourceDir\Content\Textures\stars_front.png" />
+                        </Component>
+                        <Component Id="cmp76CBDFB1B0C9EED30612DC16FC11BE6C" Guid="{F207806F-D906-4D98-9D40-AFD6A37D3677}">
+                            <File Id="fil509B5D8F8B3223DF1CA35B217C207609" KeyPath="yes" Source="SourceDir\Content\Textures\stars_left.png" />
+                        </Component>
+                        <Component Id="cmp54EFFD0B8149406541AD88AAD37AEA7A" Guid="{2D73C5BC-2A37-4370-920C-47263E297A42}">
+                            <File Id="fil745D30E0F665535591D14BEA71DB7D8D" KeyPath="yes" Source="SourceDir\Content\Textures\stars_right.png" />
+                        </Component>
+                        <Component Id="cmp3FCCF122A2A6063A864AB5D6FAA940D4" Guid="{3BEE59AE-C810-4C62-B105-04E0635CD7E9}">
+                            <File Id="fil515DD5FBAF74F80D67C21E06F7DFA411" KeyPath="yes" Source="SourceDir\Content\Textures\stars_up.png" />
+                        </Component>
+                        <Component Id="cmpEEFEF7D794AFD41F3BEE2F9337B1C484" Guid="{82B1D967-55BB-41C2-968D-937EB9A96635}">
+                            <File Id="filD3703483625EFF2F485AB0C91112C833" KeyPath="yes" Source="SourceDir\Content\Textures\structure_corp_md.png" />
+                        </Component>
+                        <Component Id="cmp0FBB2717B5B0A62BBD7BB0FCF1F08162" Guid="{144944F6-89B7-4774-BAE2-5165589F3D83}">
+                            <File Id="fil13652B2B1B770657B239BD79EB70217F" KeyPath="yes" Source="SourceDir\Content\Textures\structure_corp_mdg.png" />
+                        </Component>
+                        <Component Id="cmp8D6005A2529651158F485EB994663BB4" Guid="{6A0C1426-1AA6-472A-B973-6BA1B3C56B7D}">
+                            <File Id="filA7319522863760D291184CCACED477B7" KeyPath="yes" Source="SourceDir\Content\Textures\structure_corp_mdg_mdg.png" />
+                        </Component>
+                        <Component Id="cmp6A19C12FA13C0E2363AD3086A309A100" Guid="{E5B406E3-F412-4A08-AC41-314690009BA8}">
+                            <File Id="filBD55C683209F9861B78FE673CE0911B9" KeyPath="yes" Source="SourceDir\Content\Textures\structure_empire_monument_mdg.png" />
+                        </Component>
+                        <Component Id="cmpC96E6805376E5FB26FC6FD10F3EB8B57" Guid="{BCBE1E7D-C1D7-4DB5-A2F6-8EA8AFE629F7}">
+                            <File Id="fil5263F290DDEA24663FB44524991C36E8" KeyPath="yes" Source="SourceDir\Content\Textures\structure_empire_monument_mns.png" />
+                        </Component>
+                        <Component Id="cmp13ECE342380A64EB80E24CF33BED64A2" Guid="{DE27708D-3687-4C7F-99E5-FF8B803E2D11}">
+                            <File Id="fil1A294C42275B0F5432E357D9E81216B2" KeyPath="yes" Source="SourceDir\Content\Textures\structure_flying_platform_mdg.png" />
+                        </Component>
+                        <Component Id="cmp3EDE5FF859C5E5CB4A878E97453CFBED" Guid="{0E226148-4E31-4C68-B8DA-76A117473A8B}">
+                            <File Id="fil1CCEBA8E73774C2D2DFD6EB48ADA1C97" KeyPath="yes" Source="SourceDir\Content\Textures\structure_flying_platform_mns.png" />
+                        </Component>
+                        <Component Id="cmp6ECDB19905A35625B029936B93170687" Guid="{2A73F987-3F6A-4108-98CF-115C7DDD722A}">
+                            <File Id="fil9D80F1E8BA4CBF1E3FAB02AD3EE5290F" KeyPath="yes" Source="SourceDir\Content\Textures\structure_hut_mdg.png" />
+                        </Component>
+                        <Component Id="cmp13AA6B229D4E246A14A12B9EBF902EEE" Guid="{B2CB0A8C-F8E0-4BB6-845E-D52AD0F7B59E}">
+                            <File Id="filE099356DDCD2BDE4A1FAF1A7EFADB04D" KeyPath="yes" Source="SourceDir\Content\Textures\structure_hut_mns.png" />
+                        </Component>
+                        <Component Id="cmpA9FAF9425F89A730081C155F8BD49DC7" Guid="{0B82536C-48A1-4F71-8F74-F50010118631}">
+                            <File Id="fil96AD9F19DA7FBEF967D009021C042278" KeyPath="yes" Source="SourceDir\Content\Textures\structure_light_street_low_mdg.png" />
+                        </Component>
+                        <Component Id="cmp70E83DEBDC877086FCA9E5553ECF09C8" Guid="{7C7EA430-C6D5-4CA0-83DA-73B9F449645C}">
+                            <File Id="filCDC5580210A01CB053FC8D6ADCBF7948" KeyPath="yes" Source="SourceDir\Content\Textures\structure_light_street_low_mns.png" />
+                        </Component>
+                        <Component Id="cmp49787331F019EBAC96E61F47951B7FA9" Guid="{CDC50152-6037-4F6F-9803-CA4F8F83043D}">
+                            <File Id="filF5A110198923BCE43CCE81B51A87C458" KeyPath="yes" Source="SourceDir\Content\Textures\structure_light_street_tall_mdg.png" />
+                        </Component>
+                        <Component Id="cmpB151E7133CCFF694487B815AC190A2D5" Guid="{CE425449-3658-4823-BA87-D9C8AFF556BD}">
+                            <File Id="fil42AB2A9CB20D12F2A8E0F11FD6238605" KeyPath="yes" Source="SourceDir\Content\Textures\structure_light_street_tall_mns.png" />
+                        </Component>
+                        <Component Id="cmpA921DDCBD4A9C885895A9DF3CEC4D320" Guid="{919A580E-E908-434F-877F-B6E729166FC1}">
+                            <File Id="fil9E90262741207B05C0F7FA2226AAA461" KeyPath="yes" Source="SourceDir\Content\Textures\structure_market_mdg.png" />
+                        </Component>
+                        <Component Id="cmp34F97F8B94643F12CAF7DA0D958C3780" Guid="{3E09C911-DFAF-4F2F-B667-4C45A4983EA4}">
+                            <File Id="filCCC88900A65DCE70C606098C1E12FAE4" KeyPath="yes" Source="SourceDir\Content\Textures\structure_metal_rib_mdg.png" />
+                        </Component>
+                        <Component Id="cmp6CFCA60A0DB6B58395CEBFC628E6918D" Guid="{7B3F0C82-5760-48F9-A51E-9372DCC928C6}">
+                            <File Id="filC6523B0C642CBA0C6B1289193696C355" KeyPath="yes" Source="SourceDir\Content\Textures\structure_metal_rib_mns.png" />
+                        </Component>
+                        <Component Id="cmpB4B2C57F384DFE16FD2DDDD45843D18B" Guid="{FB227BF1-D3CF-4E4C-A2DA-3A3325E9904E}">
+                            <File Id="fil43D6045FF1834C9B7145924C9FFEF8C6" KeyPath="yes" Source="SourceDir\Content\Textures\TexCharOrcaSkinDefault.png" />
+                        </Component>
+                        <Component Id="cmpFA130E114309DC67D9AA605CD25987E3" Guid="{C42CD664-10EA-44B3-B19E-D3A536DF86C8}">
+                            <File Id="fil6BE2933F71333ED24A0928E538B28AED" KeyPath="yes" Source="SourceDir\Content\Textures\world_dirt_mdg.png" />
+                        </Component>
+                        <Component Id="cmp210A89882ACBD6B8A042B5A21231A988" Guid="{E69B9C1E-1094-4E52-966B-B7E5B8255374}">
+                            <File Id="filA63E3E44602BEEBB50748AB46BBF3FDD" KeyPath="yes" Source="SourceDir\Content\Textures\world_grass_mdg.png" />
+                        </Component>
+                        <Component Id="cmp8F0C30D3731C750C6B2278C574122B25" Guid="{CA581D58-17F5-424E-9187-57DB1C28D150}">
+                            <File Id="filD884F00671168F4DAE4C390DFA675A12" KeyPath="yes" Source="SourceDir\Content\Textures\world_lightPillar_mdg.png" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dirCE550469B1CC98EC770178ABA145D831" Name="Worlds">
+                        <Component Id="cmpB665A61661DBCF532AE9FBC15A438CEB" Guid="{C25272AE-DF1B-4EBE-9A11-184EF64F9B17}">
+                            <File Id="filBA7D74DE0C48611CEDE1CDC6291DC2A8" KeyPath="yes" Source="SourceDir\Content\Worlds\demo_5.bias" />
+                        </Component>
+                        <Component Id="cmpA6A3917A9E97FF0950E0F47C8FCC7564" Guid="{18B5CBDE-8E46-488B-92DD-C700405DE654}">
+                            <File Id="filB867AE604F5F136C5E940B096C92E309" KeyPath="yes" Source="SourceDir\Content\Worlds\OfficialWorld_v3.bias" />
+                        </Component>
+                        <Directory Id="dir2AC556FCE9BBC4963F0720D497AAAED3" Name="cgf">
+                            <Component Id="cmp9D524A4DE6258CB1AEE534E6B29B5A87" Guid="{DF043F51-B18E-4894-B152-CEF20030DC6A}">
+                                <File Id="filC8ACDDE3BB8086ADDC744576E830CCF9" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\crate_generic.cgf" />
+                            </Component>
+                            <Component Id="cmp2FDFF0A832AC00ED731761D19D416763" Guid="{6D4B7809-8893-40A0-8D84-7B4496431689}">
+                                <File Id="fil098F60C28EE29DB081BA26421BE486BD" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\defaultSphere.cgf" />
+                            </Component>
+                            <Component Id="cmp542B8183ABC06D63BA79AFBE3E493E1E" Guid="{F0D735E6-2EEC-48FE-B37D-F3F03EDF787A}">
+                                <File Id="fil95E17E63D58D9C91A9C4A88928E7F665" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\entity_blueCrystal_mid.cgf" />
+                            </Component>
+                            <Component Id="cmpFDFF360B9547A7A9EACA573511304E5B" Guid="{264F78EB-973E-4009-B47D-B1548226D680}">
+                                <File Id="filDC344C88A3CAE3535373A09B9045A51B" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\entity_blueCrystal_small.cgf" />
+                            </Component>
+                            <Component Id="cmpADFEBFDC5FFA3A1E1EF84CD7B2595FAD" Guid="{C0E5D1DA-2EAC-4AE7-A7BF-22B19F0DD59D}">
+                                <File Id="filA48DC43E8883E6801FFE40FFEDBD0164" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\entity_blueCrystal_tall.cgf" />
+                            </Component>
+                            <Component Id="cmpE0BAC4F19FDA6635B9CD006B46A942D6" Guid="{AEFE37A7-8880-4728-AE88-6A623913FFD3}">
+                                <File Id="fil14F2EF731B96DEE8F0097DEAC8D6F8CB" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\entity_lightPillar.cgf" />
+                            </Component>
+                            <Component Id="cmpB1FD20893DB533E6CFB5A5A2D58EC2CF" Guid="{ADB29133-A78D-416E-8C51-D2F0A4D7E8A5}">
+                                <File Id="filDADAD21A7B6D321635FCA498841E9776" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\identityBox.cgf" />
+                            </Component>
+                            <Component Id="cmpDB117C0A4E869EABCFB67CE9E0F63CC8" Guid="{AA379E5C-DB86-413E-83C6-E7908857E52C}">
+                                <File Id="filD3CF6B6025343A5A8EA953709EA0D3CC" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\jumppad.cgf" />
+                            </Component>
+                            <Component Id="cmpE279D8B723D97FF053A83712ED2FC192" Guid="{0011A5BE-DAA6-466F-AC98-E2CD7E215FBF}">
+                                <File Id="fil2327450DE94DCC9241E5FF5F68EB0AEB" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\nature_crystalFormation.cgf" />
+                            </Component>
+                            <Component Id="cmpE5E4C96F388971571682658A0AD40F78" Guid="{EEFA57DF-6E91-4DFD-8605-19A10A3CFD77}">
+                                <File Id="filA7156902D21FD9C9E2DE199514F21207" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\nature_stone.cgf" />
+                            </Component>
+                            <Component Id="cmpCE96DBB476FFBD18945336AF5D369DD6" Guid="{68A5CF9B-DE7B-4EB2-AFEE-B55A26FAD11E}">
+                                <File Id="fil8552E63FB8B9A0A7B34839C18D03D10A" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\pickup_health.cgf" />
+                            </Component>
+                            <Component Id="cmpAA1028FB8D7AB2087797AD85CA9972EA" Guid="{F911CAF5-B161-44E2-BE79-775FA4C79F35}">
+                                <File Id="fil7E643D36D52EE4674D324231BFE2E9E6" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_corporation.bullet" />
+                            </Component>
+                            <Component Id="cmp862EFA0923C1BC0E0010DA5B901DEA66" Guid="{36541BBA-F4B8-4C21-8353-0EE6029A070F}">
+                                <File Id="filE8D7D15BBC7C2C3C4A7860843FACE2DC" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_corporation.cgf" />
+                            </Component>
+                            <Component Id="cmpCCD4A567D68C0D03F1EC3480B79A056F" Guid="{699724C0-8216-432A-88A9-745D0B3ABF0D}">
+                                <File Id="filA283E0E872B6B5A92E38645A2160562A" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_corporation_box.cgf" />
+                            </Component>
+                            <Component Id="cmp0279FE82845811E5F6DD13B9ECE35DF8" Guid="{77468D3C-E681-481E-831C-B493C2EC86A8}">
+                                <File Id="fil7888063E4F86F34163D75FA738D8D8DF" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_empire_monument.bullet" />
+                            </Component>
+                            <Component Id="cmp615F339C40B0B8D6304C1A9317276F2C" Guid="{B0D9AA1F-B48F-49B6-A917-895D2253051E}">
+                                <File Id="fil78BFA59B7FCF932207968952A5995C23" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_empire_monument.cgf" />
+                            </Component>
+                            <Component Id="cmpF21B2865E169153C3A05764284B0BB49" Guid="{B776ACE1-5C8A-411E-B72C-F328E80061CE}">
+                                <File Id="fil1C79DC6661EA0CBB3370E28DF6617F01" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_flying_platform.bullet" />
+                            </Component>
+                            <Component Id="cmp4A9A4FEF402576BB1BF686EF6CDC67F8" Guid="{166ED88A-262D-4D36-99B1-EC7F4B43CA4D}">
+                                <File Id="filF377EE906F65583034087F715B04D8D7" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_flying_platform.cgf" />
+                            </Component>
+                            <Component Id="cmp4F647F891972E0CFF220A2B7E8A0ABAB" Guid="{54B59E8C-1BC1-467A-9324-42A6C1C0025B}">
+                                <File Id="fil7BEC1E04A589C1ADACC5F66CCE1522D0" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_hut.bullet" />
+                            </Component>
+                            <Component Id="cmp4667063B2B51BE8A7976829A60AD4765" Guid="{A2DBCAE1-9235-448E-9C09-51D618189992}">
+                                <File Id="fil82F7974520CDED1D7A23C3160EB4857D" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_hut.cgf" />
+                            </Component>
+                            <Component Id="cmp69F3B94E47E59430EFCCE7D9D357B550" Guid="{4B05B801-2F55-4687-8D31-65F967A4F23C}">
+                                <File Id="fil3E209898D9FFB5696BC5D14AC02391D3" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_market.bullet" />
+                            </Component>
+                            <Component Id="cmpB0A10316F8784361679B603AA9F9AC73" Guid="{C5EAA75F-D6BE-41A7-85FF-7483EBE78F6D}">
+                                <File Id="filB11CD4CC130ADE8E4618906268442B60" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_market.cgf" />
+                            </Component>
+                            <Component Id="cmp85C5FAB294B52ADA045F444E0E829090" Guid="{0929156C-9D7C-4BDD-965D-769FBE16F485}">
+                                <File Id="fil214CE2FE7C2A369426236111FA91564B" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_metal_rib.bullet" />
+                            </Component>
+                            <Component Id="cmp1B505665950D18A4CA5882D82709DC6C" Guid="{430510E4-4138-42C4-8926-15157B61FF92}">
+                                <File Id="filADA8EA2D095FFE0B3742735885300381" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_metal_rib.cgf" />
+                            </Component>
+                            <Component Id="cmp070024472503043BABA9FC7BFC766D2C" Guid="{67A02D32-1B6F-4463-8792-120C2D3B3202}">
+                                <File Id="filB87676478F160493B88ABCE7E00F2007" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_platform.bullet" />
+                            </Component>
+                            <Component Id="cmp06B01624E48D982D2DE8C012085590FF" Guid="{1122A126-B235-4D6A-B790-72806F345404}">
+                                <File Id="fil9115EC597273E643C5E369337D7215DE" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\structure_platform.cgf" />
+                            </Component>
+                            <Component Id="cmp20C01D4D8A5448738DF5D1AE3B9D368F" Guid="{FF772631-C2FA-49D0-BE5F-6ABEDE617169}">
+                                <File Id="filAF2CAC9780BC9C59495AA2A210BA530E" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_300_repeatxy.bullet" />
+                            </Component>
+                            <Component Id="cmpC51A8190EBCC212B7C53AD7D6FDDA63A" Guid="{48C81D29-37F9-44E0-B41D-B24B080878C7}">
+                                <File Id="filD57CDAAE2256D88AAB15B739B37AD82F" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_300_repeatxy.cgf" />
+                            </Component>
+                            <Component Id="cmpA443389AE6D74894E76B6755130089C2" Guid="{33502E49-5C4C-4AD6-9A5F-B33735280F03}">
+                                <File Id="fil1ABB23EA7CB7583253530BD597E0BCAD" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_booger.bullet" />
+                            </Component>
+                            <Component Id="cmp02A9004A8871884CF57A9B608414FA15" Guid="{0A4FC3D3-302A-4B0D-8641-2A3CF5CB1D93}">
+                                <File Id="fil1737039B541D48558FBF5B818DAC86D5" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_booger.cgf" />
+                            </Component>
+                            <Component Id="cmp1BF60279FCAFDBD5B2178CA414470B10" Guid="{4EF78125-0AEB-432E-AE7C-09EE50190866}">
+                                <File Id="fil7FC8C3C9B92A52EE291217C31AE2639B" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_demo.bullet" />
+                            </Component>
+                            <Component Id="cmpABF60DFFB9AF142D202ECC7386A9CADD" Guid="{6B336E57-F5C8-4EFC-A63E-CC489CB8E84A}">
+                                <File Id="filA62DB80A5772A226A54A720C02259C20" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_demo.cgf" />
+                            </Component>
+                            <Component Id="cmp1AD163507CB716EDA56C0CBDC1C14B09" Guid="{71DBF92B-1EEF-4B62-B79E-D6F72A290222}">
+                                <File Id="fil93C3E77BB99F4DC36C0987AF28CF420D" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_demophere.cgf" />
+                            </Component>
+                            <Component Id="cmpEAC847E48AA52A77C6FE879845A45D03" Guid="{B248717B-4BD4-47AB-862F-E2B789989CA8}">
+                                <File Id="filBC7F72DC49454D2EC068CA7446D0C822" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_demosphere.bullet" />
+                            </Component>
+                            <Component Id="cmpAEF0F25CD65C05AE82E2D8227BC2B20F" Guid="{9DE83D7F-9CE0-4446-ADC5-49DD215DFA96}">
+                                <File Id="filB3C34FA12B0EE7A1281A8715F7C59FC2" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_demosphere.cgf" />
+                            </Component>
+                            <Component Id="cmpCB871D0870BE0CDBEF41AE0D98AEAFD0" Guid="{715CCE8A-E70C-4414-87A1-E30C5B102879}">
+                                <File Id="fil70BABD06A8CB46ACF44335E243869E48" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_dirt_sculpted-ellipse.bullet" />
+                            </Component>
+                            <Component Id="cmp68CAAEA57B97B6C1161FA7AB06F61473" Guid="{0E19C8E6-579A-4053-BD55-45B77C729331}">
+                                <File Id="fil6A0E69622E103B51C32308AB64D2413F" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_dirt_sculpted-ellipse.cgf" />
+                            </Component>
+                            <Component Id="cmp302365F84AC0AD4E40EBB7520296F4D3" Guid="{A3C958B3-8ADF-43A2-8DAD-7F5218849E4F}">
+                                <File Id="fil94A0A3791B3F84FA9A89C432B3F5754D" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_dirt_sculpted.bullet" />
+                            </Component>
+                            <Component Id="cmp4C33DD01D91B9152EB0089B98D8BFB7F" Guid="{56CA2D6B-181F-4282-BC71-66AE820CD7FC}">
+                                <File Id="filBB2EFBCBA75450310FBDB48B687ABE50" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_dirt_sculpted.cgf" />
+                            </Component>
+                            <Component Id="cmp1812D60BCA118D00BBB3FE3941B6C666" Guid="{3070534D-49EF-42A5-B0FE-AAFF5AFF3D92}">
+                                <File Id="fil126AB485ED8A29322542B89E1B1BCBDB" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_grass.cgf" />
+                            </Component>
+                            <Component Id="cmpE798BAA0D8D29A9190F9F8918E384728" Guid="{5003C4AB-BE47-49D0-A296-722309A1D747}">
+                                <File Id="fil89D111E43C49FB32C561FA9C379B3C29" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_spacedonut.bullet" />
+                            </Component>
+                            <Component Id="cmp26586AB279E95A2AF35C74760BD73606" Guid="{43D213EB-9725-4F17-AE1B-4E7308B24E30}">
+                                <File Id="fil428DE334DDD013500BF6C15484B84B88" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_spacedonut.cgf" />
+                            </Component>
+                            <Component Id="cmp10BCBCFE70A0D88551A0EA921BF194AC" Guid="{DECFFE20-BEE5-43AB-B2BA-3678E2C69250}">
+                                <File Id="filCF48550AB16DE59B8F6016BF186659E5" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_spacedonut_200.bullet" />
+                            </Component>
+                            <Component Id="cmpBCF3F88946E0B7E538F43D47DC958A6C" Guid="{BFE4EE30-99F9-4EF1-99BA-A3403EC80C71}">
+                                <File Id="filD318550C7098B98A5FC51EB6A093CFC6" KeyPath="yes" Source="SourceDir\Content\Worlds\cgf\world_spacedonut_200.cgf" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                </Directory>
+                <Directory Id="dirD78D8005852DD38D688C589FF03160A6" Name="DLL">
+                    <Component Id="cmp2FA3EE0380C6A74B2EACB70878A60AFD" Guid="{F70527F6-CAAE-4581-BD29-042C0289AE3E}">
+                        <File Id="fil62CF9C9036F43121FBF2131142E86395" KeyPath="yes" Source="SourceDir\DLL\CLIStandaloneServer_x64.dll" />
+                    </Component>
+                    <Component Id="cmp1CB43E278DEABEA16493C49F431CA0A9" Guid="{0DA54F40-089E-49E0-9B02-703A27A913E5}">
+                        <File Id="filD9E55F6E77C1AAD698AF25B225106F54" KeyPath="yes" Source="SourceDir\DLL\CLIStandaloneServer_x86.dll" />
+                    </Component>
+                    <Component Id="cmpC600877E63968AB55A955F65EB7BA282" Guid="{B2DFE9DF-E9CE-45D0-B7CA-7B58F3681954}">
+                        <File Id="fil10B43EEB184FFFBD73068393A6AA5456" KeyPath="yes" Source="SourceDir\DLL\fmodex.dll" />
+                    </Component>
+                    <Component Id="cmp7B5D3D83230785872BE071D738734C22" Guid="{96416B6A-AE39-406A-9F55-44EBFFA97C19}">
+                        <File Id="fil4542A52BA7A55D1CD333E4C75BEF7752" KeyPath="yes" Source="SourceDir\DLL\fmodex64.dll" />
+                    </Component>
+                    <Component Id="cmpE22F7A717FA2D83636FC68F9A88D58F8" Guid="{073100D2-4115-4289-9E0F-81F8EEBD1C8E}">
+                        <File Id="filC372444778BBF2A966E473E2C7A95166" KeyPath="yes" Source="SourceDir\DLL\GameClient_x64.dll" />
+                    </Component>
+                    <Component Id="cmp6A2E5B19CD3FC85F6C7EEF0AE6A702D9" Guid="{044C4E96-B5C1-4914-A5D5-E5242C498AC8}">
+                        <File Id="filCA452618ECD48CA99D9120D217FFC7AD" KeyPath="yes" Source="SourceDir\DLL\GameClient_x86.dll" />
+                    </Component>
+                    <Component Id="cmp9462D00F47DA66D30EEA2DE97226FF37" Guid="{CF43FB9F-E3B4-4C32-9C2E-931CE9FE20B5}">
+                        <File Id="filFEBE37CC42F15678B86398B1052B2C2B" KeyPath="yes" Source="SourceDir\DLL\GameLogic_x64.dll" />
+                    </Component>
+                    <Component Id="cmp4428EE39B2F3E6A4FCB55605438492BB" Guid="{D8923F5B-E57C-4E61-BF1B-47ECAF18835B}">
+                        <File Id="filA30AB7CF2AC9EAA98EFDA49BFC59F8DD" KeyPath="yes" Source="SourceDir\DLL\GameLogic_x86.dll" />
+                    </Component>
+                    <Component Id="cmpB5C4A087D73F3187AB0F37D4A5F61B6D" Guid="{F0BDC0BB-3552-4AB6-91A3-83E51AAF0F99}">
+                        <File Id="fil989E2484B7AD3B7D4CD636BDEF3A45DF" KeyPath="yes" Source="SourceDir\DLL\GamePhysics_x64.dll" />
+                    </Component>
+                    <Component Id="cmpCA5D586C94F5B3C5EE0A69A4F066CBD7" Guid="{C61013AB-65A2-418C-9A88-7550FA00EC12}">
+                        <File Id="fil5DC913B7632A20EB8499731938F5E130" KeyPath="yes" Source="SourceDir\DLL\GamePhysics_x86.dll" />
+                    </Component>
+                    <Component Id="cmp16982C83DA20E049194947E95E308868" Guid="{661F17C8-95E8-4EC3-8CF8-7628DFD888BA}">
+                        <File Id="fil80364B87A2BAFC2C843013472B9CC27C" KeyPath="yes" Source="SourceDir\DLL\GameServer_x64.dll" />
+                    </Component>
+                    <Component Id="cmp9629CCFEF2BADB483CB0487D46D5FB2F" Guid="{9636794B-FF6D-4986-A7B4-085DA91DE9B7}">
+                        <File Id="fil1D78645E83C3CDF7C8E24D84248C30DC" KeyPath="yes" Source="SourceDir\DLL\GameServer_x86.dll" />
+                    </Component>
+                    <Component Id="cmp159CCB89CB7D48F51479D13BA128F724" Guid="{CBB08E94-993F-4D3C-BC0B-AB7BAF7F15E3}">
+                        <File Id="fil82C10F5A6F9D0C4DB9F2C3671CD94AF3" KeyPath="yes" Source="SourceDir\DLL\NetworkAPI_x64.dll" />
+                    </Component>
+                    <Component Id="cmp9EC654345F9CFD1BC0B0A6B64F06865D" Guid="{38C0AEA7-7A55-4DD8-8FFA-901C38CACB60}">
+                        <File Id="fil3859EB893FB832C7C10F87057CF47926" KeyPath="yes" Source="SourceDir\DLL\NetworkAPI_x86.dll" />
+                    </Component>
+                    <Component Id="cmp5274C356515A746E624A480FE4954DB9" Guid="{FABE70A5-60FD-4D06-913E-55D38C0B2E85}">
+                        <File Id="filF06BAF10692FDED0797D56F99F19CDE2" KeyPath="yes" Source="SourceDir\DLL\OysterGraphics_x64.dll" />
+                    </Component>
+                    <Component Id="cmpE93664CCCAF4D1DAA79E45A4F7726EF9" Guid="{6B04C003-D65E-416A-A164-30787EC8933F}">
+                        <File Id="filA246C5582C2994030FA9A5CDFBA5AC96" KeyPath="yes" Source="SourceDir\DLL\OysterGraphics_x86.dll" />
+                    </Component>
+                    <Component Id="cmpDFFAA32D2BEFCF12E6147204C32C51B9" Guid="{A124AE7C-3D52-430F-9349-B3D3FE21CD6B}">
+                        <File Id="fil8553475634F9765B7B15C693E2537893" KeyPath="yes" Source="SourceDir\DLL\Sound_x64.dll" />
+                    </Component>
+                    <Component Id="cmp84CC244182DAF502FE702CC5140AAE2C" Guid="{23746BFB-F23C-43E6-B1F5-14AAD511AD22}">
+                        <File Id="fil0A4D5261F615938F92117985774A0FFA" KeyPath="yes" Source="SourceDir\DLL\Sound_x86.dll" />
+                    </Component>
+                    <Component Id="cmpD0C4C57AFA0B711DCE52D90EBECA676A" Guid="{DD995272-2AED-4A18-8FAF-ED5F92C59CB3}">
+                        <File Id="fil168A466AA8417974A34D14BB35EA4058" KeyPath="yes" Source="SourceDir\DLL\StandAloneLauncher.exe" />
+                    </Component>
+                </Directory>
+                <Directory Id="dir758097769B956E37F8BBD78A5ABFDCEC" Name="Executable">
+                    <Component Id="cmpDE14BC0D605ADA304A7B1F6DDD6D25C0" Guid="{95A0871E-F68B-4146-AEC3-12C68B6E27F1}">
+                        <File Id="fil5336FECFB5E5A08A603CD9F3A655F2DD" KeyPath="yes" Source="SourceDir\Executable\GameLauncher_x64.exe" />
+                    </Component>
+                    <Component Id="cmp904DFCE6CC56801B083F6A1AB0045FE8" Guid="{0D886905-1FB9-44B7-BBCB-A1DAD3675264}">
+                        <File Id="fil673413A866A0C96431006130369CD61E" KeyPath="yes" Source="SourceDir\Executable\GameLauncher_x86.exe" />
+                    </Component>
+                </Directory>
+                <Directory Id="dir7A9448C597EA7D83C243D9300D3707E3" Name="Settings">
+                    <Component Id="cmpA57BF91F983096DAF31669E8B425CE91" Guid="{04E2EB5E-81B8-49A8-82A5-A4D0FD01AAFB}">
+                        <File Id="filEEDE2FCEFF789CC4C6823A1D4E097057" KeyPath="yes" Source="SourceDir\Settings\gameUI.settings" />
+                    </Component>
+                    <Component Id="cmp449DB4D6F37AFC8326F083D25DC8687F" Guid="{EB32C5CB-6127-4F8F-AFBE-4BE273EF1804}">
+                        <File Id="filC20E3CC035328AA7B19377E8AB754E1B" KeyPath="yes" Source="SourceDir\Settings\settings.txt" />
+                    </Component>
+                    <Component Id="cmp7C54EC1D00E31C40AF21985A50036565" Guid="{A8416017-B406-4D35-8C6F-0938D0069863}">
+                        <File Id="fil2B1B389F5519C70C62DFEC558C4044F4" KeyPath="yes" Source="SourceDir\Settings\statsLayout.settings" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </DirectoryRef>
+    </Fragment>
+</Wix>

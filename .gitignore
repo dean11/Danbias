@@ -27,11 +27,13 @@
 *.pdb
 *.cso
 *.orig
+*.exe
 
 #Dir
 Bin/Content/
 Bin/DLL/
 Bin/Executable/
+Bin/Install/
 Obj/
 External/
 Code/Game/GameClient/GameClient.vcxproj.user
